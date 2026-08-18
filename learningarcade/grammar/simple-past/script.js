@@ -24,7 +24,16 @@
   const IRREGULAR = [
     ["be","was/were"],["buy","bought"],["do","did"],["get","got"],["go","went"],
     ["have","had"],["leave","left"],["say","said"],["see","saw"],["send","sent"],
-    ["sit","sat"],["tell","told"],["write","wrote"]
+    ["sit","sat"],["tell","told"],["write","wrote"],
+    ["come","came"],["drink","drank"],["drive","drove"],["eat","ate"],["fall","fell"],
+    ["find","found"],["give","gave"],["know","knew"],["make","made"],["meet","met"],
+    ["read","read"],["run","ran"],["sleep","slept"],["speak","spoke"],["take","took"],
+    ["think","thought"],["wear","wore"],["win","won"],["begin","began"],["break","broke"],
+    ["bring","brought"],["build","built"],["catch","caught"],["choose","chose"],
+    ["cut","cut"],["draw","drew"],["feel","felt"],["fly","flew"],["forget","forgot"],
+    ["hear","heard"],["keep","kept"],["lose","lost"],["pay","paid"],["put","put"],
+    ["sell","sold"],["sing","sang"],["stand","stood"],["swim","swam"],["teach","taught"],
+    ["understand","understood"]
   ];
 
   // Pronunciation groups (ed endings)
@@ -253,12 +262,19 @@
   }
 
   function qIrrMatch() {
-    const pairs = shuffle(IRREGULAR.filter((x) => x[0] !== "be")).slice(0, 4);
+    const pool = IRREGULAR.filter(function (x) {
+      return x[0] !== "be";
+    });
+    // 3 pairs on small screens so everything fits; 4 on larger
+    const count = (window.innerWidth <= 700 || window.innerHeight <= 700) ? 3 : 4;
+    const pairs = shuffle(pool).slice(0, count);
     return {
       type: "match",
-      hint: "Match base form → past form",
-      prompt: "Match the verbs",
-      pairs: pairs.map(([b, p]) => ({ left: b, right: p }))
+      hint: "Tap a base form, then its past form",
+      prompt: "Match base → past",
+      pairs: pairs.map(function (pair) {
+        return { left: pair[0], right: pair[1] };
+      }),
     };
   }
 
@@ -319,6 +335,10 @@
 
   function startMode(key) {
     modeKey = key;
+    if (key === "irr-match") {
+      startMatchRush();
+      return;
+    }
     const mode = MODES[key];
     queue = [];
     for (let i = 0; i < TOTAL; i++) queue.push(mode.build());
@@ -343,10 +363,19 @@
 
     if (item.type === "match") {
       choicesArea.classList.add("hidden");
-      matchArea.classList.remove("hidden");
+      if (matchArea) {
+        matchArea.classList.remove("hidden");
+        matchArea.style.display = "grid";
+      }
       setupMatch(item);
+      if (matchArea) {
+        matchArea.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
     } else {
-      matchArea.classList.add("hidden");
+      if (matchArea) {
+        matchArea.classList.add("hidden");
+        matchArea.style.display = "";
+      }
       choicesArea.classList.remove("hidden");
       renderChoices(item);
     }
@@ -401,9 +430,19 @@
     matchDone = 0;
     matchTotal = item.pairs.length;
     matchMap = {};
-    item.pairs.forEach((p) => { matchMap[p.left] = p.right; });
-    const lefts = shuffle(item.pairs.map((p) => p.left));
-    const rights = shuffle(item.pairs.map((p) => p.right));
+    item.pairs.forEach(function (p) { matchMap[p.left] = p.right; });
+    const lefts = shuffle(item.pairs.map(function (p) { return p.left; }));
+    const rights = shuffle(item.pairs.map(function (p) { return p.right; }));
+
+    if (!matchArea || !matchLeft || !matchRight) {
+      console.error("Match UI elements missing");
+      return;
+    }
+
+    matchArea.classList.remove("hidden");
+    matchArea.style.display = "grid";
+    choicesArea.classList.add("hidden");
+
     matchLeft.innerHTML = "";
     matchRight.innerHTML = "";
     lefts.forEach((w) => {
@@ -474,6 +513,196 @@
     }
   }
 
+
+  /* ---------- MATCH RUSH (all verbs, 90s) ---------- */
+  const RUSH_SECONDS = 90;
+  let rushTimerId = null;
+  let rushTimeLeft = RUSH_SECONDS;
+  let rushMatches = 0;
+  let rushCombo = 0;
+  let rushBestCombo = 0;
+  let rushMap = {};
+  let rushSel = { left: null, right: null };
+  let rushLocked = false;
+
+  function stopRushTimer() {
+    if (rushTimerId) {
+      clearInterval(rushTimerId);
+      rushTimerId = null;
+    }
+  }
+
+  function startMatchRush() {
+    stopRushTimer();
+    score = 0;
+    correct = 0;
+    wrong = 0;
+    rushMatches = 0;
+    rushCombo = 0;
+    rushBestCombo = 0;
+    rushTimeLeft = RUSH_SECONDS;
+    rushSel = { left: null, right: null };
+    rushLocked = false;
+
+    if (modeLabel) modeLabel.textContent = "Match Rush · 90s";
+    if (scoreEl) scoreEl.textContent = "0";
+
+    show("play");
+    const play = document.getElementById("playScreen");
+    if (play) play.classList.add("play-screen-rush");
+
+    if (choicesArea) choicesArea.classList.add("hidden");
+    if (matchArea) {
+      matchArea.classList.remove("hidden");
+      matchArea.style.display = "flex";
+    }
+    if (feedbackEl) {
+      feedbackEl.textContent = "Match base → past as fast as you can!";
+      feedbackEl.className = "feedback";
+    }
+
+    const pool = shuffle(
+      IRREGULAR.filter(function (x) {
+        return x[0] !== "be";
+      })
+    );
+
+    rushMap = {};
+    pool.forEach(function (p) {
+      rushMap[p[0]] = p[1];
+    });
+
+    const lefts = shuffle(pool.map(function (p) { return p[0]; }));
+    const rights = shuffle(pool.map(function (p) { return p[1]; }));
+
+    matchLeft.innerHTML = "";
+    matchRight.innerHTML = "";
+
+    lefts.forEach(function (w) {
+      matchLeft.appendChild(makeRushChip(w, "left"));
+    });
+    rights.forEach(function (w) {
+      matchRight.appendChild(makeRushChip(w, "right"));
+    });
+
+    updateRushHud();
+    rushTimerId = setInterval(function () {
+      rushTimeLeft -= 1;
+      updateRushHud();
+      if (rushTimeLeft <= 0) {
+        stopRushTimer();
+        endMatchRush();
+      }
+    }, 1000);
+  }
+
+  function makeRushChip(word, side) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "match-chip";
+    b.textContent = word;
+    b.dataset.side = side;
+    b.dataset.val = word;
+    b.addEventListener("click", function () {
+      onRushPick(b);
+    });
+    return b;
+  }
+
+  function updateRushHud() {
+    const timerEl = document.getElementById("rushTimer");
+    const matchesEl = document.getElementById("rushMatches");
+    const comboEl = document.getElementById("rushCombo");
+    if (timerEl) {
+      timerEl.textContent = String(Math.max(0, rushTimeLeft));
+      timerEl.classList.toggle("warn", rushTimeLeft <= 30 && rushTimeLeft > 10);
+      timerEl.classList.toggle("danger", rushTimeLeft <= 10);
+    }
+    if (matchesEl) matchesEl.textContent = String(rushMatches);
+    if (comboEl) comboEl.textContent = "×" + Math.max(1, rushCombo);
+    if (scoreEl) scoreEl.textContent = String(score);
+  }
+
+  function onRushPick(btn) {
+    if (rushLocked || btn.classList.contains("matched")) return;
+    const side = btn.dataset.side;
+    document.querySelectorAll('.match-chip[data-side="' + side + '"]').forEach(function (b) {
+      if (!b.classList.contains("matched")) b.classList.remove("selected");
+    });
+    btn.classList.add("selected");
+    rushSel[side] = btn;
+
+    if (rushSel.left && rushSel.right) {
+      const L = rushSel.left.dataset.val;
+      const R = rushSel.right.dataset.val;
+      if (rushMap[L] === R) {
+        rushSel.left.classList.add("matched");
+        rushSel.right.classList.add("matched");
+        rushSel.left.classList.remove("selected");
+        rushSel.right.classList.remove("selected");
+        rushMatches += 1;
+        rushCombo += 1;
+        if (rushCombo > rushBestCombo) rushBestCombo = rushCombo;
+        const pts = 10 + Math.min(40, (rushCombo - 1) * 5);
+        score += pts;
+        correct += 1;
+        if (feedbackEl) {
+          feedbackEl.textContent = "Nice! +" + pts;
+          feedbackEl.className = "feedback ok";
+        }
+        rushSel = { left: null, right: null };
+        updateRushHud();
+
+        // All matched early?
+        const leftRemain = matchLeft.querySelectorAll(".match-chip:not(.matched)").length;
+        if (leftRemain === 0) {
+          stopRushTimer();
+          setTimeout(endMatchRush, 400);
+        }
+      } else {
+        rushCombo = 0;
+        wrong += 1;
+        rushSel.left.classList.add("wrong-flash");
+        rushSel.right.classList.add("wrong-flash");
+        if (feedbackEl) {
+          feedbackEl.textContent = "Try again";
+          feedbackEl.className = "feedback bad";
+        }
+        const a = rushSel.left;
+        const b = rushSel.right;
+        rushSel = { left: null, right: null };
+        updateRushHud();
+        setTimeout(function () {
+          a.classList.remove("selected", "wrong-flash");
+          b.classList.remove("selected", "wrong-flash");
+        }, 280);
+      }
+    }
+  }
+
+  function endMatchRush() {
+    stopRushTimer();
+    rushLocked = true;
+    const play = document.getElementById("playScreen");
+    if (play) play.classList.remove("play-screen-rush");
+    if (matchArea) {
+      matchArea.classList.add("hidden");
+      matchArea.style.display = "";
+    }
+    if (feedbackEl) {
+      feedbackEl.textContent = "";
+      feedbackEl.className = "feedback";
+    }
+    document.getElementById("finalScore").textContent = String(score);
+    document.getElementById("finalCorrect").textContent = String(rushMatches);
+    document.getElementById("finalWrong").textContent = String(wrong);
+    const totalPairs = Object.keys(rushMap).length || 1;
+    const acc = Math.round((rushMatches / totalPairs) * 100);
+    document.getElementById("finalAccuracy").textContent = Math.min(100, acc) + "%";
+    show("result");
+  }
+
+
   function endRound() {
     if (progressFill) progressFill.style.width = "100%";
     document.getElementById("finalScore").textContent = String(score);
@@ -492,7 +721,12 @@
   });
 
   const backMenu = document.getElementById("backMenu");
-  if (backMenu) backMenu.addEventListener("click", () => show("menu"));
+  if (backMenu) backMenu.addEventListener("click", () => {
+    stopRushTimer();
+    const play = document.getElementById("playScreen");
+    if (play) play.classList.remove("play-screen-rush");
+    show("menu");
+  });
   document.getElementById("toMenuBtn").addEventListener("click", () => show("menu"));
   document.getElementById("playAgainBtn").addEventListener("click", () => {
     if (modeKey) startMode(modeKey);
