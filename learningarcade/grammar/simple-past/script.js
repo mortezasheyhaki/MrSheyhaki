@@ -365,7 +365,7 @@
       choicesArea.classList.add("hidden");
       if (matchArea) {
         matchArea.classList.remove("hidden");
-        matchArea.style.display = "grid";
+        matchArea.style.display = "flex";
       }
       setupMatch(item);
       if (matchArea) {
@@ -440,7 +440,7 @@
     }
 
     matchArea.classList.remove("hidden");
-    matchArea.style.display = "grid";
+    matchArea.style.display = "flex";
     choicesArea.classList.add("hidden");
 
     matchLeft.innerHTML = "";
@@ -555,6 +555,8 @@
     if (matchArea) {
       matchArea.classList.remove("hidden");
       matchArea.style.display = "flex";
+      matchArea.style.flexDirection = "column";
+      matchArea.style.gridTemplateColumns = "none";
     }
     if (feedbackEl) {
       feedbackEl.textContent = "Match base → past as fast as you can!";
