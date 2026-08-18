@@ -1,0 +1,235 @@
+/* ==========================================
+   MATCH RUSH — ARCADE CABINET PAGE SHELL
+   This page is its own fixed, no-scroll screen.
+   Everything below is scoped to this page only
+   (cabinet-body / cabinet-shell) so it can never
+   leak into the rest of the site.
+   ========================================== */
+
+/* This stylesheet is only ever loaded by the Match Rush page, so the
+   plain html/body rule below is safe — it can't affect any other page. */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.cabinet-body {
+  margin: 0;
+  background: #0b0714;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.cabinet-shell {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at 50% -10%, #2c1a55 0%, #170b2b 45%, #0b0714 100%);
+  color: #fff;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ---------- TOP BAR / MARQUEE ---------- */
+
+.cabinet-topbar {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px clamp(14px, 3vw, 28px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, 0));
+  border-bottom: 2px solid rgba(255, 214, 87, .28);
+  box-shadow: 0 2px 18px rgba(0, 0, 0, .35);
+}
+
+.cabinet-marquee {
+  text-align: center;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.cabinet-marquee__eyebrow {
+  display: block;
+  font-family: 'Press Start 2P', ui-monospace, monospace;
+  font-size: 7px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ffd657;
+  text-shadow: 0 0 8px rgba(255, 214, 87, .6);
+  margin-bottom: 6px;
+}
+
+.cabinet-marquee__title {
+  margin: 0;
+  font-family: 'Press Start 2P', ui-monospace, monospace;
+  font-size: clamp(13px, 2.4vw, 20px);
+  letter-spacing: 1px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(168, 85, 247, .9), 0 0 24px rgba(105, 55, 216, .5);
+}
+
+.cabinet-brand-mark {
+  justify-self: end;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #6937d8, #a855f7);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 0 12px rgba(168, 85, 247, .6);
+}
+
+/* Back button sits in the topbar grid — drop the stacked-layout
+   spacing it uses on the Vocabulary page. */
+.cabinet-topbar .arcade-back-btn {
+  justify-self: start;
+  margin-bottom: 0;
+}
+
+/* ---------- SCREEN (fills all remaining height, never scrolls) ---------- */
+
+.cabinet-screen {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 12px clamp(10px, 2.5vw, 22px) clamp(12px, 2.5vh, 20px);
+  overflow: hidden;
+}
+
+.cabinet-screen .match-rush-game {
+  width: 100%;
+  height: 100%;
+  max-width: 900px;
+  margin: 0;
+  padding: 14px clamp(12px, 2vw, 22px) clamp(12px, 2vh, 18px);
+  border: 1px solid rgba(168, 85, 247, .25);
+  box-shadow: 0 0 40px rgba(105, 55, 216, .18), inset 0 0 0 1px rgba(255, 255, 255, .02);
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.cabinet-screen .match-rush-game #app {
+  height: 100%;
+  min-height: 0;
+  max-width: 640px;
+  justify-content: flex-start;
+}
+
+/* Redundant with the marquee title above — keep the sound / dark-mode
+   controls, drop the duplicate "Match Rush Pro" heading. */
+.cabinet-screen .match-rush-game header {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+.cabinet-screen .match-rush-game header h1 {
+  display: none;
+}
+
+.cabinet-screen .match-rush-game #homeScreen {
+  margin: auto 0;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.cabinet-screen .match-rush-game #gameScreen {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cabinet-screen .match-rush-game #stats {
+  flex: 0 0 auto;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.cabinet-screen .match-rush-game #stats h2 {
+  font-size: clamp(1.05rem, 3vh, 1.5rem);
+}
+
+.cabinet-screen .match-rush-game .powerups-bar {
+  flex: 0 0 auto;
+  margin-bottom: 10px;
+}
+
+.cabinet-screen .match-rush-game #freezeBanner {
+  flex: 0 0 auto;
+  margin-bottom: 10px;
+}
+
+.cabinet-screen .match-rush-game #board {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  gap: 14px;
+}
+
+.cabinet-screen .match-rush-game .column {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cabinet-screen .match-rush-game .column h3 {
+  flex: 0 0 auto;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+}
+
+/* Cards fill the available column height instead of stacking as fixed
+   150px squares — this is what keeps the whole board on screen with
+   no scrolling, at any viewport height. */
+.cabinet-screen .match-rush-game #verbs,
+.cabinet-screen .match-rush-game #phrases {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+  gap: clamp(6px, 1.1vh, 10px);
+  width: 100%;
+  align-items: stretch;
+  /* Safety net only — normal viewports never need this to activate. */
+  overflow: hidden;
+}
+
+.cabinet-screen .match-rush-game .word {
+  width: min(100%, 132px);
+  height: auto;
+  max-width: 132px;
+  aspect-ratio: 1 / 1;
+  justify-self: center;
+  align-self: center;
+  padding: 8px;
+  font-size: clamp(0.92rem, 2.1vh, 1.08rem);
+}
+
+/* ---------- VERY SHORT VIEWPORTS (e.g. landscape phones) ---------- */
+@media (max-height: 480px) {
+  .cabinet-topbar { padding: 8px clamp(12px, 3vw, 24px); }
+  .cabinet-marquee__eyebrow { display: none; }
+  .cabinet-screen .match-rush-game #stats,
+  .cabinet-screen .match-rush-game .powerups-bar,
+  .cabinet-screen .match-rush-game #freezeBanner {
+    margin-bottom: 6px;
+    padding: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cabinet-marquee__title { font-size: 12px; }
+  .arcade-back-btn span:last-child { display: none; }
+  .arcade-back-btn__icon { font-size: 12px; }
+}

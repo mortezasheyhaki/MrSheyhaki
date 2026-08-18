@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Grammar Battle | Learning Arcade</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+<body>
+
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
+
+    <header class="game-header">
+
+        <div class="header-left">
+
+            <button
+                id="grammarBackButton"
+                class="back-button hidden-nav-button"
+                type="button"
+                aria-label="Return to Grammar Battle selection"
+            >
+                ← Grammar Battle
+            </button>
+
+
+            <a
+                href="../../"
+                class="arcade-button"
+                aria-label="Return to Learning Arcade"
+            >
+                ← Arcade
+            </a>
+
+        </div>
+
+
+        <div class="game-title">
+
+            <span class="game-icon">
+                ⚔️
+            </span>
+
+
+            <div class="game-title-text">
+
+                <h1>
+                    Grammar Battle
+                </h1>
+
+                <p>
+                    BE • Countries &amp; Nationalities
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="header-right">
+
+            <button
+                id="themeToggle"
+                class="theme-toggle"
+                type="button"
+                aria-label="Toggle light and dark mode"
+                title="Toggle theme"
+            >
+                ☀️
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =================================================
+         MAIN
+    ================================================== -->
+
+    <main>
+
+
+        <!-- =================================================
+             TARGET GRAMMAR
+        ================================================== -->
+
+        <section
+            id="targetScreen"
+            class="screen"
+        >
+
+            <div class="selection-card">
+
+                <div class="selection-icon">
+                    ⚔️
+                </div>
+
+
+                <span class="eyebrow">
+                    GRAMMAR BATTLE
+                </span>
+
+
+                <h2>
+                    Choose Your Grammar
+                </h2>
+
+
+                <p class="selection-description">
+                    Choose a target grammar and
+                    start the battle.
+                </p>
+
+
+                <div class="grammar-grid">
+
+
+                    <button
+                        class="grammar-card selected"
+                        data-grammar="be"
+                        type="button"
+                    >
+
+                        <span class="grammar-card-icon">
+                            🧩
+                        </span>
+
+                        <span class="grammar-card-title">
+                            BE
+                        </span>
+
+                        <span class="grammar-card-text">
+                            Positive • Negative • Questions
+                        </span>
+
+                        <span class="grammar-card-topic">
+                            Countries &amp; Nationalities
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="grammar-card"
+                        data-grammar="simple-present"
+                        type="button"
+                    >
+
+                        <span class="grammar-card-icon">
+                            🕐
+                        </span>
+
+                        <span class="grammar-card-title">
+                            Simple Present
+                        </span>
+
+                        <span class="grammar-card-text">
+                            Positive • Negative • Questions
+                        </span>
+
+                        <span class="grammar-card-topic">
+                            A1 Grammar
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="grammar-card"
+                        data-grammar="there-is"
+                        type="button"
+                    >
+
+                        <span class="grammar-card-icon">
+                            🏠
+                        </span>
+
+                        <span class="grammar-card-title">
+                            There Is / There Are
+                        </span>
+
+                        <span class="grammar-card-text">
+                            Positive • Negative • Questions
+                        </span>
+
+                        <span class="grammar-card-topic">
+                            Rooms &amp; Places • some / any
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="grammar-card locked"
+                        type="button"
+                        disabled
+                    >
+
+                        <span class="grammar-card-icon">
+                            🔒
+                        </span>
+
+                        <span class="grammar-card-title">
+                            Present Continuous
+                        </span>
+
+                        <span class="grammar-card-text">
+                            Coming soon
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="grammar-card locked"
+                        type="button"
+                        disabled
+                    >
+
+                        <span class="grammar-card-icon">
+                            🔒
+                        </span>
+
+                        <span class="grammar-card-title">
+                            Articles
+                        </span>
+
+                        <span class="grammar-card-text">
+                            Coming soon
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <button
+                    id="startBattleButton"
+                    class="main-button"
+                    type="button"
+                >
+                    START BATTLE →
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             GAME
+        ================================================== -->
+
+        <section
+            id="gameScreen"
+            class="screen hidden"
+        >
+
+            <div class="battle-container">
+
+
+                <!-- SCORE -->
+
+                <div class="score-bar">
+
+
+                    <div class="score-item">
+
+                        <span>
+                            SCORE
+                        </span>
+
+                        <strong id="score">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="score-item">
+
+                        <span>
+                            PROGRESS
+                        </span>
+
+                        <strong id="questionNumber">
+                            1 / 15
+                        </strong>
+
+                    </div>
+
+
+                    <div class="score-item combo-item">
+
+                        <span>
+                            COMBO
+                        </span>
+
+                        <strong id="combo">
+                            ×1
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- QUESTION -->
+
+                <div class="question-area">
+
+                    <div
+                        id="questionType"
+                        class="question-badge"
+                    >
+                        COMPLETE THE SENTENCE
+                    </div>
+
+
+                    <h2 id="questionText">
+                        She _____ from Brazil.
+                    </h2>
+
+
+                    <p id="questionHint">
+                        Choose the best answer.
+                    </p>
+
+                </div>
+
+
+
+                <!-- ANSWERS -->
+
+                <div
+                    id="answersContainer"
+                    class="answers-container"
+                ></div>
+
+
+
+                <!-- FEEDBACK -->
+
+                <div
+                    id="feedback"
+                    class="feedback"
+                ></div>
+
+
+
+                <!-- PROGRESS -->
+
+                <div class="progress-area">
+
+                    <div class="progress-label">
+
+                        <span>
+                            BATTLE PROGRESS
+                        </span>
+
+                        <span id="progressText">
+                            0 / 15
+                        </span>
+
+                    </div>
+
+
+                    <div class="progress-bar">
+
+                        <div
+                            id="progressFill"
+                            class="progress-fill"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RESULT
+        ================================================== -->
+
+        <section
+            id="resultScreen"
+            class="screen hidden"
+        >
+
+            <div class="result-card">
+
+
+                <div class="result-icon">
+                    🏆
+                </div>
+
+
+                <span class="eyebrow">
+                    BATTLE COMPLETE
+                </span>
+
+
+                <h2>
+                    Great Job!
+                </h2>
+
+
+                <div class="final-score">
+
+                    <span>
+                        FINAL SCORE
+                    </span>
+
+                    <strong id="finalScore">
+                        0 / 15
+                    </strong>
+
+                </div>
+
+
+                <div class="result-stats">
+
+
+                    <div class="result-stat">
+
+                        <strong id="finalCorrect">
+                            0
+                        </strong>
+
+                        <span>
+                            Correct
+                        </span>
+
+                    </div>
+
+
+                    <div class="result-stat">
+
+                        <strong id="finalWrong">
+                            0
+                        </strong>
+
+                        <span>
+                            Wrong
+                        </span>
+
+                    </div>
+
+
+                    <div class="result-stat">
+
+                        <strong id="finalAccuracy">
+                            0%
+                        </strong>
+
+                        <span>
+                            Accuracy
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BREAKDOWN -->
+
+                <div class="breakdown">
+
+                    <h3>
+                        Grammar Breakdown
+                    </h3>
+
+
+                    <div class="breakdown-row">
+
+                        <span>
+                            ✅ Positive
+                        </span>
+
+                        <strong id="positiveResult">
+                            0 / 5
+                        </strong>
+
+                    </div>
+
+
+                    <div class="breakdown-row">
+
+                        <span>
+                            ❌ Negative
+                        </span>
+
+                        <strong id="negativeResult">
+                            0 / 5
+                        </strong>
+
+                    </div>
+
+
+                    <div class="breakdown-row">
+
+                        <span>
+                            ❓ Answer the Question
+                        </span>
+
+                        <strong id="questionResult">
+                            0 / 5
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- XP -->
+
+                <div class="xp-box">
+
+                    <span>
+                        XP EARNED
+                    </span>
+
+                    <strong id="earnedXP">
+                        +0 XP
+                    </strong>
+
+                </div>
+
+
+
+                <div class="result-buttons">
+
+                    <button
+                        id="retryButton"
+                        class="main-button"
+                        type="button"
+                    >
+                        PLAY AGAIN →
+                    </button>
+
+
+                    <button
+                        id="grammarButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        ← Choose Grammar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

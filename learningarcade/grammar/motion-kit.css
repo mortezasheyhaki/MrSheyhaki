@@ -1,0 +1,203 @@
+/* =========================================================
+   ARCADE MOTION KIT (fixed — no opacity trap on answers)
+========================================================= */
+
+/* ----- Screen enter ----- */
+@keyframes mk-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mk-screen,
+.screen:not(.hidden) {
+  animation: mk-fade-in-up 0.32s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+/* ----- Pop ----- */
+@keyframes mk-pop {
+  0%   { opacity: 0; transform: scale(0.94); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.mk-pop {
+  animation: mk-pop 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+/* ----- Stagger (opacity ONLY in keyframes — never as a lasting rule) ----- */
+@keyframes mk-stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mk-stagger > *,
+.mk-stagger-fast > * {
+  /* Do NOT set opacity: 0 here — it survives after later animations
+     (correct/wrong) replace the enter animation and makes buttons vanish. */
+  animation: mk-stagger-in 0.34s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+.mk-stagger > *:nth-child(1),
+.mk-stagger-fast > *:nth-child(1) { animation-delay: 0.04s; }
+.mk-stagger > *:nth-child(2),
+.mk-stagger-fast > *:nth-child(2) { animation-delay: 0.08s; }
+.mk-stagger > *:nth-child(3),
+.mk-stagger-fast > *:nth-child(3) { animation-delay: 0.12s; }
+.mk-stagger > *:nth-child(4),
+.mk-stagger-fast > *:nth-child(4) { animation-delay: 0.16s; }
+.mk-stagger > *:nth-child(5),
+.mk-stagger-fast > *:nth-child(5) { animation-delay: 0.20s; }
+.mk-stagger > *:nth-child(6),
+.mk-stagger-fast > *:nth-child(6) { animation-delay: 0.24s; }
+.mk-stagger > *:nth-child(7) { animation-delay: 0.28s; }
+.mk-stagger > *:nth-child(8) { animation-delay: 0.32s; }
+.mk-stagger > *:nth-child(9) { animation-delay: 0.36s; }
+.mk-stagger > *:nth-child(n+10) { animation-delay: 0.40s; }
+
+.mk-stagger-fast > * {
+  animation-duration: 0.28s;
+}
+
+/* ----- Shake (wrong) — transform only ----- */
+@keyframes mk-shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+
+.mk-shake,
+.choice-btn.wrong,
+.answer-btn.wrong,
+.answer-button.wrong,
+.match-chip.wrong-flash {
+  animation: mk-shake 0.38s ease;
+}
+
+/* ----- Pulse correct — box-shadow only ----- */
+@keyframes mk-pulse-ok {
+  0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45); }
+  70%  { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.mk-pulse-ok,
+.choice-btn.correct,
+.answer-btn.correct,
+.answer-button.correct,
+.answer-button.correct-answer {
+  animation: mk-pulse-ok 0.55s ease;
+}
+
+/* Keep answered options fully visible while feedback animations run */
+.choice-btn.correct,
+.choice-btn.wrong,
+.answer-button.correct,
+.answer-button.wrong,
+.answer-button.correct-answer,
+.match-chip.matched {
+  opacity: 1 !important;
+}
+
+@keyframes mk-pulse-soft {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.03); }
+}
+
+.mk-pulse-soft {
+  animation: mk-pulse-soft 1.8s ease-in-out infinite;
+}
+
+/* ----- Progress ----- */
+.mk-progress-fill,
+.progress-fill {
+  transition: width 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+/* ----- Hover / shared controls ----- */
+.choice-btn,
+.answer-btn,
+.answer-button,
+.match-chip,
+.word-chip,
+.level-list li,
+.topic-card,
+.main-btn,
+.main-button {
+  transition:
+    transform 0.18s cubic-bezier(0.2, 0.9, 0.3, 1),
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.choice-btn:hover:not(:disabled),
+.answer-btn:hover:not(:disabled),
+.answer-button:hover:not(:disabled),
+.word-chip:hover:not(.used),
+.level-list li:hover,
+.main-btn:hover,
+.main-button:hover {
+  transform: translateY(-2px);
+}
+
+@keyframes mk-feedback-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.feedback.ok,
+.feedback.bad,
+.feedback.correct,
+.feedback.wrong {
+  animation: mk-feedback-in 0.22s ease both;
+}
+
+.result-card {
+  animation: mk-pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mk-screen,
+  .screen:not(.hidden),
+  .mk-pop,
+  .mk-stagger > *,
+  .mk-stagger-fast > *,
+  .mk-shake,
+  .choice-btn.wrong,
+  .answer-btn.wrong,
+  .answer-button.wrong,
+  .match-chip.wrong-flash,
+  .mk-pulse-ok,
+  .choice-btn.correct,
+  .answer-btn.correct,
+  .answer-button.correct,
+  .answer-button.correct-answer,
+  .mk-pulse-soft,
+  .feedback.ok,
+  .feedback.bad,
+  .feedback.correct,
+  .feedback.wrong,
+  .result-card {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .mk-progress-fill,
+  .progress-fill {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,139 @@
+
+/* =========================================================
+   MR. SHEYHAKI — GLOBAL THEME
+   Light is the default. Dark mode is user-controlled and
+   persisted across every page and game.
+========================================================= */
+:root{
+  --site-bg:#ffffff;
+  --site-surface:#ffffff;
+  --site-surface-2:#f7f8fb;
+  --site-text:#202636;
+  --site-muted:#687184;
+  --site-border:#e7e9ef;
+  --site-shadow:rgba(32,38,54,.08);
+}
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --site-bg:#0f1117;
+  --site-surface:#181b24;
+  --site-surface-2:#11141b;
+  --site-text:#f4f6fb;
+  --site-muted:#aeb6c8;
+  --site-border:#2b3040;
+  --site-shadow:rgba(0,0,0,.28);
+}
+body{background:var(--site-bg)!important;color:var(--site-text)!important;transition:background-color .25s ease,color .25s ease}
+.theme-toggle{
+  display:inline-flex!important;align-items:center;justify-content:center;gap:7px;
+  min-height:38px;padding:0 12px;border:1px solid var(--site-border);
+  border-radius:10px;background:var(--site-surface);color:var(--site-text);
+  font:700 11px/1 Inter,ui-sans-serif,system-ui,sans-serif;cursor:pointer;
+  transition:transform .15s ease,background .2s ease,border-color .2s ease;
+  white-space:nowrap;
+}
+.theme-toggle:hover{transform:translateY(-1px);border-color:#6937d8}
+.theme-toggle:active{transform:translateY(1px)}
+html[data-theme="dark"] .site-header,
+html[data-theme="dark"] .arcade-header{
+  background:rgba(15,17,23,.94)!important;border-color:var(--site-border)!important;
+}
+html[data-theme="dark"] .brand,
+html[data-theme="dark"] .brand-text strong,
+html[data-theme="dark"] .main-nav a.active{color:var(--site-text)!important}
+html[data-theme="dark"] .brand-text small,
+html[data-theme="dark"] .main-nav a{color:var(--site-muted)!important}
+html[data-theme="dark"] .main-nav a:hover{color:#9a7cf0!important}
+html[data-theme="dark"] .hero,
+html[data-theme="dark"] .game-card,
+html[data-theme="dark"] .skill-card,
+html[data-theme="dark"] .site-footer{background:var(--site-surface)!important;color:var(--site-text)!important;border-color:var(--site-border)!important}
+html[data-theme="dark"] .hero-description,
+html[data-theme="dark"] .skill-card p,
+html[data-theme="dark"] .game-card p,
+html[data-theme="dark"] .section-heading p,
+html[data-theme="dark"] .arcade-intro p{color:var(--site-muted)!important}
+html[data-theme="dark"] .quick-card,
+html[data-theme="dark"] .resource-card,
+html[data-theme="dark"] .worksheet-card,
+html[data-theme="dark"] .lesson-card,
+html[data-theme="dark"] .content-card{
+  background:var(--site-surface)!important;color:var(--site-text)!important;border-color:var(--site-border)!important;
+}
+html[data-theme="dark"] .main-nav{
+  background:var(--site-bg)!important;border-color:var(--site-border)!important;
+}
+html[data-theme="dark"] .menu-toggle span{background:var(--site-text)!important}
+
+/* Global dark mode also recolors common page-level surfaces. */
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea{
+  background:#11141b!important;color:#f4f6fb!important;border-color:#343a4a!important;
+}
+html[data-theme="dark"] .site-footer{color:#9da6b8!important}
+@media(max-width:700px){
+  .theme-toggle{min-height:36px;padding:0 10px}
+}
+
+html[data-theme="dark"] .match-rush-game{
+  --mr-bg:#10131a!important;
+  --mr-card-bg:#1b1f2a!important;
+  --mr-card-hover:#272c3b!important;
+  --mr-text:#f4f6fb!important;
+  --mr-text-muted:#aeb6c8!important;
+  --mr-accent:#8b6de2!important;
+  --mr-accent-hover:#a58cf0!important;
+  --mr-gold:#ffd34d!important;
+  --mr-modal-bg:rgba(0,0,0,.72)!important;
+}
+html[data-theme="dark"] .match-rush-game .word{
+  background:#1b1f2a!important;color:#f4f6fb!important;border-color:#353b4d!important;
+  box-shadow:0 5px 0 #11141b,0 9px 22px rgba(0,0,0,.28)!important;
+}
+html[data-theme="dark"] .match-rush-game .word:hover{
+  background:#252a38!important;border-color:#8b6de2!important;
+}
+html[data-theme="dark"] .match-rush-game .word.selected{
+  background:#302b18!important;border-color:#ffd34d!important;
+  box-shadow:0 0 0 4px rgba(255,211,77,.14),0 0 28px rgba(255,211,77,.48),0 7px 0 #574b20!important;
+}
+html[data-theme="dark"] .match-rush-game .word.correct{
+  background:#20a85a!important;color:#fff!important;border-color:#77e2a1!important;
+}
+
+/* GLOBAL FLOATING HEADER
+   All standard pages use the same 78px header geometry. */
+body:not(.cabinet-body){padding-top:78px!important;}
+.site-header,.arcade-header{position:fixed!important;top:0;left:0;right:0;width:100%;height:78px!important;z-index:1000;}
+.site-header .header-inner,.arcade-header .header-inner{height:78px!important;min-height:78px!important;}
+
+/* Final shared header geometry — match the live Learning Arcade visual style. */
+body:not(.cabinet-body){padding-top:68px!important;}
+.site-header,.arcade-header{
+  position:fixed!important;top:0!important;left:0!important;right:0!important;
+  width:100%!important;height:68px!important;min-height:68px!important;
+  z-index:1000!important;background:rgba(255,255,255,.96)!important;
+  backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important;
+  border-bottom:1px solid #eef0f4!important;
+}
+.site-header .header-inner,.arcade-header .header-inner{
+  width:92%!important;max-width:1500px!important;height:68px!important;min-height:68px!important;
+  margin:0 auto!important;display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
+  align-items:center!important;gap:24px!important;
+}
+.site-header .brand,.arcade-header .brand{grid-column:1!important;justify-self:start!important;}
+.site-header .main-nav,.arcade-header .main-nav{
+  grid-column:2!important;justify-self:center!important;display:flex!important;align-items:center!important;gap:28px!important;
+}
+.site-header .theme-toggle,.arcade-header .theme-toggle{
+  grid-column:3!important;justify-self:end!important;height:40px!important;min-height:40px!important;padding:0 13px!important;border-radius:10px!important;font-size:11px!important;
+}
+.site-header .menu-toggle,.arcade-header .menu-toggle{grid-column:3!important;justify-self:end!important;}
+@media(max-width:700px){
+  body:not(.cabinet-body){padding-top:68px!important}
+  .site-header,.arcade-header{height:68px!important;min-height:68px!important}
+  .site-header .header-inner,.arcade-header .header-inner{width:calc(100% - 28px)!important;height:68px!important;min-height:68px!important;display:flex!important;justify-content:space-between!important;gap:12px!important}
+  .site-header .main-nav,.arcade-header .main-nav{top:68px!important}
+}

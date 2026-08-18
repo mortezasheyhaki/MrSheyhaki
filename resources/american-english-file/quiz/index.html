@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Multiple Choice Quiz | American English File | Mr. Sheyhaki</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+<body>
+
+    <!-- =========================================
+         TOP BAR
+    ========================================== -->
+
+    <header class="top-bar">
+
+        <a
+            href="../"
+            class="back-button"
+            aria-label="Back to American English File"
+        >
+            ← American English File
+        </a>
+
+        <div class="game-title">
+            <span class="game-icon">🧠</span>
+            <div>
+                <h1>Multiple Choice</h1>
+                <p>Grammar &amp; Vocabulary · Units 1–12</p>
+            </div>
+        </div>
+
+        <button
+            id="themeToggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Toggle light and dark mode"
+        >☀️</button>
+
+    </header>
+
+
+    <!-- =========================================
+         MAIN
+    ========================================== -->
+
+    <main class="game-container">
+
+
+        <!-- =====================================
+             UNIT SELECTION
+        ====================================== -->
+
+        <section
+            id="unitScreen"
+            class="screen"
+        >
+
+            <div class="intro">
+
+                <span class="eyebrow">
+                    LEARNING ARCADE
+                </span>
+
+                <h2>
+                    Choose a Unit
+                </h2>
+
+                <p>
+                    Test your grammar and vocabulary
+                    knowledge from Units 1–12.
+                </p>
+
+            </div>
+
+
+            <div
+                id="unitGrid"
+                class="unit-grid"
+            >
+
+                <!-- Units will be created by JavaScript -->
+
+            </div>
+
+
+            <div class="unit-info">
+
+                <span>📚</span>
+
+                <p>
+                    Each unit has 40 questions.
+                    Choose a unit and start playing!
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             QUIZ SCREEN
+        ====================================== -->
+
+        <section
+            id="quizScreen"
+            class="screen hidden"
+        >
+
+            <!-- Quiz Header -->
+
+            <div class="quiz-header">
+
+                <div class="quiz-unit">
+
+                    <span class="small-label">
+                        UNIT
+                    </span>
+
+                    <strong id="currentUnit">
+                        1
+                    </strong>
+
+                </div>
+
+
+                <div class="question-counter">
+
+                    <strong id="questionNumber">
+                        1
+                    </strong>
+
+                    <span>
+                        /
+                    </span>
+
+                    <span id="totalQuestions">
+                        40
+                    </span>
+
+                </div>
+
+
+                <div class="quiz-score">
+
+                    <span class="small-label">
+                        SCORE
+                    </span>
+
+                    <strong id="score">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- Progress -->
+
+            <div class="progress-container">
+
+                <div
+                    id="progressBar"
+                    class="progress-bar"
+                ></div>
+
+            </div>
+
+
+            <!-- Question -->
+
+            <div class="question-card">
+
+                <div
+                    id="questionType"
+                    class="question-type"
+                >
+                    GRAMMAR
+                </div>
+
+
+                <h2
+                    id="questionText"
+                    class="question-text"
+                >
+                    Question goes here
+                </h2>
+
+
+                <!-- Optional Image -->
+
+                <div
+                    id="questionImage"
+                    class="question-image hidden"
+                >
+                </div>
+
+
+                <!-- Answers -->
+
+                <div
+                    id="answers"
+                    class="answers"
+                >
+
+                    <!-- Answer buttons created by JS -->
+
+                </div>
+
+
+                <!-- Feedback -->
+
+                <div
+                    id="feedback"
+                    class="feedback hidden"
+                >
+                </div>
+
+            </div>
+
+
+            <!-- Quiz Controls -->
+
+            <div class="quiz-controls">
+
+                <button
+                    id="quitButton"
+                    class="secondary-button"
+                >
+                    ← Choose Unit
+                </button>
+
+                <button
+                    id="nextButton"
+                    class="primary-button hidden"
+                >
+                    Next Question →
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             RESULTS SCREEN
+        ====================================== -->
+
+        <section
+            id="resultScreen"
+            class="screen hidden"
+        >
+
+            <div class="result-card">
+
+                <div class="result-icon">
+                    🏆
+                </div>
+
+                <span class="eyebrow">
+                    QUIZ COMPLETE
+                </span>
+
+                <h2>
+                    Great Job!
+                </h2>
+
+                <p class="result-unit">
+                    Unit
+                    <span id="resultUnit">
+                        1
+                    </span>
+                </p>
+
+
+                <!-- Score -->
+
+                <div class="final-score">
+
+                    <span>
+                        YOUR SCORE
+                    </span>
+
+                    <strong id="finalScore">
+                        0%
+                    </strong>
+
+                </div>
+
+
+                <!-- Stats -->
+
+                <div class="result-stats">
+
+                    <div class="result-stat">
+
+                        <strong id="correctAnswers">
+                            0
+                        </strong>
+
+                        <span>
+                            Correct
+                        </span>
+
+                    </div>
+
+
+                    <div class="result-stat">
+
+                        <strong id="wrongAnswers">
+                            0
+                        </strong>
+
+                        <span>
+                            Wrong
+                        </span>
+
+                    </div>
+
+
+                    <div class="result-stat">
+
+                        <strong id="earnedXP">
+                            +0
+                        </strong>
+
+                        <span>
+                            XP
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Buttons -->
+
+                <div class="result-buttons">
+
+                    <button
+                        id="retryButton"
+                        class="primary-button"
+                    >
+                        🔄 Try Again
+                    </button>
+
+
+                    <button
+                        id="unitsButton"
+                        class="secondary-button"
+                    >
+                        📚 Choose Another Unit
+                    </button>
+
+
+                    <a
+                        href="../"
+                        class="secondary-button arcade-button"
+                    >
+                        ← American English File
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer>
+
+        <strong>
+            MR. SHEYHAKI
+        </strong>
+
+        <span>
+            American English File · Quiz
+        </span>
+
+    </footer>
+
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================== -->
+
+    <script src="quiz-data.js"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
