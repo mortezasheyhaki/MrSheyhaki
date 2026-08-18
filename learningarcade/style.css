@@ -108,3 +108,48 @@ body.dark-mode .skill-card:hover{
 }
 html[data-theme="dark"] .skill-card p{color:#c5cbe0}
 html[data-theme="dark"] .skill-card li{color:#d0d6ea}
+/* =========================================================
+   MOBILE SHELL (hybrid)
+   Fixed header + scrollable content + no horizontal overflow
+   + safe-area for notched phones. Games (.cabinet-body) unchanged.
+========================================================= */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+.site-header,
+.arcade-header {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  padding-top: env(safe-area-inset-top, 0px);
+  box-sizing: border-box;
+}
+body:not(.cabinet-body) {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (max-width: 700px) {
+  body {
+    touch-action: pan-y;
+  }
+  img, video, svg, canvas {
+    max-width: 100%;
+    height: auto;
+  }
+  .main-nav a,
+  .skill-button,
+  .theme-toggle,
+  .menu-toggle {
+    min-height: 44px;
+  }
+}
