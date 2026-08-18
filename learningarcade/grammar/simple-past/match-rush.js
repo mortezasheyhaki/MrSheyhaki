@@ -93,7 +93,6 @@
 
     const darkModeBtn = container.querySelector("#darkModeBtn");
     const ttsToggleBtn = container.querySelector("#ttsToggleBtn");
-    const musicToggleBtn = container.querySelector("#musicToggleBtn");
     const modeSelect = container.querySelector("#modeSelect");
     const setSelect = container.querySelector("#setSelect");
 
@@ -194,85 +193,6 @@
       });
     }
 
-
-    // --- BACKGROUND ARCADE MUSIC (soft looping chiptune) ---
-    let musicEnabled = true;
-    let musicNodes = null; // { gain, oscillators, intervalId }
-    const MUSIC_VOL = 0.035; // keep it quiet under SFX/TTS
-
-    function startMusic() {
-      if (musicNodes || !musicEnabled) return;
-      const ctx = getAudioCtx();
-      if (ctx.state === "suspended") ctx.resume();
-
-      const master = ctx.createGain();
-      master.gain.value = MUSIC_VOL;
-      master.connect(ctx.destination);
-
-      // Soft square lead + quiet triangle bass
-      const lead = ctx.createOscillator();
-      lead.type = "square";
-      const leadGain = ctx.createGain();
-      leadGain.gain.value = 0.55;
-      lead.connect(leadGain);
-      leadGain.connect(master);
-
-      const bass = ctx.createOscillator();
-      bass.type = "triangle";
-      const bassGain = ctx.createGain();
-      bassGain.gain.value = 0.4;
-      bass.connect(bassGain);
-      bassGain.connect(master);
-
-      // Simple 8-step minor arcade riff (A minor-ish)
-      const leadNotes = [220.00, 246.94, 261.63, 293.66, 329.63, 293.66, 261.63, 246.94];
-      const bassNotes = [110.00, 110.00, 130.81, 130.81, 146.83, 146.83, 130.81, 110.00];
-      let step = 0;
-      const stepMs = 280;
-
-      lead.frequency.value = leadNotes[0];
-      bass.frequency.value = bassNotes[0];
-      lead.start();
-      bass.start();
-
-      const intervalId = setInterval(() => {
-        if (!musicNodes) return;
-        step = (step + 1) % leadNotes.length;
-        const t = ctx.currentTime;
-        lead.frequency.setValueAtTime(leadNotes[step], t);
-        bass.frequency.setValueAtTime(bassNotes[step], t);
-        // soft pulse so it feels alive without being loud
-        leadGain.gain.cancelScheduledValues(t);
-        leadGain.gain.setValueAtTime(0.15, t);
-        leadGain.gain.linearRampToValueAtTime(0.55, t + 0.04);
-        leadGain.gain.linearRampToValueAtTime(0.35, t + 0.22);
-      }, stepMs);
-
-      musicNodes = { master, lead, bass, leadGain, bassGain, intervalId };
-    }
-
-    function stopMusic() {
-      if (!musicNodes) return;
-      clearInterval(musicNodes.intervalId);
-      try {
-        musicNodes.lead.stop();
-        musicNodes.bass.stop();
-      } catch (e) {}
-      try {
-        musicNodes.master.disconnect();
-      } catch (e) {}
-      musicNodes = null;
-    }
-
-    function setMusicEnabled(on) {
-      musicEnabled = on;
-      if (musicToggleBtn) {
-        musicToggleBtn.textContent = on ? "🎵 Music On" : "🎵 Music Off";
-      }
-      if (on) startMusic();
-      else stopMusic();
-    }
-
     // --- HIGH SCORE (namespaced for Simple Past) ---
     function highScoreKey() {
       return "simplepast_match_high_scores";
@@ -301,8 +221,6 @@
       homeScreen.style.display = "none";
       gameScreen.style.display = "block";
       gameScreen.classList.add("is-active");
-      // Start soft arcade music after a user gesture (browser autoplay policy)
-      if (musicEnabled) startMusic();
       startGame();
     };
 
@@ -317,12 +235,6 @@
       ttsToggleBtn.onclick = () => {
         ttsEnabled = !ttsEnabled;
         ttsToggleBtn.textContent = ttsEnabled ? "🔊 Sound On" : "🔇 Sound Off";
-      };
-    }
-
-    if (musicToggleBtn) {
-      musicToggleBtn.onclick = () => {
-        setMusicEnabled(!musicEnabled);
       };
     }
 
