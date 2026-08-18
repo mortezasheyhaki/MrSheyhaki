@@ -88,8 +88,37 @@ html, body {
   box-shadow: 0 0 12px rgba(168, 85, 247, .6);
 }
 
-/* Back button sits in the topbar grid — drop the stacked-layout
-   spacing it uses on the Vocabulary page. */
+/* Full back-button styles (self-contained so it never falls back to blue link) */
+.arcade-back-btn {
+  color: #e2e8f0;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  width: fit-content;
+  white-space: nowrap;
+}
+.arcade-back-btn:hover,
+.arcade-back-btn:focus,
+.arcade-back-btn:visited {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+  transform: translateX(-2px);
+}
+.arcade-back-btn__icon {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+/* Back button sits in the topbar grid */
 .cabinet-topbar .arcade-back-btn {
   justify-self: start;
   margin-bottom: 0;
@@ -140,14 +169,17 @@ html, body {
 .cabinet-screen .match-rush-game #homeScreen {
   margin: auto 0;
   max-height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .cabinet-screen .match-rush-game #gameScreen {
   flex: 1 1 auto;
   min-height: 0;
-  display: flex;
+  display: none;
   flex-direction: column;
+}
+.cabinet-screen .match-rush-game #gameScreen.is-active {
+  display: flex;
 }
 
 .cabinet-screen .match-rush-game #stats {
@@ -372,9 +404,12 @@ html, body {
   flex: 1 1 auto !important;
   min-height: 0 !important;
   width: 100% !important;
-  display: flex !important;
+  display: none !important;
   flex-direction: column !important;
   align-items: stretch !important;
+}
+.cabinet-screen .match-rush-game #gameScreen.is-active {
+  display: flex !important;
 }
 
 .cabinet-screen .match-rush-game #stats {
