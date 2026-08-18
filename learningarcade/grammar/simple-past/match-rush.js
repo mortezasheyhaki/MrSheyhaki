@@ -98,8 +98,6 @@
 
     const hintBtn = container.querySelector("#hintBtn");
     const shuffleBtn = container.querySelector("#shuffleBtn");
-    const freezeBanner = container.querySelector("#freezeBanner");
-
     // --- GAME STATE ---
     const ACTIVE_PAIRS = 4;
     let gameMode = "rush"; // "rush", "zen", "streak"
@@ -113,8 +111,6 @@
 
     let timeLeft = 90;
     let timer = null;
-    let isFrozen = false;
-    let freezeTimer = null;
     let gameRunning = false;
     let ttsEnabled = true;
 
@@ -278,18 +274,6 @@
       };
     }
 
-    function triggerTimeFreeze() {
-      isFrozen = true;
-      playSound("freeze");
-      if (freezeBanner) freezeBanner.style.display = "block";
-
-      if (freezeTimer) clearTimeout(freezeTimer);
-      freezeTimer = setTimeout(() => {
-        isFrozen = false;
-        if (freezeBanner) freezeBanner.style.display = "none";
-      }, 5000);
-    }
-
     // --- GAME LOGIC ---
     function startGame() {
       score = 0;
@@ -298,7 +282,6 @@
       totalAttempts = 0;
       correctMatches = 0;
       mistakes = [];
-      isFrozen = false;
 
       timeLeft = gameMode === "rush" ? 90 : 0;
 
@@ -306,7 +289,6 @@
       comboLabel.textContent = "0x";
       timerLabel.textContent = gameMode === "zen" ? "∞" : timeLeft;
 
-      if (freezeBanner) freezeBanner.style.display = "none";
       if (timer) clearInterval(timer);
 
       gameRunning = true;
@@ -331,7 +313,7 @@
     }
 
     function updateTimer() {
-      if (!gameRunning || isFrozen) return;
+      if (!gameRunning) return;
       timeLeft--;
       timerLabel.textContent = timeLeft;
       if (timeLeft <= 0) endGame(false);
@@ -339,7 +321,6 @@
 
     function endGame(isVictory = false) {
       clearInterval(timer);
-      if (freezeTimer) clearTimeout(freezeTimer);
       gameRunning = false;
       clearSelections();
 
@@ -410,8 +391,8 @@
     }
 
     function renderBoard() {
-      verbsDiv.innerHTML = "";
-      phrasesDiv.innerHTML = "";
+      const verbFrag = document.createDocumentFragment();
+      const phraseFrag = document.createDocumentFragment();
 
       const shuffled = [...activePairs];
       shuffle(shuffled);
@@ -420,16 +401,41 @@
         const div = document.createElement("div");
         div.className = "word";
         div.textContent = pair.verb;
-        div.onclick = () => selectVerb(div, pair);
-        verbsDiv.appendChild(div);
+        div.dataset.id = String(pair.id);
+        div.dataset.side = "verb";
+        verbFrag.appendChild(div);
       });
 
       shuffled.forEach(pair => {
         const div = document.createElement("div");
         div.className = "word";
         div.textContent = pair.phrase;
-        div.onclick = () => selectPhrase(div, pair);
-        phrasesDiv.appendChild(div);
+        div.dataset.id = String(pair.id);
+        div.dataset.side = "phrase";
+        phraseFrag.appendChild(div);
+      });
+
+      verbsDiv.replaceChildren(verbFrag);
+      phrasesDiv.replaceChildren(phraseFrag);
+    }
+
+    // Event delegation — one listener each, no per-card handlers
+    if (!verbsDiv._delegated) {
+      verbsDiv._delegated = true;
+      verbsDiv.addEventListener("click", (e) => {
+        const el = e.target.closest(".word");
+        if (!el || !gameRunning || el.classList.contains("matched")) return;
+        const pair = activePairs.find(p => String(p.id) === el.dataset.id);
+        if (pair) selectVerb(el, pair);
+      });
+    }
+    if (!phrasesDiv._delegated) {
+      phrasesDiv._delegated = true;
+      phrasesDiv.addEventListener("click", (e) => {
+        const el = e.target.closest(".word");
+        if (!el || !gameRunning || el.classList.contains("matched")) return;
+        const pair = activePairs.find(p => String(p.id) === el.dataset.id);
+        if (pair) selectPhrase(el, pair);
       });
     }
 
@@ -445,7 +451,10 @@
     }
 
     function clearSelections() {
-      container.querySelectorAll(".word").forEach(w => {
+      verbsDiv.querySelectorAll(".word").forEach(w => {
+        w.classList.remove("selected", "wrong", "correct");
+      });
+      phrasesDiv.querySelectorAll(".word").forEach(w => {
         w.classList.remove("selected", "wrong", "correct");
       });
       selectedVerb = null;
@@ -462,7 +471,7 @@
         selectedVerbElement = null;
         return;
       }
-      container.querySelectorAll("#verbs .word").forEach(w => w.classList.remove("selected"));
+      verbsDiv.querySelectorAll(".word").forEach(w => w.classList.remove("selected"));
       element.classList.add("selected");
       selectedVerb = pair;
       selectedVerbElement = element;
@@ -477,7 +486,7 @@
         selectedPhraseElement = null;
         return;
       }
-      container.querySelectorAll("#phrases .word").forEach(w => w.classList.remove("selected"));
+      phrasesDiv.querySelectorAll(".word").forEach(w => w.classList.remove("selected"));
       element.classList.add("selected");
       selectedPhrase = pair;
       selectedPhraseElement = element;
@@ -523,11 +532,7 @@
         showFloatingFeedback(pEl, feedbackMsg);
 
         if (combo > 0 && combo % 5 === 0) {
-          if (gameMode === "rush") {
-            triggerTimeFreeze();
-          } else {
-            playSound("bonus");
-          }
+          playSound("bonus");
         } else {
           playSound("match");
         }
