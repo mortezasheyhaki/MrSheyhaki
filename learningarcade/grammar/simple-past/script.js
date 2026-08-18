@@ -448,7 +448,7 @@
     lefts.forEach((w) => {
       const b = document.createElement("button");
       b.type = "button";
-      b.className = "match-chip";
+      b.className = "match-chip word";
       b.textContent = w;
       b.dataset.side = "left";
       b.dataset.val = w;
@@ -458,7 +458,7 @@
     rights.forEach((w) => {
       const b = document.createElement("button");
       b.type = "button";
-      b.className = "match-chip";
+      b.className = "match-chip word";
       b.textContent = w;
       b.dataset.side = "right";
       b.dataset.val = w;
@@ -556,7 +556,6 @@
       matchArea.classList.remove("hidden");
       matchArea.style.display = "flex";
       matchArea.style.flexDirection = "column";
-      matchArea.style.gridTemplateColumns = "none";
     }
     if (feedbackEl) {
       feedbackEl.textContent = "Match base → past as fast as you can!";
@@ -601,7 +600,7 @@
   function makeRushChip(word, side) {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "match-chip";
+    b.className = "match-chip word";
     b.textContent = word;
     b.dataset.side = side;
     b.dataset.val = word;
@@ -613,16 +612,30 @@
 
   function updateRushHud() {
     const timerEl = document.getElementById("rushTimer");
-    const matchesEl = document.getElementById("rushMatches");
+    const scoreHud = document.getElementById("rushScore");
     const comboEl = document.getElementById("rushCombo");
     if (timerEl) {
       timerEl.textContent = String(Math.max(0, rushTimeLeft));
       timerEl.classList.toggle("warn", rushTimeLeft <= 30 && rushTimeLeft > 10);
       timerEl.classList.toggle("danger", rushTimeLeft <= 10);
     }
-    if (matchesEl) matchesEl.textContent = String(rushMatches);
-    if (comboEl) comboEl.textContent = "×" + Math.max(1, rushCombo);
+    if (scoreHud) scoreHud.textContent = String(score);
+    if (comboEl) comboEl.textContent = Math.max(0, rushCombo) + "x";
     if (scoreEl) scoreEl.textContent = String(score);
+  }
+
+  function shuffleRushBoard() {
+    if (rushLocked || !matchLeft || !matchRight) return;
+    const leftChips = Array.from(matchLeft.querySelectorAll(".match-chip:not(.matched)"));
+    const rightChips = Array.from(matchRight.querySelectorAll(".match-chip:not(.matched)"));
+    const leftVals = shuffle(leftChips.map(function (c) { return c.dataset.val; }));
+    const rightVals = shuffle(rightChips.map(function (c) { return c.dataset.val; }));
+    // rebuild unmatched only, keep matched removed
+    matchLeft.querySelectorAll(".match-chip:not(.matched)").forEach(function (c) { c.remove(); });
+    matchRight.querySelectorAll(".match-chip:not(.matched)").forEach(function (c) { c.remove(); });
+    leftVals.forEach(function (w) { matchLeft.appendChild(makeRushChip(w, "left")); });
+    rightVals.forEach(function (w) { matchRight.appendChild(makeRushChip(w, "right")); });
+    rushSel = { left: null, right: null };
   }
 
   function onRushPick(btn) {
@@ -723,6 +736,13 @@
   });
 
   const backMenu = document.getElementById("backMenu");
+  const rushShuffleBtn = document.getElementById("rushShuffleBtn");
+  if (rushShuffleBtn) {
+    rushShuffleBtn.addEventListener("click", function () {
+      shuffleRushBoard();
+    });
+  }
+
   if (backMenu) backMenu.addEventListener("click", () => {
     stopRushTimer();
     const play = document.getElementById("playScreen");
