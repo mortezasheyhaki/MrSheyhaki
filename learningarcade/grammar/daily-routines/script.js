@@ -1,117 +1,41 @@
-/* =====================================================
-   Daily Routines · Sentence Builder
-   Statements (with always / usually / sometimes / never)
-   + Questions. No don't / doesn't forms.
-   Click or drag words. Auto-advance on correct.
-===================================================== */
-
+/* Daily Routines · Sentence Builder */
 (function () {
   "use strict";
 
   const TOTAL = 10;
 
-  /** Statements use never as an adverb (not don't/doesn't). */
   const STATEMENTS = [
-    {
-      prompt: "Talk about mornings.",
-      words: ["I", "always", "get", "up", "early"],
-      answer: ["I", "always", "get", "up", "early"],
-    },
-    {
-      prompt: "Talk about breakfast.",
-      words: ["She", "usually", "has", "breakfast", "at", "7"],
-      answer: ["She", "usually", "has", "breakfast", "at", "7"],
-    },
-    {
-      prompt: "Talk about coffee.",
-      words: ["They", "sometimes", "have", "a", "coffee"],
-      answer: ["They", "sometimes", "have", "a", "coffee"],
-    },
-    {
-      prompt: "Talk about the gym.",
-      words: ["He", "never", "goes", "to", "the", "gym"],
-      answer: ["He", "never", "goes", "to", "the", "gym"],
-    },
-    {
-      prompt: "Talk about TV in the evening.",
-      words: ["We", "usually", "watch", "TV", "after", "dinner"],
-      answer: ["We", "usually", "watch", "TV", "after", "dinner"],
-    },
-    {
-      prompt: "Talk about work.",
-      words: ["I", "always", "go", "to", "work", "by", "bus"],
-      answer: ["I", "always", "go", "to", "work", "by", "bus"],
-    },
-    {
-      prompt: "Talk about shopping.",
-      words: ["She", "sometimes", "goes", "shopping", "on", "Friday"],
-      answer: ["She", "sometimes", "goes", "shopping", "on", "Friday"],
-    },
-    {
-      prompt: "Talk about housework.",
-      words: ["He", "never", "does", "housework"],
-      answer: ["He", "never", "does", "housework"],
-    },
+    { prompt: "Talk about mornings.", words: ["I", "always", "get", "up", "early"], answer: ["I", "always", "get", "up", "early"] },
+    { prompt: "Talk about breakfast.", words: ["She", "usually", "has", "breakfast", "at", "7"], answer: ["She", "usually", "has", "breakfast", "at", "7"] },
+    { prompt: "Talk about coffee.", words: ["They", "sometimes", "have", "a", "coffee"], answer: ["They", "sometimes", "have", "a", "coffee"] },
+    { prompt: "Talk about the gym.", words: ["He", "never", "goes", "to", "the", "gym"], answer: ["He", "never", "goes", "to", "the", "gym"] },
+    { prompt: "Talk about TV in the evening.", words: ["We", "usually", "watch", "TV", "after", "dinner"], answer: ["We", "usually", "watch", "TV", "after", "dinner"] },
+    { prompt: "Talk about work.", words: ["I", "always", "go", "to", "work", "by", "bus"], answer: ["I", "always", "go", "to", "work", "by", "bus"] },
+    { prompt: "Talk about shopping.", words: ["She", "sometimes", "goes", "shopping", "on", "Friday"], answer: ["She", "sometimes", "goes", "shopping", "on", "Friday"] },
+    { prompt: "Talk about housework.", words: ["He", "never", "does", "housework"], answer: ["He", "never", "does", "housework"] },
   ];
 
   const QUESTIONS = [
-    {
-      prompt: "Ask about mornings.",
-      words: ["Do", "you", "always", "get", "up", "early?"],
-      answer: ["Do", "you", "always", "get", "up", "early?"],
-    },
-    {
-      prompt: "Ask about breakfast.",
-      words: ["Does", "she", "usually", "have", "breakfast?"],
-      answer: ["Does", "she", "usually", "have", "breakfast?"],
-    },
-    {
-      prompt: "Ask about the gym.",
-      words: ["Do", "they", "sometimes", "go", "to", "the", "gym?"],
-      answer: ["Do", "they", "sometimes", "go", "to", "the", "gym?"],
-    },
-    {
-      prompt: "Ask about TV.",
-      words: ["Does", "he", "sometimes", "watch", "TV?"],
-      answer: ["Does", "he", "sometimes", "watch", "TV?"],
-    },
-    {
-      prompt: "Ask about housework.",
-      words: ["Do", "you", "usually", "do", "housework?"],
-      answer: ["Do", "you", "usually", "do", "housework?"],
-    },
-    {
-      prompt: "Ask about dinner.",
-      words: ["Does", "she", "always", "make", "dinner?"],
-      answer: ["Does", "she", "always", "make", "dinner?"],
-    },
-    {
-      prompt: "Ask about shopping.",
-      words: ["Do", "they", "sometimes", "go", "shopping?"],
-      answer: ["Do", "they", "sometimes", "go", "shopping?"],
-    },
-    {
-      prompt: "Ask about bed time.",
-      words: ["Do", "you", "usually", "go", "to", "bed", "early?"],
-      answer: ["Do", "you", "usually", "go", "to", "bed", "early?"],
-    },
+    { prompt: "Ask about mornings.", words: ["Do", "you", "always", "get", "up", "early?"], answer: ["Do", "you", "always", "get", "up", "early?"] },
+    { prompt: "Ask about breakfast.", words: ["Does", "she", "usually", "have", "breakfast?"], answer: ["Does", "she", "usually", "have", "breakfast?"] },
+    { prompt: "Ask about the gym.", words: ["Do", "they", "sometimes", "go", "to", "the", "gym?"], answer: ["Do", "they", "sometimes", "go", "to", "the", "gym?"] },
+    { prompt: "Ask about TV.", words: ["Does", "he", "sometimes", "watch", "TV?"], answer: ["Does", "he", "sometimes", "watch", "TV?"] },
+    { prompt: "Ask about housework.", words: ["Do", "you", "usually", "do", "housework?"], answer: ["Do", "you", "usually", "do", "housework?"] },
+    { prompt: "Ask about dinner.", words: ["Does", "she", "always", "make", "dinner?"], answer: ["Does", "she", "always", "make", "dinner?"] },
+    { prompt: "Ask about shopping.", words: ["Do", "they", "sometimes", "go", "shopping?"], answer: ["Do", "they", "sometimes", "go", "shopping?"] },
+    { prompt: "Ask about bed time.", words: ["Do", "you", "usually", "go", "to", "bed", "early?"], answer: ["Do", "you", "usually", "go", "to", "bed", "early?"] },
   ];
 
-  // DOM
   const homeScreen = document.getElementById("homeScreen");
   const gameScreen = document.getElementById("gameScreen");
   const resultScreen = document.getElementById("resultScreen");
   const startBtn = document.getElementById("startBtn");
   const playAgainBtn = document.getElementById("playAgainBtn");
-  const checkBtn = document.getElementById("checkBtn");
   const clearBtn = document.getElementById("clearBtn");
-  const skipBtn = document.getElementById("skipBtn");
-  const themeToggle = document.getElementById("themeToggle");
   const wordBank = document.getElementById("wordBank");
   const answerSlots = document.getElementById("answerSlots");
   const feedbackEl = document.getElementById("feedback");
   const scoreEl = document.getElementById("score");
-  const progressEl = document.getElementById("progress");
   const promptHint = document.getElementById("promptHint");
   const promptText = document.getElementById("promptText");
   const progressFill = document.getElementById("progressFill");
@@ -119,19 +43,15 @@
   const finalCorrect = document.getElementById("finalCorrect");
   const finalWrong = document.getElementById("finalWrong");
   const finalAccuracy = document.getElementById("finalAccuracy");
-  const reviewBox = document.getElementById("reviewBox");
-  const reviewList = document.getElementById("reviewList");
 
-  // State
   let queue = [];
   let index = 0;
   let score = 0;
   let correctCount = 0;
   let wrongCount = 0;
-  let built = []; // { word, uid }
-  let bankState = []; // { word, used, uid }
+  let built = [];
+  let bankState = [];
   let locked = false;
-  let review = [];
   let dragUid = null;
 
   function shuffle(arr) {
@@ -153,14 +73,11 @@
     homeScreen.classList.add("hidden");
     gameScreen.classList.add("hidden");
     resultScreen.classList.add("hidden");
-        if (name === "home") homeScreen.classList.remove("hidden");
-    if (name === "game") {
-      gameScreen.classList.remove("hidden");
-          }
-    if (name === "result") {
-      resultScreen.classList.remove("hidden");
-      if (progressFill) progressFill.style.width = "100%";
-    }
+    if (name === "home") homeScreen.classList.remove("hidden");
+    if (name === "game") gameScreen.classList.remove("hidden");
+    if (name === "result") resultScreen.classList.remove("hidden");
+    // Keep play area in view on mobile
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function current() {
@@ -173,41 +90,42 @@
     dragUid = null;
     const item = current();
     const words = shuffle(item.words.slice());
-    bankState = words.map((w, i) => ({
-      word: w,
-      used: false,
-      uid: i + "-" + w,
-    }));
+    bankState = words.map(function (w, i) {
+      return { word: w, used: false, uid: i + "-" + w };
+    });
 
-    promptHint.textContent = "Put the words in the correct order.";
-    promptText.textContent = item.prompt;
-    progressEl.textContent = index + 1 + " / " + TOTAL;
-    scoreEl.textContent = String(score);
-    feedbackEl.textContent = "";
-    feedbackEl.className = "feedback";
-    checkBtn.disabled = true;
+    if (promptHint) promptHint.textContent = "Click or drag the words into order";
+    if (promptText) promptText.textContent = item.prompt;
+    if (scoreEl) scoreEl.textContent = String(score);
+    if (progressFill) progressFill.style.width = Math.round((index / TOTAL) * 100) + "%";
+    if (feedbackEl) {
+      feedbackEl.textContent = "";
+      feedbackEl.className = "feedback";
+    }
 
     renderBank();
     renderAnswer();
   }
 
   function renderBank() {
+    if (!wordBank) return;
     wordBank.innerHTML = "";
     wordBank.classList.remove("mk-stagger-fast");
     void wordBank.offsetWidth;
     wordBank.classList.add("mk-stagger-fast");
-    bankState.forEach((entry) => {
+
+    bankState.forEach(function (entry) {
       if (entry.used) return;
       wordBank.appendChild(makeChip(entry, "bank"));
     });
   }
 
   function renderAnswer() {
+    if (!answerSlots) return;
     answerSlots.innerHTML = "";
-    built.forEach((entry, i) => {
+    built.forEach(function (entry, i) {
       answerSlots.appendChild(makeChip(entry, "answer", i));
     });
-    checkBtn.disabled = locked || built.length === 0;
   }
 
   function makeChip(entry, place, answerIndex) {
@@ -219,15 +137,13 @@
     btn.draggable = !locked;
     btn.disabled = locked;
 
-    // Click: bank → answer, or answer → bank
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", function () {
       if (locked) return;
       if (place === "bank") addWord(entry.uid);
       else removeWord(answerIndex);
     });
 
-    // Drag
-    btn.addEventListener("dragstart", (e) => {
+    btn.addEventListener("dragstart", function (e) {
       if (locked) {
         e.preventDefault();
         return;
@@ -237,11 +153,11 @@
       e.dataTransfer.setData("text/plain", entry.uid);
       e.dataTransfer.effectAllowed = "move";
     });
-    btn.addEventListener("dragend", () => {
+    btn.addEventListener("dragend", function () {
       btn.classList.remove("dragging");
       dragUid = null;
-      answerSlots.classList.remove("drag-over");
-      wordBank.classList.remove("drag-over");
+      if (answerSlots) answerSlots.classList.remove("drag-over");
+      if (wordBank) wordBank.classList.remove("drag-over");
     });
 
     return btn;
@@ -249,15 +165,18 @@
 
   function addWord(uid) {
     if (locked) return;
-    const entry = bankState.find((e) => e.uid === uid);
+    const entry = bankState.find(function (e) {
+      return e.uid === uid;
+    });
     if (!entry || entry.used) return;
     entry.used = true;
     built.push({ word: entry.word, uid: entry.uid });
     renderBank();
     renderAnswer();
-    // When every word is placed, check automatically
-    if (bankState.every((e) => e.used)) {
-      setTimeout(checkAnswer, 200);
+    if (bankState.every(function (e) {
+      return e.used;
+    })) {
+      setTimeout(checkAnswer, 180);
     }
   }
 
@@ -265,7 +184,9 @@
     if (locked) return;
     if (i < 0 || i >= built.length) return;
     const entry = built.splice(i, 1)[0];
-    const bankEntry = bankState.find((e) => e.uid === entry.uid);
+    const bankEntry = bankState.find(function (e) {
+      return e.uid === entry.uid;
+    });
     if (bankEntry) bankEntry.used = false;
     renderBank();
     renderAnswer();
@@ -274,84 +195,75 @@
   function clearAnswer() {
     if (locked) return;
     built = [];
-    bankState.forEach((e) => (e.used = false));
+    bankState.forEach(function (e) {
+      e.used = false;
+    });
     renderBank();
     renderAnswer();
-    feedbackEl.textContent = "";
-    feedbackEl.className = "feedback";
+    if (feedbackEl) {
+      feedbackEl.textContent = "";
+      feedbackEl.className = "feedback";
+    }
   }
 
   function normalize(arr) {
-    return arr.map((w) => w.replace(/[?.!,]/g, "").toLowerCase());
+    return arr.map(function (w) {
+      return w.replace(/[?.!,]/g, "").toLowerCase();
+    });
   }
 
   function isCorrect(user, answer) {
     if (user.length !== answer.length) {
-      // allow missing trailing ?
-      const a = answer.map((w) => w.replace("?", ""));
-      const u = user.map((w) => w.replace("?", ""));
+      const a = answer.map(function (w) {
+        return w.replace("?", "");
+      });
+      const u = user.map(function (w) {
+        return w.replace("?", "");
+      });
       if (u.length !== a.length) return false;
-      return normalize(u).every((w, i) => w === normalize(a)[i]);
+      return normalize(u).every(function (w, i) {
+        return w === normalize(a)[i];
+      });
     }
-    return normalize(user).every((w, i) => w === normalize(answer)[i]);
+    return normalize(user).every(function (w, i) {
+      return w === normalize(answer)[i];
+    });
   }
 
   function checkAnswer() {
     if (locked || !built.length) return;
     locked = true;
-    checkBtn.disabled = true;
-
     const item = current();
-    const user = built.map((b) => b.word);
+    const user = built.map(function (b) {
+      return b.word;
+    });
     const success = isCorrect(user, item.answer);
 
     if (success) {
       score += 10;
       correctCount += 1;
-      feedbackEl.textContent = "Correct!";
-      feedbackEl.className = "feedback ok";
-      scoreEl.textContent = String(score);
-      // Auto-advance quickly
-      setTimeout(() => {
+      if (feedbackEl) {
+        feedbackEl.textContent = "Correct!";
+        feedbackEl.className = "feedback ok";
+      }
+      if (scoreEl) scoreEl.textContent = String(score);
+      setTimeout(function () {
         index += 1;
         if (index >= TOTAL) endGame();
         else loadItem();
       }, 650);
     } else {
       wrongCount += 1;
-      feedbackEl.textContent = "Not quite. → " + item.answer.join(" ");
-      feedbackEl.className = "feedback bad";
-      review.push({
-        prompt: item.prompt,
-        yours: user.join(" "),
-        correct: item.answer.join(" "),
-      });
-      // Stay briefly so they can read the answer, then next
-      setTimeout(() => {
+      if (feedbackEl) {
+        feedbackEl.textContent = "Not quite. → " + item.answer.join(" ");
+        feedbackEl.className = "feedback bad";
+      }
+      setTimeout(function () {
         index += 1;
         if (index >= TOTAL) endGame();
         else loadItem();
-      }, 1600);
+      }, 1400);
     }
-  }
-
-  function skipItem() {
-    if (locked) return;
-    locked = true;
-    const item = current();
-    wrongCount += 1;
-    review.push({
-      prompt: item.prompt,
-      yours: "(skipped)",
-      correct: item.answer.join(" "),
-    });
-    feedbackEl.textContent = "→ " + item.answer.join(" ");
-    feedbackEl.className = "feedback bad";
-    setTimeout(() => {
-      index += 1;
-      if (index >= TOTAL) endGame();
-      else loadItem();
-    }, 900);
   }
 
   function startGame() {
@@ -360,81 +272,72 @@
     score = 0;
     correctCount = 0;
     wrongCount = 0;
-    review = [];
     showScreen("game");
     loadItem();
   }
 
   function endGame() {
-    const accuracy = TOTAL ? Math.round((correctCount / TOTAL) * 100) : 0;
-    finalScore.textContent = String(score);
-    finalCorrect.textContent = String(correctCount);
-    finalWrong.textContent = String(wrongCount);
-    finalAccuracy.textContent = accuracy + "%";
-
-    if (review.length) {
-      reviewBox.classList.remove("hidden");
-      reviewList.innerHTML = review
-        .map(
-          (r) =>
-            "<li><em>" +
-            r.prompt +
-            "</em><br>You: " +
-            r.yours +
-            "<br><strong>" +
-            r.correct +
-            "</strong></li>"
-        )
-        .join("");
-    } else {
-      reviewBox.classList.add("hidden");
-      reviewList.innerHTML = "";
+    if (progressFill) progressFill.style.width = "100%";
+    if (finalScore) finalScore.textContent = String(score);
+    if (finalCorrect) finalCorrect.textContent = String(correctCount);
+    if (finalWrong) finalWrong.textContent = String(wrongCount);
+    if (finalAccuracy) {
+      finalAccuracy.textContent =
+        (TOTAL ? Math.round((correctCount / TOTAL) * 100) : 0) + "%";
     }
-
     showScreen("result");
   }
 
-  // --- Drop zones ---
   function setupDropZones() {
-    answerSlots.addEventListener("dragover", (e) => {
+    if (!answerSlots || !wordBank) return;
+
+    answerSlots.addEventListener("dragover", function (e) {
       e.preventDefault();
       answerSlots.classList.add("drag-over");
     });
-    answerSlots.addEventListener("dragleave", () => {
+    answerSlots.addEventListener("dragleave", function () {
       answerSlots.classList.remove("drag-over");
     });
-    answerSlots.addEventListener("drop", (e) => {
+    answerSlots.addEventListener("drop", function (e) {
       e.preventDefault();
       answerSlots.classList.remove("drag-over");
       const uid = e.dataTransfer.getData("text/plain") || dragUid;
       if (!uid || locked) return;
-      // If already in answer, ignore (or could reorder later)
-      if (built.some((b) => b.uid === uid)) return;
+      if (built.some(function (b) {
+        return b.uid === uid;
+      })) return;
       addWord(uid);
     });
 
-    wordBank.addEventListener("dragover", (e) => {
+    wordBank.addEventListener("dragover", function (e) {
       e.preventDefault();
       wordBank.classList.add("drag-over");
     });
-    wordBank.addEventListener("dragleave", () => {
+    wordBank.addEventListener("dragleave", function () {
       wordBank.classList.remove("drag-over");
     });
-    wordBank.addEventListener("drop", (e) => {
+    wordBank.addEventListener("drop", function (e) {
       e.preventDefault();
       wordBank.classList.remove("drag-over");
       const uid = e.dataTransfer.getData("text/plain") || dragUid;
       if (!uid || locked) return;
-      const idx = built.findIndex((b) => b.uid === uid);
+      const idx = built.findIndex(function (b) {
+        return b.uid === uid;
+      });
       if (idx >= 0) removeWord(idx);
     });
   }
 
-  // Theme
   function syncSiteTheme() {
     const dark = document.documentElement.getAttribute("data-theme") === "dark";
     document.body.classList.toggle("light-mode", !dark);
   }
+
+  if (startBtn) startBtn.addEventListener("click", startGame);
+  if (playAgainBtn) playAgainBtn.addEventListener("click", startGame);
+  if (clearBtn) clearBtn.addEventListener("click", clearAnswer);
+
+  setupDropZones();
   syncSiteTheme();
   window.addEventListener("site-theme-change", syncSiteTheme);
   try {
