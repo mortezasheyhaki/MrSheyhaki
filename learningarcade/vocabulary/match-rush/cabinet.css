@@ -206,14 +206,16 @@ html, body {
 }
 
 .cabinet-screen .match-rush-game .word {
-  width: min(100%, 132px);
-  height: auto;
-  max-width: 132px;
-  aspect-ratio: 1 / 1;
-  justify-self: center;
-  align-self: center;
-  padding: 8px;
-  font-size: clamp(0.92rem, 2.1vh, 1.08rem);
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  min-height: 0;
+  aspect-ratio: auto; /* critical: squares overflow and hide the 4th row */
+  justify-self: stretch;
+  align-self: stretch;
+  padding: 6px 8px;
+  font-size: clamp(0.85rem, 2vh, 1.05rem);
+  box-sizing: border-box;
 }
 
 /* ---------- VERY SHORT VIEWPORTS (e.g. landscape phones) ---------- */
@@ -232,4 +234,113 @@ html, body {
   .cabinet-marquee__title { font-size: 12px; }
   .arcade-back-btn span:last-child { display: none; }
   .arcade-back-btn__icon { font-size: 12px; }
+}
+
+
+/* ---------- PHONE / TALL MOBILE: fit all 4 pairs ---------- */
+@media (max-width: 720px) {
+  .cabinet-topbar {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  .cabinet-marquee__eyebrow {
+    font-size: 6px;
+    margin-bottom: 4px;
+  }
+  .cabinet-marquee__title {
+    font-size: 12px;
+  }
+  .cabinet-brand-mark {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
+    font-size: 10px;
+  }
+  .arcade-back-btn span:last-child {
+    display: none; /* icon-only back on narrow screens */
+  }
+  .arcade-back-btn {
+    padding: 8px 10px;
+  }
+
+  .cabinet-screen {
+    padding: 8px 10px 10px;
+  }
+
+  .cabinet-screen .match-rush-game header {
+    margin-bottom: 4px;
+  }
+  .cabinet-screen .match-rush-game .header-controls button {
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .cabinet-screen .match-rush-game #stats {
+    padding: 6px 8px;
+    margin-bottom: 6px;
+  }
+  .cabinet-screen .match-rush-game #stats h2 {
+    font-size: 1rem;
+  }
+
+  .cabinet-screen .match-rush-game .powerups-bar {
+    margin-bottom: 6px;
+    gap: 6px;
+  }
+  .cabinet-screen .match-rush-game .powerup-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .cabinet-screen .match-rush-game #board {
+    gap: 8px;
+  }
+
+  .cabinet-screen .match-rush-game .column h3 {
+    margin-bottom: 4px;
+    font-size: 0.65rem;
+  }
+
+  .cabinet-screen .match-rush-game #verbs,
+  .cabinet-screen .match-rush-game #phrases {
+    gap: 5px;
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+  }
+
+  .cabinet-screen .match-rush-game .word {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    padding: 4px 6px;
+    font-size: clamp(0.78rem, 1.8vh, 0.95rem);
+    border-radius: 10px;
+    line-height: 1.15;
+  }
+}
+
+@media (max-height: 700px) {
+  .cabinet-screen .match-rush-game #verbs,
+  .cabinet-screen .match-rush-game #phrases {
+    gap: 4px;
+  }
+  .cabinet-screen .match-rush-game .word {
+    aspect-ratio: auto;
+    padding: 3px 5px;
+    font-size: clamp(0.72rem, 1.7vh, 0.9rem);
+  }
+  .cabinet-screen .match-rush-game #stats {
+    padding: 4px 6px;
+    margin-bottom: 4px;
+  }
+  .cabinet-screen .match-rush-game .powerups-bar {
+    margin-bottom: 4px;
+  }
+}
+
+@media (max-height: 560px) {
+  .cabinet-marquee__eyebrow { display: none; }
+  .cabinet-screen .match-rush-game header { display: none; }
+  .cabinet-screen .match-rush-game .powerups-bar { display: none; }
+  .cabinet-screen .match-rush-game .column h3 { display: none; }
 }
