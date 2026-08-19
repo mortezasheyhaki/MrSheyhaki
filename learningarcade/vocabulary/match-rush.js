@@ -82,9 +82,10 @@
     const hintBtn = container.querySelector("#hintBtn");
     const shuffleBtn = container.querySelector("#shuffleBtn");
     const freezeBanner = container.querySelector("#freezeBanner");
+    if (freezeBanner) freezeBanner.style.display = "none";
 
     // --- GAME STATE ---
-    const ACTIVE_PAIRS = 4;
+    const ACTIVE_PAIRS = 5;
     let gameMode = "rush"; // "rush", "zen", "streak"
     let score = 0;
     let combo = 0;
@@ -95,7 +96,7 @@
 
     let timeLeft = 90;
     let timer = null;
-    let isFrozen = false;
+    let isFrozen = false; // freeze removed
     let freezeTimer = null;
     let gameRunning = false;
     let ttsEnabled = true;
@@ -265,20 +266,9 @@
         activePairs = [];
         for (let i = 0; i < ACTIVE_PAIRS; i++) addRandomPair();
         clearSelections();
-        renderBoard();
+        verbOrder = []; phraseOrder = [];
+        renderBoard(true);
       };
-    }
-
-    function triggerTimeFreeze() {
-      isFrozen = true;
-      playSound("freeze");
-      if (freezeBanner) freezeBanner.style.display = "block";
-
-      if (freezeTimer) clearTimeout(freezeTimer);
-      freezeTimer = setTimeout(() => {
-        isFrozen = false;
-        if (freezeBanner) freezeBanner.style.display = "none";
-      }, 5000);
     }
 
     // --- GAME LOGIC ---
@@ -313,11 +303,11 @@
         addRandomPair();
       }
 
-      renderBoard();
+      verbOrder = []; phraseOrder = []; renderBoard(true);
     }
 
     function updateTimer() {
-      if (!gameRunning || isFrozen) return;
+      if (!gameRunning) return;
       timeLeft--;
       timerLabel.textContent = timeLeft;
       if (timeLeft <= 0) endGame(false);
@@ -408,14 +398,35 @@
       }
     }
 
-    function renderBoard() {
+    // Stable column order (Duolingo-style): unmatched cards stay put; new pairs fill gaps.
+    let verbOrder = [];
+    let phraseOrder = [];
+
+    function renderBoard(fullShuffle) {
+      if (fullShuffle || !verbOrder.length) {
+        verbOrder = activePairs.map(p => p.id);
+        phraseOrder = activePairs.map(p => p.id);
+        shuffle(verbOrder);
+        shuffle(phraseOrder);
+      } else {
+        const live = new Set(activePairs.map(p => p.id));
+        verbOrder = verbOrder.filter(id => live.has(id));
+        phraseOrder = phraseOrder.filter(id => live.has(id));
+        activePairs.forEach(p => {
+          if (!verbOrder.includes(p.id)) verbOrder.push(p.id);
+          if (!phraseOrder.includes(p.id)) phraseOrder.push(p.id);
+        });
+      }
+
+      const byId = {};
+      activePairs.forEach(p => { byId[p.id] = p; });
+
       verbsDiv.innerHTML = "";
       phrasesDiv.innerHTML = "";
 
-      const shuffled = [...activePairs];
-      shuffle(shuffled);
-
-      activePairs.forEach(pair => {
+      verbOrder.forEach(id => {
+        const pair = byId[id];
+        if (!pair) return;
         const div = document.createElement("div");
         div.className = "word";
         div.textContent = pair.verb;
@@ -423,7 +434,9 @@
         verbsDiv.appendChild(div);
       });
 
-      shuffled.forEach(pair => {
+      phraseOrder.forEach(id => {
+        const pair = byId[id];
+        if (!pair) return;
         const div = document.createElement("div");
         div.className = "word";
         div.textContent = pair.phrase;
@@ -528,13 +541,8 @@
         if (combo > 2) feedbackMsg = `🔥 ${combo}x Streak!`;
         showFloatingFeedback(pEl, feedbackMsg);
 
-        // Power-Up Trigger: Time Freeze on every 5x streak in Rush Mode
         if (combo > 0 && combo % 5 === 0) {
-          if (gameMode === "rush") {
-            triggerTimeFreeze();
-          } else {
-            playSound("bonus");
-          }
+          playSound("bonus");
         } else {
           playSound("match");
         }
