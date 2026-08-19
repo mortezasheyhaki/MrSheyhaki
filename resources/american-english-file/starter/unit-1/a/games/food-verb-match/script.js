@@ -115,7 +115,10 @@ function onPointerDown(e) {
     }
     const el = document.elementFromPoint(ev.clientX, ev.clientY);
     document.querySelectorAll(".match-card").forEach((x) => {
-      x.classList.toggle("target", x !== card && !!el && x.contains(el) && !x.classList.contains("matched"));
+      x.classList.toggle(
+        "target",
+        x !== card && !!el && x.contains(el) && !x.classList.contains("matched")
+      );
     });
   };
 
@@ -128,7 +131,7 @@ function onPointerDown(e) {
       card.releasePointerCapture(ev.pointerId);
     } catch (err) {}
 
-    if (!dragged) return; // pure tap handled by click
+    if (!dragged) return;
 
     const el = document.elementFromPoint(ev.clientX, ev.clientY);
     const target = el && el.closest ? el.closest(".match-card") : null;
@@ -169,20 +172,18 @@ function attempt(a, b) {
     return;
   }
 
-  // Remove this pair from remaining
   state.remaining.splice(pairIndex, 1);
   state.correct++;
   state.combo++;
   state.bestCombo = Math.max(state.bestCombo, state.combo);
   state.score += 15 + Math.max(0, state.combo - 1) * 3;
 
-  // Only disable/remove the ITEM — verbs stay reusable (eat/drink/have)
+  // Only lock the ITEM — verbs stay reusable
   itemCard.classList.add("matched");
   itemCard.disabled = true;
   itemCard.setAttribute("aria-disabled", "true");
 
   verbCard.classList.remove("selected");
-  // brief flash on verb without locking it
   verbCard.classList.add("verb-flash");
   setTimeout(() => verbCard.classList.remove("verb-flash"), 350);
 
