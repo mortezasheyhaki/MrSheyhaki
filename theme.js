@@ -29,7 +29,8 @@
       var iconOnly =
         btn.classList.contains("icon-btn") ||
         btn.classList.contains("theme-icon-only") ||
-        btn.getAttribute("data-icon-only") === "true";
+        btn.getAttribute("data-icon-only") === "true" ||
+        !!btn.closest(".arcade-nav");
 
       if (theme === "dark") {
         btn.innerHTML = iconOnly ? "☀️" : '☀️<span>Light Mode</span>';
