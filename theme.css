@@ -669,20 +669,30 @@ html[data-theme="dark"] .audio-download-btn {
   color: #d4daf0 !important;
   border: 1px solid #2e3448 !important;
 }
+
+
 /* =========================================================
    MOBILE SHELL (hybrid)
-   Fixed header + scrollable content + no horizontal overflow
-   + safe-area for notched phones. Games (.cabinet-body) unchanged.
+   - Fixed/sticky header on all standard pages
+   - Content still scrolls
+   - No horizontal overflow on phones
+   - Safe-area support (notch / home indicator)
+   - Games that use .cabinet-body keep their own full-screen layout
 ========================================================= */
+
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
-html, body {
+
+html,
+body {
   max-width: 100%;
   overflow-x: hidden;
   overscroll-behavior-x: none;
 }
+
+/* Fixed site chrome */
 .site-header,
 .arcade-header {
   position: fixed !important;
@@ -690,27 +700,92 @@ html, body {
   left: 0;
   right: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: 100;
+  /* notch / status bar */
   padding-top: env(safe-area-inset-top, 0px);
+  /* total bar height = content + safe area */
+  min-height: calc(78px + env(safe-area-inset-top, 0px));
   box-sizing: border-box;
 }
+
+/* Offset page content under fixed header (skip full-screen games) */
 body:not(.cabinet-body) {
+  padding-top: calc(78px + env(safe-area-inset-top, 0px)) !important;
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+
+/* Sticky in-page game toolbars (Simple Past menu, etc.) sit under the site header when present */
+.game-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+/* Phone refinements */
 @media (max-width: 700px) {
+  .site-header,
+  .arcade-header {
+    min-height: calc(64px + env(safe-area-inset-top, 0px));
+  }
+
+  .header-inner {
+    height: 64px;
+    min-height: 64px;
+    width: min(calc(100% - 24px), var(--container, 1180px));
+  }
+
+  body:not(.cabinet-body) {
+    padding-top: calc(64px + env(safe-area-inset-top, 0px)) !important;
+  }
+
+  /* Prevent accidental horizontal drag */
   body {
     touch-action: pan-y;
   }
-  img, video, svg, canvas {
+
+  img,
+  video,
+  svg,
+  canvas {
     max-width: 100%;
     height: auto;
   }
+
+  /* Comfortable tap targets */
   .main-nav a,
   .skill-button,
   .theme-toggle,
   .menu-toggle {
     min-height: 44px;
   }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  .header-inner {
+    gap: 10px;
+  }
+  .brand-text small {
+    display: none;
+  }
+}
+
+/* Universal back button (use class="site-back-btn" on any page) */
+.site-back-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  min-height:40px;padding:0 14px;
+  border-radius:999px;
+  border:1px solid var(--site-border,#e7e9ef);
+  background:var(--site-surface,#fff);
+  color:var(--site-text,#202636);
+  font:700 13px/1 Inter,ui-sans-serif,system-ui,sans-serif;
+  text-decoration:none;
+  box-shadow:0 2px 10px rgba(32,38,54,.06);
+  transition:transform .15s ease, background .15s ease;
+}
+.site-back-btn:hover{transform:translateY(-1px)}
+html[data-theme="dark"] .site-back-btn{
+  background:#1a1f2c;border-color:#2e3448;color:#f4f6fb;
 }
