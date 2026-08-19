@@ -26,17 +26,21 @@
     } catch (e) {}
 
     document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
+      var iconOnly =
+        btn.classList.contains("icon-btn") ||
+        btn.classList.contains("theme-icon-only") ||
+        btn.getAttribute("data-icon-only") === "true";
+
       if (theme === "dark") {
-        btn.innerHTML = '☀️<span>Light Mode</span>';
+        btn.innerHTML = iconOnly ? "☀️" : '☀️<span>Light Mode</span>';
         btn.setAttribute("aria-label", "Switch to light mode");
       } else {
-        btn.innerHTML = '🌙<span>Dark Mode</span>';
+        btn.innerHTML = iconOnly ? "🌙" : '🌙<span>Dark Mode</span>';
         btn.setAttribute("aria-label", "Switch to dark mode");
       }
     });
   }
 
-  // Apply ASAP (also call early if this script is deferred)
   applyTheme(getPreferred());
 
   function bindToggles() {
