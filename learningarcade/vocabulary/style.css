@@ -316,3 +316,176 @@ body {
 .main-nav a{padding:8px 0;width:100%}
 }
 
+
+
+/* =====================================================
+   GAME CARDS — soft skill-card style (Vocabulary)
+===================================================== */
+
+.game-grid {
+  width: min(calc(100% - 48px), var(--container));
+  margin: 0 auto 70px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.game-card {
+  position: relative;
+  min-height: 260px;
+  padding: 22px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e4dcfa;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfaff 100%);
+  box-shadow: 0 10px 30px rgba(105, 55, 216, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+
+.game-card::before {
+  content: "";
+  position: absolute;
+  right: -30px;
+  top: -30px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: #f1edff;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.game-card--playable:hover {
+  transform: translateY(-4px);
+  border-color: #d2c4f5;
+  box-shadow: 0 16px 40px rgba(105, 55, 216, 0.12);
+}
+
+.game-card-icon {
+  position: relative;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: #6937d8;
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  box-shadow: 0 8px 18px rgba(105, 55, 216, 0.22);
+  margin-bottom: 4px;
+}
+
+.game-tag {
+  position: relative;
+  z-index: 1;
+  align-self: flex-start;
+  margin-top: 12px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: #f1edff;
+  color: #5e2fc8;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.game-card h3 {
+  position: relative;
+  z-index: 1;
+  margin: 12px 0 8px;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  color: #202636;
+}
+
+.game-card p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #687184;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.game-meta {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding-top: 16px;
+  color: #8a92a2;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.game-launch {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: #6937d8;
+  color: #ffffff !important;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 850;
+  box-shadow: 0 8px 20px rgba(105, 55, 216, 0.2);
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.game-launch span { font-size: 16px; line-height: 1; }
+
+.game-launch:hover {
+  background: #5425b8;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(105, 55, 216, 0.28);
+}
+
+.game-launch:visited { color: #ffffff !important; }
+
+.game-card[aria-disabled="true"],
+.game-card:not(.game-card--playable) {
+  border-color: #e7e9ef;
+  background: #f7f8fb;
+  box-shadow: none;
+}
+
+.game-card[aria-disabled="true"]::before,
+.game-card:not(.game-card--playable)::before {
+  background: #eef0f4;
+}
+
+.game-card[aria-disabled="true"] .game-card-icon,
+.game-card:not(.game-card--playable) .game-card-icon {
+  background: #c5cad6;
+  box-shadow: none;
+}
+
+.game-card[aria-disabled="true"] .game-tag,
+.game-card:not(.game-card--playable) .game-tag {
+  background: #eef0f4;
+  color: #8a92a2;
+}
+
+.game-card[aria-disabled="true"] h3,
+.game-card:not(.game-card--playable) h3 {
+  color: #6d7587;
+}
+
+@media (max-width: 900px) {
+  .game-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .game-grid { grid-template-columns: 1fr; }
+  .game-card { min-height: 0; }
+}
