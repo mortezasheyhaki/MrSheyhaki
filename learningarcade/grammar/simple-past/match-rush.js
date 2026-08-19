@@ -99,7 +99,7 @@
     const hintBtn = container.querySelector("#hintBtn");
     const shuffleBtn = container.querySelector("#shuffleBtn");
     // --- GAME STATE ---
-    const ACTIVE_PAIRS = 4;
+    const ACTIVE_PAIRS = 5;
     let gameMode = "rush"; // "rush", "zen", "streak"
     let verbSet = "irregular";
     let score = 0;
@@ -270,7 +270,8 @@
         activePairs = [];
         for (let i = 0; i < ACTIVE_PAIRS; i++) addRandomPair();
         clearSelections();
-        renderBoard();
+        verbOrder = []; phraseOrder = [];
+        renderBoard(true);
       };
     }
 
@@ -309,7 +310,7 @@
         addRandomPair();
       }
 
-      renderBoard();
+      verbOrder = []; phraseOrder = []; renderBoard(true);
     }
 
     function updateTimer() {
@@ -390,52 +391,50 @@
       }
     }
 
-    function renderBoard() {
-      const verbFrag = document.createDocumentFragment();
-      const phraseFrag = document.createDocumentFragment();
+    // Stable column order (Duolingo-style): unmatched cards stay put; new pairs fill gaps.
+    let verbOrder = [];
+    let phraseOrder = [];
 
-      const shuffled = [...activePairs];
-      shuffle(shuffled);
+    function renderBoard(fullShuffle) {
+      if (fullShuffle || !verbOrder.length) {
+        verbOrder = activePairs.map(p => p.id);
+        phraseOrder = activePairs.map(p => p.id);
+        shuffle(verbOrder);
+        shuffle(phraseOrder);
+      } else {
+        const live = new Set(activePairs.map(p => p.id));
+        verbOrder = verbOrder.filter(id => live.has(id));
+        phraseOrder = phraseOrder.filter(id => live.has(id));
+        activePairs.forEach(p => {
+          if (!verbOrder.includes(p.id)) verbOrder.push(p.id);
+          if (!phraseOrder.includes(p.id)) phraseOrder.push(p.id);
+        });
+      }
 
-      activePairs.forEach(pair => {
+      const byId = {};
+      activePairs.forEach(p => { byId[p.id] = p; });
+
+      verbsDiv.innerHTML = "";
+      phrasesDiv.innerHTML = "";
+
+      verbOrder.forEach(id => {
+        const pair = byId[id];
+        if (!pair) return;
         const div = document.createElement("div");
         div.className = "word";
         div.textContent = pair.verb;
-        div.dataset.id = String(pair.id);
-        div.dataset.side = "verb";
-        verbFrag.appendChild(div);
+        div.onclick = () => selectVerb(div, pair);
+        verbsDiv.appendChild(div);
       });
 
-      shuffled.forEach(pair => {
+      phraseOrder.forEach(id => {
+        const pair = byId[id];
+        if (!pair) return;
         const div = document.createElement("div");
         div.className = "word";
         div.textContent = pair.phrase;
-        div.dataset.id = String(pair.id);
-        div.dataset.side = "phrase";
-        phraseFrag.appendChild(div);
-      });
-
-      verbsDiv.replaceChildren(verbFrag);
-      phrasesDiv.replaceChildren(phraseFrag);
-    }
-
-    // Event delegation — one listener each, no per-card handlers
-    if (!verbsDiv._delegated) {
-      verbsDiv._delegated = true;
-      verbsDiv.addEventListener("click", (e) => {
-        const el = e.target.closest(".word");
-        if (!el || !gameRunning || el.classList.contains("matched")) return;
-        const pair = activePairs.find(p => String(p.id) === el.dataset.id);
-        if (pair) selectVerb(el, pair);
-      });
-    }
-    if (!phrasesDiv._delegated) {
-      phrasesDiv._delegated = true;
-      phrasesDiv.addEventListener("click", (e) => {
-        const el = e.target.closest(".word");
-        if (!el || !gameRunning || el.classList.contains("matched")) return;
-        const pair = activePairs.find(p => String(p.id) === el.dataset.id);
-        if (pair) selectPhrase(el, pair);
+        div.onclick = () => selectPhrase(div, pair);
+        phrasesDiv.appendChild(div);
       });
     }
 
