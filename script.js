@@ -43,13 +43,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =====================================
-     HEADER SCROLL EFFECT
+     FLOATING NAV SCROLL EFFECT
   ====================================== */
-  const header = document.querySelector(".site-header");
+  const arcadeNav = document.querySelector(".arcade-nav");
 
   const handleScroll = () => {
-    if (!header) return;
-    header.classList.toggle("scrolled", window.scrollY > 20);
+    if (!arcadeNav) return;
+    arcadeNav.classList.toggle("nav-scrolled", window.scrollY > 20);
   };
 
   window.addEventListener("scroll", handleScroll, { passive: true });
