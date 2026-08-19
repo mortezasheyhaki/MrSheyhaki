@@ -234,7 +234,8 @@
     if (ttsToggleBtn) {
       ttsToggleBtn.onclick = () => {
         ttsEnabled = !ttsEnabled;
-        ttsToggleBtn.textContent = ttsEnabled ? "🔊 Sound On" : "🔇 Sound Off";
+        ttsToggleBtn.textContent = ttsEnabled ? "🔊" : "🔇";
+        ttsToggleBtn.setAttribute("aria-label", ttsEnabled ? "Sound on" : "Sound off");
       };
     }
 
@@ -392,24 +393,58 @@
     }
 
     // Stable column order (Duolingo-style): unmatched cards stay put; new pairs fill gaps.
+    // Phrase column is always shuffled so pairs are NEVER stacked on the same row.
     let verbOrder = [];
     let phraseOrder = [];
 
-    function renderBoard(fullShuffle) {
+    function arraysAligned(a, b) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] === b[i]) return true;
+      }
+      return false;
+    }
+
+    function shuffleOrders(fullShuffle) {
+      const ids = activePairs.map(p => p.id);
       if (fullShuffle || !verbOrder.length) {
-        verbOrder = activePairs.map(p => p.id);
-        phraseOrder = activePairs.map(p => p.id);
+        verbOrder = ids.slice();
+        phraseOrder = ids.slice();
         shuffle(verbOrder);
         shuffle(phraseOrder);
       } else {
-        const live = new Set(activePairs.map(p => p.id));
+        const live = new Set(ids);
         verbOrder = verbOrder.filter(id => live.has(id));
         phraseOrder = phraseOrder.filter(id => live.has(id));
-        activePairs.forEach(p => {
-          if (!verbOrder.includes(p.id)) verbOrder.push(p.id);
-          if (!phraseOrder.includes(p.id)) phraseOrder.push(p.id);
+        const newcomers = ids.filter(id => !verbOrder.includes(id));
+        // Insert each new id at independent random positions (never both at the same end)
+        newcomers.forEach(id => {
+          const vi = Math.floor(Math.random() * (verbOrder.length + 1));
+          verbOrder.splice(vi, 0, id);
+          let pi = Math.floor(Math.random() * (phraseOrder.length + 1));
+          // Prefer not placing new pair on the same row
+          if (verbOrder[pi] === id && phraseOrder.length > 0) {
+            pi = (pi + 1 + Math.floor(Math.random() * Math.max(1, phraseOrder.length))) % (phraseOrder.length + 1);
+          }
+          phraseOrder.splice(pi, 0, id);
         });
       }
+      // Guarantee no matching pair sits on the same row when board has 2+ cards
+      if (verbOrder.length > 1) {
+        let tries = 0;
+        while (arraysAligned(verbOrder, phraseOrder) && tries < 30) {
+          shuffle(phraseOrder);
+          tries++;
+        }
+        // Last resort: rotate phrase column
+        if (arraysAligned(verbOrder, phraseOrder)) {
+          phraseOrder.push(phraseOrder.shift());
+        }
+      }
+    }
+
+    function renderBoard(fullShuffle) {
+      shuffleOrders(!!fullShuffle);
 
       const byId = {};
       activePairs.forEach(p => { byId[p.id] = p; });
