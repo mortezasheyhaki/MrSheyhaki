@@ -1,23 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unit 1A games | Mr. Sheyhaki</title>
-<meta name="description" content="games">
-<link rel="stylesheet" href="../../../../../style.css">
-<link rel="stylesheet" href="../../../../../../theme.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10243e">
+  <meta name="description" content="Food & Drinks Sort - vocabulary game">
+  <title>Food & Drinks Sort | Mr. Sheyhaki</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body data-course="american-english-file" data-type="games" data-level="starter" data-unit="1" data-lesson="a">
+<body>
+  <main class="game-shell" id="app">
+    <header class="game-header">
+      <div>
+        <a class="back-link" href="../">← Unit 5A Games</a>
+        <p class="eyebrow">UNIT 5A · VOCABULARY GAME</p>
+        <h1>Food &amp; Drinks Sort</h1>
+        <p class="instruction">Put each word in the correct category.</p>
+      </div>
+      <div class="header-badge" aria-label="22 vocabulary items">22 words</div>
+    </header>
 
-<header class="site-header"><div class="header-inner"><a class="brand" href="../../../../../../"><span class="brand-mark">MS</span><span class="brand-text"><strong>Mr. Sheyhaki</strong><small>English Teacher</small></span></a><nav id="mainNav" class="main-nav" aria-label="Main navigation"><a href="../../../../../../">Home</a><a href="../../../../../../learningarcade/">Learning Arcade</a><a href="../../../../../../resources/" class="active">Resources</a><a href="../../../../../../worksheets/">Worksheets</a><a href="../../../../../../about/">About</a><a href="../../../../../../contact/">Contact</a></nav><button class="theme-toggle" data-theme-toggle type="button" aria-label="Toggle website theme"></button><button id="menuToggle" class="menu-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mainNav"><span></span><span></span><span></span></button></div></header>
+    <section class="hud" aria-label="Game information">
+      <div class="stat"><span>Score</span><strong id="score">0</strong></div>
+      <div class="stat"><span>Combo</span><strong id="combo">×0</strong></div>
+      <div class="stat"><span>Time</span><strong id="time">01:30</strong></div>
+      <div class="stat progress-stat">
+        <span>Progress</span>
+        <strong><span id="progressCount">0</span>/22</strong>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </section>
 
-<main id="app"></main>
+    <section class="sort-board" aria-label="Food and drinks categories">
+      <div class="drop-zone food-zone" data-category="food" tabindex="0">
+        <div class="zone-heading"><span class="zone-icon">🍽️</span><div><h2>Food</h2><p>Drop food here</p></div></div>
+        <div class="zone-items" id="foodItems"></div>
+      </div>
+      <div class="drop-zone drinks-zone" data-category="drinks" tabindex="0">
+        <div class="zone-heading"><span class="zone-icon">🥤</span><div><h2>Drinks</h2><p>Drop drinks here</p></div></div>
+        <div class="zone-items" id="drinkItems"></div>
+      </div>
+    </section>
 
-<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Resources</p></footer>
-<script src="../../../../../script.js"></script>
-<script src="../../../../../../theme.js"></script>
-<script src="../../../../assets/course-data.js"></script>
-<script src="../../../../assets/course-render.js"></script>
+    <section class="card-tray" id="cardTray" aria-label="Vocabulary cards"></section>
+    <p class="sr-status" id="status" aria-live="polite"></p>
+
+    <div class="modal hidden" id="endModal" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+      <div class="modal-card">
+        <div class="result-icon" id="resultIcon">🏆</div>
+        <p class="eyebrow">ROUND COMPLETE</p>
+        <h2 id="endTitle">Great job!</h2>
+        <p id="endMessage"></p>
+        <div class="result-grid">
+          <div><span>Score</span><strong id="finalScore">0</strong></div>
+          <div><span>Accuracy</span><strong id="accuracy">0%</strong></div>
+          <div><span>Best Combo</span><strong id="bestCombo">×0</strong></div>
+        </div>
+        <button class="primary-btn" id="playAgain" type="button">Play Again</button>
+      </div>
+    </div>
+  </main>
+  <script src="script.js"></script>
 </body>
 </html>
