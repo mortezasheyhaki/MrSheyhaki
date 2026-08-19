@@ -667,27 +667,56 @@
 }
 
 
-/* FORCE equal rows — all 5 cards same height */
+
+/* =========================================================
+   FORCE equal card size — every row identical height
+========================================================= */
+.match-rush-game #verbs,
+.match-rush-game #phrases {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
 .match-rush-game #verbs .word,
 .match-rush-game #phrases .word {
-  min-height: 52px !important;
+  /* Fixed height so short words (be, cut, know) match longer ones */
+  height: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
+  width: 100% !important;
+  max-width: none !important;
+  aspect-ratio: auto !important;
+  flex: 0 0 58px !important;
   box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px 12px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
-@media (max-width: 720px), (max-height: 900px) {
-  .match-rush-game #verbs,
-  .match-rush-game #phrases {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    align-items: stretch !important;
-  }
+
+@media (max-width: 480px) {
   .match-rush-game #verbs .word,
   .match-rush-game #phrases .word {
-    flex: 1 1 0 !important;
-    width: 100% !important;
-    max-width: none !important;
-    aspect-ratio: auto !important;
+    height: 52px !important;
     min-height: 52px !important;
-    height: auto !important;
+    max-height: 52px !important;
+    flex: 0 0 52px !important;
+    font-size: 0.95rem !important;
+  }
+}
+
+@media (min-width: 721px) and (min-height: 801px) {
+  /* Desktop: slightly taller but still equal */
+  .match-rush-game #verbs .word,
+  .match-rush-game #phrases .word {
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+    flex: 0 0 64px !important;
   }
 }
