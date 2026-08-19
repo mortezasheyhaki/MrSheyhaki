@@ -36,6 +36,7 @@
     });
   }
 
+  // Apply ASAP (also call early if this script is deferred)
   applyTheme(getPreferred());
 
   function bindToggles() {
