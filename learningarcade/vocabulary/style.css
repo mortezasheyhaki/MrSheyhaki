@@ -266,188 +266,32 @@ body {
 }
 .game-card--playable::after { content: none !important; display: none !important; }
 .game-launch {
-  margin-top: 14px;
-  align-self: flex-start;
+  position: relative;
+  z-index: 1;
   display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 38px;
-  padding: 0 15px;
-  border: none;
-  border-radius: 9px;
-  background: var(--skill-color);
-  color: #fff;
-  text-decoration: none;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 850;
-  cursor: pointer;
-  transition: transform .18s ease, opacity .18s ease;
-}
-.game-launch:hover {
-  transform: translateY(-1px);
-  opacity: .92;
-}
-.game-launch span { font-size: 15px; line-height: 1; }
-.game-launch:visited { color: #fff; }
-
-/* MOBILE MENU TOGGLE */
-.menu-toggle{display:none;width:38px;height:38px;padding:0;border:none;background:transparent;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px}
-.menu-toggle span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:transform .2s ease,opacity .2s ease}
-.menu-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.menu-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
-.menu-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-@media(max-width:700px){
-.menu-toggle{display:flex}
-.main-nav{display:flex;flex-direction:column;align-items:flex-start;gap:4px;position:absolute;top:78px;left:0;right:0;background:#fff;border-bottom:1px solid #eef0f4;padding:14px 24px 20px;max-height:0;overflow:hidden;opacity:0;pointer-events:none;transition:max-height .25s ease,opacity .2s ease}
-.main-nav.open{max-height:400px;opacity:1;pointer-events:auto}
-.main-nav a{padding:8px 0;width:100%}
-}
-
-/* =====================================================
-   GAME CARDS — unified soft skill-card style
-   Colors driven by subject (Vocabulary / Grammar / …)
-===================================================== */
-.game-grid {
-  --game-color: #6937d8;
-  --game-color-dark: #5425b8;
-  --game-bg: #f1edff;
-  --game-border: #e4dcfa;
-  --game-tag-bg: #f1edff;
-  --game-tag-color: #5e2fc8;
-}
-
-.game-grid {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto 70px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-}
-
-.game-card {
-  position: relative;
-  min-height: 260px;
-  padding: 22px 22px 20px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--game-border);
-  border-radius: 22px;
-  background: linear-gradient(180deg, #ffffff 0%, #fbfaff 100%);
-  box-shadow: 0 10px 30px rgba(32, 38, 54, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  overflow: hidden;
-}
-
-/* soft corner shape — no text ribbon */
-.game-card::before {
-  content: "";
-  position: absolute;
-  right: -30px;
-  top: -30px;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  background: var(--game-bg);
-  opacity: 0.9;
-  pointer-events: none;
-}
-
-/* kill any old PLAYABLE ribbon */
-.game-card::after,
-.game-card--playable::after {
-  content: none !important;
-  display: none !important;
-}
-
-.game-card--playable:hover {
-  transform: translateY(-4px);
-  border-color: var(--game-color);
-  box-shadow: 0 16px 40px rgba(32, 38, 54, 0.1);
-}
-
-.game-card-icon {
-  position: relative;
-  z-index: 1;
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  background: var(--game-color);
-  color: #fff;
-  font-size: 22px;
-  line-height: 1;
-  box-shadow: 0 8px 18px color-mix(in srgb, var(--game-color) 35%, transparent);
-  margin-bottom: 4px;
-}
-
-.game-tag {
-  position: relative;
-  z-index: 1;
-  align-self: flex-start;
-  margin-top: 12px;
-  padding: 5px 9px;
-  border-radius: 8px;
-  background: var(--game-tag-bg);
-  color: var(--game-tag-color);
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: 0.7px;
-  text-transform: uppercase;
-}
-
-.game-card h3 {
-  position: relative;
-  z-index: 1;
-  margin: 12px 0 8px;
-  font-size: 20px;
-  line-height: 1.2;
-  letter-spacing: -0.3px;
-  color: #202636;
-}
-
-.game-card p {
-  position: relative;
-  z-index: 1;
-  margin: 0;
-  color: #687184;
-  font-size: 13px;
-  line-height: 1.65;
-}
-
-.game-meta {
-  position: relative;
-  z-index: 1;
-  margin-top: auto;
-  padding-top: 16px;
-  color: #8a92a2;
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.game-launch {
-  position: relative;
-  z-index: 1;
-  display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-top: 14px;
-  min-height: 44px;
-  padding: 0 16px;
-  border-radius: 12px;
+  align-self: flex-end;
+  margin-top: 16px;
+  min-height: 48px;
+  min-width: 140px;
+  width: auto;
+  max-width: max-content;
+  padding: 0 24px;
+  border-radius: 14px;
   background: var(--game-color);
   color: #ffffff !important;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 850;
+  white-space: nowrap;
   box-shadow: 0 8px 20px color-mix(in srgb, var(--game-color) 28%, transparent);
   transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .game-launch span {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1;
 }
 
@@ -460,6 +304,8 @@ body {
 .game-launch:visited {
   color: #ffffff !important;
 }
+
+
 
 /* Locked / coming soon */
 .game-card[aria-disabled="true"],
