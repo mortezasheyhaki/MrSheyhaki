@@ -1217,6 +1217,27 @@ body.light-mode .context-box span {
    MOBILE
 ===================================================== */
 @media (max-width: 800px) {
+
+    /* Fixed phone viewport — no page scrolling */
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        overflow: hidden !important;
+    }
+
+    main {
+        width: 100%;
+        height: 100%;
+        overflow: hidden !important;
+    }
+
+    /* Hide the desktop header on phones */
+    .game-header {
+        display: none !important;
+    }
+
     .group-grid {
         grid-template-columns: 1fr;
     }
@@ -1240,59 +1261,70 @@ body.light-mode .context-box span {
         max-width: 45px;
     }
 
-    .game-header {
-        grid-template-columns: auto 1fr auto;
-        padding: 0 12px;
+    /* The actual game fills the phone screen */
+    #gameScreen {
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding: 8px;
+        overflow: hidden !important;
+        align-items: stretch;
+        justify-content: stretch;
     }
 
-    .game-title-text {
-        display: none;
+    #gameScreen .game-card {
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        max-height: none;
+        padding: 18px 14px;
+        overflow: hidden !important;
     }
 
-    .game-title .game-icon {
-        width: 42px;
-        height: 42px;
-    }
-
-    .back-button {
-        padding: 0 12px;
-    }
-
+    /* Game header inside the card */
     .game-top {
         grid-template-columns: 1fr auto;
+        gap: 8px;
     }
 
     .game-top-title {
         grid-column: 1 / -1;
         grid-row: 1;
-        text-align: left;
+        text-align: center;
     }
 
     .game-top > .small-back {
         grid-row: 2;
+        grid-column: 1;
     }
 
     .score-pill {
         grid-row: 2;
+        grid-column: 2;
     }
 
+    /* Keep the question section inside the fixed card */
     .question-area {
-        min-height: 360px;
+        min-height: 0;
+        flex: 1;
+        overflow: hidden;
     }
 
     .answer-grid {
         width: 100%;
         max-width: 520px;
         grid-template-columns: 1fr;
-        gap: 14px;
-        margin: 22px auto 0;
+        gap: 10px;
+        margin: 14px auto 0;
         padding: 0 4px;
     }
 
     .answer-option {
         width: 100%;
-        min-height: 66px;
-        padding: 16px 18px;
+        min-height: 56px;
+        padding: 12px 16px;
         font-size: 15px;
         line-height: 1.4;
         border-radius: 15px;
@@ -1307,19 +1339,19 @@ body.light-mode .context-box span {
     }
 
     .word-chip {
-        padding: 18px 24px !important;
-        font-size: 19px !important;
-        min-height: 56px !important;
+        padding: 14px 18px !important;
+        font-size: 17px !important;
+        min-height: 50px !important;
     }
 
     .built-chip {
-        padding: 16px 20px !important;
-        font-size: 18px !important;
+        padding: 12px 16px !important;
+        font-size: 16px !important;
     }
 
     .word-bank {
-        gap: 12px !important;
-        padding: 14px !important;
+        gap: 8px !important;
+        padding: 10px !important;
     }
 
     .result-actions {
@@ -1332,8 +1364,13 @@ body.light-mode .context-box span {
 }
 
 @media (max-width: 500px) {
-    .screen {
-        padding: 24px 10px;
+
+    #gameScreen {
+        padding: 6px;
+    }
+
+    #gameScreen .game-card {
+        padding: 14px 12px;
     }
 
     .home-card h2,
@@ -1372,13 +1409,14 @@ body.light-mode .context-box span {
     }
 
     .word-chip {
-        padding: 16px 20px !important;
-        font-size: 17px !important;
+        padding: 12px 16px !important;
+        font-size: 16px !important;
+        min-height: 46px !important;
     }
 
     .built-chip {
-        font-size: 16px !important;
-        padding: 14px 16px !important;
+        font-size: 15px !important;
+        padding: 11px 14px !important;
     }
 
     .game-title .game-icon {
@@ -1410,22 +1448,8 @@ body.light-mode .context-box span {
         padding: 22px 13px;
     }
 
-    .game-header {
-        padding: 0 7px;
-    }
-
-    .back-button {
-        padding: 0 8px;
-        font-size: 11px;
-    }
-
     .xp-box {
         display: none;
-    }
-
-    .game-title .game-icon {
-        width: 34px;
-        height: 34px;
     }
 
     .target-sentence {
@@ -1433,10 +1457,11 @@ body.light-mode .context-box span {
     }
 
     .word-chip {
-        padding: 14px 16px !important;
+        padding: 10px 14px !important;
         font-size: 15px !important;
     }
 }
+
 /* Extra safety – keep chips big */
 .word-chip,
 .built-chip {
