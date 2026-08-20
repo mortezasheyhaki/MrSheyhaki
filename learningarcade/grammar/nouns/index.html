@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Match Rush — Singular & Plural</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="matchRushGame" class="game-container">
+<header class="game-header">
+  <button id="backBtn" type="button" class="back-btn" aria-label="Go Back">←</button>
+  <h1>Singular & Plural Match Rush</h1>
+  <div class="controls">
+    <button id="ttsToggleBtn" type="button" aria-label="Sound on">🔊</button>
+    <button id="darkModeBtn" type="button" aria-label="Toggle Theme">🌙</button>
+  </div>
+</header>
+
+    <!-- Home Screen -->
+    <div id="homeScreen" class="screen">
+      <div class="high-score-banner">Best Score: <span id="homeHighScore">0</span></div>
+      <div class="mode-select-wrapper">
+        <label for="modeSelect">Select Game Mode:</label>
+        <select id="modeSelect">
+          <option value="rush">Time Rush (90s)</option>
+          <option value="zen">Zen Mode (No Time Limit)</option>
+          <option value="streak">Sudden Death Streak</option>
+        </select>
+      </div>
+      <button id="startBtn" type="button" class="btn primary">Start Game</button>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen" style="display: none;">
+      <div class="stats-bar">
+        <div>Score: <span id="score">0</span></div>
+        <div>Combo: <span id="combo">0x</span></div>
+        <div>Time: <span id="timer">90</span></div>
+      </div>
+
+      <div class="game-action-buttons">
+        <button id="hintBtn" type="button" class="btn secondary">💡 Hint (-5s)</button>
+        <button id="shuffleBtn" type="button" class="btn secondary">🔀 Shuffle</button>
+      </div>
+
+      <div class="board">
+        <div id="singular" class="column"></div>
+        <div id="plural" class="column"></div>
+      </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <h2>Game Over</h2>
+        <div id="newHighTag" class="new-high-tag" style="display: none;">🎉 NEW HIGH SCORE! 🎉</div>
+        <p>Final Score: <span id="modalFinalScore">0</span></p>
+        <p>Best Score: <span id="modalBestScore">0</span></p>
+        <p>Accuracy: <span id="accuracyStat">0%</span> | Max Combo: <span id="maxComboStat">0x</span></p>
+        
+        <div class="mistakes-container">
+          <h3>Review Mistakes</h3>
+          <div id="mistakeList"></div>
+        </div>
+
+        <button id="restartBtn" type="button" class="btn primary">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
