@@ -1,14 +1,7 @@
-/* UNIFIED DARK DEFAULT */
-body {
-  background: #0b1020;
-  color: #f5f7ff;
-}
-body.light-mode {
-  background: #f5f7fb;
-  color: #151a2d;
-}
 /* =====================================================
-   GRAMMAR BATTLE
+   BE — Countries & Nationalities
+   Style aligned with Daily Routines (green theme)
+   Light mode default · dark mode via body:not(.light-mode)
 ===================================================== */
 
 * {
@@ -19,50 +12,54 @@ body.light-mode {
 
 
 :root {
+    /* Daily Routines green system */
+    --dr-green: #079d73;
+    --dr-green-dark: #068a64;
+    --dr-green-soft: #eaf8f4;
+    --dr-green-border: #dcefe9;
 
-    --bg-main: #f3f5fa;
-
+    --bg-main: #f6fbf9;
     --bg-card: #ffffff;
+    --bg-card-hover: #f0f9f5;
 
-    --bg-card-hover: #f0f2f8;
+    --text-main: #202636;
+    --text-muted: #687184;
+    --text-soft: #8a938c;
 
-    --text-main: #161927;
+    --border: #dcefe9;
 
-    --text-muted: #60677a;
+    --accent: #079d73;
+    --accent-two: #0bb881;
 
-    --text-soft: #7c8395;
+    --success: #059669;
+    --success-bg: #ecfdf5;
 
-    --border: rgba(20,25,45,0.10);
+    --danger: #e11d48;
+    --danger-bg: #fff1f2;
 
-    --accent: #7c5cff;
-
-    --accent-two: #4ecbff;
-
-    --success: #22c55e;
-
-    --success-bg: #dcfce7;
-
-    --danger: #ef4444;
-
-    --danger-bg: #fee2e2;
+    --dr-shadow: 0 12px 32px rgba(7, 157, 115, 0.1);
+    --dr-radius: 18px;
 }
 
 
 body:not(.light-mode) {
+    --bg-main: #0e1311;
+    --bg-card: #17201c;
+    --bg-card-hover: #1e2a25;
 
-    --bg-main: #080a12;
+    --text-main: #eef5f1;
+    --text-muted: #9aaba3;
+    --text-soft: #7a8f85;
 
-    --bg-card: #141827;
+    --border: #24463b;
 
-    --bg-card-hover: #191e31;
+    --dr-green-soft: #14352c;
+    --dr-green-border: #24463b;
 
-    --text-main: #ffffff;
+    --success-bg: #10352b;
+    --danger-bg: #3a1520;
 
-    --text-muted: #858b9e;
-
-    --text-soft: #71788c;
-
-    --border: rgba(255,255,255,0.08);
+    --dr-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
 
@@ -76,43 +73,22 @@ html {
 
 
 body {
-
     min-height: 100vh;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            #ffffff 0%,
-            #f3f5fa 55%,
-            #eef1f7 100%
-        );
-
-    color:
-        var(--text-main);
-
-    overflow-x:
-        hidden;
-
-    transition:
-        background 0.3s ease,
-        color 0.3s ease;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg-main);
+    color: var(--text-main);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
+body.light-mode {
+    background: var(--bg-main);
+    color: var(--text-main);
+}
 
 body:not(.light-mode) {
-
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            #171c35 0%,
-            #080a12 55%,
-            #080a12 100%
-        );
+    background: var(--bg-main);
 }
 
 
@@ -121,41 +97,21 @@ body:not(.light-mode) {
 ===================================================== */
 
 .game-header {
-
-    height: 76px;
-
-    padding: 0 26px;
-
-    display: grid;
-
-    grid-template-columns:
-        minmax(0, 1fr)
-        auto
-        minmax(0, 1fr);
-
+    display: flex;
     align-items: center;
-
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--dr-green-border);
     position: sticky;
-
     top: 0;
-
-    z-index: 100;
-
-    background:
-        rgba(255,255,255,0.94);
-
-    border-bottom:
-        1px solid var(--border);
-
-    backdrop-filter:
-        blur(15px);
+    z-index: 40;
 }
 
-
 body:not(.light-mode) .game-header {
-
-    background:
-        rgba(8,10,18,0.92);
+    background: rgba(14, 19, 17, 0.92);
 }
 
 
@@ -179,61 +135,32 @@ body:not(.light-mode) .game-header {
 
 .back-button,
 .arcade-button {
-
     display: inline-flex;
-
     align-items: center;
-
-    justify-content: center;
-
-    flex: 0 0 auto;
-
-    height: 42px;
-
-    padding: 0 14px;
-
-    border: 1px solid var(--border);
-
+    gap: 6px;
+    padding: 10px 14px;
     border-radius: 12px;
-
+    border: 1px solid var(--dr-green-border);
     background: var(--bg-card);
-
     color: var(--text-main);
-
     text-decoration: none;
-
-    font-size: 12px;
-
-    font-weight: 800;
-
+    font-size: 13px;
+    font-weight: 700;
     white-space: nowrap;
-
     cursor: pointer;
-
-    transition:
-        transform 0.2s ease,
-        background 0.2s ease,
-        border-color 0.2s ease,
-        opacity 0.2s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
-
 
 .back-button:hover,
 .arcade-button:hover {
-
+    border-color: var(--dr-green);
+    box-shadow: 0 6px 16px rgba(7, 157, 115, 0.12);
     transform: translateY(-1px);
-
-    background: var(--bg-card-hover);
-
-    border-color: rgba(124,92,255,0.30);
 }
-
 
 .back-button:focus-visible,
 .arcade-button:focus-visible {
-
-    outline: 3px solid rgba(124,92,255,0.28);
-
+    outline: 3px solid rgba(7, 157, 115, 0.28);
     outline-offset: 2px;
 }
 
@@ -275,80 +202,48 @@ body:not(.light-mode) .game-header {
 
 
 .game-icon {
-
-    width: 44px;
-
-    height: 44px;
-
-    flex: 0 0 44px;
-
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
     border-radius: 12px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--accent),
-            var(--accent-two)
-        );
-
-    color: white;
-
-    font-size: 23px;
+    display: grid;
+    place-items: center;
+    background: var(--dr-green);
+    color: #fff;
+    font-size: 20px;
 }
 
+.game-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
 .game-title-text {
-
     min-width: 0;
-
     overflow: hidden;
-
     text-align: left;
 }
 
-
 .game-title-text h1 {
-
+    margin: 0;
     max-width: 100%;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
-
     white-space: nowrap;
-
-    font-size: 19px;
-
-    line-height: 1.1;
-
+    font-size: 16px;
     font-weight: 800;
-
     color: var(--text-main);
 }
 
-
 .game-title-text p {
-
-    margin-top: 3px;
-
+    margin: 2px 0 0;
     max-width: 100%;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
-
     white-space: nowrap;
-
     color: var(--text-muted);
-
     font-size: 11px;
-
     font-weight: 600;
 }
 
@@ -400,13 +295,13 @@ body:not(.light-mode) .game-header {
         rotate(8deg);
 
     background:
-        rgba(124,92,255,0.10);
+        rgba(7, 157, 115,0.10);
 }
 
 
 .theme-toggle:focus-visible {
 
-    outline: 3px solid rgba(124,92,255,0.28);
+    outline: 3px solid rgba(7, 157, 115,0.28);
 
     outline-offset: 2px;
 }
@@ -505,92 +400,54 @@ main {
 ===================================================== */
 
 .selection-card {
-
-    max-width:
-        780px;
-
-    margin:
-        30px auto;
-
-    padding:
-        42px;
-
-    text-align:
-        center;
-
-    background:
-        var(--bg-card);
-
-    border:
-        1px solid var(--border);
-
-    border-radius:
-        26px;
-
-    box-shadow:
-        0 25px 80px
-        rgba(0,0,0,0.08);
+    max-width: 720px;
+    margin: 28px auto;
+    padding: 40px 32px;
+    text-align: center;
+    background: var(--bg-card);
+    border: 1px solid var(--dr-green-border);
+    border-radius: 24px;
+    box-shadow: var(--dr-shadow);
 }
-
 
 .selection-icon {
-
-    width:
-        82px;
-
-    height:
-        82px;
-
-    margin:
-        0 auto 20px;
-
-    border-radius:
-        23px;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--accent),
-            var(--accent-two)
-        );
-
-    font-size:
-        40px;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 12px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: var(--dr-green);
+    color: #fff;
+    font-size: 26px;
+    box-shadow: 0 10px 22px rgba(7, 157, 115, 0.28);
 }
 
+.eyebrow {
+    display: inline-block;
+    color: var(--dr-green);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.4px;
+}
 
 .selection-card h2 {
-
-    margin-top:
-        10px;
-
-    font-size:
-        38px;
-
-    color:
-        var(--text-main);
+    margin: 10px 0 12px;
+    font-size: clamp(28px, 5vw, 36px);
+    letter-spacing: -0.8px;
+    color: var(--text-main);
 }
 
-
 .selection-description {
+    margin: 0 auto 18px;
+    max-width: 420px;
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.65;
+}
 
-    margin:
-        10px auto 28px;
-
-    color:
-        var(--text-muted);
-
-    font-size:
-        14px;
+.selection-description strong {
+    color: var(--dr-green);
 }
 
 
@@ -666,7 +523,7 @@ main {
         var(--bg-card-hover);
 
     border-color:
-        rgba(124,92,255,0.35);
+        rgba(7, 157, 115,0.35);
 }
 
 
@@ -676,7 +533,7 @@ main {
         var(--accent);
 
     background:
-        rgba(124,92,255,0.07);
+        rgba(7, 157, 115,0.07);
 }
 
 
@@ -790,60 +647,33 @@ main {
 ===================================================== */
 
 .main-button {
-
-    margin-top:
-        28px;
-
-    padding:
-        15px 32px;
-
-    border:
-        none;
-
-    border-radius:
-        12px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--accent),
-            var(--accent-two)
-        );
-
-    color:
-        white;
-
-    font-size:
-        12px;
-
-    font-weight:
-        900;
-
-    letter-spacing:
-        1px;
-
-    cursor:
-        pointer;
-
-    transition:
-        all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 50px;
+    margin-top: 26px;
+    padding: 0 28px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0bb881, #079d73);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 850;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(7, 157, 115, 0.28);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
-
 
 .main-button:hover {
-
-    transform:
-        translateY(-3px);
-
-    box-shadow:
-        0 14px 35px
-        rgba(92,72,255,0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(7, 157, 115, 0.34);
+    filter: brightness(1.03);
 }
 
-
 .main-button:active {
-    transform:
-        scale(0.98);
+    transform: translateY(0);
 }
 
 
@@ -960,7 +790,7 @@ main {
         20px;
 
     background:
-        rgba(124,92,255,0.08);
+        rgba(7, 157, 115,0.08);
 
     color:
         var(--accent);
@@ -1071,14 +901,14 @@ main {
         translateY(-4px);
 
     border-color:
-        rgba(124,92,255,0.50);
+        rgba(7, 157, 115,0.50);
 
     background:
         var(--bg-card-hover);
 
     box-shadow:
         0 10px 24px
-        rgba(124,92,255,0.08);
+        rgba(7, 157, 115,0.08);
 }
 
 
@@ -1327,50 +1157,31 @@ main {
 ===================================================== */
 
 .result-card {
-
-    max-width:
-        650px;
-
-    margin:
-        20px auto;
-
-    padding:
-        42px;
-
-    text-align:
-        center;
-
-    border:
-        1px solid var(--border);
-
-    border-radius:
-        26px;
-
-    background:
-        var(--bg-card);
+    max-width: 720px;
+    margin: 20px auto;
+    padding: 36px 28px;
+    text-align: center;
+    border: 1px solid var(--dr-green-border);
+    border-radius: 24px;
+    background: var(--bg-card);
+    box-shadow: var(--dr-shadow);
 }
-
 
 .result-icon {
-
-    font-size:
-        52px;
-
-    margin-bottom:
-        12px;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 10px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    background: var(--dr-green-soft);
+    font-size: 28px;
 }
 
-
 .result-card h2 {
-
-    margin-top:
-        8px;
-
-    color:
-        var(--text-main);
-
-    font-size:
-        38px;
+    margin: 8px 0 18px;
+    color: var(--text-main);
+    font-size: 30px;
 }
 
 
@@ -1386,7 +1197,7 @@ main {
         16px;
 
     background:
-        rgba(124,92,255,0.08);
+        rgba(7, 157, 115,0.08);
 }
 
 
@@ -1447,7 +1258,7 @@ main {
         13px;
 
     background:
-        rgba(124,92,255,0.04);
+        rgba(7, 157, 115,0.04);
 }
 
 
@@ -1502,7 +1313,7 @@ main {
         16px;
 
     background:
-        rgba(124,92,255,0.03);
+        rgba(7, 157, 115,0.03);
 }
 
 
