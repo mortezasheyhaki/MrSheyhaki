@@ -149,7 +149,7 @@
       state.combo = 0;
       a.classList.add("wrong");
       b.classList.add("wrong");
-      setTimeout(() => { a.classList.remove("wrong"); b.classList.remove("wrong"); }, 380);
+      setTimeout(() => { a.classList.remove("wrong"); b.classList.remove("wrong"); }, 420);
       updateHud();
       return;
     }
@@ -163,14 +163,14 @@
     const itemCard = a.dataset.type === "item" ? a : b;
     const verbCard = a.dataset.type === "verb" ? a : b;
     verbCard.classList.add("correct-flash");
-    setTimeout(() => verbCard.classList.remove("correct-flash"), 300);
+    setTimeout(() => verbCard.classList.remove("correct-flash"), 380);
 
     itemCard.classList.add("matched");
     setTimeout(() => {
       if (itemCard.parentNode) itemCard.parentNode.removeChild(itemCard);
       state.visibleItems = state.visibleItems.filter((x) => x !== item);
       fillItems();
-    }, 250);
+    }, 320);
 
     if (remainingForVerb(verb) === 0) {
       verbCard.classList.add("verb-done");
