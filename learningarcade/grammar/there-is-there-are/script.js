@@ -328,97 +328,44 @@ function shuffle(array) {
 
 
 /* =====================================================
-   THEME
+   THEME (legacy — only if local #themeToggle exists)
+   Global theme.js handles the site-wide FAB toggle.
 ===================================================== */
 
-function loadTheme() {
+if (themeToggle) {
 
-    let saved = null;
-
-    try {
-
-        saved =
-            localStorage.getItem(
-                "learningArcadeTheme"
-            );
-
-    } catch (error) {
-
-        console.error(
-            "Could not load theme:",
-            error
-        );
-
-        saved = null;
-
-    }
-
-
-    if (
-        saved === "light"
-    ) {
-
-        document.body.classList.add(
-            "light-mode"
-        );
-
-        themeToggle.textContent =
-            "🌙";
-
-    } else {
-
-        themeToggle.textContent =
-            "☀️";
-
-    }
-
-}
-
-
-themeToggle.addEventListener(
-    "click",
-    function () {
-
-        document.body.classList.toggle(
-            "light-mode"
-        );
-
-
-        const isLight =
-            document.body.classList.contains(
-                "light-mode"
-            );
-
-
+    function loadTheme() {
+        let saved = null;
         try {
+            saved = localStorage.getItem("learningArcadeTheme");
+        } catch (error) {
+            console.error("Could not load theme:", error);
+            saved = null;
+        }
+        if (saved === "light") {
+            document.body.classList.add("light-mode");
+            themeToggle.textContent = "🌙";
+        } else {
+            themeToggle.textContent = "☀️";
+        }
+    }
 
+    themeToggle.addEventListener("click", function () {
+        document.body.classList.toggle("light-mode");
+        const isLight = document.body.classList.contains("light-mode");
+        try {
             localStorage.setItem(
                 "learningArcadeTheme",
-                isLight
-                    ? "light"
-                    : "dark"
+                isLight ? "light" : "dark"
             );
-
         } catch (error) {
-
-            console.error(
-                "Could not save theme:",
-                error
-            );
-
+            console.error("Could not save theme:", error);
         }
+        themeToggle.textContent = isLight ? "🌙" : "☀️";
+    });
 
-
-        themeToggle.textContent =
-            isLight
-                ? "🌙"
-                : "☀️";
-
-    }
-);
-
-
-loadTheme();
+    loadTheme();
+}
 
 
 
