@@ -1,128 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WH Word Match | Mr. Sheyhaki's Learning Arcade</title>
-<meta name="description" content="Choose the WH word that matches the meaning of the clues.">
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="../../../style.css">
-<link rel="stylesheet" href="../../../theme.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>WH Word Match · Learning Arcade | Mr. Sheyhaki</title>
+  <meta name="description" content="Choose the WH word that matches the meaning of the clues.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../motion-kit.css">
+  <link rel="stylesheet" href="../../../theme.css">
 </head>
 <body>
 
-<!-- =================================
-     FLOATING ARCADE-STYLE HEADER
-================================== -->
-<header class="arcade-header-bar">
-  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
-    <a href="../../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
-    <a href="../../" class="nav-link active" aria-current="page" aria-label="Learning Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Learning Arcade</span></a>
-    <a href="../../../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-    <a href="../../../worksheets/" class="nav-link" aria-label="Worksheets" data-icon="📝"><span class="nav-ico" aria-hidden="true">📝</span><span class="nav-text">Worksheets</span></a>
-    <a href="../../../about/" class="nav-link" aria-label="About" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">About</span></a>
-    <a href="../../../contact/" class="nav-link" aria-label="Contact" data-icon="✉️"><span class="nav-ico" aria-hidden="true">✉️</span><span class="nav-text">Contact</span></a>
-  </nav>
+<header class="game-header">
+  <div class="header-left">
+    <a href="../" class="back-button">← Grammar</a>
+  </div>
+  <div class="game-title">
+    <span class="game-icon">❓</span>
+    <div class="game-title-text">
+      <h1>WH Word Match</h1>
+      <p>what · who · where · when · how</p>
+    </div>
+  </div>
+  <div class="header-right"></div>
 </header>
 
+<main class="game-container">
 
-<main class="game-page">
-
-  <div class="page-top">
-    <a class="back-link" href="../">← Back to Grammar</a>
-    <span class="game-tag">WH QUESTIONS · A1</span>
-  </div>
-
-  <section id="startScreen" class="screen start-screen">
-    <div class="game-badge">WH?</div>
-    <p class="eyebrow">GRAMMAR GAME 01</p>
-    <h1>WH Word Match</h1>
-    <p class="subtitle">
-      Look at the floating clues and choose the WH word that matches their meaning.
-    </p>
-
-    <div class="how-to">
-      <div><b>1</b> Read the clues.</div>
-      <div><b>2</b> Choose the WH word.</div>
-      <div><b>3</b> Get it right and move on.</div>
+  <section id="startScreen" class="screen">
+    <div class="home-card">
+      <div class="home-icon">❓</div>
+      <span class="eyebrow">WH QUESTIONS · A1</span>
+      <h2>WH Word Match</h2>
+      <p class="lead">
+        Look at the floating clues and choose the <strong>WH word</strong> that matches their meaning.
+      </p>
+      <div class="how-chips">
+        <span>1 · Read clues</span>
+        <span>2 · Choose word</span>
+        <span>3 · Move on</span>
+      </div>
+      <button id="startButton" class="main-btn" type="button">START PRACTICE →</button>
     </div>
-
-    <button id="startButton" class="primary-btn">START GAME</button>
   </section>
 
-  <section id="gameScreen" class="screen" hidden>
+  <section id="gameScreen" class="screen hidden">
+    <div class="play-top">
+      <span class="mode-label">WH WORD MATCH</span>
+      <div class="score-pill">⭐ <strong id="score">0</strong></div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressBar"></div></div>
 
-    <header class="game-header">
-      <div>
-        <p class="eyebrow">WH WORD MATCH</p>
-        <h1>Which WH word do you need?</h1>
-      </div>
+    <div class="stats-row">
+      <div class="mini-stat"><span>ROUND</span><strong id="roundNumber">1 / 12</strong></div>
+      <div class="mini-stat"><span>STREAK</span><strong id="streak">0</strong></div>
+    </div>
 
-      <div class="stats">
-        <div class="stat">
-          <span>ROUND</span>
-          <strong id="roundNumber">1 / 12</strong>
-        </div>
-        <div class="stat">
-          <span>SCORE</span>
-          <strong id="score">0</strong>
-        </div>
-        <div class="stat">
-          <span>STREAK</span>
-          <strong id="streak">0</strong>
-        </div>
-      </div>
-    </header>
-
-    <section class="clue-panel">
-      <div class="clue-label">FLOATING CLUES</div>
+    <div class="prompt-card">
+      <p class="prompt-hint">Floating clues</p>
       <div id="clueCloud" class="clue-cloud"></div>
-      <p class="clue-hint">Think about what these words tell you.</p>
-    </section>
-
-    <section class="choice-panel">
-      <div class="choice-label">CHOOSE THE WH WORD</div>
-
-      <div id="choices" class="choices">
-        <button class="choice" data-answer="What">What</button>
-        <button class="choice" data-answer="How">How</button>
-        <button class="choice" data-answer="How old">How old</button>
-        <button class="choice" data-answer="Where">Where</button>
-        <button class="choice" data-answer="Who">Who</button>
-        <button class="choice" data-answer="When">When</button>
-      </div>
-
-      <div id="feedback" class="feedback" aria-live="polite"></div>
-    </section>
-
-    <div class="progress-track">
-      <div id="progressBar" class="progress-bar"></div>
     </div>
 
+    <div class="build-label">Choose the WH word</div>
+    <div id="choices" class="choices">
+      <button class="choice" data-answer="What" type="button">What</button>
+      <button class="choice" data-answer="How" type="button">How</button>
+      <button class="choice" data-answer="How old" type="button">How old</button>
+      <button class="choice" data-answer="Where" type="button">Where</button>
+      <button class="choice" data-answer="Who" type="button">Who</button>
+      <button class="choice" data-answer="When" type="button">When</button>
+    </div>
+    <div id="feedback" class="feedback" aria-live="polite"></div>
   </section>
 
-  <section id="endScreen" class="screen end-screen" hidden>
-    <div class="game-badge">✓</div>
-    <p class="eyebrow">GAME COMPLETE</p>
-    <h1>Great job!</h1>
-    <p class="subtitle">You matched all the WH-word meanings.</p>
-
-    <div class="final-stats">
-      <div><span>SCORE</span><strong id="finalScore">0</strong></div>
-      <div><span>STREAK</span><strong id="finalStreak">0</strong></div>
+  <section id="endScreen" class="screen hidden">
+    <div class="result-card">
+      <div class="result-icon">🏆</div>
+      <span class="eyebrow">PRACTICE COMPLETE</span>
+      <h2>Well done!</h2>
+      <div class="final-score"><span>SCORE</span><strong id="finalScore">0</strong></div>
+      <div class="result-stats">
+        <div><span>Streak</span><strong id="finalStreak">0</strong></div>
+      </div>
+      <div class="result-actions">
+        <button id="playAgain" class="main-btn" type="button">PLAY AGAIN →</button>
+        <a href="../" class="ghost-btn">← Grammar</a>
+      </div>
     </div>
-
-    <button id="playAgain" class="primary-btn">PLAY AGAIN</button>
   </section>
 
 </main>
 
 <footer class="site-footer">
-  <p>© <span id="year"></span> Mr. Sheyhaki · English Teacher</p>
+  <p><strong>Mr. Sheyhaki</strong> · Learning Arcade · WH Word Match</p>
 </footer>
 
 <script src="script.js"></script>
-<script src="../../../script.js"></script>
 <script src="../../../theme.js"></script>
 </body>
 </html>

@@ -27,7 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let streak = 0;
   let locked = false;
 
-  $("year").textContent = new Date().getFullYear();
+  const yearEl = $("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   function shuffle(arr) {
     const a = [...arr];
@@ -70,12 +71,12 @@ document.addEventListener("DOMContentLoaded", () => {
     score = 0;
     streak = 0;
 
-    startScreen.hidden = true;
-    endScreen.hidden = true;
-    gameScreen.hidden = false;
+    startScreen.classList.add("hidden");
+    endScreen.classList.add("hidden");
+    gameScreen.classList.remove("hidden");
+    document.body.classList.add("playing");
 
     loadRound();
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function finishGame() {
@@ -83,8 +84,9 @@ document.addEventListener("DOMContentLoaded", () => {
     $("finalScore").textContent = score;
     $("finalStreak").textContent = streak;
 
-    gameScreen.hidden = true;
-    endScreen.hidden = false;
+    gameScreen.classList.add("hidden");
+    endScreen.classList.remove("hidden");
+    document.body.classList.remove("playing");
   }
 
   function choose(button) {

@@ -1630,7 +1630,7 @@ function renderHome() {
     updateGroupCardState(
         group1,
         group1Complete,
-        "✓ GROUP 1 COMPLETED",
+        "✓",
         "PLAY AGAIN →"
     );
 
@@ -1640,7 +1640,7 @@ function renderHome() {
     updateGroupCardState(
         group2,
         group2Complete,
-        "✓ GROUP 2 COMPLETED",
+        "✓",
         "PLAY AGAIN →"
     );
 

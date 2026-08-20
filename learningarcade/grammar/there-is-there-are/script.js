@@ -561,6 +561,7 @@ hideGrammarBackButton();
 ===================================================== */
 
 function startBattle() {
+    document.body.classList.add("playing");
 
     showGrammarBackButton();
 
