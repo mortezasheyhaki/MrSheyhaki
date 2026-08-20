@@ -1294,6 +1294,9 @@
     playScreen.classList.add("hidden");
     resultScreen.classList.add("hidden");
 
+    document.body.classList.toggle("sp-playing", name === "play");
+    document.body.classList.toggle("sp-result", name === "result");
+
     if (name === "menu") {
       menuScreen.classList.remove("hidden");
     }
