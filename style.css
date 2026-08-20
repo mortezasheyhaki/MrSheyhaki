@@ -2127,3 +2127,511 @@ body:not(.cabinet-body) {
     justify-content: center !important;
   }
 }
+
+
+/* ========== HUB HOMEPAGE (mockup-inspired, floating header kept) ========== */
+
+.home-page {
+  --hub-arcade: #7c5cff;
+  --hub-resources: #3b82f6;
+  --hub-worksheets: #22c55e;
+  --hub-about: #f59e0b;
+  --hub-contact: #ec4899;
+  --hub-text: #1e293b;
+  --hub-muted: #64748b;
+  --hub-bg: #f8fafc;
+  --hub-card-bg: #ffffff;
+  --hub-border: #e8ecf4;
+}
+
+html[data-theme="dark"] .home-page,
+html[data-theme="dark"] body.home-page,
+body.home-page[data-theme="dark"] {
+  --hub-text: #eef2ff;
+  --hub-muted: #94a3b8;
+  --hub-bg: #070b16;
+  --hub-card-bg: #0d1220;
+  --hub-border: #1e293b;
+}
+
+body.home-page {
+  background: var(--hub-bg);
+  color: var(--hub-text);
+}
+
+.hub-main {
+  width: min(1120px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 48px 0 40px;
+}
+
+/* ---- Hero ---- */
+.hub-hero {
+  position: relative;
+  text-align: center;
+  padding: 28px 12px 36px;
+  overflow: hidden;
+}
+
+.hub-hero-deco {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hub-hero-deco .deco {
+  position: absolute;
+  color: #a78bfa;
+  opacity: 0.45;
+}
+
+.hub-hero-deco .deco svg {
+  width: 56px;
+  height: 56px;
+}
+
+.deco-pad { top: 8%; left: 6%; color: #a78bfa; }
+.deco-head { bottom: 18%; left: 10%; color: #60a5fa; }
+.deco-trophy { top: 6%; right: 8%; color: #fbbf24; }
+.deco-book { bottom: 14%; right: 10%; color: #93c5fd; }
+
+.hub-hero-deco .spark {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c4b5fd;
+  opacity: 0.7;
+}
+.s1 { top: 20%; left: 22%; }
+.s2 { top: 30%; right: 24%; }
+.s3 { bottom: 30%; left: 28%; }
+.s4 { top: 15%; right: 30%; background: #fcd34d; }
+
+.hub-kicker {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 6px;
+  font-size: clamp(22px, 3.2vw, 34px);
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: var(--hub-text);
+}
+
+.hub-title {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: clamp(36px, 7vw, 64px);
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
+}
+
+.hub-title-line {
+  background: linear-gradient(100deg, #8b5cf6 0%, #6366f1 40%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hub-tagline {
+  position: relative;
+  z-index: 1;
+  margin: 14px 0 0;
+  font-size: clamp(15px, 2vw, 18px);
+  font-weight: 600;
+  color: var(--hub-muted);
+}
+
+.hub-underline {
+  position: relative;
+  z-index: 1;
+  width: 120px;
+  height: 4px;
+  margin: 18px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #8b5cf6, #3b82f6, transparent);
+}
+
+/* ---- Cards grid ---- */
+.hub-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.hub-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 28px 18px 22px;
+  border-radius: 22px;
+  border: 1.5px solid var(--hub-border);
+  background: var(--hub-card-bg);
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  min-height: 280px;
+}
+
+.hub-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.1);
+}
+
+.hub-card-icon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+}
+
+.hub-card-icon svg {
+  width: 52px;
+  height: 52px;
+}
+
+.hub-card h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 850;
+  letter-spacing: 0.6px;
+  color: var(--hub-text);
+}
+
+.hub-card-rule {
+  display: block;
+  width: 36px;
+  height: 3px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.hub-card p {
+  margin: 0 0 18px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--hub-muted);
+  flex: 1;
+}
+
+.hub-card-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  border: 1.5px solid transparent;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Per-card colors */
+.hub-card--arcade {
+  border-color: #e9e0ff;
+  background: linear-gradient(180deg, #faf7ff 0%, #ffffff 55%);
+}
+.hub-card--arcade .hub-card-icon { color: #7c5cff; }
+.hub-card--arcade .hub-card-rule { background: #7c5cff; }
+.hub-card--arcade .hub-card-btn {
+  color: #7c5cff;
+  border-color: #d4c4ff;
+  background: #f3edff;
+}
+.hub-card--arcade:hover {
+  border-color: #c4b5fd;
+}
+.hub-card--arcade:hover .hub-card-btn {
+  background: #7c5cff;
+  color: #fff;
+  border-color: #7c5cff;
+}
+
+.hub-card--resources {
+  border-color: #dbeafe;
+  background: linear-gradient(180deg, #f0f7ff 0%, #ffffff 55%);
+}
+.hub-card--resources .hub-card-icon { color: #3b82f6; }
+.hub-card--resources .hub-card-rule { background: #3b82f6; }
+.hub-card--resources .hub-card-btn {
+  color: #2563eb;
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+.hub-card--resources:hover { border-color: #93c5fd; }
+.hub-card--resources:hover .hub-card-btn {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+
+.hub-card--worksheets {
+  border-color: #dcfce7;
+  background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 55%);
+}
+.hub-card--worksheets .hub-card-icon { color: #16a34a; }
+.hub-card--worksheets .hub-card-rule { background: #22c55e; }
+.hub-card--worksheets .hub-card-btn {
+  color: #16a34a;
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+.hub-card--worksheets:hover { border-color: #86efac; }
+.hub-card--worksheets:hover .hub-card-btn {
+  background: #22c55e;
+  color: #fff;
+  border-color: #22c55e;
+}
+
+.hub-card--about {
+  border-color: #fef3c7;
+  background: linear-gradient(180deg, #fffbeb 0%, #ffffff 55%);
+}
+.hub-card--about .hub-card-icon { color: #d97706; }
+.hub-card--about .hub-card-rule { background: #f59e0b; }
+.hub-card--about .hub-card-btn {
+  color: #d97706;
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+.hub-card--about:hover { border-color: #fcd34d; }
+.hub-card--about:hover .hub-card-btn {
+  background: #f59e0b;
+  color: #fff;
+  border-color: #f59e0b;
+}
+
+.hub-card--contact {
+  border-color: #fce7f3;
+  background: linear-gradient(180deg, #fdf2f8 0%, #ffffff 55%);
+}
+.hub-card--contact .hub-card-icon { color: #db2777; }
+.hub-card--contact .hub-card-rule { background: #ec4899; }
+.hub-card--contact .hub-card-btn {
+  color: #db2777;
+  border-color: #fbcfe8;
+  background: #fdf2f8;
+}
+.hub-card--contact:hover { border-color: #f9a8d4; }
+.hub-card--contact:hover .hub-card-btn {
+  background: #ec4899;
+  color: #fff;
+  border-color: #ec4899;
+}
+
+.hub-journey {
+  text-align: center;
+  margin: 36px 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--hub-muted);
+  letter-spacing: 0.2px;
+}
+
+.hub-journey span {
+  color: #8b5cf6;
+  margin: 0 8px;
+}
+
+.hub-footer .footer-inner {
+  justify-content: center;
+  text-align: center;
+}
+
+.hub-copy {
+  margin: 0;
+  font-size: 13px;
+  color: var(--hub-muted);
+}
+
+/* ---- Dark mode neon cards ---- */
+html[data-theme="dark"] .home-page .hub-card,
+html[data-theme="dark"] body.home-page .hub-card {
+  background: #0c1220;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+html[data-theme="dark"] .hub-card--arcade {
+  border-color: rgba(124, 92, 255, 0.45);
+  background: linear-gradient(180deg, #14102a 0%, #0c1220 70%);
+  box-shadow: 0 0 24px rgba(124, 92, 255, 0.12);
+}
+html[data-theme="dark"] .hub-card--arcade .hub-card-btn {
+  background: #7c5cff;
+  color: #fff;
+  border-color: #7c5cff;
+}
+
+html[data-theme="dark"] .hub-card--resources {
+  border-color: rgba(59, 130, 246, 0.45);
+  background: linear-gradient(180deg, #0b1830 0%, #0c1220 70%);
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.12);
+}
+html[data-theme="dark"] .hub-card--resources .hub-card-btn {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+
+html[data-theme="dark"] .hub-card--worksheets {
+  border-color: rgba(34, 197, 94, 0.45);
+  background: linear-gradient(180deg, #0b2014 0%, #0c1220 70%);
+  box-shadow: 0 0 24px rgba(34, 197, 94, 0.12);
+}
+html[data-theme="dark"] .hub-card--worksheets .hub-card-btn {
+  background: #22c55e;
+  color: #fff;
+  border-color: #22c55e;
+}
+
+html[data-theme="dark"] .hub-card--about {
+  border-color: rgba(245, 158, 11, 0.45);
+  background: linear-gradient(180deg, #1c1608 0%, #0c1220 70%);
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.12);
+}
+html[data-theme="dark"] .hub-card--about .hub-card-btn {
+  background: #f59e0b;
+  color: #111;
+  border-color: #f59e0b;
+}
+
+html[data-theme="dark"] .hub-card--contact {
+  border-color: rgba(236, 72, 153, 0.45);
+  background: linear-gradient(180deg, #1c0f18 0%, #0c1220 70%);
+  box-shadow: 0 0 24px rgba(236, 72, 153, 0.12);
+}
+html[data-theme="dark"] .hub-card--contact .hub-card-btn {
+  background: #ec4899;
+  color: #fff;
+  border-color: #ec4899;
+}
+
+html[data-theme="dark"] .hub-title-line {
+  background: linear-gradient(100deg, #c4b5fd 0%, #818cf8 45%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+html[data-theme="dark"] .hub-hero-deco .deco {
+  opacity: 0.55;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+html[data-theme="dark"] body.home-page {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99, 102, 241, 0.18), transparent 55%),
+    #070b16;
+}
+
+/* ---- Tablet ---- */
+@media (max-width: 1000px) {
+  .hub-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .hub-card:nth-child(4),
+  .hub-card:nth-child(5) {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 720px) {
+  .hub-main {
+    width: min(100% - 28px, 1120px);
+    padding: 28px 0 28px;
+  }
+
+  .hub-hero {
+    padding: 12px 4px 24px;
+  }
+
+  .hub-hero-deco .deco svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .deco-pad { left: 2%; }
+  .deco-trophy { right: 2%; }
+  .deco-head, .deco-book { display: none; }
+
+  /* Phone: stacked list rows (mockup) */
+  .hub-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .hub-card {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    text-align: left;
+    min-height: 0;
+    padding: 16px 14px;
+    gap: 0 12px;
+    border-radius: 18px;
+  }
+
+  .hub-card-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0;
+    flex: 0 0 48px;
+    border-radius: 14px;
+    background: rgba(124, 92, 255, 0.08);
+  }
+  .hub-card--resources .hub-card-icon { background: rgba(59, 130, 246, 0.1); }
+  .hub-card--worksheets .hub-card-icon { background: rgba(34, 197, 94, 0.1); }
+  .hub-card--about .hub-card-icon { background: rgba(245, 158, 11, 0.12); }
+  .hub-card--contact .hub-card-icon { background: rgba(236, 72, 153, 0.1); }
+
+  .hub-card-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .hub-card h2 {
+    flex: 1 1 calc(100% - 120px);
+    margin: 0;
+    font-size: 13px;
+  }
+
+  .hub-card-rule { display: none; }
+
+  .hub-card p {
+    flex: 1 1 calc(100% - 120px);
+    margin: 4px 0 0;
+    font-size: 12px;
+    order: 3;
+    padding-left: 60px;
+    margin-top: -4px;
+  }
+
+  .hub-card-btn {
+    flex: 0 0 auto;
+    order: 2;
+    margin-left: auto;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+    font-size: 0;
+  }
+  .hub-card-btn span {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .hub-journey {
+    margin: 24px 0 4px;
+    font-size: 13px;
+  }
+}
+
+/* ========== END HUB HOMEPAGE ========== */
