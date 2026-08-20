@@ -10,30 +10,32 @@
 
 
 /* =====================================================
-   THEME VARIABLES
+   THEME VARIABLES — Daily Routines green
 ===================================================== */
 
 :root {
+    --dr-green: #079d73;
+    --dr-green-dark: #068a64;
+    --dr-green-soft: #eaf8f4;
+    --dr-green-border: #dcefe9;
 
-    --bg: #f3f5fa;
+    --bg: #f6fbf9;
     --card: #ffffff;
-    --card2: #f7f8fc;
-    --text: #161927;
-    --muted: #697084;
-    --soft: #8990a2;
+    --card2: #f0f9f5;
+    --text: #202636;
+    --muted: #687184;
+    --soft: #8a938c;
 
-    --border:
-        rgba(20, 25, 45, 0.10);
+    --border: #dcefe9;
 
-    --accent: #7c5cff;
-    --accent2: #4ecbff;
+    --accent: #079d73;
+    --accent2: #0bb881;
 
-    --success: #22c55e;
-    --danger: #ef4444;
+    --success: #059669;
+    --danger: #e11d48;
 
-    --shadow:
-        0 25px 70px
-        rgba(25, 30, 55, 0.12);
+    --shadow: 0 12px 32px rgba(7, 157, 115, 0.1);
+    --dr-radius: 18px;
 }
 
 
@@ -42,20 +44,19 @@
 ===================================================== */
 
 body.dark-mode {
+    --dr-green-soft: #14352c;
+    --dr-green-border: #24463b;
 
-    --bg: #080a12;
-    --card: #141827;
-    --card2: #191e31;
-    --text: #ffffff;
-    --muted: #8c93a7;
-    --soft: #6f778d;
+    --bg: #0e1311;
+    --card: #17201c;
+    --card2: #1e2a25;
+    --text: #eef5f1;
+    --muted: #9aaba3;
+    --soft: #7a8f85;
 
-    --border:
-        rgba(255, 255, 255, 0.09);
+    --border: #24463b;
 
-    --shadow:
-        0 30px 90px
-        rgba(0, 0, 0, 0.28);
+    --shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
 
@@ -69,42 +70,17 @@ html {
 
 
 body {
-
     min-height: 100vh;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            #ffffff 0%,
-            #f3f5fa 55%,
-            #eef1f7 100%
-        );
-
-    color:
-        var(--text);
-
-    transition:
-        background 0.3s ease,
-        color 0.3s ease;
-
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.3s ease, color 0.3s ease;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 
-
 body.dark-mode {
-
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            #171c35 0%,
-            #080a12 55%,
-            #080a12 100%
-        );
+    background: var(--bg);
 }
 
 
@@ -121,102 +97,54 @@ button {
 
     height: 76px;
 
-    padding: 0 26px;
-
-    display: grid;
-
-    grid-template-columns:
-        1fr auto 1fr;
-
+    display: flex;
     align-items: center;
-
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--dr-green-border);
     position: sticky;
-
     top: 0;
-
-    z-index: 100;
-
-    background:
-        rgba(255, 255, 255, 0.94);
-
-    border-bottom:
-        1px solid var(--border);
-
-    backdrop-filter:
-        blur(15px);
+    z-index: 40;
 }
-
 
 body.dark-mode .game-header {
-
-    background:
-        rgba(8, 10, 18, 0.92);
+    background: rgba(14, 19, 17, 0.92);
 }
-
 
 .back-button,
 .small-back {
-
     display: inline-flex;
-
     align-items: center;
-
-    justify-content: center;
-
-    border:
-        1px solid var(--border);
-
+    gap: 6px;
+    border: 1px solid var(--dr-green-border);
     border-radius: 12px;
-
-    background:
-        var(--card);
-
-    color:
-        var(--text);
-
+    background: var(--card);
+    color: var(--text);
     text-decoration: none;
-
     font-weight: 700;
-
     cursor: pointer;
-
-    transition: 0.2s;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-
 .back-button {
-
-    justify-self: start;
-
-    height: 42px;
-
-    padding: 0 16px;
-
+    padding: 10px 14px;
     font-size: 13px;
 }
 
-
 .small-back {
-
     height: 38px;
-
     padding: 0 13px;
-
     font-size: 12px;
 }
 
-
 .back-button:hover,
 .small-back:hover {
-
-    transform:
-        translateY(-1px);
-
-    border-color:
-        rgba(124, 92, 255, 0.35);
-
-    background:
-        var(--card2);
+    border-color: var(--dr-green);
+    box-shadow: 0 6px 16px rgba(7, 157, 115, 0.12);
+    transform: translateY(-1px);
 }
 
 
@@ -225,61 +153,34 @@ body.dark-mode .game-header {
 ===================================================== */
 
 .game-title {
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
-    gap: 11px;
+    gap: 12px;
 }
-
 
 .game-icon {
-
-    width: 44px;
-    height: 44px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
     border-radius: 12px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--accent),
-            var(--accent2)
-        );
-
-    font-size: 23px;
-
-    box-shadow:
-        0 8px 18px
-        rgba(124, 92, 255, 0.20);
+    background: var(--dr-green);
+    color: #fff;
+    font-size: 20px;
 }
 
-
 .game-title-text h1 {
-
-    font-size: 19px;
-
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
     line-height: 1.1;
 }
 
-
 .game-title-text p {
-
-    margin-top: 3px;
-
-    color:
-        var(--muted);
-
+    margin: 2px 0 0;
+    color: var(--muted);
     font-size: 11px;
-
     font-weight: 600;
 }
 
@@ -383,7 +284,7 @@ body.dark-mode .game-header {
 
     outline:
         3px solid
-        rgba(124, 92, 255, 0.30);
+        rgba(7, 157, 115, 0.30);
 
     outline-offset:
         2px;
@@ -422,49 +323,30 @@ body.dark-mode .game-header {
 .menu-card,
 .game-card,
 .result-card {
-
     width: 100%;
-
-    max-width: 920px;
-
-    padding: 42px;
-
-    border:
-        1px solid var(--border);
-
-    background:
-        var(--card);
-
-    border-radius: 28px;
-
-    box-shadow:
-        var(--shadow);
+    max-width: 720px;
+    padding: 40px 32px;
+    border: 1px solid var(--dr-green-border);
+    background: var(--card);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
 }
-
 
 .home-card {
     text-align: center;
 }
-
 
 /* =====================================================
    EYEBROW
 ===================================================== */
 
 .eyebrow {
-
     display: inline-block;
-
-    color:
-        var(--accent);
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-    letter-spacing: 2px;
+    color: var(--dr-green);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.4px;
 }
-
 
 /* =====================================================
    HOME
@@ -472,25 +354,21 @@ body.dark-mode .game-header {
 
 .home-card h2,
 .menu-card h2 {
-
-    margin-top: 10px;
-
-    font-size: 46px;
-
-    letter-spacing: -2px;
+    margin: 10px 0 12px;
+    font-size: clamp(28px, 5vw, 36px);
+    letter-spacing: -0.8px;
 }
 
-
 .lead {
+    max-width: 420px;
+    margin: 0 auto 18px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.65;
+}
 
-    max-width: 650px;
-
-    margin: 15px auto 0;
-
-    color:
-        var(--muted);
-
-    line-height: 1.7;
+.lead strong {
+    color: var(--dr-green);
 }
 
 
@@ -626,7 +504,7 @@ body.dark-mode .game-header {
         linear-gradient(
             90deg,
             var(--accent),
-            rgba(124, 92, 255, 0.15)
+            rgba(7, 157, 115, 0.15)
         );
 }
 
@@ -696,11 +574,11 @@ body.dark-mode .game-header {
         translateY(-5px);
 
     border-color:
-        rgba(124, 92, 255, 0.35);
+        rgba(7, 157, 115, 0.35);
 
     box-shadow:
         0 18px 40px
-        rgba(92, 72, 255, 0.12);
+        rgba(7, 157, 115, 0.12);
 }
 
 
@@ -729,7 +607,7 @@ body.dark-mode .game-header {
     border-radius: 15px;
 
     background:
-        rgba(124, 92, 255, 0.12);
+        rgba(7, 157, 115, 0.12);
 
     font-size: 25px;
 
@@ -1121,7 +999,7 @@ body.dark-mode
         12px;
 
     background:
-        rgba(124, 92, 255, 0.11);
+        rgba(7, 157, 115, 0.11);
 
     font-size:
         22px;
@@ -1175,7 +1053,7 @@ body.dark-mode
         999px;
 
     background:
-        rgba(124, 92, 255, 0.10);
+        rgba(7, 157, 115, 0.10);
 
     color:
         var(--accent);
@@ -1306,7 +1184,7 @@ body.dark-mode .future-card {
         translateX(4px);
 
     border-color:
-        rgba(124, 92, 255, 0.35);
+        rgba(7, 157, 115, 0.35);
 }
 
 
@@ -1418,7 +1296,7 @@ body.dark-mode
         12px;
 
     background:
-        rgba(124, 92, 255, 0.11);
+        rgba(7, 157, 115, 0.11);
 
     font-size:
         20px;
@@ -1711,7 +1589,7 @@ body.dark-mode .progress-bar {
 
     border:
         1px dashed
-        rgba(124, 92, 255, 0.35);
+        rgba(7, 157, 115, 0.35);
 
     border-radius:
         16px;
@@ -1739,7 +1617,7 @@ body.dark-mode .progress-bar {
 body.dark-mode .built-sentence {
 
     background:
-        rgba(124, 92, 255, 0.045);
+        rgba(7, 157, 115, 0.045);
 }
 
 
@@ -1823,7 +1701,7 @@ body.dark-mode .word-chip {
         #191e31;
 
     border-color:
-        rgba(124, 92, 255, 0.35);
+        rgba(7, 157, 115, 0.35);
 
     color:
         #ffffff;
@@ -1839,7 +1717,7 @@ body.dark-mode .word-chip {
         translateY(-2px);
 
     border-color:
-        #7c5cff;
+        #079d73;
 }
 
 
@@ -1901,10 +1779,10 @@ body.dark-mode .word-chip:hover {
 body.dark-mode .built-chip {
 
     background:
-        rgba(124, 92, 255, 0.16);
+        rgba(7, 157, 115, 0.16);
 
     border-color:
-        rgba(124, 92, 255, 0.35);
+        rgba(7, 157, 115, 0.35);
 
     color:
         #ffffff;
@@ -2027,11 +1905,11 @@ body.dark-mode .answer-option {
         #f7f8ff;
 
     border-color:
-        #7c5cff;
+        #079d73;
 
     box-shadow:
         0 7px 18px
-        rgba(92, 72, 255, 0.10);
+        rgba(7, 157, 115, 0.10);
 }
 
 
@@ -2049,7 +1927,7 @@ body.dark-mode .answer-option:hover {
 
     outline:
         3px solid
-        rgba(124, 92, 255, 0.28);
+        rgba(7, 157, 115, 0.28);
 
     outline-offset:
         3px;
@@ -2147,13 +2025,13 @@ body.dark-mode .answer-option.wrong {
 
     border:
         1px solid
-        rgba(124, 92, 255, 0.22);
+        rgba(7, 157, 115, 0.22);
 
     border-radius:
         14px;
 
     background:
-        rgba(124, 92, 255, 0.07);
+        rgba(7, 157, 115, 0.07);
 
     color:
         var(--text);
@@ -2256,135 +2134,74 @@ body.light-mode .context-box span {
 
 .main-button,
 .secondary-button {
-
-    min-height:
-        48px;
-
-    padding:
-        0 22px;
-
-    border-radius:
-        13px;
-
-    font-weight:
-        800;
-
-    cursor:
-        pointer;
-
-    border:
-        1px solid transparent;
-
-    transition:
-        0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 50px;
+    padding: 0 28px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 850;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
-
 
 .main-button {
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--accent),
-            var(--accent2)
-        );
-
-    color:
-        #ffffff;
-
-    box-shadow:
-        0 10px 25px
-        rgba(92, 72, 255, 0.18);
+    background: linear-gradient(135deg, #0bb881, #079d73);
+    color: #ffffff;
+    box-shadow: 0 10px 24px rgba(7, 157, 115, 0.28);
 }
-
 
 .secondary-button {
-
-    background:
-        var(--card2);
-
-    border-color:
-        var(--border);
-
-    color:
-        var(--text);
+    background: var(--card);
+    border-color: var(--dr-green-border);
+    color: var(--muted);
 }
 
+.main-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(7, 157, 115, 0.34);
+    filter: brightness(1.03);
+}
 
-.main-button:hover,
 .secondary-button:hover {
-
-    transform:
-        translateY(-2px);
+    border-color: var(--dr-green);
+    color: var(--dr-green-dark);
+    background: var(--dr-green-soft);
+    transform: translateY(-1px);
 }
-
 
 /* =====================================================
    RESULT
 ===================================================== */
 
 .result-card {
-
-    text-align:
-        center;
-
-    max-width:
-        620px;
+    text-align: center;
+    max-width: 720px;
 }
-
 
 .result-icon {
-
-    width:
-        82px;
-
-    height:
-        82px;
-
-    margin:
-        0 auto 20px;
-
-    display:
-        grid;
-
-    place-items:
-        center;
-
-    border-radius:
-        24px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--accent),
-            var(--accent2)
-        );
-
-    font-size:
-        40px;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 10px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    background: var(--dr-green-soft);
+    font-size: 28px;
 }
-
 
 .result-card h2 {
-
-    margin-top:
-        8px;
-
-    font-size:
-        42px;
+    margin: 8px 0 18px;
+    font-size: 30px;
 }
 
-
 .result-card > p {
-
-    margin:
-        10px auto 0;
-
-    color:
-        var(--muted);
-
-    line-height:
-        1.6;
+    margin: 0 auto 18px;
+    color: var(--muted);
+    line-height: 1.6;
 }
 
 
@@ -3278,7 +3095,7 @@ body.light-mode .context-box span {
         12px;
 
     background:
-        rgba(124, 92, 255, 0.11);
+        rgba(7, 157, 115, 0.11);
 
     font-size:
         22px;
@@ -3343,11 +3160,11 @@ body.light-mode .context-box span {
         999px;
 
     background:
-        rgba(124, 92, 255, 0.08);
+        rgba(7, 157, 115, 0.08);
 
     border:
         1px solid
-        rgba(124, 92, 255, 0.12);
+        rgba(7, 157, 115, 0.12);
 
     color:
         var(--accent);
@@ -3532,14 +3349,14 @@ body.dark-mode
 
 .arcade-button:hover {
     transform: translateY(-1px);
-    border-color: rgba(124,92,255,0.35);
+    border-color: rgba(7, 157, 115,0.35);
     background: var(--card2);
 }
 
 .back-button:focus-visible,
 .arcade-button:focus-visible,
 .theme-toggle:focus-visible {
-    outline: 3px solid rgba(124,92,255,0.28);
+    outline: 3px solid rgba(7, 157, 115,0.28);
     outline-offset: 2px;
 }
 
@@ -3667,13 +3484,13 @@ body.dark-mode
 }
 
 .built-sentence.drag-over {
-  border-color: rgba(124, 92, 255, 0.55);
-  background: rgba(124, 92, 255, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(124, 92, 255, 0.2);
+  border-color: rgba(7, 157, 115, 0.55);
+  background: rgba(7, 157, 115, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(7, 157, 115, 0.2);
 }
 
 .word-bank.drag-over {
-  outline: 2px dashed rgba(124, 92, 255, 0.45);
+  outline: 2px dashed rgba(7, 157, 115, 0.45);
   outline-offset: 6px;
   border-radius: 14px;
 }
