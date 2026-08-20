@@ -1,983 +1,691 @@
 /* =========================================================
-   FOOD VERB MATCH — MATCH RUSH STYLE
-========================================================= */
+   FOOD VERB MATCH — SWIPE STYLE
+   ========================================================= */
 
-:root {
-  --bg-frame: #241446;
-  --panel: #f5f2fc;
-  --panel-edge: rgba(139, 92, 246, 0.35);
-  --panel-card: #ffffff;
-  --text: #1f2430;
-  --muted: #6f7689;
-  --accent: #6d28d9;
-  --accent-2: #8b5cf6;
-  --accent-soft: #efe9ff;
-  --good: #16a34a;
-  --good-bg: #ecfdf5;
-  --bad: #dc2626;
-  --bad-bg: #fef2f2;
-  --line: #e5dff5;
-  --shadow: 0 10px 28px rgba(55, 30, 110, 0.1);
-  --glow: 0 0 40px rgba(139, 92, 246, 0.18);
-}
-
-html[data-theme="dark"] {
-  --bg-frame: #0e0a16;
-  --panel: #171222;
-  --panel-edge: rgba(167, 139, 250, 0.35);
-  --panel-card: #221c30;
-  --text: #f3f0fa;
-  --muted: #9b93b0;
-  --accent: #a78bfa;
-  --accent-2: #c4b5fd;
-  --accent-soft: #2c2440;
-  --line: #342c4a;
-  --shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
-  --glow: 0 0 48px rgba(139, 92, 246, 0.22);
-}
-
-*,
-*::before,
-*::after {
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
 body {
+  width: 100%;
   height: 100%;
-  height: 100dvh;
-  overflow: hidden;
 }
 
 body {
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    sans-serif;
-
-  background:
-    radial-gradient(
-      ellipse 80% 50% at 50% -10%,
-      rgba(139, 92, 246, 0.35),
-      transparent 55%
-    ),
-    var(--bg-frame);
-
-  color: var(--text);
-
-  -webkit-font-smoothing: antialiased;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f7fb;
+  color: #1f2937;
   overflow: hidden;
-  clip: rect(0 0 0 0);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
 }
 
 /* =========================================================
-   MAIN FRAME
-========================================================= */
+   GAME CONTAINER
+   ========================================================= */
 
-.frame {
-  height: 100%;
+.game {
+  width: 100%;
   height: 100dvh;
-
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-
-  padding:
-    max(10px, env(safe-area-inset-top))
-    10px
-    max(10px, env(safe-area-inset-bottom));
-}
-
-.panel {
-  width: min(720px, 100%);
-  height: 100%;
-
-  background: var(--panel);
-
-  border-radius: 28px;
-  border: 1px solid var(--panel-edge);
-
-  padding: 14px 16px 12px;
+  min-height: 520px;
 
   display: flex;
   flex-direction: column;
+  align-items: center;
 
+  position: relative;
   overflow: hidden;
-
-  box-shadow:
-    var(--glow),
-    0 24px 60px rgba(0, 0, 0, 0.28);
 }
 
 /* =========================================================
    TOP BAR
-========================================================= */
+   ========================================================= */
 
-.topbar {
-  flex: 0 0 auto;
+.top-bar {
+  width: 100%;
+  max-width: 700px;
+
+  padding: 14px 18px 8px;
 
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
 
-  margin-bottom: 10px;
+  z-index: 10;
 }
 
-.back-pill {
-  display: inline-flex;
+.top-item {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 3px;
+}
 
-  padding: 10px 16px;
-
-  border-radius: 999px;
-
-  background: linear-gradient(
-    135deg,
-    #1f3d36,
-    #16302b
-  );
-
-  color: #ffffff;
-
-  text-decoration: none;
-
-  font-size: 14px;
+.top-label {
+  font-size: 11px;
   font-weight: 700;
-
-  box-shadow:
-    0 4px 12px rgba(22, 48, 43, 0.3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #8b93a1;
 }
 
-html[data-theme="dark"] .back-pill {
-  background: linear-gradient(
-    135deg,
-    #2d5a4e,
-    #1f3d36
-  );
-}
-
-.top-title {
-  flex: 1;
-
-  text-align: center;
-
-  font-size: 14px;
+.top-value {
+  font-size: 20px;
   font-weight: 800;
-
-  color: var(--text);
-}
-
-.icon-btn {
-  width: 38px;
-  height: 38px;
-
-  border-radius: 999px;
-
-  border: 1px solid var(--line);
-
-  background: var(--panel-card);
-
-  cursor: pointer;
-
-  font-size: 15px;
-
-  box-shadow: var(--shadow);
+  color: #202735;
 }
 
 /* =========================================================
-   SCREEN
-========================================================= */
+   PROGRESS
+   ========================================================= */
 
-.screen {
-  flex: 1 1 auto;
-  min-height: 0;
+.progress-wrap {
+  width: min(90%, 500px);
+  height: 6px;
 
-  display: flex;
-  flex-direction: column;
+  background: #e3e7ee;
+  border-radius: 99px;
 
   overflow: hidden;
 }
 
-/* =========================================================
-   HOME SCREEN
-========================================================= */
+.progress-bar {
+  height: 100%;
+  width: 0%;
 
-.home-inner {
-  margin: auto;
+  border-radius: inherit;
+
+  transition: width 0.25s ease;
+}
+
+/* =========================================================
+   MAIN PLAY AREA
+   ========================================================= */
+
+.swipe-area {
+  width: min(94vw, 600px);
+  flex: 1;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-top: 12px;
+}
+
+/* =========================================================
+   ANSWER TARGETS
+   ========================================================= */
+
+.targets {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+
+  column-gap: 18px;
+  row-gap: 10px;
+
+  position: relative;
+
+  z-index: 5;
+}
+
+/* HAVE — top center */
+
+.target-have {
+  grid-column: 1 / 3;
+  grid-row: 1;
+
+  justify-self: center;
+}
+
+/* DRINK — bottom left */
+
+.target-drink {
+  grid-column: 1;
+  grid-row: 2;
+
+  justify-self: end;
+}
+
+/* EAT — bottom right */
+
+.target-eat {
+  grid-column: 2;
+  grid-row: 2;
+
+  justify-self: start;
+}
+
+.target {
+  width: clamp(120px, 30vw, 180px);
+  min-height: 64px;
+
+  padding: 12px 22px;
+
+  border-radius: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: white;
+
+  border: 2px solid #e2e6ed;
+
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.06);
+
+  font-size: clamp(17px, 4vw, 22px);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/* Direction indicators */
+
+.target-have::before {
+  content: "↑";
+  margin-right: 8px;
+  font-size: 18px;
+  opacity: 0.45;
+}
+
+.target-drink::before {
+  content: "←";
+  margin-right: 8px;
+  font-size: 18px;
+  opacity: 0.45;
+}
+
+.target-eat::after {
+  content: "→";
+  margin-left: 8px;
+  font-size: 18px;
+  opacity: 0.45;
+}
+
+/* =========================================================
+   TARGET STATES
+   ========================================================= */
+
+.target.active {
+  transform: scale(1.06);
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.target.correct {
+  background: #dff7e8;
+  border-color: #43b979;
+
+  transform: scale(1.08);
+}
+
+.target.wrong {
+  background: #ffe3e3;
+  border-color: #e45b5b;
+
+  animation: targetShake 0.25s ease;
+}
+
+@keyframes targetShake {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-6px);
+  }
+
+  50% {
+    transform: translateX(6px);
+  }
+
+  75% {
+    transform: translateX(-4px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* =========================================================
+   CARD AREA
+   ========================================================= */
+
+.card-area {
+  position: relative;
+
+  width: 100%;
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 260px;
+}
+
+/* =========================================================
+   SWIPE CARD
+   ========================================================= */
+
+.swipe-card {
+  width: min(70vw, 300px);
+  height: min(48vw, 210px);
+
+  min-width: 220px;
+  min-height: 160px;
+
+  position: absolute;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  border-radius: 28px;
+
+  background: white;
+
+  border: 2px solid #e5e9f0;
+
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.10);
+
+  cursor: grab;
+
+  touch-action: none;
+
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease,
+    box-shadow 0.2s ease;
+}
+
+.swipe-card:active {
+  cursor: grabbing;
+}
+
+/* =========================================================
+   WORD
+   ========================================================= */
+
+.word {
+  font-size: clamp(32px, 9vw, 54px);
+  font-weight: 900;
 
   text-align: center;
 
-  max-width: 400px;
+  color: #202735;
 
-  padding: 24px 16px;
+  pointer-events: none;
 }
 
-.home-badge {
-  display: inline-block;
+/* =========================================================
+   SWIPE HINTS
+   ========================================================= */
 
-  padding: 6px 12px;
+.swipe-hints {
+  position: absolute;
 
-  border-radius: 999px;
+  width: min(90%, 420px);
 
-  background: var(--accent-soft);
+  bottom: 8px;
 
-  color: var(--accent);
+  display: flex;
+  justify-content: space-between;
+
+  pointer-events: none;
+
+  color: #a0a7b2;
+}
+
+.swipe-hint {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 
   font-size: 11px;
-  font-weight: 850;
+  font-weight: 700;
 
-  letter-spacing: 1px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+/* =========================================================
+   SWIPE VISUAL FEEDBACK
+   ========================================================= */
+
+.swipe-card.swiping-left {
+  box-shadow:
+    -18px 18px 35px rgba(0, 0, 0, 0.12);
+}
+
+.swipe-card.swiping-right {
+  box-shadow:
+    18px 18px 35px rgba(0, 0, 0, 0.12);
+}
+
+.swipe-card.swiping-up {
+  box-shadow:
+    0 -18px 35px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================================================
+   CARD EXIT ANIMATIONS
+   ========================================================= */
+
+.swipe-card.exit-left {
+  animation: exitLeft 0.35s ease forwards;
+}
+
+.swipe-card.exit-right {
+  animation: exitRight 0.35s ease forwards;
+}
+
+.swipe-card.exit-up {
+  animation: exitUp 0.35s ease forwards;
+}
+
+@keyframes exitLeft {
+  to {
+    transform:
+      translate(-130vw, 0)
+      rotate(-25deg);
+
+    opacity: 0;
+  }
+}
+
+@keyframes exitRight {
+  to {
+    transform:
+      translate(130vw, 0)
+      rotate(25deg);
+
+    opacity: 0;
+  }
+}
+
+@keyframes exitUp {
+  to {
+    transform:
+      translate(0, -130vh)
+      rotate(-8deg);
+
+    opacity: 0;
+  }
+}
+
+/* =========================================================
+   WRONG ANSWER — CARD RETURNS
+   ========================================================= */
+
+.swipe-card.return-card {
+  animation: returnCard 0.35s ease;
+}
+
+@keyframes returnCard {
+  0% {
+    transform: translateX(var(--return-x, 0));
+  }
+
+  60% {
+    transform: translateX(12px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* =========================================================
+   SCORE POPUP
+   ========================================================= */
+
+.score-popup {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  font-size: 30px;
+  font-weight: 900;
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  z-index: 30;
+}
+
+.score-popup.show {
+  animation: scorePopup 0.7s ease forwards;
+}
+
+@keyframes scorePopup {
+  0% {
+    transform: translate(-50%, -40%);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -100%);
+    opacity: 0;
+  }
+}
+
+/* =========================================================
+   FEEDBACK
+   ========================================================= */
+
+.feedback {
+  min-height: 28px;
+
+  margin-bottom: 8px;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  text-align: center;
+
+  opacity: 0;
+
+  transition: opacity 0.2s ease;
+}
+
+.feedback.show {
+  opacity: 1;
+}
+
+.feedback.correct {
+  color: #2b9b61;
+}
+
+.feedback.wrong {
+  color: #d84c4c;
+}
+
+/* =========================================================
+   START / END SCREEN
+   ========================================================= */
+
+.overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 25px;
+
+  background: rgba(245, 247, 251, 0.96);
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.overlay-content {
+  width: min(90vw, 420px);
+
+  padding: 35px 25px;
+
+  text-align: center;
+
+  background: white;
+
+  border-radius: 28px;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.12);
+}
+
+.overlay-title {
+  font-size: clamp(28px, 8vw, 42px);
+  font-weight: 900;
 
   margin-bottom: 12px;
 }
 
-.home-inner h1 {
-  font-size: clamp(26px, 5vw, 34px);
+.overlay-text {
+  font-size: 16px;
+  line-height: 1.5;
 
-  font-weight: 850;
+  color: #737b88;
 
-  margin-bottom: 10px;
-
-  letter-spacing: -0.5px;
+  margin-bottom: 25px;
 }
 
-.lead {
-  color: var(--muted);
-
-  font-size: 15px;
-
-  line-height: 1.55;
-
-  margin-bottom: 22px;
-}
-
-.primary {
-  min-height: 48px;
-
-  padding: 12px 32px;
-
+.start-button {
   border: none;
 
-  border-radius: 10px;
+  padding: 15px 35px;
 
-  background: linear-gradient(
-    135deg,
-    var(--accent-2),
-    var(--accent)
-  );
+  border-radius: 16px;
 
-  color: #ffffff;
+  background: #202735;
+  color: white;
 
-  font-size: 1rem;
-  font-weight: 750;
+  font-size: 17px;
+  font-weight: 800;
 
   cursor: pointer;
 
-  font-family: inherit;
-
-  box-shadow:
-    0 10px 24px rgba(109, 40, 217, 0.35);
-
   transition:
-    transform 0.12s ease,
-    filter 0.15s ease;
+    transform 0.15s ease,
+    opacity 0.15s ease;
 }
 
-.primary:hover {
-  filter: brightness(1.06);
-
-  transform: translateY(-1px);
-}
-
-/* =========================================================
-   STATS
-========================================================= */
-
-.stats {
-  flex: 0 0 auto;
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(3, 1fr);
-
-  background: var(--panel-card);
-
-  border-radius: 16px;
-
-  padding: 12px 8px;
-
-  margin-bottom: 8px;
-
-  border: 1px solid var(--line);
-
-  box-shadow: var(--shadow);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat span {
-  display: block;
-
-  font-size: 10px;
-  font-weight: 800;
-
-  letter-spacing: 0.7px;
-
-  color: var(--muted);
-
-  margin-bottom: 2px;
-}
-
-.stat strong {
-  font-size: 26px;
-
-  font-weight: 850;
+.start-button:active {
+  transform: scale(0.96);
 }
 
 /* =========================================================
-   PROGRESS BAR
-========================================================= */
+   DESKTOP
+   ========================================================= */
 
-.progress-line {
-  flex: 0 0 auto;
+@media (min-width: 700px) {
 
-  display: flex;
-  align-items: center;
-
-  gap: 10px;
-
-  margin-bottom: 10px;
-
-  padding: 0 2px;
-}
-
-.progress-line span {
-  font-size: 12px;
-  font-weight: 750;
-
-  color: var(--muted);
-
-  white-space: nowrap;
-}
-
-.track {
-  flex: 1;
-
-  height: 7px;
-
-  border-radius: 999px;
-
-  background: var(--line);
-
-  overflow: hidden;
-}
-
-.fill {
-  height: 100%;
-  width: 0%;
-
-  border-radius: 999px;
-
-  background: linear-gradient(
-    90deg,
-    var(--accent-2),
-    var(--accent)
-  );
-
-  transition: width 0.3s ease;
-
-  box-shadow:
-    0 0 8px rgba(139, 92, 246, 0.45);
-}
-
-/* =========================================================
-   MATCH BOARD
-========================================================= */
-
-.board {
-  flex: 1 1 auto;
-  min-height: 0;
-
-  display: grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
-  gap: 16px;
-
-  overflow: hidden;
-
-  align-content: center;
-
-  justify-items: center;
-}
-
-/* =========================================================
-   COLUMNS
-========================================================= */
-
-.col {
-  width: 100%;
-
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-
-  min-height: 0;
-
-  overflow: hidden;
-}
-
-.col h2 {
-  flex: 0 0 auto;
-
-  text-align: center;
-
-  font-size: 0.95rem;
-  font-weight: 900;
-
-  letter-spacing: 0.4px;
-
-  color: var(--accent);
-
-  margin-bottom: 8px;
-}
-
-/* =========================================================
-   CARDS CONTAINER
-========================================================= */
-
-.cards {
-  width: 100%;
-
-  flex: 1 1 auto;
-  min-height: 0;
-
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 8px;
-
-  overflow: hidden;
-
-  /*
-    MAIN FOOD VERB MATCH SQUARE SIZE
-
-    All cards share this variable.
-    Left and right squares will always
-    have exactly the same size.
-  */
-  --card-size: min(118px, 25vw, 11.5vh);
-}
-
-/* =========================================================
-   MATCH SQUARES
-========================================================= */
-
-.match-card {
-  width: var(--card-size);
-  height: var(--card-size);
-
-  min-width: var(--card-size);
-  min-height: var(--card-size);
-
-  max-width: var(--card-size);
-  max-height: var(--card-size);
-
-  flex: 0 0 var(--card-size);
-
-  aspect-ratio: 1 / 1;
-
-  touch-action: none;
-
-  user-select: none;
-
-  cursor: grab;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  text-align: center;
-
-  padding: 8px;
-
-  font-size:
-    clamp(0.85rem, 2.4vw, 1.08rem);
-
-  font-weight: 800;
-
-  line-height: 1.2;
-
-  font-family: inherit;
-
-  color: var(--text);
-
-  background: var(--panel-card);
-
-  border: 3px solid #e3e7ef;
-
-  border-radius: 16px;
-
-  box-shadow:
-    0 5px 0 #dfe3ea,
-    0 9px 22px rgba(32, 38, 54, 0.08);
-
-  transition:
-    transform 0.12s ease,
-    box-shadow 0.18s ease,
-    border-color 0.18s ease,
-    background-color 0.18s ease,
-    opacity 0.35s ease,
-    filter 0.35s ease;
-}
-
-/* =========================================================
-   DARK MODE CARDS
-========================================================= */
-
-html[data-theme="dark"] .match-card {
-  border-color: #3a3450;
-
-  box-shadow:
-    0 5px 0 #2a2438,
-    0 9px 22px rgba(0, 0, 0, 0.35);
-}
-
-/* =========================================================
-   HOVER
-========================================================= */
-
-.match-card:hover:not(:disabled) {
-  transform: translateY(-3px);
-
-  border-color: #8b6de2;
-
-  box-shadow:
-    0 7px 0 #d8d1ee,
-    0 13px 25px rgba(105, 55, 216, 0.15);
-}
-
-/* =========================================================
-   ACTIVE / TOUCH
-========================================================= */
-
-.match-card:active:not(:disabled) {
-  transform:
-    translateY(2px)
-    scale(0.98);
-
-  box-shadow:
-    0 2px 0 #dfe3ea;
-}
-
-/* =========================================================
-   SELECTED / DRAGGING
-========================================================= */
-
-.match-card.selected,
-.match-card.dragging {
-  border-color: #ffc62e;
-
-  background: #fffdf1;
-
-  box-shadow:
-    0 0 0 4px rgba(255, 198, 46, 0.16),
-    0 0 25px rgba(255, 198, 46, 0.62),
-    0 7px 0 #e5d58c;
-
-  cursor: grabbing;
-
-  z-index: 2;
-
-  animation:
-    mrSelectedGlow
-    0.9s
-    ease-in-out
-    infinite
-    alternate;
-}
-
-html[data-theme="dark"] .match-card.selected,
-html[data-theme="dark"] .match-card.dragging {
-  background: #3a3020;
-
-  box-shadow:
-    0 0 0 4px rgba(255, 198, 46, 0.2),
-    0 0 25px rgba(255, 198, 46, 0.45),
-    0 7px 0 #8a7420;
-}
-
-/* =========================================================
-   TARGET
-========================================================= */
-
-.match-card.target {
-  border-color: #8b6de2;
-
-  box-shadow:
-    0 0 0 3px rgba(139, 92, 246, 0.2),
-    0 7px 0 #d8d1ee;
-}
-
-/* =========================================================
-   WRONG ANSWER
-========================================================= */
-
-.match-card.wrong {
-  background: #e5484d !important;
-
-  border-color: #ff8b8f !important;
-
-  color: #ffffff !important;
-
-  box-shadow:
-    0 6px 0 #b83237;
-
-  animation:
-    mrWrongShake
-    0.34s
-    ease;
-}
-
-/* =========================================================
-   CORRECT ANSWER
-========================================================= */
-
-.match-card.correct-flash {
-  background: #20a85a !important;
-
-  border-color: #77e2a1 !important;
-
-  color: #ffffff !important;
-
-  box-shadow:
-    0 0 0 4px rgba(32, 168, 90, 0.15),
-    0 7px 0 #168448;
-
-  animation:
-    mrCorrectPop
-    0.28s
-    ease-out
-    forwards;
-}
-
-/* =========================================================
-   MATCHED / DISABLED
-========================================================= */
-
-.match-card.matched,
-.match-card.verb-done,
-.match-card:disabled {
-  opacity: 0.35;
-
-  pointer-events: none;
-
-  cursor: default;
-
-  transform: scale(0.92);
-
-  transition:
-    opacity 0.35s ease,
-    transform 0.35s ease;
-}
-
-/* =========================================================
-   ANIMATIONS
-========================================================= */
-
-@keyframes mrSelectedGlow {
-  from {
-    filter: brightness(1);
-
-    box-shadow:
-      0 0 0 3px rgba(255, 198, 46, 0.12),
-      0 0 16px rgba(255, 198, 46, 0.38),
-      0 7px 0 #e5d58c;
+  .swipe-area {
+    padding-top: 20px;
   }
 
-  to {
-    filter: brightness(1.04);
-
-    box-shadow:
-      0 0 0 5px rgba(255, 198, 46, 0.18),
-      0 0 32px rgba(255, 198, 46, 0.78),
-      0 7px 0 #e5d58c;
-  }
-}
-
-@keyframes mrCorrectPop {
-  0% {
-    transform: scale(1);
+  .targets {
+    max-width: 520px;
   }
 
-  55% {
-    transform: scale(1.07);
+  .card-area {
+    min-height: 320px;
   }
 
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes mrWrongShake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  20% {
-    transform: translateX(-8px);
-  }
-
-  40% {
-    transform: translateX(8px);
-  }
-
-  60% {
-    transform: translateX(-6px);
-  }
-
-  80% {
-    transform: translateX(6px);
+  .swipe-card {
+    width: 300px;
+    height: 210px;
   }
 }
 
 /* =========================================================
-   HINT
-========================================================= */
+   SMALL PHONES
+   ========================================================= */
 
-.hint {
-  flex: 0 0 auto;
+@media (max-height: 650px) {
 
-  text-align: center;
-
-  font-size: 12px;
-
-  color: var(--muted);
-
-  margin-top: 8px;
-
-  font-weight: 600;
-}
-
-/* =========================================================
-   RESULT MODAL
-========================================================= */
-
-.modal {
-  position: absolute;
-
-  inset: 0;
-
-  background:
-    rgba(20, 10, 40, 0.55);
-
-  backdrop-filter: blur(4px);
-
-  display: grid;
-
-  place-items: center;
-
-  border-radius: 28px;
-
-  z-index: 20;
-
-  padding: 16px;
-}
-
-.modal-card {
-  width: min(360px, 100%);
-
-  background: var(--panel-card);
-
-  border-radius: 22px;
-
-  padding: 26px 20px;
-
-  text-align: center;
-
-  border: 1px solid var(--line);
-
-  box-shadow:
-    var(--glow),
-    var(--shadow);
-}
-
-.modal-icon {
-  font-size: 38px;
-
-  margin-bottom: 6px;
-}
-
-.modal-card h2 {
-  font-size: 24px;
-
-  margin-bottom: 6px;
-}
-
-.modal-card p {
-  color: var(--muted);
-
-  font-size: 14px;
-
-  margin-bottom: 14px;
-}
-
-.result-row {
-  display: grid;
-
-  grid-template-columns:
-    repeat(3, 1fr);
-
-  gap: 8px;
-
-  margin-bottom: 18px;
-}
-
-.result-row div {
-  background: var(--panel);
-
-  border-radius: 12px;
-
-  padding: 10px 6px;
-}
-
-.result-row span {
-  display: block;
-
-  font-size: 10px;
-
-  font-weight: 800;
-
-  color: var(--muted);
-
-  text-transform: uppercase;
-}
-
-.result-row strong {
-  font-size: 18px;
-}
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 720px),
-       (max-height: 780px) {
-
-  .frame {
-    padding: 6px;
+  .top-bar {
+    padding-top: 8px;
   }
 
-  .panel {
-    border-radius: 20px;
-
-    padding:
-      10px
-      10px
-      8px;
+  .target {
+    min-height: 52px;
+    padding: 8px 16px;
   }
 
-  .top-title {
-    font-size: 13px;
+  .card-area {
+    min-height: 210px;
   }
 
-  .stat strong {
-    font-size: 20px;
+  .swipe-card {
+    height: 155px;
+    min-height: 140px;
   }
 
-  .board {
-    gap: 12px;
+  .word {
+    font-size: 38px;
   }
 
-  .cards {
-    /*
-      Slightly smaller squares
-      for normal phone screens
-    */
-    --card-size: min(105px, 25vw, 11vh);
-
-    gap: 7px;
-  }
-
-  .match-card {
-    border-radius: 14px;
-
-    font-size:
-      clamp(0.8rem, 3.2vw, 1rem);
-  }
-
-  .col h2 {
-    font-size: 0.8rem;
-
-    margin-bottom: 6px;
-  }
-
-  .hint {
-    font-size: 11px;
-  }
-
-  .back-pill {
-    font-size: 12px;
-
-    padding:
-      7px
-      12px;
+  .swipe-hints {
+    bottom: 2px;
   }
 }
 
 /* =========================================================
-   VERY SMALL / SHORT PHONES
-========================================================= */
+   VERY SMALL PHONES
+   ========================================================= */
 
-@media (max-width: 400px),
-       (max-height: 640px) {
+@media (max-width: 360px) {
 
-  .cards {
-    /*
-      Ensures all 5 cards fit
-      on very small phones
-    */
-    --card-size: min(88px, 24vw, 10vh);
+  .target {
+    width: 115px;
+    min-height: 52px;
 
-    gap: 6px;
+    font-size: 16px;
   }
 
-  .match-card {
-    border-radius: 12px;
-
-    border-width: 2px;
-
-    padding: 6px;
-
-    font-size:
-      clamp(0.75rem, 3vw, 0.95rem);
+  .swipe-card {
+    min-width: 205px;
+    min-height: 145px;
   }
 
-  .stat strong {
-    font-size: 18px;
+  .word {
+    font-size: 34px;
   }
 }
