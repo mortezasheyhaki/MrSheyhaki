@@ -264,19 +264,7 @@ body {
   position: relative;
   overflow: hidden;
 }
-.game-card--playable::after {
-  content: "PLAYABLE";
-  position: absolute;
-  top: 14px;
-  right: -27px;
-  padding: 5px 32px;
-  transform: rotate(35deg);
-  background: var(--skill-color);
-  color: #fff;
-  font-size: 8px;
-  font-weight: 900;
-  letter-spacing: .8px;
-}
+.game-card--playable::after { content: none !important; display: none !important; }
 .game-launch {
   margin-top: 14px;
   align-self: flex-start;
@@ -316,11 +304,18 @@ body {
 .main-nav a{padding:8px 0;width:100%}
 }
 
-
-
 /* =====================================================
-   GAME CARDS — soft skill-card style (Vocabulary)
+   GAME CARDS — unified soft skill-card style
+   Colors driven by subject (Vocabulary / Grammar / …)
 ===================================================== */
+.game-grid {
+  --game-color: #6937d8;
+  --game-color-dark: #5425b8;
+  --game-bg: #f1edff;
+  --game-border: #e4dcfa;
+  --game-tag-bg: #f1edff;
+  --game-tag-color: #5e2fc8;
+}
 
 .game-grid {
   width: min(calc(100% - 48px), var(--container));
@@ -336,14 +331,15 @@ body {
   padding: 22px 22px 20px;
   display: flex;
   flex-direction: column;
-  border: 1px solid #e4dcfa;
+  border: 1px solid var(--game-border);
   border-radius: 22px;
   background: linear-gradient(180deg, #ffffff 0%, #fbfaff 100%);
-  box-shadow: 0 10px 30px rgba(105, 55, 216, 0.06);
+  box-shadow: 0 10px 30px rgba(32, 38, 54, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   overflow: hidden;
 }
 
+/* soft corner shape — no text ribbon */
 .game-card::before {
   content: "";
   position: absolute;
@@ -352,15 +348,22 @@ body {
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: #f1edff;
-  opacity: 0.85;
+  background: var(--game-bg);
+  opacity: 0.9;
   pointer-events: none;
+}
+
+/* kill any old PLAYABLE ribbon */
+.game-card::after,
+.game-card--playable::after {
+  content: none !important;
+  display: none !important;
 }
 
 .game-card--playable:hover {
   transform: translateY(-4px);
-  border-color: #d2c4f5;
-  box-shadow: 0 16px 40px rgba(105, 55, 216, 0.12);
+  border-color: var(--game-color);
+  box-shadow: 0 16px 40px rgba(32, 38, 54, 0.1);
 }
 
 .game-card-icon {
@@ -371,11 +374,11 @@ body {
   display: grid;
   place-items: center;
   border-radius: 14px;
-  background: #6937d8;
+  background: var(--game-color);
   color: #fff;
   font-size: 22px;
   line-height: 1;
-  box-shadow: 0 8px 18px rgba(105, 55, 216, 0.22);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--game-color) 35%, transparent);
   margin-bottom: 4px;
 }
 
@@ -386,8 +389,8 @@ body {
   margin-top: 12px;
   padding: 5px 9px;
   border-radius: 8px;
-  background: #f1edff;
-  color: #5e2fc8;
+  background: var(--game-tag-bg);
+  color: var(--game-tag-color);
   font-size: 9px;
   font-weight: 900;
   letter-spacing: 0.7px;
@@ -434,25 +437,31 @@ body {
   min-height: 44px;
   padding: 0 16px;
   border-radius: 12px;
-  background: #6937d8;
+  background: var(--game-color);
   color: #ffffff !important;
   text-decoration: none;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 850;
-  box-shadow: 0 8px 20px rgba(105, 55, 216, 0.2);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--game-color) 28%, transparent);
   transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
-.game-launch span { font-size: 16px; line-height: 1; }
-
-.game-launch:hover {
-  background: #5425b8;
-  transform: translateY(-1px);
-  box-shadow: 0 12px 26px rgba(105, 55, 216, 0.28);
+.game-launch span {
+  font-size: 16px;
+  line-height: 1;
 }
 
-.game-launch:visited { color: #ffffff !important; }
+.game-launch:hover {
+  background: var(--game-color-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px color-mix(in srgb, var(--game-color) 35%, transparent);
+}
 
+.game-launch:visited {
+  color: #ffffff !important;
+}
+
+/* Locked / coming soon */
 .game-card[aria-disabled="true"],
 .game-card:not(.game-card--playable) {
   border-color: #e7e9ef;
@@ -480,6 +489,15 @@ body {
 .game-card[aria-disabled="true"] h3,
 .game-card:not(.game-card--playable) h3 {
   color: #6d7587;
+}
+
+.coming-soon {
+  position: relative;
+  z-index: 1;
+  margin-top: 12px;
+  color: #929aaa;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 @media (max-width: 900px) {
