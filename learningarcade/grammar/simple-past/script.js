@@ -1414,51 +1414,64 @@
      ========================================================= */
 
   function startMode(key) {
-    modeKey = key;
+  modeKey = key;
 
-    if (key === "irr-match") {
-      startMatchRush();
-      return;
-    }
-
-    const mode = MODES[key];
-
-    if (!mode) {
-      return;
-    }
-
-    queue = [];
-
-    for (
-      let i = 0;
-      i < TOTAL;
-      i++
-    ) {
-      queue.push(
-        mode.build()
-      );
-    }
-
-    index = 0;
-    score = 0;
-    correct = 0;
-    wrong = 0;
-
-    if (modeLabel) {
-      modeLabel.textContent =
-        mode.label;
-    }
-
-    if (scoreEl) {
-      scoreEl.textContent =
-        "0";
-    }
-
-    show("play");
-
-    loadItem();
+  if (key === "irr-match") {
+    startMatchRush();
+    return;
   }
 
+  const mode = MODES[key];
+
+  if (!mode) {
+    return;
+  }
+
+  queue = [];
+
+  // WH-question modes: use unique items (no repeats in a round)
+  if (key === "ww3" || key === "reg2" || key === "irr2") {
+    const source =
+      key === "ww3"
+        ? WAS_WERE_WH
+        : key === "reg2"
+          ? REGULAR_WH
+          : IRREGULAR_WH;
+
+    const unique = shuffle(source.slice()).slice(0, TOTAL);
+
+    unique.forEach(function (item) {
+      queue.push({
+        type: "assemble",
+        hint: "Build the correct Wh- question",
+        prompt: "Put the chunks in the correct order.",
+        chunks: item.chunks.slice(),
+        displayChunks: shuffle(item.chunks.slice())
+      });
+    });
+  } else {
+    for (let i = 0; i < TOTAL; i++) {
+      queue.push(mode.build());
+    }
+  }
+
+  index = 0;
+  score = 0;
+  correct = 0;
+  wrong = 0;
+
+  if (modeLabel) {
+    modeLabel.textContent = mode.label;
+  }
+
+  if (scoreEl) {
+    scoreEl.textContent = "0";
+  }
+
+  show("play");
+
+  loadItem();
+}
   /* =========================================================
      LOAD ITEM
      ========================================================= */
