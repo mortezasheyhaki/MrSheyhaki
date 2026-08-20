@@ -6,6 +6,7 @@
 (function () {
   "use strict";
 
+
   /* =======================================================
      DATA
      ======================================================= */
@@ -43,8 +44,9 @@
   const TOTAL = PAIRS.length;
   const START_TIME = 90;
 
+
   /*
-    Swipe directions:
+    SWIPE DIRECTIONS
 
       UP    = HAVE
       LEFT  = DRINK
@@ -101,12 +103,16 @@
      ======================================================= */
 
   function shuffle(array) {
+
     const arr = array.slice();
 
     for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
 
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+      const j =
+        Math.floor(Math.random() * (i + 1));
+
+      [arr[i], arr[j]] =
+        [arr[j], arr[i]];
     }
 
     return arr;
@@ -119,16 +125,29 @@
 
   function startGame() {
 
+    /*
+      Clear previous timer.
+    */
+
     if (state && state.timer) {
       clearInterval(state.timer);
     }
 
+
+    /*
+      Create fresh game state.
+    */
+
     state = {
+
       score: 0,
+
       combo: 0,
+
       bestCombo: 0,
 
       correct: 0,
+
       attempts: 0,
 
       time: START_TIME,
@@ -143,24 +162,69 @@
 
       dragging: false,
 
+      answering: false,
+
       startX: 0,
+
       startY: 0,
 
       currentX: 0,
+
       currentY: 0
     };
 
-    startOverlay.classList.add("hidden");
-    endModal.classList.add("hidden");
+
+    /*
+      Show game.
+    */
+
+    if (startOverlay) {
+      startOverlay.classList.add("hidden");
+    }
+
+    if (endModal) {
+      endModal.classList.add("hidden");
+    }
+
+
+    /*
+      Make card playable again.
+    */
+
+    swipeCard.style.pointerEvents = "auto";
+
+    swipeCard.classList.remove(
+      "dragging",
+      "exit-up",
+      "exit-left",
+      "exit-right",
+      "swiping-up",
+      "swiping-left",
+      "swiping-right"
+    );
+
+
+    /*
+      Reset card.
+    */
 
     resetCard();
 
     updateHud();
 
-    state.timer = setInterval(tick, 1000);
 
-    statusEl.textContent =
-      "Game started. Swipe the word to the correct verb.";
+    /*
+      Start timer.
+    */
+
+    state.timer =
+      setInterval(tick, 1000);
+
+
+    if (statusEl) {
+      statusEl.textContent =
+        "Game started. Swipe the word to the correct verb.";
+    }
   }
 
 
@@ -168,48 +232,110 @@
      RESET CARD
      ======================================================= */
 
-function resetCard() {
+  function resetCard() {
 
-  if (!state || state.done) return;
-
-  const pair = state.questions[state.currentIndex];
-
-  if (!pair) {
-    finish(true);
-    return;
-  }
-
-  const item = pair[1];
-
-  wordEl.textContent = item.toUpperCase();
-
-  swipeCard.className = "swipe-card";
-
-  swipeCard.style.transform = "translate3d(0, 0, 0)";
-  swipeCard.style.opacity = "1";
-
-  clearTargetHighlights();
-
-  feedbackEl.textContent = "";
-  feedbackEl.className = "feedback";
-
-  swipeCard.animate(
-    [
-      {
-        opacity: 0,
-        transform: "translate3d(0, 25px, 0) scale(.95)"
-      },
-      {
-        opacity: 1,
-        transform: "translate3d(0, 0, 0) scale(1)"
-      }
-    ],
-    {
-      duration: 220,
-      easing: "ease-out"
+    if (!state || state.done) {
+      return;
     }
-  );
-}
+
+    const pair =
+      state.questions[state.currentIndex];
+
+
+    /*
+      No more questions.
+    */
+
+    if (!pair) {
+
+      finish(true);
+
+      return;
+    }
+
+
+    const item = pair[1];
+
+
+    /*
+      Set word.
+    */
+
+    wordEl.textContent =
+      item.toUpperCase();
+
+
+    /*
+      Reset card classes.
+    */
+
+    swipeCard.className =
+      "swipe-card";
+
+
+    /*
+      Reset inline styles.
+    */
+
+    swipeCard.style.transition = "";
+
+    swipeCard.style.transform =
+      "translate3d(0, 0, 0) rotate(0deg)";
+
+    swipeCard.style.opacity = "1";
+
+    swipeCard.style.pointerEvents = "auto";
+
+
+    /*
+      Reset highlights.
+    */
+
+    clearTargetHighlights();
+
+
+    /*
+      Reset feedback.
+    */
+
+    feedbackEl.textContent = "";
+
+    feedbackEl.className =
+      "feedback";
+
+
+    /*
+      Small entrance animation.
+    */
+
+    if (typeof swipeCard.animate === "function") {
+
+      swipeCard.animate(
+
+        [
+          {
+            opacity: 0,
+
+            transform:
+              "translate3d(0, 25px, 0) scale(.95)"
+          },
+
+          {
+            opacity: 1,
+
+            transform:
+              "translate3d(0, 0, 0) scale(1)"
+          }
+        ],
+
+        {
+          duration: 220,
+
+          easing: "ease-out"
+        }
+      );
+    }
+  }
 
 
   /* =======================================================
@@ -218,19 +344,30 @@ function resetCard() {
 
   function onPointerDown(e) {
 
-    if (!state || state.done || state.dragging) {
+    if (
+      !state ||
+      state.done ||
+      state.dragging ||
+      state.answering
+    ) {
       return;
     }
+
 
     /*
       Only accept primary mouse button.
     */
 
-    if (e.pointerType === "mouse" && e.button !== 0) {
+    if (
+      e.pointerType === "mouse" &&
+      e.button !== 0
+    ) {
       return;
     }
 
+
     e.preventDefault();
+
 
     state.dragging = true;
 
@@ -240,14 +377,29 @@ function resetCard() {
     state.currentX = e.clientX;
     state.currentY = e.clientY;
 
+
     swipeCard.classList.add("dragging");
 
+
+    /*
+      Capture pointer.
+    */
+
     try {
-      swipeCard.setPointerCapture(e.pointerId);
+
+      swipeCard.setPointerCapture(
+        e.pointerId
+      );
+
     } catch (_) {}
 
-    statusEl.textContent =
-      "Dragging " + wordEl.textContent;
+
+    if (statusEl) {
+
+      statusEl.textContent =
+        "Dragging " +
+        wordEl.textContent;
+    }
   }
 
 
@@ -257,23 +409,43 @@ function resetCard() {
 
   function onPointerMove(e) {
 
-    if (!state || !state.dragging || state.done) {
+    if (
+      !state ||
+      !state.dragging ||
+      state.done
+    ) {
       return;
     }
 
+
     e.preventDefault();
+
 
     state.currentX = e.clientX;
     state.currentY = e.clientY;
 
-    const dx = e.clientX - state.startX;
-    const dy = e.clientY - state.startY;
+
+    const dx =
+      e.clientX - state.startX;
+
+    const dy =
+      e.clientY - state.startY;
+
 
     /*
-      Move the card with the finger.
+      Rotate card according to horizontal movement.
     */
 
-    const rotation = dx * 0.06;
+    const rotation =
+      Math.max(
+        -18,
+        Math.min(18, dx * 0.06)
+      );
+
+
+    /*
+      Move card.
+    */
 
     swipeCard.style.transform =
       "translate3d(" +
@@ -284,8 +456,9 @@ function resetCard() {
       rotation +
       "deg)";
 
+
     /*
-      Show which target the user is approaching.
+      Highlight destination.
     */
 
     highlightDirection(dx, dy);
@@ -298,47 +471,93 @@ function resetCard() {
 
   function onPointerUp(e) {
 
-    if (!state || !state.dragging || state.done) {
+    if (
+      !state ||
+      !state.dragging ||
+      state.done
+    ) {
       return;
     }
 
+
     e.preventDefault();
+
 
     state.dragging = false;
 
-    const dx = e.clientX - state.startX;
-    const dy = e.clientY - state.startY;
 
-    swipeCard.classList.remove("dragging");
+    const dx =
+      e.clientX - state.startX;
+
+    const dy =
+      e.clientY - state.startY;
+
+
+    swipeCard.classList.remove(
+      "dragging"
+    );
+
+
+    /*
+      Release pointer capture.
+    */
 
     try {
-      swipeCard.releasePointerCapture(e.pointerId);
+
+      swipeCard.releasePointerCapture(
+        e.pointerId
+      );
+
     } catch (_) {}
+
+
+    /*
+      Remove target highlight.
+    */
 
     clearTargetHighlights();
 
-    /*
-      Ignore tiny movements.
 
-      This means a simple tap doesn't count
-      as an incorrect swipe.
+    /*
+      Calculate movement distance.
     */
 
-    const distance = Math.sqrt(
-      dx * dx + dy * dy
-    );
+    const distance =
+      Math.sqrt(
+        dx * dx +
+        dy * dy
+      );
+
+
+    /*
+      Tiny movement = tap.
+    */
 
     if (distance < 45) {
 
       returnCard();
 
-      statusEl.textContent =
-        "Swipe the word left, right, or up.";
+      if (statusEl) {
+
+        statusEl.textContent =
+          "Swipe the word left, right, or up.";
+      }
 
       return;
     }
 
-    const direction = getDirection(dx, dy);
+
+    /*
+      Determine direction.
+    */
+
+    const direction =
+      getDirection(dx, dy);
+
+
+    /*
+      Submit answer.
+    */
 
     attemptSwipe(direction);
   }
@@ -351,21 +570,30 @@ function resetCard() {
   function getDirection(dx, dy) {
 
     /*
-      If vertical movement is stronger,
-      it's either UP or DOWN.
-
-      We don't have a DOWN answer, so
-      DOWN will simply be treated as wrong.
+      Vertical movement is stronger.
     */
 
-    if (Math.abs(dy) > Math.abs(dx)) {
+    if (
+      Math.abs(dy) >
+      Math.abs(dx)
+    ) {
+
+      /*
+        Up = HAVE
+      */
 
       if (dy < 0) {
         return "up";
       }
 
+
+      /*
+        Down has no answer.
+      */
+
       return "down";
     }
+
 
     /*
       Horizontal movement.
@@ -385,32 +613,85 @@ function resetCard() {
 
   function highlightDirection(dx, dy) {
 
-function clearTargetHighlights() {
+    if (
+      !state ||
+      !state.dragging
+    ) {
+      return;
+    }
 
-  targetHave.classList.remove(
-    "active",
-    "correct",
-    "wrong"
-  );
 
-  targetDrink.classList.remove(
-    "active",
-    "correct",
-    "wrong"
-  );
+    /*
+      Remove previous highlights.
+    */
 
-  targetEat.classList.remove(
-    "active",
-    "correct",
-    "wrong"
-  );
+    clearTargetHighlights();
 
-  swipeCard.classList.remove(
-    "swiping-up",
-    "swiping-left",
-    "swiping-right"
-  );
-}
+
+    /*
+      Don't highlight tiny movements.
+    */
+
+    const distance =
+      Math.sqrt(
+        dx * dx +
+        dy * dy
+      );
+
+    if (distance < 30) {
+      return;
+    }
+
+
+    /*
+      Determine direction.
+    */
+
+    const direction =
+      getDirection(dx, dy);
+
+
+    /*
+      Highlight corresponding target.
+    */
+
+    const target =
+      getTargetForDirection(direction);
+
+
+    if (target) {
+
+      target.classList.add("active");
+    }
+
+
+    /*
+      Add direction class to card.
+    */
+
+    if (direction === "up") {
+
+      swipeCard.classList.add(
+        "swiping-up"
+      );
+
+    }
+
+    else if (direction === "left") {
+
+      swipeCard.classList.add(
+        "swiping-left"
+      );
+
+    }
+
+    else if (direction === "right") {
+
+      swipeCard.classList.add(
+        "swiping-right"
+      );
+    }
+  }
 
 
   /* =======================================================
@@ -419,13 +700,41 @@ function clearTargetHighlights() {
 
   function clearTargetHighlights() {
 
-    targetHave.classList.remove("active");
-    targetDrink.classList.remove("active");
-    targetEat.classList.remove("active");
+    if (targetHave) {
 
-    swipeCard.classList.remove("swiping-up");
-    swipeCard.classList.remove("swiping-left");
-    swipeCard.classList.remove("swiping-right");
+      targetHave.classList.remove(
+        "active",
+        "correct",
+        "wrong"
+      );
+    }
+
+
+    if (targetDrink) {
+
+      targetDrink.classList.remove(
+        "active",
+        "correct",
+        "wrong"
+      );
+    }
+
+
+    if (targetEat) {
+
+      targetEat.classList.remove(
+        "active",
+        "correct",
+        "wrong"
+      );
+    }
+
+
+    swipeCard.classList.remove(
+      "swiping-up",
+      "swiping-left",
+      "swiping-right"
+    );
   }
 
 
@@ -435,31 +744,43 @@ function clearTargetHighlights() {
 
   function attemptSwipe(direction) {
 
-    if (!state || state.done) {
+    if (
+      !state ||
+      state.done ||
+      state.answering
+    ) {
       return;
     }
 
+
     state.attempts++;
+
 
     const pair =
       state.questions[state.currentIndex];
+
 
     if (!pair) {
       return;
     }
 
-    const correctVerb = pair[0];
+
+    const correctVerb =
+      pair[0];
+
 
     const selectedVerb =
-      DIRECTION_TO_VERB[direction] || null;
+      DIRECTION_TO_VERB[direction] ||
+      null;
+
 
     const isCorrect =
       selectedVerb === correctVerb;
 
 
-    /* -------------------------------------------------------
-       CORRECT
-       ------------------------------------------------------- */
+    /*
+      Correct.
+    */
 
     if (isCorrect) {
 
@@ -469,11 +790,14 @@ function clearTargetHighlights() {
     }
 
 
-    /* -------------------------------------------------------
-       WRONG
-       ------------------------------------------------------- */
+    /*
+      Wrong.
+    */
 
-    handleWrong(direction, correctVerb);
+    handleWrong(
+      direction,
+      correctVerb
+    );
   }
 
 
@@ -487,35 +811,58 @@ function clearTargetHighlights() {
 
     state.combo++;
 
-    state.bestCombo = Math.max(
-      state.bestCombo,
-      state.combo
-    );
+
+    state.bestCombo =
+      Math.max(
+        state.bestCombo,
+        state.combo
+      );
+
 
     /*
-      Base points:
-      15 points
+      Base points = 15
 
       Combo bonus:
-      +3 for each combo after the first.
+      +3 for each combo after first.
     */
 
     const points =
       15 +
-      Math.max(0, state.combo - 1) * 3;
+      Math.max(
+        0,
+        state.combo - 1
+      ) * 3;
+
 
     state.score += points;
 
 
     /*
-      Highlight correct target.
+      Lock answer while animation plays.
+    */
+
+    state.answering = true;
+
+
+    /*
+      Correct target.
     */
 
     const target =
-      getTargetForDirection(direction);
+      getTargetForDirection(
+        direction
+      );
+
 
     if (target) {
-      target.classList.add("correct");
+
+      target.classList.remove(
+        "active"
+      );
+
+      target.classList.add(
+        "correct"
+      );
     }
 
 
@@ -530,19 +877,30 @@ function clearTargetHighlights() {
       "feedback show correct";
 
 
-    statusEl.textContent =
-      "Correct! " +
-      wordEl.textContent +
-      " goes with " +
-      DIRECTION_TO_VERB[direction] +
-      ".";
+    /*
+      Status.
+    */
 
+    if (statusEl) {
+
+      statusEl.textContent =
+        "Correct! " +
+        wordEl.textContent +
+        " goes with " +
+        DIRECTION_TO_VERB[direction] +
+        ".";
+    }
+
+
+    /*
+      Update HUD.
+    */
 
     updateHud();
 
 
     /*
-      Send card away in the correct direction.
+      Send card away.
     */
 
     swipeCard.classList.add(
@@ -551,23 +909,35 @@ function clearTargetHighlights() {
 
 
     /*
-      Move to next question.
+      Next card.
     */
 
-    setTimeout(() => {
+    setTimeout(function () {
 
       if (!state || state.done) {
         return;
       }
 
+
       state.currentIndex++;
 
-      if (state.currentIndex >= TOTAL) {
+
+      /*
+        All questions completed.
+      */
+
+      if (
+        state.currentIndex >=
+        TOTAL
+      ) {
 
         finish(true);
 
         return;
       }
+
+
+      state.answering = false;
 
       resetCard();
 
@@ -579,22 +949,33 @@ function clearTargetHighlights() {
      WRONG ANSWER
      ======================================================= */
 
-  function handleWrong(direction, correctVerb) {
+  function handleWrong(
+    direction,
+    correctVerb
+  ) {
 
     state.combo = 0;
 
-    updateHud();
-
 
     /*
-      Highlight the selected target red.
+      Highlight selected target.
     */
 
     const selectedTarget =
-      getTargetForDirection(direction);
+      getTargetForDirection(
+        direction
+      );
+
 
     if (selectedTarget) {
-      selectedTarget.classList.add("wrong");
+
+      selectedTarget.classList.remove(
+        "active"
+      );
+
+      selectedTarget.classList.add(
+        "wrong"
+      );
     }
 
 
@@ -609,12 +990,26 @@ function clearTargetHighlights() {
       "feedback show wrong";
 
 
-    statusEl.textContent =
-      "Wrong direction. Try again.";
+    /*
+      Status.
+    */
+
+    if (statusEl) {
+
+      statusEl.textContent =
+        "Wrong direction. Try again.";
+    }
 
 
     /*
-      Return the card to the center.
+      Update HUD.
+    */
+
+    updateHud();
+
+
+    /*
+      Return card.
     */
 
     returnCard();
@@ -627,23 +1022,30 @@ function clearTargetHighlights() {
 
   function returnCard() {
 
+    if (!swipeCard) {
+      return;
+    }
+
+
     swipeCard.classList.remove(
       "swiping-up",
       "swiping-left",
-      "swiping-right"
+      "swiping-right",
+      "exit-up",
+      "exit-left",
+      "exit-right"
     );
+
 
     swipeCard.style.transition =
       "transform 0.3s ease";
 
+
     swipeCard.style.transform =
       "translate3d(0, 0, 0) rotate(0deg)";
 
-    setTimeout(() => {
 
-      if (!swipeCard) {
-        return;
-      }
+    setTimeout(function () {
 
       swipeCard.style.transition = "";
 
@@ -657,19 +1059,24 @@ function clearTargetHighlights() {
      GET TARGET
      ======================================================= */
 
-  function getTargetForDirection(direction) {
+  function getTargetForDirection(
+    direction
+  ) {
 
     if (direction === "up") {
       return targetHave;
     }
 
+
     if (direction === "left") {
       return targetDrink;
     }
 
+
     if (direction === "right") {
       return targetEat;
     }
+
 
     return null;
   }
@@ -681,15 +1088,22 @@ function clearTargetHighlights() {
 
   function tick() {
 
-    if (!state || state.done) {
+    if (
+      !state ||
+      state.done
+    ) {
       return;
     }
 
+
     state.time--;
+
 
     updateHud();
 
+
     if (state.time <= 0) {
+
       finish(false);
     }
   }
@@ -705,17 +1119,28 @@ function clearTargetHighlights() {
       return;
     }
 
+
     scoreEl.textContent =
       state.score;
+
 
     comboEl.textContent =
       state.combo + "x";
 
+
     timerEl.textContent =
-      Math.max(0, state.time);
+      Math.max(
+        0,
+        state.time
+      );
+
 
     progressFill.style.width =
-      (state.correct / TOTAL) * 100 + "%";
+      (
+        state.correct /
+        TOTAL *
+        100
+      ) + "%";
   }
 
 
@@ -725,42 +1150,82 @@ function clearTargetHighlights() {
 
   function finish(won) {
 
-    if (!state || state.done) {
+    if (
+      !state ||
+      state.done
+    ) {
       return;
     }
 
+
     state.done = true;
 
+    state.dragging = false;
+
+    state.answering = false;
+
+
+    /*
+      Stop timer.
+    */
+
     if (state.timer) {
-      clearInterval(state.timer);
+
+      clearInterval(
+        state.timer
+      );
+
       state.timer = null;
     }
 
-    swipeCard.style.pointerEvents = "none";
 
     /*
-      Final results.
+      Disable card.
+    */
+
+    swipeCard.style.pointerEvents =
+      "none";
+
+
+    /*
+      Final score.
     */
 
     $("finalScore").textContent =
       state.score;
 
+
+    /*
+      Accuracy.
+    */
+
     const accuracy =
       state.attempts > 0
+
         ? Math.round(
-            (state.correct / state.attempts) * 100
+            (
+              state.correct /
+              state.attempts
+            ) * 100
           )
+
         : 0;
+
 
     $("accuracy").textContent =
       accuracy + "%";
+
+
+    /*
+      Best combo.
+    */
 
     $("bestCombo").textContent =
       state.bestCombo + "x";
 
 
     /*
-      End message.
+      End title.
     */
 
     $("endTitle").textContent =
@@ -768,16 +1233,28 @@ function clearTargetHighlights() {
         ? "Excellent!"
         : "Time's up!";
 
+
+    /*
+      End message.
+    */
+
     $("endMessage").textContent =
       won
+
         ? "You matched all " +
           TOTAL +
           " food combinations."
+
         : "You matched " +
           state.correct +
           " of " +
           TOTAL +
           ".";
+
+
+    /*
+      Result icon.
+    */
 
     $("resultIcon").textContent =
       won
@@ -785,12 +1262,26 @@ function clearTargetHighlights() {
         : "⏱️";
 
 
-    endModal.classList.remove("hidden");
+    /*
+      Show modal.
+    */
 
-    statusEl.textContent =
-      won
-        ? "Game complete."
-        : "Time is up.";
+    endModal.classList.remove(
+      "hidden"
+    );
+
+
+    /*
+      Status.
+    */
+
+    if (statusEl) {
+
+      statusEl.textContent =
+        won
+          ? "Game complete."
+          : "Time is up.";
+    }
   }
 
 
@@ -802,19 +1293,30 @@ function clearTargetHighlights() {
 
     document.documentElement.setAttribute(
       "data-theme",
-      dark ? "dark" : "light"
+      dark
+        ? "dark"
+        : "light"
     );
 
+
     if (themeBtn) {
+
       themeBtn.textContent =
-        dark ? "☀️" : "🌙";
+        dark
+          ? "☀️"
+          : "🌙";
     }
 
+
     try {
+
       localStorage.setItem(
         "fvm-theme",
-        dark ? "dark" : "light"
+        dark
+          ? "dark"
+          : "light"
       );
+
     } catch (_) {}
   }
 
@@ -834,7 +1336,10 @@ function clearTargetHighlights() {
             "data-theme"
           ) === "dark";
 
-        applyTheme(!isDark);
+
+        applyTheme(
+          !isDark
+        );
       }
     );
   }
@@ -847,9 +1352,14 @@ function clearTargetHighlights() {
   try {
 
     const savedTheme =
-      localStorage.getItem("fvm-theme");
+      localStorage.getItem(
+        "fvm-theme"
+      );
 
-    applyTheme(savedTheme === "dark");
+
+    applyTheme(
+      savedTheme === "dark"
+    );
 
   } catch (_) {
 
@@ -861,87 +1371,125 @@ function clearTargetHighlights() {
      BUTTONS
      ======================================================= */
 
-  startBtn.addEventListener(
-    "click",
-    startGame
-  );
+  if (startBtn) {
 
-  playAgainBtn.addEventListener(
-    "click",
-    startGame
-  );
+    startBtn.addEventListener(
+      "click",
+      startGame
+    );
+  }
+
+
+  if (playAgainBtn) {
+
+    playAgainBtn.addEventListener(
+      "click",
+      startGame
+    );
+  }
 
 
   /* =======================================================
      POINTER EVENTS
      ======================================================= */
 
-  swipeCard.addEventListener(
-    "pointerdown",
-    onPointerDown
-  );
+  if (swipeCard) {
 
-  swipeCard.addEventListener(
-    "pointermove",
-    onPointerMove
-  );
+    swipeCard.addEventListener(
+      "pointerdown",
+      onPointerDown
+    );
 
-  swipeCard.addEventListener(
-    "pointerup",
-    onPointerUp
-  );
 
-  swipeCard.addEventListener(
-    "pointercancel",
-    function () {
+    swipeCard.addEventListener(
+      "pointermove",
+      onPointerMove
+    );
 
-      if (!state || !state.dragging) {
-        return;
+
+    swipeCard.addEventListener(
+      "pointerup",
+      onPointerUp
+    );
+
+
+    swipeCard.addEventListener(
+      "pointercancel",
+      function () {
+
+        if (
+          !state ||
+          !state.dragging
+        ) {
+          return;
+        }
+
+
+        state.dragging = false;
+
+
+        swipeCard.classList.remove(
+          "dragging"
+        );
+
+
+        clearTargetHighlights();
+
+        returnCard();
       }
-
-      state.dragging = false;
-
-      swipeCard.classList.remove("dragging");
-
-      returnCard();
-    }
-  );
+    );
 
 
-  /* =======================================================
-     KEYBOARD SUPPORT
-     ======================================================= */
+    /* =====================================================
+       KEYBOARD SUPPORT
+       ===================================================== */
 
-  swipeCard.addEventListener(
-    "keydown",
-    function (e) {
+    swipeCard.addEventListener(
+      "keydown",
+      function (e) {
 
-      if (!state || state.done) {
-        return;
+        if (
+          !state ||
+          state.done ||
+          state.answering
+        ) {
+          return;
+        }
+
+
+        if (
+          e.key === "ArrowUp"
+        ) {
+
+          e.preventDefault();
+
+          attemptSwipe("up");
+
+        }
+
+
+        else if (
+          e.key === "ArrowLeft"
+        ) {
+
+          e.preventDefault();
+
+          attemptSwipe("left");
+
+        }
+
+
+        else if (
+          e.key === "ArrowRight"
+        ) {
+
+          e.preventDefault();
+
+          attemptSwipe("right");
+        }
       }
-
-      if (e.key === "ArrowUp") {
-
-        e.preventDefault();
-        attemptSwipe("up");
-
-      }
-
-      else if (e.key === "ArrowLeft") {
-
-        e.preventDefault();
-        attemptSwipe("left");
-
-      }
-
-      else if (e.key === "ArrowRight") {
-
-        e.preventDefault();
-        attemptSwipe("right");
-
-      }
-    }
-  );
+    );
+  }
 
 
   /* =======================================================
@@ -949,12 +1497,16 @@ function clearTargetHighlights() {
      ======================================================= */
 
   /*
-    The game starts on the start screen.
-    No timer runs until Start Game is pressed.
+    Game starts on start screen.
+    Timer does not run until Start Game.
   */
 
   if (startOverlay) {
-    startOverlay.classList.remove("hidden");
+
+    startOverlay.classList.remove(
+      "hidden"
+    );
   }
+
 
 })();
