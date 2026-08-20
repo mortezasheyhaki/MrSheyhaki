@@ -294,8 +294,6 @@
 
   /* =========================================================
      THERE WAS / THERE WERE — LEVEL 2
-
-     Fixed A1 hotel / house / apartment questions.
      ========================================================= */
 
   function qThereWasWere() {
@@ -400,9 +398,6 @@
   /* =========================================================
      WAS / WERE — LEVEL 3
      SENTENCE ASSEMBLY
-
-     Fixed questions.
-     Chunks are shuffled when displayed.
      ========================================================= */
 
   const WAS_WERE_WH = [
@@ -562,7 +557,8 @@
       type: "assemble",
       hint: "Build the correct Wh- question",
       prompt: "Put the chunks in the correct order.",
-      chunks: shuffle(item.chunks)
+      chunks: item.chunks.slice(),
+      displayChunks: shuffle(item.chunks.slice())
     };
   }
 
@@ -835,7 +831,8 @@
       type: "assemble",
       hint: "Build the correct Wh- question",
       prompt: "Put the chunks in the correct order.",
-      chunks: shuffle(item.chunks)
+      chunks: item.chunks.slice(),
+      displayChunks: shuffle(item.chunks.slice())
     };
   }
 
@@ -1162,8 +1159,8 @@
         "Build the correct Wh- question",
       prompt:
         "Put the chunks in the correct order.",
-      chunks:
-        shuffle(item.chunks)
+      chunks: item.chunks.slice(),
+      displayChunks: shuffle(item.chunks.slice())
     };
   }
 
@@ -1698,23 +1695,19 @@
     );
 
     assemblySelected = [];
-    assemblyAvailable =
-      item.chunks.map(
-        function (chunk, i) {
-          return {
-            id: i,
-            text: chunk
-          };
-        }
-      );
 
-    assemblyAnswer =
-      item.chunks.slice();
+    // Use the shuffled copy for the chips the player can tap
+    const display = item.displayChunks || item.chunks;
 
-    /*
-      Create a dedicated assembly layout
-      inside the existing choicesArea.
-    */
+    assemblyAvailable = display.map(function (chunk, i) {
+      return {
+        id: i,
+        text: chunk
+      };
+    });
+
+    // Always keep the original correct order
+    assemblyAnswer = item.chunks.slice();
 
     const wrapper =
       document.createElement(
@@ -2644,7 +2637,7 @@
 
     const rightChips =
       Array.from(
-        matchRight.querySelectorAll(
+      matchRight.querySelectorAll(
           ".match-chip:not(.matched)"
         )
       );
@@ -3018,10 +3011,6 @@
         li.addEventListener(
           "click",
           function (event) {
-            /*
-              Don't intercept the actual
-              Match Rush link.
-            */
             if (
               event.target.closest(
                 "a"
