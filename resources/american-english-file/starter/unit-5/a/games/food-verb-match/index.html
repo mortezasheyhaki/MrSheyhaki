@@ -2,71 +2,270 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#2a1848">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#f5f7fb">
+
   <title>Food Verb Match | Unit 5A | Mr. Sheyhaki</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="frame">
-    <div class="panel" id="app">
-      <div class="topbar">
-        <a class="back-pill" href="../">← Unit 5A</a>
-        <p class="top-title">Food Verb Match</p>
-        <button type="button" class="icon-btn" id="themeBtn" aria-label="Theme">🌙</button>
+
+  <div class="game" id="app">
+
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
+
+    <header class="top-bar">
+
+      <div class="top-item">
+        <span class="top-label">Score</span>
+        <span class="top-value" id="score">0</span>
       </div>
 
-      <section class="screen" id="homeScreen">
-        <div class="home-inner">
-          <div class="home-badge">UNIT 5A · VOCABULARY</div>
-          <h1>Food Verb Match</h1>
-          <p class="lead">Match <strong>eat</strong>, <strong>drink</strong> and <strong>have</strong> with the right food, drink or meal. Build combos for bonus points!</p>
-          <button type="button" class="primary" id="startBtn">Start Game</button>
-        </div>
-      </section>
-
-      <section class="screen game-screen hidden" id="gameScreen">
-        <div class="stats">
-          <div class="stat"><span>SCORE</span><strong id="score">0</strong></div>
-          <div class="stat"><span>TIMER</span><strong id="timer">90</strong></div>
-          <div class="stat"><span>COMBO</span><strong id="combo">0x</strong></div>
-        </div>
-
-        <div class="progress-line">
-          <span id="progressLabel">0 / 25</span>
-          <div class="track"><div class="fill" id="progressFill"></div></div>
-        </div>
-
-        <div class="board">
-          <div class="col">
-            <h2>VERBS</h2>
-            <div class="cards" id="verbColumn"></div>
-          </div>
-          <div class="col">
-            <h2>FOOD / DRINKS / MEALS</h2>
-            <div class="cards" id="itemColumn"></div>
-          </div>
-        </div>
-
-        <p class="hint" id="helper">Tap a verb, then an item — or drag to match.</p>
-        <p class="sr-only" id="status" aria-live="polite"></p>
-      </section>
-
-      <div class="modal hidden" id="endModal">
-        <div class="modal-card">
-          <div class="modal-icon" id="resultIcon">🏆</div>
-          <h2 id="endTitle">Excellent!</h2>
-          <p id="endMessage"></p>
-          <div class="result-row">
-            <div><span>Score</span><strong id="finalScore">0</strong></div>
-            <div><span>Accuracy</span><strong id="accuracy">0%</strong></div>
-            <div><span>Best Combo</span><strong id="bestCombo">0x</strong></div>
-          </div>
-          <button type="button" class="primary" id="playAgain">Play Again</button>
-        </div>
+      <div class="top-item">
+        <span class="top-label">Time</span>
+        <span class="top-value" id="timer">90</span>
       </div>
+
+      <div class="top-item">
+        <span class="top-label">Combo</span>
+        <span class="top-value" id="combo">0x</span>
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         PROGRESS
+         ===================================================== -->
+
+    <div class="progress-wrap">
+      <div
+        class="progress-bar"
+        id="progressFill"
+        style="width: 0%;"
+      ></div>
     </div>
+
+
+    <!-- =====================================================
+         GAME
+         ===================================================== -->
+
+    <main class="swipe-area" id="gameScreen">
+
+      <!-- -----------------------------------------------
+           THREE TARGETS
+           ----------------------------------------------- -->
+
+      <div class="targets">
+
+        <!-- UP -->
+        <div
+          class="target target-have"
+          id="targetHave"
+          data-answer="have"
+        >
+          HAVE
+        </div>
+
+        <!-- LEFT -->
+        <div
+          class="target target-drink"
+          id="targetDrink"
+          data-answer="drink"
+        >
+          DRINK
+        </div>
+
+        <!-- RIGHT -->
+        <div
+          class="target target-eat"
+          id="targetEat"
+          data-answer="eat"
+        >
+          EAT
+        </div>
+
+      </div>
+
+
+      <!-- -----------------------------------------------
+           CARD AREA
+           ----------------------------------------------- -->
+
+      <div class="card-area" id="cardArea">
+
+        <div
+          class="swipe-card"
+          id="swipeCard"
+          role="button"
+          tabindex="0"
+          aria-label="Swipe this word to the correct verb"
+        >
+          <span class="word" id="word">
+            APPLE
+          </span>
+        </div>
+
+        <!-- Swipe direction hints -->
+
+        <div class="swipe-hints">
+
+          <div class="swipe-hint">
+            ← DRINK
+          </div>
+
+          <div class="swipe-hint">
+            ↑ HAVE
+          </div>
+
+          <div class="swipe-hint">
+            EAT →
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- -----------------------------------------------
+           FEEDBACK
+           ----------------------------------------------- -->
+
+      <p
+        class="feedback"
+        id="feedback"
+        aria-live="polite"
+      ></p>
+
+
+      <!-- Screen-reader status -->
+
+      <p
+        class="sr-only"
+        id="status"
+        aria-live="polite"
+      ></p>
+
+    </main>
+
+
+    <!-- =====================================================
+         START SCREEN
+         ===================================================== -->
+
+    <div class="overlay" id="startOverlay">
+
+      <div class="overlay-content">
+
+        <div class="overlay-title">
+          Food Verb Match
+        </div>
+
+        <p class="overlay-text">
+          Swipe each word to the correct verb.
+          <br><br>
+
+          <strong>↑ HAVE</strong>
+          &nbsp;&nbsp;
+          <strong>← DRINK</strong>
+          &nbsp;&nbsp;
+          <strong>EAT →</strong>
+        </p>
+
+        <button
+          type="button"
+          class="start-button"
+          id="startBtn"
+        >
+          Start Game
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         END SCREEN
+         ===================================================== -->
+
+    <div
+      class="overlay hidden"
+      id="endModal"
+    >
+
+      <div class="overlay-content">
+
+        <div
+          class="overlay-title"
+          id="resultIcon"
+        >
+          🏆
+        </div>
+
+        <h2 id="endTitle">
+          Excellent!
+        </h2>
+
+        <p
+          class="overlay-text"
+          id="endMessage"
+        >
+          Great job!
+        </p>
+
+
+        <!-- Results -->
+
+        <div class="result-row">
+
+          <div>
+            <span>Score</span>
+            <strong id="finalScore">0</strong>
+          </div>
+
+          <div>
+            <span>Accuracy</span>
+            <strong id="accuracy">0%</strong>
+          </div>
+
+          <div>
+            <span>Best Combo</span>
+            <strong id="bestCombo">0x</strong>
+          </div>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="start-button"
+          id="playAgain"
+        >
+          Play Again
+        </button>
+
+      </div>
+
+    </div>
+
   </div>
+
+
+  <!-- =====================================================
+       JAVASCRIPT
+       ===================================================== -->
+
   <script src="script.js"></script>
+
 </body>
 </html>
