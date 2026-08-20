@@ -3982,38 +3982,8 @@ function testFutureModulesAccessibility() {
  * testFutureModulesAccessibility();
  */
 /* =====================================================
-   DRAG REORDERING INSIDE SENTENCE AREA
+   DRAG REORDERING INSIDE SENTENCE AREA (Improved)
 ===================================================== */
-
-function enableSentenceReordering() {
-  const built = document.getElementById("builtSentence") || 
-                document.querySelector(".built-sentence") ||
-                document.querySelector(".answer-slots");
-
-  if (!built) return;
-
-  // Allow dropping on the sentence container
-  built.addEventListener("dragover", function (e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-  });
-
-  built.addEventListener("drop", function (e) {
-    e.preventDefault();
-
-    const dragged = window._dragChip;
-    if (!dragged || !built.contains(dragged)) return;
-
-    // Find the chip we are hovering over
-    const afterElement = getDragAfterElement(built, e.clientX);
-
-    if (afterElement == null) {
-      built.appendChild(dragged);
-    } else {
-      built.insertBefore(dragged, afterElement);
-    }
-  });
-}
 
 function getDragAfterElement(container, x) {
   const chips = [...container.querySelectorAll(".built-chip:not(.dragging), .word-chip:not(.dragging)")];
@@ -4030,11 +4000,39 @@ function getDragAfterElement(container, x) {
   }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
-// Run it when the page is ready
-document.addEventListener("DOMContentLoaded", enableSentenceReordering);
+function enableSentenceReordering() {
+  // Use event delegation on the whole game screen
+  const gameScreen = document.getElementById("gameScreen") || document.body;
 
-// Also run it every time a new question is rendered
-const originalRender = window.renderBuild || window.renderQuestion;
-if (typeof originalRender === "function") {
-  // optional safety
+  gameScreen.addEventListener("dragover", function (e) {
+    const built = e.target.closest(".built-sentence") || e.target.closest(".answer-slots");
+    if (!built) return;
+
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  });
+
+  gameScreen.addEventListener("drop", function (e) {
+    const built = e.target.closest(".built-sentence") || e.target.closest(".answer-slots");
+    if (!built) return;
+
+    e.preventDefault();
+
+    const dragged = window._dragChip;
+    if (!dragged) return;
+
+    // Only reorder if the chip is already inside the sentence area
+    if (!built.contains(dragged)) return;
+
+    const afterElement = getDragAfterElement(built, e.clientX);
+
+    if (afterElement == null) {
+      built.appendChild(dragged);
+    } else {
+      built.insertBefore(dragged, afterElement);
+    }
+  });
 }
+
+// Run once
+enableSentenceReordering();
