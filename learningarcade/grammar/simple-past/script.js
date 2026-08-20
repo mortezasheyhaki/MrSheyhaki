@@ -4,9 +4,7 @@
 
   const TOTAL = 10;
 
-  /* =========================================================
-     VERB BANKS
-     ========================================================= */
+  /* ---------- DATA ---------- */
 
   const REGULAR = [
     ["answer", "answered"],
@@ -118,9 +116,7 @@
     ["understand", "understood"]
   ];
 
-  /* =========================================================
-     PRONUNCIATION
-     ========================================================= */
+  /* ---------- PRONUNCIATION ---------- */
 
   const SOUND_T = [
     "asked",
@@ -179,652 +175,14 @@
     "wanted"
   ];
 
-  /* =========================================================
-     A1 SENTENCE BANKS
-     ========================================================= */
-
-  /*
-    These sentence templates are connected to the verb.
-    This prevents unnatural combinations such as:
-    "I slept home."
-  */
-
-  const REGULAR_SENTENCES = {
-    answer: [
-      "I answered the question.",
-      "She answered the teacher.",
-      "He answered my question."
-    ],
-
-    arrive: [
-      "I arrived at school at eight.",
-      "She arrived home late.",
-      "They arrived at the hotel."
-    ],
-
-    ask: [
-      "I asked the teacher a question.",
-      "She asked me a question.",
-      "He asked for help."
-    ],
-
-    book: [
-      "We booked a hotel.",
-      "I booked a room.",
-      "They booked a trip."
-    ],
-
-    call: [
-      "I called my mother.",
-      "She called me last night.",
-      "He called his friend."
-    ],
-
-    carry: [
-      "I carried the bags.",
-      "She carried her books.",
-      "He carried a big box."
-    ],
-
-    change: [
-      "I changed my clothes.",
-      "She changed her plans.",
-      "He changed his shirt."
-    ],
-
-    "check in": [
-      "We checked in at the hotel.",
-      "I checked in at the airport.",
-      "They checked in at two."
-    ],
-
-    clean: [
-      "I cleaned my room.",
-      "She cleaned the kitchen.",
-      "We cleaned the house."
-    ],
-
-    close: [
-      "I closed the door.",
-      "She closed the window.",
-      "He closed the book."
-    ],
-
-    cook: [
-      "I cooked dinner.",
-      "She cooked some rice.",
-      "He cooked breakfast."
-    ],
-
-    cry: [
-      "The baby cried.",
-      "She cried after the movie.",
-      "The child cried."
-    ],
-
-    decide: [
-      "I decided to stay home.",
-      "We decided to go.",
-      "She decided to buy it."
-    ],
-
-    finish: [
-      "I finished my homework.",
-      "She finished her work.",
-      "We finished the lesson."
-    ],
-
-    hate: [
-      "I hated the food.",
-      "She hated the movie.",
-      "He hated the cold weather."
-    ],
-
-    help: [
-      "I helped my mother.",
-      "She helped her friend.",
-      "We helped the teacher."
-    ],
-
-    invite: [
-      "I invited my friend.",
-      "She invited us to dinner.",
-      "They invited Tom."
-    ],
-
-    learn: [
-      "I learned English.",
-      "She learned a new word.",
-      "We learned a lot."
-    ],
-
-    like: [
-      "I liked the movie.",
-      "She liked the food.",
-      "They liked the party."
-    ],
-
-    listen: [
-      "I listened to music.",
-      "She listened to the teacher.",
-      "We listened to the radio."
-    ],
-
-    live: [
-      "I lived in Tehran.",
-      "She lived with her parents.",
-      "They lived in a small house."
-    ],
-
-    look: [
-      "I looked at the picture.",
-      "She looked at me.",
-      "He looked outside."
-    ],
-
-    love: [
-      "I loved the movie.",
-      "She loved the food.",
-      "They loved the party."
-    ],
-
-    miss: [
-      "I missed the bus.",
-      "She missed the train.",
-      "He missed his family."
-    ],
-
-    move: [
-      "I moved to a new house.",
-      "She moved to another city.",
-      "They moved last year."
-    ],
-
-    need: [
-      "I needed some help.",
-      "She needed a pen.",
-      "We needed more time."
-    ],
-
-    offer: [
-      "He offered me some coffee.",
-      "She offered to help.",
-      "They offered me a job."
-    ],
-
-    open: [
-      "I opened the door.",
-      "She opened the window.",
-      "He opened the box."
-    ],
-
-    pack: [
-      "I packed my bag.",
-      "She packed her clothes.",
-      "We packed our bags."
-    ],
-
-    paint: [
-      "I painted the room.",
-      "She painted the wall.",
-      "They painted the house."
-    ],
-
-    park: [
-      "I parked the car.",
-      "She parked near the school.",
-      "He parked outside."
-    ],
-
-    pass: [
-      "I passed the test.",
-      "She passed her exam.",
-      "He passed the ball."
-    ],
-
-    play: [
-      "I played soccer.",
-      "She played tennis.",
-      "We played a game."
-    ],
-
-    rain: [
-      "It rained yesterday.",
-      "It rained all day.",
-      "It rained in the morning."
-    ],
-
-    relax: [
-      "I relaxed at home.",
-      "She relaxed after work.",
-      "We relaxed at the beach."
-    ],
-
-    rent: [
-      "We rented a car.",
-      "I rented a small apartment.",
-      "They rented a house."
-    ],
-
-    snow: [
-      "It snowed yesterday.",
-      "It snowed last night.",
-      "It snowed in the morning."
-    ],
-
-    start: [
-      "I started work at eight.",
-      "The movie started at nine.",
-      "She started a new job."
-    ],
-
-    stay: [
-      "I stayed home.",
-      "She stayed at a hotel.",
-      "We stayed with our friends."
-    ],
-
-    stop: [
-      "The bus stopped here.",
-      "I stopped the car.",
-      "She stopped working."
-    ],
-
-    study: [
-      "I studied English.",
-      "She studied for the test.",
-      "We studied together."
-    ],
-
-    talk: [
-      "I talked to my friend.",
-      "She talked to the teacher.",
-      "We talked about the movie."
-    ],
-
-    travel: [
-      "I traveled to Turkey.",
-      "She traveled with her family.",
-      "We traveled by train."
-    ],
-
-    turn: [
-      "I turned left.",
-      "She turned the TV off.",
-      "He turned the light on."
-    ],
-
-    use: [
-      "I used my phone.",
-      "She used a computer.",
-      "We used the new book."
-    ],
-
-    wait: [
-      "I waited for the bus.",
-      "She waited for me.",
-      "We waited outside."
-    ],
-
-    walk: [
-      "I walked to school.",
-      "She walked home.",
-      "We walked in the park."
-    ],
-
-    want: [
-      "I wanted some water.",
-      "She wanted a new phone.",
-      "They wanted to go home."
-    ],
-
-    wash: [
-      "I washed my hands.",
-      "She washed the dishes.",
-      "He washed his car."
-    ],
-
-    watch: [
-      "I watched TV.",
-      "She watched a movie.",
-      "We watched the game."
-    ],
-
-    work: [
-      "I worked yesterday.",
-      "She worked at a hotel.",
-      "They worked all day."
-    ]
-  };
-
-  const IRREGULAR_SENTENCES = {
-    buy: [
-      "I bought some bread.",
-      "She bought a new bag.",
-      "We bought some food."
-    ],
-
-    do: [
-      "I did my homework.",
-      "She did the work.",
-      "We did the exercise."
-    ],
-
-    get: [
-      "I got home at six.",
-      "She got a new phone.",
-      "We got some food."
-    ],
-
-    go: [
-      "I went to school.",
-      "She went home.",
-      "They went to the park."
-    ],
-
-    have: [
-      "I had breakfast.",
-      "She had a good day.",
-      "We had dinner together."
-    ],
-
-    leave: [
-      "I left home at eight.",
-      "She left the office early.",
-      "They left the hotel."
-    ],
-
-    say: [
-      "I said hello.",
-      "She said my name.",
-      "He said thank you."
-    ],
-
-    see: [
-      "I saw my friend.",
-      "She saw a dog.",
-      "We saw a movie."
-    ],
-
-    send: [
-      "I sent an email.",
-      "She sent me a message.",
-      "He sent a photo."
-    ],
-
-    sit: [
-      "I sat on the chair.",
-      "She sat next to me.",
-      "We sat outside."
-    ],
-
-    tell: [
-      "I told him the story.",
-      "She told me the answer.",
-      "He told us the news."
-    ],
-
-    write: [
-      "I wrote an email.",
-      "She wrote a letter.",
-      "He wrote his name."
-    ],
-
-    come: [
-      "I came home early.",
-      "She came to my house.",
-      "They came to the party."
-    ],
-
-    drink: [
-      "I drank some water.",
-      "She drank coffee.",
-      "We drank tea."
-    ],
-
-    drive: [
-      "I drove to work.",
-      "She drove to the store.",
-      "He drove home."
-    ],
-
-    eat: [
-      "I ate breakfast.",
-      "She ate some rice.",
-      "We ate dinner."
-    ],
-
-    fall: [
-      "I fell on the floor.",
-      "She fell off her bike.",
-      "He fell in the park."
-    ],
-
-    find: [
-      "I found my keys.",
-      "She found her phone.",
-      "We found a good restaurant."
-    ],
-
-    give: [
-      "I gave him a book.",
-      "She gave me some water.",
-      "He gave her a gift."
-    ],
-
-    know: [
-      "I knew the answer.",
-      "She knew his name.",
-      "We knew the way."
-    ],
-
-    make: [
-      "I made breakfast.",
-      "She made a cake.",
-      "We made dinner."
-    ],
-
-    meet: [
-      "I met my friend.",
-      "She met her teacher.",
-      "We met at the café."
-    ],
-
-    read: [
-      "I read a book.",
-      "She read the newspaper.",
-      "He read an email."
-    ],
-
-    run: [
-      "I ran in the park.",
-      "She ran every morning.",
-      "They ran to the bus."
-    ],
-
-    sleep: [
-      "I slept well last night.",
-      "She slept for eight hours.",
-      "The baby slept all night."
-    ],
-
-    speak: [
-      "I spoke to my teacher.",
-      "She spoke English.",
-      "We spoke about school."
-    ],
-
-    take: [
-      "I took a bus.",
-      "She took a photo.",
-      "He took my book."
-    ],
-
-    think: [
-      "I thought about my family.",
-      "She thought about the question.",
-      "He thought it was good."
-    ],
-
-    wear: [
-      "I wore my blue shirt.",
-      "She wore a new dress.",
-      "He wore black shoes."
-    ],
-
-    win: [
-      "We won the game.",
-      "She won the race.",
-      "They won the match."
-    ],
-
-    begin: [
-      "The class began at nine.",
-      "The movie began at eight.",
-      "The lesson began early."
-    ],
-
-    break: [
-      "I broke my phone.",
-      "She broke the glass.",
-      "He broke his arm."
-    ],
-
-    bring: [
-      "I brought some food.",
-      "She brought her book.",
-      "He brought a gift."
-    ],
-
-    build: [
-      "They built a house.",
-      "He built a small table.",
-      "We built a snowman."
-    ],
-
-    catch: [
-      "I caught the bus.",
-      "She caught the ball.",
-      "He caught the train."
-    ],
-
-    choose: [
-      "I chose the blue one.",
-      "She chose a new dress.",
-      "We chose the first one."
-    ],
-
-    cut: [
-      "I cut the paper.",
-      "She cut the cake.",
-      "He cut the bread."
-    ],
-
-    draw: [
-      "I drew a picture.",
-      "She drew a cat.",
-      "He drew a house."
-    ],
-
-    feel: [
-      "I felt tired.",
-      "She felt happy.",
-      "He felt sick."
-    ],
-
-    fly: [
-      "I flew to London.",
-      "She flew home.",
-      "They flew to Turkey."
-    ],
-
-    forget: [
-      "I forgot my keys.",
-      "She forgot my name.",
-      "He forgot his phone."
-    ],
-
-    hear: [
-      "I heard a noise.",
-      "She heard the music.",
-      "We heard a dog."
-    ],
-
-    keep: [
-      "I kept the book.",
-      "She kept the photo.",
-      "He kept the money."
-    ],
-
-    lose: [
-      "I lost my keys.",
-      "She lost her phone.",
-      "He lost the game."
-    ],
-
-    pay: [
-      "I paid for dinner.",
-      "She paid for the ticket.",
-      "We paid the bill."
-    ],
-
-    put: [
-      "I put the book on the table.",
-      "She put her bag on the chair.",
-      "He put the keys in his bag."
-    ],
-
-    sell: [
-      "I sold my old bike.",
-      "She sold her car.",
-      "They sold their house."
-    ],
-
-    sing: [
-      "I sang a song.",
-      "She sang at the party.",
-      "They sang together."
-    ],
-
-    stand: [
-      "I stood near the door.",
-      "She stood outside.",
-      "We stood in line."
-    ],
-
-    swim: [
-      "I swam in the pool.",
-      "She swam at the beach.",
-      "They swam yesterday."
-    ],
-
-    teach: [
-      "She taught English.",
-      "He taught the students.",
-      "My teacher taught us."
-    ],
-
-    understand: [
-      "I understood the question.",
-      "She understood the lesson.",
-      "We understood the teacher."
-    ]
-  };
-
-  /* =========================================================
-     SIMPLE DATA
-     ========================================================= */
-
   const PLACES = [
     "home",
     "school",
     "the park",
     "the office",
+    "the gym",
     "work",
-    "the cinema",
-    "the hotel",
-    "the store",
-    "the restaurant"
+    "the cinema"
   ];
 
   function pick(arr) {
@@ -843,52 +201,25 @@
     return x;
   }
 
-  function getRegularSentence(base) {
-    const list = REGULAR_SENTENCES[base];
-
-    if (list && list.length) {
-      return pick(list);
-    }
-
-    return "I " + base + " yesterday.";
-  }
-
-  function getIrregularSentence(base) {
-    const list = IRREGULAR_SENTENCES[base];
-
-    if (list && list.length) {
-      return pick(list);
-    }
-
-    return "I " + base + " yesterday.";
-  }
-
-  /*
-    Replace the base verb in a sentence with a blank.
-  */
-  function blankVerb(sentence, past) {
-    const regex = new RegExp("\\b" + escapeRegExp(past) + "\\b", "i");
-
-    return sentence.replace(regex, "____");
-  }
-
-  function escapeRegExp(text) {
-    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
-
-  /* =========================================================
-     QUESTION BUILDERS
-     ========================================================= */
-
   /* ---------- WAS / WERE ---------- */
 
   function qWasWere() {
-    const singular = Math.random() < 0.55;
+    const usePlural = Math.random() < 0.45;
 
     let subject;
     let answer;
 
-    if (singular) {
+    if (usePlural) {
+      subject = pick([
+        "You",
+        "We",
+        "They",
+        "My parents",
+        "The students"
+      ]);
+
+      answer = "were";
+    } else {
       subject = pick([
         "I",
         "He",
@@ -899,16 +230,6 @@
       ]);
 
       answer = "was";
-    } else {
-      subject = pick([
-        "You",
-        "We",
-        "They",
-        "My parents",
-        "The students"
-      ]);
-
-      answer = "were";
     }
 
     const place = pick(PLACES);
@@ -925,160 +246,254 @@
   /* ---------- THERE WAS / THERE WERE ---------- */
 
   function qThereWasWere() {
-    const singularSentences = [
-      ["a book", "on the table"],
-      ["a bag", "under the chair"],
-      ["a cat", "in the garden"],
-      ["a party", "at my house"],
-      ["a problem", "at school"],
-      ["a meeting", "at work"],
-      ["a car", "in front of the house"],
-      ["an email", "in my inbox"],
-      ["a phone", "on the desk"],
-      ["a dog", "in the park"]
-    ];
+    const singular = Math.random() < 0.5;
 
-    const pluralSentences = [
-      ["two books", "on the table"],
-      ["three bags", "under the chair"],
-      ["two cats", "in the garden"],
-      ["many people", "at the party"],
-      ["some students", "at school"],
-      ["two cars", "in front of the house"],
-      ["three emails", "in my inbox"],
-      ["some children", "in the park"],
-      ["two phones", "on the desk"],
-      ["many people", "at the meeting"]
-    ];
-
-    const useSingular = Math.random() < 0.5;
-
-    if (useSingular) {
-      const [noun, place] = pick(singularSentences);
+    if (singular) {
+      const noun = pick([
+        "a book",
+        "a party",
+        "a problem",
+        "a message",
+        "an email",
+        "a meeting"
+      ]);
 
       return {
         type: "mc",
-        hint: "Choose There was or There were",
-        prompt: "____ " + noun + " " + place + " yesterday.",
-        choices: shuffle(["There was", "There were"]),
+        hint: "There was / There were",
+        prompt: "____ " + noun + " on the table.",
+        choices: shuffle([
+          "There was",
+          "There were"
+        ]),
         answer: "There was"
       };
     }
 
-    const [noun, place] = pick(pluralSentences);
+    const noun = pick([
+      "two books",
+      "many people",
+      "some problems",
+      "three messages",
+      "a lot of cars"
+    ]);
 
     return {
       type: "mc",
-      hint: "Choose There was or There were",
-      prompt: "____ " + noun + " " + place + " yesterday.",
-      choices: shuffle(["There was", "There were"]),
+      hint: "There was / There were",
+      prompt: "____ " + noun + " outside.",
+      choices: shuffle([
+        "There was",
+        "There were"
+      ]),
       answer: "There were"
     };
   }
 
-  /* ---------- WAS / WERE WH QUESTIONS ---------- */
+  /* ---------- WAS / WERE WH- QUESTIONS ---------- */
 
   function qWasWereWh() {
-    const data = [
-      ["Where", "you", "were", "you"],
-      ["Where", "he", "was", "he"],
-      ["Where", "she", "was", "she"],
-      ["Where", "they", "were", "they"],
-      ["When", "you", "were", "you"],
-      ["When", "he", "was", "he"],
-      ["When", "she", "was", "she"],
-      ["Why", "you", "were", "you"],
-      ["Why", "he", "was", "he"],
-      ["Why", "they", "were", "they"]
+    const questions = [
+      {
+        prompt: "____ was Tom yesterday?",
+        choices: shuffle([
+          "Where",
+          "When",
+          "Why"
+        ]),
+        answer: "Where"
+      },
+
+      {
+        prompt: "____ was Sara last night?",
+        choices: shuffle([
+          "Where",
+          "When",
+          "Why"
+        ]),
+        answer: "Where"
+      },
+
+      {
+        prompt: "____ were you yesterday?",
+        choices: shuffle([
+          "Where",
+          "When",
+          "Why"
+        ]),
+        answer: "Where"
+      },
+
+      {
+        prompt: "____ were they on Saturday?",
+        choices: shuffle([
+          "Where",
+          "When",
+          "Why"
+        ]),
+        answer: "Where"
+      },
+
+      {
+        prompt: "____ was the party?",
+        choices: shuffle([
+          "When",
+          "Where",
+          "Why"
+        ]),
+        answer: "When"
+      },
+
+      {
+        prompt: "____ was the meeting?",
+        choices: shuffle([
+          "When",
+          "Where",
+          "Why"
+        ]),
+        answer: "When"
+      },
+
+      {
+        prompt: "____ was he at home?",
+        choices: shuffle([
+          "Why",
+          "Where",
+          "When"
+        ]),
+        answer: "Why"
+      },
+
+      {
+        prompt: "____ was she at school?",
+        choices: shuffle([
+          "Why",
+          "Where",
+          "When"
+        ]),
+        answer: "Why"
+      },
+
+      {
+        prompt: "____ were they at the park?",
+        choices: shuffle([
+          "Why",
+          "Where",
+          "When"
+        ]),
+        answer: "Why"
+      },
+
+      {
+        prompt: "____ were you late?",
+        choices: shuffle([
+          "Why",
+          "Where",
+          "When"
+        ]),
+        answer: "Why"
+      }
     ];
 
-    const [wh, subject, be, correctSubject] = pick(data);
-
-    const correct = wh + " " + be + " " + correctSubject + "?";
-
-    const wrongBe = be === "was" ? "were" : "was";
+    const q = pick(questions);
 
     return {
       type: "mc",
-      hint: "Choose the correct Wh- question",
-      prompt: "Choose the correct question.",
-      choices: shuffle([
-        correct,
-        wh + " " + wrongBe + " " + subject + "?",
-        wh + " did " + subject + "?",
-        "What " + be + " " + subject + "?"
-      ]),
-      answer: correct
+      hint: "Choose the correct Wh- word",
+      prompt: q.prompt,
+      choices: q.choices,
+      answer: q.answer
     };
   }
 
-  /* ---------- REGULAR LEVEL 1 ---------- */
+  /* ---------- REGULAR VERBS ---------- */
 
   function qRegLevel1() {
     const [base, past] = pick(REGULAR);
 
-    const form = pick(["pos", "neg", "q"]);
+    const form = pick([
+      "pos",
+      "neg",
+      "q"
+    ]);
+
+    const subj = pick([
+      "I",
+      "You",
+      "He",
+      "She",
+      "We",
+      "They"
+    ]);
 
     if (form === "pos") {
-      const sentence = getRegularSentence(base);
-      const prompt = blankVerb(sentence, past);
-
       return {
         type: "mc",
-        hint: "Choose the past form",
-        prompt: prompt,
+        hint: "Positive · regular verb",
+        prompt:
+          "Yesterday " +
+          subj.toLowerCase() +
+          " ____ the room. (" +
+          base +
+          ")",
+
         choices: shuffle([
           past,
           base,
           base + "ed",
           "did " + base
         ]),
+
         answer: past
       };
     }
 
     if (form === "neg") {
-      const subject = pick([
-        "I",
-        "You",
-        "He",
-        "She",
-        "We",
-        "They"
-      ]);
-
       return {
         type: "mc",
-        hint: "Choose the correct negative",
-        prompt: subject + " ____ " + base + " yesterday.",
+        hint: "Negative · regular verb",
+
+        prompt:
+          subj +
+          " ____ the movie. (" +
+          base +
+          ")",
+
         choices: shuffle([
           "didn't " + base,
           "didn't " + past,
           "not " + past,
           "doesn't " + base
         ]),
+
         answer: "didn't " + base
       };
     }
 
     return {
       type: "mc",
-      hint: "Choose the correct question",
-      prompt: "____ you ____ yesterday? (" + base + ")",
+      hint: "Question · regular verb",
+
+      prompt:
+        "____ you ____ English yesterday? (" +
+        base +
+        ")",
+
       choices: shuffle([
         "Did / " + base,
         "Did / " + past,
         "Do / " + base,
-        "Were / " + base
+        "Was / " + past
       ]),
+
       answer: "Did / " + base
     };
   }
 
-  /* ---------- REGULAR WH QUESTIONS ---------- */
+  /* ---------- REGULAR WH ---------- */
 
   function qRegWh() {
-    const [base] = pick(REGULAR);
+    const [base, past] = pick(REGULAR);
 
     const wh = pick([
       "Where",
@@ -1087,20 +502,29 @@
       "What"
     ]);
 
-    const correct =
-      wh + " did you " + base + " yesterday?";
-
     return {
       type: "mc",
-      hint: "Choose the correct Wh- question",
-      prompt: "Choose the correct question.",
+      hint: "Wh- question · regular verb",
+
+      prompt:
+        "Make a question: " +
+        wh +
+        " / you / " +
+        base +
+        " / yesterday",
+
       choices: shuffle([
-        correct,
-        wh + " did you " + base + " yesterday",
+        wh + " did you " + base + " yesterday?",
+        wh + " did you " + past + " yesterday?",
         wh + " do you " + base + " yesterday?",
-        wh + " you " + base + " yesterday?"
+        wh + " you " + past + " yesterday?"
       ]),
-      answer: correct
+
+      answer:
+        wh +
+        " did you " +
+        base +
+        " yesterday?"
     };
   }
 
@@ -1124,11 +548,11 @@
 
     const mainIdx = Math.floor(Math.random() * 3);
 
-    const possibleOdd = [0, 1, 2].filter(
-      (i) => i !== mainIdx
-    );
-
-    const oddIdx = pick(possibleOdd);
+    const oddIdx =
+      (mainIdx +
+        1 +
+        Math.floor(Math.random() * 2)) %
+      3;
 
     const main = shuffle(
       groups[mainIdx].list
@@ -1138,18 +562,25 @@
       groups[oddIdx].list
     );
 
+    const options = shuffle(
+      main.concat([odd])
+    );
+
     return {
       type: "mc",
-      hint: "Which word has a different -ed sound?",
-      prompt: "Find the different pronunciation.",
-      choices: shuffle(
-        main.concat([odd])
-      ),
+      hint:
+        "Which past form has a different -ed sound?",
+
+      prompt:
+        "Find the different pronunciation",
+
+      choices: options,
+
       answer: odd
     };
   }
 
-  /* ---------- IRREGULAR LEVEL 1 ---------- */
+  /* ---------- IRREGULAR VERBS ---------- */
 
   function qIrrLevel1() {
     const pool = IRREGULAR.filter(
@@ -1164,73 +595,81 @@
       "q"
     ]);
 
+    const subj = pick([
+      "I",
+      "You",
+      "He",
+      "She",
+      "We",
+      "They"
+    ]);
+
     if (form === "pos") {
-      const sentence =
-        getIrregularSentence(base);
-
-      const prompt =
-        blankVerb(sentence, past);
-
       return {
         type: "mc",
-        hint: "Choose the past form",
-        prompt: prompt,
+        hint: "Positive · irregular verb",
+
+        prompt:
+          "Yesterday " +
+          subj.toLowerCase() +
+          " ____ home. (" +
+          base +
+          ")",
+
         choices: shuffle([
           past,
           base,
           base + "ed",
           "did " + base
         ]),
+
         answer: past
       };
     }
 
     if (form === "neg") {
-      const subject = pick([
-        "I",
-        "You",
-        "He",
-        "She",
-        "We",
-        "They"
-      ]);
-
       return {
         type: "mc",
-        hint: "Choose the correct negative",
+        hint: "Negative · irregular verb",
+
         prompt:
-          subject +
-          " ____ " +
+          subj +
+          " ____ the homework. (" +
           base +
-          " yesterday.",
+          ")",
+
         choices: shuffle([
           "didn't " + base,
           "didn't " + past,
           "not " + past,
           "doesn't " + base
         ]),
+
         answer: "didn't " + base
       };
     }
 
     return {
       type: "mc",
-      hint: "Choose the correct question",
+      hint: "Question · irregular verb",
+
       prompt:
         "____ she ____ it? (" +
         base +
         ")",
+
       choices: shuffle([
         "Did / " + base,
         "Did / " + past,
         "Does / " + base,
         "Was / " + past
       ]),
+
       answer: "Did / " + base
     };
   }
 
-  /* ---------- IRREGULAR WH QUESTIONS ---------- */
+  /* ---------- IRREGULAR WH ---------- */
 
   function qIrrWh() {
     const pool = IRREGULAR.filter(
@@ -1246,20 +685,28 @@
       "What"
     ]);
 
-    const correct =
-      wh + " did they " + base + "?";
-
     return {
       type: "mc",
-      hint: "Choose the correct Wh- question",
-      prompt: "Choose the correct question.",
+      hint: "Wh- question · irregular verb",
+
+      prompt:
+        "Make a question: " +
+        wh +
+        " / they / " +
+        base,
+
       choices: shuffle([
-        correct,
-        wh + " did they " + base,
+        wh + " did they " + base + "?",
+        wh + " did they " + pick(pool)[1] + "?",
         wh + " do they " + base + "?",
         wh + " they " + base + "?"
       ]),
-      answer: correct
+
+      answer:
+        wh +
+        " did they " +
+        base +
+        "?"
     };
   }
 
@@ -1285,8 +732,13 @@
 
     return {
       type: "match",
-      hint: "Tap a base form, then its past form",
-      prompt: "Match base → past",
+
+      hint:
+        "Tap a base form, then its past form",
+
+      prompt:
+        "Match base → past",
+
       pairs: pairs.map(function (pair) {
         return {
           left: pair[0],
@@ -1296,9 +748,7 @@
     };
   }
 
-  /* =========================================================
-     MODES
-     ========================================================= */
+  /* ---------- MODES ---------- */
 
   const MODES = {
     ww1: {
@@ -1347,48 +797,72 @@
     }
   };
 
-  /* =========================================================
-     UI / STATE
-     ========================================================= */
+  /* ---------- UI / STATE ---------- */
 
   const menuScreen =
-    document.getElementById("menuScreen");
+    document.getElementById(
+      "menuScreen"
+    );
 
   const playScreen =
-    document.getElementById("playScreen");
+    document.getElementById(
+      "playScreen"
+    );
 
   const resultScreen =
-    document.getElementById("resultScreen");
+    document.getElementById(
+      "resultScreen"
+    );
 
   const choicesArea =
-    document.getElementById("choicesArea");
+    document.getElementById(
+      "choicesArea"
+    );
 
   const matchArea =
-    document.getElementById("matchArea");
+    document.getElementById(
+      "matchArea"
+    );
 
   const matchLeft =
-    document.getElementById("matchLeft");
+    document.getElementById(
+      "matchLeft"
+    );
 
   const matchRight =
-    document.getElementById("matchRight");
+    document.getElementById(
+      "matchRight"
+    );
 
   const feedbackEl =
-    document.getElementById("feedback");
+    document.getElementById(
+      "feedback"
+    );
 
   const promptHint =
-    document.getElementById("promptHint");
+    document.getElementById(
+      "promptHint"
+    );
 
   const promptText =
-    document.getElementById("promptText");
+    document.getElementById(
+      "promptText"
+    );
 
   const modeLabel =
-    document.getElementById("modeLabel");
+    document.getElementById(
+      "modeLabel"
+    );
 
   const scoreEl =
-    document.getElementById("score");
+    document.getElementById(
+      "score"
+    );
 
   const progressFill =
-    document.getElementById("progressFill");
+    document.getElementById(
+      "progressFill"
+    );
 
   let modeKey = null;
   let queue = [];
@@ -1407,9 +881,7 @@
   let matchTotal = 0;
   let matchMap = {};
 
-  /* =========================================================
-     SCREEN CONTROL
-     ========================================================= */
+  /* ---------- SCREEN CONTROL ---------- */
 
   function show(name) {
     menuScreen.classList.add("hidden");
@@ -1438,9 +910,7 @@
       ) + "%";
   }
 
-  /* =========================================================
-     START MODE
-     ========================================================= */
+  /* ---------- START MODE ---------- */
 
   function startMode(key) {
     modeKey = key;
@@ -1454,8 +924,14 @@
 
     queue = [];
 
-    for (let i = 0; i < TOTAL; i++) {
-      queue.push(mode.build());
+    for (
+      let i = 0;
+      i < TOTAL;
+      i++
+    ) {
+      queue.push(
+        mode.build()
+      );
     }
 
     index = 0;
@@ -1477,15 +953,14 @@
     loadItem();
   }
 
-  /* =========================================================
-     LOAD QUESTION
-     ========================================================= */
+  /* ---------- LOAD QUESTION ---------- */
 
   function loadItem() {
     locked = false;
 
     feedbackEl.textContent = "";
-    feedbackEl.className = "feedback";
+    feedbackEl.className =
+      "feedback";
 
     const item = queue[index];
 
@@ -1498,11 +973,17 @@
       item.prompt;
 
     if (item.type === "match") {
-      choicesArea.classList.add("hidden");
+      choicesArea.classList.add(
+        "hidden"
+      );
 
       if (matchArea) {
-        matchArea.classList.remove("hidden");
-        matchArea.style.display = "flex";
+        matchArea.classList.remove(
+          "hidden"
+        );
+
+        matchArea.style.display =
+          "flex";
       }
 
       setupMatch(item);
@@ -1515,19 +996,23 @@
       }
     } else {
       if (matchArea) {
-        matchArea.classList.add("hidden");
-        matchArea.style.display = "";
+        matchArea.classList.add(
+          "hidden"
+        );
+
+        matchArea.style.display =
+          "";
       }
 
-      choicesArea.classList.remove("hidden");
+      choicesArea.classList.remove(
+        "hidden"
+      );
 
       renderChoices(item);
     }
   }
 
-  /* =========================================================
-     MULTIPLE CHOICE
-     ========================================================= */
+  /* ---------- MULTIPLE CHOICE ---------- */
 
   function renderChoices(item) {
     choicesArea.innerHTML = "";
@@ -1542,27 +1027,35 @@
       "mk-stagger-fast"
     );
 
-    item.choices.forEach(function (c) {
-      const btn =
-        document.createElement("button");
-
-      btn.type = "button";
-      btn.className = "choice-btn";
-      btn.textContent = c;
-
-      btn.addEventListener(
-        "click",
-        function () {
-          onChoice(
-            c,
-            item.answer,
-            btn
+    item.choices.forEach(
+      (c) => {
+        const btn =
+          document.createElement(
+            "button"
           );
-        }
-      );
 
-      choicesArea.appendChild(btn);
-    });
+        btn.type = "button";
+
+        btn.className =
+          "choice-btn";
+
+        btn.textContent = c;
+
+        btn.addEventListener(
+          "click",
+          () =>
+            onChoice(
+              c,
+              item.answer,
+              btn
+            )
+        );
+
+        choicesArea.appendChild(
+          btn
+        );
+      }
+    );
   }
 
   function onChoice(
@@ -1578,20 +1071,26 @@
       choice === answer;
 
     document
-      .querySelectorAll(".choice-btn")
-      .forEach(function (b) {
+      .querySelectorAll(
+        ".choice-btn"
+      )
+      .forEach((b) => {
         b.disabled = true;
 
         if (
           b.textContent ===
           answer
         ) {
-          b.classList.add("correct");
+          b.classList.add(
+            "correct"
+          );
         }
       });
 
     if (ok) {
-      btn.classList.add("correct");
+      btn.classList.add(
+        "correct"
+      );
 
       score += 10;
       correct += 1;
@@ -1602,7 +1101,9 @@
       feedbackEl.className =
         "feedback ok";
     } else {
-      btn.classList.add("wrong");
+      btn.classList.add(
+        "wrong"
+      );
 
       wrong += 1;
 
@@ -1619,7 +1120,7 @@
     }
 
     setTimeout(
-      function () {
+      () => {
         index += 1;
 
         if (index >= TOTAL) {
@@ -1632,9 +1133,7 @@
     );
   }
 
-  /* =========================================================
-     NORMAL MATCHING
-     ========================================================= */
+  /* ---------- MATCHING ---------- */
 
   function setupMatch(item) {
     matchSel = {
@@ -1656,23 +1155,21 @@
       }
     );
 
-    const lefts =
-      shuffle(
-        item.pairs.map(
-          function (p) {
-            return p.left;
-          }
-        )
-      );
+    const lefts = shuffle(
+      item.pairs.map(
+        function (p) {
+          return p.left;
+        }
+      )
+    );
 
-    const rights =
-      shuffle(
-        item.pairs.map(
-          function (p) {
-            return p.right;
-          }
-        )
-      );
+    const rights = shuffle(
+      item.pairs.map(
+        function (p) {
+          return p.right;
+        }
+      )
+    );
 
     if (
       !matchArea ||
@@ -1700,65 +1197,53 @@
     matchLeft.innerHTML = "";
     matchRight.innerHTML = "";
 
-    lefts.forEach(
-      function (w) {
-        const b =
-          document.createElement(
-            "button"
-          );
-
-        b.type = "button";
-        b.className =
-          "match-chip word";
-
-        b.textContent = w;
-
-        b.dataset.side =
-          "left";
-
-        b.dataset.val =
-          w;
-
-        b.addEventListener(
-          "click",
-          function () {
-            onMatchPick(b);
-          }
+    lefts.forEach((w) => {
+      const b =
+        document.createElement(
+          "button"
         );
 
-        matchLeft.appendChild(b);
-      }
-    );
+      b.type = "button";
 
-    rights.forEach(
-      function (w) {
-        const b =
-          document.createElement(
-            "button"
-          );
+      b.className =
+        "match-chip word";
 
-        b.type = "button";
-        b.className =
-          "match-chip word";
+      b.textContent = w;
 
-        b.textContent = w;
+      b.dataset.side = "left";
+      b.dataset.val = w;
 
-        b.dataset.side =
-          "right";
+      b.addEventListener(
+        "click",
+        () => onMatchPick(b)
+      );
 
-        b.dataset.val =
-          w;
+      matchLeft.appendChild(b);
+    });
 
-        b.addEventListener(
-          "click",
-          function () {
-            onMatchPick(b);
-          }
+    rights.forEach((w) => {
+      const b =
+        document.createElement(
+          "button"
         );
 
-        matchRight.appendChild(b);
-      }
-    );
+      b.type = "button";
+
+      b.className =
+        "match-chip word";
+
+      b.textContent = w;
+
+      b.dataset.side = "right";
+      b.dataset.val = w;
+
+      b.addEventListener(
+        "click",
+        () => onMatchPick(b)
+      );
+
+      matchRight.appendChild(b);
+    });
   }
 
   function onMatchPick(btn) {
@@ -1780,26 +1265,23 @@
           side +
           '"]'
       )
-      .forEach(
-        function (b) {
-          if (
-            !b.classList.contains(
-              "matched"
-            )
-          ) {
-            b.classList.remove(
-              "selected"
-            );
-          }
+      .forEach((b) => {
+        if (
+          !b.classList.contains(
+            "matched"
+          )
+        ) {
+          b.classList.remove(
+            "selected"
+          );
         }
-      );
+      });
 
     btn.classList.add(
       "selected"
     );
 
-    matchSel[side] =
-      btn;
+    matchSel[side] = btn;
 
     if (
       matchSel.left &&
@@ -1811,9 +1293,7 @@
       const R =
         matchSel.right.dataset.val;
 
-      if (
-        matchMap[L] === R
-      ) {
+      if (matchMap[L] === R) {
         matchSel.left.classList.add(
           "matched"
         );
@@ -1855,10 +1335,11 @@
           matchTotal
         ) {
           correct += 1;
+
           locked = true;
 
           setTimeout(
-            function () {
+            () => {
               index += 1;
 
               if (
@@ -1899,7 +1380,7 @@
         };
 
         setTimeout(
-          function () {
+          () => {
             a.classList.remove(
               "selected",
               "wrong-flash"
@@ -1916,9 +1397,7 @@
     }
   }
 
-  /* =========================================================
-     MATCH RUSH
-     ========================================================= */
+  /* ---------- MATCH RUSH ---------- */
 
   const RUSH_SECONDS = 90;
 
@@ -1976,8 +1455,7 @@
     }
 
     if (scoreEl) {
-      scoreEl.textContent =
-        "0";
+      scoreEl.textContent = "0";
     }
 
     show("play");
@@ -2019,14 +1497,13 @@
         "feedback";
     }
 
-    const pool =
-      shuffle(
-        IRREGULAR.filter(
-          function (x) {
-            return x[0] !== "be";
-          }
-        )
-      );
+    const pool = shuffle(
+      IRREGULAR.filter(
+        function (x) {
+          return x[0] !== "be";
+        }
+      )
+    );
 
     rushMap = {};
 
@@ -2037,23 +1514,21 @@
       }
     );
 
-    const lefts =
-      shuffle(
-        pool.map(
-          function (p) {
-            return p[0];
-          }
-        )
-      );
+    const lefts = shuffle(
+      pool.map(
+        function (p) {
+          return p[0];
+        }
+      )
+    );
 
-    const rights =
-      shuffle(
-        pool.map(
-          function (p) {
-            return p[1];
-          }
-        )
-      );
+    const rights = shuffle(
+      pool.map(
+        function (p) {
+          return p[1];
+        }
+      )
+    );
 
     matchLeft.innerHTML = "";
     matchRight.innerHTML = "";
@@ -2093,6 +1568,7 @@
             rushTimeLeft <= 0
           ) {
             stopRushTimer();
+
             endMatchRush();
           }
         },
@@ -2116,11 +1592,8 @@
 
     b.textContent = word;
 
-    b.dataset.side =
-      side;
-
-    b.dataset.val =
-      word;
+    b.dataset.side = side;
+    b.dataset.val = word;
 
     b.addEventListener(
       "click",
@@ -2211,23 +1684,21 @@
         )
       );
 
-    const leftVals =
-      shuffle(
-        leftChips.map(
-          function (c) {
-            return c.dataset.val;
-          }
-        )
-      );
+    const leftVals = shuffle(
+      leftChips.map(
+        function (c) {
+          return c.dataset.val;
+        }
+      )
+    );
 
-    const rightVals =
-      shuffle(
-        rightChips.map(
-          function (c) {
-            return c.dataset.val;
-          }
-        )
-      );
+    const rightVals = shuffle(
+      rightChips.map(
+        function (c) {
+          return c.dataset.val;
+        }
+      )
+    );
 
     matchLeft
       .querySelectorAll(
@@ -2314,8 +1785,7 @@
       "selected"
     );
 
-    rushSel[side] =
-      btn;
+    rushSel[side] = btn;
 
     if (
       rushSel.left &&
@@ -2327,9 +1797,7 @@
       const R =
         rushSel.right.dataset.val;
 
-      if (
-        rushMap[L] === R
-      ) {
+      if (rushMap[L] === R) {
         rushSel.left.classList.add(
           "matched"
         );
@@ -2347,7 +1815,6 @@
         );
 
         rushMatches += 1;
-
         rushCombo += 1;
 
         if (
@@ -2401,7 +1868,6 @@
         }
       } else {
         rushCombo = 0;
-
         wrong += 1;
 
         rushSel.left.classList.add(
@@ -2451,9 +1917,7 @@
     }
   }
 
-  /* =========================================================
-     RESULTS
-     ========================================================= */
+  /* ---------- END MATCH RUSH ---------- */
 
   function endMatchRush() {
     stopRushTimer();
@@ -2481,8 +1945,7 @@
     }
 
     if (feedbackEl) {
-      feedbackEl.textContent =
-        "";
+      feedbackEl.textContent = "";
 
       feedbackEl.className =
         "feedback";
@@ -2525,6 +1988,8 @@
     show("result");
   }
 
+  /* ---------- END NORMAL ROUND ---------- */
+
   function endRound() {
     if (progressFill) {
       progressFill.style.width =
@@ -2549,31 +2014,26 @@
     document.getElementById(
       "finalAccuracy"
     ).textContent =
-      (
-        TOTAL
-          ? Math.round(
-              (correct /
-                TOTAL) *
-                100
-            )
-          : 0
-      ) + "%";
+      (TOTAL
+        ? Math.round(
+            (correct / TOTAL) *
+              100
+          )
+        : 0) + "%";
 
     show("result");
   }
 
-  /* =========================================================
-     MENU BUTTONS
-     ========================================================= */
+  /* ---------- MENU ---------- */
 
   document
     .querySelectorAll(
       ".level-list li"
     )
-    .forEach(function (li) {
+    .forEach((li) => {
       li.addEventListener(
         "click",
-        function () {
+        () => {
           const mode =
             li.getAttribute(
               "data-mode"
@@ -2588,6 +2048,8 @@
         }
       );
     });
+
+  /* ---------- MATCH RUSH BUTTON ---------- */
 
   const backMenu =
     document.getElementById(
@@ -2608,10 +2070,12 @@
     );
   }
 
+  /* ---------- BACK TO MENU ---------- */
+
   if (backMenu) {
     backMenu.addEventListener(
       "click",
-      function () {
+      () => {
         stopRushTimer();
 
         const play =
@@ -2630,15 +2094,15 @@
     );
   }
 
+  /* ---------- RESULT BUTTONS ---------- */
+
   document
     .getElementById(
       "toMenuBtn"
     )
     .addEventListener(
       "click",
-      function () {
-        show("menu");
-      }
+      () => show("menu")
     );
 
   document
@@ -2647,7 +2111,7 @@
     )
     .addEventListener(
       "click",
-      function () {
+      () => {
         if (modeKey) {
           startMode(
             modeKey
@@ -2656,9 +2120,7 @@
       }
     );
 
-  /* =========================================================
-     SITE THEME
-     ========================================================= */
+  /* ---------- SITE THEME ---------- */
 
   function syncSiteTheme() {
     const dark =
@@ -2693,9 +2155,8 @@
     );
   } catch (_) {}
 
-  /* =========================================================
-     INITIAL SCREEN
-     ========================================================= */
+  /* ---------- START ---------- */
 
   show("menu");
+
 })();
