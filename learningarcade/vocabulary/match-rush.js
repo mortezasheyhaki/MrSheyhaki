@@ -204,6 +204,7 @@
       if (modeSelect) gameMode = modeSelect.value;
       homeScreen.style.display = "none";
       gameScreen.style.display = "block";
+      if (container) container.classList.add("is-playing");
       startGame();
     };
 
