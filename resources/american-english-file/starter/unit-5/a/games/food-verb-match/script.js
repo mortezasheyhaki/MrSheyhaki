@@ -168,52 +168,48 @@
      RESET CARD
      ======================================================= */
 
-  function resetCard() {
+function resetCard() {
 
-    if (!state || state.done) return;
+  if (!state || state.done) return;
 
-    const pair = state.questions[state.currentIndex];
+  const pair = state.questions[state.currentIndex];
 
-    if (!pair) {
-      finish(true);
-      return;
-    }
-
-    const item = pair[1];
-
-    wordEl.textContent = item.toUpperCase();
-
-    swipeCard.className = "swipe-card";
-
-    swipeCard.style.transform = "translate3d(0, 0, 0)";
-    swipeCard.style.opacity = "1";
-
-    clearTargetHighlights();
-
-    feedbackEl.textContent = "";
-    feedbackEl.className = "feedback";
-
-    /*
-      Small entrance animation.
-    */
-
-    swipeCard.animate(
-      [
-        {
-          opacity: 0,
-          transform: "translate3d(0, 25px, 0) scale(.95)"
-        },
-        {
-          opacity: 1,
-          transform: "translate3d(0, 0, 0) scale(1)"
-        }
-      ],
-      {
-        duration: 220,
-        easing: "ease-out"
-      }
-    );
+  if (!pair) {
+    finish(true);
+    return;
   }
+
+  const item = pair[1];
+
+  wordEl.textContent = item.toUpperCase();
+
+  swipeCard.className = "swipe-card";
+
+  swipeCard.style.transform = "translate3d(0, 0, 0)";
+  swipeCard.style.opacity = "1";
+
+  clearTargetHighlights();
+
+  feedbackEl.textContent = "";
+  feedbackEl.className = "feedback";
+
+  swipeCard.animate(
+    [
+      {
+        opacity: 0,
+        transform: "translate3d(0, 25px, 0) scale(.95)"
+      },
+      {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0) scale(1)"
+      }
+    ],
+    {
+      duration: 220,
+      easing: "ease-out"
+    }
+  );
+}
 
 
   /* =======================================================
