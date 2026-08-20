@@ -1,4 +1,6 @@
-/* Food Verb Match — enriched Match Rush–inspired board */
+/* =========================================================
+   FOOD VERB MATCH — MATCH RUSH STYLE
+========================================================= */
 
 :root {
   --bg-frame: #241446;
@@ -34,321 +36,515 @@ html[data-theme="dark"] {
   --glow: 0 0 48px rgba(139, 92, 246, 0.22);
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; height: 100dvh; overflow: hidden; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+
   background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139, 92, 246, 0.35), transparent 55%),
+    radial-gradient(
+      ellipse 80% 50% at 50% -10%,
+      rgba(139, 92, 246, 0.35),
+      transparent 55%
+    ),
     var(--bg-frame);
+
   color: var(--text);
+
   -webkit-font-smoothing: antialiased;
 }
-.hidden { display: none !important; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+.hidden {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* =========================================================
+   MAIN FRAME
+========================================================= */
 
 .frame {
-  height: 100%; height: 100dvh;
-  display: flex; align-items: stretch; justify-content: center;
-  padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
+  height: 100%;
+  height: 100dvh;
+
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+
+  padding:
+    max(10px, env(safe-area-inset-top))
+    10px
+    max(10px, env(safe-area-inset-bottom));
 }
 
 .panel {
   width: min(720px, 100%);
   height: 100%;
+
   background: var(--panel);
+
   border-radius: 28px;
   border: 1px solid var(--panel-edge);
+
   padding: 14px 16px 12px;
-  display: flex; flex-direction: column; overflow: hidden;
-  box-shadow: var(--glow), 0 24px 60px rgba(0, 0, 0, 0.28);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  box-shadow:
+    var(--glow),
+    0 24px 60px rgba(0, 0, 0, 0.28);
 }
+
+/* =========================================================
+   TOP BAR
+========================================================= */
 
 .topbar {
   flex: 0 0 auto;
-  display: flex; align-items: center; gap: 10px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
   margin-bottom: 10px;
 }
+
 .back-pill {
-  display: inline-flex; align-items: center;
-  padding: 10px 16px; border-radius: 999px;
-  background: linear-gradient(135deg, #1f3d36, #16302b);
-  color: #fff; text-decoration: none;
-  font-size: 14px; font-weight: 700;
-  box-shadow: 0 4px 12px rgba(22, 48, 43, 0.3);
+  display: inline-flex;
+  align-items: center;
+
+  padding: 10px 16px;
+
+  border-radius: 999px;
+
+  background: linear-gradient(
+    135deg,
+    #1f3d36,
+    #16302b
+  );
+
+  color: #ffffff;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  box-shadow:
+    0 4px 12px rgba(22, 48, 43, 0.3);
 }
-html[data-theme="dark"] .back-pill { background: linear-gradient(135deg, #2d5a4e, #1f3d36); }
+
+html[data-theme="dark"] .back-pill {
+  background: linear-gradient(
+    135deg,
+    #2d5a4e,
+    #1f3d36
+  );
+}
+
 .top-title {
-  flex: 1; text-align: center;
-  font-size: 14px; font-weight: 800; color: var(--text);
+  flex: 1;
+
+  text-align: center;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  color: var(--text);
 }
+
 .icon-btn {
-  width: 38px; height: 38px; border-radius: 999px;
-  border: 1px solid var(--line); background: var(--panel-card);
-  cursor: pointer; font-size: 15px;
+  width: 38px;
+  height: 38px;
+
+  border-radius: 999px;
+
+  border: 1px solid var(--line);
+
+  background: var(--panel-card);
+
+  cursor: pointer;
+
+  font-size: 15px;
+
   box-shadow: var(--shadow);
 }
 
+/* =========================================================
+   SCREEN
+========================================================= */
+
 .screen {
-  flex: 1 1 auto; min-height: 0;
-  display: flex; flex-direction: column; overflow: hidden;
+  flex: 1 1 auto;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
 }
 
+/* =========================================================
+   HOME SCREEN
+========================================================= */
+
 .home-inner {
-  margin: auto; text-align: center;
-  max-width: 400px; padding: 24px 16px;
+  margin: auto;
+
+  text-align: center;
+
+  max-width: 400px;
+
+  padding: 24px 16px;
 }
+
 .home-badge {
   display: inline-block;
-  padding: 6px 12px; border-radius: 999px;
-  background: var(--accent-soft); color: var(--accent);
-  font-size: 11px; font-weight: 850; letter-spacing: 1px;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  background: var(--accent-soft);
+
+  color: var(--accent);
+
+  font-size: 11px;
+  font-weight: 850;
+
+  letter-spacing: 1px;
+
   margin-bottom: 12px;
 }
+
 .home-inner h1 {
   font-size: clamp(26px, 5vw, 34px);
-  font-weight: 850; margin-bottom: 10px;
+
+  font-weight: 850;
+
+  margin-bottom: 10px;
+
   letter-spacing: -0.5px;
 }
+
 .lead {
-  color: var(--muted); font-size: 15px; line-height: 1.55; margin-bottom: 22px;
+  color: var(--muted);
+
+  font-size: 15px;
+
+  line-height: 1.55;
+
+  margin-bottom: 22px;
 }
+
 .primary {
-  border: none; border-radius: 14px;
-  padding: 16px 36px; min-height: 54px;
-  background: linear-gradient(135deg, var(--accent-2), var(--accent));
-  color: #fff; font-size: 16px; font-weight: 750;
-  cursor: pointer; font-family: inherit;
-  box-shadow: 0 10px 24px rgba(109, 40, 217, 0.35);
-  transition: transform 0.12s ease, filter 0.15s ease;
+  min-height: 48px;
+
+  padding: 12px 32px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    135deg,
+    var(--accent-2),
+    var(--accent)
+  );
+
+  color: #ffffff;
+
+  font-size: 1rem;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  font-family: inherit;
+
+  box-shadow:
+    0 10px 24px rgba(109, 40, 217, 0.35);
+
+  transition:
+    transform 0.12s ease,
+    filter 0.15s ease;
 }
-.primary:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+.primary:hover {
+  filter: brightness(1.06);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   STATS
+========================================================= */
 
 .stats {
   flex: 0 0 auto;
-  display: grid; grid-template-columns: repeat(3, 1fr);
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
   background: var(--panel-card);
+
   border-radius: 16px;
+
   padding: 12px 8px;
+
   margin-bottom: 8px;
+
   border: 1px solid var(--line);
+
   box-shadow: var(--shadow);
 }
-.stat { text-align: center; }
-.stat span {
-  display: block; font-size: 10px; font-weight: 800;
-  letter-spacing: 0.7px; color: var(--muted); margin-bottom: 2px;
+
+.stat {
+  text-align: center;
 }
-.stat strong { font-size: 26px; font-weight: 850; }
+
+.stat span {
+  display: block;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 0.7px;
+
+  color: var(--muted);
+
+  margin-bottom: 2px;
+}
+
+.stat strong {
+  font-size: 26px;
+
+  font-weight: 850;
+}
+
+/* =========================================================
+   PROGRESS BAR
+========================================================= */
 
 .progress-line {
   flex: 0 0 auto;
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 10px; padding: 0 2px;
-}
-.progress-line span {
-  font-size: 12px; font-weight: 750; color: var(--muted); white-space: nowrap;
-}
-.track {
-  flex: 1; height: 7px; border-radius: 999px;
-  background: var(--line); overflow: hidden;
-}
-.fill {
-  height: 100%; width: 0%; border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent-2), var(--accent));
-  transition: width 0.3s ease;
-  box-shadow: 0 0 8px rgba(139, 92, 246, 0.45);
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 10px;
+
+  padding: 0 2px;
 }
 
-.board {
-  flex: 1 1 auto; min-height: 0;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+.progress-line span {
+  font-size: 12px;
+  font-weight: 750;
+
+  color: var(--muted);
+
+  white-space: nowrap;
+}
+
+.track {
+  flex: 1;
+
+  height: 7px;
+
+  border-radius: 999px;
+
+  background: var(--line);
+
   overflow: hidden;
 }
-.col { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
-.col h2 {
-  flex: 0 0 auto; text-align: center;
-  font-size: 11px; font-weight: 850; letter-spacing: 0.9px;
-  color: var(--accent); margin-bottom: 8px;
-}
-.cards {
-  flex: 1 1 auto; min-height: 0;
-  display: flex; flex-direction: column; gap: 12px; overflow: hidden;
+
+.fill {
+  height: 100%;
+  width: 0%;
+
+  border-radius: 999px;
+
+  background: linear-gradient(
+    90deg,
+    var(--accent-2),
+    var(--accent)
+  );
+
+  transition: width 0.3s ease;
+
+  box-shadow:
+    0 0 8px rgba(139, 92, 246, 0.45);
 }
 
-.match-card {
-  flex: 1 1 0; min-height: 0; max-height: none;
-  touch-action: none; user-select: none; cursor: grab;
-  border: 1.5px solid transparent;
-  border-radius: 14px;
-  background: var(--panel-card);
-  color: var(--text);
-  font-size: clamp(16px, 3.4vw, 20px);
-  font-weight: 750; font-family: inherit;
-  box-shadow: var(--shadow);
-  display: flex; align-items: center; justify-content: center;
-  padding: 8px 12px;
-  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease, opacity 0.22s ease;
-}
-.match-card:hover:not(:disabled) {
-  transform: translateY(-2px);
-  border-color: var(--accent-2);
-  box-shadow: 0 12px 26px rgba(109, 40, 217, 0.16);
-}
-.match-card.selected, .match-card.dragging {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.28), var(--shadow);
-  cursor: grabbing; transform: scale(1.03); z-index: 2;
-}
-.match-card.target {
-  border-color: var(--accent-2);
-  background: var(--accent-soft);
-  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
-}
-.match-card.wrong {
-  background: var(--bad-bg);
-  border-color: var(--bad);
-  animation: shake 0.35s ease;
-}
-.match-card.correct-flash {
-  background: var(--good-bg);
-  border-color: var(--good);
-  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
-}
-.match-card.matched, .match-card.verb-done, .match-card:disabled {
-  opacity: 0.32; pointer-events: none; cursor: default; transform: none;
-}
-
-.hint {
-  flex: 0 0 auto; text-align: center;
-  font-size: 12px; color: var(--muted); margin-top: 8px; font-weight: 600;
-}
-
-.modal {
-  position: absolute; inset: 0;
-  background: rgba(20, 10, 40, 0.55);
-  backdrop-filter: blur(4px);
-  display: grid; place-items: center;
-  border-radius: 28px; z-index: 20; padding: 16px;
-}
-.modal-card {
-  width: min(360px, 100%);
-  background: var(--panel-card);
-  border-radius: 22px; padding: 26px 20px; text-align: center;
-  border: 1px solid var(--line);
-  box-shadow: var(--glow), var(--shadow);
-}
-.modal-icon { font-size: 38px; margin-bottom: 6px; }
-.modal-card h2 { font-size: 24px; margin-bottom: 6px; }
-.modal-card p { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
-.result-row {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px;
-}
-.result-row div {
-  background: var(--panel); border-radius: 12px; padding: 10px 6px;
-}
-.result-row span {
-  display: block; font-size: 10px; font-weight: 800; color: var(--muted); text-transform: uppercase;
-}
-.result-row strong { font-size: 18px; }
-
-@keyframes shake {
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-3px); }
-}
-
-@media (max-width: 560px) {
-  .frame { padding: 6px; }
-  .panel { border-radius: 20px; padding: 10px 10px 8px; }
-  .top-title { font-size: 13px; }
-  .stat strong { font-size: 18px; }
-  .board { gap: 8px; }
-  .cards { gap: 6px; }
-  .match-card { font-size: 16px; border-radius: 16px; }
-  .col h2 { font-size: 10px; margin-bottom: 6px; }
-  .hint { font-size: 11px; }
-  .back-pill { font-size: 12px; padding: 7px 12px; }
-}
-
-/* ---- Equal squares: same size left & right (3 + 5) ---- */
+/* =========================================================
+   MATCH BOARD
+========================================================= */
 
 .board {
   flex: 1 1 auto;
   min-height: 0;
+
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 16px;
+
   overflow: hidden;
+
   align-content: center;
+
   justify-items: center;
 }
 
+/* =========================================================
+   COLUMNS
+========================================================= */
+
 .col {
   width: 100%;
+
   display: flex;
   flex-direction: column;
+
   align-items: center;
+
   min-height: 0;
+
   overflow: hidden;
 }
 
 .col h2 {
   flex: 0 0 auto;
+
   text-align: center;
+
   font-size: 0.95rem;
   font-weight: 900;
+
   letter-spacing: 0.4px;
+
   color: var(--accent);
-  margin-bottom: 10px;
+
+  margin-bottom: 8px;
 }
+
+/* =========================================================
+   CARDS CONTAINER
+========================================================= */
 
 .cards {
   width: 100%;
+
+  flex: 1 1 auto;
+  min-height: 0;
+
   display: flex;
   flex-direction: column;
+
   align-items: center;
   justify-content: center;
-  gap: 10px;
+
+  gap: 8px;
+
   overflow: hidden;
-  min-height: 0;
+
+  /*
+    MAIN FOOD VERB MATCH SQUARE SIZE
+
+    All cards share this variable.
+    Left and right squares will always
+    have exactly the same size.
+  */
+  --card-size: min(118px, 25vw, 11.5vh);
 }
 
-/*
-  Fixed square size for EVERY card (verbs and items).
-  --card-size is shared so left and right are identical.
-*/
-.cards {
-  --card-size: min(132px, 22vw, 14vh);
-}
+/* =========================================================
+   MATCH SQUARES
+========================================================= */
 
 .match-card {
   width: var(--card-size);
   height: var(--card-size);
+
   min-width: var(--card-size);
   min-height: var(--card-size);
+
   max-width: var(--card-size);
   max-height: var(--card-size);
+
   flex: 0 0 var(--card-size);
+
   aspect-ratio: 1 / 1;
+
   touch-action: none;
+
   user-select: none;
+
   cursor: grab;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   text-align: center;
+
   padding: 8px;
-  font-size: clamp(0.85rem, 2.4vw, 1.08rem);
+
+  font-size:
+    clamp(0.85rem, 2.4vw, 1.08rem);
+
   font-weight: 800;
+
   line-height: 1.2;
+
   font-family: inherit;
+
   color: var(--text);
+
   background: var(--panel-card);
+
   border: 3px solid #e3e7ef;
+
   border-radius: 16px;
-  box-shadow: 0 5px 0 #dfe3ea, 0 9px 22px rgba(32, 38, 54, 0.08);
+
+  box-shadow:
+    0 5px 0 #dfe3ea,
+    0 9px 22px rgba(32, 38, 54, 0.08);
+
   transition:
     transform 0.12s ease,
     box-shadow 0.18s ease,
@@ -358,129 +554,430 @@ html[data-theme="dark"] .back-pill { background: linear-gradient(135deg, #2d5a4e
     filter 0.35s ease;
 }
 
+/* =========================================================
+   DARK MODE CARDS
+========================================================= */
+
 html[data-theme="dark"] .match-card {
   border-color: #3a3450;
-  box-shadow: 0 5px 0 #2a2438, 0 9px 22px rgba(0, 0, 0, 0.35);
+
+  box-shadow:
+    0 5px 0 #2a2438,
+    0 9px 22px rgba(0, 0, 0, 0.35);
 }
+
+/* =========================================================
+   HOVER
+========================================================= */
 
 .match-card:hover:not(:disabled) {
   transform: translateY(-3px);
+
   border-color: #8b6de2;
-  box-shadow: 0 7px 0 #d8d1ee, 0 13px 25px rgba(105, 55, 216, 0.15);
+
+  box-shadow:
+    0 7px 0 #d8d1ee,
+    0 13px 25px rgba(105, 55, 216, 0.15);
 }
 
+/* =========================================================
+   ACTIVE / TOUCH
+========================================================= */
+
 .match-card:active:not(:disabled) {
-  transform: translateY(2px) scale(0.98);
-  box-shadow: 0 2px 0 #dfe3ea;
+  transform:
+    translateY(2px)
+    scale(0.98);
+
+  box-shadow:
+    0 2px 0 #dfe3ea;
 }
+
+/* =========================================================
+   SELECTED / DRAGGING
+========================================================= */
 
 .match-card.selected,
 .match-card.dragging {
   border-color: #ffc62e;
+
   background: #fffdf1;
+
   box-shadow:
     0 0 0 4px rgba(255, 198, 46, 0.16),
     0 0 25px rgba(255, 198, 46, 0.62),
     0 7px 0 #e5d58c;
+
   cursor: grabbing;
+
   z-index: 2;
-  animation: mrSelectedGlow 0.9s ease-in-out infinite alternate;
+
+  animation:
+    mrSelectedGlow
+    0.9s
+    ease-in-out
+    infinite
+    alternate;
 }
 
 html[data-theme="dark"] .match-card.selected,
 html[data-theme="dark"] .match-card.dragging {
   background: #3a3020;
+
   box-shadow:
     0 0 0 4px rgba(255, 198, 46, 0.2),
     0 0 25px rgba(255, 198, 46, 0.45),
     0 7px 0 #8a7420;
 }
 
+/* =========================================================
+   TARGET
+========================================================= */
+
 .match-card.target {
   border-color: #8b6de2;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2), 0 7px 0 #d8d1ee;
+
+  box-shadow:
+    0 0 0 3px rgba(139, 92, 246, 0.2),
+    0 7px 0 #d8d1ee;
 }
+
+/* =========================================================
+   WRONG ANSWER
+========================================================= */
 
 .match-card.wrong {
   background: #e5484d !important;
+
   border-color: #ff8b8f !important;
-  color: #fff !important;
-  box-shadow: 0 6px 0 #b83237;
-  animation: mrWrongShake 0.34s ease;
+
+  color: #ffffff !important;
+
+  box-shadow:
+    0 6px 0 #b83237;
+
+  animation:
+    mrWrongShake
+    0.34s
+    ease;
 }
+
+/* =========================================================
+   CORRECT ANSWER
+========================================================= */
 
 .match-card.correct-flash {
   background: #20a85a !important;
+
   border-color: #77e2a1 !important;
-  color: #fff !important;
-  box-shadow: 0 0 0 4px rgba(32, 168, 90, 0.15), 0 7px 0 #168448;
-  animation: mrCorrectPop 0.28s ease-out forwards;
+
+  color: #ffffff !important;
+
+  box-shadow:
+    0 0 0 4px rgba(32, 168, 90, 0.15),
+    0 7px 0 #168448;
+
+  animation:
+    mrCorrectPop
+    0.28s
+    ease-out
+    forwards;
 }
+
+/* =========================================================
+   MATCHED / DISABLED
+========================================================= */
 
 .match-card.matched,
 .match-card.verb-done,
 .match-card:disabled {
   opacity: 0.35;
+
   pointer-events: none;
+
   cursor: default;
+
   transform: scale(0.92);
-  transition: opacity 0.35s ease, transform 0.35s ease;
+
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
 }
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
 
 @keyframes mrSelectedGlow {
   from {
     filter: brightness(1);
-    box-shadow: 0 0 0 3px rgba(255, 198, 46, 0.12), 0 0 16px rgba(255, 198, 46, 0.38), 0 7px 0 #e5d58c;
+
+    box-shadow:
+      0 0 0 3px rgba(255, 198, 46, 0.12),
+      0 0 16px rgba(255, 198, 46, 0.38),
+      0 7px 0 #e5d58c;
   }
+
   to {
     filter: brightness(1.04);
-    box-shadow: 0 0 0 5px rgba(255, 198, 46, 0.18), 0 0 32px rgba(255, 198, 46, 0.78), 0 7px 0 #e5d58c;
+
+    box-shadow:
+      0 0 0 5px rgba(255, 198, 46, 0.18),
+      0 0 32px rgba(255, 198, 46, 0.78),
+      0 7px 0 #e5d58c;
   }
 }
 
 @keyframes mrCorrectPop {
-  0% { transform: scale(1); }
-  55% { transform: scale(1.07); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  55% {
+    transform: scale(1.07);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes mrWrongShake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-8px); }
-  40% { transform: translateX(8px); }
-  60% { transform: translateX(-6px); }
-  80% { transform: translateX(6px); }
-}
-
-.primary {
-  min-height: 48px;
-  padding: 12px 32px;
-  font-size: 1rem;
-  border-radius: 10px;
-}
-
-/* Phone / short screens: slightly smaller equal squares so 5 fit */
-@media (max-width: 720px), (max-height: 780px) {
-  .board { gap: 12px; }
-  .cards {
-    --card-size: min(112px, 28vw, 12.5vh);
-    gap: 8px;
+  0%,
+  100% {
+    transform: translateX(0);
   }
+
+  20% {
+    transform: translateX(-8px);
+  }
+
+  40% {
+    transform: translateX(8px);
+  }
+
+  60% {
+    transform: translateX(-6px);
+  }
+
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+/* =========================================================
+   HINT
+========================================================= */
+
+.hint {
+  flex: 0 0 auto;
+
+  text-align: center;
+
+  font-size: 12px;
+
+  color: var(--muted);
+
+  margin-top: 8px;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   RESULT MODAL
+========================================================= */
+
+.modal {
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    rgba(20, 10, 40, 0.55);
+
+  backdrop-filter: blur(4px);
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 28px;
+
+  z-index: 20;
+
+  padding: 16px;
+}
+
+.modal-card {
+  width: min(360px, 100%);
+
+  background: var(--panel-card);
+
+  border-radius: 22px;
+
+  padding: 26px 20px;
+
+  text-align: center;
+
+  border: 1px solid var(--line);
+
+  box-shadow:
+    var(--glow),
+    var(--shadow);
+}
+
+.modal-icon {
+  font-size: 38px;
+
+  margin-bottom: 6px;
+}
+
+.modal-card h2 {
+  font-size: 24px;
+
+  margin-bottom: 6px;
+}
+
+.modal-card p {
+  color: var(--muted);
+
+  font-size: 14px;
+
+  margin-bottom: 14px;
+}
+
+.result-row {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 8px;
+
+  margin-bottom: 18px;
+}
+
+.result-row div {
+  background: var(--panel);
+
+  border-radius: 12px;
+
+  padding: 10px 6px;
+}
+
+.result-row span {
+  display: block;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  color: var(--muted);
+
+  text-transform: uppercase;
+}
+
+.result-row strong {
+  font-size: 18px;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 720px),
+       (max-height: 780px) {
+
+  .frame {
+    padding: 6px;
+  }
+
+  .panel {
+    border-radius: 20px;
+
+    padding:
+      10px
+      10px
+      8px;
+  }
+
+  .top-title {
+    font-size: 13px;
+  }
+
+  .stat strong {
+    font-size: 20px;
+  }
+
+  .board {
+    gap: 12px;
+  }
+
+  .cards {
+    /*
+      Slightly smaller squares
+      for normal phone screens
+    */
+    --card-size: min(105px, 25vw, 11vh);
+
+    gap: 7px;
+  }
+
   .match-card {
     border-radius: 14px;
-    font-size: clamp(0.8rem, 3.2vw, 1rem);
+
+    font-size:
+      clamp(0.8rem, 3.2vw, 1rem);
   }
-  .col h2 { font-size: 0.8rem; margin-bottom: 6px; }
+
+  .col h2 {
+    font-size: 0.8rem;
+
+    margin-bottom: 6px;
+  }
+
+  .hint {
+    font-size: 11px;
+  }
+
+  .back-pill {
+    font-size: 12px;
+
+    padding:
+      7px
+      12px;
+  }
 }
 
-@media (max-width: 400px), (max-height: 640px) {
+/* =========================================================
+   VERY SMALL / SHORT PHONES
+========================================================= */
+
+@media (max-width: 400px),
+       (max-height: 640px) {
+
   .cards {
-    --card-size: min(96px, 26vw, 11vh);
+    /*
+      Ensures all 5 cards fit
+      on very small phones
+    */
+    --card-size: min(88px, 24vw, 10vh);
+
     gap: 6px;
   }
+
   .match-card {
     border-radius: 12px;
+
     border-width: 2px;
+
     padding: 6px;
+
+    font-size:
+      clamp(0.75rem, 3vw, 0.95rem);
+  }
+
+  .stat strong {
+    font-size: 18px;
   }
 }
