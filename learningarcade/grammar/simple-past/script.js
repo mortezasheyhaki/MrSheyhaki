@@ -563,96 +563,121 @@
   }
 
   /* =========================================================
-     REGULAR VERBS — LEVEL 1
-     ========================================================= */
+   REGULAR VERBS — LEVEL 1 (FIXED A1)
+   ========================================================= */
 
-  function qRegLevel1() {
-    const [base, past] = pick(REGULAR);
+const REGULAR_L1 = [
+  // Positive
+  {
+    type: "mc",
+    hint: "Positive · regular verb",
+    prompt: "Yesterday I ____ at home. (stay)",
+    choices: ["stayed", "stay", "stayeded"],
+    answer: "stayed"
+  },
+  {
+    type: "mc",
+    hint: "Positive · regular verb",
+    prompt: "Last night she ____ dinner. (cook)",
+    choices: ["cooked", "cook", "cookked"],
+    answer: "cooked"
+  },
+  {
+    type: "mc",
+    hint: "Positive · regular verb",
+    prompt: "Last weekend they ____ football. (play)",
+    choices: ["played", "play", "playyed"],
+    answer: "played"
+  },
+  {
+    type: "mc",
+    hint: "Positive · regular verb",
+    prompt: "He ____ the window yesterday. (close)",
+    choices: ["closed", "close", "closede"],
+    answer: "closed"
+  },
+  {
+    type: "mc",
+    hint: "Positive · regular verb",
+    prompt: "We ____ the hotel last month. (book)",
+    choices: ["booked", "book", "bookked"],
+    answer: "booked"
+  },
 
-    const form = pick([
-      "pos",
-      "neg",
-      "q"
-    ]);
+  // Negative
+  {
+    type: "mc",
+    hint: "Negative · regular verb",
+    prompt: "I ____ it yesterday. (need)",
+    choices: ["didn't need", "didn't needed", "doesn't need"],
+    answer: "didn't need"
+  },
+  {
+    type: "mc",
+    hint: "Negative · regular verb",
+    prompt: "She ____ the door. (open)",
+    choices: ["didn't open", "didn't opened", "doesn't open"],
+    answer: "didn't open"
+  },
+  {
+    type: "mc",
+    hint: "Negative · regular verb",
+    prompt: "They ____ the car. (park)",
+    choices: ["didn't park", "didn't parked", "doesn't park"],
+    answer: "didn't park"
+  },
+  {
+    type: "mc",
+    hint: "Negative · regular verb",
+    prompt: "He ____ help. (want)",
+    choices: ["didn't want", "didn't wanted", "doesn't want"],
+    answer: "didn't want"
+  },
+  {
+    type: "mc",
+    hint: "Negative · regular verb",
+    prompt: "We ____ the dishes. (wash)",
+    choices: ["didn't wash", "didn't washed", "doesn't wash"],
+    answer: "didn't wash"
+  },
 
-    const subjects = [
-      "I",
-      "You",
-      "He",
-      "She",
-      "We",
-      "They"
-    ];
-
-    const subj = pick(subjects);
-
-    const positiveSentences = [
-      "Yesterday " +
-        subj.toLowerCase() +
-        " ____ at home. (" +
-        base +
-        ")",
-
-      "Last night " +
-        subj.toLowerCase() +
-        " ____ after dinner. (" +
-        base +
-        ")",
-
-      "Last weekend " +
-        subj.toLowerCase() +
-        " ____ with friends. (" +
-        base +
-        ")"
-    ];
-
-    if (form === "pos") {
-      return {
-        type: "mc",
-        hint: "Positive · regular verb",
-        prompt: pick(positiveSentences),
-        choices: shuffle([
-          past,
-          base,
-          base + "ed"
-        ]),
-        answer: past
-      };
-    }
-
-    if (form === "neg") {
-      return {
-        type: "mc",
-        hint: "Negative · regular verb",
-        prompt:
-          subj +
-          " ____ it yesterday. (" +
-          base +
-          ")",
-        choices: shuffle([
-          "didn't " + base,
-          "didn't " + past,
-          "doesn't " + base
-        ]),
-        answer: "didn't " + base
-      };
-    }
-
-    return {
-      type: "mc",
-      hint: "Question · regular verb",
-      prompt:
-        "____ you ____ English yesterday? (" +
-        base +
-        ")",
-      choices: shuffle([
-        "Did / " + base,
-        "Did / " + past,
-        "Do / " + base
-      ]),
-      answer: "Did / " + base
-    };
+  // Questions
+  {
+    type: "mc",
+    hint: "Question · regular verb",
+    prompt: "____ you ____ English yesterday? (study)",
+    choices: ["Did / study", "Did / studied", "Do / study"],
+    answer: "Did / study"
+  },
+  {
+    type: "mc",
+    hint: "Question · regular verb",
+    prompt: "____ she ____ the room? (clean)",
+    choices: ["Did / clean", "Did / cleaned", "Does / clean"],
+    answer: "Did / clean"
+  },
+  {
+    type: "mc",
+    hint: "Question · regular verb",
+    prompt: "____ they ____ the window? (close)",
+    choices: ["Did / close", "Did / closed", "Do / close"],
+    answer: "Did / close"
+  },
+  {
+    type: "mc",
+    hint: "Question · regular verb",
+    prompt: "____ he ____ the hotel? (book)",
+    choices: ["Did / book", "Did / booked", "Does / book"],
+    answer: "Did / book"
+  },
+  {
+    type: "mc",
+    hint: "Question · regular verb",
+    prompt: "____ you ____ at home last night? (stay)",
+    choices: ["Did / stay", "Did / stayed", "Do / stay"],
+    answer: "Did / stay"
   }
+];
 
   /* =========================================================
      REGULAR VERBS — LEVEL 2
