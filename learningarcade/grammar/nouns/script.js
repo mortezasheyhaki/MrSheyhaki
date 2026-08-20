@@ -213,6 +213,11 @@
 
     if (backBtn) {
   backBtn.onclick = () => {
+    const onHomeScreen = !gameScreen || gameScreen.style.display === "none";
+    if (onHomeScreen) {
+      window.location.href = "../";
+      return;
+    }
     if (gameRunning) {
       if (timer) clearInterval(timer);
       gameRunning = false;
