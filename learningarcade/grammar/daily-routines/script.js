@@ -1,4 +1,4 @@
-/* Daily Routines · Sentence Builder */
+/* Daily Routines · Sentence Builder — fixed clicks + smooth UI */
 (function () {
   "use strict";
 
@@ -34,10 +34,10 @@
   const clearBtn = document.getElementById("clearBtn");
   const wordBank = document.getElementById("wordBank");
   const answerSlots = document.getElementById("answerSlots");
+  const promptText = document.getElementById("promptText");
+  const promptHint = document.getElementById("promptHint");
   const feedbackEl = document.getElementById("feedback");
   const scoreEl = document.getElementById("score");
-  const promptHint = document.getElementById("promptHint");
-  const promptText = document.getElementById("promptText");
   const progressFill = document.getElementById("progressFill");
   const finalScore = document.getElementById("finalScore");
   const finalCorrect = document.getElementById("finalCorrect");
@@ -49,34 +49,33 @@
   let score = 0;
   let correctCount = 0;
   let wrongCount = 0;
-  let built = [];
-  let bankState = [];
   let locked = false;
+  /** @type {Map<string, HTMLButtonElement>} */
+  let chipMap = new Map();
+  /** @type {string[]} order of uids in answer */
+  let builtUids = [];
   let dragUid = null;
 
   function shuffle(arr) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+      const t = a[i];
+      a[i] = a[j];
+      a[j] = t;
     }
     return a;
   }
 
   function buildQueue() {
-    const statements = shuffle(STATEMENTS).slice(0, 5);
-    const questions = shuffle(QUESTIONS).slice(0, 5);
-    queue = shuffle(statements.concat(questions));
+    const pool = STATEMENTS.concat(QUESTIONS);
+    return shuffle(pool).slice(0, TOTAL);
   }
 
   function showScreen(name) {
-    homeScreen.classList.add("hidden");
-    gameScreen.classList.add("hidden");
-    resultScreen.classList.add("hidden");
-    if (name === "home") homeScreen.classList.remove("hidden");
-    if (name === "game") gameScreen.classList.remove("hidden");
-    if (name === "result") resultScreen.classList.remove("hidden");
-    // Keep play area in view on mobile
+    if (homeScreen) homeScreen.classList.toggle("hidden", name !== "home");
+    if (gameScreen) gameScreen.classList.toggle("hidden", name !== "game");
+    if (resultScreen) resultScreen.classList.toggle("hidden", name !== "result");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -84,194 +83,206 @@
     return queue[index];
   }
 
+  function updateProgress() {
+    if (progressFill) {
+      const pct = Math.min(100, Math.round((index / TOTAL) * 100));
+      progressFill.style.width = pct + "%";
+    }
+  }
+
   function loadItem() {
     locked = false;
-    built = [];
+    builtUids = [];
     dragUid = null;
-    const item = current();
-    const words = shuffle(item.words.slice());
-    bankState = words.map(function (w, i) {
-      return { word: w, used: false, uid: i + "-" + w };
-    });
-
-    if (promptHint) promptHint.textContent = "Click or drag the words into order";
-    if (promptText) promptText.textContent = item.prompt;
-    if (scoreEl) scoreEl.textContent = String(score);
-    if (progressFill) progressFill.style.width = Math.round((index / TOTAL) * 100) + "%";
+    chipMap.clear();
     if (feedbackEl) {
       feedbackEl.textContent = "";
       feedbackEl.className = "feedback";
     }
+    if (answerSlots) {
+      answerSlots.innerHTML = "";
+      answerSlots.classList.remove("correct", "wrong");
+    }
+    if (wordBank) wordBank.innerHTML = "";
 
-    renderBank();
-    renderAnswer();
+    const item = current();
+    if (!item) return;
+
+    if (promptText) promptText.textContent = item.prompt;
+    if (promptHint) {
+      promptHint.textContent = item.answer[0] && item.answer[0].match(/^(Do|Does)/)
+        ? "Build the question"
+        : "Put the words in order";
+    }
+
+    const words = shuffle(item.words.map(function (w, i) {
+      return { word: w, uid: "w" + i + "-" + Math.random().toString(36).slice(2, 7) };
+    }));
+
+    words.forEach(function (entry) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "word-chip";
+      btn.textContent = entry.word;
+      btn.dataset.uid = entry.uid;
+      btn.dataset.word = entry.word;
+      btn.draggable = true;
+
+      btn.addEventListener("click", function () {
+        if (locked) return;
+        if (btn.classList.contains("in-answer")) {
+          // return to bank
+          returnToBank(entry.uid);
+        } else {
+          moveToAnswer(entry.uid);
+        }
+      });
+
+      btn.addEventListener("dragstart", function (e) {
+        if (locked) {
+          e.preventDefault();
+          return;
+        }
+        dragUid = entry.uid;
+        btn.classList.add("dragging");
+        try {
+          e.dataTransfer.setData("text/plain", entry.uid);
+          e.dataTransfer.effectAllowed = "move";
+        } catch (_) {}
+      });
+
+      btn.addEventListener("dragend", function () {
+        btn.classList.remove("dragging");
+        dragUid = null;
+        if (answerSlots) answerSlots.classList.remove("drag-over");
+        if (wordBank) wordBank.classList.remove("drag-over");
+      });
+
+      chipMap.set(entry.uid, btn);
+      wordBank.appendChild(btn);
+      // entrance animation
+      requestAnimationFrame(function () {
+        btn.classList.add("chip-in");
+      });
+    });
+
+    updateProgress();
   }
 
-  function renderBank() {
-    if (!wordBank) return;
-    wordBank.innerHTML = "";
-    wordBank.classList.remove("mk-stagger-fast");
-    void wordBank.offsetWidth;
-    wordBank.classList.add("mk-stagger-fast");
-
-    bankState.forEach(function (entry) {
-      if (entry.used) return;
-      wordBank.appendChild(makeChip(entry, "bank"));
-    });
-  }
-
-  function renderAnswer() {
-    if (!answerSlots) return;
-    answerSlots.innerHTML = "";
-    built.forEach(function (entry, i) {
-      answerSlots.appendChild(makeChip(entry, "answer", i));
-    });
-  }
-
-  function makeChip(entry, place, answerIndex) {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "word-chip";
-    btn.textContent = entry.word;
-    btn.dataset.uid = entry.uid;
-    btn.draggable = !locked;
-    btn.disabled = locked;
-
-    btn.addEventListener("click", function () {
-      if (locked) return;
-      if (place === "bank") addWord(entry.uid);
-      else removeWord(answerIndex);
-    });
-
-    btn.addEventListener("dragstart", function (e) {
-      if (locked) {
-        e.preventDefault();
-        return;
-      }
-      dragUid = entry.uid;
-      btn.classList.add("dragging");
-      e.dataTransfer.setData("text/plain", entry.uid);
-      e.dataTransfer.effectAllowed = "move";
-    });
-    btn.addEventListener("dragend", function () {
-      btn.classList.remove("dragging");
-      dragUid = null;
-      if (answerSlots) answerSlots.classList.remove("drag-over");
-      if (wordBank) wordBank.classList.remove("drag-over");
-    });
-
-    return btn;
-  }
-
-  function addWord(uid) {
+  function moveToAnswer(uid) {
     if (locked) return;
-    const entry = bankState.find(function (e) {
-      return e.uid === uid;
-    });
-    if (!entry || entry.used) return;
-    entry.used = true;
-    built.push({ word: entry.word, uid: entry.uid });
-    renderBank();
-    renderAnswer();
-    if (bankState.every(function (e) {
-      return e.used;
-    })) {
-      setTimeout(checkAnswer, 180);
+    const btn = chipMap.get(uid);
+    if (!btn || btn.classList.contains("in-answer")) return;
+
+    btn.classList.add("in-answer", "chip-pop");
+    answerSlots.appendChild(btn);
+    builtUids.push(uid);
+
+    setTimeout(function () {
+      btn.classList.remove("chip-pop");
+    }, 220);
+
+    // all words placed?
+    if (builtUids.length === chipMap.size) {
+      setTimeout(checkAnswer, 200);
     }
   }
 
-  function removeWord(i) {
+  function returnToBank(uid) {
     if (locked) return;
-    if (i < 0 || i >= built.length) return;
-    const entry = built.splice(i, 1)[0];
-    const bankEntry = bankState.find(function (e) {
-      return e.uid === entry.uid;
-    });
-    if (bankEntry) bankEntry.used = false;
-    renderBank();
-    renderAnswer();
+    const btn = chipMap.get(uid);
+    if (!btn) return;
+
+    const idx = builtUids.indexOf(uid);
+    if (idx >= 0) builtUids.splice(idx, 1);
+
+    btn.classList.remove("in-answer");
+    btn.classList.add("chip-pop");
+    wordBank.appendChild(btn);
+
+    setTimeout(function () {
+      btn.classList.remove("chip-pop");
+    }, 220);
+
+    if (feedbackEl) {
+      feedbackEl.textContent = "";
+      feedbackEl.className = "feedback";
+    }
+    if (answerSlots) answerSlots.classList.remove("correct", "wrong");
   }
 
   function clearAnswer() {
     if (locked) return;
-    built = [];
-    bankState.forEach(function (e) {
-      e.used = false;
-    });
-    renderBank();
-    renderAnswer();
-    if (feedbackEl) {
-      feedbackEl.textContent = "";
-      feedbackEl.className = "feedback";
-    }
+    const uids = builtUids.slice();
+    uids.forEach(returnToBank);
   }
 
   function normalize(arr) {
     return arr.map(function (w) {
-      return w.replace(/[?.!,]/g, "").toLowerCase();
+      return String(w).replace(/[?.!,]/g, "").toLowerCase();
     });
   }
 
   function isCorrect(user, answer) {
-    if (user.length !== answer.length) {
-      const a = answer.map(function (w) {
-        return w.replace("?", "");
-      });
-      const u = user.map(function (w) {
-        return w.replace("?", "");
-      });
-      if (u.length !== a.length) return false;
-      return normalize(u).every(function (w, i) {
-        return w === normalize(a)[i];
-      });
-    }
-    return normalize(user).every(function (w, i) {
-      return w === normalize(answer)[i];
+    const u = normalize(user);
+    const a = normalize(answer);
+    if (u.length !== a.length) return false;
+    return u.every(function (w, i) {
+      return w === a[i];
     });
   }
 
   function checkAnswer() {
-    if (locked || !built.length) return;
+    if (locked || !builtUids.length) return;
     locked = true;
+
     const item = current();
-    const user = built.map(function (b) {
-      return b.word;
+    const user = builtUids.map(function (uid) {
+      const btn = chipMap.get(uid);
+      return btn ? btn.dataset.word : "";
     });
     const success = isCorrect(user, item.answer);
 
     if (success) {
       score += 10;
       correctCount += 1;
+      if (scoreEl) scoreEl.textContent = String(score);
       if (feedbackEl) {
         feedbackEl.textContent = "Correct!";
         feedbackEl.className = "feedback ok";
       }
-      if (scoreEl) scoreEl.textContent = String(score);
-      setTimeout(function () {
-        index += 1;
-        if (index >= TOTAL) endGame();
-        else loadItem();
-      }, 650);
+      if (answerSlots) answerSlots.classList.add("correct");
+      builtUids.forEach(function (uid) {
+        const btn = chipMap.get(uid);
+        if (btn) btn.classList.add("chip-correct");
+      });
     } else {
       wrongCount += 1;
       if (feedbackEl) {
-        feedbackEl.textContent = "Not quite. → " + item.answer.join(" ");
+        feedbackEl.textContent = "Not quite — " + item.answer.join(" ");
         feedbackEl.className = "feedback bad";
       }
-      setTimeout(function () {
-        index += 1;
-        if (index >= TOTAL) endGame();
-        else loadItem();
-      }, 1400);
+      if (answerSlots) answerSlots.classList.add("wrong");
+      builtUids.forEach(function (uid) {
+        const btn = chipMap.get(uid);
+        if (btn) btn.classList.add("chip-wrong");
+      });
     }
+
+    setTimeout(function () {
+      index += 1;
+      if (index >= TOTAL) endGame();
+      else loadItem();
+    }, success ? 900 : 1600);
   }
 
   function startGame() {
-    buildQueue();
+    queue = buildQueue();
     index = 0;
     score = 0;
     correctCount = 0;
     wrongCount = 0;
+    if (scoreEl) scoreEl.textContent = "0";
     showScreen("game");
     loadItem();
   }
@@ -303,10 +314,7 @@
       answerSlots.classList.remove("drag-over");
       const uid = e.dataTransfer.getData("text/plain") || dragUid;
       if (!uid || locked) return;
-      if (built.some(function (b) {
-        return b.uid === uid;
-      })) return;
-      addWord(uid);
+      moveToAnswer(uid);
     });
 
     wordBank.addEventListener("dragover", function (e) {
@@ -321,16 +329,8 @@
       wordBank.classList.remove("drag-over");
       const uid = e.dataTransfer.getData("text/plain") || dragUid;
       if (!uid || locked) return;
-      const idx = built.findIndex(function (b) {
-        return b.uid === uid;
-      });
-      if (idx >= 0) removeWord(idx);
+      returnToBank(uid);
     });
-  }
-
-  function syncSiteTheme() {
-    const dark = document.documentElement.getAttribute("data-theme") === "dark";
-    document.body.classList.toggle("light-mode", !dark);
   }
 
   if (startBtn) startBtn.addEventListener("click", startGame);
@@ -338,14 +338,5 @@
   if (clearBtn) clearBtn.addEventListener("click", clearAnswer);
 
   setupDropZones();
-  syncSiteTheme();
-  window.addEventListener("site-theme-change", syncSiteTheme);
-  try {
-    new MutationObserver(syncSiteTheme).observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme"],
-    });
-  } catch (_) {}
-
   showScreen("home");
 })();
