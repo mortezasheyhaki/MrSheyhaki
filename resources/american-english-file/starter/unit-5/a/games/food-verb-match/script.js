@@ -389,33 +389,32 @@
 
   function highlightDirection(dx, dy) {
 
-    clearTargetHighlights();
+function clearTargetHighlights() {
 
-    const distance = Math.sqrt(
-      dx * dx + dy * dy
-    );
+  targetHave.classList.remove(
+    "active",
+    "correct",
+    "wrong"
+  );
 
-    if (distance < 35) {
-      return;
-    }
+  targetDrink.classList.remove(
+    "active",
+    "correct",
+    "wrong"
+  );
 
-    const direction = getDirection(dx, dy);
+  targetEat.classList.remove(
+    "active",
+    "correct",
+    "wrong"
+  );
 
-    if (direction === "up") {
-      targetHave.classList.add("active");
-      swipeCard.classList.add("swiping-up");
-    }
-
-    else if (direction === "left") {
-      targetDrink.classList.add("active");
-      swipeCard.classList.add("swiping-left");
-    }
-
-    else if (direction === "right") {
-      targetEat.classList.add("active");
-      swipeCard.classList.add("swiping-right");
-    }
-  }
+  swipeCard.classList.remove(
+    "swiping-up",
+    "swiping-left",
+    "swiping-right"
+  );
+}
 
 
   /* =======================================================
