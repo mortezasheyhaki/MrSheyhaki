@@ -1085,13 +1085,6 @@ function saveXP() {
 
 /* =====================================================
    SAVE ARCADE PLAYER DATA
-   Writes into the same shared profile the homepage,
-   Match Rush, Multiple Choice, Grammar Battle, and
-   Video Quest use, so Simple Present progress shows
-   up in the site-wide XP/streak/games-played stats.
-   Called once per completed practice or final mix,
-   not per question, so gamesPlayed counts rounds
-   rather than individual answers.
 ===================================================== */
 
 function saveArcadeProgress(xp) {
@@ -1206,17 +1199,76 @@ function saveArcadeProgress(xp) {
 
 
 /* =====================================================
+   SHOW / HIDE SCREENS
+===================================================== */
+
+function show(id) {
+
+    $$(".screen")
+        .forEach(
+            function (screen) {
+
+                screen.classList.add(
+                    "hidden"
+                );
+
+            }
+        );
+
+
+    const target =
+        document.getElementById(
+            id
+        );
+
+
+    if (target) {
+
+        target.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   NORMALIZE
+===================================================== */
+
+function normalize(text) {
+
+    return String(text || "")
+        .toLowerCase()
+        .replace(
+            /[^\w\s']/g,
+            ""
+        )
+        .replace(
+            /\s+/g,
+            " "
+        )
+        .trim();
+
+}
+
+
+/* =====================================================
    SHUFFLE
 ===================================================== */
 
 function shuffle(array) {
 
-    const result =
-        [...array];
+    const copy =
+        [
+            ...array
+        ];
 
 
     for (
-        let i = result.length - 1;
+        let i =
+            copy.length - 1;
         i > 0;
         i--
     ) {
@@ -1229,135 +1281,81 @@ function shuffle(array) {
 
 
         [
-            result[i],
-            result[j]
-        ] = [
-            result[j],
-            result[i]
-        ];
+            copy[i],
+            copy[j]
+        ] =
+            [
+                copy[j],
+                copy[i]
+            ];
 
     }
 
 
-    return result;
+    return copy;
 
 }
 
 
 /* =====================================================
-   NORMALIZE
+   LOCAL STORAGE HELPERS
 ===================================================== */
 
-function normalize(text) {
+function getDonePractices(group) {
 
-    return String(text)
-        .toLowerCase()
-        .replace(/[’]/g, "'")
-        .replace(/\s+/g, " ")
-        .trim();
+    try {
 
-}
-
-
-/* =====================================================
-   SCREEN CONTROL
-===================================================== */
-
-function show(id) {
-
-    [
-        "homeScreen",
-        "practiceMenu",
-        "gameScreen",
-        "resultScreen"
-
-    ].forEach(
-        function (screenId) {
-
-            $(`#${screenId}`)
-                .classList
-                .add("hidden");
-
-        }
-    );
-
-
-    $(`#${id}`)
-        .classList
-        .remove("hidden");
-
-
-    window.scrollTo({
-
-        top:
-            0,
-
-        behavior:
-            "smooth"
-
-    });
-
-}
-
-
-/* =====================================================
-   GROUP COMPLETION
-===================================================== */
-
-function groupDone(group) {
-
-    const done =
-        JSON.parse(
+        return JSON.parse(
             localStorage.getItem(
-                `spDone_${group}`
+                "sp_done_" + group
             ) || "[]"
         );
 
+    } catch (error) {
 
-    return (
-        new Set(done).size >= 5
-    );
+        return [];
+
+    }
 
 }
 
 
-function markPracticeDone(
-    group,
-    practice
-) {
+function markPracticeDone(group, practice) {
 
     const done =
-        new Set(
-            JSON.parse(
-                localStorage.getItem(
-                    `spDone_${group}`
-                ) || "[]"
-            )
+        getDonePractices(
+            group
         );
 
 
-    done.add(
-        practice
-    );
-
-
-    localStorage.setItem(
-        `spDone_${group}`,
-        JSON.stringify(
-            [...done]
+    if (
+        !done.includes(
+            practice
         )
-    );
+    ) {
+
+        done.push(
+            practice
+        );
+
+
+        localStorage.setItem(
+            "sp_done_" + group,
+            JSON.stringify(
+                done
+            )
+        );
+
+    }
 
 }
 
 
-function finalMixedDone() {
+function isFinalMixedDone() {
 
-    return (
-        localStorage.getItem(
-            "spFinalMixedDone"
-        ) === "true"
-    );
+    return localStorage.getItem(
+        "sp_final_mixed_done"
+    ) === "1";
 
 }
 
@@ -1365,356 +1363,185 @@ function finalMixedDone() {
 function markFinalMixedDone() {
 
     localStorage.setItem(
-        "spFinalMixedDone",
-        "true"
+        "sp_final_mixed_done",
+        "1"
     );
 
 }
 
 
 /* =====================================================
-   FINAL UNLOCK
-===================================================== */
-
-function mixedUnlocked() {
-
-    return (
-        groupDone("group1") &&
-        groupDone("group2")
-    );
-
-}
-
-
-/* =====================================================
-   UPDATE PRACTICE MENU
-===================================================== */
-
-function updateMenuProgress() {
-
-    const done =
-        JSON.parse(
-            localStorage.getItem(
-                `spDone_${state.group}`
-            ) || "[]"
-        );
-
-
-    const completed =
-        new Set(done);
-
-
-    $("#groupProgressText").textContent =
-        `${completed.size} / 5 practices completed`;
-
-
-    document
-        .querySelectorAll(
-            ".practice-card"
-        )
-        .forEach(
-            function (card) {
-
-                const practice =
-                    card.dataset.practice;
-
-
-                card.classList.toggle(
-                    "completed",
-                    completed.has(
-                        practice
-                    )
-                );
-
-            }
-        );
-
-}
-
-
-/* =====================================================
-   TOP PATH PROGRESS
-===================================================== */
-
-function updatePathProgress(
-    group1Complete,
-    group2Complete,
-    finalComplete
-) {
-
-    const steps =
-        document.querySelectorAll(
-            ".path-step"
-        );
-
-
-    const lines =
-        document.querySelectorAll(
-            ".path-line"
-        );
-
-
-    if (
-        steps.length >= 3
-    ) {
-
-        updatePathStep(
-            steps[0],
-            group1Complete,
-            false
-        );
-
-
-        updatePathStep(
-            steps[1],
-            group2Complete,
-            false
-        );
-
-
-        updatePathStep(
-            steps[2],
-            finalComplete,
-            true
-        );
-
-    }
-
-
-    if (
-        lines.length >= 2
-    ) {
-
-        lines[0].classList.toggle(
-            "completed",
-            group1Complete
-        );
-
-
-        lines[1].classList.toggle(
-            "completed",
-            group2Complete
-        );
-
-    }
-
-}
-
-
-function updatePathStep(
-    step,
-    completed,
-    finalStep
-) {
-
-    step.classList.toggle(
-        "completed",
-        completed
-    );
-
-
-    step.classList.toggle(
-        "locked",
-        !completed &&
-        finalStep
-    );
-
-
-    const number =
-        step.querySelector(
-            "span"
-        );
-
-
-    if (!number) {
-        return;
-    }
-
-
-    if (completed) {
-
-        number.textContent =
-            "✓";
-
-    }
-
-    else {
-
-        number.textContent =
-            step.dataset.number ||
-            "";
-
-    }
-
-}
-
-
-/* =====================================================
-   GROUP CARD STATE
-===================================================== */
-
-function updateGroupCardState(
-    card,
-    completed,
-    badgeText,
-    actionText
-) {
-
-    if (!card) {
-        return;
-    }
-
-
-    card.classList.toggle(
-        "completed",
-        completed
-    );
-
-
-    const action =
-        card.querySelector(
-            ".group-action"
-        );
-
-
-    if (action) {
-
-        action.textContent =
-            completed
-                ? actionText
-                : "START GROUP →";
-
-    }
-
-}
-
-
-/* =====================================================
-   HOME
+   RENDER HOME
 ===================================================== */
 
 function renderHome() {
 
-    const group1 =
+    const group1Done =
+        getDonePractices(
+            "group1"
+        ).length >= 5;
+
+
+    const group2Done =
+        getDonePractices(
+            "group2"
+        ).length >= 5;
+
+
+    const mixedUnlocked =
+        group1Done &&
+        group2Done;
+
+
+    // Path steps
+    $$(".path-step")
+        .forEach(
+            function (step) {
+
+                const number =
+                    step.dataset.number;
+
+
+                step.classList.remove(
+                    "active",
+                    "locked",
+                    "completed"
+                );
+
+
+                if (
+                    number === "1"
+                ) {
+
+                    step.classList.add(
+                        group1Done
+                            ? "completed"
+                            : "active"
+                    );
+
+                }
+
+
+                if (
+                    number === "2"
+                ) {
+
+                    step.classList.add(
+                        group2Done
+                            ? "completed"
+                            : "active"
+                    );
+
+                }
+
+
+                if (
+                    number === "3"
+                ) {
+
+                    step.classList.add(
+                        mixedUnlocked
+                            ? (
+                                isFinalMixedDone()
+                                    ? "completed"
+                                    : "active"
+                            )
+                            : "locked"
+                    );
+
+                }
+
+            }
+        );
+
+
+    // Group cards
+    const group1Card =
         document.querySelector(
             '[data-group="group1"]'
         );
 
 
-    const group2 =
+    const group2Card =
         document.querySelector(
             '[data-group="group2"]'
         );
 
 
-    const finalGroup =
+    const mixedCard =
         document.querySelector(
             '[data-group="mixed"]'
         );
 
 
-    const group1Complete =
-        groupDone("group1");
+    if (group1Card) {
 
-
-    const group2Complete =
-        groupDone("group2");
-
-
-    const finalComplete =
-        finalMixedDone();
-
-
-    /* GROUP 1 */
-
-    updateGroupCardState(
-        group1,
-        group1Complete,
-        "✓",
-        "PLAY AGAIN →"
-    );
-
-
-    /* GROUP 2 */
-
-    updateGroupCardState(
-        group2,
-        group2Complete,
-        "✓",
-        "PLAY AGAIN →"
-    );
-
-
-    /* FINAL GROUP */
-
-    const unlocked =
-        group1Complete &&
-        group2Complete;
-
-
-    finalGroup.disabled =
-        !unlocked;
-
-
-    finalGroup.classList.toggle(
-        "locked-card",
-        !unlocked
-    );
-
-
-    finalGroup.classList.toggle(
-        "final-completed",
-        finalComplete
-    );
-
-
-    const finalNote =
-        finalGroup.querySelector(
-            ".lock-note"
+        group1Card.classList.toggle(
+            "completed",
+            group1Done
         );
-
-
-    const finalAction =
-        finalGroup.querySelector(
-            ".group-action"
-        );
-
-
-    if (finalNote) {
-
-        finalNote.textContent =
-
-            !unlocked
-
-                ? "🔒 COMPLETE GROUP 1 + GROUP 2"
-
-                : finalComplete
-
-                    ? "✓ FINAL CHALLENGE COMPLETED"
-
-                    : "✓ GROUPS COMPLETE";
 
     }
 
 
-    if (finalAction) {
+    if (group2Card) {
 
-        finalAction.textContent =
-
-            !unlocked
-
-                ? "LOCKED"
-
-                : "PLAY AGAIN →";
+        group2Card.classList.toggle(
+            "completed",
+            group2Done
+        );
 
     }
 
 
-    updatePathProgress(
-        group1Complete,
-        group2Complete,
-        finalComplete
-    );
+    if (mixedCard) {
+
+        if (mixedUnlocked) {
+
+            mixedCard.disabled =
+                false;
+
+
+            mixedCard.classList.remove(
+                "locked-card"
+            );
+
+
+            mixedCard.querySelector(
+                ".group-action"
+            ).textContent =
+                isFinalMixedDone()
+                    ? "PLAY AGAIN →"
+                    : "START FINAL →";
+
+
+            const lockNote =
+                $("#mixedLockNote");
+
+
+            if (lockNote) {
+
+                lockNote.textContent =
+                    isFinalMixedDone()
+                        ? "✓ COMPLETED"
+                        : "UNLOCKED";
+
+            }
+
+
+            if (
+                isFinalMixedDone()
+            ) {
+
+                mixedCard.classList.add(
+                    "final-completed"
+                );
+
+            }
+
+        }
+
+    }
 
 }
 
@@ -1729,22 +1556,7 @@ function openGroup(group) {
         group === "mixed"
     ) {
 
-        if (
-            !mixedUnlocked()
-        ) {
-
-            toast(
-                "Complete Group 1 and Group 2 first."
-            );
-
-
-            return;
-
-        }
-
-
         startFinalMixed();
-
 
         return;
 
@@ -1759,20 +1571,20 @@ function openGroup(group) {
         false;
 
 
-    const groupData =
+    const data =
         GROUPS[group];
 
 
     $("#menuEyebrow").textContent =
-        groupData.label;
+        data.label;
 
 
     $("#menuTitle").textContent =
-        groupData.title;
+        data.title;
 
 
     $("#menuDescription").textContent =
-        groupData.description;
+        data.description;
 
 
     updateMenuProgress();
@@ -1786,85 +1598,242 @@ function openGroup(group) {
 
 
 /* =====================================================
-   START NORMAL PRACTICE
+   UPDATE MENU PROGRESS
 ===================================================== */
 
-function startPractice(
-    practice
-) {
+function updateMenuProgress() {
 
-    state.finalMixed =
-        false;
+    const done =
+        getDonePractices(
+            state.group
+        );
 
+
+    const total =
+        5;
+
+
+    $("#groupProgressText").textContent =
+        done.length +
+        " / " +
+        total +
+        " practices completed";
+
+
+    $$(".practice-card")
+        .forEach(
+            function (card) {
+
+                const practice =
+                    card.dataset.practice;
+
+
+                card.classList.toggle(
+                    "completed",
+                    done.includes(
+                        practice
+                    )
+                );
+
+            }
+        );
+
+}
+
+
+/* =====================================================
+   START PRACTICE
+===================================================== */
+
+function startPractice(practice) {
 
     state.practice =
         practice;
 
 
-    state.questions =
-        shuffle(
-            GROUPS[
-                state.group
-            ]
-            .practices[
-                practice
-            ]
-        ).slice(
-            0,
-            12
-        );
+    state.finalMixed =
+        false;
 
 
     state.index =
         0;
 
+
     state.score =
         0;
+
 
     state.correct =
         0;
 
+
     state.streak =
         0;
+
 
     state.answered =
         false;
 
 
+    const groupData =
+        GROUPS[state.group];
+
+
+    let questions =
+        [];
+
+
+    if (
+        practice === "mixed"
+    ) {
+
+        // Build a mixed set from the current group
+        const build =
+            shuffle(
+                groupData.practices.build
+            ).slice(
+                0,
+                4
+            );
+
+
+        const complete =
+            shuffle(
+                groupData.practices.complete
+            ).slice(
+                0,
+                3
+            );
+
+
+        const question =
+            shuffle(
+                groupData.practices.question
+            ).slice(
+                0,
+                3
+            );
+
+
+        const short =
+            shuffle(
+                groupData.practices.short
+            ).slice(
+                0,
+                2
+            );
+
+
+        questions =
+            shuffle(
+                [
+                    ...build.map(
+                        function (item) {
+
+                            return {
+                                type: "build",
+                                words: item
+                            };
+
+                        }
+                    ),
+                    ...complete.map(
+                        function (item) {
+
+                            return {
+                                type: "complete",
+                                ...item
+                            };
+
+                        }
+                    ),
+                    ...question.map(
+                        function (item) {
+
+                            return {
+                                type: "question",
+                                ...item
+                            };
+
+                        }
+                    ),
+                    ...short.map(
+                        function (item) {
+
+                            return {
+                                type: "short",
+                                ...item
+                            };
+
+                        }
+                    )
+                ]
+            );
+
+    }
+
+    else {
+
+        questions =
+            shuffle(
+                [
+                    ...groupData.practices[practice]
+                ]
+            );
+
+    }
+
+
+    state.questions =
+        questions;
+
+
     $("#practiceLabel").textContent =
-        practiceNames[
-            practice
-        ].toUpperCase();
+        practiceNames[practice].toUpperCase();
 
 
     $("#gameTitle").textContent =
-        practiceNames[
-            practice
-        ];
+        practiceNames[practice];
 
 
     $("#score").textContent =
         "0";
 
 
-    renderQuestion();
+    $("#streakText").textContent =
+        "STREAK ×1";
+
+
+    $("#progressFill").style.width =
+        "0%";
+
+
+    $("#feedback").textContent =
+        "";
+
+
+    $("#feedback").className =
+        "feedback";
 
 
     show(
         "gameScreen"
     );
 
+
+    renderQuestion();
+
 }
 
 
 /* =====================================================
-   FINAL MIXED START
+   START FINAL MIXED
 ===================================================== */
 
 function startFinalMixed() {
 
     state.group =
-        "final";
+        "mixed";
 
 
     state.practice =
@@ -1875,76 +1844,68 @@ function startFinalMixed() {
         true;
 
 
-    state.questions =
-        shuffle(
-            FINAL_MIXED_QUESTIONS
-        );
-
-
     state.index =
         0;
+
 
     state.score =
         0;
 
+
     state.correct =
         0;
 
+
     state.streak =
         0;
+
 
     state.answered =
         false;
 
 
+    state.questions =
+        shuffle(
+            [
+                ...FINAL_MIXED_QUESTIONS
+            ]
+        );
+
+
     $("#practiceLabel").textContent =
-        "FINAL MIX";
+        "FINAL MIXED";
 
 
     $("#gameTitle").textContent =
-        "Final Mixed Simple Present";
+        "Final Mixed Challenge";
 
 
     $("#score").textContent =
         "0";
 
 
-    renderQuestion();
+    $("#streakText").textContent =
+        "STREAK ×1";
+
+
+    $("#progressFill").style.width =
+        "0%";
+
+
+    $("#feedback").textContent =
+        "";
+
+
+    $("#feedback").className =
+        "feedback";
 
 
     show(
         "gameScreen"
     );
 
-}
 
-
-/* =====================================================
-   PROGRESS
-===================================================== */
-
-function setProgress() {
-
-    const total =
-        state.questions.length;
-
-
-    $("#questionCounter").textContent =
-        `${state.index + 1} / ${total}`;
-
-
-    $("#progressFill").style.width =
-        `${(
-            state.index /
-            total
-        ) * 100}%`;
-
-
-    $("#streakText").textContent =
-        `STREAK ×${Math.max(
-            1,
-            state.streak
-        )}`;
+    renderQuestion();
 
 }
 
@@ -1967,34 +1928,26 @@ function renderQuestion() {
         "feedback";
 
 
-    setProgress();
-
-
     const question =
         state.questions[
             state.index
         ];
 
 
-    if (
-        state.finalMixed
-    ) {
+    $("#questionCounter").textContent =
+        (state.index + 1) +
+        " / " +
+        state.questions.length;
 
-        renderFinalMixedQuestion(
+
+    // Determine type
+    if (
+        Array.isArray(
             question
-        );
-
-
-        return;
-
-    }
-
-
-    if (
-        state.practice ===
-        "build"
+        )
     ) {
 
+        // Build the Sentence style
         renderBuild(
             question,
             false
@@ -2003,20 +1956,11 @@ function renderQuestion() {
     }
 
     else if (
-        state.practice ===
-        "question"
-    ) {
-
-        renderBuild(
-            question,
-            true
-        );
-
-    }
-
-    else if (
-        state.practice ===
-        "complete"
+        question.type === "complete" ||
+        (
+            question.before !== undefined &&
+            question.options
+        )
     ) {
 
         renderComplete(
@@ -2026,8 +1970,11 @@ function renderQuestion() {
     }
 
     else if (
-        state.practice ===
-        "short"
+        question.type === "short" ||
+        (
+            question.context &&
+            question.options
+        )
     ) {
 
         renderShort(
@@ -2036,69 +1983,27 @@ function renderQuestion() {
 
     }
 
-    else {
-
-        renderMixed(
-            question
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   FINAL MIXED QUESTION
-===================================================== */
-
-function renderFinalMixedQuestion(
-    question
-) {
-
-    if (
-        question.type ===
-        "short"
-    ) {
-
-        renderShort(
-            question
-        );
-
-
-        setFinalPrompt(
-            "FINAL MIX • Choose the correct short answer."
-        );
-
-
-        return;
-
-    }
-
-
-    if (
-        question.type ===
-        "question"
+    else if (
+        question.type === "question" ||
+        (
+            question.words &&
+            question.words[0] &&
+            (
+                question.words[0] === "Do" ||
+                question.words[0] === "Does"
+            )
+        )
     ) {
 
         renderBuild(
-            question.words,
+            question.words || question,
             true
         );
 
-
-        setFinalPrompt(
-            "FINAL MIX • Build the correct yes/no question."
-        );
-
-
-        return;
-
     }
 
-
-    if (
-        question.type ===
-        "negative"
+    else if (
+        question.words
     ) {
 
         renderBuild(
@@ -2106,42 +2011,14 @@ function renderFinalMixedQuestion(
             false
         );
 
-
-        setFinalPrompt(
-            "FINAL MIX • Build the correct negative sentence."
-        );
-
-
-        return;
-
     }
 
+    else {
 
-    renderBuild(
-        question.words,
-        false
-    );
-
-
-    setFinalPrompt(
-        "FINAL MIX • Build the correct positive sentence."
-    );
-
-}
-
-
-function setFinalPrompt(text) {
-
-    const prompt =
-        document.querySelector(
-            "#questionArea .prompt"
+        renderBuild(
+            question,
+            false
         );
-
-
-    if (prompt) {
-
-        prompt.textContent =
-            text;
 
     }
 
@@ -2149,7 +2026,7 @@ function setFinalPrompt(text) {
 
 
 /* =====================================================
-   BUILD SENTENCE
+   BUILD THE SENTENCE / MAKE THE QUESTION
 ===================================================== */
 
 function renderBuild(
@@ -2157,35 +2034,16 @@ function renderBuild(
     isQuestion
 ) {
 
-    const area =
-        $("#questionArea");
+    const promptText =
+        isQuestion
+            ? "Put the words in the correct order to make a question."
+            : "Put the words in the correct order to make a sentence.";
 
 
-    const correctWords =
-        Array.isArray(words)
-            ? words
-            : words.words;
-
-
-    const shuffled =
-        shuffle(
-            correctWords
-        );
-
-
-    area.innerHTML = `
+    $("#questionArea").innerHTML = `
 
         <div class="prompt">
-
-            ${
-                isQuestion
-
-                    ? "Put the words in the correct order to make a question."
-
-                    : "Put the words in the correct order to make a sentence."
-
-            }
-
+            ${promptText}
         </div>
 
 
@@ -2193,11 +2051,9 @@ function renderBuild(
             id="builtSentence"
             class="built-sentence"
         >
-
             <span class="empty-note">
                 Click or drag the words below
             </span>
-
         </div>
 
 
@@ -2218,19 +2074,13 @@ function renderBuild(
         $("#builtSentence");
 
 
-    bank.dataset.isQuestion =
-        isQuestion
-            ? "true"
-            : "false";
-
-
-    setupBuildDropZones(
-        built,
-        bank
-    );
-
-
-    shuffled.forEach(
+    // Create shuffled word chips
+    shuffle(
+        [
+            ...words
+        ]
+    )
+    .forEach(
         function (word, index) {
 
             const button =
@@ -2252,10 +2102,10 @@ function renderBuild(
 
 
             button.dataset.uid =
-                "w" +
+                "chip-" +
                 index +
                 "-" +
-                word;
+                Date.now();
 
 
             button.draggable =
@@ -2266,17 +2116,6 @@ function renderBuild(
                 "click",
                 function () {
 
-                    if (
-                        button.classList.contains(
-                            "used"
-                        )
-                    ) {
-
-                        return;
-
-                    }
-
-
                     chooseWord(
                         button,
                         word
@@ -2286,8 +2125,76 @@ function renderBuild(
             );
 
 
-            enableChipDrag(
-                button
+            // Drag from bank
+            button.addEventListener(
+                "dragstart",
+                function (e) {
+
+                    if (
+                        state.answered
+                    ) {
+
+                        e.preventDefault();
+
+                        return;
+
+                    }
+
+
+                    button.classList.add(
+                        "dragging"
+                    );
+
+
+                    e.dataTransfer.setData(
+                        "text/plain",
+                        button.dataset.uid ||
+                            button.textContent
+                    );
+
+
+                    e.dataTransfer.effectAllowed =
+                        "move";
+
+
+                    window._dragChip =
+                        button;
+
+                }
+            );
+
+
+            button.addEventListener(
+                "dragend",
+                function () {
+
+                    button.classList.remove(
+                        "dragging"
+                    );
+
+
+                    window._dragChip =
+                        null;
+
+
+                    if (built) {
+
+                        built.classList.remove(
+                            "drag-over"
+                        );
+
+                    }
+
+
+                    if (bank) {
+
+                        bank.classList.remove(
+                            "drag-over"
+                        );
+
+                    }
+
+                }
             );
 
 
@@ -2298,93 +2205,10 @@ function renderBuild(
         }
     );
 
-}
 
-
-function enableChipDrag(
-    chip
-) {
-
-    chip.addEventListener(
-        "dragstart",
-        function (e) {
-
-            if (
-                state.answered ||
-                chip.classList.contains(
-                    "used"
-                )
-            ) {
-
-                e.preventDefault();
-
-                return;
-
-            }
-
-
-            chip.classList.add(
-                "dragging"
-            );
-
-
-            e.dataTransfer.setData(
-                "text/plain",
-                chip.dataset.uid ||
-                    chip.textContent
-            );
-
-
-            e.dataTransfer.effectAllowed =
-                "move";
-
-
-            window._dragChip =
-                chip;
-
-        }
-    );
-
-
-    chip.addEventListener(
-        "dragend",
-        function () {
-
-            chip.classList.remove(
-                "dragging"
-            );
-
-
-            window._dragChip =
-                null;
-
-
-            const built =
-                $("#builtSentence");
-
-
-            const bank =
-                $("#wordBank");
-
-
-            if (built) {
-
-                built.classList.remove(
-                    "drag-over"
-                );
-
-            }
-
-
-            if (bank) {
-
-                bank.classList.remove(
-                    "drag-over"
-                );
-
-            }
-
-        }
+    setupBuildDropZones(
+        built,
+        bank
     );
 
 }
@@ -3240,7 +3064,6 @@ function checkAnswer(
 
 /* =====================================================
    FINISH ANSWER
-   NO NEXT BUTTON
 ===================================================== */
 
 function finishAnswer(
@@ -3614,14 +3437,6 @@ function toast(message) {
 
 function applyTheme() {
 
-    /*
-     * Shared site-wide theme key, same convention
-     * as the homepage and every other game: a
-     * stored value of "light" means light mode,
-     * anything else (including nothing stored)
-     * means dark mode.
-     */
-
     let saved = null;
 
     try {
@@ -3917,76 +3732,16 @@ renderHome();
 
 show(
     "homeScreen"
-)
+);
+
+
 /* =====================================================
-   OPTIONAL ACCESSIBILITY TEST HELPER
-   Development / testing only
-===================================================== */
-
-function testFutureModulesAccessibility() {
-
-    const cards =
-        document.querySelectorAll(
-            ".future-card.disabled"
-        );
-
-
-    if (!cards.length) {
-
-        console.warn(
-            "No disabled future-module cards found."
-        );
-
-        return;
-
-    }
-
-
-    cards.forEach(
-        function (card) {
-
-            console.log({
-
-                module:
-                    card.querySelector(
-                        "h4"
-                    )?.textContent.trim(),
-
-                ariaDisabled:
-                    card.getAttribute(
-                        "aria-disabled"
-                    ),
-
-                tabIndex:
-                    card.tabIndex,
-
-                focusableByTab:
-                    card.tabIndex >= 0,
-
-                screenReaderStatus:
-                    card.querySelector(
-                        ".sr-only"
-                    )?.textContent.trim()
-
-            });
-
-        }
-    );
-
-}
-
-
-/*
- * Run manually from the browser console:
- *
- * testFutureModulesAccessibility();
- */
-/* =====================================================
-   DRAG REORDERING INSIDE SENTENCE AREA (Improved)
+   DRAG REORDERING INSIDE SENTENCE AREA
+   Polished & conflict-free version
 ===================================================== */
 
 function getDragAfterElement(container, x) {
-  const chips = [...container.querySelectorAll(".built-chip:not(.dragging), .word-chip:not(.dragging)")];
+  const chips = [...container.querySelectorAll(".built-chip:not(.dragging)")];
 
   return chips.reduce((closest, child) => {
     const box = child.getBoundingClientRect();
@@ -4000,29 +3755,34 @@ function getDragAfterElement(container, x) {
   }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
-function enableSentenceReordering() {
-  // Use event delegation on the whole game screen
-  const gameScreen = document.getElementById("gameScreen") || document.body;
-
-  gameScreen.addEventListener("dragover", function (e) {
-    const built = e.target.closest(".built-sentence") || e.target.closest(".answer-slots");
+(function enableSentenceReordering() {
+  // Use capture phase so it runs before the original drop handlers
+  document.body.addEventListener("dragover", function (e) {
+    const built = e.target.closest("#builtSentence") || e.target.closest(".built-sentence");
     if (!built) return;
 
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
-  });
+  }, true);
 
-  gameScreen.addEventListener("drop", function (e) {
-    const built = e.target.closest(".built-sentence") || e.target.closest(".answer-slots");
+  document.body.addEventListener("drop", function (e) {
+    const built = e.target.closest("#builtSentence") || e.target.closest(".built-sentence");
     if (!built) return;
 
-    e.preventDefault();
-
     const dragged = window._dragChip;
-    if (!dragged) return;
 
-    // Only reorder if the chip is already inside the sentence area
-    if (!built.contains(dragged)) return;
+    // Only reorder chips that are already inside the sentence area
+    if (
+      !dragged ||
+      state.answered ||
+      !built.contains(dragged) ||
+      !dragged.classList.contains("built-chip")
+    ) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
 
     const afterElement = getDragAfterElement(built, e.clientX);
 
@@ -4031,8 +3791,5 @@ function enableSentenceReordering() {
     } else {
       built.insertBefore(dragged, afterElement);
     }
-  });
-}
-
-// Run once
-enableSentenceReordering();
+  }, true);
+})();
