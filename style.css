@@ -223,33 +223,58 @@ body:not(.cabinet-body) {
   padding-top: 0 !important;
 }
 
-/* Mobile: compact floating nav */
+/* Desktop: show text, icon optional */
+.arcade-nav .nav-ico {
+  display: none;
+  font-size: 16px;
+  line-height: 1;
+}
+.arcade-nav .nav-text {
+  display: inline;
+}
+
+/* Mobile: icon-only floating nav */
 @media (max-width: 700px) {
   .arcade-nav {
-    top: 10px;
+    top: max(8px, env(safe-area-inset-top, 0px));
     left: 50%;
-    width: calc(100% - 16px);
+    width: calc(100% - 12px);
     max-width: 100%;
-    padding: 5px;
-    gap: 3px;
-    border-radius: 13px;
-    overflow-x: auto;
-    justify-content: flex-start;
+    padding: 6px;
+    gap: 4px;
+    border-radius: 14px;
+    overflow-x: visible;
+    justify-content: space-between;
   }
   .arcade-nav .nav-link {
-    flex: 0 0 auto;
-    min-height: 34px;
-    padding: 0 8px;
-    font-size: 10px;
-    border-radius: 8px;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 40px;
+    padding: 0 4px;
+    font-size: 0;
+    border-radius: 10px;
+    gap: 0;
+  }
+  .arcade-nav .nav-ico {
+    display: inline-block;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .arcade-nav .nav-text {
+    display: none;
+  }
+  .arcade-nav .nav-link.active::after {
+    bottom: -3px;
+    width: 12px;
+    height: 2px;
   }
   .arcade-nav .theme-toggle {
-    flex: 0 0 34px;
-    width: 34px;
-    height: 34px;
-    min-height: 34px;
-    font-size: 14px;
-    border-radius: 8px;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    font-size: 16px;
+    border-radius: 10px;
   }
 }
 
