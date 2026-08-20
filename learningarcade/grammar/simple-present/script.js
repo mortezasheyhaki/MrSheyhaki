@@ -3981,3 +3981,60 @@ function testFutureModulesAccessibility() {
  *
  * testFutureModulesAccessibility();
  */
+/* =====================================================
+   DRAG REORDERING INSIDE SENTENCE AREA
+===================================================== */
+
+function enableSentenceReordering() {
+  const built = document.getElementById("builtSentence") || 
+                document.querySelector(".built-sentence") ||
+                document.querySelector(".answer-slots");
+
+  if (!built) return;
+
+  // Allow dropping on the sentence container
+  built.addEventListener("dragover", function (e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  });
+
+  built.addEventListener("drop", function (e) {
+    e.preventDefault();
+
+    const dragged = window._dragChip;
+    if (!dragged || !built.contains(dragged)) return;
+
+    // Find the chip we are hovering over
+    const afterElement = getDragAfterElement(built, e.clientX);
+
+    if (afterElement == null) {
+      built.appendChild(dragged);
+    } else {
+      built.insertBefore(dragged, afterElement);
+    }
+  });
+}
+
+function getDragAfterElement(container, x) {
+  const chips = [...container.querySelectorAll(".built-chip:not(.dragging), .word-chip:not(.dragging)")];
+
+  return chips.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = x - box.left - box.width / 2;
+
+    if (offset < 0 && offset > closest.offset) {
+      return { offset: offset, element: child };
+    } else {
+      return closest;
+    }
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+// Run it when the page is ready
+document.addEventListener("DOMContentLoaded", enableSentenceReordering);
+
+// Also run it every time a new question is rendered
+const originalRender = window.renderBuild || window.renderQuestion;
+if (typeof originalRender === "function") {
+  // optional safety
+}
