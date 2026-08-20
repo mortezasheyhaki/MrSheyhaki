@@ -59,7 +59,7 @@ body {
   background: var(--panel);
   border-radius: 28px;
   border: 1px solid var(--panel-edge);
-  padding: 12px 14px 10px;
+  padding: 14px 16px 12px;
   display: flex; flex-direction: column; overflow: hidden;
   box-shadow: var(--glow), 0 24px 60px rgba(0, 0, 0, 0.28);
 }
@@ -71,10 +71,10 @@ body {
 }
 .back-pill {
   display: inline-flex; align-items: center;
-  padding: 8px 14px; border-radius: 999px;
+  padding: 10px 16px; border-radius: 999px;
   background: linear-gradient(135deg, #1f3d36, #16302b);
   color: #fff; text-decoration: none;
-  font-size: 13px; font-weight: 700;
+  font-size: 14px; font-weight: 700;
   box-shadow: 0 4px 12px rgba(22, 48, 43, 0.3);
 }
 html[data-theme="dark"] .back-pill { background: linear-gradient(135deg, #2d5a4e, #1f3d36); }
@@ -115,9 +115,9 @@ html[data-theme="dark"] .back-pill { background: linear-gradient(135deg, #2d5a4e
 }
 .primary {
   border: none; border-radius: 14px;
-  padding: 13px 30px;
+  padding: 16px 36px; min-height: 54px;
   background: linear-gradient(135deg, var(--accent-2), var(--accent));
-  color: #fff; font-size: 15px; font-weight: 750;
+  color: #fff; font-size: 16px; font-weight: 750;
   cursor: pointer; font-family: inherit;
   box-shadow: 0 10px 24px rgba(109, 40, 217, 0.35);
   transition: transform 0.12s ease, filter 0.15s ease;
@@ -139,7 +139,7 @@ html[data-theme="dark"] .back-pill { background: linear-gradient(135deg, #2d5a4e
   display: block; font-size: 10px; font-weight: 800;
   letter-spacing: 0.7px; color: var(--muted); margin-bottom: 2px;
 }
-.stat strong { font-size: 22px; font-weight: 850; }
+.stat strong { font-size: 26px; font-weight: 850; }
 
 .progress-line {
   flex: 0 0 auto;
@@ -173,22 +173,22 @@ html[data-theme="dark"] .back-pill { background: linear-gradient(135deg, #2d5a4e
 }
 .cards {
   flex: 1 1 auto; min-height: 0;
-  display: flex; flex-direction: column; gap: 8px; overflow: hidden;
+  display: flex; flex-direction: column; gap: 12px; overflow: hidden;
 }
 
 .match-card {
-  flex: 1 1 0; min-height: 0; max-height: 64px;
+  flex: 1 1 0; min-height: 0; max-height: none;
   touch-action: none; user-select: none; cursor: grab;
   border: 1.5px solid transparent;
   border-radius: 14px;
   background: var(--panel-card);
   color: var(--text);
-  font-size: clamp(14px, 2.8vw, 17px);
+  font-size: clamp(16px, 3.4vw, 20px);
   font-weight: 750; font-family: inherit;
   box-shadow: var(--shadow);
   display: flex; align-items: center; justify-content: center;
   padding: 8px 12px;
-  transition: transform 0.12s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease, opacity 0.22s ease;
 }
 .match-card:hover:not(:disabled) {
   transform: translateY(-2px);
@@ -266,8 +266,138 @@ html[data-theme="dark"] .back-pill { background: linear-gradient(135deg, #2d5a4e
   .stat strong { font-size: 18px; }
   .board { gap: 8px; }
   .cards { gap: 6px; }
-  .match-card { font-size: 14px; border-radius: 12px; max-height: 56px; }
+  .match-card { font-size: 16px; border-radius: 16px; }
   .col h2 { font-size: 10px; margin-bottom: 6px; }
   .hint { font-size: 11px; }
   .back-pill { font-size: 12px; padding: 7px 12px; }
+}
+
+
+/* ---- Bigger cards + smooth polish ---- */
+.match-card {
+  min-height: 56px;
+  border-radius: 16px;
+  padding: 14px 16px;
+  font-size: clamp(16px, 3.4vw, 20px);
+  font-weight: 750;
+  letter-spacing: -0.2px;
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease,
+    opacity 0.22s ease;
+}
+
+.cards {
+  gap: 12px;
+}
+
+.board {
+  gap: 14px;
+}
+
+.col h2 {
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.stats {
+  padding: 14px 10px;
+  border-radius: 18px;
+}
+
+.stat strong {
+  font-size: 26px;
+}
+
+.primary {
+  min-height: 54px;
+  padding: 16px 36px;
+  font-size: 16px;
+  border-radius: 16px;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary:active {
+  transform: scale(0.98);
+}
+
+.back-pill {
+  min-height: 42px;
+  padding: 10px 16px;
+  font-size: 14px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.back-pill:hover {
+  transform: translateY(-1px);
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.icon-btn:hover {
+  transform: scale(1.05);
+}
+
+.match-card:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.01);
+}
+
+.match-card.selected,
+.match-card.dragging {
+  transform: scale(1.04);
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.match-card.matched {
+  transition: opacity 0.28s ease, transform 0.28s ease;
+  transform: scale(0.96);
+}
+
+.track .fill,
+.fill {
+  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.panel {
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.modal-card {
+  animation: modalIn 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.screen {
+  animation: fadeScreen 0.28s ease;
+}
+
+@keyframes fadeScreen {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 560px) {
+  .match-card {
+    min-height: 52px;
+    font-size: 16px;
+    padding: 12px 14px;
+    border-radius: 14px;
+  }
+  .cards { gap: 10px; }
+  .stat strong { font-size: 22px; }
+  .primary {
+    min-height: 52px;
+    width: 100%;
+    max-width: 280px;
+  }
 }
