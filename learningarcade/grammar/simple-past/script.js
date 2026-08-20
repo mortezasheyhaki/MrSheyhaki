@@ -1,553 +1,125 @@
-/* Simple Past — Was/Were · Regular · Irregular
-   A1–A2 version
-   Keeps vocabulary from both books while using
-   natural, beginner-friendly sentences.
-*/
-
+/* Simple Past — Was/Were · Regular · Irregular */
 (function () {
   "use strict";
 
   const TOTAL = 10;
 
   /* =========================================================
-     VERB DATA
+     VERB BANKS
      ========================================================= */
 
-  /*
-    Difficulty:
-    1 = very common / core A1
-    2 = A1–A2
-    3 = less common / harder
-
-    The verbs are NOT deleted.
-    Difficulty is only used to control which vocabulary
-    appears more often in the different levels.
-  */
-
   const REGULAR = [
-    { base: "answer", past: "answered", level: 1, sentences: [
-      "I answered the question.",
-      "She answered the phone.",
-      "He answered my question."
-    ]},
-    { base: "arrive", past: "arrived", level: 2, sentences: [
-      "I arrived at school early.",
-      "She arrived home at six.",
-      "They arrived late."
-    ]},
-    { base: "ask", past: "asked", level: 1, sentences: [
-      "I asked a question.",
-      "She asked me a question.",
-      "He asked for help."
-    ]},
-    { base: "book", past: "booked", level: 2, sentences: [
-      "I booked a hotel.",
-      "She booked a room.",
-      "We booked our tickets."
-    ]},
-    { base: "call", past: "called", level: 1, sentences: [
-      "I called my mother.",
-      "She called me yesterday.",
-      "He called his friend."
-    ]},
-    { base: "carry", past: "carried", level: 2, sentences: [
-      "I carried the bag.",
-      "She carried the box.",
-      "He carried his books."
-    ]},
-    { base: "change", past: "changed", level: 2, sentences: [
-      "I changed my clothes.",
-      "She changed her plan.",
-      "We changed the date."
-    ]},
-    { base: "check in", past: "checked in", level: 3, sentences: [
-      "We checked in at the hotel.",
-      "She checked in at two.",
-      "They checked in at the airport."
-    ]},
-    { base: "clean", past: "cleaned", level: 1, sentences: [
-      "I cleaned my room.",
-      "She cleaned the kitchen.",
-      "We cleaned the house."
-    ]},
-    { base: "close", past: "closed", level: 1, sentences: [
-      "I closed the door.",
-      "She closed the window.",
-      "He closed the book."
-    ]},
-    { base: "cook", past: "cooked", level: 1, sentences: [
-      "I cooked dinner.",
-      "She cooked rice.",
-      "We cooked dinner together."
-    ]},
-    { base: "cry", past: "cried", level: 1, sentences: [
-      "The baby cried.",
-      "She cried yesterday.",
-      "He cried after the movie."
-    ]},
-    { base: "decide", past: "decided", level: 2, sentences: [
-      "I decided to stay home.",
-      "She decided to go.",
-      "We decided to eat at home."
-    ]},
-    { base: "finish", past: "finished", level: 1, sentences: [
-      "I finished my homework.",
-      "She finished her work.",
-      "We finished the book."
-    ]},
-    { base: "hate", past: "hated", level: 2, sentences: [
-      "I hated the food.",
-      "She hated the movie.",
-      "He hated the weather."
-    ]},
-    { base: "help", past: "helped", level: 1, sentences: [
-      "I helped my mother.",
-      "She helped me.",
-      "He helped his friend."
-    ]},
-    { base: "invite", past: "invited", level: 2, sentences: [
-      "I invited my friends.",
-      "She invited me to dinner.",
-      "We invited Tom."
-    ]},
-    { base: "learn", past: "learned", level: 1, sentences: [
-      "I learned English.",
-      "She learned a new word.",
-      "We learned a lot."
-    ]},
-    { base: "like", past: "liked", level: 1, sentences: [
-      "I liked the movie.",
-      "She liked the food.",
-      "We liked the hotel."
-    ]},
-    { base: "listen", past: "listened", level: 1, sentences: [
-      "I listened to music.",
-      "She listened to the teacher.",
-      "We listened to the radio."
-    ]},
-    { base: "live", past: "lived", level: 1, sentences: [
-      "I lived in Tehran.",
-      "She lived with her parents.",
-      "We lived in a small house."
-    ]},
-    { base: "look", past: "looked", level: 1, sentences: [
-      "I looked at the picture.",
-      "She looked at me.",
-      "He looked outside."
-    ]},
-    { base: "love", past: "loved", level: 1, sentences: [
-      "I loved the movie.",
-      "She loved the food.",
-      "We loved the trip."
-    ]},
-    { base: "miss", past: "missed", level: 2, sentences: [
-      "I missed the bus.",
-      "She missed the train.",
-      "He missed the class."
-    ]},
-    { base: "move", past: "moved", level: 2, sentences: [
-      "I moved to a new house.",
-      "She moved to London.",
-      "We moved last year."
-    ]},
-    { base: "need", past: "needed", level: 1, sentences: [
-      "I needed some help.",
-      "She needed a pen.",
-      "We needed more time."
-    ]},
-    { base: "offer", past: "offered", level: 3, sentences: [
-      "He offered me some water.",
-      "She offered to help.",
-      "They offered me a job."
-    ]},
-    { base: "open", past: "opened", level: 1, sentences: [
-      "I opened the door.",
-      "She opened the window.",
-      "He opened the box."
-    ]},
-    { base: "pack", past: "packed", level: 1, sentences: [
-      "I packed my bag.",
-      "She packed her clothes.",
-      "We packed our bags."
-    ]},
-    { base: "paint", past: "painted", level: 2, sentences: [
-      "I painted the wall.",
-      "She painted a picture.",
-      "We painted the room."
-    ]},
-    { base: "park", past: "parked", level: 1, sentences: [
-      "I parked the car.",
-      "She parked near the school.",
-      "He parked outside."
-    ]},
-    { base: "pass", past: "passed", level: 2, sentences: [
-      "I passed the test.",
-      "She passed the exam.",
-      "He passed the ball."
-    ]},
-    { base: "play", past: "played", level: 1, sentences: [
-      "I played football.",
-      "She played tennis.",
-      "We played a game."
-    ]},
-    { base: "rain", past: "rained", level: 1, sentences: [
-      "It rained yesterday.",
-      "It rained all day.",
-      "It rained last night."
-    ]},
-    { base: "relax", past: "relaxed", level: 1, sentences: [
-      "I relaxed at home.",
-      "She relaxed after work.",
-      "We relaxed at the hotel."
-    ]},
-    { base: "rent", past: "rented", level: 2, sentences: [
-      "I rented a car.",
-      "She rented a house.",
-      "We rented a small apartment."
-    ]},
-    { base: "snow", past: "snowed", level: 1, sentences: [
-      "It snowed yesterday.",
-      "It snowed last night.",
-      "It snowed in the morning."
-    ]},
-    { base: "start", past: "started", level: 1, sentences: [
-      "I started work at eight.",
-      "She started school last year.",
-      "We started the game."
-    ]},
-    { base: "stay", past: "stayed", level: 1, sentences: [
-      "I stayed home.",
-      "She stayed at a hotel.",
-      "We stayed with our friends."
-    ]},
-    { base: "stop", past: "stopped", level: 1, sentences: [
-      "I stopped the car.",
-      "She stopped the music.",
-      "The bus stopped here."
-    ]},
-    { base: "study", past: "studied", level: 1, sentences: [
-      "I studied English.",
-      "She studied last night.",
-      "We studied for the test."
-    ]},
-    { base: "talk", past: "talked", level: 1, sentences: [
-      "I talked to my friend.",
-      "She talked to her teacher.",
-      "We talked about school."
-    ]},
-    { base: "travel", past: "traveled", level: 2, sentences: [
-      "I traveled to Turkey.",
-      "She traveled last summer.",
-      "We traveled by bus."
-    ]},
-    { base: "turn", past: "turned", level: 2, sentences: [
-      "I turned left.",
-      "She turned the light off.",
-      "He turned around."
-    ]},
-    { base: "use", past: "used", level: 1, sentences: [
-      "I used my phone.",
-      "She used a computer.",
-      "We used the car."
-    ]},
-    { base: "wait", past: "waited", level: 1, sentences: [
-      "I waited for the bus.",
-      "She waited for me.",
-      "We waited outside."
-    ]},
-    { base: "walk", past: "walked", level: 1, sentences: [
-      "I walked to school.",
-      "She walked home.",
-      "We walked in the park."
-    ]},
-    { base: "want", past: "wanted", level: 1, sentences: [
-      "I wanted some water.",
-      "She wanted a new phone.",
-      "He wanted to go home."
-    ]},
-    { base: "wash", past: "washed", level: 1, sentences: [
-      "I washed my hands.",
-      "She washed the dishes.",
-      "We washed the car."
-    ]},
-    { base: "watch", past: "watched", level: 1, sentences: [
-      "I watched TV.",
-      "She watched a movie.",
-      "We watched football."
-    ]},
-    { base: "work", past: "worked", level: 1, sentences: [
-      "I worked yesterday.",
-      "She worked at home.",
-      "We worked all day."
-    ]}
+    ["answer", "answered"],
+    ["arrive", "arrived"],
+    ["ask", "asked"],
+    ["book", "booked"],
+    ["call", "called"],
+    ["carry", "carried"],
+    ["change", "changed"],
+    ["check in", "checked in"],
+    ["clean", "cleaned"],
+    ["close", "closed"],
+    ["cook", "cooked"],
+    ["cry", "cried"],
+    ["decide", "decided"],
+    ["finish", "finished"],
+    ["hate", "hated"],
+    ["help", "helped"],
+    ["invite", "invited"],
+    ["learn", "learned"],
+    ["like", "liked"],
+    ["listen", "listened"],
+    ["live", "lived"],
+    ["look", "looked"],
+    ["love", "loved"],
+    ["miss", "missed"],
+    ["move", "moved"],
+    ["need", "needed"],
+    ["offer", "offered"],
+    ["open", "opened"],
+    ["pack", "packed"],
+    ["paint", "painted"],
+    ["park", "parked"],
+    ["pass", "passed"],
+    ["play", "played"],
+    ["rain", "rained"],
+    ["relax", "relaxed"],
+    ["rent", "rented"],
+    ["snow", "snowed"],
+    ["start", "started"],
+    ["stay", "stayed"],
+    ["stop", "stopped"],
+    ["study", "studied"],
+    ["talk", "talked"],
+    ["travel", "traveled"],
+    ["turn", "turned"],
+    ["use", "used"],
+    ["wait", "waited"],
+    ["walk", "walked"],
+    ["want", "wanted"],
+    ["wash", "washed"],
+    ["watch", "watched"],
+    ["work", "worked"]
   ];
 
   const IRREGULAR = [
-    { base: "be", past: "was/were", level: 1 },
-    { base: "buy", past: "bought", level: 1, sentences: [
-      "I bought some food.",
-      "She bought a new bag.",
-      "We bought a new phone."
-    ]},
-    { base: "do", past: "did", level: 1, sentences: [
-      "I did my homework.",
-      "She did the work.",
-      "We did our homework."
-    ]},
-    { base: "get", past: "got", level: 1, sentences: [
-      "I got a new phone.",
-      "She got home late.",
-      "We got some food."
-    ]},
-    { base: "go", past: "went", level: 1, sentences: [
-      "I went to school.",
-      "She went home.",
-      "We went to the park."
-    ]},
-    { base: "have", past: "had", level: 1, sentences: [
-      "I had breakfast.",
-      "She had a coffee.",
-      "We had dinner."
-    ]},
-    { base: "leave", past: "left", level: 1, sentences: [
-      "I left home at eight.",
-      "She left school early.",
-      "We left the hotel."
-    ]},
-    { base: "say", past: "said", level: 1, sentences: [
-      "I said hello.",
-      "She said thank you.",
-      "He said my name."
-    ]},
-    { base: "see", past: "saw", level: 1, sentences: [
-      "I saw Tom yesterday.",
-      "She saw a movie.",
-      "We saw our friends."
-    ]},
-    { base: "send", past: "sent", level: 2, sentences: [
-      "I sent a message.",
-      "She sent an email.",
-      "He sent me a photo."
-    ]},
-    { base: "sit", past: "sat", level: 1, sentences: [
-      "I sat on the chair.",
-      "She sat next to me.",
-      "We sat in the park."
-    ]},
-    { base: "tell", past: "told", level: 1, sentences: [
-      "I told him the story.",
-      "She told me the answer.",
-      "He told me his name."
-    ]},
-    { base: "write", past: "wrote", level: 1, sentences: [
-      "I wrote an email.",
-      "She wrote a letter.",
-      "He wrote his name."
-    ]},
-    { base: "come", past: "came", level: 1, sentences: [
-      "I came home early.",
-      "She came to school.",
-      "They came to the party."
-    ]},
-    { base: "drink", past: "drank", level: 1, sentences: [
-      "I drank some water.",
-      "She drank coffee.",
-      "We drank tea."
-    ]},
-    { base: "drive", past: "drove", level: 1, sentences: [
-      "I drove to work.",
-      "She drove home.",
-      "He drove the car."
-    ]},
-    { base: "eat", past: "ate", level: 1, sentences: [
-      "I ate breakfast.",
-      "She ate pizza.",
-      "We ate dinner."
-    ]},
-    { base: "fall", past: "fell", level: 2, sentences: [
-      "I fell in the park.",
-      "She fell off her bike.",
-      "He fell down."
-    ]},
-    { base: "find", past: "found", level: 1, sentences: [
-      "I found my keys.",
-      "She found her phone.",
-      "We found the book."
-    ]},
-    { base: "give", past: "gave", level: 1, sentences: [
-      "I gave her a gift.",
-      "She gave me some water.",
-      "He gave me a book."
-    ]},
-    { base: "know", past: "knew", level: 2, sentences: [
-      "I knew the answer.",
-      "She knew my name.",
-      "He knew the way."
-    ]},
-    { base: "make", past: "made", level: 1, sentences: [
-      "I made breakfast.",
-      "She made a cake.",
-      "We made dinner."
-    ]},
-    { base: "meet", past: "met", level: 1, sentences: [
-      "I met my friend.",
-      "She met Tom.",
-      "We met at school."
-    ]},
-    { base: "read", past: "read", level: 1, sentences: [
-      "I read a book.",
-      "She read the newspaper.",
-      "We read the story."
-    ]},
-    { base: "run", past: "ran", level: 1, sentences: [
-      "I ran in the park.",
-      "She ran home.",
-      "We ran every morning."
-    ]},
-    { base: "sleep", past: "slept", level: 1, sentences: [
-      "I slept well.",
-      "She slept for eight hours.",
-      "We slept at the hotel."
-    ]},
-    { base: "speak", past: "spoke", level: 2, sentences: [
-      "I spoke to my teacher.",
-      "She spoke English.",
-      "We spoke about school."
-    ]},
-    { base: "take", past: "took", level: 1, sentences: [
-      "I took a bus.",
-      "She took a photo.",
-      "We took a taxi."
-    ]},
-    { base: "think", past: "thought", level: 2, sentences: [
-      "I thought about my family.",
-      "She thought it was good.",
-      "He thought about the question."
-    ]},
-    { base: "wear", past: "wore", level: 2, sentences: [
-      "I wore a blue shirt.",
-      "She wore a dress.",
-      "He wore black shoes."
-    ]},
-    { base: "win", past: "won", level: 2, sentences: [
-      "We won the game.",
-      "She won the race.",
-      "He won the match."
-    ]},
-    { base: "begin", past: "began", level: 3, sentences: [
-      "The class began at nine.",
-      "The movie began at eight.",
-      "The game began early."
-    ]},
-    { base: "break", past: "broke", level: 2, sentences: [
-      "I broke my phone.",
-      "She broke the glass.",
-      "He broke his leg."
-    ]},
-    { base: "bring", past: "brought", level: 1, sentences: [
-      "I brought some food.",
-      "She brought her book.",
-      "He brought a gift."
-    ]},
-    { base: "build", past: "built", level: 2, sentences: [
-      "They built a house.",
-      "He built a table.",
-      "We built a small wall."
-    ]},
-    { base: "catch", past: "caught", level: 3, sentences: [
-      "I caught the bus.",
-      "She caught the ball.",
-      "He caught the train."
-    ]},
-    { base: "choose", past: "chose", level: 3, sentences: [
-      "I chose the blue one.",
-      "She chose a dress.",
-      "We chose the red car."
-    ]},
-    { base: "cut", past: "cut", level: 2, sentences: [
-      "I cut the paper.",
-      "She cut the cake.",
-      "He cut the bread."
-    ]},
-    { base: "draw", past: "drew", level: 2, sentences: [
-      "I drew a picture.",
-      "She drew a house.",
-      "He drew a cat."
-    ]},
-    { base: "feel", past: "felt", level: 1, sentences: [
-      "I felt happy.",
-      "She felt tired.",
-      "He felt sick."
-    ]},
-    { base: "fly", past: "flew", level: 3, sentences: [
-      "I flew to London.",
-      "She flew home.",
-      "We flew to Turkey."
-    ]},
-    { base: "forget", past: "forgot", level: 3, sentences: [
-      "I forgot my keys.",
-      "She forgot her phone.",
-      "He forgot my name."
-    ]},
-    { base: "hear", past: "heard", level: 2, sentences: [
-      "I heard a noise.",
-      "She heard the music.",
-      "He heard my voice."
-    ]},
-    { base: "keep", past: "kept", level: 3, sentences: [
-      "I kept the book.",
-      "She kept the money.",
-      "He kept my phone."
-    ]},
-    { base: "lose", past: "lost", level: 2, sentences: [
-      "I lost my keys.",
-      "She lost her phone.",
-      "He lost his bag."
-    ]},
-    { base: "pay", past: "paid", level: 2, sentences: [
-      "I paid for lunch.",
-      "She paid the bill.",
-      "We paid for the tickets."
-    ]},
-    { base: "put", past: "put", level: 2, sentences: [
-      "I put the book on the table.",
-      "She put her bag here.",
-      "He put the keys on the desk."
-    ]},
-    { base: "sell", past: "sold", level: 3, sentences: [
-      "I sold my car.",
-      "She sold her old phone.",
-      "They sold the house."
-    ]},
-    { base: "sing", past: "sang", level: 2, sentences: [
-      "I sang a song.",
-      "She sang at the party.",
-      "We sang together."
-    ]},
-    { base: "stand", past: "stood", level: 2, sentences: [
-      "I stood near the door.",
-      "She stood outside.",
-      "We stood in line."
-    ]},
-    { base: "swim", past: "swam", level: 2, sentences: [
-      "I swam in the pool.",
-      "She swam yesterday.",
-      "We swam in the sea."
-    ]},
-    { base: "teach", past: "taught", level: 2, sentences: [
-      "I taught English.",
-      "She taught the students.",
-      "He taught me English."
-    ]},
-    { base: "understand", past: "understood", level: 2, sentences: [
-      "I understood the question.",
-      "She understood the teacher.",
-      "We understood the lesson."
-    ]}
+    ["be", "was/were"],
+    ["buy", "bought"],
+    ["do", "did"],
+    ["get", "got"],
+    ["go", "went"],
+    ["have", "had"],
+    ["leave", "left"],
+    ["say", "said"],
+    ["see", "saw"],
+    ["send", "sent"],
+    ["sit", "sat"],
+    ["tell", "told"],
+    ["write", "wrote"],
+    ["come", "came"],
+    ["drink", "drank"],
+    ["drive", "drove"],
+    ["eat", "ate"],
+    ["fall", "fell"],
+    ["find", "found"],
+    ["give", "gave"],
+    ["know", "knew"],
+    ["make", "made"],
+    ["meet", "met"],
+    ["read", "read"],
+    ["run", "ran"],
+    ["sleep", "slept"],
+    ["speak", "spoke"],
+    ["take", "took"],
+    ["think", "thought"],
+    ["wear", "wore"],
+    ["win", "won"],
+    ["begin", "began"],
+    ["break", "broke"],
+    ["bring", "brought"],
+    ["build", "built"],
+    ["catch", "caught"],
+    ["choose", "chose"],
+    ["cut", "cut"],
+    ["draw", "drew"],
+    ["feel", "felt"],
+    ["fly", "flew"],
+    ["forget", "forgot"],
+    ["hear", "heard"],
+    ["keep", "kept"],
+    ["lose", "lost"],
+    ["pay", "paid"],
+    ["put", "put"],
+    ["sell", "sold"],
+    ["sing", "sang"],
+    ["stand", "stood"],
+    ["swim", "swam"],
+    ["teach", "taught"],
+    ["understand", "understood"]
   ];
 
   /* =========================================================
-     PRONUNCIATION GROUPS
+     PRONUNCIATION
      ========================================================= */
 
   const SOUND_T = [
@@ -608,38 +180,652 @@
   ];
 
   /* =========================================================
-     BASIC DATA
+     A1 SENTENCE BANKS
+     ========================================================= */
+
+  /*
+    These sentence templates are connected to the verb.
+    This prevents unnatural combinations such as:
+    "I slept home."
+  */
+
+  const REGULAR_SENTENCES = {
+    answer: [
+      "I answered the question.",
+      "She answered the teacher.",
+      "He answered my question."
+    ],
+
+    arrive: [
+      "I arrived at school at eight.",
+      "She arrived home late.",
+      "They arrived at the hotel."
+    ],
+
+    ask: [
+      "I asked the teacher a question.",
+      "She asked me a question.",
+      "He asked for help."
+    ],
+
+    book: [
+      "We booked a hotel.",
+      "I booked a room.",
+      "They booked a trip."
+    ],
+
+    call: [
+      "I called my mother.",
+      "She called me last night.",
+      "He called his friend."
+    ],
+
+    carry: [
+      "I carried the bags.",
+      "She carried her books.",
+      "He carried a big box."
+    ],
+
+    change: [
+      "I changed my clothes.",
+      "She changed her plans.",
+      "He changed his shirt."
+    ],
+
+    "check in": [
+      "We checked in at the hotel.",
+      "I checked in at the airport.",
+      "They checked in at two."
+    ],
+
+    clean: [
+      "I cleaned my room.",
+      "She cleaned the kitchen.",
+      "We cleaned the house."
+    ],
+
+    close: [
+      "I closed the door.",
+      "She closed the window.",
+      "He closed the book."
+    ],
+
+    cook: [
+      "I cooked dinner.",
+      "She cooked some rice.",
+      "He cooked breakfast."
+    ],
+
+    cry: [
+      "The baby cried.",
+      "She cried after the movie.",
+      "The child cried."
+    ],
+
+    decide: [
+      "I decided to stay home.",
+      "We decided to go.",
+      "She decided to buy it."
+    ],
+
+    finish: [
+      "I finished my homework.",
+      "She finished her work.",
+      "We finished the lesson."
+    ],
+
+    hate: [
+      "I hated the food.",
+      "She hated the movie.",
+      "He hated the cold weather."
+    ],
+
+    help: [
+      "I helped my mother.",
+      "She helped her friend.",
+      "We helped the teacher."
+    ],
+
+    invite: [
+      "I invited my friend.",
+      "She invited us to dinner.",
+      "They invited Tom."
+    ],
+
+    learn: [
+      "I learned English.",
+      "She learned a new word.",
+      "We learned a lot."
+    ],
+
+    like: [
+      "I liked the movie.",
+      "She liked the food.",
+      "They liked the party."
+    ],
+
+    listen: [
+      "I listened to music.",
+      "She listened to the teacher.",
+      "We listened to the radio."
+    ],
+
+    live: [
+      "I lived in Tehran.",
+      "She lived with her parents.",
+      "They lived in a small house."
+    ],
+
+    look: [
+      "I looked at the picture.",
+      "She looked at me.",
+      "He looked outside."
+    ],
+
+    love: [
+      "I loved the movie.",
+      "She loved the food.",
+      "They loved the party."
+    ],
+
+    miss: [
+      "I missed the bus.",
+      "She missed the train.",
+      "He missed his family."
+    ],
+
+    move: [
+      "I moved to a new house.",
+      "She moved to another city.",
+      "They moved last year."
+    ],
+
+    need: [
+      "I needed some help.",
+      "She needed a pen.",
+      "We needed more time."
+    ],
+
+    offer: [
+      "He offered me some coffee.",
+      "She offered to help.",
+      "They offered me a job."
+    ],
+
+    open: [
+      "I opened the door.",
+      "She opened the window.",
+      "He opened the box."
+    ],
+
+    pack: [
+      "I packed my bag.",
+      "She packed her clothes.",
+      "We packed our bags."
+    ],
+
+    paint: [
+      "I painted the room.",
+      "She painted the wall.",
+      "They painted the house."
+    ],
+
+    park: [
+      "I parked the car.",
+      "She parked near the school.",
+      "He parked outside."
+    ],
+
+    pass: [
+      "I passed the test.",
+      "She passed her exam.",
+      "He passed the ball."
+    ],
+
+    play: [
+      "I played soccer.",
+      "She played tennis.",
+      "We played a game."
+    ],
+
+    rain: [
+      "It rained yesterday.",
+      "It rained all day.",
+      "It rained in the morning."
+    ],
+
+    relax: [
+      "I relaxed at home.",
+      "She relaxed after work.",
+      "We relaxed at the beach."
+    ],
+
+    rent: [
+      "We rented a car.",
+      "I rented a small apartment.",
+      "They rented a house."
+    ],
+
+    snow: [
+      "It snowed yesterday.",
+      "It snowed last night.",
+      "It snowed in the morning."
+    ],
+
+    start: [
+      "I started work at eight.",
+      "The movie started at nine.",
+      "She started a new job."
+    ],
+
+    stay: [
+      "I stayed home.",
+      "She stayed at a hotel.",
+      "We stayed with our friends."
+    ],
+
+    stop: [
+      "The bus stopped here.",
+      "I stopped the car.",
+      "She stopped working."
+    ],
+
+    study: [
+      "I studied English.",
+      "She studied for the test.",
+      "We studied together."
+    ],
+
+    talk: [
+      "I talked to my friend.",
+      "She talked to the teacher.",
+      "We talked about the movie."
+    ],
+
+    travel: [
+      "I traveled to Turkey.",
+      "She traveled with her family.",
+      "We traveled by train."
+    ],
+
+    turn: [
+      "I turned left.",
+      "She turned the TV off.",
+      "He turned the light on."
+    ],
+
+    use: [
+      "I used my phone.",
+      "She used a computer.",
+      "We used the new book."
+    ],
+
+    wait: [
+      "I waited for the bus.",
+      "She waited for me.",
+      "We waited outside."
+    ],
+
+    walk: [
+      "I walked to school.",
+      "She walked home.",
+      "We walked in the park."
+    ],
+
+    want: [
+      "I wanted some water.",
+      "She wanted a new phone.",
+      "They wanted to go home."
+    ],
+
+    wash: [
+      "I washed my hands.",
+      "She washed the dishes.",
+      "He washed his car."
+    ],
+
+    watch: [
+      "I watched TV.",
+      "She watched a movie.",
+      "We watched the game."
+    ],
+
+    work: [
+      "I worked yesterday.",
+      "She worked at a hotel.",
+      "They worked all day."
+    ]
+  };
+
+  const IRREGULAR_SENTENCES = {
+    buy: [
+      "I bought some bread.",
+      "She bought a new bag.",
+      "We bought some food."
+    ],
+
+    do: [
+      "I did my homework.",
+      "She did the work.",
+      "We did the exercise."
+    ],
+
+    get: [
+      "I got home at six.",
+      "She got a new phone.",
+      "We got some food."
+    ],
+
+    go: [
+      "I went to school.",
+      "She went home.",
+      "They went to the park."
+    ],
+
+    have: [
+      "I had breakfast.",
+      "She had a good day.",
+      "We had dinner together."
+    ],
+
+    leave: [
+      "I left home at eight.",
+      "She left the office early.",
+      "They left the hotel."
+    ],
+
+    say: [
+      "I said hello.",
+      "She said my name.",
+      "He said thank you."
+    ],
+
+    see: [
+      "I saw my friend.",
+      "She saw a dog.",
+      "We saw a movie."
+    ],
+
+    send: [
+      "I sent an email.",
+      "She sent me a message.",
+      "He sent a photo."
+    ],
+
+    sit: [
+      "I sat on the chair.",
+      "She sat next to me.",
+      "We sat outside."
+    ],
+
+    tell: [
+      "I told him the story.",
+      "She told me the answer.",
+      "He told us the news."
+    ],
+
+    write: [
+      "I wrote an email.",
+      "She wrote a letter.",
+      "He wrote his name."
+    ],
+
+    come: [
+      "I came home early.",
+      "She came to my house.",
+      "They came to the party."
+    ],
+
+    drink: [
+      "I drank some water.",
+      "She drank coffee.",
+      "We drank tea."
+    ],
+
+    drive: [
+      "I drove to work.",
+      "She drove to the store.",
+      "He drove home."
+    ],
+
+    eat: [
+      "I ate breakfast.",
+      "She ate some rice.",
+      "We ate dinner."
+    ],
+
+    fall: [
+      "I fell on the floor.",
+      "She fell off her bike.",
+      "He fell in the park."
+    ],
+
+    find: [
+      "I found my keys.",
+      "She found her phone.",
+      "We found a good restaurant."
+    ],
+
+    give: [
+      "I gave him a book.",
+      "She gave me some water.",
+      "He gave her a gift."
+    ],
+
+    know: [
+      "I knew the answer.",
+      "She knew his name.",
+      "We knew the way."
+    ],
+
+    make: [
+      "I made breakfast.",
+      "She made a cake.",
+      "We made dinner."
+    ],
+
+    meet: [
+      "I met my friend.",
+      "She met her teacher.",
+      "We met at the café."
+    ],
+
+    read: [
+      "I read a book.",
+      "She read the newspaper.",
+      "He read an email."
+    ],
+
+    run: [
+      "I ran in the park.",
+      "She ran every morning.",
+      "They ran to the bus."
+    ],
+
+    sleep: [
+      "I slept well last night.",
+      "She slept for eight hours.",
+      "The baby slept all night."
+    ],
+
+    speak: [
+      "I spoke to my teacher.",
+      "She spoke English.",
+      "We spoke about school."
+    ],
+
+    take: [
+      "I took a bus.",
+      "She took a photo.",
+      "He took my book."
+    ],
+
+    think: [
+      "I thought about my family.",
+      "She thought about the question.",
+      "He thought it was good."
+    ],
+
+    wear: [
+      "I wore my blue shirt.",
+      "She wore a new dress.",
+      "He wore black shoes."
+    ],
+
+    win: [
+      "We won the game.",
+      "She won the race.",
+      "They won the match."
+    ],
+
+    begin: [
+      "The class began at nine.",
+      "The movie began at eight.",
+      "The lesson began early."
+    ],
+
+    break: [
+      "I broke my phone.",
+      "She broke the glass.",
+      "He broke his arm."
+    ],
+
+    bring: [
+      "I brought some food.",
+      "She brought her book.",
+      "He brought a gift."
+    ],
+
+    build: [
+      "They built a house.",
+      "He built a small table.",
+      "We built a snowman."
+    ],
+
+    catch: [
+      "I caught the bus.",
+      "She caught the ball.",
+      "He caught the train."
+    ],
+
+    choose: [
+      "I chose the blue one.",
+      "She chose a new dress.",
+      "We chose the first one."
+    ],
+
+    cut: [
+      "I cut the paper.",
+      "She cut the cake.",
+      "He cut the bread."
+    ],
+
+    draw: [
+      "I drew a picture.",
+      "She drew a cat.",
+      "He drew a house."
+    ],
+
+    feel: [
+      "I felt tired.",
+      "She felt happy.",
+      "He felt sick."
+    ],
+
+    fly: [
+      "I flew to London.",
+      "She flew home.",
+      "They flew to Turkey."
+    ],
+
+    forget: [
+      "I forgot my keys.",
+      "She forgot my name.",
+      "He forgot his phone."
+    ],
+
+    hear: [
+      "I heard a noise.",
+      "She heard the music.",
+      "We heard a dog."
+    ],
+
+    keep: [
+      "I kept the book.",
+      "She kept the photo.",
+      "He kept the money."
+    ],
+
+    lose: [
+      "I lost my keys.",
+      "She lost her phone.",
+      "He lost the game."
+    ],
+
+    pay: [
+      "I paid for dinner.",
+      "She paid for the ticket.",
+      "We paid the bill."
+    ],
+
+    put: [
+      "I put the book on the table.",
+      "She put her bag on the chair.",
+      "He put the keys in his bag."
+    ],
+
+    sell: [
+      "I sold my old bike.",
+      "She sold her car.",
+      "They sold their house."
+    ],
+
+    sing: [
+      "I sang a song.",
+      "She sang at the party.",
+      "They sang together."
+    ],
+
+    stand: [
+      "I stood near the door.",
+      "She stood outside.",
+      "We stood in line."
+    ],
+
+    swim: [
+      "I swam in the pool.",
+      "She swam at the beach.",
+      "They swam yesterday."
+    ],
+
+    teach: [
+      "She taught English.",
+      "He taught the students.",
+      "My teacher taught us."
+    ],
+
+    understand: [
+      "I understood the question.",
+      "She understood the lesson.",
+      "We understood the teacher."
+    ]
+  };
+
+  /* =========================================================
+     SIMPLE DATA
      ========================================================= */
 
   const PLACES = [
     "home",
     "school",
-    "work",
     "the park",
-    "the store",
+    "the office",
+    "work",
     "the cinema",
-    "the gym"
+    "the hotel",
+    "the store",
+    "the restaurant"
   ];
-
-  const SIMPLE_SUBJECTS = [
-    "I",
-    "You",
-    "He",
-    "She",
-    "We",
-    "They"
-  ];
-
-  const NAMES = [
-    "Tom",
-    "Sara",
-    "Ali",
-    "Emma"
-  ];
-
-  /* =========================================================
-     HELPERS
-     ========================================================= */
 
   function pick(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
@@ -650,39 +836,70 @@
 
     for (let i = x.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
+
       [x[i], x[j]] = [x[j], x[i]];
     }
 
     return x;
   }
 
-  function pickByLevel(pool, maxLevel) {
-    const filtered = pool.filter(function (v) {
-      return v.level <= maxLevel;
-    });
+  function getRegularSentence(base) {
+    const list = REGULAR_SENTENCES[base];
 
-    return pick(filtered.length ? filtered : pool);
+    if (list && list.length) {
+      return pick(list);
+    }
+
+    return "I " + base + " yesterday.";
   }
 
-  function capitalizeFirst(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+  function getIrregularSentence(base) {
+    const list = IRREGULAR_SENTENCES[base];
+
+    if (list && list.length) {
+      return pick(list);
+    }
+
+    return "I " + base + " yesterday.";
   }
 
-  function removeQuestionMark(str) {
-    return str.replace(/\?$/, "");
+  /*
+    Replace the base verb in a sentence with a blank.
+  */
+  function blankVerb(sentence, past) {
+    const regex = new RegExp("\\b" + escapeRegExp(past) + "\\b", "i");
+
+    return sentence.replace(regex, "____");
+  }
+
+  function escapeRegExp(text) {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
   /* =========================================================
-     WAS / WERE
+     QUESTION BUILDERS
      ========================================================= */
 
+  /* ---------- WAS / WERE ---------- */
+
   function qWasWere() {
-    const usePlural = Math.random() < 0.45;
+    const singular = Math.random() < 0.55;
 
     let subject;
     let answer;
 
-    if (usePlural) {
+    if (singular) {
+      subject = pick([
+        "I",
+        "He",
+        "She",
+        "It",
+        "Tom",
+        "Sara"
+      ]);
+
+      answer = "was";
+    } else {
       subject = pick([
         "You",
         "We",
@@ -692,16 +909,6 @@
       ]);
 
       answer = "were";
-    } else {
-      subject = pick([
-        "I",
-        "He",
-        "She",
-        "Tom",
-        "Sara"
-      ]);
-
-      answer = "was";
     }
 
     const place = pick(PLACES);
@@ -710,273 +917,194 @@
       type: "mc",
       hint: "Choose was or were",
       prompt: subject + " ____ at " + place + " yesterday.",
-      choices: shuffle([
-        "was",
-        "were"
-      ]),
+      choices: shuffle(["was", "were"]),
       answer: answer
     };
   }
 
-  function qThereWasWere() {
-    const singular = Math.random() < 0.5;
+  /* ---------- THERE WAS / THERE WERE ---------- */
 
-    if (singular) {
-      const noun = pick([
-        "a book",
-        "a party",
-        "a problem",
-        "a message",
-        "an email",
-        "a meeting"
-      ]);
+  function qThereWasWere() {
+    const singularSentences = [
+      ["a book", "on the table"],
+      ["a bag", "under the chair"],
+      ["a cat", "in the garden"],
+      ["a party", "at my house"],
+      ["a problem", "at school"],
+      ["a meeting", "at work"],
+      ["a car", "in front of the house"],
+      ["an email", "in my inbox"],
+      ["a phone", "on the desk"],
+      ["a dog", "in the park"]
+    ];
+
+    const pluralSentences = [
+      ["two books", "on the table"],
+      ["three bags", "under the chair"],
+      ["two cats", "in the garden"],
+      ["many people", "at the party"],
+      ["some students", "at school"],
+      ["two cars", "in front of the house"],
+      ["three emails", "in my inbox"],
+      ["some children", "in the park"],
+      ["two phones", "on the desk"],
+      ["many people", "at the meeting"]
+    ];
+
+    const useSingular = Math.random() < 0.5;
+
+    if (useSingular) {
+      const [noun, place] = pick(singularSentences);
 
       return {
         type: "mc",
-        hint: "There was / There were",
-        prompt: "____ " + noun + " on the table.",
-        choices: shuffle([
-          "There was",
-          "There were"
-        ]),
+        hint: "Choose There was or There were",
+        prompt: "____ " + noun + " " + place + " yesterday.",
+        choices: shuffle(["There was", "There were"]),
         answer: "There was"
       };
     }
 
-    const noun = pick([
-      "two books",
-      "many people",
-      "some problems",
-      "three messages",
-      "a lot of cars"
-    ]);
+    const [noun, place] = pick(pluralSentences);
 
     return {
       type: "mc",
-      hint: "There was / There were",
-      prompt: "____ " + noun + " outside.",
-      choices: shuffle([
-        "There was",
-        "There were"
-      ]),
+      hint: "Choose There was or There were",
+      prompt: "____ " + noun + " " + place + " yesterday.",
+      choices: shuffle(["There was", "There were"]),
       answer: "There were"
     };
   }
 
-  function qWasWereWh() {
-    const data = pick([
-      {
-        wh: "Where",
-        subject: "you",
-        be: "were",
-        sentence: "Where were you yesterday?"
-      },
-      {
-        wh: "Where",
-        subject: "he",
-        be: "was",
-        sentence: "Where was he yesterday?"
-      },
-      {
-        wh: "Where",
-        subject: "she",
-        be: "was",
-        sentence: "Where was she last night?"
-      },
-      {
-        wh: "When",
-        subject: "they",
-        be: "were",
-        sentence: "When were they at school?"
-      },
-      {
-        wh: "Why",
-        subject: "he",
-        be: "was",
-        sentence: "Why was he at home?"
-      },
-      {
-        wh: "Why",
-        subject: "she",
-        be: "was",
-        sentence: "Why was she late?"
-      },
-      {
-        wh: "Where",
-        subject: "Tom",
-        be: "was",
-        sentence: "Where was Tom yesterday?"
-      }
-    ]);
+  /* ---------- WAS / WERE WH QUESTIONS ---------- */
 
-    const wrongBe = data.be === "was" ? "were" : "was";
+  function qWasWereWh() {
+    const data = [
+      ["Where", "you", "were", "you"],
+      ["Where", "he", "was", "he"],
+      ["Where", "she", "was", "she"],
+      ["Where", "they", "were", "they"],
+      ["When", "you", "were", "you"],
+      ["When", "he", "was", "he"],
+      ["When", "she", "was", "she"],
+      ["Why", "you", "were", "you"],
+      ["Why", "he", "was", "he"],
+      ["Why", "they", "were", "they"]
+    ];
+
+    const [wh, subject, be, correctSubject] = pick(data);
+
+    const correct = wh + " " + be + " " + correctSubject + "?";
+
+    const wrongBe = be === "was" ? "were" : "was";
 
     return {
       type: "mc",
-      hint: "Wh- question with was / were",
+      hint: "Choose the correct Wh- question",
       prompt: "Choose the correct question.",
       choices: shuffle([
-        data.sentence,
-        data.wh + " " + wrongBe + " " + data.subject + "?",
-        data.wh + " is " + data.subject + "?",
-        "Was " + data.subject + " where?"
+        correct,
+        wh + " " + wrongBe + " " + subject + "?",
+        wh + " did " + subject + "?",
+        "What " + be + " " + subject + "?"
       ]),
-      answer: data.sentence
+      answer: correct
     };
   }
 
-  /* =========================================================
-     REGULAR VERBS
-     ========================================================= */
+  /* ---------- REGULAR LEVEL 1 ---------- */
 
   function qRegLevel1() {
-    const verb = pickByLevel(REGULAR, 1);
-    const form = pick([
-      "pos",
-      "neg",
-      "q"
-    ]);
+    const [base, past] = pick(REGULAR);
 
-    const subject = pick(SIMPLE_SUBJECTS);
+    const form = pick(["pos", "neg", "q"]);
 
     if (form === "pos") {
-      const sentence = pick(verb.sentences);
-      const lowerSentence = sentence.charAt(0).toLowerCase() + sentence.slice(1);
-      const prompt = lowerSentence.replace(
-        verb.past,
-        "____"
-      );
+      const sentence = getRegularSentence(base);
+      const prompt = blankVerb(sentence, past);
 
       return {
         type: "mc",
-        hint: "Positive · regular verb",
+        hint: "Choose the past form",
         prompt: prompt,
         choices: shuffle([
-          verb.past,
-          verb.base,
-          verb.base + "ed",
-          "did " + verb.base
+          past,
+          base,
+          base + "ed",
+          "did " + base
         ]),
-        answer: verb.past
+        answer: past
       };
     }
 
     if (form === "neg") {
-      const baseSentence = pick(verb.sentences);
-
-      const negativeSentence =
-        subject +
-        " didn't " +
-        verb.base +
-        ".";
-
-      const correct = "didn't " + verb.base;
+      const subject = pick([
+        "I",
+        "You",
+        "He",
+        "She",
+        "We",
+        "They"
+      ]);
 
       return {
         type: "mc",
-        hint: "Negative · regular verb",
-        prompt:
-          subject +
-          " ____ " +
-          getObjectFromSentence(baseSentence, verb) +
-          ".",
+        hint: "Choose the correct negative",
+        prompt: subject + " ____ " + base + " yesterday.",
         choices: shuffle([
-          correct,
-          "didn't " + verb.past,
-          "not " + verb.past,
-          "doesn't " + verb.base
+          "didn't " + base,
+          "didn't " + past,
+          "not " + past,
+          "doesn't " + base
         ]),
-        answer: correct
+        answer: "didn't " + base
       };
     }
 
     return {
       type: "mc",
-      hint: "Question · regular verb",
-      prompt: "____ you ____ yesterday? (" + verb.base + ")",
+      hint: "Choose the correct question",
+      prompt: "____ you ____ yesterday? (" + base + ")",
       choices: shuffle([
-        "Did / " + verb.base,
-        "Did / " + verb.past,
-        "Do / " + verb.base,
-        "Was / " + verb.past
+        "Did / " + base,
+        "Did / " + past,
+        "Do / " + base,
+        "Were / " + base
       ]),
-      answer: "Did / " + verb.base
+      answer: "Did / " + base
     };
   }
 
-  /*
-    Gets a simple object/place from one of our stored sentences.
-    This prevents negative questions from becoming unnatural.
-  */
-  function getObjectFromSentence(sentence, verb) {
-    let text = sentence;
-
-    text = text.replace(/^I /, "");
-    text = text.replace(/^You /, "");
-    text = text.replace(/^He /, "");
-    text = text.replace(/^She /, "");
-    text = text.replace(/^We /, "");
-    text = text.replace(/^They /, "");
-
-    text = text.replace(
-      new RegExp("\\b" + escapeRegExp(verb.past) + "\\b", "i"),
-      ""
-    );
-
-    text = text.replace(/\.$/, "").trim();
-
-    if (!text) {
-      return "it";
-    }
-
-    return text;
-  }
-
-  function escapeRegExp(str) {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
+  /* ---------- REGULAR WH QUESTIONS ---------- */
 
   function qRegWh() {
-    const verb = pickByLevel(REGULAR, 2);
+    const [base] = pick(REGULAR);
 
-    const questions = [
-      {
-        wh: "Where",
-        sentence: "Where did you " + verb.base + " yesterday?"
-      },
-      {
-        wh: "When",
-        sentence: "When did you " + verb.base + " yesterday?"
-      },
-      {
-        wh: "Why",
-        sentence: "Why did you " + verb.base + " yesterday?"
-      },
-      {
-        wh: "What",
-        sentence: "What did you " + verb.base + " yesterday?"
-      }
-    ];
+    const wh = pick([
+      "Where",
+      "When",
+      "Why",
+      "What"
+    ]);
 
-    const q = pick(questions);
+    const correct =
+      wh + " did you " + base + " yesterday?";
 
     return {
       type: "mc",
-      hint: "Wh- question · regular verb",
+      hint: "Choose the correct Wh- question",
       prompt: "Choose the correct question.",
       choices: shuffle([
-        q.sentence,
-        q.wh + " did you " + verb.past + " yesterday?",
-        q.wh + " do you " + verb.base + " yesterday?",
-        q.wh + " you " + verb.past + " yesterday?"
+        correct,
+        wh + " did you " + base + " yesterday",
+        wh + " do you " + base + " yesterday?",
+        wh + " you " + base + " yesterday?"
       ]),
-      answer: q.sentence
+      answer: correct
     };
   }
 
-  /* =========================================================
-     REGULAR PRONUNCIATION
-     ========================================================= */
+  /* ---------- REGULAR PRONUNCIATION ---------- */
 
   function qRegSound() {
     const groups = [
@@ -996,15 +1124,23 @@
 
     const mainIdx = Math.floor(Math.random() * 3);
 
-    const oddIdx =
-      (mainIdx + 1 + Math.floor(Math.random() * 2)) % 3;
+    const possibleOdd = [0, 1, 2].filter(
+      (i) => i !== mainIdx
+    );
 
-    const main = shuffle(groups[mainIdx].list).slice(0, 3);
-    const odd = pick(groups[oddIdx].list);
+    const oddIdx = pick(possibleOdd);
+
+    const main = shuffle(
+      groups[mainIdx].list
+    ).slice(0, 3);
+
+    const odd = pick(
+      groups[oddIdx].list
+    );
 
     return {
       type: "mc",
-      hint: "Which past form has a different -ed sound?",
+      hint: "Which word has a different -ed sound?",
       prompt: "Find the different pronunciation.",
       choices: shuffle(
         main.concat([odd])
@@ -1013,16 +1149,14 @@
     };
   }
 
-  /* =========================================================
-     IRREGULAR VERBS
-     ========================================================= */
+  /* ---------- IRREGULAR LEVEL 1 ---------- */
 
   function qIrrLevel1() {
-    const pool = IRREGULAR.filter(function (x) {
-      return x.base !== "be";
-    });
+    const pool = IRREGULAR.filter(
+      (x) => x[0] !== "be"
+    );
 
-    const verb = pickByLevel(pool, 1);
+    const [base, past] = pick(pool);
 
     const form = pick([
       "pos",
@@ -1030,74 +1164,80 @@
       "q"
     ]);
 
-    const subject = pick(SIMPLE_SUBJECTS);
-
     if (form === "pos") {
-      const sentence = pick(verb.sentences);
+      const sentence =
+        getIrregularSentence(base);
 
-      const prompt = sentence.replace(
-        verb.past,
-        "____"
-      );
+      const prompt =
+        blankVerb(sentence, past);
 
       return {
         type: "mc",
-        hint: "Positive · irregular verb",
+        hint: "Choose the past form",
         prompt: prompt,
         choices: shuffle([
-          verb.past,
-          verb.base,
-          verb.base + "ed",
-          "did " + verb.base
+          past,
+          base,
+          base + "ed",
+          "did " + base
         ]),
-        answer: verb.past
+        answer: past
       };
     }
 
     if (form === "neg") {
-      const correct = "didn't " + verb.base;
+      const subject = pick([
+        "I",
+        "You",
+        "He",
+        "She",
+        "We",
+        "They"
+      ]);
 
       return {
         type: "mc",
-        hint: "Negative · irregular verb",
+        hint: "Choose the correct negative",
         prompt:
           subject +
-          " ____ yesterday. (" +
-          verb.base +
-          ")",
+          " ____ " +
+          base +
+          " yesterday.",
         choices: shuffle([
-          correct,
-          "didn't " + verb.past,
-          "not " + verb.past,
-          "doesn't " + verb.base
+          "didn't " + base,
+          "didn't " + past,
+          "not " + past,
+          "doesn't " + base
         ]),
-        answer: correct
+        answer: "didn't " + base
       };
     }
 
     return {
       type: "mc",
-      hint: "Question · irregular verb",
+      hint: "Choose the correct question",
       prompt:
         "____ she ____ it? (" +
-        verb.base +
+        base +
         ")",
       choices: shuffle([
-        "Did / " + verb.base,
-        "Did / " + verb.past,
-        "Does / " + verb.base,
-        "Was / " + verb.past
+        "Did / " + base,
+        "Did / " + past,
+        "Does / " + base,
+        "Was / " + past
       ]),
-      answer: "Did / " + verb.base
+      answer: "Did / " + base
     };
   }
 
-  function qIrrWh() {
-    const pool = IRREGULAR.filter(function (x) {
-      return x.base !== "be";
-    });
+  /* ---------- IRREGULAR WH QUESTIONS ---------- */
 
-    const verb = pickByLevel(pool, 2);
+  function qIrrWh() {
+    const pool = IRREGULAR.filter(
+      (x) => x[0] !== "be"
+    );
+
+    const [base] = pick(pool);
 
     const wh = pick([
       "Where",
@@ -1107,51 +1247,30 @@
     ]);
 
     const correct =
-      wh +
-      " did they " +
-      verb.base +
-      "?";
-
-    const wrong1 =
-      wh +
-      " did they " +
-      verb.past +
-      "?";
-
-    const wrong2 =
-      wh +
-      " do they " +
-      verb.base +
-      "?";
-
-    const wrong3 =
-      wh +
-      " they " +
-      verb.base +
-      "?";
+      wh + " did they " + base + "?";
 
     return {
       type: "mc",
-      hint: "Wh- question · irregular verb",
+      hint: "Choose the correct Wh- question",
       prompt: "Choose the correct question.",
       choices: shuffle([
         correct,
-        wrong1,
-        wrong2,
-        wrong3
+        wh + " did they " + base,
+        wh + " do they " + base + "?",
+        wh + " they " + base + "?"
       ]),
       answer: correct
     };
   }
 
-  /* =========================================================
-     IRREGULAR MATCHING
-     ========================================================= */
+  /* ---------- IRREGULAR MATCHING ---------- */
 
   function qIrrMatch() {
-    const pool = IRREGULAR.filter(function (x) {
-      return x.base !== "be";
-    });
+    const pool = IRREGULAR.filter(
+      function (x) {
+        return x[0] !== "be";
+      }
+    );
 
     const count =
       window.innerWidth <= 700 ||
@@ -1159,7 +1278,10 @@
         ? 3
         : 4;
 
-    const pairs = shuffle(pool).slice(0, count);
+    const pairs = shuffle(pool).slice(
+      0,
+      count
+    );
 
     return {
       type: "match",
@@ -1167,8 +1289,8 @@
       prompt: "Match base → past",
       pairs: pairs.map(function (pair) {
         return {
-          left: pair.base,
-          right: pair.past
+          left: pair[0],
+          right: pair[1]
         };
       })
     };
@@ -1294,9 +1416,6 @@
     playScreen.classList.add("hidden");
     resultScreen.classList.add("hidden");
 
-    document.body.classList.toggle("sp-playing", name === "play");
-    document.body.classList.toggle("sp-result", name === "result");
-
     if (name === "menu") {
       menuScreen.classList.remove("hidden");
     }
@@ -1314,8 +1433,9 @@
     if (!progressFill) return;
 
     progressFill.style.width =
-      Math.round((index / TOTAL) * 100) +
-      "%";
+      Math.round(
+        (index / TOTAL) * 100
+      ) + "%";
   }
 
   /* =========================================================
@@ -1332,8 +1452,6 @@
 
     const mode = MODES[key];
 
-    if (!mode) return;
-
     queue = [];
 
     for (let i = 0; i < TOTAL; i++) {
@@ -1346,7 +1464,8 @@
     wrong = 0;
 
     if (modeLabel) {
-      modeLabel.textContent = mode.label;
+      modeLabel.textContent =
+        mode.label;
     }
 
     if (scoreEl) {
@@ -1394,18 +1513,16 @@
           block: "nearest"
         });
       }
+    } else {
+      if (matchArea) {
+        matchArea.classList.add("hidden");
+        matchArea.style.display = "";
+      }
 
-      return;
+      choicesArea.classList.remove("hidden");
+
+      renderChoices(item);
     }
-
-    if (matchArea) {
-      matchArea.classList.add("hidden");
-      matchArea.style.display = "";
-    }
-
-    choicesArea.classList.remove("hidden");
-
-    renderChoices(item);
   }
 
   /* =========================================================
@@ -1425,19 +1542,19 @@
       "mk-stagger-fast"
     );
 
-    item.choices.forEach(function (choice) {
+    item.choices.forEach(function (c) {
       const btn =
         document.createElement("button");
 
       btn.type = "button";
       btn.className = "choice-btn";
-      btn.textContent = choice;
+      btn.textContent = c;
 
       btn.addEventListener(
         "click",
         function () {
           onChoice(
-            choice,
+            c,
             item.answer,
             btn
           );
@@ -1448,7 +1565,11 @@
     });
   }
 
-  function onChoice(choice, answer, btn) {
+  function onChoice(
+    choice,
+    answer,
+    btn
+  ) {
     if (locked) return;
 
     locked = true;
@@ -1462,7 +1583,8 @@
         b.disabled = true;
 
         if (
-          b.textContent === answer
+          b.textContent ===
+          answer
         ) {
           b.classList.add("correct");
         }
@@ -1521,24 +1643,36 @@
     };
 
     matchDone = 0;
-    matchTotal = item.pairs.length;
+
+    matchTotal =
+      item.pairs.length;
+
     matchMap = {};
 
-    item.pairs.forEach(function (p) {
-      matchMap[p.left] = p.right;
-    });
-
-    const lefts = shuffle(
-      item.pairs.map(function (p) {
-        return p.left;
-      })
+    item.pairs.forEach(
+      function (p) {
+        matchMap[p.left] =
+          p.right;
+      }
     );
 
-    const rights = shuffle(
-      item.pairs.map(function (p) {
-        return p.right;
-      })
-    );
+    const lefts =
+      shuffle(
+        item.pairs.map(
+          function (p) {
+            return p.left;
+          }
+        )
+      );
+
+    const rights =
+      shuffle(
+        item.pairs.map(
+          function (p) {
+            return p.right;
+          }
+        )
+      );
 
     if (
       !matchArea ||
@@ -1556,7 +1690,8 @@
       "hidden"
     );
 
-    matchArea.style.display = "flex";
+    matchArea.style.display =
+      "flex";
 
     choicesArea.classList.add(
       "hidden"
@@ -1565,57 +1700,73 @@
     matchLeft.innerHTML = "";
     matchRight.innerHTML = "";
 
-    lefts.forEach(function (word) {
-      const b =
-        document.createElement("button");
+    lefts.forEach(
+      function (w) {
+        const b =
+          document.createElement(
+            "button"
+          );
 
-      b.type = "button";
-      b.className =
-        "match-chip word";
+        b.type = "button";
+        b.className =
+          "match-chip word";
 
-      b.textContent = word;
+        b.textContent = w;
 
-      b.dataset.side = "left";
-      b.dataset.val = word;
+        b.dataset.side =
+          "left";
 
-      b.addEventListener(
-        "click",
-        function () {
-          onMatchPick(b);
-        }
-      );
+        b.dataset.val =
+          w;
 
-      matchLeft.appendChild(b);
-    });
+        b.addEventListener(
+          "click",
+          function () {
+            onMatchPick(b);
+          }
+        );
 
-    rights.forEach(function (word) {
-      const b =
-        document.createElement("button");
+        matchLeft.appendChild(b);
+      }
+    );
 
-      b.type = "button";
-      b.className =
-        "match-chip word";
+    rights.forEach(
+      function (w) {
+        const b =
+          document.createElement(
+            "button"
+          );
 
-      b.textContent = word;
+        b.type = "button";
+        b.className =
+          "match-chip word";
 
-      b.dataset.side = "right";
-      b.dataset.val = word;
+        b.textContent = w;
 
-      b.addEventListener(
-        "click",
-        function () {
-          onMatchPick(b);
-        }
-      );
+        b.dataset.side =
+          "right";
 
-      matchRight.appendChild(b);
-    });
+        b.dataset.val =
+          w;
+
+        b.addEventListener(
+          "click",
+          function () {
+            onMatchPick(b);
+          }
+        );
+
+        matchRight.appendChild(b);
+      }
+    );
   }
 
   function onMatchPick(btn) {
     if (
       locked ||
-      btn.classList.contains("matched")
+      btn.classList.contains(
+        "matched"
+      )
     ) {
       return;
     }
@@ -1626,24 +1777,29 @@
     document
       .querySelectorAll(
         '.match-chip[data-side="' +
-        side +
-        '"]'
+          side +
+          '"]'
       )
-      .forEach(function (b) {
-        if (
-          !b.classList.contains(
-            "matched"
-          )
-        ) {
-          b.classList.remove(
-            "selected"
-          );
+      .forEach(
+        function (b) {
+          if (
+            !b.classList.contains(
+              "matched"
+            )
+          ) {
+            b.classList.remove(
+              "selected"
+            );
+          }
         }
-      });
+      );
 
-    btn.classList.add("selected");
+    btn.classList.add(
+      "selected"
+    );
 
-    matchSel[side] = btn;
+    matchSel[side] =
+      btn;
 
     if (
       matchSel.left &&
@@ -1655,7 +1811,9 @@
       const R =
         matchSel.right.dataset.val;
 
-      if (matchMap[L] === R) {
+      if (
+        matchMap[L] === R
+      ) {
         matchSel.left.classList.add(
           "matched"
         );
@@ -1673,6 +1831,7 @@
         );
 
         matchDone += 1;
+
         score += 10;
 
         if (scoreEl) {
@@ -1692,7 +1851,8 @@
         };
 
         if (
-          matchDone >= matchTotal
+          matchDone >=
+          matchTotal
         ) {
           correct += 1;
           locked = true;
@@ -1701,7 +1861,9 @@
             function () {
               index += 1;
 
-              if (index >= TOTAL) {
+              if (
+                index >= TOTAL
+              ) {
                 endRound();
               } else {
                 loadItem();
@@ -1725,8 +1887,11 @@
         feedbackEl.className =
           "feedback bad";
 
-        const a = matchSel.left;
-        const b = matchSel.right;
+        const a =
+          matchSel.left;
+
+        const b =
+          matchSel.right;
 
         matchSel = {
           left: null,
@@ -1758,15 +1923,20 @@
   const RUSH_SECONDS = 90;
 
   let rushTimerId = null;
-  let rushTimeLeft = RUSH_SECONDS;
+  let rushTimeLeft =
+    RUSH_SECONDS;
+
   let rushMatches = 0;
   let rushCombo = 0;
   let rushBestCombo = 0;
+
   let rushMap = {};
+
   let rushSel = {
     left: null,
     right: null
   };
+
   let rushLocked = false;
 
   function stopRushTimer() {
@@ -1789,7 +1959,9 @@
     rushMatches = 0;
     rushCombo = 0;
     rushBestCombo = 0;
-    rushTimeLeft = RUSH_SECONDS;
+
+    rushTimeLeft =
+      RUSH_SECONDS;
 
     rushSel = {
       left: null,
@@ -1847,53 +2019,66 @@
         "feedback";
     }
 
-    const pool = shuffle(
-      IRREGULAR.filter(
-        function (x) {
-          return x.base !== "be";
-        }
-      )
-    );
+    const pool =
+      shuffle(
+        IRREGULAR.filter(
+          function (x) {
+            return x[0] !== "be";
+          }
+        )
+      );
 
     rushMap = {};
 
-    pool.forEach(function (p) {
-      rushMap[p.base] =
-        p.past;
-    });
-
-    const lefts = shuffle(
-      pool.map(function (p) {
-        return p.base;
-      })
+    pool.forEach(
+      function (p) {
+        rushMap[p[0]] =
+          p[1];
+      }
     );
 
-    const rights = shuffle(
-      pool.map(function (p) {
-        return p.past;
-      })
-    );
+    const lefts =
+      shuffle(
+        pool.map(
+          function (p) {
+            return p[0];
+          }
+        )
+      );
+
+    const rights =
+      shuffle(
+        pool.map(
+          function (p) {
+            return p[1];
+          }
+        )
+      );
 
     matchLeft.innerHTML = "";
     matchRight.innerHTML = "";
 
-    lefts.forEach(function (word) {
-      matchLeft.appendChild(
-        makeRushChip(
-          word,
-          "left"
-        )
-      );
-    });
+    lefts.forEach(
+      function (w) {
+        matchLeft.appendChild(
+          makeRushChip(
+            w,
+            "left"
+          )
+        );
+      }
+    );
 
-    rights.forEach(function (word) {
-      matchRight.appendChild(
-        makeRushChip(
-          word,
-          "right"
-        )
-      );
-    });
+    rights.forEach(
+      function (w) {
+        matchRight.appendChild(
+          makeRushChip(
+            w,
+            "right"
+          )
+        );
+      }
+    );
 
     updateRushHud();
 
@@ -1931,8 +2116,11 @@
 
     b.textContent = word;
 
-    b.dataset.side = side;
-    b.dataset.val = word;
+    b.dataset.side =
+      side;
+
+    b.dataset.val =
+      word;
 
     b.addEventListener(
       "click",
@@ -2062,10 +2250,10 @@
       );
 
     leftVals.forEach(
-      function (word) {
+      function (w) {
         matchLeft.appendChild(
           makeRushChip(
-            word,
+            w,
             "left"
           )
         );
@@ -2073,10 +2261,10 @@
     );
 
     rightVals.forEach(
-      function (word) {
+      function (w) {
         matchRight.appendChild(
           makeRushChip(
-            word,
+            w,
             "right"
           )
         );
@@ -2105,8 +2293,8 @@
     document
       .querySelectorAll(
         '.match-chip[data-side="' +
-        side +
-        '"]'
+          side +
+          '"]'
       )
       .forEach(
         function (b) {
@@ -2126,7 +2314,8 @@
       "selected"
     );
 
-    rushSel[side] = btn;
+    rushSel[side] =
+      btn;
 
     if (
       rushSel.left &&
@@ -2138,7 +2327,9 @@
       const R =
         rushSel.right.dataset.val;
 
-      if (rushMap[L] === R) {
+      if (
+        rushMap[L] === R
+      ) {
         rushSel.left.classList.add(
           "matched"
         );
@@ -2156,6 +2347,7 @@
         );
 
         rushMatches += 1;
+
         rushCombo += 1;
 
         if (
@@ -2178,7 +2370,8 @@
 
         if (feedbackEl) {
           feedbackEl.textContent =
-            "Nice! +" + pts;
+            "Nice! +" +
+            pts;
 
           feedbackEl.className =
             "feedback ok";
@@ -2196,7 +2389,9 @@
             ".match-chip:not(.matched)"
           ).length;
 
-        if (leftRemain === 0) {
+        if (
+          leftRemain === 0
+        ) {
           stopRushTimer();
 
           setTimeout(
@@ -2206,6 +2401,7 @@
         }
       } else {
         rushCombo = 0;
+
         wrong += 1;
 
         rushSel.left.classList.add(
@@ -2224,8 +2420,11 @@
             "feedback bad";
         }
 
-        const a = rushSel.left;
-        const b = rushSel.right;
+        const a =
+          rushSel.left;
+
+        const b =
+          rushSel.right;
 
         rushSel = {
           left: null,
@@ -2289,44 +2488,24 @@
         "feedback";
     }
 
-    const finalScore =
-      document.getElementById(
-        "finalScore"
-      );
+    document.getElementById(
+      "finalScore"
+    ).textContent =
+      String(score);
 
-    const finalCorrect =
-      document.getElementById(
-        "finalCorrect"
-      );
+    document.getElementById(
+      "finalCorrect"
+    ).textContent =
+      String(rushMatches);
 
-    const finalWrong =
-      document.getElementById(
-        "finalWrong"
-      );
-
-    const finalAccuracy =
-      document.getElementById(
-        "finalAccuracy"
-      );
-
-    if (finalScore) {
-      finalScore.textContent =
-        String(score);
-    }
-
-    if (finalCorrect) {
-      finalCorrect.textContent =
-        String(rushMatches);
-    }
-
-    if (finalWrong) {
-      finalWrong.textContent =
-        String(wrong);
-    }
+    document.getElementById(
+      "finalWrong"
+    ).textContent =
+      String(wrong);
 
     const totalPairs =
-      Object.keys(rushMap).length ||
-      1;
+      Object.keys(rushMap)
+        .length || 1;
 
     const acc =
       Math.round(
@@ -2335,13 +2514,13 @@
           100
       );
 
-    if (finalAccuracy) {
-      finalAccuracy.textContent =
-        Math.min(
-          100,
-          acc
-        ) + "%";
-    }
+    document.getElementById(
+      "finalAccuracy"
+    ).textContent =
+      Math.min(
+        100,
+        acc
+      ) + "%";
 
     show("result");
   }
@@ -2352,52 +2531,33 @@
         "100%";
     }
 
-    const finalScore =
-      document.getElementById(
-        "finalScore"
-      );
+    document.getElementById(
+      "finalScore"
+    ).textContent =
+      String(score);
 
-    const finalCorrect =
-      document.getElementById(
-        "finalCorrect"
-      );
+    document.getElementById(
+      "finalCorrect"
+    ).textContent =
+      String(correct);
 
-    const finalWrong =
-      document.getElementById(
-        "finalWrong"
-      );
+    document.getElementById(
+      "finalWrong"
+    ).textContent =
+      String(wrong);
 
-    const finalAccuracy =
-      document.getElementById(
-        "finalAccuracy"
-      );
-
-    if (finalScore) {
-      finalScore.textContent =
-        String(score);
-    }
-
-    if (finalCorrect) {
-      finalCorrect.textContent =
-        String(correct);
-    }
-
-    if (finalWrong) {
-      finalWrong.textContent =
-        String(wrong);
-    }
-
-    if (finalAccuracy) {
-      finalAccuracy.textContent =
-        (
-          TOTAL
-            ? Math.round(
-                (correct / TOTAL) *
-                  100
-              )
-            : 0
-        ) + "%";
-    }
+    document.getElementById(
+      "finalAccuracy"
+    ).textContent =
+      (
+        TOTAL
+          ? Math.round(
+              (correct /
+                TOTAL) *
+                100
+            )
+          : 0
+      ) + "%";
 
     show("result");
   }
@@ -2470,35 +2630,31 @@
     );
   }
 
-  const toMenuBtn =
-    document.getElementById(
+  document
+    .getElementById(
       "toMenuBtn"
-    );
-
-  if (toMenuBtn) {
-    toMenuBtn.addEventListener(
+    )
+    .addEventListener(
       "click",
       function () {
         show("menu");
       }
     );
-  }
 
-  const playAgainBtn =
-    document.getElementById(
+  document
+    .getElementById(
       "playAgainBtn"
-    );
-
-  if (playAgainBtn) {
-    playAgainBtn.addEventListener(
+    )
+    .addEventListener(
       "click",
       function () {
         if (modeKey) {
-          startMode(modeKey);
+          startMode(
+            modeKey
+          );
         }
       }
     );
-  }
 
   /* =========================================================
      SITE THEME
@@ -2542,5 +2698,4 @@
      ========================================================= */
 
   show("menu");
-
 })();
