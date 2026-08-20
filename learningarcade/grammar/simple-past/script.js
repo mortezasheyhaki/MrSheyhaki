@@ -660,170 +660,61 @@
      ========================================================= */
 
   const REGULAR_WH = [
-    {
-      chunks: [
-        "When",
-        "did",
-        "you",
-        "finish",
-        "your homework?"
-      ]
-    },
-    {
-      chunks: [
-        "Where",
-        "did",
-        "you",
-        "stay",
-        "last weekend?"
-      ]
-    },
-    {
-      chunks: [
-        "Why",
-        "did",
-        "she",
-        "close",
-        "the window?"
-      ]
-    },
-    {
-      chunks: [
-        "When",
-        "did",
-        "they",
-        "clean",
-        "the hotel room?"
-      ]
-    },
-    {
-      chunks: [
-        "Where",
-        "did",
-        "he",
-        "park",
-        "the car?"
-      ]
-    },
-    {
-      chunks: [
-        "Why",
-        "did",
-        "you",
-        "open",
-        "the door?"
-      ]
-    },
-    {
-      chunks: [
-        "When",
-        "did",
-        "she",
-        "book",
-        "the hotel?"
-      ]
-    },
-    {
-      chunks: [
-        "Where",
-        "did",
-        "they",
-        "travel",
-        "last summer?"
-      ]
-    },
-    {
-      chunks: [
-        "Why",
-        "did",
-        "he",
-        "change",
-        "his plan?"
-      ]
-    },
-    {
-      chunks: [
-        "When",
-        "did",
-        "you",
-        "start",
-        "your new job?"
-      ]
-    },
-    {
-      chunks: [
-        "Where",
-        "did",
-        "she",
-        "work",
-        "last year?"
-      ]
-    },
-    {
-      chunks: [
-        "Why",
-        "did",
-        "they",
-        "cancel",
-        "the meeting?"
-      ]
-    },
-    {
-      chunks: [
-        "When",
-        "did",
-        "he",
-        "arrive",
-        "at the hotel?"
-      ]
-    },
-    {
-      chunks: [
-        "Where",
-        "did",
-        "you",
-        "park",
-        "your car?"
-      ]
-    },
-    {
-      chunks: [
-        "Why",
-        "did",
-        "she",
-        "wash",
-        "the dishes?"
-      ]
-    },
-    {
-      chunks: [
-        "When",
-        "did",
-        "they",
-        "move",
-        "to the new house?"
-      ]
-    },
-    {
-      chunks: [
-        "Where",
-        "did",
-        "he",
-        "live",
-        "before?"
-      ]
-    },
-    {
-      chunks: [
-        "Why",
-        "did",
-        "you",
-        "call",
-        "the hotel?"
-      ]
-    }
-  ];
-
+  {
+    chunks: ["When", "did", "you", "finish", "your homework?"]
+  },
+  {
+    chunks: ["Where", "did", "you", "stay", "last weekend?"]
+  },
+  {
+    chunks: ["Why", "did", "she", "close", "the window?"]
+  },
+  {
+    chunks: ["When", "did", "they", "clean", "the room?"]
+  },
+  {
+    chunks: ["Where", "did", "he", "park", "the car?"]
+  },
+  {
+    chunks: ["Why", "did", "you", "open", "the door?"]
+  },
+  {
+    chunks: ["When", "did", "she", "book", "the hotel?"]
+  },
+  {
+    chunks: ["Where", "did", "they", "travel", "last summer?"]
+  },
+  {
+    chunks: ["Why", "did", "he", "change", "his plan?"]
+  },
+  {
+    chunks: ["When", "did", "you", "start", "your job?"]
+  },
+  {
+    chunks: ["Where", "did", "she", "work", "last year?"]
+  },
+  {
+    chunks: ["Why", "did", "they", "call", "you?"]
+  },
+  {
+    chunks: ["When", "did", "he", "arrive", "at the hotel?"]
+  },
+  {
+    chunks: ["Where", "did", "you", "live", "before?"]
+  },
+  {
+    chunks: ["Why", "did", "she", "wash", "the dishes?"]
+  },
+  {
+    chunks: ["When", "did", "they", "move", "to the new house?"]
+  },
+  {
+    chunks: ["Where", "did", "he", "play", "football?"]
+  },
+  {
+    chunks: ["Why", "did", "you", "need", "help?"]
+  }
+];
   function qRegWh() {
     const item = pick(REGULAR_WH);
 
