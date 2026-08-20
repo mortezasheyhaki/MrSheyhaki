@@ -3899,11 +3899,10 @@ $("#againButton")
     );
 
 
-$("#themeToggle")
-    .addEventListener(
-        "click",
-        toggleTheme
-    );
+const themeToggleEl = $("#themeToggle");
+if (themeToggleEl) {
+    themeToggleEl.addEventListener("click", toggleTheme);
+}
 
 
 /* =====================================================
