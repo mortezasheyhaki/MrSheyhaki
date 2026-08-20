@@ -876,170 +876,61 @@
      ========================================================= */
 
   const IRREGULAR_WH = [
-    {
-      chunks: [
-        "Where",
-        "did",
-        "you",
-        "go",
-        "last weekend?"
-      ]
-    },
-    {
-      chunks: [
-        "What",
-        "did",
-        "she",
-        "eat",
-        "for breakfast?"
-      ]
-    },
-    {
-      chunks: [
-        "When",
-        "did",
-        "they",
-        "come",
-        "home?"
-      ]
-    },
-    {
-      chunks: [
-        "Where",
-        "did",
-        "he",
-        "put",
-        "the book?"
-      ]
-    },
-    {
-      chunks: [
-        "What",
-        "did",
-        "you",
-        "buy",
-        "at the store?"
-      ]
-    },
-    {
-      chunks: [
-        "Why",
-        "did",
-        "she",
-        "leave",
-        "the hotel early?"
-      ]
-    },
-    {
-      chunks: [
-        "When",
-        "did",
-        "you",
-        "meet",
-        "your friend?"
-      ]
-    },
-    {
-      chunks: [
-        "What",
-        "did",
-        "he",
-        "have",
-        "at the restaurant?"
-      ]
-    },
-    {
-      chunks: [
-        "Where",
-        "did",
-        "they",
-        "sleep",
-        "last night?"
-      ]
-    },
-    {
-      chunks: [
-        "What",
-        "did",
-        "she",
-        "make",
-        "for dinner?"
-      ]
-    },
-    {
-      chunks: [
-        "When",
-        "did",
-        "he",
-        "get",
-        "home?"
-      ]
-    },
-    {
-      chunks: [
-        "Why",
-        "did",
-        "they",
-        "take",
-        "the bus?"
-      ]
-    },
-    {
-      chunks: [
-        "Where",
-        "did",
-        "she",
-        "find",
-        "her keys?"
-      ]
-    },
-    {
-      chunks: [
-        "What",
-        "did",
-        "you",
-        "drink",
-        "with dinner?"
-      ]
-    },
-    {
-      chunks: [
-        "When",
-        "did",
-        "your parents",
-        "come",
-        "home?"
-      ]
-    },
-    {
-      chunks: [
-        "Where",
-        "did",
-        "he",
-        "leave",
-        "his bag?"
-      ]
-    },
-    {
-      chunks: [
-        "Why",
-        "did",
-        "you",
-        "take",
-        "a taxi?"
-      ]
-    },
-    {
-      chunks: [
-        "What",
-        "did",
-        "they",
-        "see",
-        "at the museum?"
-      ]
-    }
-  ];
-
+  {
+    chunks: ["Where", "did", "you", "go", "last weekend?"]
+  },
+  {
+    chunks: ["What", "did", "she", "eat", "for breakfast?"]
+  },
+  {
+    chunks: ["When", "did", "they", "come", "home?"]
+  },
+  {
+    chunks: ["Where", "did", "he", "put", "the book?"]
+  },
+  {
+    chunks: ["What", "did", "you", "buy", "at the store?"]
+  },
+  {
+    chunks: ["Why", "did", "she", "leave", "early?"]
+  },
+  {
+    chunks: ["When", "did", "you", "meet", "your friend?"]
+  },
+  {
+    chunks: ["What", "did", "he", "have", "for lunch?"]
+  },
+  {
+    chunks: ["Where", "did", "they", "sleep", "last night?"]
+  },
+  {
+    chunks: ["What", "did", "she", "make", "for dinner?"]
+  },
+  {
+    chunks: ["When", "did", "he", "get", "home?"]
+  },
+  {
+    chunks: ["Why", "did", "they", "take", "the bus?"]
+  },
+  {
+    chunks: ["Where", "did", "she", "find", "her keys?"]
+  },
+  {
+    chunks: ["What", "did", "you", "drink", "with dinner?"]
+  },
+  {
+    chunks: ["When", "did", "your parents", "come", "home?"]
+  },
+  {
+    chunks: ["Where", "did", "he", "leave", "his bag?"]
+  },
+  {
+    chunks: ["Why", "did", "you", "take", "a taxi?"]
+  },
+  {
+    chunks: ["What", "did", "they", "see", "at the museum?"]
+  }
+];
   function qIrrWh() {
     const item =
       pick(IRREGULAR_WH);
