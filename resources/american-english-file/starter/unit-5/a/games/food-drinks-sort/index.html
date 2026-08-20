@@ -3,92 +3,76 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#6937d8">
-  <meta name="description" content="Food & Drinks Sort vocabulary game">
+  <meta name="theme-color" content="#2a1848">
   <title>Food & Drinks Sort | Unit 5A | Mr. Sheyhaki</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="mr-shell" id="app">
-
-    <header class="mr-top">
-      <a class="mr-back" href="../">← Unit 5A</a>
-      <div class="mr-title-wrap">
-        <p class="mr-eyebrow">UNIT 5A · VOCABULARY</p>
-        <h1>Food &amp; Drinks Sort</h1>
+  <div class="frame">
+    <div class="panel" id="app">
+      <div class="topbar">
+        <a class="back-pill" href="../">← Unit 5A</a>
+        <p class="top-title">Food &amp; Drinks Sort</p>
+        <button type="button" class="icon-btn" id="themeBtn" aria-label="Theme">🌙</button>
       </div>
-      <button type="button" class="mr-theme" id="themeBtn" aria-label="Toggle theme">🌙</button>
-    </header>
 
-    <!-- HOME -->
-    <section class="mr-screen" id="homeScreen">
-      <div class="mr-home-card">
-        <div class="mr-home-icon" aria-hidden="true">🍽️</div>
-        <h2>Food &amp; Drinks Sort</h2>
-        <p>Put each word in the correct category: <strong>Food</strong> or <strong>Drinks</strong>.</p>
-        <ul class="mr-how">
-          <li>Tap a word, then tap a category</li>
-          <li>Or drag the word onto Food / Drinks</li>
-          <li>New words appear as you sort</li>
-        </ul>
-        <button type="button" class="mr-btn" id="startBtn">START →</button>
-      </div>
-    </section>
-
-    <!-- GAME -->
-    <section class="mr-screen mr-game hidden" id="gameScreen">
-      <div class="mr-hud">
-        <div class="mr-stat"><span>SCORE</span><strong id="score">0</strong></div>
-        <div class="mr-stat"><span>COMBO</span><strong id="combo">×0</strong></div>
-        <div class="mr-stat"><span>TIME</span><strong id="timer">01:30</strong></div>
-        <div class="mr-stat mr-stat-wide">
-          <span>PROGRESS</span>
-          <strong><span id="progressCount">0</span>/<span id="progressTotal">22</span></strong>
-          <div class="mr-track"><div class="mr-fill" id="progressFill"></div></div>
+      <section class="screen" id="homeScreen">
+        <div class="home-inner">
+          <div class="home-badge">UNIT 5A · VOCABULARY</div>
+          <h1>Food &amp; Drinks Sort</h1>
+          <p class="lead">Sort each word into <strong>Food</strong> or <strong>Drinks</strong>. Build combos for bonus points!</p>
+          <button type="button" class="primary" id="startBtn">Start Game</button>
         </div>
-      </div>
+      </section>
 
-      <div class="mr-zones">
-        <button type="button" class="drop-zone food-zone" data-category="food" id="foodZone">
-          <span class="zone-icon" aria-hidden="true">🍽️</span>
-          <span class="zone-title">Food</span>
-          <span class="zone-hint">Drop food here</span>
-          <div class="zone-count" id="foodCount">0</div>
-        </button>
-        <button type="button" class="drop-zone drinks-zone" data-category="drinks" id="drinksZone">
-          <span class="zone-icon" aria-hidden="true">🥤</span>
-          <span class="zone-title">Drinks</span>
-          <span class="zone-hint">Drop drinks here</span>
-          <div class="zone-count" id="drinksCount">0</div>
-        </button>
-      </div>
-
-      <div class="mr-tray-wrap">
-        <h3>Words</h3>
-        <div class="mr-tray" id="cardTray"></div>
-      </div>
-
-      <p class="mr-helper" id="helper">Tap a word, then Food or Drinks — or drag to sort.</p>
-      <p class="sr-only" id="status" aria-live="polite"></p>
-    </section>
-
-    <!-- END -->
-    <div class="mr-modal hidden" id="endModal" role="dialog" aria-modal="true">
-      <div class="mr-modal-card">
-        <div class="mr-modal-icon" id="resultIcon">🏆</div>
-        <p class="mr-eyebrow">ROUND COMPLETE</p>
-        <h2 id="endTitle">Excellent!</h2>
-        <p id="endMessage"></p>
-        <div class="mr-result-grid">
-          <div><span>Score</span><strong id="finalScore">0</strong></div>
-          <div><span>Accuracy</span><strong id="accuracy">0%</strong></div>
-          <div><span>Best Combo</span><strong id="bestCombo">×0</strong></div>
+      <section class="screen game-screen hidden" id="gameScreen">
+        <div class="stats">
+          <div class="stat"><span>SCORE</span><strong id="score">0</strong></div>
+          <div class="stat"><span>TIMER</span><strong id="timer">90</strong></div>
+          <div class="stat"><span>COMBO</span><strong id="combo">0x</strong></div>
         </div>
-        <button type="button" class="mr-btn" id="playAgain">PLAY AGAIN →</button>
-        <a class="mr-link" href="../">← Unit 5A Games</a>
+
+        <div class="progress-line">
+          <span id="progressLabel">0 / 22</span>
+          <div class="track"><div class="fill" id="progressFill"></div></div>
+        </div>
+
+        <div class="zones">
+          <button type="button" class="drop-zone food-zone" data-category="food" id="foodZone">
+            <span class="zone-icon">🍽️</span>
+            <span class="zone-title">Food</span>
+            <span class="zone-count" id="foodCount">0</span>
+          </button>
+          <button type="button" class="drop-zone drinks-zone" data-category="drinks" id="drinksZone">
+            <span class="zone-icon">🥤</span>
+            <span class="zone-title">Drinks</span>
+            <span class="zone-count" id="drinksCount">0</span>
+          </button>
+        </div>
+
+        <div class="tray-wrap">
+          <h2>WORDS</h2>
+          <div class="tray" id="cardTray"></div>
+        </div>
+
+        <p class="hint">Tap a word, then Food or Drinks — or drag to sort.</p>
+        <p class="sr-only" id="status" aria-live="polite"></p>
+      </section>
+
+      <div class="modal hidden" id="endModal">
+        <div class="modal-card">
+          <div class="modal-icon" id="resultIcon">🏆</div>
+          <h2 id="endTitle">Excellent!</h2>
+          <p id="endMessage"></p>
+          <div class="result-row">
+            <div><span>Score</span><strong id="finalScore">0</strong></div>
+            <div><span>Accuracy</span><strong id="accuracy">0%</strong></div>
+            <div><span>Best Combo</span><strong id="bestCombo">0x</strong></div>
+          </div>
+          <button type="button" class="primary" id="playAgain">Play Again</button>
+        </div>
       </div>
     </div>
-
   </div>
   <script src="script.js"></script>
 </body>
