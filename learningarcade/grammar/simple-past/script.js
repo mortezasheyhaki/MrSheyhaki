@@ -1,15 +1,6 @@
 /* =========================================================
    SIMPLE PAST — MR. SHEYHAKI'S LEARNING ARCADE
-
-   Was / Were
-   Regular Verbs
-   Irregular Verbs
-
-   Wh-question levels use SENTENCE ASSEMBLY:
-   - Fixed questions
-   - Randomized chunks
-   - Player taps chunks to build the question
-   - Automatic checking
+   Fixed A1 questions · no repeats · fully working
    ========================================================= */
 
 (function () {
@@ -22,113 +13,41 @@
      ========================================================= */
 
   const REGULAR = [
-    ["answer", "answered"],
-    ["arrive", "arrived"],
-    ["ask", "asked"],
-    ["book", "booked"],
-    ["call", "called"],
-    ["carry", "carried"],
-    ["change", "changed"],
-    ["check in", "checked in"],
-    ["clean", "cleaned"],
-    ["close", "closed"],
-    ["cook", "cooked"],
-    ["cry", "cried"],
-    ["decide", "decided"],
-    ["finish", "finished"],
-    ["hate", "hated"],
-    ["help", "helped"],
-    ["invite", "invited"],
-    ["learn", "learned"],
-    ["like", "liked"],
-    ["listen", "listened"],
-    ["live", "lived"],
-    ["look", "looked"],
-    ["love", "loved"],
-    ["miss", "missed"],
-    ["move", "moved"],
-    ["need", "needed"],
-    ["offer", "offered"],
-    ["open", "opened"],
-    ["pack", "packed"],
-    ["paint", "painted"],
-    ["park", "parked"],
-    ["pass", "passed"],
-    ["play", "played"],
-    ["rain", "rained"],
-    ["relax", "relaxed"],
-    ["rent", "rented"],
-    ["snow", "snowed"],
-    ["start", "started"],
-    ["stay", "stayed"],
-    ["stop", "stopped"],
-    ["study", "studied"],
-    ["talk", "talked"],
-    ["travel", "traveled"],
-    ["turn", "turned"],
-    ["use", "used"],
-    ["wait", "waited"],
-    ["walk", "walked"],
-    ["want", "wanted"],
-    ["wash", "washed"],
-    ["watch", "watched"],
-    ["work", "worked"]
+    ["answer", "answered"], ["arrive", "arrived"], ["ask", "asked"],
+    ["book", "booked"], ["call", "called"], ["carry", "carried"],
+    ["change", "changed"], ["check in", "checked in"], ["clean", "cleaned"],
+    ["close", "closed"], ["cook", "cooked"], ["cry", "cried"],
+    ["decide", "decided"], ["finish", "finished"], ["hate", "hated"],
+    ["help", "helped"], ["invite", "invited"], ["learn", "learned"],
+    ["like", "liked"], ["listen", "listened"], ["live", "lived"],
+    ["look", "looked"], ["love", "loved"], ["miss", "missed"],
+    ["move", "moved"], ["need", "needed"], ["offer", "offered"],
+    ["open", "opened"], ["pack", "packed"], ["paint", "painted"],
+    ["park", "parked"], ["pass", "passed"], ["play", "played"],
+    ["rain", "rained"], ["relax", "relaxed"], ["rent", "rented"],
+    ["snow", "snowed"], ["start", "started"], ["stay", "stayed"],
+    ["stop", "stopped"], ["study", "studied"], ["talk", "talked"],
+    ["travel", "traveled"], ["turn", "turned"], ["use", "used"],
+    ["wait", "waited"], ["walk", "walked"], ["want", "wanted"],
+    ["wash", "washed"], ["watch", "watched"], ["work", "worked"]
   ];
 
   const IRREGULAR = [
-    ["be", "was/were"],
-    ["buy", "bought"],
-    ["do", "did"],
-    ["get", "got"],
-    ["go", "went"],
-    ["have", "had"],
-    ["leave", "left"],
-    ["say", "said"],
-    ["see", "saw"],
-    ["send", "sent"],
-    ["sit", "sat"],
-    ["tell", "told"],
-    ["write", "wrote"],
-    ["come", "came"],
-    ["drink", "drank"],
-    ["drive", "drove"],
-    ["eat", "ate"],
-    ["fall", "fell"],
-    ["find", "found"],
-    ["give", "gave"],
-    ["know", "knew"],
-    ["make", "made"],
-    ["meet", "met"],
-    ["read", "read"],
-    ["run", "ran"],
-    ["sleep", "slept"],
-    ["speak", "spoke"],
-    ["take", "took"],
-    ["think", "thought"],
-    ["wear", "wore"],
-    ["win", "won"],
-    ["begin", "began"],
-    ["break", "broke"],
-    ["bring", "brought"],
-    ["build", "built"],
-    ["catch", "caught"],
-    ["choose", "chose"],
-    ["cut", "cut"],
-    ["draw", "drew"],
-    ["feel", "felt"],
-    ["fly", "flew"],
-    ["forget", "forgot"],
-    ["hear", "heard"],
-    ["keep", "kept"],
-    ["lose", "lost"],
-    ["pay", "paid"],
-    ["put", "put"],
-    ["sell", "sold"],
-    ["sing", "sang"],
-    ["stand", "stood"],
-    ["swim", "swam"],
-    ["teach", "taught"],
-    ["understand", "understood"]
+    ["be", "was/were"], ["buy", "bought"], ["do", "did"], ["get", "got"],
+    ["go", "went"], ["have", "had"], ["leave", "left"], ["say", "said"],
+    ["see", "saw"], ["send", "sent"], ["sit", "sat"], ["tell", "told"],
+    ["write", "wrote"], ["come", "came"], ["drink", "drank"],
+    ["drive", "drove"], ["eat", "ate"], ["fall", "fell"], ["find", "found"],
+    ["give", "gave"], ["know", "knew"], ["make", "made"], ["meet", "met"],
+    ["read", "read"], ["run", "ran"], ["sleep", "slept"], ["speak", "spoke"],
+    ["take", "took"], ["think", "thought"], ["wear", "wore"], ["win", "won"],
+    ["begin", "began"], ["break", "broke"], ["bring", "brought"],
+    ["build", "built"], ["catch", "caught"], ["choose", "chose"],
+    ["cut", "cut"], ["draw", "drew"], ["feel", "felt"], ["fly", "flew"],
+    ["forget", "forgot"], ["hear", "heard"], ["keep", "kept"],
+    ["lose", "lost"], ["pay", "paid"], ["put", "put"], ["sell", "sold"],
+    ["sing", "sang"], ["stand", "stood"], ["swim", "swam"],
+    ["teach", "taught"], ["understand", "understood"]
   ];
 
   /* =========================================================
@@ -198,13 +117,10 @@
       "two days ago", "last summer"
     ];
 
-    const place = pick(situations);
-    const time = pick(timeExpressions);
-
     return {
       type: "mc",
       hint: "Choose was or were",
-      prompt: subject + " ____ " + place + " " + time + ".",
+      prompt: subject + " ____ " + pick(situations) + " " + pick(timeExpressions) + ".",
       choices: shuffle(["was", "were", "is"]),
       answer: answer
     };
@@ -239,7 +155,6 @@
     ];
 
     const item = pick(questions);
-
     return {
       type: "mc",
       hint: "Choose There was or There were",
@@ -280,115 +195,25 @@
 
   const REGULAR_L1 = [
     // Positive
-    {
-      type: "mc",
-      hint: "Positive · regular verb",
-      prompt: "Yesterday I ____ at home. (stay)",
-      choices: ["stayed", "stay", "stayeded"],
-      answer: "stayed"
-    },
-    {
-      type: "mc",
-      hint: "Positive · regular verb",
-      prompt: "Last night she ____ dinner. (cook)",
-      choices: ["cooked", "cook", "cookked"],
-      answer: "cooked"
-    },
-    {
-      type: "mc",
-      hint: "Positive · regular verb",
-      prompt: "Last weekend they ____ football. (play)",
-      choices: ["played", "play", "playyed"],
-      answer: "played"
-    },
-    {
-      type: "mc",
-      hint: "Positive · regular verb",
-      prompt: "He ____ the window yesterday. (close)",
-      choices: ["closed", "close", "closede"],
-      answer: "closed"
-    },
-    {
-      type: "mc",
-      hint: "Positive · regular verb",
-      prompt: "We ____ the hotel last month. (book)",
-      choices: ["booked", "book", "bookked"],
-      answer: "booked"
-    },
+    { type: "mc", hint: "Positive · regular verb", prompt: "Yesterday I ____ at home. (stay)", choices: ["stayed", "stay", "stayeded"], answer: "stayed" },
+    { type: "mc", hint: "Positive · regular verb", prompt: "Last night she ____ dinner. (cook)", choices: ["cooked", "cook", "cookked"], answer: "cooked" },
+    { type: "mc", hint: "Positive · regular verb", prompt: "Last weekend they ____ football. (play)", choices: ["played", "play", "playyed"], answer: "played" },
+    { type: "mc", hint: "Positive · regular verb", prompt: "He ____ the window yesterday. (close)", choices: ["closed", "close", "closede"], answer: "closed" },
+    { type: "mc", hint: "Positive · regular verb", prompt: "We ____ the hotel last month. (book)", choices: ["booked", "book", "bookked"], answer: "booked" },
 
     // Negative
-    {
-      type: "mc",
-      hint: "Negative · regular verb",
-      prompt: "I ____ it yesterday. (need)",
-      choices: ["didn't need", "didn't needed", "doesn't need"],
-      answer: "didn't need"
-    },
-    {
-      type: "mc",
-      hint: "Negative · regular verb",
-      prompt: "She ____ the door. (open)",
-      choices: ["didn't open", "didn't opened", "doesn't open"],
-      answer: "didn't open"
-    },
-    {
-      type: "mc",
-      hint: "Negative · regular verb",
-      prompt: "They ____ the car. (park)",
-      choices: ["didn't park", "didn't parked", "doesn't park"],
-      answer: "didn't park"
-    },
-    {
-      type: "mc",
-      hint: "Negative · regular verb",
-      prompt: "He ____ help. (want)",
-      choices: ["didn't want", "didn't wanted", "doesn't want"],
-      answer: "didn't want"
-    },
-    {
-      type: "mc",
-      hint: "Negative · regular verb",
-      prompt: "We ____ the dishes. (wash)",
-      choices: ["didn't wash", "didn't washed", "doesn't wash"],
-      answer: "didn't wash"
-    },
+    { type: "mc", hint: "Negative · regular verb", prompt: "I ____ it yesterday. (need)", choices: ["didn't need", "didn't needed", "doesn't need"], answer: "didn't need" },
+    { type: "mc", hint: "Negative · regular verb", prompt: "She ____ the door. (open)", choices: ["didn't open", "didn't opened", "doesn't open"], answer: "didn't open" },
+    { type: "mc", hint: "Negative · regular verb", prompt: "They ____ the car. (park)", choices: ["didn't park", "didn't parked", "doesn't park"], answer: "didn't park" },
+    { type: "mc", hint: "Negative · regular verb", prompt: "He ____ help. (want)", choices: ["didn't want", "didn't wanted", "doesn't want"], answer: "didn't want" },
+    { type: "mc", hint: "Negative · regular verb", prompt: "We ____ the dishes. (wash)", choices: ["didn't wash", "didn't washed", "doesn't wash"], answer: "didn't wash" },
 
     // Questions
-    {
-      type: "mc",
-      hint: "Question · regular verb",
-      prompt: "____ you ____ English yesterday? (study)",
-      choices: ["Did / study", "Did / studied", "Do / study"],
-      answer: "Did / study"
-    },
-    {
-      type: "mc",
-      hint: "Question · regular verb",
-      prompt: "____ she ____ the room? (clean)",
-      choices: ["Did / clean", "Did / cleaned", "Does / clean"],
-      answer: "Did / clean"
-    },
-    {
-      type: "mc",
-      hint: "Question · regular verb",
-      prompt: "____ they ____ the window? (close)",
-      choices: ["Did / close", "Did / closed", "Do / close"],
-      answer: "Did / close"
-    },
-    {
-      type: "mc",
-      hint: "Question · regular verb",
-      prompt: "____ he ____ the hotel? (book)",
-      choices: ["Did / book", "Did / booked", "Does / book"],
-      answer: "Did / book"
-    },
-    {
-      type: "mc",
-      hint: "Question · regular verb",
-      prompt: "____ you ____ at home last night? (stay)",
-      choices: ["Did / stay", "Did / stayed", "Do / stay"],
-      answer: "Did / stay"
-    }
+    { type: "mc", hint: "Question · regular verb", prompt: "____ you ____ English yesterday? (study)", choices: ["Did / study", "Did / studied", "Do / study"], answer: "Did / study" },
+    { type: "mc", hint: "Question · regular verb", prompt: "____ she ____ the room? (clean)", choices: ["Did / clean", "Did / cleaned", "Does / clean"], answer: "Did / clean" },
+    { type: "mc", hint: "Question · regular verb", prompt: "____ they ____ the window? (close)", choices: ["Did / close", "Did / closed", "Do / close"], answer: "Did / close" },
+    { type: "mc", hint: "Question · regular verb", prompt: "____ he ____ the hotel? (book)", choices: ["Did / book", "Did / booked", "Does / book"], answer: "Did / book" },
+    { type: "mc", hint: "Question · regular verb", prompt: "____ you ____ at home last night? (stay)", choices: ["Did / stay", "Did / stayed", "Do / stay"], answer: "Did / stay" }
   ];
 
   /* =========================================================
@@ -422,23 +247,20 @@
 
   function qRegSound() {
     const groups = [
-      { name: "/t/", list: SOUND_T },
-      { name: "/d/", list: SOUND_D },
-      { name: "/ɪd/", list: SOUND_ID }
+      { list: SOUND_T },
+      { list: SOUND_D },
+      { list: SOUND_ID }
     ];
-
     const mainIdx = Math.floor(Math.random() * 3);
     const oddIdx = (mainIdx + 1 + Math.floor(Math.random() * 2)) % 3;
-
     const main = shuffle(groups[mainIdx].list).slice(0, 3);
     const odd = pick(groups[oddIdx].list);
-    const options = shuffle(main.concat([odd]));
 
     return {
       type: "mc",
       hint: "Which past form has a different -ed sound?",
       prompt: "Find the different pronunciation.",
-      choices: options,
+      choices: shuffle(main.concat([odd])),
       answer: odd
     };
   }
@@ -449,115 +271,25 @@
 
   const IRREGULAR_L1 = [
     // Positive
-    {
-      type: "mc",
-      hint: "Positive · irregular verb",
-      prompt: "Yesterday I ____ home. (go)",
-      choices: ["went", "go", "goed"],
-      answer: "went"
-    },
-    {
-      type: "mc",
-      hint: "Positive · irregular verb",
-      prompt: "Last night she ____ pizza. (eat)",
-      choices: ["ate", "eat", "eated"],
-      answer: "ate"
-    },
-    {
-      type: "mc",
-      hint: "Positive · irregular verb",
-      prompt: "They ____ a new car last month. (buy)",
-      choices: ["bought", "buy", "buyed"],
-      answer: "bought"
-    },
-    {
-      type: "mc",
-      hint: "Positive · irregular verb",
-      prompt: "He ____ the book on the table. (put)",
-      choices: ["put", "putted", "puts"],
-      answer: "put"
-    },
-    {
-      type: "mc",
-      hint: "Positive · irregular verb",
-      prompt: "We ____ our friends yesterday. (meet)",
-      choices: ["met", "meet", "meeted"],
-      answer: "met"
-    },
+    { type: "mc", hint: "Positive · irregular verb", prompt: "Yesterday I ____ home. (go)", choices: ["went", "go", "goed"], answer: "went" },
+    { type: "mc", hint: "Positive · irregular verb", prompt: "Last night she ____ pizza. (eat)", choices: ["ate", "eat", "eated"], answer: "ate" },
+    { type: "mc", hint: "Positive · irregular verb", prompt: "They ____ a new car last month. (buy)", choices: ["bought", "buy", "buyed"], answer: "bought" },
+    { type: "mc", hint: "Positive · irregular verb", prompt: "He ____ the book on the table. (put)", choices: ["put", "putted", "puts"], answer: "put" },
+    { type: "mc", hint: "Positive · irregular verb", prompt: "We ____ our friends yesterday. (meet)", choices: ["met", "meet", "meeted"], answer: "met" },
 
     // Negative
-    {
-      type: "mc",
-      hint: "Negative · irregular verb",
-      prompt: "I ____ the homework. (do)",
-      choices: ["didn't do", "didn't did", "doesn't do"],
-      answer: "didn't do"
-    },
-    {
-      type: "mc",
-      hint: "Negative · irregular verb",
-      prompt: "She ____ early. (leave)",
-      choices: ["didn't leave", "didn't left", "doesn't leave"],
-      answer: "didn't leave"
-    },
-    {
-      type: "mc",
-      hint: "Negative · irregular verb",
-      prompt: "They ____ the bus. (take)",
-      choices: ["didn't take", "didn't took", "doesn't take"],
-      answer: "didn't take"
-    },
-    {
-      type: "mc",
-      hint: "Negative · irregular verb",
-      prompt: "He ____ home late. (get)",
-      choices: ["didn't get", "didn't got", "doesn't get"],
-      answer: "didn't get"
-    },
-    {
-      type: "mc",
-      hint: "Negative · irregular verb",
-      prompt: "We ____ any water. (drink)",
-      choices: ["didn't drink", "didn't drank", "doesn't drink"],
-      answer: "didn't drink"
-    },
+    { type: "mc", hint: "Negative · irregular verb", prompt: "I ____ the homework. (do)", choices: ["didn't do", "didn't did", "doesn't do"], answer: "didn't do" },
+    { type: "mc", hint: "Negative · irregular verb", prompt: "She ____ early. (leave)", choices: ["didn't leave", "didn't left", "doesn't leave"], answer: "didn't leave" },
+    { type: "mc", hint: "Negative · irregular verb", prompt: "They ____ the bus. (take)", choices: ["didn't take", "didn't took", "doesn't take"], answer: "didn't take" },
+    { type: "mc", hint: "Negative · irregular verb", prompt: "He ____ home late. (get)", choices: ["didn't get", "didn't got", "doesn't get"], answer: "didn't get" },
+    { type: "mc", hint: "Negative · irregular verb", prompt: "We ____ any water. (drink)", choices: ["didn't drink", "didn't drank", "doesn't drink"], answer: "didn't drink" },
 
     // Questions
-    {
-      type: "mc",
-      hint: "Question · irregular verb",
-      prompt: "____ you ____ to the park? (go)",
-      choices: ["Did / go", "Did / went", "Do / go"],
-      answer: "Did / go"
-    },
-    {
-      type: "mc",
-      hint: "Question · irregular verb",
-      prompt: "____ she ____ breakfast? (eat)",
-      choices: ["Did / eat", "Did / ate", "Does / eat"],
-      answer: "Did / eat"
-    },
-    {
-      type: "mc",
-      hint: "Question · irregular verb",
-      prompt: "____ they ____ the keys? (find)",
-      choices: ["Did / find", "Did / found", "Do / find"],
-      answer: "Did / find"
-    },
-    {
-      type: "mc",
-      hint: "Question · irregular verb",
-      prompt: "____ he ____ a taxi? (take)",
-      choices: ["Did / take", "Did / took", "Does / take"],
-      answer: "Did / take"
-    },
-    {
-      type: "mc",
-      hint: "Question · irregular verb",
-      prompt: "____ you ____ your friend yesterday? (see)",
-      choices: ["Did / see", "Did / saw", "Do / see"],
-      answer: "Did / see"
-    }
+    { type: "mc", hint: "Question · irregular verb", prompt: "____ you ____ to the park? (go)", choices: ["Did / go", "Did / went", "Do / go"], answer: "Did / go" },
+    { type: "mc", hint: "Question · irregular verb", prompt: "____ she ____ breakfast? (eat)", choices: ["Did / eat", "Did / ate", "Does / eat"], answer: "Did / eat" },
+    { type: "mc", hint: "Question · irregular verb", prompt: "____ they ____ the keys? (find)", choices: ["Did / find", "Did / found", "Do / find"], answer: "Did / find" },
+    { type: "mc", hint: "Question · irregular verb", prompt: "____ he ____ a taxi? (take)", choices: ["Did / take", "Did / took", "Does / take"], answer: "Did / take" },
+    { type: "mc", hint: "Question · irregular verb", prompt: "____ you ____ your friend yesterday? (see)", choices: ["Did / see", "Did / saw", "Do / see"], answer: "Did / see" }
   ];
 
   /* =========================================================
@@ -586,88 +318,36 @@
   ];
 
   /* =========================================================
-     IRREGULAR VERBS — MATCHING
-     ========================================================= */
-
-  function qIrrMatch() {
-    const pool = IRREGULAR.filter(function (x) {
-      return x[0] !== "be";
-    });
-
-    const count =
-      window.innerWidth <= 700 || window.innerHeight <= 700 ? 3 : 4;
-
-    const pairs = shuffle(pool).slice(0, count);
-
-    return {
-      type: "match",
-      hint: "Tap a base form, then its past form",
-      prompt: "Match base → past",
-      pairs: pairs.map(function (pair) {
-        return { left: pair[0], right: pair[1] };
-      })
-    };
-  }
-
-  /* =========================================================
      MODES
      ========================================================= */
 
   const MODES = {
-    ww1: {
-      label: "Was / Were · Level 1",
-      build: qWasWere
-    },
-    ww2: {
-      label: "There was / were · Level 2",
-      build: qThereWasWere
-    },
-    ww3: {
-      label: "Was / Were · Wh- questions",
-      build: null
-    },
-    reg1: {
-      label: "Regular · Level 1",
-      build: null
-    },
-    reg2: {
-      label: "Regular · Wh- questions",
-      build: null
-    },
-    "reg-sound": {
-      label: "Regular · Pronunciation",
-      build: qRegSound
-    },
-    irr1: {
-      label: "Irregular · Level 1",
-      build: null
-    },
-    irr2: {
-      label: "Irregular · Wh- questions",
-      build: null
-    },
-    "irr-match": {
-      label: "Irregular · Matching",
-      build: qIrrMatch
-    }
+    ww1:        { label: "Was / Were · Level 1",           build: qWasWere },
+    ww2:        { label: "There was / were · Level 2",     build: qThereWasWere },
+    ww3:        { label: "Was / Were · Wh- questions",     build: null },
+    reg1:       { label: "Regular · Level 1",              build: null },
+    reg2:       { label: "Regular · Wh- questions",        build: null },
+    "reg-sound":{ label: "Regular · Pronunciation",        build: qRegSound },
+    irr1:       { label: "Irregular · Level 1",            build: null },
+    irr2:       { label: "Irregular · Wh- questions",      build: null }
   };
 
   /* =========================================================
-     UI
+     UI ELEMENTS
      ========================================================= */
 
-  const menuScreen = document.getElementById("menuScreen");
-  const playScreen = document.getElementById("playScreen");
+  const menuScreen   = document.getElementById("menuScreen");
+  const playScreen   = document.getElementById("playScreen");
   const resultScreen = document.getElementById("resultScreen");
-  const choicesArea = document.getElementById("choicesArea");
-  const matchArea = document.getElementById("matchArea");
-  const matchLeft = document.getElementById("matchLeft");
-  const matchRight = document.getElementById("matchRight");
-  const feedbackEl = document.getElementById("feedback");
-  const promptHint = document.getElementById("promptHint");
-  const promptText = document.getElementById("promptText");
-  const modeLabel = document.getElementById("modeLabel");
-  const scoreEl = document.getElementById("score");
+  const choicesArea  = document.getElementById("choicesArea");
+  const matchArea    = document.getElementById("matchArea");
+  const matchLeft    = document.getElementById("matchLeft");
+  const matchRight   = document.getElementById("matchRight");
+  const feedbackEl   = document.getElementById("feedback");
+  const promptHint   = document.getElementById("promptHint");
+  const promptText   = document.getElementById("promptText");
+  const modeLabel    = document.getElementById("modeLabel");
+  const scoreEl      = document.getElementById("score");
   const progressFill = document.getElementById("progressFill");
 
   /* =========================================================
@@ -682,11 +362,6 @@
   let wrong = 0;
   let locked = false;
 
-  let matchSel = { left: null, right: null };
-  let matchDone = 0;
-  let matchTotal = 0;
-  let matchMap = {};
-
   let assemblySelected = [];
   let assemblyAvailable = [];
   let assemblyAnswer = [];
@@ -700,15 +375,15 @@
     menuScreen.classList.add("hidden");
     playScreen.classList.add("hidden");
     resultScreen.classList.add("hidden");
-
-    if (name === "menu") menuScreen.classList.remove("hidden");
-    if (name === "play") playScreen.classList.remove("hidden");
+    if (name === "menu")   menuScreen.classList.remove("hidden");
+    if (name === "play")   playScreen.classList.remove("hidden");
     if (name === "result") resultScreen.classList.remove("hidden");
   }
 
   function updateProgress() {
-    if (!progressFill) return;
-    progressFill.style.width = Math.round((index / TOTAL) * 100) + "%";
+    if (progressFill) {
+      progressFill.style.width = Math.round((index / TOTAL) * 100) + "%";
+    }
   }
 
   /* =========================================================
@@ -717,37 +392,25 @@
 
   function startMode(key) {
     modeKey = key;
-
-    if (key === "irr-match") {
-      startMatchRush();
-      return;
-    }
-
     const mode = MODES[key];
     if (!mode) return;
 
     queue = [];
 
-    // Fixed unique questions for these modes
-    if (
-      key === "ww3" ||
-      key === "reg1" ||
-      key === "reg2" ||
-      key === "irr1" ||
-      key === "irr2"
-    ) {
+    // Fixed unique questions (no repeats)
+    if (key === "ww3" || key === "reg1" || key === "reg2" || key === "irr1" || key === "irr2") {
       let source;
-      if (key === "ww3") source = WAS_WERE_WH;
-      else if (key === "reg1") source = REGULAR_L1;
-      else if (key === "reg2") source = REGULAR_WH;
-      else if (key === "irr1") source = IRREGULAR_L1;
-      else if (key === "irr2") source = IRREGULAR_WH;
+      if (key === "ww3")  source = WAS_WERE_WH;
+      if (key === "reg1") source = REGULAR_L1;
+      if (key === "reg2") source = REGULAR_WH;
+      if (key === "irr1") source = IRREGULAR_L1;
+      if (key === "irr2") source = IRREGULAR_WH;
 
       const unique = shuffle(source.slice()).slice(0, TOTAL);
 
       unique.forEach(function (item) {
         if (item.chunks) {
-          // Assembly (Wh- questions)
+          // Wh- question assembly
           queue.push({
             type: "assemble",
             hint: "Build the correct Wh- question",
@@ -756,7 +419,7 @@
             displayChunks: shuffle(item.chunks.slice())
           });
         } else {
-          // Multiple choice (Level 1)
+          // Multiple choice
           queue.push({
             type: "mc",
             hint: item.hint,
@@ -767,7 +430,7 @@
         }
       });
     } else {
-      // Random modes (was/were, there was/were, pronunciation)
+      // Random modes
       for (let i = 0; i < TOTAL; i++) {
         queue.push(mode.build());
       }
@@ -792,7 +455,6 @@
   function loadItem() {
     locked = false;
     assemblyLocked = false;
-
     feedbackEl.textContent = "";
     feedbackEl.className = "feedback";
 
@@ -800,37 +462,20 @@
     if (!item) return;
 
     updateProgress();
-
     promptHint.textContent = item.hint;
     promptText.textContent = item.prompt;
-
-    if (item.type === "match") {
-      choicesArea.classList.add("hidden");
-      if (matchArea) {
-        matchArea.classList.remove("hidden");
-        matchArea.style.display = "flex";
-      }
-      setupMatch(item);
-      if (matchArea) {
-        matchArea.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-      return;
-    }
-
-    if (item.type === "assemble") {
-      if (matchArea) {
-        matchArea.classList.add("hidden");
-        matchArea.style.display = "";
-      }
-      choicesArea.classList.remove("hidden");
-      renderAssembly(item);
-      return;
-    }
 
     if (matchArea) {
       matchArea.classList.add("hidden");
       matchArea.style.display = "";
     }
+
+    if (item.type === "assemble") {
+      choicesArea.classList.remove("hidden");
+      renderAssembly(item);
+      return;
+    }
+
     choicesArea.classList.remove("hidden");
     renderChoices(item);
   }
@@ -865,9 +510,7 @@
 
     document.querySelectorAll(".choice-btn").forEach(function (button) {
       button.disabled = true;
-      if (button.textContent === answer) {
-        button.classList.add("correct");
-      }
+      if (button.textContent === answer) button.classList.add("correct");
     });
 
     if (ok) {
@@ -887,11 +530,8 @@
 
     setTimeout(function () {
       index += 1;
-      if (index >= TOTAL) {
-        endRound();
-      } else {
-        loadItem();
-      }
+      if (index >= TOTAL) endRound();
+      else loadItem();
     }, ok ? 650 : 1300);
   }
 
@@ -909,7 +549,6 @@
     assemblyAvailable = display.map(function (chunk, i) {
       return { id: i, text: chunk };
     });
-
     assemblyAnswer = item.chunks.slice();
 
     const wrapper = document.createElement("div");
@@ -939,7 +578,6 @@
   function renderAssemblyChunks() {
     const chunksBox = document.getElementById("builderChunks");
     if (!chunksBox) return;
-
     chunksBox.innerHTML = "";
 
     assemblyAvailable.forEach(function (chunk) {
@@ -947,7 +585,6 @@
       btn.type = "button";
       btn.className = "choice-btn assembly-chip";
       btn.textContent = chunk.text;
-      btn.dataset.chunkId = String(chunk.id);
       btn.addEventListener("click", function () {
         selectAssemblyChunk(chunk.id);
       });
@@ -958,7 +595,6 @@
   function renderAssemblyAnswer() {
     const answerBox = document.getElementById("builderAnswer");
     if (!answerBox) return;
-
     answerBox.innerHTML = "";
 
     if (assemblySelected.length === 0) {
@@ -969,14 +605,14 @@
       return;
     }
 
-    assemblySelected.forEach(function (chunk, index) {
+    assemblySelected.forEach(function (chunk, idx) {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "assembly-answer-chip";
       btn.textContent = chunk.text;
       btn.title = "Tap to remove";
       btn.addEventListener("click", function () {
-        removeAssemblyChunk(index);
+        removeAssemblyChunk(idx);
       });
       answerBox.appendChild(btn);
     });
@@ -984,15 +620,11 @@
 
   function selectAssemblyChunk(id) {
     if (assemblyLocked) return;
+    const idx = assemblyAvailable.findIndex(function (c) { return c.id === id; });
+    if (idx === -1) return;
 
-    const index = assemblyAvailable.findIndex(function (chunk) {
-      return chunk.id === id;
-    });
-    if (index === -1) return;
-
-    const chunk = assemblyAvailable[index];
-    assemblySelected.push(chunk);
-    assemblyAvailable.splice(index, 1);
+    assemblySelected.push(assemblyAvailable[idx]);
+    assemblyAvailable.splice(idx, 1);
 
     renderAssemblyChunks();
     renderAssemblyAnswer();
@@ -1004,34 +636,23 @@
 
   function removeAssemblyChunk(answerIndex) {
     if (assemblyLocked) return;
-
     const removed = assemblySelected.splice(answerIndex, 1)[0];
     if (removed) assemblyAvailable.push(removed);
-
     renderAssemblyChunks();
     renderAssemblyAnswer();
   }
 
   function normalizeAssembly(arr) {
-    return arr
-      .join(" ")
-      .replace(/\s+([?.!,])/g, "$1")
-      .trim()
-      .toLowerCase();
+    return arr.join(" ").replace(/\s+([?.!,])/g, "$1").trim().toLowerCase();
   }
 
   function checkAssembly() {
     if (assemblyLocked) return;
     assemblyLocked = true;
 
-    const userAnswer = normalizeAssembly(
-      assemblySelected.map(function (x) {
-        return x.text;
-      })
-    );
+    const userAnswer = normalizeAssembly(assemblySelected.map(function (x) { return x.text; }));
     const correctAnswer = normalizeAssembly(assemblyAnswer);
     const ok = userAnswer === correctAnswer;
-
     const answerBox = document.getElementById("builderAnswer");
 
     if (ok) {
@@ -1053,393 +674,21 @@
 
   function nextQuestion() {
     index += 1;
-    if (index >= TOTAL) {
-      endRound();
-    } else {
-      loadItem();
-    }
+    if (index >= TOTAL) endRound();
+    else loadItem();
   }
 
   /* =========================================================
-     MATCHING
-     ========================================================= */
-
-  function setupMatch(item) {
-    matchSel = { left: null, right: null };
-    matchDone = 0;
-    matchTotal = item.pairs.length;
-    matchMap = {};
-
-    item.pairs.forEach(function (p) {
-      matchMap[p.left] = p.right;
-    });
-
-    const lefts = shuffle(item.pairs.map(function (p) { return p.left; }));
-    const rights = shuffle(item.pairs.map(function (p) { return p.right; }));
-
-    if (!matchArea || !matchLeft || !matchRight) {
-      console.error("Match UI elements missing");
-      return;
-    }
-
-    matchArea.classList.remove("hidden");
-    matchArea.style.display = "flex";
-    choicesArea.classList.add("hidden");
-
-    matchLeft.innerHTML = "";
-    matchRight.innerHTML = "";
-
-    lefts.forEach(function (word) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "match-chip word";
-      btn.textContent = word;
-      btn.dataset.side = "left";
-      btn.dataset.val = word;
-      btn.addEventListener("click", function () { onMatchPick(btn); });
-      matchLeft.appendChild(btn);
-    });
-
-    rights.forEach(function (word) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "match-chip word";
-      btn.textContent = word;
-      btn.dataset.side = "right";
-      btn.dataset.val = word;
-      btn.addEventListener("click", function () { onMatchPick(btn); });
-      matchRight.appendChild(btn);
-    });
-  }
-
-  function onMatchPick(btn) {
-    if (locked || btn.classList.contains("matched")) return;
-
-    const side = btn.dataset.side;
-
-    document.querySelectorAll('.match-chip[data-side="' + side + '"]').forEach(function (b) {
-      if (!b.classList.contains("matched")) b.classList.remove("selected");
-    });
-
-    btn.classList.add("selected");
-    matchSel[side] = btn;
-
-    if (matchSel.left && matchSel.right) {
-      const left = matchSel.left.dataset.val;
-      const right = matchSel.right.dataset.val;
-
-      if (matchMap[left] === right) {
-        matchSel.left.classList.add("matched");
-        matchSel.right.classList.add("matched");
-        matchSel.left.classList.remove("selected");
-        matchSel.right.classList.remove("selected");
-
-        matchDone += 1;
-        score += 10;
-        if (scoreEl) scoreEl.textContent = String(score);
-
-        feedbackEl.textContent = "Matched!";
-        feedbackEl.className = "feedback ok";
-
-        matchSel = { left: null, right: null };
-
-        if (matchDone >= matchTotal) {
-          correct += 1;
-          locked = true;
-          setTimeout(function () {
-            index += 1;
-            if (index >= TOTAL) endRound();
-            else loadItem();
-          }, 600);
-        }
-      } else {
-        matchSel.left.classList.add("wrong-flash");
-        matchSel.right.classList.add("wrong-flash");
-        feedbackEl.textContent = "Try again";
-        feedbackEl.className = "feedback bad";
-
-        const a = matchSel.left;
-        const b = matchSel.right;
-        matchSel = { left: null, right: null };
-
-        setTimeout(function () {
-          a.classList.remove("selected", "wrong-flash");
-          b.classList.remove("selected", "wrong-flash");
-        }, 400);
-      }
-    }
-  }
-
-  /* =========================================================
-     MATCH RUSH
-     ========================================================= */
-
-  const RUSH_SECONDS = 90;
-  let rushTimerId = null;
-  let rushTimeLeft = RUSH_SECONDS;
-  let rushMatches = 0;
-  let rushCombo = 0;
-  let rushBestCombo = 0;
-  let rushMap = {};
-  let rushSel = { left: null, right: null };
-  let rushLocked = false;
-
-  function stopRushTimer() {
-    if (rushTimerId) {
-      clearInterval(rushTimerId);
-      rushTimerId = null;
-    }
-  }
-
-  function startMatchRush() {
-    stopRushTimer();
-
-    score = 0;
-    correct = 0;
-    wrong = 0;
-    rushMatches = 0;
-    rushCombo = 0;
-    rushBestCombo = 0;
-    rushTimeLeft = RUSH_SECONDS;
-    rushSel = { left: null, right: null };
-    rushLocked = false;
-
-    if (modeLabel) modeLabel.textContent = "Match Rush · 90s";
-    if (scoreEl) scoreEl.textContent = "0";
-
-    show("play");
-
-    const play = document.getElementById("playScreen");
-    if (play) play.classList.add("play-screen-rush");
-
-    if (choicesArea) choicesArea.classList.add("hidden");
-    if (matchArea) {
-      matchArea.classList.remove("hidden");
-      matchArea.style.display = "flex";
-      matchArea.style.flexDirection = "column";
-    }
-
-    if (feedbackEl) {
-      feedbackEl.textContent = "Match base → past as fast as you can!";
-      feedbackEl.className = "feedback";
-    }
-
-    const pool = shuffle(
-      IRREGULAR.filter(function (x) {
-        return x[0] !== "be";
-      })
-    );
-
-    rushMap = {};
-    pool.forEach(function (p) {
-      rushMap[p[0]] = p[1];
-    });
-
-    const lefts = shuffle(pool.map(function (p) { return p[0]; }));
-    const rights = shuffle(pool.map(function (p) { return p[1]; }));
-
-    matchLeft.innerHTML = "";
-    matchRight.innerHTML = "";
-
-    lefts.forEach(function (word) {
-      matchLeft.appendChild(makeRushChip(word, "left"));
-    });
-    rights.forEach(function (word) {
-      matchRight.appendChild(makeRushChip(word, "right"));
-    });
-
-    updateRushHud();
-
-    rushTimerId = setInterval(function () {
-      rushTimeLeft -= 1;
-      updateRushHud();
-      if (rushTimeLeft <= 0) {
-        stopRushTimer();
-        endMatchRush();
-      }
-    }, 1000);
-  }
-
-  function makeRushChip(word, side) {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "match-chip word";
-    btn.textContent = word;
-    btn.dataset.side = side;
-    btn.dataset.val = word;
-    btn.addEventListener("click", function () {
-      onRushPick(btn);
-    });
-    return btn;
-  }
-
-  function updateRushHud() {
-    const timerEl = document.getElementById("rushTimer");
-    const scoreHud = document.getElementById("rushScore");
-    const comboEl = document.getElementById("rushCombo");
-
-    if (timerEl) {
-      timerEl.textContent = String(Math.max(0, rushTimeLeft));
-      timerEl.classList.toggle("warn", rushTimeLeft <= 30 && rushTimeLeft > 10);
-      timerEl.classList.toggle("danger", rushTimeLeft <= 10);
-    }
-    if (scoreHud) scoreHud.textContent = String(score);
-    if (comboEl) comboEl.textContent = Math.max(0, rushCombo) + "x";
-    if (scoreEl) scoreEl.textContent = String(score);
-  }
-
-  function shuffleRushBoard() {
-    if (rushLocked || !matchLeft || !matchRight) return;
-
-    const leftChips = Array.from(
-      matchLeft.querySelectorAll(".match-chip:not(.matched)")
-    );
-    const rightChips = Array.from(
-      matchRight.querySelectorAll(".match-chip:not(.matched)")
-    );
-
-    const leftVals = shuffle(leftChips.map(function (chip) {
-      return chip.dataset.val;
-    }));
-    const rightVals = shuffle(rightChips.map(function (chip) {
-      return chip.dataset.val;
-    }));
-
-    matchLeft.querySelectorAll(".match-chip:not(.matched)").forEach(function (chip) {
-      chip.remove();
-    });
-    matchRight.querySelectorAll(".match-chip:not(.matched)").forEach(function (chip) {
-      chip.remove();
-    });
-
-    leftVals.forEach(function (word) {
-      matchLeft.appendChild(makeRushChip(word, "left"));
-    });
-    rightVals.forEach(function (word) {
-      matchRight.appendChild(makeRushChip(word, "right"));
-    });
-
-    rushSel = { left: null, right: null };
-  }
-
-  function onRushPick(btn) {
-    if (rushLocked || btn.classList.contains("matched")) return;
-
-    const side = btn.dataset.side;
-
-    document.querySelectorAll('.match-chip[data-side="' + side + '"]').forEach(function (b) {
-      if (!b.classList.contains("matched")) b.classList.remove("selected");
-    });
-
-    btn.classList.add("selected");
-    rushSel[side] = btn;
-
-    if (rushSel.left && rushSel.right) {
-      const left = rushSel.left.dataset.val;
-      const right = rushSel.right.dataset.val;
-
-      if (rushMap[left] === right) {
-        rushSel.left.classList.add("matched");
-        rushSel.right.classList.add("matched");
-        rushSel.left.classList.remove("selected");
-        rushSel.right.classList.remove("selected");
-
-        rushMatches += 1;
-        rushCombo += 1;
-        if (rushCombo > rushBestCombo) rushBestCombo = rushCombo;
-
-        const pts = 10 + Math.min(40, (rushCombo - 1) * 5);
-        score += pts;
-        correct += 1;
-
-        if (feedbackEl) {
-          feedbackEl.textContent = "Nice! +" + pts;
-          feedbackEl.className = "feedback ok";
-        }
-
-        rushSel = { left: null, right: null };
-        updateRushHud();
-
-        const remaining = matchLeft.querySelectorAll(
-          ".match-chip:not(.matched)"
-        ).length;
-
-        if (remaining === 0) {
-          stopRushTimer();
-          setTimeout(endMatchRush, 400);
-        }
-      } else {
-        rushCombo = 0;
-        wrong += 1;
-
-        rushSel.left.classList.add("wrong-flash");
-        rushSel.right.classList.add("wrong-flash");
-
-        if (feedbackEl) {
-          feedbackEl.textContent = "Try again";
-          feedbackEl.className = "feedback bad";
-        }
-
-        const a = rushSel.left;
-        const b = rushSel.right;
-        rushSel = { left: null, right: null };
-        updateRushHud();
-
-        setTimeout(function () {
-          a.classList.remove("selected", "wrong-flash");
-          b.classList.remove("selected", "wrong-flash");
-        }, 280);
-      }
-    }
-  }
-
-  /* =========================================================
-     END MATCH RUSH
-     ========================================================= */
-
-  function endMatchRush() {
-    stopRushTimer();
-    rushLocked = true;
-
-    const play = document.getElementById("playScreen");
-    if (play) play.classList.remove("play-screen-rush");
-
-    if (matchArea) {
-      matchArea.classList.add("hidden");
-      matchArea.style.display = "";
-    }
-
-    if (feedbackEl) {
-      feedbackEl.textContent = "";
-      feedbackEl.className = "feedback";
-    }
-
-    document.getElementById("finalScore").textContent = String(score);
-    document.getElementById("finalCorrect").textContent = String(rushMatches);
-    document.getElementById("finalWrong").textContent = String(wrong);
-
-    const totalPairs = Object.keys(rushMap).length || 1;
-    const accuracy = Math.round((rushMatches / totalPairs) * 100);
-
-    document.getElementById("finalAccuracy").textContent =
-      Math.min(100, accuracy) + "%";
-
-    show("result");
-  }
-
-  /* =========================================================
-     END NORMAL ROUND
+     END ROUND
      ========================================================= */
 
   function endRound() {
     if (progressFill) progressFill.style.width = "100%";
-
     document.getElementById("finalScore").textContent = String(score);
     document.getElementById("finalCorrect").textContent = String(correct);
     document.getElementById("finalWrong").textContent = String(wrong);
     document.getElementById("finalAccuracy").textContent =
       (TOTAL ? Math.round((correct / TOTAL) * 100) : 0) + "%";
-
     show("result");
   }
 
@@ -1456,19 +705,8 @@
   });
 
   const backMenu = document.getElementById("backMenu");
-  const rushShuffleBtn = document.getElementById("rushShuffleBtn");
-
-  if (rushShuffleBtn) {
-    rushShuffleBtn.addEventListener("click", function () {
-      shuffleRushBoard();
-    });
-  }
-
   if (backMenu) {
     backMenu.addEventListener("click", function () {
-      stopRushTimer();
-      const play = document.getElementById("playScreen");
-      if (play) play.classList.remove("play-screen-rush");
       show("menu");
     });
   }
@@ -1476,7 +714,6 @@
   const toMenuBtn = document.getElementById("toMenuBtn");
   if (toMenuBtn) {
     toMenuBtn.addEventListener("click", function () {
-      stopRushTimer();
       show("menu");
     });
   }
@@ -1489,18 +726,15 @@
   }
 
   /* =========================================================
-     SITE THEME
+     THEME
      ========================================================= */
 
   function syncSiteTheme() {
-    const dark =
-      document.documentElement.getAttribute("data-theme") === "dark";
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
     document.body.classList.toggle("light-mode", !dark);
   }
-
   syncSiteTheme();
   window.addEventListener("site-theme-change", syncSiteTheme);
-
   try {
     new MutationObserver(syncSiteTheme).observe(document.documentElement, {
       attributes: true,
