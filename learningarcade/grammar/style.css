@@ -165,110 +165,11 @@ body {
 .section-heading h2 { margin: 0 0 5px; font-size: 22px; }
 .section-heading p { margin: 0; color: var(--muted); font-size: 12px; }
 
-.game-grid {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto 70px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 17px;
-}
-
-.game-card {
-  min-height: 205px;
-  padding: 23px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--border);
-  border-radius: 17px;
-  background: #fff;
-  box-shadow: 0 8px 25px rgba(32,38,54,.04);
-}
-
-.game-tag {
-  align-self: flex-start;
-  padding: 5px 8px;
-  border-radius: 7px;
-  background: var(--skill-bg);
-  color: var(--skill-color);
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: .7px;
-  text-transform: uppercase;
-}
-
-.game-card h3 { margin: 14px 0 7px; font-size: 17px; }
-.game-card p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
-.game-meta { margin-top: auto; padding-top: 17px; color: #8a92a2; font-size: 10px; }
-
-.coming-soon {
-  margin-top: 10px;
-  color: #929aaa;
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.site-footer {
-  border-top: 1px solid #edf0f4;
-  text-align: center;
-  padding: 25px;
-  color: #8991a1;
-  font-size: 10px;
-}
-
-.vocabulary { --skill-color:#5e2fc8; --skill-bg:#f1edff; --skill-border:#e6ddfa; }
-.grammar    { --skill-color:#07966d; --skill-bg:#eaf8f4; --skill-border:#dcefe9; }
-.listening  { --skill-color:#176fd0; --skill-bg:#edf6ff; --skill-border:#dbe9fa; }
-.reading    { --skill-color:#ed3036; --skill-bg:#fff0f0; --skill-border:#f8dddd; }
-.writing    { --skill-color:#ed7d00; --skill-bg:#fff4e6; --skill-border:#fae5ca; }
-.speaking   { --skill-color:#0795a7; --skill-bg:#eaf9fb; --skill-border:#d7edf0; }
-
-@media (max-width: 900px) {
-  .game-grid { grid-template-columns: repeat(2, 1fr); }
-  .skill-hero { grid-template-columns: 1fr 180px; }
-}
-
-@media (max-width: 700px) {
-  .main-nav { display: none; }
-  .header-inner,
-  .arcade-intro,
-  .skill-hero,
-  .section-heading,
-  .game-grid {
-    width: min(calc(100% - 28px), var(--container));
-  }
-  .skill-hero { padding: 28px; grid-template-columns: 1fr; }
-  .hero-character { height: 170px; }
-  .hero-character img { max-height: 170px; }
-}
-
-@media (max-width: 560px) {
-  .game-grid { grid-template-columns: 1fr; }
-}
-
-.skill-hero{--skill-color:#6937d8;--skill-bg:#f1edff;--skill-border:#e6ddfa}
-.skill-hero.grammar{--skill-color:#07966d;--skill-bg:#eaf8f4;--skill-border:#dcefe9}
-.skill-hero.listening{--skill-color:#176fd0;--skill-bg:#edf6ff;--skill-border:#dbe9fa}
-.skill-hero.reading{--skill-color:#ed3036;--skill-bg:#fff0f0;--skill-border:#f8dddd}
-.skill-hero.writing{--skill-color:#ed7d00;--skill-bg:#fff4e6;--skill-border:#fae5ca}
-.skill-hero.speaking{--skill-color:#0795a7;--skill-bg:#eaf9fb;--skill-border:#d7edf0}
-
-/* MOBILE MENU TOGGLE */
-.menu-toggle{display:none;width:38px;height:38px;padding:0;border:none;background:transparent;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px}
-.menu-toggle span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:transform .2s ease,opacity .2s ease}
-.menu-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.menu-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
-.menu-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-@media(max-width:700px){
-.menu-toggle{display:flex}
-.main-nav{display:flex;flex-direction:column;align-items:flex-start;gap:4px;position:absolute;top:78px;left:0;right:0;background:#fff;border-bottom:1px solid #eef0f4;padding:14px 24px 20px;max-height:0;overflow:hidden;opacity:0;pointer-events:none;transition:max-height .25s ease,opacity .2s ease}
-.main-nav.open{max-height:400px;opacity:1;pointer-events:auto}
-.main-nav a{padding:8px 0;width:100%}
-}
 
 /* =====================================================
    GAME CARDS — unified soft skill-card style
-   Colors driven by subject (Vocabulary / Grammar / …)
 ===================================================== */
+
 .game-grid {
   --game-color: #079d73;
   --game-color-dark: #068a64;
@@ -276,10 +177,8 @@ body {
   --game-border: #dcefe9;
   --game-tag-bg: #eaf8f4;
   --game-tag-color: #07966d;
-}
 
-.game-grid {
-  width: min(calc(100% - 48px), var(--container));
+  width: min(calc(100% - 48px), var(--container, 1180px));
   margin: 0 auto 70px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -288,7 +187,7 @@ body {
 
 .game-card {
   position: relative;
-  min-height: 260px;
+  min-height: 280px;
   padding: 22px 22px 20px;
   display: flex;
   flex-direction: column;
@@ -300,7 +199,6 @@ body {
   overflow: hidden;
 }
 
-/* soft corner shape — no text ribbon */
 .game-card::before {
   content: "";
   position: absolute;
@@ -312,11 +210,10 @@ body {
   background: var(--game-bg);
   opacity: 0.9;
   pointer-events: none;
+  z-index: 0;
 }
 
-/* kill any old PLAYABLE ribbon */
-.game-card::after,
-.game-card--playable::after {
+.game-card::after {
   content: none !important;
   display: none !important;
 }
@@ -330,8 +227,10 @@ body {
 .game-card-icon {
   position: relative;
   z-index: 1;
-  width: 48px;
-  height: 48px;
+  flex: 0 0 48px;
+  width: 48px !important;
+  height: 48px !important;
+  max-width: 48px;
   display: grid;
   place-items: center;
   border-radius: 14px;
@@ -339,7 +238,7 @@ body {
   color: #fff;
   font-size: 22px;
   line-height: 1;
-  box-shadow: 0 8px 18px color-mix(in srgb, var(--game-color) 35%, transparent);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
   margin-bottom: 4px;
 }
 
@@ -398,8 +297,6 @@ body {
   margin-top: 16px;
   min-height: 48px;
   min-width: 140px;
-  width: auto;
-  max-width: max-content;
   padding: 0 24px;
   border-radius: 14px;
   background: var(--game-color);
@@ -408,7 +305,7 @@ body {
   font-size: 15px;
   font-weight: 850;
   white-space: nowrap;
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--game-color) 28%, transparent);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
@@ -420,42 +317,41 @@ body {
 .game-launch:hover {
   background: var(--game-color-dark);
   transform: translateY(-1px);
-  box-shadow: 0 12px 26px color-mix(in srgb, var(--game-color) 35%, transparent);
 }
 
 .game-launch:visited {
   color: #ffffff !important;
 }
 
-
-
-/* Locked / coming soon */
-.game-card[aria-disabled="true"],
-.game-card:not(.game-card--playable) {
+/* Locked */
+.game-card:not(.game-card--playable),
+.game-card[aria-disabled="true"] {
   border-color: #e7e9ef;
   background: #f7f8fb;
   box-shadow: none;
 }
 
-.game-card[aria-disabled="true"]::before,
-.game-card:not(.game-card--playable)::before {
+.game-card:not(.game-card--playable)::before,
+.game-card[aria-disabled="true"]::before {
   background: #eef0f4;
 }
 
-.game-card[aria-disabled="true"] .game-card-icon,
-.game-card:not(.game-card--playable) .game-card-icon {
+.game-card:not(.game-card--playable) .game-card-icon,
+.game-card[aria-disabled="true"] .game-card-icon {
+  width: 48px !important;
+  height: 48px !important;
   background: #c5cad6;
   box-shadow: none;
 }
 
-.game-card[aria-disabled="true"] .game-tag,
-.game-card:not(.game-card--playable) .game-tag {
+.game-card:not(.game-card--playable) .game-tag,
+.game-card[aria-disabled="true"] .game-tag {
   background: #eef0f4;
   color: #8a92a2;
 }
 
-.game-card[aria-disabled="true"] h3,
-.game-card:not(.game-card--playable) h3 {
+.game-card:not(.game-card--playable) h3,
+.game-card[aria-disabled="true"] h3 {
   color: #6d7587;
 }
 
