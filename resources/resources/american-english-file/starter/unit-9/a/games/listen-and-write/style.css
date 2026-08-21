@@ -1,0 +1,577 @@
+/* =========================================================
+   LISTEN & WRITE — Unit 9A
+   Mr. Sheyhaki | American English File Starter
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background: #f4f5fb;
+  color: #20243a;
+  overflow-x: hidden;
+}
+
+/* ---------- Game container ---------- */
+.game {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(108, 92, 231, 0.07), transparent 45%),
+    #f4f5fb;
+}
+
+/* ---------- Top bar ---------- */
+.top-bar {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 14px 16px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #e3e6ef;
+  background: #fff;
+  color: #20243a;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.back-btn:hover {
+  background: #f0f2f8;
+  transform: translateY(-1px);
+}
+
+.top-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.unit-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #7c6cf0;
+}
+
+.game-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #20243a;
+}
+
+.top-stats {
+  display: flex;
+  gap: 10px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 52px;
+}
+
+.stat-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #8b92a8;
+}
+
+.stat-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #20243a;
+}
+
+/* ---------- Main content ---------- */
+.main-content {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 8px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+
+.instruction {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #5a6278;
+  line-height: 1.45;
+}
+
+/* ---------- Audio player ---------- */
+.audio-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid #e3e6ef;
+  border-radius: 16px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 10px rgba(32, 38, 54, 0.05);
+}
+
+.play-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #7c6cf0, #5b4cdb);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 14px rgba(108, 92, 231, 0.35);
+}
+
+.play-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.play-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.play-btn.playing {
+  background: linear-gradient(135deg, #5b4cdb, #4a3cc7);
+}
+
+.play-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+  margin-left: 3px; /* optical centering for ▶ */
+}
+
+/* Visualizer bars */
+.visualizer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 22px;
+}
+
+.visualizer span {
+  width: 3px;
+  height: 8px;
+  background: #fff;
+  border-radius: 2px;
+  animation: barPulse 0.6s ease-in-out infinite alternate;
+}
+
+.visualizer span:nth-child(1) { animation-delay: 0.0s; height: 10px; }
+.visualizer span:nth-child(2) { animation-delay: 0.1s; height: 16px; }
+.visualizer span:nth-child(3) { animation-delay: 0.2s; height: 20px; }
+.visualizer span:nth-child(4) { animation-delay: 0.15s; height: 14px; }
+.visualizer span:nth-child(5) { animation-delay: 0.05s; height: 9px; }
+
+@keyframes barPulse {
+  from { transform: scaleY(0.45); opacity: 0.7; }
+  to   { transform: scaleY(1);    opacity: 1; }
+}
+
+.audio-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.audio-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #20243a;
+}
+
+.audio-hint {
+  font-size: 0.78rem;
+  color: #8b92a8;
+}
+
+/* ---------- Writing boxes ---------- */
+.boxes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.box-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #e3e6ef;
+  border-radius: 14px;
+  padding: 10px 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.box-row.correct {
+  border-color: #34c759;
+  background: #f0fdf4;
+  box-shadow: 0 0 0 1px rgba(52, 199, 89, 0.15);
+}
+
+.box-row.wrong {
+  border-color: #ff3b30;
+  background: #fff5f5;
+}
+
+.box-row.locked {
+  opacity: 0.92;
+}
+
+.box-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #f0f2f8;
+  color: #5a6278;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.box-row.correct .box-number {
+  background: #34c759;
+  color: #fff;
+}
+
+.box-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+  color: #20243a;
+  outline: none;
+  padding: 6px 4px;
+  min-width: 0;
+}
+
+.box-input::placeholder {
+  color: #b0b6c8;
+}
+
+.box-input:disabled {
+  color: #20243a;
+  cursor: default;
+}
+
+/* Circle-check submit button */
+.submit-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #d0d4e2;
+  background: #fff;
+  color: #7c6cf0;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.submit-btn:hover:not(:disabled) {
+  border-color: #7c6cf0;
+  background: #f5f3ff;
+  transform: scale(1.06);
+}
+
+.submit-btn:disabled {
+  cursor: default;
+}
+
+.submit-btn.correct {
+  border-color: #34c759;
+  background: #34c759;
+  color: #fff;
+}
+
+.submit-btn.wrong {
+  border-color: #ff3b30;
+  background: #ff3b30;
+  color: #fff;
+}
+
+/* ---------- Feedback ---------- */
+.feedback {
+  text-align: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.feedback.info {
+  background: #f0f2f8;
+  color: #5a6278;
+}
+
+.feedback.error {
+  background: #fff0f0;
+  color: #d32f2f;
+}
+
+.feedback.success {
+  background: #e8f8ef;
+  color: #1b7a3d;
+}
+
+/* ---------- Continue button ---------- */
+.continue-btn {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  margin: 8px auto 0;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7c6cf0, #5b4cdb);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(108, 92, 231, 0.3);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.continue-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(108, 92, 231, 0.4);
+}
+
+/* ---------- Success overlay ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 17, 23, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.overlay-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px 28px;
+  text-align: center;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.overlay-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #34c759, #2da94c);
+  color: #fff;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.overlay-card h2 {
+  font-size: 1.4rem;
+  margin-bottom: 6px;
+  color: #20243a;
+}
+
+.overlay-card p {
+  color: #5a6278;
+  margin-bottom: 22px;
+  font-size: 0.95rem;
+}
+
+/* ---------- Reveal answers (after 3 fails) ---------- */
+.reveal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+  text-align: left;
+}
+
+.reveal-item {
+  background: #f8f9fc;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.reveal-item .num {
+  font-weight: 700;
+  color: #7c6cf0;
+  margin-right: 6px;
+}
+
+.reveal-item .user-ans {
+  color: #d32f2f;
+  text-decoration: line-through;
+  margin-right: 6px;
+}
+
+.reveal-item .correct-ans {
+  color: #1b7a3d;
+  font-weight: 600;
+}
+
+/* ---------- Dark mode support ---------- */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #0f1117;
+    color: #f4f6fb;
+  }
+
+  .game {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(108, 92, 231, 0.12), transparent 45%),
+      #0f1117;
+  }
+
+  .back-btn {
+    background: #181b24;
+    border-color: #2b3040;
+    color: #f4f6fb;
+  }
+
+  .back-btn:hover {
+    background: #222633;
+  }
+
+  .game-title { color: #f4f6fb; }
+  .stat-value { color: #f4f6fb; }
+
+  .instruction { color: #aeb6c8; }
+
+  .audio-wrap {
+    background: #181b24;
+    border-color: #2b3040;
+  }
+
+  .audio-label { color: #f4f6fb; }
+
+  .box-row {
+    background: #181b24;
+    border-color: #2b3040;
+  }
+
+  .box-row.correct {
+    background: #0f2a18;
+    border-color: #34c759;
+  }
+
+  .box-row.wrong {
+    background: #2a1212;
+    border-color: #ff3b30;
+  }
+
+  .box-number {
+    background: #222633;
+    color: #aeb6c8;
+  }
+
+  .box-input {
+    color: #f4f6fb;
+  }
+
+  .box-input::placeholder {
+    color: #5a6278;
+  }
+
+  .submit-btn {
+    background: #181b24;
+    border-color: #3a4055;
+    color: #9a7cf0;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    background: #222633;
+    border-color: #7c6cf0;
+  }
+
+  .feedback.info {
+    background: #1a1e28;
+    color: #aeb6c8;
+  }
+
+  .overlay-card {
+    background: #181b24;
+  }
+
+  .overlay-card h2 { color: #f4f6fb; }
+  .overlay-card p { color: #aeb6c8; }
+
+  .reveal-item {
+    background: #1a1e28;
+  }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 420px) {
+  .top-bar {
+    padding: 12px 12px 8px;
+  }
+
+  .main-content {
+    padding: 6px 12px 32px;
+  }
+
+  .play-btn {
+    width: 50px;
+    height: 50px;
+  }
+
+  .box-input {
+    font-size: 0.9rem;
+  }
+}
