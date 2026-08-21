@@ -373,7 +373,7 @@
             class: "audio-download-btn",
             href: t.url,
             download: "AEF-" + t.track.replace(/\s+/g, "") + ".mp3",
-            target: "_blank",
+            target: "_self"
             rel: "noopener noreferrer",
             text: "↓ Download",
           }),
