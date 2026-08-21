@@ -371,15 +371,15 @@
   });
 
   // -------------------------------------------------------
-  // CONTINUE BUTTONS
-  // -------------------------------------------------------
-  continueBtn.addEventListener("click", () => {
-    window.location.href = "../";
-  });
+// CONTINUE BUTTONS
+// -------------------------------------------------------
+continueBtn.addEventListener("click", () => {
+  window.location.href = "../../";   // → Unit 9A lesson page
+});
 
-  successContinue.addEventListener("click", () => {
-    window.location.href = "../";
-  });
+successContinue.addEventListener("click", () => {
+  window.location.href = "../../";   // → Unit 9A lesson page
+});
 
   // -------------------------------------------------------
   // INIT
