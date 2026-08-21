@@ -1440,56 +1440,208 @@ body.light-mode .context-box span {
     }
 }
 
-@media (max-width: 360px) {
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 800px) {
+
+    /* Allow the page to scroll naturally */
+    html,
+    body {
+        width: 100%;
+        min-height: 100%;
+        height: auto;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+
+    body {
+        min-height: 100dvh;
+    }
+
+    main {
+        width: 100%;
+        height: auto;
+        min-height: 100%;
+        overflow: visible !important;
+    }
+
+    /* Hide the desktop header on phones */
+    .game-header {
+        display: none !important;
+    }
+
+    /* Screens can grow taller than the phone */
+    .screen {
+        min-height: 100dvh;
+        height: auto;
+        padding: 20px 12px 40px;
+        align-items: flex-start;
+        justify-content: center;
+        overflow: visible !important;
+    }
+
+    .group-grid {
+        grid-template-columns: 1fr;
+    }
+
     .home-card,
     .menu-card,
     .game-card,
     .result-card {
-        padding: 22px 13px;
+        padding: 28px 20px;
     }
 
-    .xp-box {
-        display: none;
+    .path-step {
+        min-width: 90px;
     }
 
-    .target-sentence {
-        font-size: 20px;
+    .path-step b {
+        font-size: 10px;
+    }
+
+    .path-line {
+        max-width: 45px;
+    }
+
+    /* Game screen */
+    #gameScreen {
+        width: 100%;
+        height: auto;
+        min-height: 100dvh;
+        padding: 8px;
+        overflow: visible !important;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    #gameScreen .game-card {
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        max-width: none;
+        max-height: none;
+        padding: 18px 14px;
+        overflow: visible !important;
+    }
+
+    /* Game header inside the card */
+    .game-top {
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+    }
+
+    .game-top-title {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        text-align: center;
+    }
+
+    .game-top > .small-back {
+        grid-row: 2;
+        grid-column: 1;
+    }
+
+    .score-pill {
+        grid-row: 2;
+        grid-column: 2;
+    }
+
+    /* Let questions grow naturally */
+    .question-area {
+        min-height: 0;
+        height: auto;
+        flex: none;
+        overflow: visible !important;
+        padding: 20px 0;
+    }
+
+    .answer-grid {
+        width: 100%;
+        max-width: 520px;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin: 14px auto 0;
+        padding: 0 4px;
+    }
+
+    .answer-option {
+        width: 100%;
+        min-height: 56px;
+        padding: 12px 16px;
+        font-size: 15px;
+        line-height: 1.4;
+        border-radius: 15px;
+    }
+
+    .answer-option:hover {
+        transform: none;
+    }
+
+    .answer-option:active {
+        transform: scale(0.985);
     }
 
     .word-chip {
-        padding: 10px 14px !important;
-        font-size: 15px !important;
+        padding: 14px 18px !important;
+        font-size: 17px !important;
+        min-height: 50px !important;
+    }
+
+    .built-chip {
+        padding: 12px 16px !important;
+        font-size: 16px !important;
+    }
+
+    .word-bank {
+        gap: 8px !important;
+        padding: 10px !important;
+    }
+
+    .result-actions {
+        flex-direction: column;
+    }
+
+    .result-actions button {
+        width: 100%;
     }
 }
 
-/* Extra safety – keep chips big */
-.word-chip,
-.built-chip {
-  font-size: 18px !important;
-  padding: 16px 22px !important;
-}
-/* ===== Fast & smooth click on word chips ===== */
-.word-chip,
-.built-chip {
-  transition: 
-    transform 0.12s ease,
-    background 0.12s ease,
-    border-color 0.12s ease,
-    box-shadow 0.12s ease !important;
-}
 
-.word-chip:active,
-.built-chip:active {
-  transform: scale(0.94) !important;
-  transition: transform 0.08s ease !important;
-}
+/* =====================================================
+   SMALL PHONES
+===================================================== */
 
-.word-chip:hover {
-  transform: translateY(-2px);
-}
+@media (max-width: 500px) {
 
-.word-chip:active:hover {
-  transform: scale(0.94) !important;
+    .screen {
+        padding: 14px 8px 35px;
+    }
+
+    #gameScreen {
+        padding: 6px;
+    }
+
+    #gameScreen .game-card {
+        padding: 14px 12px;
+    }
+
+    .home-card,
+    .menu-card,
+    .game-card,
+    .result-card {
+        border-radius: 20px;
+    }
+
+    .home-card h2,
+    .menu-card h2 {
+        font-size: 34px;
+    }
+
+    .path {
+        margin: 25px auto;
+    }
 }
 /* ===== Make chips in the sentence area clickable ===== */
 .built-sentence .word-chip,
