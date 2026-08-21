@@ -304,15 +304,13 @@
       return;
     }
     const grid = el("section", { class: "content-grid unit-resource-grid" });
-items.forEach((item) => {
-  grid.appendChild(
-    el("a", { class: "content-card resource-card", href: item.url }, [
-      el("div", { class: "resource-icon", "aria-hidden": "true", text: meta.icon }),
-      el("h3", { text: item.title }),
-      el("span", { class: "resource-button", text: meta.verb + " →" }),
-    ])
-  );
-});
+    items.forEach((item) => {
+      grid.appendChild(
+        el("a", { class: "content-card resource-card", href: item.url }, [
+          el("div", { class: "resource-icon", "aria-hidden": "true", text: meta.icon }),
+          el("h3", { text: item.title }),
+          el("span", { class: "resource-button", text: meta.verb + " →" }),
+        ])
       );
     });
     main.appendChild(grid);
@@ -375,7 +373,7 @@ items.forEach((item) => {
             class: "audio-download-btn",
             href: t.url,
             download: "AEF-" + t.track.replace(/\s+/g, "") + ".mp3",
-            target: "_self"
+            target: "_self",
             rel: "noopener noreferrer",
             text: "↓ Download",
           }),
