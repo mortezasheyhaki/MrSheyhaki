@@ -304,13 +304,15 @@
       return;
     }
     const grid = el("section", { class: "content-grid unit-resource-grid" });
-    items.forEach((item) => {
-      grid.appendChild(
-        el("a", { class: "content-card resource-card", href: item.url, target: "_blank", rel: "noopener" }, [
-          el("div", { class: "resource-icon", "aria-hidden": "true", text: meta.icon }),
-          el("h3", { text: item.title }),
-          el("span", { class: "resource-button", text: meta.verb + " →" }),
-        ])
+items.forEach((item) => {
+  grid.appendChild(
+    el("a", { class: "content-card resource-card", href: item.url }, [
+      el("div", { class: "resource-icon", "aria-hidden": "true", text: meta.icon }),
+      el("h3", { text: item.title }),
+      el("span", { class: "resource-button", text: meta.verb + " →" }),
+    ])
+  );
+});
       );
     });
     main.appendChild(grid);
