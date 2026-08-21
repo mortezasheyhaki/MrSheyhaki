@@ -3716,15 +3716,25 @@ $("#backHome")
         "click",
         function () {
 
-            renderHome();
+            if (
+                history.length > 1
+            ) {
 
-            show(
-                "homeScreen"
-            );
+                history.back();
+
+            } else {
+
+                renderHome();
+
+                show(
+                    "homeScreen",
+                    false
+                );
+
+            }
 
         }
     );
-
 
 $("#backMenu")
     .addEventListener(
@@ -3732,25 +3742,36 @@ $("#backMenu")
         function () {
 
             if (
-                state.finalMixed
+                history.length > 1
             ) {
 
-                renderHome();
+                history.back();
 
-                show(
-                    "homeScreen"
-                );
+            } else {
 
-                return;
+                if (
+                    state.finalMixed
+                ) {
+
+                    renderHome();
+
+                    show(
+                        "homeScreen",
+                        false
+                    );
+
+                } else {
+
+                    updateMenuProgress();
+
+                    show(
+                        "practiceMenu",
+                        false
+                    );
+
+                }
 
             }
-
-
-            updateMenuProgress();
-
-            show(
-                "practiceMenu"
-            );
 
         }
     );
@@ -3762,25 +3783,36 @@ $("#resultMenuButton")
         function () {
 
             if (
-                state.finalMixed
+                history.length > 1
             ) {
 
-                renderHome();
+                history.back();
 
-                show(
-                    "homeScreen"
-                );
+            } else {
 
-                return;
+                if (
+                    state.finalMixed
+                ) {
+
+                    renderHome();
+
+                    show(
+                        "homeScreen",
+                        false
+                    );
+
+                } else {
+
+                    updateMenuProgress();
+
+                    show(
+                        "practiceMenu",
+                        false
+                    );
+
+                }
 
             }
-
-
-            updateMenuProgress();
-
-            show(
-                "practiceMenu"
-            );
 
         }
     );
@@ -3826,10 +3858,25 @@ saveXP();
 
 renderHome();
 
-show(
-    "homeScreen"
+
+/*
+   Create the first browser-history entry.
+*/
+history.replaceState(
+    {
+        arcadeScreen: "homeScreen"
+    },
+    "",
+    window.location.href
 );
 
+historyReady = true;
+
+
+show(
+    "homeScreen",
+    false
+);
 
 /* =====================================================
    DRAG REORDERING INSIDE SENTENCE AREA
