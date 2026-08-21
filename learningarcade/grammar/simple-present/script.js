@@ -1199,10 +1199,16 @@ function saveArcadeProgress(xp) {
 
 
 /* =====================================================
-   SHOW / HIDE SCREENS
+   SHOW / HIDE SCREENS + BROWSER HISTORY
 ===================================================== */
 
-function show(id) {
+let historyReady = false;
+
+
+function show(
+    id,
+    addHistory = true
+) {
 
     $$(".screen")
         .forEach(
@@ -1229,6 +1235,52 @@ function show(id) {
         );
 
     }
+
+
+    /*
+       Add this screen to browser history.
+
+       We do NOT add another history entry when
+       show() is being called by the phone/browser
+       Back button.
+    */
+    if (addHistory) {
+
+        if (!historyReady) {
+
+            history.replaceState(
+                {
+                    arcadeScreen: "homeScreen"
+                },
+                "",
+                window.location.href
+            );
+
+            historyReady = true;
+
+        }
+
+
+        history.pushState(
+            {
+                arcadeScreen: id
+            },
+            "",
+            window.location.href
+        );
+
+    }
+
+
+    /*
+       Always start the new screen at the top.
+    */
+    window.scrollTo(
+        {
+            top: 0,
+            behavior: "auto"
+        }
+    );
 
 }
 
