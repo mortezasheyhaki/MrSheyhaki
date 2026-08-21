@@ -8,7 +8,6 @@
 
   // -------------------------------------------------------
   // DATA – Unit 9A (picture descriptions)
-  // Each item has a list of acceptable answers (normalized)
   // -------------------------------------------------------
   const QUESTIONS = [
     {
@@ -94,7 +93,6 @@
     }
   ];
 
-  // Display versions of the correct answers (for reveal)
   const DISPLAY_ANSWERS = [
     "He's reading a story / book",
     "He's watching soccer / football (on TV)",
@@ -122,19 +120,18 @@
   // -------------------------------------------------------
   // DOM
   // -------------------------------------------------------
-  const playBtn      = document.getElementById("playBtn");
-  const playIcon     = document.getElementById("playIcon");
-  const visualizer   = document.getElementById("visualizer");
-  const audioHint    = document.getElementById("audioHint");
-  const listensEl    = document.getElementById("listensLeft");
-  const attemptsEl   = document.getElementById("attemptsLeft");
-  const boxesEl      = document.getElementById("boxes");
-  const feedbackEl   = document.getElementById("feedback");
-  const continueBtn  = document.getElementById("continueBtn");
+  const playBtn        = document.getElementById("playBtn");
+  const playIcon       = document.getElementById("playIcon");
+  const visualizer     = document.getElementById("visualizer");
+  const audioHint      = document.getElementById("audioHint");
+  const listensEl      = document.getElementById("listensLeft");
+  const attemptsEl     = document.getElementById("attemptsLeft");
+  const boxesEl        = document.getElementById("boxes");
+  const feedbackEl     = document.getElementById("feedback");
+  const continueBtn    = document.getElementById("continueBtn");
   const successOverlay = document.getElementById("successOverlay");
   const successContinue = document.getElementById("successContinue");
 
-  // Create audio element
   const audio = new Audio(AUDIO_URL);
   audio.preload = "auto";
 
@@ -145,9 +142,9 @@
     return str
       .toLowerCase()
       .trim()
-      .replace(/[’']/g, "'")           // normalize apostrophes
-      .replace(/[.,!?;:""]/g, "")    // remove small punctuation
-      .replace(/\s+/g, " ")            // collapse spaces
+      .replace(/[’']/g, "'")
+      .replace(/[.,!?;:""]/g, "")
+      .replace(/\s+/g, " ")
       .trim();
   }
 
@@ -177,10 +174,6 @@
 
   function allBoxesCorrect() {
     return boxStates.every(b => b.correct);
-  }
-
-  function anyBoxSubmitted() {
-    return boxStates.some(b => b.submitted);
   }
 
   // -------------------------------------------------------
@@ -220,7 +213,6 @@
       boxesEl.appendChild(row);
     });
 
-    // Attach events
     boxesEl.querySelectorAll(".box-input").forEach(input => {
       input.addEventListener("input", onInputChange);
       input.addEventListener("keydown", e => {
@@ -243,7 +235,6 @@
   function onInputChange(e) {
     const idx = parseInt(e.target.dataset.index, 10);
     boxStates[idx].value = e.target.value;
-    // Clear previous wrong state while typing
     if (boxStates[idx].submitted && !boxStates[idx].correct) {
       boxStates[idx].submitted = false;
       renderBoxes();
@@ -277,19 +268,16 @@
       renderBoxes();
 
       if (allBoxesCorrect()) {
-        // Full success
         setTimeout(() => {
-          successOverlay.hidden = false;
+          successOverlay.classList.add("is-visible");
         }, 350);
       }
     } else {
-      // Wrong
       attemptsLeft--;
       updateStats();
       renderBoxes();
 
       if (attemptsLeft <= 0) {
-        // Final fail → reveal answers
         revealAnswers();
       } else {
         showFeedback("error", `Not quite. Try again! (${attemptsLeft} attempt${attemptsLeft === 1 ? "" : "s"} left)`);
@@ -301,7 +289,6 @@
   // REVEAL ANSWERS (after 3 fails)
   // -------------------------------------------------------
   function revealAnswers() {
-    // Lock everything
     boxStates.forEach(b => { b.locked = true; });
 
     let html = `<div class="reveal-list">`;
@@ -331,8 +318,6 @@
 
     continueBtn.hidden = false;
     playBtn.disabled = true;
-
-    // Disable all inputs/buttons
     renderBoxes();
   }
 
@@ -389,7 +374,6 @@
   // CONTINUE BUTTONS
   // -------------------------------------------------------
   continueBtn.addEventListener("click", () => {
-    // For now go back to the unit games list
     window.location.href = "../";
   });
 
