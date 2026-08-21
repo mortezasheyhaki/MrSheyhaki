@@ -3623,7 +3623,51 @@ document
 
         }
     );
+/* =====================================================
+   PHONE / BROWSER BACK BUTTON
+===================================================== */
 
+window.addEventListener(
+    "popstate",
+    function (event) {
+
+        const screen =
+            event.state &&
+            event.state.arcadeScreen
+                ? event.state.arcadeScreen
+                : "homeScreen";
+
+
+        /*
+           Update the correct information before
+           showing the previous screen.
+        */
+
+        if (
+            screen === "homeScreen"
+        ) {
+
+            renderHome();
+
+        }
+
+
+        if (
+            screen === "practiceMenu"
+        ) {
+
+            updateMenuProgress();
+
+        }
+
+
+        show(
+            screen,
+            false
+        );
+
+    }
+);
 
 /* =====================================================
    EVENT LISTENERS
