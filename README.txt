@@ -1,37 +1,17 @@
-UPDATES
-=======
+Mr. Sheyhaki Learning Arcade — updated package
 
-1) AEF Units (Starter & Level 1) — Multiple Choice style
-   - Unit cards now match Multiple Choice: UNIT number badge,
-     gradient card, hover lift, arrow.
-   - Files: resources/style.css, assets/course-render.js
+1) learningarcade/style.css
+   - Character images brightened for dark theme (brightness 1.38 + stronger colored soft-shapes)
 
-2) Single back button + clean header on games
-   - BE, There Is/There Are, Simple Present, Multiple Choice:
-     one "← Grammar" or "← American English File" button,
-     centered title, theme toggle on the right.
+2) learningarcade/food-verb-match/
+   - Full arcade redesign of Food Verb Match
+   - Visual joystick that tilts with swipe (right = EAT)
+   - Back button (← only) styled like skill EXPLORE buttons
+   - Dark neon cabinet look matching Match Rush
 
-3) Dark mode improved
-   - Resources pages: full dark theme (header, cards, text, footer)
-   - Game pages: dark default with light-mode toggle
-   - Unit cards styled for both themes
+How to use:
+- Replace your existing learningarcade/style.css with the one in this zip
+- Upload the food-verb-match/ folder contents to:
+  resources/american-english-file/starter/unit-5/a/games/food-verb-match/
 
-4) Jobs & Work + Daily Routines moved to Grammar (locked)
-   - Removed from Simple Present
-   - Added as locked cards on learningarcade/grammar/index.html
-   - You can unlock them later when ready
-
-UPLOAD / REPLACE
-----------------
-learningarcade/grammar/be/
-learningarcade/grammar/there-is-there-are/
-learningarcade/grammar/simple-present/
-learningarcade/grammar/index.html
-
-resources/style.css
-resources/american-english-file/assets/course-data.js
-resources/american-english-file/assets/course-render.js
-resources/american-english-file/quiz/
-
-DELETE if present:
-learningarcade/grammar/grammar-battle/
+No new character PNGs were available; brightness is handled in CSS.

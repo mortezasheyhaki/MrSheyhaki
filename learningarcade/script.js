@@ -140,3 +140,84 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
 });
+
+/* =========================================
+   SMOOTH PAGE TRANSITIONS
+========================================= */
+
+(function initPageTransitions() {
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduced) return;
+
+  const DURATION = 280; // ms
+
+  // Enter animation on load
+  document.documentElement.classList.add("pt-ready");
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      document.documentElement.classList.add("pt-enter");
+    });
+  });
+
+  function sameOrigin(href) {
+    try {
+      const url = new URL(href, window.location.href);
+      return url.origin === window.location.origin;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function shouldSkip(a) {
+    if (!a || !a.href) return true;
+    if (a.target === "_blank") return true;
+    if (a.hasAttribute("download")) return true;
+    if (a.getAttribute("href") === "#" || a.getAttribute("href") === "") return true;
+    if (a.getAttribute("href").charAt(0) === "#") return true;
+    if (a.hasAttribute("data-no-transition")) return true;
+    if (!sameOrigin(a.href)) return true;
+    // same page hash-only already handled
+    const url = new URL(a.href, window.location.href);
+    if (url.pathname === window.location.pathname && url.search === window.location.search) {
+      return true; // same page
+    }
+    return false;
+  }
+
+  function navigateWithTransition(href) {
+    document.documentElement.classList.remove("pt-enter");
+    document.documentElement.classList.add("pt-exit");
+
+    // View Transitions API when available
+    if (document.startViewTransition) {
+      document.startViewTransition(function () {
+        window.location.href = href;
+      });
+      // Fallback timeout in case navigation is slow
+      setTimeout(function () {
+        window.location.href = href;
+      }, DURATION + 80);
+      return;
+    }
+
+    setTimeout(function () {
+      window.location.href = href;
+    }, DURATION);
+  }
+
+  document.addEventListener(
+    "click",
+    function (e) {
+      if (e.defaultPrevented) return;
+      if (e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+      const a = e.target.closest && e.target.closest("a[href]");
+      if (!a || shouldSkip(a)) return;
+
+      e.preventDefault();
+      navigateWithTransition(a.href);
+    },
+    true
+  );
+})();

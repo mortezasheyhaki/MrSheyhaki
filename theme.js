@@ -1,6 +1,6 @@
 /* =========================================================
-   MR. SHEYHAKI — GLOBAL THEME TOGGLE
-   One fixed moon/sun button on every page (including games).
+   MR. SHEYHAKI — GLOBAL THEME TOGGLE (JS)
+   Persists light/dark across every page.
 ========================================================= */
 (function () {
   "use strict";
@@ -19,86 +19,145 @@
     return "light";
   }
 
-  function ensureFab() {
-    var fab = document.getElementById("siteThemeFab");
-    if (fab) return fab;
-
-    fab = document.createElement("button");
-    fab.id = "siteThemeFab";
-    fab.type = "button";
-    fab.className = "site-theme-fab";
-    fab.setAttribute("data-theme-toggle", "true");
-    fab.setAttribute("aria-label", "Toggle website theme");
-    fab.title = "Toggle theme";
-    document.body.appendChild(fab);
-    return fab;
-  }
-
   function applyTheme(theme) {
     root.setAttribute("data-theme", theme);
     try {
       localStorage.setItem(STORAGE_KEY, theme);
     } catch (e) {}
 
-    // Keep body class for older game CSS that uses .light-mode
-    document.body.classList.toggle("light-mode", theme === "light");
-    document.body.classList.toggle("dark-mode", theme === "dark");
+    document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
+      var iconOnly =
+        btn.classList.contains("icon-btn") ||
+        btn.classList.contains("theme-icon-only") ||
+        btn.getAttribute("data-icon-only") === "true";
 
-    var fab = document.getElementById("siteThemeFab");
-    if (fab) {
-      // Show the mode you can switch TO
       if (theme === "dark") {
-        fab.textContent = "☀️";
-        fab.setAttribute("aria-label", "Switch to light mode");
-        fab.title = "Light mode";
+        btn.innerHTML = iconOnly ? "☀️" : '☀️<span>Light Mode</span>';
+        btn.setAttribute("aria-label", "Switch to light mode");
       } else {
-        fab.textContent = "🌙";
-        fab.setAttribute("aria-label", "Switch to dark mode");
-        fab.title = "Dark mode";
+        btn.innerHTML = iconOnly ? "🌙" : '🌙<span>Dark Mode</span>';
+        btn.setAttribute("aria-label", "Switch to dark mode");
       }
-    }
-
-    // Notify games/pages that listen
-    try {
-      window.dispatchEvent(new CustomEvent("site-theme-change", { detail: { theme: theme } }));
-    } catch (e) {}
-  }
-
-  function toggleTheme() {
-    var current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
-    applyTheme(current === "dark" ? "light" : "dark");
-  }
-
-  function init() {
-    // Remove legacy toggles from headers / games
-    document.querySelectorAll(
-      ".arcade-nav [data-theme-toggle], " +
-      ".arcade-nav .theme-toggle, " +
-      "#darkModeBtn, " +
-      "header .theme-toggle, " +
-      ".header-controls [data-theme-toggle]"
-    ).forEach(function (el) {
-      if (el.id === "siteThemeFab") return;
-      el.remove();
     });
-
-    var fab = ensureFab();
-    if (fab.dataset.themeBound !== "1") {
-      fab.dataset.themeBound = "1";
-      fab.addEventListener("click", toggleTheme);
-    }
-
-    applyTheme(getPreferred());
   }
 
-  // Apply ASAP to reduce flash
-  try {
-    root.setAttribute("data-theme", getPreferred());
-  } catch (e) {}
+  applyTheme(getPreferred());
+
+  function ensureThemeFab() {
+    if (document.querySelector(".site-theme-fab, [data-theme-toggle]")) return;
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "site-theme-fab theme-icon-only";
+    btn.setAttribute("data-theme-toggle", "true");
+    btn.setAttribute("data-icon-only", "true");
+    btn.setAttribute("aria-label", "Toggle color theme");
+    document.body.appendChild(btn);
+
+    // Refresh icon for current theme
+    applyTheme(root.getAttribute("data-theme") || getPreferred());
+  }
+
+  function bindToggles() {
+    ensureThemeFab();
+
+    document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
+      if (btn.dataset.themeBound === "1") return;
+      btn.dataset.themeBound = "1";
+      btn.addEventListener("click", function () {
+        var current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+        applyTheme(current === "dark" ? "light" : "dark");
+      });
+    });
+  }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
+    document.addEventListener("DOMContentLoaded", bindToggles);
   } else {
-    init();
+    bindToggles();
+  }
+
+  /* data-back-one links use their href (one logical parent page).
+     Handled by normal navigation + page transitions. */
+})();
+
+/* =========================================================
+   SMOOTH PAGE TRANSITIONS (global)
+========================================================= */
+(function () {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var DURATION = 280;
+
+  function boot() {
+    document.documentElement.classList.add("pt-ready");
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        document.documentElement.classList.add("pt-enter");
+      });
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+
+  function sameOrigin(href) {
+    try {
+      return new URL(href, location.href).origin === location.origin;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function shouldSkip(a) {
+    if (!a || !a.getAttribute("href")) return true;
+    var href = a.getAttribute("href");
+    if (a.target === "_blank" || a.hasAttribute("download")) return true;
+    if (href === "#" || href.charAt(0) === "#") return true;
+    if (a.hasAttribute("data-no-transition")) return true;
+    if (!sameOrigin(a.href)) return true;
+    try {
+      var u = new URL(a.href, location.href);
+      if (u.pathname === location.pathname && u.search === location.search) return true;
+    } catch (e) {}
+    return false;
+  }
+
+  document.addEventListener(
+    "click",
+    function (e) {
+      if (e.defaultPrevented || e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target.closest && e.target.closest("a[href]");
+      if (!a || shouldSkip(a)) return;
+      e.preventDefault();
+      document.documentElement.classList.remove("pt-enter");
+      document.documentElement.classList.add("pt-exit");
+      var href = a.href;
+      setTimeout(function () {
+        location.href = href;
+      }, DURATION);
+    },
+    true
+  );
+})();
+
+/* Floating nav shrink on scroll */
+(function () {
+  var nav = null;
+  function onScroll() {
+    if (!nav) nav = document.querySelector(".arcade-nav");
+    if (!nav) return;
+    if (window.scrollY > 24) nav.classList.add("nav-scrolled");
+    else nav.classList.remove("nav-scrolled");
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", onScroll);
+  } else {
+    onScroll();
   }
 })();

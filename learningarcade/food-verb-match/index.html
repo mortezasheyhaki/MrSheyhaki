@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0714">
+  <title>Food Verb Match | Unit 5A | Mr. Sheyhaki</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="cabinet-body">
+
+  <div class="cabinet-shell" id="app">
+
+    <!-- ========== TOP BAR / MARQUEE ========== -->
+    <header class="cabinet-topbar">
+      <a href="../../" class="back-btn" aria-label="Back" title="Back">
+        <span class="back-arrow" aria-hidden="true">←</span>
+      </a>
+
+      <div class="cabinet-marquee">
+        <span class="cabinet-marquee__eyebrow">UNIT 5A · ARCADE</span>
+        <h1 class="cabinet-marquee__title">Food Verb Match</h1>
+      </div>
+
+      <div class="hud-stats">
+        <div class="hud-item">
+          <span class="hud-label">Score</span>
+          <span class="hud-value" id="score">0</span>
+        </div>
+        <div class="hud-item hud-time">
+          <span class="hud-label">Time</span>
+          <span class="hud-value" id="timer">90</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Combo</span>
+          <span class="hud-value" id="combo">0x</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressFill" style="width: 0%;"></div>
+    </div>
+
+    <!-- ========== GAME AREA ========== -->
+    <main class="swipe-area" id="gameScreen">
+
+      <!-- Three targets -->
+      <div class="targets">
+        <div class="target target-have" id="targetHave" data-answer="have">
+          <span class="target-dir">↑</span>
+          <span class="target-label">HAVE</span>
+        </div>
+        <div class="target target-drink" id="targetDrink" data-answer="drink">
+          <span class="target-dir">←</span>
+          <span class="target-label">DRINK</span>
+        </div>
+        <div class="target target-eat" id="targetEat" data-answer="eat">
+          <span class="target-dir">→</span>
+          <span class="target-label">EAT</span>
+        </div>
+      </div>
+
+      <!-- Card -->
+      <div class="card-area" id="cardArea">
+        <div class="swipe-card" id="swipeCard" role="button" tabindex="0" aria-label="Swipe the word to the correct verb">
+          <span class="word" id="word">—</span>
+        </div>
+      </div>
+
+      <!-- Arcade joystick visual -->
+      <div class="joystick-panel" aria-hidden="true">
+        <div class="joystick-base">
+          <div class="joystick-stick" id="joystickStick">
+            <div class="joystick-ball"></div>
+          </div>
+          <div class="joy-label joy-up">HAVE</div>
+          <div class="joy-label joy-left">DRINK</div>
+          <div class="joy-label joy-right">EAT</div>
+        </div>
+        <p class="joystick-hint">Drag the stick to send the card</p>
+      </div>
+
+      <p class="feedback" id="feedback" aria-live="polite"></p>
+      <p class="sr-only" id="status" aria-live="polite"></p>
+    </main>
+
+    <!-- ========== START OVERLAY ========== -->
+    <div class="overlay" id="startOverlay">
+      <div class="overlay-content arcade-panel">
+        <div class="overlay-title">Food Verb Match</div>
+        <p class="overlay-text">
+          Swipe each food / drink / meal to the correct verb.
+        </p>
+        <div class="direction-guide">
+          <span><strong>↑</strong> HAVE</span>
+          <span><strong>←</strong> DRINK</span>
+          <span><strong>→</strong> EAT</span>
+        </div>
+        <button type="button" class="start-button" id="startBtn">START GAME</button>
+      </div>
+    </div>
+
+    <!-- ========== END OVERLAY ========== -->
+    <div class="overlay hidden" id="endModal">
+      <div class="overlay-content arcade-panel">
+        <div class="overlay-title" id="resultIcon">🏆</div>
+        <h2 id="endTitle">Excellent!</h2>
+        <p class="overlay-text" id="endMessage">Great job!</p>
+        <div class="result-row">
+          <div>
+            <span>Score</span>
+            <strong id="finalScore">0</strong>
+          </div>
+          <div>
+            <span>Accuracy</span>
+            <strong id="accuracy">0%</strong>
+          </div>
+          <div>
+            <span>Best Combo</span>
+            <strong id="bestCombo">0x</strong>
+          </div>
+        </div>
+        <button type="button" class="start-button" id="playAgain">PLAY AGAIN</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+  <script src="../../theme.js"></script>
+</body>
+</html>
