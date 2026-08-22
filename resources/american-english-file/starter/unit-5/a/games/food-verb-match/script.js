@@ -91,6 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const targetDrink = $("targetDrink");
   const targetEat = $("targetEat");
 
+  const joystickStick = $("joystickStick");
   const themeBtn = $("themeBtn");
 
 
@@ -119,6 +120,82 @@ document.addEventListener("DOMContentLoaded", function () {
      ======================================================= */
 
   let state = null;
+
+
+  /* =======================================================
+     SPEECH — say "Have breakfast", "Drink tea", etc.
+     ======================================================= */
+
+  function pickEnglishVoice() {
+    if (!window.speechSynthesis) return null;
+    const voices = window.speechSynthesis.getVoices();
+    return (
+      voices.find(function (x) {
+        return (
+          x.lang &&
+          x.lang.indexOf("en") === 0 &&
+          /US|United|Google|Samantha|Daniel|Zira|Female/i.test(x.name)
+        );
+      }) ||
+      voices.find(function (x) {
+        return x.lang && x.lang.indexOf("en") === 0;
+      }) ||
+      null
+    );
+  }
+
+  function speakText(text, options) {
+    if (!window.speechSynthesis) return;
+    options = options || {};
+
+    try {
+      window.speechSynthesis.cancel();
+
+      const utter = new SpeechSynthesisUtterance(String(text));
+      utter.lang = "en-US";
+      utter.rate = options.rate != null ? options.rate : 1;
+      utter.pitch = options.pitch != null ? options.pitch : 1;
+      utter.volume = options.volume != null ? options.volume : 1;
+
+      const preferred = pickEnglishVoice();
+      if (preferred) {
+        utter.voice = preferred;
+      }
+
+      window.speechSynthesis.speak(utter);
+    } catch (err) {}
+  }
+
+  /* Correct match: clear, confident phrase e.g. "Have breakfast" */
+  function speakPhrase(verb, noun) {
+    const v =
+      String(verb).charAt(0).toUpperCase() +
+      String(verb).slice(1).toLowerCase();
+    const phrase = v + " " + String(noun).toLowerCase();
+
+    speakText(phrase, {
+      rate: 0.95,
+      pitch: 1.05,
+      volume: 1
+    });
+  }
+
+  /* Wrong match: playful tone */
+  function speakOops() {
+    speakText("Oops! Try again!", {
+      rate: 1.12,   // a bit quicker = more playful
+      pitch: 1.35,  // higher = lighter / playful
+      volume: 1
+    });
+  }
+
+  // Chrome loads voices async
+  if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = function () {
+      window.speechSynthesis.getVoices();
+    };
+  }
 
 
   /* =======================================================
@@ -339,7 +416,7 @@ document.addEventListener("DOMContentLoaded", function () {
           opacity: 0,
 
           transform:
-            "translate3d(0,20px,0) scale(.96)"
+            "translate3d(0,28px,0) scale(.94)"
         },
 
         {
@@ -350,8 +427,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       ],
       {
-        duration: 220,
-        easing: "ease-out"
+        duration: 380,
+        easing: "cubic-bezier(0.22, 1, 0.36, 1)"
       }
     );
   }
@@ -675,6 +752,22 @@ document.addEventListener("DOMContentLoaded", function () {
         "swiping-right"
       );
     }
+
+    /* Arcade joystick visual tilt */
+    if (joystickStick) {
+      joystickStick.classList.remove(
+        "tilt-up", "tilt-left", "tilt-right", "tilt-down"
+      );
+      if (direction === "up") {
+        joystickStick.classList.add("tilt-up");
+      } else if (direction === "left") {
+        joystickStick.classList.add("tilt-left");
+      } else if (direction === "right") {
+        joystickStick.classList.add("tilt-right");
+      } else if (direction === "down") {
+        joystickStick.classList.add("tilt-down");
+      }
+    }
   }
 
 
@@ -719,6 +812,12 @@ document.addEventListener("DOMContentLoaded", function () {
       "swiping-left",
       "swiping-right"
     );
+
+    if (joystickStick) {
+      joystickStick.classList.remove(
+        "tilt-up", "tilt-left", "tilt-right", "tilt-down"
+      );
+    }
   }
 
 
@@ -830,6 +929,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
+      Speak: "Have breakfast", "Drink tea", "Eat salad"
+    */
+
+    const pair =
+      state.questions[state.currentIndex];
+
+    if (pair) {
+      speakPhrase(pair[0], pair[1]);
+    }
+
+
+    /*
       Feedback.
     */
 
@@ -895,7 +1006,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       resetCard();
 
-    }, 330);
+    }, 480);
   }
 
 
@@ -920,6 +1031,10 @@ document.addEventListener("DOMContentLoaded", function () {
         "wrong"
       );
     }
+
+
+    /* Playful voice */
+    speakOops();
 
 
     if (feedbackEl) {
@@ -953,7 +1068,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function returnCard() {
 
     swipeCard.style.transition =
-      "transform .3s ease";
+      "transform .42s cubic-bezier(0.22, 1, 0.36, 1)";
 
 
     swipeCard.style.transform =
@@ -968,7 +1083,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       clearTargetHighlights();
 
-    }, 300);
+    }, 420);
   }
 
 
@@ -1388,6 +1503,129 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   );
+
+
+  /* =======================================================
+     JOYSTICK — fully interactive (drag to send card)
+     ======================================================= */
+
+  const joystickBase = document.querySelector(".joystick-base");
+  let joyActive = false;
+  let joyStartX = 0;
+  let joyStartY = 0;
+  const JOY_MAX = 38;       // max pixel travel of the stick (matches larger joystick)
+  const JOY_THRESHOLD = 18; // minimum travel to register a direction
+
+  function resetJoystickVisual() {
+    if (!joystickStick) return;
+    joystickStick.style.transition = "transform .22s cubic-bezier(0.22, 1, 0.36, 1)";
+    joystickStick.style.transform = "translate(-50%, -50%)";
+    joystickStick.classList.remove(
+      "tilt-up", "tilt-left", "tilt-right", "tilt-down"
+    );
+  }
+
+  function onJoyDown(e) {
+    if (!state || state.done || state.answering || state.dragging) {
+      return;
+    }
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    joyActive = true;
+    joyStartX = e.clientX;
+    joyStartY = e.clientY;
+
+    try {
+      (joystickBase || joystickStick).setPointerCapture(e.pointerId);
+    } catch (err) {}
+  }
+
+  function onJoyMove(e) {
+    if (!joyActive || !state || state.done) return;
+
+    e.preventDefault();
+
+    let dx = e.clientX - joyStartX;
+    let dy = e.clientY - joyStartY;
+
+    // Clamp to circle
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > JOY_MAX) {
+      dx = (dx / dist) * JOY_MAX;
+      dy = (dy / dist) * JOY_MAX;
+    }
+
+    // Highlight matching target while dragging (targets only)
+    if (dist > 10) {
+      highlightDirection(dx, dy);
+    } else {
+      clearTargetHighlights();
+    }
+
+    // Always keep stick under the finger (override any class-based tilt)
+    if (joystickStick) {
+      joystickStick.classList.remove(
+        "tilt-up", "tilt-left", "tilt-right", "tilt-down"
+      );
+      joystickStick.style.transition = "none";
+      joystickStick.style.transform =
+        "translate(calc(-50% + " + dx + "px), calc(-50% + " + dy + "px))";
+    }
+  }
+
+  function onJoyUp(e) {
+    if (!joyActive) return;
+
+    e.preventDefault();
+    joyActive = false;
+
+    try {
+      (joystickBase || joystickStick).releasePointerCapture(e.pointerId);
+    } catch (err) {}
+
+    const dx = e.clientX - joyStartX;
+    const dy = e.clientY - joyStartY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    clearTargetHighlights();
+    resetJoystickVisual();
+
+    if (dist < JOY_THRESHOLD) {
+      return; // not far enough — ignore
+    }
+
+    if (!state || state.done || state.answering) {
+      return;
+    }
+
+    const direction = getDirection(dx, dy);
+
+    // Only allow the three valid directions
+    if (direction === "up" || direction === "left" || direction === "right") {
+      attemptSwipe(direction);
+    }
+  }
+
+  function onJoyCancel() {
+    joyActive = false;
+    clearTargetHighlights();
+    resetJoystickVisual();
+  }
+
+  if (joystickBase) {
+    joystickBase.addEventListener("pointerdown", onJoyDown);
+    joystickBase.addEventListener("pointermove", onJoyMove);
+    joystickBase.addEventListener("pointerup", onJoyUp);
+    joystickBase.addEventListener("pointercancel", onJoyCancel);
+  } else if (joystickStick) {
+    joystickStick.addEventListener("pointerdown", onJoyDown);
+    joystickStick.addEventListener("pointermove", onJoyMove);
+    joystickStick.addEventListener("pointerup", onJoyUp);
+    joystickStick.addEventListener("pointercancel", onJoyCancel);
+  }
 
 
   /* =======================================================
