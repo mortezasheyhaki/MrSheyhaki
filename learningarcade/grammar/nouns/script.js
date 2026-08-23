@@ -218,7 +218,7 @@
         }
         gameOverModal.style.display = "none";
         gameScreen.style.display = "none";
-        homeScreen.style.display = "block";
+        homeScreen.style.display = "flex";
         window.location.href = "../";
       };
     }
@@ -228,7 +228,7 @@
         gameMode = modeSelect ? modeSelect.value : "rush";
         homeScreen.style.display = "none";
         gameOverModal.style.display = "none";
-        gameScreen.style.display = "block";
+        gameScreen.style.display = "flex";
         startGame();
       };
     }
@@ -236,7 +236,7 @@
     if (restartBtn) {
       restartBtn.onclick = () => {
         gameOverModal.style.display = "none";
-        gameScreen.style.display = "block";
+        gameScreen.style.display = "flex";
         startGame();
       };
     }
@@ -334,7 +334,18 @@
       const start = (currentRound - 1) * PAIRS_PER_ROUND;
       boardPairs = deck.slice(start, start + PAIRS_PER_ROUND);
 
-      // If not enough pairs left, pad isn't needed — end when board cleared
+      // Always aim for 5 pairs; if short, pull extras from earlier deck (no dups on board)
+      if (boardPairs.length < PAIRS_PER_ROUND && deck.length) {
+        const have = new Set(boardPairs.map((p) => p.id));
+        for (const p of deck) {
+          if (boardPairs.length >= PAIRS_PER_ROUND) break;
+          if (!have.has(p.id)) {
+            boardPairs.push(p);
+            have.add(p.id);
+          }
+        }
+      }
+
       if (!boardPairs.length) {
         endGame(true);
         return;
