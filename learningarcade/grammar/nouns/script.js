@@ -1,7 +1,7 @@
 /* =========================================================
-   SINGULAR & PLURAL — MATCH RUSH
+   SINGULAR & PLURAL — MATCH (5 vs 5, stay when matched)
+   3 rounds × 5 pairs = 15 matches
    Mr. Sheyhaki's Learning Arcade
-   Scoped Game & Cabinet Logic
 ========================================================= */
 
 (function () {
@@ -16,7 +16,7 @@
     if (initialized) return;
     initialized = true;
 
-    /* NOUNS DATA */
+    /* NOUNS DATA — at least 15 pairs for 3 rounds */
     const NOUNS = [
       { singular: "a cell phone", plural: "cell phones" },
       { singular: "a watch", plural: "watches" },
@@ -42,11 +42,14 @@
       { singular: "a person", plural: "people" }
     ];
 
-    const ACTIVE_PAIRS = 5;
+    const PAIRS_PER_ROUND = 5;
+    const TOTAL_ROUNDS = 3;
+    const TOTAL_MATCHES = PAIRS_PER_ROUND * TOTAL_ROUNDS; // 15
 
     /* DOM ELEMENTS */
     const backBtn = container.querySelector("#backBtn");
     const restartBtn = container.querySelector("#restartBtn");
+    const startBtn = container.querySelector("#startBtn");
     const homeScreen = container.querySelector("#homeScreen");
     const gameScreen = container.querySelector("#gameScreen");
     const gameOverModal = container.querySelector("#gameOverModal");
@@ -57,6 +60,7 @@
     const scoreLabel = container.querySelector("#score");
     const timerLabel = container.querySelector("#timer");
     const comboLabel = container.querySelector("#combo");
+    const roundLabel = container.querySelector("#roundLabel");
     const homeHighScore = container.querySelector("#homeHighScore");
 
     const modalFinalScore = container.querySelector("#modalFinalScore");
@@ -87,8 +91,10 @@
     let isProcessingMatch = false;
     let ttsEnabled = true;
 
-    let activePairs = [];
-    let remainingPairs = [];
+    let currentRound = 1;
+    let deck = [];           // all pairs for this game (15 shuffled)
+    let boardPairs = [];     // current 5 pairs on board
+    let matchedIds = new Set(); // ids already matched this round (stay on board, muted)
 
     let selectedSingular = null;
     let selectedPlural = null;
@@ -107,7 +113,7 @@
       return array;
     }
 
-    /* SPEECH SYNTHESIS */
+    /* SPEECH */
     function speakText(text) {
       if (!ttsEnabled || !("speechSynthesis" in window)) return;
       window.speechSynthesis.cancel();
@@ -118,7 +124,7 @@
       window.speechSynthesis.speak(utterance);
     }
 
-    /* AUDIO SYNTHESIZER (WEB AUDIO API) */
+    /* AUDIO */
     let audioCtx = null;
     function getAudioCtx() {
       if (!audioCtx) {
@@ -148,93 +154,81 @@
           [523.25, 0.08, "square", 0.09],
           [659.25, 0.08, "square", 0.09],
           [783.99, 0.08, "square", 0.09],
-          [1046.5, 0.25, "triangle", 0.1]
+          [1046.5, 0.22, "triangle", 0.12]
         ],
         gameover: [
-          [330, 0.12, "square", 0.08],
-          [247, 0.14, "square", 0.08],
-          [196, 0.24, "sawtooth", 0.07]
+          [196, 0.12, "sawtooth", 0.08],
+          [147, 0.2, "square", 0.07]
+        ],
+        round: [
+          [440, 0.06, "square", 0.08],
+          [554.37, 0.08, "triangle", 0.09],
+          [659.25, 0.12, "triangle", 0.1]
         ]
       };
 
-      (patterns[soundType] || []).forEach(([freq, duration, type, volume], i) => {
-        setTimeout(() => {
-          try {
-            const ctx = getAudioCtx();
-            if (ctx.state === "suspended") ctx.resume();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, ctx.currentTime);
-            gain.gain.setValueAtTime(volume, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start();
-            osc.stop(ctx.currentTime + duration);
-          } catch (e) {
-            // Audio Context restriction silent fallback
-          }
-        }, i * 75);
-      });
+      const notes = patterns[soundType];
+      if (!notes) return;
+
+      try {
+        const ctx = getAudioCtx();
+        if (ctx.state === "suspended") ctx.resume();
+        let t = ctx.currentTime;
+        notes.forEach(([freq, dur, type, vol]) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = type;
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(vol, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + dur + 0.02);
+          t += dur * 0.85;
+        });
+      } catch (e) {}
     }
 
-    /* HIGH SCORE STORAGE */
     function highScoreKey() {
       return "singular_plural_match_high_scores";
     }
 
     function updateHighScoreDisplay() {
-      const highScores = JSON.parse(localStorage.getItem(highScoreKey()) || "{}");
-      const best = highScores[gameMode] || 0;
-      if (homeHighScore) homeHighScore.textContent = best;
+      if (!homeHighScore) return;
+      try {
+        const highScores = JSON.parse(localStorage.getItem(highScoreKey()) || "{}");
+        const best = Math.max(
+          highScores.rush || 0,
+          highScores.zen || 0,
+          highScores.streak || 0
+        );
+        homeHighScore.textContent = best;
+      } catch (e) {
+        homeHighScore.textContent = "0";
+      }
     }
 
-    /* FLOATING SCORE FEEDBACK */
-    function createFloatingFeedback(points, targetEl) {
-      if (!targetEl) return;
-      const rect = targetEl.getBoundingClientRect();
-      const popup = document.createElement("div");
-      popup.className = "floating-feedback";
-      popup.textContent = `+${points}`;
-      popup.style.left = `${rect.left + rect.width / 2}px`;
-      popup.style.top = `${rect.top}px`;
-      document.body.appendChild(popup);
-      setTimeout(() => popup.remove(), 800);
-    }
-
-    /* EVENT BINDINGS */
-    if (modeSelect) {
-      modeSelect.onchange = () => {
-        gameMode = modeSelect.value;
-        updateHighScoreDisplay();
+    /* NAV */
+    if (backBtn) {
+      backBtn.onclick = () => {
+        if (gameRunning) {
+          if (timer) clearInterval(timer);
+          gameRunning = false;
+        }
+        gameOverModal.style.display = "none";
+        gameScreen.style.display = "none";
+        homeScreen.style.display = "block";
+        window.location.href = "../";
       };
     }
 
-    if (backBtn) {
-  backBtn.onclick = () => {
-    const onHomeScreen = !gameScreen || gameScreen.style.display === "none";
-    if (onHomeScreen) {
-      window.location.href = "../";
-      return;
-    }
-    if (gameRunning) {
-      if (timer) clearInterval(timer);
-      gameRunning = false;
-      clearSelections();
-    }
-    gameScreen.style.display = "none";
-    gameScreen.classList.remove("is-active");
-    homeScreen.style.display = "flex";
-  };
-}
-
     if (startBtn) {
       startBtn.onclick = () => {
-        if (modeSelect) gameMode = modeSelect.value;
+        gameMode = modeSelect ? modeSelect.value : "rush";
         homeScreen.style.display = "none";
-        gameScreen.style.display = "flex";
-        gameScreen.classList.add("is-active");
+        gameOverModal.style.display = "none";
+        gameScreen.style.display = "block";
         startGame();
       };
     }
@@ -242,6 +236,7 @@
     if (restartBtn) {
       restartBtn.onclick = () => {
         gameOverModal.style.display = "none";
+        gameScreen.style.display = "block";
         startGame();
       };
     }
@@ -265,18 +260,20 @@
 
     if (hintBtn) {
       hintBtn.onclick = () => {
-        if (!gameRunning || isProcessingMatch || !activePairs.length) return;
-        const target = activePairs[Math.floor(Math.random() * activePairs.length)];
+        if (!gameRunning || isProcessingMatch) return;
+        const unmatched = boardPairs.filter((p) => !matchedIds.has(p.id));
+        if (!unmatched.length) return;
+        const target = unmatched[Math.floor(Math.random() * unmatched.length)];
 
         if (gameMode === "rush") {
           timeLeft = Math.max(1, timeLeft - 5);
           timerLabel.textContent = timeLeft;
         }
 
-        container.querySelectorAll("#singular .word").forEach((el) => {
+        container.querySelectorAll("#singular .word:not(.matched)").forEach((el) => {
           if (el.dataset.id === String(target.id)) el.classList.add("selected");
         });
-        container.querySelectorAll("#plural .word").forEach((el) => {
+        container.querySelectorAll("#plural .word:not(.matched)").forEach((el) => {
           if (el.dataset.id === String(target.id)) el.classList.add("selected");
         });
 
@@ -287,6 +284,7 @@
     if (shuffleBtn) {
       shuffleBtn.onclick = () => {
         if (!gameRunning || isProcessingMatch) return;
+        // Only reshuffle unmatched cards' visual order; matched stay in place conceptually
         singularOrder = [];
         pluralOrder = [];
         renderBoard(true);
@@ -294,7 +292,7 @@
       };
     }
 
-    /* GAME LOOP & MANAGEMENT */
+    /* START / ROUNDS */
     function startGame() {
       score = 0;
       combo = 0;
@@ -303,10 +301,13 @@
       correctMatches = 0;
       mistakes = [];
       isProcessingMatch = false;
+      currentRound = 1;
+      matchedIds = new Set();
 
       timeLeft = gameMode === "rush" ? 90 : 0;
       scoreLabel.textContent = "0";
       comboLabel.textContent = "0x";
+      if (roundLabel) roundLabel.textContent = "1";
       timerLabel.textContent = gameMode === "zen" ? "∞" : timeLeft;
 
       if (timer) clearInterval(timer);
@@ -316,22 +317,34 @@
         timer = setInterval(updateTimer, 1000);
       }
 
-      remainingPairs = NOUNS.map((noun, index) => ({
+      // Build deck of exactly TOTAL_MATCHES pairs (or all if fewer)
+      const pool = NOUNS.map((noun, index) => ({
         id: index + 1,
         singular: noun.singular,
         plural: noun.plural
       }));
+      shuffle(pool);
+      deck = pool.slice(0, Math.min(TOTAL_MATCHES, pool.length));
 
-      shuffle(remainingPairs);
-      activePairs = [];
+      loadRound();
+    }
 
-      for (let i = 0; i < ACTIVE_PAIRS; i++) {
-        addRandomPair();
+    function loadRound() {
+      matchedIds = new Set();
+      const start = (currentRound - 1) * PAIRS_PER_ROUND;
+      boardPairs = deck.slice(start, start + PAIRS_PER_ROUND);
+
+      // If not enough pairs left, pad isn't needed — end when board cleared
+      if (!boardPairs.length) {
+        endGame(true);
+        return;
       }
 
+      if (roundLabel) roundLabel.textContent = String(currentRound);
       singularOrder = [];
       pluralOrder = [];
       renderBoard(true);
+      clearSelections();
     }
 
     function updateTimer() {
@@ -341,7 +354,7 @@
       if (timeLeft <= 0) endGame(false);
     }
 
-    function endGame(isVictory = false) {
+    function endGame(isVictory) {
       if (timer) clearInterval(timer);
       gameRunning = false;
       clearSelections();
@@ -366,7 +379,7 @@
       const modalTitle = gameOverModal.querySelector("h2");
       if (modalTitle) {
         modalTitle.textContent = isVictory
-          ? "🏆 Board Cleared!"
+          ? "🏆 All Rounds Cleared!"
           : gameMode === "streak"
           ? "💥 Streak Broken!"
           : "⏰ Time's Up!";
@@ -380,6 +393,27 @@
       accuracyStat.textContent = accuracy + "%";
       maxComboStat.textContent = maxCombo + "x";
 
+      // Stars for Grammar index cards (0–3, best kept)
+      (function saveGameStars() {
+        var stars = accuracy >= 90 ? 3 : accuracy >= 70 ? 2 : accuracy >= 40 ? 1 : 0;
+        // Bonus: full clear of 15 matches gets at least 2 stars
+        if (isVictory && correctMatches >= TOTAL_MATCHES && stars < 2) stars = 2;
+        if (isVictory && correctMatches >= TOTAL_MATCHES && accuracy >= 80) stars = 3;
+        var data = {};
+        try {
+          data = JSON.parse(localStorage.getItem("laGameStars") || "{}") || {};
+        } catch (e) {
+          data = {};
+        }
+        var prev = Number(data["nouns"] || 0);
+        if (stars > prev) {
+          data["nouns"] = stars;
+          try {
+            localStorage.setItem("laGameStars", JSON.stringify(data));
+          } catch (e) {}
+        }
+      })();
+
       if (mistakeListDiv) {
         mistakeListDiv.innerHTML = "";
         if (!mistakes.length) {
@@ -392,7 +426,8 @@
             seen.add(key);
             const row = document.createElement("div");
             row.className = "mistake-item";
-            row.innerHTML = `<strong>${mistake.singular}</strong> → <span>${mistake.plural}</span>`;
+            row.innerHTML =
+              "<strong>" + mistake.singular + "</strong> → <span>" + mistake.plural + "</span>";
             mistakeListDiv.appendChild(row);
           });
         }
@@ -400,13 +435,6 @@
 
       gameOverModal.style.display = "flex";
       updateHighScoreDisplay();
-    }
-
-    function addRandomPair() {
-      if (!remainingPairs.length) return;
-      const index = Math.floor(Math.random() * remainingPairs.length);
-      const pair = remainingPairs.splice(index, 1)[0];
-      activePairs.push(pair);
     }
 
     function arraysAligned(a, b) {
@@ -418,7 +446,7 @@
     }
 
     function createBoardOrders(fullShuffle) {
-      const ids = activePairs.map((pair) => pair.id);
+      const ids = boardPairs.map((pair) => pair.id);
 
       if (fullShuffle || !singularOrder.length) {
         singularOrder = ids.slice();
@@ -429,18 +457,6 @@
         const live = new Set(ids);
         singularOrder = singularOrder.filter((id) => live.has(id));
         pluralOrder = pluralOrder.filter((id) => live.has(id));
-
-        const newIds = ids.filter((id) => !singularOrder.includes(id));
-        newIds.forEach((id) => {
-          const singularIndex = Math.floor(Math.random() * (singularOrder.length + 1));
-          singularOrder.splice(singularIndex, 0, id);
-
-          let pluralIndex = Math.floor(Math.random() * (pluralOrder.length + 1));
-          if (pluralOrder[pluralIndex] === id && pluralOrder.length > 0) {
-            pluralIndex = (pluralIndex + 1 + Math.floor(Math.random() * Math.max(1, pluralOrder.length))) % (pluralOrder.length + 1);
-          }
-          pluralOrder.splice(pluralIndex, 0, id);
-        });
       }
 
       if (singularOrder.length > 1) {
@@ -455,10 +471,10 @@
       }
     }
 
-    function renderBoard(fullShuffle = false) {
+    function renderBoard(fullShuffle) {
       createBoardOrders(fullShuffle);
       const byId = {};
-      activePairs.forEach((pair) => {
+      boardPairs.forEach((pair) => {
         byId[pair.id] = pair;
       });
 
@@ -468,49 +484,61 @@
       singularOrder.forEach((id) => {
         const pair = byId[id];
         if (!pair) return;
+        const isMatched = matchedIds.has(pair.id);
         const div = document.createElement("div");
-        div.className = "word";
+        div.className = "word" + (isMatched ? " matched" : "");
         div.dataset.id = pair.id;
         div.textContent = pair.singular;
         div.setAttribute("role", "button");
-        div.setAttribute("tabindex", "0");
-        div.setAttribute("aria-label", `Singular: ${pair.singular}`);
+        div.setAttribute("tabindex", isMatched ? "-1" : "0");
+        div.setAttribute(
+          "aria-label",
+          (isMatched ? "Matched singular: " : "Singular: ") + pair.singular
+        );
 
-        div.onclick = () => selectSingular(div, pair);
-        div.onkeydown = (event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            selectSingular(div, pair);
-          }
-        };
+        if (!isMatched) {
+          div.onclick = () => selectSingular(div, pair);
+          div.onkeydown = (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              selectSingular(div, pair);
+            }
+          };
+        }
         singularDiv.appendChild(div);
       });
 
       pluralOrder.forEach((id) => {
         const pair = byId[id];
         if (!pair) return;
+        const isMatched = matchedIds.has(pair.id);
         const div = document.createElement("div");
-        div.className = "word";
+        div.className = "word" + (isMatched ? " matched" : "");
         div.dataset.id = pair.id;
         div.textContent = pair.plural;
         div.setAttribute("role", "button");
-        div.setAttribute("tabindex", "0");
-        div.setAttribute("aria-label", `Plural: ${pair.plural}`);
+        div.setAttribute("tabindex", isMatched ? "-1" : "0");
+        div.setAttribute(
+          "aria-label",
+          (isMatched ? "Matched plural: " : "Plural: ") + pair.plural
+        );
 
-        div.onclick = () => selectPlural(div, pair);
-        div.onkeydown = (event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            selectPlural(div, pair);
-          }
-        };
+        if (!isMatched) {
+          div.onclick = () => selectPlural(div, pair);
+          div.onkeydown = (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              selectPlural(div, pair);
+            }
+          };
+        }
         pluralDiv.appendChild(div);
       });
     }
 
-    /* MATCH SELECTION LOGIC */
+    /* MATCH SELECTION */
     function selectSingular(element, pair) {
-      if (!gameRunning || isProcessingMatch) return;
+      if (!gameRunning || isProcessingMatch || matchedIds.has(pair.id)) return;
       speakText(pair.singular);
 
       if (selectedSingularElement) {
@@ -525,7 +553,7 @@
     }
 
     function selectPlural(element, pair) {
-      if (!gameRunning || isProcessingMatch) return;
+      if (!gameRunning || isProcessingMatch || matchedIds.has(pair.id)) return;
       speakText(pair.plural);
 
       if (selectedPluralElement) {
@@ -561,26 +589,47 @@
         if (selectedSingularElement) selectedSingularElement.classList.add("correct");
         if (selectedPluralElement) selectedPluralElement.classList.add("correct");
 
+        const matchedId = selectedSingular.id;
+
         setTimeout(() => {
-          if (selectedSingularElement) selectedSingularElement.classList.add("vanish");
-          if (selectedPluralElement) selectedPluralElement.classList.add("vanish");
+          // Keep cards on board — mark as matched with fade (no remove)
+          matchedIds.add(matchedId);
 
-          setTimeout(() => {
-            activePairs = activePairs.filter((p) => p.id !== selectedSingular.id);
+          // Apply matched class on the live elements so fade animation plays
+          if (selectedSingularElement) {
+            selectedSingularElement.classList.remove("selected");
+            selectedSingularElement.classList.add("matched");
+            selectedSingularElement.setAttribute("tabindex", "-1");
+            selectedSingularElement.onclick = null;
+            selectedSingularElement.onkeydown = null;
+          }
+          if (selectedPluralElement) {
+            selectedPluralElement.classList.remove("selected");
+            selectedPluralElement.classList.add("matched");
+            selectedPluralElement.setAttribute("tabindex", "-1");
+            selectedPluralElement.onclick = null;
+            selectedPluralElement.onkeydown = null;
+          }
 
-            if (remainingPairs.length > 0) {
-              addRandomPair();
-            }
+          // Clear selection refs without stripping matched/correct classes
+          selectedSingular = null;
+          selectedPlural = null;
+          selectedSingularElement = null;
+          selectedPluralElement = null;
+          isProcessingMatch = false;
 
-            if (activePairs.length === 0 && remainingPairs.length === 0) {
-              endGame(true);
+          // All 5 matched this round?
+          if (matchedIds.size >= boardPairs.length) {
+            if (currentRound >= TOTAL_ROUNDS || correctMatches >= TOTAL_MATCHES) {
+              setTimeout(() => endGame(true), 650);
             } else {
-              renderBoard(false);
-              clearSelections();
+              // Next round after fade settles
+              currentRound++;
+              playSound("round");
+              setTimeout(() => loadRound(), 700);
             }
-            isProcessingMatch = false;
-          }, 220);
-        }, 280);
+          }
+        }, 320);
       } else {
         isProcessingMatch = true;
         mistakes.push(selectedSingular);
@@ -615,6 +664,19 @@
       selectedPlural = null;
       selectedSingularElement = null;
       selectedPluralElement = null;
+    }
+
+    function createFloatingFeedback(points, el) {
+      if (!el) return;
+      const float = document.createElement("div");
+      float.className = "float-score";
+      float.textContent = "+" + points;
+      const rect = el.getBoundingClientRect();
+      const parentRect = container.getBoundingClientRect();
+      float.style.left = rect.left - parentRect.left + rect.width / 2 + "px";
+      float.style.top = rect.top - parentRect.top + "px";
+      container.appendChild(float);
+      setTimeout(() => float.remove(), 900);
     }
 
     updateHighScoreDisplay();

@@ -3362,6 +3362,21 @@ function finishPractice() {
         state.correct * 10
     );
 
+    // Stars for Grammar index (based on this practice accuracy)
+    (function saveGameStars() {
+        var total = state.questions.length || 1;
+        var acc = Math.round((state.correct / total) * 100);
+        var stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 40 ? 1 : 0;
+        var data = {};
+        try {
+            data = JSON.parse(localStorage.getItem("laGameStars") || "{}") || {};
+        } catch (e) { data = {}; }
+        var prev = Number(data["simple-present"] || 0);
+        if (stars > prev) {
+            data["simple-present"] = stars;
+            try { localStorage.setItem("laGameStars", JSON.stringify(data)); } catch (e) {}
+        }
+    })();
 
     updateMenuProgress();
 
@@ -3423,6 +3438,21 @@ function finishFinalMixed() {
         state.correct * 10
     );
 
+    // Stars for Grammar index (final mix counts higher)
+    (function saveGameStars() {
+        var total = state.questions.length || 1;
+        var acc = Math.round((state.correct / total) * 100);
+        var stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 40 ? 1 : 0;
+        var data = {};
+        try {
+            data = JSON.parse(localStorage.getItem("laGameStars") || "{}") || {};
+        } catch (e) { data = {}; }
+        var prev = Number(data["simple-present"] || 0);
+        if (stars > prev) {
+            data["simple-present"] = stars;
+            try { localStorage.setItem("laGameStars", JSON.stringify(data)); } catch (e) {}
+        }
+    })();
 
     renderHome();
 

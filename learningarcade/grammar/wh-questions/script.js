@@ -269,6 +269,18 @@ document.addEventListener('DOMContentLoaded', () => {
     endScreen.hidden = false;
     finalScore.textContent = score;
     finalStreak.textContent = streak;
+
+    // Stars for Be Verbs hub (0–3)
+    (function saveGameStars() {
+      var stars = score >= 1000 ? 3 : score >= 600 ? 2 : score >= 200 ? 1 : 0;
+      var data = {};
+      try { data = JSON.parse(localStorage.getItem("laGameStars") || "{}") || {}; } catch (e) { data = {}; }
+      var prev = Number(data["be-verbs"] || 0);
+      if (stars > prev) {
+        data["be-verbs"] = stars;
+        try { localStorage.setItem("laGameStars", JSON.stringify(data)); } catch (e) {}
+      }
+    })();
   }
 
   startBtn.addEventListener('click', startGame);

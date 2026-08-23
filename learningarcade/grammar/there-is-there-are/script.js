@@ -1089,6 +1089,20 @@ function finishBattle() {
         xp
     );
 
+    // Stars for Grammar index cards (0–3, best kept)
+    (function saveGameStars() {
+        var stars = accuracy >= 90 ? 3 : accuracy >= 70 ? 2 : accuracy >= 40 ? 1 : 0;
+        var data = {};
+        try {
+            data = JSON.parse(localStorage.getItem("laGameStars") || "{}") || {};
+        } catch (e) { data = {}; }
+        var prev = Number(data["there-is-there-are"] || 0);
+        if (stars > prev) {
+            data["there-is-there-are"] = stars;
+            try { localStorage.setItem("laGameStars", JSON.stringify(data)); } catch (e) {}
+        }
+    })();
+
     showGrammarBackButton();
 
 

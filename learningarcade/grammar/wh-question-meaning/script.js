@@ -84,6 +84,21 @@ document.addEventListener("DOMContentLoaded", () => {
     $("finalScore").textContent = score;
     $("finalStreak").textContent = streak;
 
+    // Stars for Be Verbs hub (0–3)
+    (function saveGameStars() {
+      var total = (typeof rounds !== "undefined" && rounds.length) ? rounds.length : 12;
+      var maxScore = total * 100;
+      var acc = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+      var stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 40 ? 1 : 0;
+      var data = {};
+      try { data = JSON.parse(localStorage.getItem("laGameStars") || "{}") || {}; } catch (e) { data = {}; }
+      var prev = Number(data["be-verbs"] || 0);
+      if (stars > prev) {
+        data["be-verbs"] = stars;
+        try { localStorage.setItem("laGameStars", JSON.stringify(data)); } catch (e) {}
+      }
+    })();
+
     gameScreen.classList.add("hidden");
     endScreen.classList.remove("hidden");
     document.body.classList.remove("playing");

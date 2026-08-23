@@ -176,3 +176,28 @@
     setYear();
   }
 })();
+
+/* Re-parent floating nav to <body> so position:fixed is never broken by ancestor transform/filter */
+(function () {
+  function pinNavToBody() {
+    var nav = document.querySelector(".arcade-nav");
+    if (!nav) return;
+    if (nav.parentElement !== document.body) {
+      document.body.appendChild(nav);
+    }
+    nav.style.setProperty("position", "fixed", "important");
+    nav.style.setProperty("top", "auto", "important");
+    nav.style.setProperty("bottom", "max(12px, env(safe-area-inset-bottom, 0px))", "important");
+    nav.style.setProperty("left", "50%", "important");
+    nav.style.setProperty("right", "auto", "important");
+    nav.style.setProperty("transform", "translateX(-50%)", "important");
+    nav.style.setProperty("z-index", "2147483000", "important");
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", pinNavToBody);
+  } else {
+    pinNavToBody();
+  }
+  window.addEventListener("load", pinNavToBody);
+})();
+

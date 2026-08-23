@@ -1279,6 +1279,25 @@ function finishBattle() {
         xp
     );
 
+    // Stars for Grammar index cards (0–3, best score kept)
+    (function saveGameStars() {
+        var stars = accuracy >= 90 ? 3 : accuracy >= 70 ? 2 : accuracy >= 40 ? 1 : 0;
+        var data = {};
+        try {
+            data = JSON.parse(localStorage.getItem("laGameStars") || "{}") || {};
+        } catch (e) {
+            data = {};
+        }
+        // be-verbs hub aggregates BE + WH games; store under be-verbs and be
+        var prevBe = Number(data["be"] || 0);
+        var prevHub = Number(data["be-verbs"] || 0);
+        if (stars > prevBe) data["be"] = stars;
+        if (stars > prevHub) data["be-verbs"] = Math.max(prevHub, stars);
+        try {
+            localStorage.setItem("laGameStars", JSON.stringify(data));
+        } catch (e) {}
+    })();
+
     showGrammarBackButton();
 
 

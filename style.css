@@ -76,6 +76,7 @@ a {
    FLOATING ARCADE NAV (from Learning Arcade)
 ===================================================== */
 
+/* Floating nav — fixed at BOTTOM of viewport (always visible while scrolling, not on games) */
 .arcade-header-bar {
   position: relative;
   z-index: 100;
@@ -83,41 +84,47 @@ a {
   pointer-events: none;
 }
 
-/* Floating nav — fixed at BOTTOM while scrolling (all pages except games) */
 .arcade-nav {
   position: fixed !important;
   top: auto !important;
-  bottom: max(14px, env(safe-area-inset-bottom, 0px)) !important;
+  bottom: max(12px, env(safe-area-inset-bottom, 0px)) !important;
   left: 50% !important;
   right: auto !important;
   transform: translateX(-50%) scale(1);
   z-index: 9999 !important;
-  display: flex;
+  display: flex !important;
   align-items: center;
   gap: 6px;
   padding: 7px;
   border: 1px solid rgba(255,255,255,0.18);
   border-radius: 15px;
-  background: rgba(8,10,20,0.78);
+  background: rgba(8,10,20,0.82);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   box-shadow: 0 12px 35px rgba(0,0,0,0.30), 0 0 0 1px rgba(255,255,255,0.04);
   white-space: nowrap;
   pointer-events: auto;
   max-width: min(560px, calc(100vw - 24px));
+  width: auto;
   transition: transform 0.28s ease, opacity 0.28s ease, background 0.28s ease, box-shadow 0.28s ease;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .arcade-nav.nav-scrolled {
-  transform: translateX(-50%) scale(0.94);
-  opacity: 0.92;
-  background: rgba(5,7,18,0.82);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  transform: translateX(-50%) scale(0.96);
+  opacity: 0.95 !important;
+  background: rgba(5,7,18,0.88);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.28);
 }
 
-/* Never show bottom nav on game cabinet pages */
+/* Hide floating nav on game pages */
 body.cabinet-body .arcade-header-bar,
-body.cabinet-body .arcade-nav {
+body.cabinet-body .arcade-nav,
+body.wh-body .arcade-header-bar,
+body.wh-body .arcade-nav,
+body.light-mode .arcade-header-bar,
+body.light-mode .arcade-nav {
   display: none !important;
 }
 
@@ -155,49 +162,43 @@ body.cabinet-body .arcade-nav {
   content: "";
   position: absolute;
   left: 50%;
-  top: -5px;
-  bottom: auto;
-  width: 16px;
-  height: 2px;
-  border-radius: 10px;
-  background: #ffffff;
+  top: -3px;
   transform: translateX(-50%);
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.85);
 }
 
-/* Theme button inside floating nav */
 .arcade-nav .theme-toggle {
-  width: 38px;
-  height: 38px;
-  min-height: 38px;
-  padding: 0;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 10px;
-  background: rgba(255,255,255,0.08);
-  color: #ffffff;
-  font-size: 16px;
-  cursor: pointer;
-  display: inline-flex !important;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0;
-  transition: all 0.2s ease;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.08);
+  color: #f1f5f9;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .arcade-nav .theme-toggle:hover {
-  transform: translateY(-2px) rotate(8deg);
   background: rgba(255,255,255,0.14);
 }
 
 .arcade-nav .theme-toggle span {
-  display: none !important; /* emoji only inside the pill */
+  display: none;
 }
 
-/* Light theme adjustments for floating nav */
+/* Light theme pill */
 html[data-theme="light"] .arcade-nav,
 html:not([data-theme="dark"]) .arcade-nav {
-  background: rgba(255,255,255,0.82);
-  border-color: rgba(20,25,45,0.12);
-  box-shadow: 0 12px 35px rgba(15,23,42,0.14);
+  background: rgba(255,255,255,0.90);
+  border-color: rgba(15,23,42,0.10);
+  box-shadow: 0 12px 32px rgba(15,23,42,0.12), 0 0 0 1px rgba(15,23,42,0.04);
 }
 
 html[data-theme="light"] .arcade-nav .nav-link,
@@ -229,16 +230,10 @@ html:not([data-theme="dark"]) .arcade-nav .theme-toggle {
 /* Hide old site-header if any leftover */
 .site-header { display: none !important; }
 
-/* Space for floating bottom nav */
-body:not(.cabinet-body) {
+/* Space for fixed BOTTOM nav — content never sits under it */
+body:not(.cabinet-body):not(.wh-body):not(.light-mode) {
   padding-top: 16px !important;
   padding-bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
-}
-@media (max-width: 700px) {
-  body:not(.cabinet-body) {
-    padding-top: 12px !important;
-    padding-bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
-  }
 }
 
 /* Desktop: show text labels */
@@ -251,12 +246,17 @@ body:not(.cabinet-body) {
   display: inline;
 }
 
-/* Mobile: bottom icon-only floating nav */
+/* Mobile: bottom icon-only floating nav (phone tab bar) */
 @media (max-width: 700px) {
+  body:not(.cabinet-body):not(.wh-body):not(.light-mode) {
+    padding-top: 12px !important;
+    padding-bottom: max(92px, calc(76px + env(safe-area-inset-bottom, 0px))) !important;
+  }
+
   .arcade-nav {
-    top: auto;
-    bottom: max(10px, env(safe-area-inset-bottom, 0px));
-    left: 50%;
+    top: auto !important;
+    bottom: max(10px, env(safe-area-inset-bottom, 0px)) !important;
+    left: 50% !important;
     width: calc(100% - 16px);
     max-width: 420px;
     padding: 6px;
@@ -297,6 +297,7 @@ body:not(.cabinet-body) {
     border-radius: 10px;
   }
 }
+
 
 
 /* =========================================
