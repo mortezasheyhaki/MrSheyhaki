@@ -117,17 +117,55 @@ body {
   line-height: 1.7;
 }
 
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+/* Match site-wide back button (arcade / grammar pages) */
+.back-link,
+.back-button,
+a.back-link,
+a.back-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
   margin-bottom: 17px;
-  color: #697285;
-  font-size: 12px;
-  font-weight: 750;
-  text-decoration: none;
+  min-height: 40px !important;
+  padding: 10px 14px !important;
+  border-radius: 12px !important;
+  border: 1px solid #e7e9ef !important;
+  background: #ffffff !important;
+  color: #202636 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+  box-shadow: 0 2px 10px rgba(32, 38, 54, 0.06) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease !important;
+  cursor: pointer;
 }
-.back-link:hover { color: var(--purple); }
+.back-link:hover,
+.back-button:hover,
+a.back-link:hover,
+a.back-button:hover {
+  transform: translateY(-1px) !important;
+  border-color: #c4b5fd !important;
+  background: #ffffff !important;
+  color: #202636 !important;
+  box-shadow: 0 6px 16px rgba(124, 92, 255, 0.12) !important;
+}
+html[data-theme="dark"] .back-link,
+html[data-theme="dark"] .back-button,
+html[data-theme="dark"] a.back-link,
+html[data-theme="dark"] a.back-button {
+  background: #1a1f2c !important;
+  border-color: #2e3448 !important;
+  color: #f4f6fb !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25) !important;
+}
+html[data-theme="dark"] .back-link:hover,
+html[data-theme="dark"] .back-button:hover {
+  border-color: #7c5cff !important;
+  background: #1a1f2c !important;
+  box-shadow: 0 6px 16px rgba(124, 92, 255, 0.2) !important;
+}
 
 /* ---------- UNIT HERO (big unit number) ---------- */
 
@@ -877,21 +915,7 @@ html[data-theme="dark"] .section-heading p {
   color: #929bb8;
 }
 
-html[data-theme="dark"] .back-link {
-  color: #c5cbe0;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 12px;
-  padding: 8px 14px;
-  text-decoration: none;
-  display: inline-flex;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-html[data-theme="dark"] .back-link:hover {
-  background: rgba(255,255,255,0.11);
-}
+/* dark back-link handled with unified back button rules */
 
 html[data-theme="dark"] .level-card {
   background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
@@ -921,37 +945,7 @@ html[data-theme="dark"] .theme-toggle {
 }
 
 
-/* BACK BUTTON UNIFIED */
-.back-link,
-.back-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 16px;
-  border-radius: 12px;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 700;
-  color: #252b40;
-  background: #eef1f8;
-  border: 1px solid #dfe3ee;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-.back-link:hover,
-.back-button:hover {
-  transform: translateX(-3px);
-  background: #e4e8f2;
-}
-html[data-theme="dark"] .back-link,
-html[data-theme="dark"] .back-button {
-  color: #dbe2ff;
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.08);
-}
-html[data-theme="dark"] .back-link:hover,
-html[data-theme="dark"] .back-button:hover {
-  background: rgba(255,255,255,0.11);
-}
+/* BACK BUTTON — handled above (matches site-wide pill style) */
 
 
 /* Fix: ensure download/play remain clickable and visible */
@@ -1092,4 +1086,777 @@ html[data-theme="dark"] .back-button:hover {
 .card-link:hover {
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(124, 108, 240, 0.4);
+}
+
+/* =========================================================
+   RESOURCES HUB — polished to match site arcade look
+========================================================= */
+
+body {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59, 130, 246, 0.1), transparent 55%),
+    radial-gradient(ellipse 40% 35% at 100% 20%, rgba(34, 197, 94, 0.06), transparent 50%),
+    #f8fafc;
+  min-height: 100dvh;
+}
+
+html[data-theme="dark"] body {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59, 130, 246, 0.14), transparent 55%),
+    #070b16;
+}
+
+.arcade-intro {
+  padding: 36px 0 20px;
+}
+
+.arcade-intro .eyebrow {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+}
+
+html[data-theme="dark"] .arcade-intro .eyebrow {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.arcade-intro h1 {
+  margin: 14px 0 10px;
+  font-size: clamp(28px, 4.5vw, 44px);
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.section-heading {
+  margin-top: 28px;
+  margin-bottom: 14px;
+}
+
+.section-heading h2 {
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: -0.3px;
+}
+
+/* Restore proper card layout (overrides earlier display:block conflict) */
+.resource-grid {
+  width: min(calc(100% - 48px), var(--container));
+  margin: 0 auto 36px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+a.resource-card,
+.resource-card {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  gap: 16px !important;
+  min-height: 160px;
+  padding: 22px 20px !important;
+  border-radius: 20px !important;
+  border: 2px solid rgba(59, 130, 246, 0.22) !important;
+  background: linear-gradient(165deg, #eff6ff 0%, #ffffff 55%) !important;
+  box-shadow: 0 10px 28px rgba(59, 130, 246, 0.08) !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+  cursor: pointer;
+}
+
+a.resource-card:hover,
+.resource-card:hover {
+  transform: translateY(-4px) !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 16px 36px rgba(59, 130, 246, 0.16) !important;
+}
+
+.resource-card .resource-icon {
+  flex: 0 0 52px !important;
+  width: 52px !important;
+  height: 52px !important;
+  margin: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 14px !important;
+  background: rgba(59, 130, 246, 0.12) !important;
+  font-size: 24px !important;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.15);
+}
+
+.resource-card > div {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.resource-card h3 {
+  margin: 0 0 6px !important;
+  font-size: 17px !important;
+  font-weight: 850 !important;
+  color: var(--text);
+}
+
+.resource-card p {
+  margin: 0 0 12px !important;
+  color: var(--muted) !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+}
+
+.resource-card .card-tag {
+  display: inline-flex !important;
+  margin: 0 0 10px !important;
+  padding: 5px 10px !important;
+  border-radius: 8px !important;
+  background: rgba(59, 130, 246, 0.12) !important;
+  color: #2563eb !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+}
+
+.resource-card .card-link {
+  margin-top: auto !important;
+  padding: 10px 16px !important;
+  border-radius: 12px !important;
+  background: #3b82f6 !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 6px 14px rgba(59, 130, 246, 0.3) !important;
+  align-self: flex-start !important;
+}
+
+.resource-card:hover .card-link {
+  background: #2563eb !important;
+}
+
+/* Worksheets card — green accent */
+.resource-card--worksheets {
+  border-color: rgba(34, 197, 94, 0.28) !important;
+  background: linear-gradient(165deg, #f0fdf4 0%, #ffffff 55%) !important;
+  box-shadow: 0 10px 28px rgba(34, 197, 94, 0.08) !important;
+}
+
+.resource-card--worksheets:hover {
+  border-color: #22c55e !important;
+  box-shadow: 0 16px 36px rgba(34, 197, 94, 0.16) !important;
+}
+
+.resource-card--worksheets .resource-icon {
+  background: rgba(34, 197, 94, 0.12) !important;
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.15) !important;
+}
+
+.resource-card--worksheets .card-tag {
+  background: rgba(34, 197, 94, 0.12) !important;
+  color: #16a34a !important;
+}
+
+.resource-card--worksheets .card-link {
+  background: #22c55e !important;
+  box-shadow: 0 6px 14px rgba(34, 197, 94, 0.3) !important;
+}
+
+.resource-card--worksheets:hover .card-link {
+  background: #16a34a !important;
+}
+
+/* Dark mode cards */
+html[data-theme="dark"] a.resource-card,
+html[data-theme="dark"] .resource-card {
+  background: linear-gradient(165deg, #0c1a32 0%, #0c1220 70%) !important;
+  border-color: rgba(59, 130, 246, 0.35) !important;
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.1), 0 12px 28px rgba(0, 0, 0, 0.35) !important;
+}
+
+html[data-theme="dark"] .resource-card h3 {
+  color: #f1f5f9 !important;
+}
+
+html[data-theme="dark"] .resource-card p {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .resource-card--worksheets {
+  background: linear-gradient(165deg, #0b2014 0%, #0c1220 70%) !important;
+  border-color: rgba(34, 197, 94, 0.35) !important;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 28px 16px 100px;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  background: transparent;
+}
+
+html[data-theme="dark"] .site-footer {
+  border-top-color: rgba(255, 255, 255, 0.06);
+  color: #7a8299;
+}
+
+@media (max-width: 700px) {
+  .arcade-intro {
+    width: min(calc(100% - 28px), var(--container));
+    padding: 24px 0 16px;
+  }
+
+  .arcade-intro h1 {
+    font-size: 26px;
+  }
+
+  .section-heading,
+  .resource-grid {
+    width: min(calc(100% - 28px), var(--container));
+  }
+
+  .resource-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  a.resource-card,
+  .resource-card {
+    min-height: 0;
+    padding: 16px 14px !important;
+  }
+
+  .resource-card .resource-icon {
+    width: 44px !important;
+    height: 44px !important;
+    flex-basis: 44px !important;
+    font-size: 20px !important;
+  }
+
+  .resource-card h3 {
+    font-size: 15px !important;
+  }
+
+  .resource-card p {
+    font-size: 12px !important;
+  }
+}
+
+/* =========================================================
+   UNIT A / B — arcade lesson cards
+========================================================= */
+
+.ab-grid--arcade {
+  width: min(calc(100% - 48px), var(--container));
+  margin: 8px auto 80px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+a.ab-card--arcade,
+.ab-card--arcade {
+  position: relative;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  min-height: 200px;
+  padding: 24px 22px 22px !important;
+  border-radius: 22px !important;
+  border: 2px solid transparent !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.ab-card--arcade::before {
+  content: "";
+  position: absolute;
+  right: -24px;
+  top: -24px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.ab-card--blue {
+  border-color: rgba(59, 130, 246, 0.3) !important;
+  background: linear-gradient(165deg, #eff6ff 0%, #ffffff 55%) !important;
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.1) !important;
+}
+.ab-card--blue::before { background: rgba(59, 130, 246, 0.12); }
+.ab-card--blue:hover {
+  transform: translateY(-5px) !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 18px 40px rgba(59, 130, 246, 0.2) !important;
+}
+
+.ab-card--green {
+  border-color: rgba(34, 197, 94, 0.3) !important;
+  background: linear-gradient(165deg, #f0fdf4 0%, #ffffff 55%) !important;
+  box-shadow: 0 12px 32px rgba(34, 197, 94, 0.1) !important;
+}
+.ab-card--green::before { background: rgba(34, 197, 94, 0.12); }
+.ab-card--green:hover {
+  transform: translateY(-5px) !important;
+  border-color: #22c55e !important;
+  box-shadow: 0 18px 40px rgba(34, 197, 94, 0.2) !important;
+}
+
+.ab-card-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.ab-letter-badge {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.ab-card--blue .ab-letter-badge {
+  background: linear-gradient(180deg, #60a5fa, #2563eb);
+}
+.ab-card--green .ab-letter-badge {
+  background: linear-gradient(180deg, #4ade80, #16a34a);
+}
+
+.ab-card-tag {
+  display: inline-flex;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.ab-card--blue .ab-card-tag {
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
+}
+.ab-card--green .ab-card-tag {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+}
+
+.ab-card-title {
+  position: relative;
+  z-index: 1;
+  margin: 6px 0 0 !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.5px;
+  color: var(--text, #202636);
+}
+
+.ab-card-blurb {
+  position: relative;
+  z-index: 1;
+  margin: 0 !important;
+  color: var(--muted, #687184) !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  flex: 1;
+}
+
+.ab-card-btn {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  min-width: 100px;
+  min-height: 42px;
+  padding: 0 20px;
+  border-radius: 999px;
+  color: #fff !important;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.12);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.ab-card--blue .ab-card-btn {
+  background: linear-gradient(180deg, #60a5fa, #2563eb 50%, #1d4ed8);
+}
+.ab-card--green .ab-card-btn {
+  background: linear-gradient(180deg, #4ade80, #22c55e 50%, #16a34a);
+}
+
+.ab-card--arcade:hover .ab-card-btn {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+/* Dark mode */
+html[data-theme="dark"] .ab-card--blue {
+  background: linear-gradient(165deg, #0c1a32 0%, #0c1220 70%) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+}
+html[data-theme="dark"] .ab-card--green {
+  background: linear-gradient(165deg, #0b2014 0%, #0c1220 70%) !important;
+  border-color: rgba(34, 197, 94, 0.4) !important;
+}
+html[data-theme="dark"] .ab-card-title {
+  color: #f1f5f9 !important;
+}
+html[data-theme="dark"] .ab-card-blurb {
+  color: #94a3b8 !important;
+}
+
+@media (max-width: 700px) {
+  .ab-grid--arcade {
+    width: min(calc(100% - 28px), var(--container));
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 90px;
+  }
+  .ab-card--arcade {
+    min-height: 0;
+    padding: 18px 16px !important;
+  }
+  .ab-card-title {
+    font-size: 18px !important;
+  }
+}
+
+/* =========================================================
+   LESSON TYPE CARDS (Games / Worksheets / Audio)
+   Dedicated class — does not conflict with hub resource-card
+========================================================= */
+.lesson-type-grid {
+  width: min(calc(100% - 48px), var(--container));
+  margin: 8px auto 80px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+a.lesson-type-card,
+.lesson-type-card {
+  position: relative;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  min-height: 200px;
+  padding: 22px 20px !important;
+  border-radius: 20px !important;
+  border: 2px solid transparent !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.lesson-type-card::before {
+  content: "";
+  position: absolute;
+  right: -28px;
+  top: -28px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.lesson-type-icon {
+  position: relative;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  font-size: 22px;
+  margin: 0 !important;
+  flex: 0 0 48px !important;
+}
+
+.lesson-type-card h3 {
+  position: relative;
+  z-index: 1;
+  margin: 4px 0 0 !important;
+  font-size: 18px !important;
+  font-weight: 850 !important;
+  line-height: 1.2 !important;
+  color: var(--text, #202636);
+}
+
+.lesson-type-card p {
+  position: relative;
+  z-index: 1;
+  margin: 0 !important;
+  flex: 1;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+  color: var(--muted, #687184) !important;
+}
+
+.lesson-type-btn {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  color: #fff !important;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  box-shadow: 0 5px 0 rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.lesson-type-card--blue {
+  border-color: rgba(59,130,246,0.28) !important;
+  background: linear-gradient(165deg, #eff6ff 0%, #fff 55%) !important;
+  box-shadow: 0 10px 28px rgba(59,130,246,0.08) !important;
+}
+.lesson-type-card--blue::before { background: rgba(59,130,246,0.12); }
+.lesson-type-card--blue .lesson-type-icon { background: rgba(59,130,246,0.14); }
+.lesson-type-card--blue .lesson-type-btn { background: linear-gradient(180deg,#60a5fa,#2563eb 55%,#1d4ed8); }
+.lesson-type-card--blue:hover { transform: translateY(-4px) !important; border-color: #3b82f6 !important; }
+
+.lesson-type-card--green {
+  border-color: rgba(34,197,94,0.28) !important;
+  background: linear-gradient(165deg, #f0fdf4 0%, #fff 55%) !important;
+  box-shadow: 0 10px 28px rgba(34,197,94,0.08) !important;
+}
+.lesson-type-card--green::before { background: rgba(34,197,94,0.12); }
+.lesson-type-card--green .lesson-type-icon { background: rgba(34,197,94,0.14); }
+.lesson-type-card--green .lesson-type-btn { background: linear-gradient(180deg,#4ade80,#22c55e 55%,#16a34a); }
+.lesson-type-card--green:hover { transform: translateY(-4px) !important; border-color: #22c55e !important; }
+
+.lesson-type-card--purple {
+  border-color: rgba(124,92,255,0.28) !important;
+  background: linear-gradient(165deg, #f5f0ff 0%, #fff 55%) !important;
+  box-shadow: 0 10px 28px rgba(124,92,255,0.08) !important;
+}
+.lesson-type-card--purple::before { background: rgba(124,92,255,0.12); }
+.lesson-type-card--purple .lesson-type-icon { background: rgba(124,92,255,0.14); }
+.lesson-type-card--purple .lesson-type-btn { background: linear-gradient(180deg,#a78bfa,#7c5cff 55%,#5b3fd4); }
+.lesson-type-card--purple:hover { transform: translateY(-4px) !important; border-color: #7c5cff !important; }
+
+html[data-theme="dark"] .lesson-type-card--blue {
+  background: linear-gradient(165deg,#0c1a32,#0c1220) !important;
+  border-color: rgba(59,130,246,0.4) !important;
+}
+html[data-theme="dark"] .lesson-type-card--green {
+  background: linear-gradient(165deg,#0b2014,#0c1220) !important;
+  border-color: rgba(34,197,94,0.4) !important;
+}
+html[data-theme="dark"] .lesson-type-card--purple {
+  background: linear-gradient(165deg,#16122a,#0c1220) !important;
+  border-color: rgba(124,92,255,0.4) !important;
+}
+html[data-theme="dark"] .lesson-type-card h3 { color: #f1f5f9 !important; }
+html[data-theme="dark"] .lesson-type-card p { color: #94a3b8 !important; }
+
+@media (max-width: 700px) {
+  .lesson-type-grid {
+    width: min(calc(100% - 28px), var(--container));
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .lesson-type-card { min-height: 0; }
+}
+
+/* =========================================================
+   AEF — round back button + polished level cards
+========================================================= */
+.aef-back-row,
+.skill-intro-top.aef-back-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.aef-round-back,
+a.skill-back-btn.aef-round-back {
+  display: grid !important;
+  place-items: center !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: #3b82f6 !important;
+  color: #fff !important;
+  text-decoration: none !important;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  border: none !important;
+  box-shadow: 0 5px 16px rgba(59, 130, 246, 0.35) !important;
+  transition: transform 0.15s ease, filter 0.15s ease !important;
+}
+.aef-round-back:hover {
+  transform: scale(1.06) !important;
+  filter: brightness(1.05);
+  color: #fff !important;
+}
+.aef-back-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted, #687184);
+}
+
+/* Level cards — arcade polish */
+.level-grid {
+  width: min(calc(100% - 48px), var(--container));
+  margin: 0 auto 40px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+a.level-card,
+.level-card {
+  min-height: 120px !important;
+  padding: 22px 20px !important;
+  border-radius: 18px !important;
+  border: 2px solid rgba(59, 130, 246, 0.2) !important;
+  background: linear-gradient(165deg, #eff6ff 0%, #ffffff 60%) !important;
+  box-shadow: 0 10px 28px rgba(59, 130, 246, 0.06) !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+a.level-card:hover,
+.level-card:hover {
+  transform: translateY(-3px) !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 16px 36px rgba(59, 130, 246, 0.14) !important;
+}
+.level-card h3 {
+  margin: 0 0 6px !important;
+  font-size: 18px !important;
+  font-weight: 850 !important;
+  color: var(--text, #202636) !important;
+}
+.level-card p {
+  margin: 0 !important;
+  color: var(--muted, #687184) !important;
+  font-size: 13px !important;
+}
+.level-card.level-locked {
+  background: #f8fafc !important;
+  border-style: dashed !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: none !important;
+  cursor: default !important;
+}
+.level-card.level-locked:hover {
+  transform: none !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: none !important;
+}
+.level-card.level-locked h3 {
+  color: #94a3b8 !important;
+}
+.level-card .lock-tag {
+  margin-top: 10px !important;
+  background: #eef2f7 !important;
+  color: #64748b !important;
+}
+
+html[data-theme="dark"] a.level-card,
+html[data-theme="dark"] .level-card {
+  background: linear-gradient(165deg, #0c1a32, #0c1220) !important;
+  border-color: rgba(59, 130, 246, 0.35) !important;
+}
+html[data-theme="dark"] .level-card h3 { color: #f1f5f9 !important; }
+html[data-theme="dark"] .level-card p { color: #94a3b8 !important; }
+html[data-theme="dark"] .level-card.level-locked {
+  background: #12151f !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+}
+html[data-theme="dark"] .aef-back-label { color: #94a3b8; }
+
+@media (max-width: 700px) {
+  .level-grid {
+    width: min(calc(100% - 28px), var(--container));
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Level card illustration (e.g. Starter character) */
+a.level-card.level-card--has-art,
+.level-card.level-card--has-art {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  min-height: 140px !important;
+  overflow: hidden !important;
+}
+
+.level-card-body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+}
+
+.level-card-art {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  width: 110px;
+  height: 110px;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.level-card-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center right;
+  display: block;
+  filter: drop-shadow(0 8px 16px rgba(32, 38, 54, 0.12));
+}
+
+@media (max-width: 700px) {
+  .level-card-art {
+    width: 88px;
+    height: 88px;
+  }
 }

@@ -792,6 +792,7 @@ html[data-theme="dark"] .site-back-btn{
 
 /* =========================================================
    FLOATING ARCADE NAV — theme overrides
+   Always fixed at bottom while scrolling (except games)
 ========================================================= */
 .arcade-header-bar {
   height: 0 !important;
@@ -799,7 +800,28 @@ html[data-theme="dark"] .site-back-btn{
   background: transparent !important;
   border: none !important;
   position: relative !important;
+  pointer-events: none !important;
+  z-index: 9999 !important;
 }
+
+/* Keep bottom nav fixed on screen at all times */
+.arcade-nav {
+  position: fixed !important;
+  top: auto !important;
+  bottom: max(14px, env(safe-area-inset-bottom, 0px)) !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+}
+
+.arcade-nav.nav-scrolled {
+  /* Slight shrink on scroll is ok, but stay fixed at bottom */
+  transform: translateX(-50%) scale(0.94) !important;
+  opacity: 0.92;
+}
+
 html[data-theme="dark"] .arcade-nav {
   background: rgba(8, 10, 20, 0.78) !important;
   border-color: rgba(255, 255, 255, 0.14) !important;
@@ -815,9 +837,29 @@ html[data-theme="dark"] .arcade-nav .nav-link.active {
   color: #ffffff !important;
   background: linear-gradient(135deg, rgba(124, 92, 255, 0.80), rgba(78, 203, 255, 0.45)) !important;
 }
-/* Cancel fixed 78px header rules for floating bar */
+
+/* Cancel fixed 78px top-header rules for floating bar */
 body:not(.cabinet-body) {
   padding-top: 0 !important;
+  padding-bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
+}
+
+/* Hide bottom nav on game / cabinet pages */
+body.cabinet-body .arcade-header-bar,
+body.cabinet-body .arcade-nav,
+.cabinet-body .arcade-header-bar,
+.cabinet-body .arcade-nav {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 700px) {
+  .arcade-nav {
+    bottom: max(10px, env(safe-area-inset-bottom, 0px)) !important;
+    width: calc(100% - 16px) !important;
+    max-width: 420px !important;
+  }
 }
 
 
@@ -1226,13 +1268,14 @@ a.arcade-btn:active,
     inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Context colors */
+/* Context colors — match each card's accent */
 .choice-card.adults .card-btn,
 .hub-card--arcade .hub-card-btn {
-  --arcade-top: #60a5fa;
-  --arcade-mid: #2563eb;
-  --arcade-bot: #1d4ed8;
-  --arcade-shadow: #1e3a8a;
+  /* Purple — matches Learning Arcade icon/rule */
+  --arcade-top: #9b6ef5;
+  --arcade-mid: #7c5cff;
+  --arcade-bot: #5b3fd4;
+  --arcade-shadow: #3b1478;
 }
 .choice-card.kids .card-btn {
   --arcade-top: #fbbf24;
@@ -1241,28 +1284,32 @@ a.arcade-btn:active,
   --arcade-shadow: #b45309;
 }
 .hub-card--resources .hub-card-btn {
-  --arcade-top: #34d399;
-  --arcade-mid: #059669;
-  --arcade-bot: #047857;
-  --arcade-shadow: #065f46;
+  /* Blue — matches Resources icon/rule */
+  --arcade-top: #60a5fa;
+  --arcade-mid: #3b82f6;
+  --arcade-bot: #2563eb;
+  --arcade-shadow: #1e3a8a;
 }
 .hub-card--worksheets .hub-card-btn {
-  --arcade-top: #fb923c;
-  --arcade-mid: #ea580c;
-  --arcade-bot: #c2410c;
-  --arcade-shadow: #9a3412;
+  /* Green — matches Worksheets accent */
+  --arcade-top: #4ade80;
+  --arcade-mid: #22c55e;
+  --arcade-bot: #16a34a;
+  --arcade-shadow: #14532d;
 }
 .hub-card--about .hub-card-btn {
-  --arcade-top: #c084fc;
-  --arcade-mid: #9333ea;
-  --arcade-bot: #7e22ce;
-  --arcade-shadow: #6b21a8;
+  /* Amber — matches About icon/rule */
+  --arcade-top: #fbbf24;
+  --arcade-mid: #f59e0b;
+  --arcade-bot: #d97706;
+  --arcade-shadow: #92400e;
 }
 .hub-card--contact .hub-card-btn {
-  --arcade-top: #22d3ee;
-  --arcade-mid: #0891b2;
-  --arcade-bot: #0e7490;
-  --arcade-shadow: #155e75;
+  /* Pink — matches Contact accent */
+  --arcade-top: #f472b6;
+  --arcade-mid: #ec4899;
+  --arcade-bot: #db2777;
+  --arcade-shadow: #9d174d;
 }
 
 .primary-button {
@@ -1292,4 +1339,145 @@ html[data-theme="dark"] .card-btn,
 html[data-theme="dark"] .game-launch,
 html[data-theme="dark"] .skill-button {
   color: #fff !important;
+}
+
+/* ---- Phone: fixed circular buttons (main + skills, same size) ---- */
+@media (max-width: 720px) {
+  /* Shared fixed size for skill + main hub buttons */
+  .skill-button,
+  .hub-card-btn,
+  .game-launch,
+  .play-btn,
+  .btn-play {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    max-width: 56px !important;
+    max-height: 56px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    font-size: 9px !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0.2px !important;
+    text-align: center !important;
+    white-space: normal !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Keep arrow/span visible and readable inside the circle */
+  .hub-card-btn span,
+  .skill-button span {
+    display: inline !important;
+    font-size: inherit !important;
+    font-weight: 900 !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .skill-button,
+  .hub-card-btn,
+  .game-launch,
+  .play-btn,
+  .btn-play {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    min-height: 52px !important;
+    max-width: 52px !important;
+    max-height: 52px !important;
+    font-size: 8px !important;
+  }
+}
+
+/* =========================================================
+   FORCE bottom nav fixed site-wide (resources + all pages)
+========================================================= */
+html body .arcade-nav,
+body .arcade-nav,
+.arcade-nav {
+  position: fixed !important;
+  top: auto !important;
+  bottom: max(12px, env(safe-area-inset-bottom, 0px)) !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 2147483000 !important;
+  pointer-events: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: flex !important;
+}
+
+html body .arcade-nav.nav-scrolled,
+.arcade-nav.nav-scrolled {
+  transform: translateX(-50%) scale(0.94) !important;
+  opacity: 0.95 !important;
+}
+
+/* Old top headers must not replace bottom nav */
+body:not(.cabinet-body) .site-header {
+  display: none !important;
+}
+
+body:not(.cabinet-body) {
+  padding-top: 12px !important;
+  padding-bottom: max(96px, calc(80px + env(safe-area-inset-bottom, 0px))) !important;
+}
+
+/* Games: no bottom nav */
+body.cabinet-body .arcade-nav,
+body.cabinet-body .arcade-header-bar {
+  display: none !important;
+}
+
+/* =========================================================
+   UNIFIED SITE FOOTER — one style for every non-game page
+========================================================= */
+.site-footer,
+footer.site-footer,
+.hub-footer {
+  display: block !important;
+  width: 100%;
+  margin: 0;
+  padding: 28px 20px max(28px, calc(24px + env(safe-area-inset-bottom, 0px)));
+  border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+  background: transparent !important;
+  text-align: center !important;
+  color: #8991a1 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  box-shadow: none !important;
+}
+
+.site-footer p,
+.site-footer .hub-copy,
+.site-footer .copyright,
+.hub-footer p {
+  margin: 0 !important;
+  color: inherit !important;
+  font-size: inherit !important;
+  text-align: center !important;
+}
+
+/* Extra space above bottom nav so footer isn't hidden */
+body:not(.cabinet-body):not(.playing) {
+  padding-bottom: max(96px, calc(88px + env(safe-area-inset-bottom, 0px))) !important;
+}
+
+html[data-theme="dark"] .site-footer,
+html[data-theme="dark"] footer.site-footer,
+html[data-theme="dark"] .hub-footer {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+  color: #7a8299 !important;
+  background: transparent !important;
+}
+
+/* Hide footer inside playable games / cabinets only */
+body.cabinet-body .site-footer,
+body.playing .site-footer,
+.game-container ~ .site-footer,
+#matchRushGame ~ .site-footer {
+  display: none !important;
 }

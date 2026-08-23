@@ -218,7 +218,7 @@ body {
 
 .game-card {
   position: relative;
-  min-height: 0;
+  min-height: 220px; /* same height for playable + locked/placeholder cards */
   padding: 18px 20px 16px;
   display: grid;
   grid-template-columns: 48px 1fr;
@@ -425,7 +425,7 @@ body {
 }
 @media (max-width: 560px) {
   .game-grid { grid-template-columns: 1fr; }
-  .game-card { min-height: 0; }
+  .game-card { min-height: 200px; }
 }
 
 
@@ -807,5 +807,98 @@ a.game-launch,
   .game-grid {
     grid-template-columns: 1fr !important;
     width: min(calc(100% - 20px), 1180px);
+  }
+}
+
+/* =========================================================
+   Grammar game cards — solid layout + dark mode
+========================================================= */
+.game-card {
+  min-height: 220px !important;
+  display: grid !important;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfaff 100%) !important;
+}
+
+.game-card h3 {
+  color: #202636 !important;
+  opacity: 1 !important;
+}
+
+.game-card p {
+  color: #687184 !important;
+}
+
+.game-tag {
+  background: rgba(7, 157, 115, 0.12) !important;
+  color: #079d73 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.game-meta {
+  color: #8a92a2 !important;
+}
+
+.game-launch,
+a.game-launch {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 72px !important;
+  height: 72px !important;
+  min-width: 72px !important;
+  min-height: 72px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: linear-gradient(180deg, #2dd4a0, #0aa276 50%, #067a58) !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  text-decoration: none !important;
+  box-shadow: 0 6px 0 #045c42, 0 10px 20px rgba(0,0,0,.15) !important;
+  border: 3px solid rgba(255,255,255,.3) !important;
+}
+
+.game-card:not(.game-card--playable),
+.game-card[aria-disabled="true"] {
+  min-height: 220px !important;
+  background: #f7f8fb !important;
+  border-color: #e7e9ef !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] .game-card,
+html[data-theme="dark"] .game-card.game-card--playable {
+  background: linear-gradient(165deg, #0f1c18 0%, #0c1220 70%) !important;
+  border-color: rgba(34, 197, 94, 0.4) !important;
+  color: #f1f5f9 !important;
+}
+html[data-theme="dark"] .game-card h3 { color: #f8fafc !important; opacity: 1 !important; }
+html[data-theme="dark"] .game-card p { color: #cbd5e1 !important; }
+html[data-theme="dark"] .game-meta { color: #86efac !important; }
+html[data-theme="dark"] .game-tag {
+  background: rgba(34, 197, 94, 0.2) !important;
+  color: #bbf7d0 !important;
+}
+html[data-theme="dark"] .game-card:not(.game-card--playable),
+html[data-theme="dark"] .game-card[aria-disabled="true"] {
+  background: linear-gradient(165deg, #12151f, #0a0d16) !important;
+  border-color: rgba(148,163,184,.25) !important;
+}
+html[data-theme="dark"] .game-card:not(.game-card--playable) h3 { color: #94a3b8 !important; }
+html[data-theme="dark"] .game-card:not(.game-card--playable) .game-tag {
+  background: rgba(148,163,184,.15) !important;
+  color: #94a3b8 !important;
+}
+html[data-theme="dark"] .game-card:not(.game-card--playable) p,
+html[data-theme="dark"] .game-card:not(.game-card--playable) .game-meta { color: #64748b !important; }
+
+@media (max-width: 700px) {
+  .game-launch, a.game-launch {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    font-size: 10px !important;
   }
 }

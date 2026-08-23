@@ -900,8 +900,10 @@ function showQuestion() {
     );
 
 
-    questionText.innerHTML =
-        question.text;
+    questionText.innerHTML = question.text.replace(
+        /_____+/g,
+        '<span class="blank-slot">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'
+    );
 
 
     questionNumberElement.textContent =
@@ -1420,3 +1422,17 @@ function saveProgress(
     }
 
 }
+
+
+/* Keep game light/dark in sync with site theme (fixes washed-out question text) */
+(function syncGameThemeWithSite() {
+  function apply() {
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
+    document.body.classList.toggle("light-mode", !dark);
+  }
+  apply();
+  try {
+    const obs = new MutationObserver(apply);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  } catch (e) {}
+})();

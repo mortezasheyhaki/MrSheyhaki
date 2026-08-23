@@ -656,7 +656,7 @@ function setQuestionType(
             "COMPLETE THE SENTENCE";
 
         questionHint.textContent =
-            "Choose the correct BE verb.";
+            "Choose there is or there are.";
 
         return;
     }
@@ -670,7 +670,7 @@ function setQuestionType(
             "MAKE IT NEGATIVE";
 
         questionHint.textContent =
-            "Choose the correct negative form.";
+            "Choose isn't or aren't.";
 
         return;
     }
@@ -712,8 +712,11 @@ function showQuestion() {
     );
 
 
-    questionText.innerHTML =
-        question.text;
+    // Make blank underline visible and keep sentence readable
+    questionText.innerHTML = question.text.replace(
+        /_____+/g,
+        '<span class="blank-slot">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'
+    );
 
 
     questionNumberElement.textContent =
@@ -1229,3 +1232,17 @@ function saveProgress(
     }
 
 }
+
+
+/* Keep game light/dark in sync with site theme (fixes washed-out question text) */
+(function syncGameThemeWithSite() {
+  function apply() {
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
+    document.body.classList.toggle("light-mode", !dark);
+  }
+  apply();
+  try {
+    const obs = new MutationObserver(apply);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  } catch (e) {}
+})();

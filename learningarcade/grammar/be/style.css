@@ -806,37 +806,78 @@ main {
 }
 
 
-.question-area h2 {
 
-    max-width:
-        700px;
 
-    margin:
-        18px auto 0;
 
-    color:
-        var(--text-main);
 
-    font-size:
-        clamp(28px,5vw,42px);
 
-    line-height:
-        1.3;
+
+
+
+
+
+
+/* =====================================================
+   QUESTION TEXT — always readable
+   Site theme uses html[data-theme]; game uses body.light-mode.
+   Prefer high-contrast against actual page background.
+===================================================== */
+.question-area h2,
+#questionText {
+    max-width: 700px;
+    margin: 18px auto 0;
+    font-size: clamp(28px, 5vw, 42px);
+    line-height: 1.3;
+    opacity: 1 !important;
+    /* Light surfaces: dark text (default) */
+    color: #202636 !important;
 }
-
 
 #questionHint {
-
-    margin-top:
-        11px;
-
-    color:
-        var(--text-muted);
-
-    font-size:
-        13px;
+    margin-top: 11px;
+    font-size: 13px;
+    opacity: 1 !important;
+    color: #687184 !important;
 }
 
+/* Dark surfaces only */
+html[data-theme="dark"] .question-area h2,
+html[data-theme="dark"] #questionText,
+body:not(.light-mode)[data-game-dark="1"] .question-area h2,
+body:not(.light-mode)[data-game-dark="1"] #questionText {
+    color: #eef5f1 !important;
+}
+
+html[data-theme="dark"] #questionHint,
+body:not(.light-mode)[data-game-dark="1"] #questionHint {
+    color: #9aaba3 !important;
+}
+
+/* When site is light, never use pale text even if body lacks .light-mode */
+html[data-theme="light"] .question-area h2,
+html[data-theme="light"] #questionText,
+html:not([data-theme="dark"]) .question-area h2,
+html:not([data-theme="dark"]) #questionText {
+    color: #202636 !important;
+}
+
+html[data-theme="light"] #questionHint,
+html:not([data-theme="dark"]) #questionHint {
+    color: #687184 !important;
+}
+
+.blank-slot {
+    display: inline-block;
+    min-width: 4.5rem;
+    border-bottom: 3px solid #079d73;
+    margin: 0 0.15em;
+    vertical-align: baseline;
+    color: transparent !important;
+}
+
+html[data-theme="dark"] .blank-slot {
+    border-bottom-color: #2dd4a0;
+}
 
 /* =====================================================
    ANSWERS
@@ -2162,3 +2203,40 @@ body.dark-mode .back-button:hover {
   }
 }
 /* ========== END UNIFIED BACK BUTTON ========== */
+
+/* Start screen feature list — readable on dark cards */
+.start-feature-list {
+  text-align: left;
+  max-width: 340px;
+  margin: 1.25rem auto 1.5rem;
+  padding: 0;
+  list-style: none;
+  line-height: 1.75;
+  font-size: 0.95rem;
+  color: rgba(226, 232, 240, 0.92) !important;
+  opacity: 1 !important;
+}
+.start-feature-list li {
+  margin: 0.35rem 0;
+  color: rgba(226, 232, 240, 0.92) !important;
+}
+.start-feature-list li span {
+  color: #6ee7b7 !important;
+  font-weight: 800;
+}
+html[data-theme="light"] .start-feature-list,
+body.light-mode .start-feature-list {
+  color: #334155 !important;
+}
+html[data-theme="light"] .start-feature-list li,
+body.light-mode .start-feature-list li {
+  color: #334155 !important;
+}
+html[data-theme="light"] .start-feature-list li span,
+body.light-mode .start-feature-list li span {
+  color: #059669 !important;
+}
+
+/* Don't leave an empty white footer strip under the cabinet */
+.site-footer { display: none !important; }
+body { min-height: 100dvh; }

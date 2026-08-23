@@ -161,3 +161,18 @@
     onScroll();
   }
 })();
+
+/* Fill © year on every page */
+(function () {
+  function setYear() {
+    var y = String(new Date().getFullYear());
+    document.querySelectorAll("#year, [data-year], .js-year").forEach(function (el) {
+      el.textContent = y;
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setYear);
+  } else {
+    setYear();
+  }
+})();

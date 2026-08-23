@@ -22,9 +22,14 @@
   }
 
   function backLink(href, label) {
-    return el("a", { class: "back-link back-button", href }, [
-      document.createTextNode("← " + label),
+    // Round arrow button + optional text label (matches Learning Arcade)
+    const wrap = el("div", { class: "skill-intro-top aef-back-row" }, [
+      el("a", { class: "skill-back-btn aef-round-back", href, "aria-label": label, title: label }, [
+        document.createTextNode("←"),
+      ]),
+      el("span", { class: "aef-back-label", text: label }),
     ]);
+    return wrap;
   }
 
   function courseFor(body) {
@@ -54,13 +59,31 @@
     const levelOrder = ["starter", "1"].concat(
       Object.keys(course.levels).filter((k) => k !== "starter" && k !== "1")
     );
+    const levelImages = {
+      starter:
+        "https://cdn.imgurl.ir/uploads/w372563_ChatGPT_Image_Aug_23_2026_03_46_57_AM.png",
+    };
     levelOrder.forEach((key) => {
       if (!course.levels[key]) return;
-      grid.appendChild(
-        el("a", { class: "level-card", href: key + "/" }, [
+      const kids = [
+        el("div", { class: "level-card-body" }, [
           el("h3", { text: course.levels[key].label }),
           el("p", { text: "Units and Practical English lessons." }),
-        ])
+        ]),
+      ];
+      if (levelImages[key]) {
+        kids.push(
+          el("div", { class: "level-card-art", "aria-hidden": "true" }, [
+            el("img", {
+              src: levelImages[key],
+              alt: "",
+              loading: "lazy",
+            }),
+          ])
+        );
+      }
+      grid.appendChild(
+        el("a", { class: "level-card" + (levelImages[key] ? " level-card--has-art" : ""), href: key + "/" }, kids)
       );
     });
     // Levels not yet in course-data.js show as locked/coming soon.
@@ -183,40 +206,44 @@
           class: "eyebrow",
           text: (course.label + " · " + level.label).toUpperCase(),
         }),
-      ])
-    );
-    main.appendChild(
-      el("section", { class: "unit-hero" }, [
-        el("span", { class: "unit-index", text: unitNum }),
-        el("div", { class: "unit-details" }, [
-          el("h1", { html: "Unit " + unitNum + ' <span class="unit-name-placeholder">— ' + (unit.name || "[Add unit name]") + "</span>" }),
-          el("p", { text: "Choose a lesson." }),
-        ]),
+        el("h1", { text: "Unit " + unitNum }),
+        el("p", { text: "Choose lesson A or B to open games, worksheets, and audio." }),
       ])
     );
     const grid = el("section", {
-      class: "ab-grid",
+      class: "ab-grid ab-grid--arcade",
       "aria-label": "Unit " + unitNum + " lessons",
     });
+    const lessonMeta = {
+      a: { color: "blue", label: "Lesson A", blurb: "First half of the unit" },
+      b: { color: "green", label: "Lesson B", blurb: "Second half of the unit" },
+    };
     ["a", "b"].forEach((letter) => {
-      const lesson = unit.lessons[letter];
+      const meta = lessonMeta[letter];
       grid.appendChild(
-        el("a", { class: "ab-card", href: letter + "/" }, [
-          el("span", { class: "ab-letter", text: letter.toUpperCase() }),
-          el("span", { text: "Unit " + unitNum + letter.toUpperCase() }),
-          el("p", { text: lesson.name || "[Add lesson name]" }),
+        el("a", {
+          class: "ab-card ab-card--arcade ab-card--" + meta.color,
+          href: letter + "/",
+        }, [
+          el("div", { class: "ab-card-top" }, [
+            el("span", { class: "ab-letter-badge", text: letter.toUpperCase() }),
+            el("span", { class: "ab-card-tag", text: "UNIT " + unitNum }),
+          ]),
+          el("h2", { class: "ab-card-title", text: "Unit " + unitNum + letter.toUpperCase() }),
+          el("p", { class: "ab-card-blurb", text: meta.blurb }),
+          el("span", { class: "ab-card-btn", text: "OPEN" }),
         ])
       );
     });
     main.appendChild(grid);
   }
 
-  function resourceCard(href, icon, title, description) {
-    return el("a", { class: "content-card resource-card", href }, [
-      el("div", { class: "resource-icon", "aria-hidden": "true", text: icon }),
+  function resourceCard(href, icon, title, description, tone) {
+    return el("a", { class: "lesson-type-card lesson-type-card--" + (tone || "purple"), href }, [
+      el("div", { class: "lesson-type-icon", "aria-hidden": "true", text: icon }),
       el("h3", { text: title }),
       el("p", { text: description }),
-      el("span", { class: "resource-button", text: "Open " + title + " →" }),
+      el("span", { class: "lesson-type-btn", text: "Open →" }),
     ]);
   }
 
@@ -246,29 +273,15 @@
           class: "eyebrow",
           text: (course.label + " · " + course.levels[body.dataset.level].label).toUpperCase(),
         }),
+        el("h1", { text: label }),
+        el("p", { text: "Choose games, worksheets, or audio for this lesson." }),
       ])
     );
     main.appendChild(
-      el("section", { class: "unit-hero" }, [
-        el("div", { class: "unit-details" }, [
-          el("h1", { html: label + ' <span class="unit-name-placeholder">— ' + (lesson.name || "[Add lesson name]") + "</span>" }),
-          el("p", { text: "Games, worksheets, and audio for " + label + "." }),
-        ]),
-      ])
-    );
-    main.appendChild(
-      el("section", { class: "section-heading" }, [
-        el("div", {}, [
-          el("h2", { text: label + " Resources" }),
-          el("p", { text: "Choose what you want to use." }),
-        ]),
-      ])
-    );
-    main.appendChild(
-      el("section", { class: "content-grid unit-resource-grid" }, [
-        resourceCard("games/", "🎮", "Games", "Interactive games and activities for " + label + "."),
-        resourceCard("worksheets/", "📝", "Worksheets", "Printable worksheets and classroom practice."),
-        resourceCard("audio/", "🎧", "Audio", "Student Book listening tracks for " + label + "."),
+      el("section", { class: "content-grid lesson-type-grid", "aria-label": label + " resources" }, [
+        resourceCard("games/", "🎮", "Games", "Interactive games and activities for " + label + ".", "blue"),
+        resourceCard("worksheets/", "📝", "Worksheets", "Printable worksheets and classroom practice.", "green"),
+        resourceCard("audio/", "🎧", "Audio", "Student Book listening tracks for " + label + ".", "purple"),
       ])
     );
   }
@@ -285,14 +298,8 @@
     main.appendChild(
       el("section", { class: "arcade-intro" }, [
         backLink(back === "../" ? "../" : back, "Back to " + label),
-      ])
-    );
-    main.appendChild(
-      el("section", { class: "unit-hero" }, [
-        el("div", { class: "unit-details" }, [
-          el("h1", { text: label + " " + section.charAt(0).toUpperCase() + section.slice(1) }),
-          el("p", { text: meta.noun.charAt(0).toUpperCase() + meta.noun.slice(1) + "s for " + label + "." }),
-        ]),
+        el("h1", { text: label + " " + section.charAt(0).toUpperCase() + section.slice(1) }),
+        el("p", { text: meta.noun.charAt(0).toUpperCase() + meta.noun.slice(1) + "s for " + label + "." }),
       ])
     );
     if (items.length === 0) {
@@ -319,14 +326,10 @@
   function renderAudio(body, main) {
     const { label, lesson, back } = lessonFromBody(body);
     main.appendChild(
-      el("section", { class: "arcade-intro" }, [backLink("../", "Back to " + label)])
-    );
-    main.appendChild(
-      el("section", { class: "unit-hero" }, [
-        el("div", { class: "unit-details" }, [
-          el("h1", { text: label + " Audio" }),
-          el("p", { text: "Student Book listening tracks for " + label + "." }),
-        ]),
+      el("section", { class: "arcade-intro" }, [
+        backLink("../", "Back to " + label),
+        el("h1", { text: label + " Audio" }),
+        el("p", { text: "Student Book listening tracks for " + label + "." }),
       ])
     );
     main.appendChild(

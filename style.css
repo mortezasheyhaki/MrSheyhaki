@@ -83,14 +83,15 @@ a {
   pointer-events: none;
 }
 
-/* Floating nav — centered pill at the BOTTOM (matches all arcade pages) */
+/* Floating nav — fixed at BOTTOM while scrolling (all pages except games) */
 .arcade-nav {
-  position: fixed;
-  top: auto;
-  bottom: max(14px, env(safe-area-inset-bottom, 0px));
-  left: 50%;
+  position: fixed !important;
+  top: auto !important;
+  bottom: max(14px, env(safe-area-inset-bottom, 0px)) !important;
+  left: 50% !important;
+  right: auto !important;
   transform: translateX(-50%) scale(1);
-  z-index: 9999;
+  z-index: 9999 !important;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -112,6 +113,12 @@ a {
   opacity: 0.92;
   background: rgba(5,7,18,0.82);
   box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+
+/* Never show bottom nav on game cabinet pages */
+body.cabinet-body .arcade-header-bar,
+body.cabinet-body .arcade-nav {
+  display: none !important;
 }
 
 .arcade-nav .nav-link {
@@ -2275,6 +2282,14 @@ body.home-page {
   margin-top: 8px;
 }
 
+/* Main page with 3 cards */
+.hub-cards--3 {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .hub-card {
   display: flex;
   flex-direction: column;
@@ -2354,17 +2369,18 @@ body.home-page {
 .hub-card--arcade .hub-card-icon { color: #7c5cff; }
 .hub-card--arcade .hub-card-rule { background: #7c5cff; }
 .hub-card--arcade .hub-card-btn {
-  color: #7c5cff;
-  border-color: #d4c4ff;
-  background: #f3edff;
+  color: #fff;
+  border-color: #7c5cff;
+  background: #7c5cff;
 }
 .hub-card--arcade:hover {
   border-color: #c4b5fd;
 }
 .hub-card--arcade:hover .hub-card-btn {
-  background: #7c5cff;
+  background: #6d4dff;
   color: #fff;
-  border-color: #7c5cff;
+  border-color: #6d4dff;
+  box-shadow: 0 4px 14px rgba(124, 92, 255, 0.35);
 }
 
 .hub-card--resources {
@@ -2374,15 +2390,16 @@ body.home-page {
 .hub-card--resources .hub-card-icon { color: #3b82f6; }
 .hub-card--resources .hub-card-rule { background: #3b82f6; }
 .hub-card--resources .hub-card-btn {
-  color: #2563eb;
-  border-color: #bfdbfe;
-  background: #eff6ff;
+  color: #fff;
+  border-color: #3b82f6;
+  background: #3b82f6;
 }
 .hub-card--resources:hover { border-color: #93c5fd; }
 .hub-card--resources:hover .hub-card-btn {
-  background: #3b82f6;
+  background: #2563eb;
   color: #fff;
-  border-color: #3b82f6;
+  border-color: #2563eb;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
 }
 
 .hub-card--worksheets {
@@ -2392,15 +2409,16 @@ body.home-page {
 .hub-card--worksheets .hub-card-icon { color: #16a34a; }
 .hub-card--worksheets .hub-card-rule { background: #22c55e; }
 .hub-card--worksheets .hub-card-btn {
-  color: #16a34a;
-  border-color: #bbf7d0;
-  background: #f0fdf4;
+  color: #fff;
+  border-color: #22c55e;
+  background: #22c55e;
 }
 .hub-card--worksheets:hover { border-color: #86efac; }
 .hub-card--worksheets:hover .hub-card-btn {
-  background: #22c55e;
+  background: #16a34a;
   color: #fff;
-  border-color: #22c55e;
+  border-color: #16a34a;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
 }
 
 .hub-card--about {
@@ -2410,15 +2428,16 @@ body.home-page {
 .hub-card--about .hub-card-icon { color: #d97706; }
 .hub-card--about .hub-card-rule { background: #f59e0b; }
 .hub-card--about .hub-card-btn {
-  color: #d97706;
-  border-color: #fde68a;
-  background: #fffbeb;
+  color: #fff;
+  border-color: #f59e0b;
+  background: #f59e0b;
 }
 .hub-card--about:hover { border-color: #fcd34d; }
 .hub-card--about:hover .hub-card-btn {
-  background: #f59e0b;
+  background: #d97706;
   color: #fff;
-  border-color: #f59e0b;
+  border-color: #d97706;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
 }
 
 .hub-card--contact {
@@ -2428,15 +2447,16 @@ body.home-page {
 .hub-card--contact .hub-card-icon { color: #db2777; }
 .hub-card--contact .hub-card-rule { background: #ec4899; }
 .hub-card--contact .hub-card-btn {
-  color: #db2777;
-  border-color: #fbcfe8;
-  background: #fdf2f8;
+  color: #fff;
+  border-color: #ec4899;
+  background: #ec4899;
 }
 .hub-card--contact:hover { border-color: #f9a8d4; }
 .hub-card--contact:hover .hub-card-btn {
-  background: #ec4899;
+  background: #db2777;
   color: #fff;
-  border-color: #ec4899;
+  border-color: #db2777;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);
 }
 
 .hub-journey {
@@ -2548,6 +2568,9 @@ html[data-theme="dark"] body.home-page {
   .hub-cards {
     grid-template-columns: repeat(3, 1fr);
   }
+  .hub-cards--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
   .hub-card:nth-child(4),
   .hub-card:nth-child(5) {
     grid-column: span 1;
@@ -2626,19 +2649,25 @@ html[data-theme="dark"] body.home-page {
   }
 
   .hub-card-btn {
-    flex: 0 0 auto;
+    flex: 0 0 56px;
     order: 2;
     margin-left: auto;
-    width: 40px;
-    height: 40px;
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    min-height: 56px;
     padding: 0;
     border-radius: 50%;
     justify-content: center;
-    font-size: 0;
+    align-items: center;
+    text-align: center;
+    font-size: 9px;
+    line-height: 1.15;
+    white-space: normal;
   }
   .hub-card-btn span {
-    font-size: 16px;
-    font-weight: 700;
+    font-size: inherit;
+    font-weight: 900;
   }
 
   .hub-journey {
