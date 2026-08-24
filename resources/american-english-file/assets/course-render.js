@@ -164,23 +164,6 @@
     });
     main.appendChild(grid);
 
-    // Quiz section
-    main.appendChild(
-      el("section", { class: "section-heading" }, [
-        el("div", {}, [
-          el("h2", { text: "Quiz" }),
-          el("p", { text: "Test your grammar and vocabulary from Units 1–12." }),
-        ]),
-      ])
-    );
-    const quizGrid = el("section", { class: "level-grid", "aria-label": "Quizzes" });
-    quizGrid.appendChild(
-      el("a", { class: "level-card", href: "quiz/" }, [
-        el("h3", { text: "🧠 Multiple Choice" }),
-        el("p", { text: "40 questions per unit · Grammar & Vocabulary." }),
-      ])
-    );
-    main.appendChild(quizGrid);
   }
 
   function itemCard(href, index, title, name, isPE) {
@@ -586,6 +569,10 @@
   });
 })();
 
-window.addEventListener("pageshow", function () {
+window.addEventListener("pageshow", function (event) {
+  if (event.persisted) {
+    window.location.reload();
+    return;
+  }
   if (window.LAStars) window.LAStars.apply(document.getElementById("app") || document);
 });
