@@ -561,6 +561,7 @@ hideGrammarBackButton();
 ===================================================== */
 
 function startBattle() {
+    if (window.LAStars) window.LAStars.recordPlay("there-is-there-are");
     document.body.classList.add("playing");
 
     showGrammarBackButton();

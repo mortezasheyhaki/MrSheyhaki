@@ -749,6 +749,7 @@ hideGrammarBackButton();
 ===================================================== */
 
 function startBattle() {
+    if (window.LAStars) window.LAStars.recordPlay("be-verbs");
     document.body.classList.add("playing");
 
     showGrammarBackButton();

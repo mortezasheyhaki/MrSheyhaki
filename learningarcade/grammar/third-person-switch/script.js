@@ -16,7 +16,8 @@ const needsS=s=>{const x=s.toLowerCase();return !["i","you","we","they"].include
 let order=[],index=0,score=0;
 const $=id=>document.getElementById(id);
 const show=id=>["startPanel","gamePanel","endPanel"].forEach(p=>$(p).classList.toggle("tps-hidden",p!==id));
-function startGame(){order=[...ITEMS.keys()].sort(()=>Math.random()-.5);index=0;score=0;show("gamePanel");renderRound()}
+function startGame(){
+ if(window.LAStars)window.LAStars.recordPlay("third-person-switch");order=[...ITEMS.keys()].sort(()=>Math.random()-.5);index=0;score=0;show("gamePanel");renderRound()}
 function renderRound(){
  if(index>=order.length)return endGame();
  const item=ITEMS[order[index]];
@@ -44,5 +45,7 @@ function endGame(){
  const pct=score/order.length;
  $("endStars").textContent=pct>=.9?"★★★":pct>=.7?"★★☆":"★☆☆";
  $("endText").textContent=`You got ${score} out of ${order.length} correct.`;
+ if(window.LAStars){var s=pct>=.9?3:pct>=.7?2:pct>=.4?1:0;window.LAStars.save("third-person-switch",s);}
+
 }
 $("startBtn").onclick=startGame;$("replayBtn").onclick=startGame;

@@ -1698,6 +1698,7 @@ function updateMenuProgress() {
 ===================================================== */
 
 function startPractice(practice) {
+    if (window.LAStars) window.LAStars.recordPlay("simple-present");
 
     state.practice =
         practice;

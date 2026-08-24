@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Pictures + Words • Arcade</title>
+<style>
+  :root {
+    --bg: #140e09;
+    --panel: #231910;
+    --card: #2e2116;
+    --card-hover: #3c2c1d;
+    --card-selected: #4a3622;
+    --accent: #ff9f1c;
+    --accent2: #ff6b00;
+    --glow: rgba(255, 159, 28, 0.4);
+    --text: #f8ecd9;
+    --muted: #9a826c;
+    --success: #22c55e;
+    --danger: #ef4444;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text);
+  }
+
+  .app {
+    height: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 12px 12px;
+    background: var(--bg);
+  }
+
+  .screen {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+  }
+  .screen.active { display: flex; }
+
+  /* ========== START ========== */
+  #start-screen {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+    position: relative;
+  }
+  .exit-back {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--panel);
+    border: 1px solid #3a2a1c;
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    z-index: 5;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .exit-back:hover {
+    background: var(--card);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .best-score {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #1a1008;
+    font-weight: 800;
+    font-size: 0.95rem;
+    padding: 11px 26px;
+    border-radius: 50px;
+    box-shadow: 0 0 24px var(--glow);
+    margin-bottom: 6px;
+  }
+  #start-screen h1 {
+    font-size: 1.7rem;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-shadow: 0 0 20px var(--glow);
+  }
+  #start-screen .desc {
+    color: var(--muted);
+    font-size: 0.86rem;
+    line-height: 1.55;
+    max-width: 290px;
+    margin: 8px 0 16px;
+  }
+  .btn-arcade {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #1a1008;
+    border: none;
+    font-size: 1.15rem;
+    font-weight: 900;
+    padding: 15px 48px;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 28px var(--glow), 0 6px 0 #c45e00;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .btn-arcade:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 16px var(--glow), 0 2px 0 #c45e00;
+  }
+  .btn-arcade.btn-secondary {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid #3a2a1c;
+    box-shadow: none;
+    margin-top: 12px;
+    font-size: 0.95rem;
+    padding: 12px 32px;
+  }
+  .btn-arcade.btn-secondary:active {
+    box-shadow: none;
+  }
+
+  /* ========== GAME ========== */
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    margin-bottom: 8px;
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--panel);
+    border: 1px solid #3a2a1c;
+    color: var(--text);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .game-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+
+  .hud {
+    display: flex;
+    justify-content: space-between;
+    background: var(--panel);
+    border-radius: 12px;
+    padding: 9px 12px;
+    margin-bottom: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .hud span { color: var(--accent); }
+
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+  }
+  .action-btn {
+    background: var(--panel);
+    border: 1px solid #3a2a1c;
+    color: var(--text);
+    padding: 10px 4px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .action-btn:active { background: var(--card); }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    flex: 1;
+    min-height: 0;
+  }
+  .col {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .col-header {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+  }
+  .card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .match-card {
+    flex: 1;
+    min-height: 0;
+    background: var(--card);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: clamp(0.95rem, 4.2vw, 1.2rem);
+    font-weight: 700;
+    cursor: pointer;
+    border: 2.5px solid transparent;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease,
+                opacity 0.45s ease, transform 0.45s cubic-bezier(0.34, 1.2, 0.64, 1);
+    padding: 4px;
+    line-height: 1.2;
+    position: relative;
+    overflow: hidden;
+  }
+  .match-card:hover:not(.muted):not(.selected):not(.matching) {
+    background: var(--card-hover);
+  }
+  .match-card.selected {
+    border-color: var(--accent);
+    background: var(--card-selected);
+    box-shadow: 0 0 16px var(--glow);
+  }
+  .match-card.matching {
+    border-color: var(--success);
+    background: #14351f;
+    box-shadow: 0 0 22px rgba(34, 197, 94, 0.55);
+    animation: matchPulse 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+    pointer-events: none;
+  }
+  .match-card.muted {
+    opacity: 0.18;
+    pointer-events: none;
+    transform: scale(0.94);
+    border-color: transparent;
+    box-shadow: none;
+  }
+  .match-card.wrong-flash {
+    border-color: var(--danger);
+    animation: shake 0.32s ease;
+  }
+
+  .match-card img {
+    max-width: 95%;
+    max-height: 95%;
+    object-fit: contain;
+    pointer-events: none;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+  }
+  .match-card.matching img {
+    transform: scale(1.08);
+  }
+  .match-card.muted img {
+    opacity: 0.7;
+    transform: scale(0.92);
+  }
+
+  @keyframes matchPulse {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.06); }
+    100% { transform: scale(1); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    60% { transform: translateX(5px); }
+  }
+
+  #overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  #overlay.show { display: flex; }
+  #overlay .box {
+    background: var(--panel);
+    border: 2px solid var(--accent);
+    border-radius: 20px;
+    padding: 24px 32px;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--accent);
+    box-shadow: 0 0 40px var(--glow);
+  }
+
+  #end-screen {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  #end-screen h2 {
+    font-size: 1.8rem;
+    color: var(--accent);
+    text-shadow: 0 0 20px var(--glow);
+    margin-bottom: 14px;
+  }
+  .stats {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 16px 26px;
+    margin-bottom: 22px;
+    line-height: 1.85;
+    font-size: 1rem;
+  }
+  .stats strong { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- START -->
+  <div id="start-screen" class="screen active">
+    <a class="exit-back" href="../" aria-label="Back to Unit 3A Games">← Games</a>
+    <div class="best-score">BEST SCORE: <span id="best-score">0</span></div>
+    <h1>PICTURES + WORDS</h1>
+    <p class="desc">
+      Match 5 pictures with 5 words.<br>
+      Matched pairs stay on the board (faded).<br>
+      Clear all 5 to unlock the next round — 3 rounds, 15 matches.
+    </p>
+    <button class="btn-arcade" id="start-btn">START GAME</button>
+  </div>
+
+  <!-- GAME -->
+  <div id="game-screen" class="screen">
+    <div class="top-bar">
+      <button class="icon-btn" id="back-btn">←</button>
+      <div class="game-title">PICTURES + WORDS</div>
+      <button class="icon-btn" id="sound-btn">🔊</button>
+    </div>
+
+    <div class="hud">
+      <div>Score: <span id="score">0</span></div>
+      <div>Round: <span id="round">1</span>/3</div>
+      <div>Combo: <span id="combo">0</span>x</div>
+      <div>Time: <span id="timer">90</span></div>
+    </div>
+
+    <div class="actions">
+      <button class="action-btn" id="hint-btn">💡 HINT (−5s)</button>
+      <button class="action-btn" id="shuffle-btn">🔀 SHUFFLE</button>
+    </div>
+
+    <div class="columns">
+      <div class="col">
+        <div class="col-header">PICTURES</div>
+        <div class="card-list" id="left-list"></div>
+      </div>
+      <div class="col">
+        <div class="col-header">WORDS</div>
+        <div class="card-list" id="right-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- END -->
+  <div id="end-screen" class="screen">
+    <h2>🎉 Well Done!</h2>
+    <div class="stats">
+      Final Score: <strong id="final-score">0</strong><br>
+      Time Left: <strong id="final-time">0</strong>s<br>
+      Max Combo: <strong id="final-combo">0</strong>x
+    </div>
+    <button class="btn-arcade" id="replay-btn">Play Again</button>
+    <a class="btn-arcade btn-secondary" href="../" style="display:inline-block;text-decoration:none;">← Back to Games</a>
+  </div>
+
+</div>
+
+<div id="overlay">
+  <div class="box" id="overlay-msg">Round Complete!</div>
+</div>
+
+<script>
+const ALL_ITEMS = [
+  { img: 'images/phone.png', word: 'a phone' },
+  { img: 'images/watch.png', word: 'a watch' },
+  { img: 'images/tablet.png', word: 'a tablet' },
+  { img: 'images/wallet.png', word: 'a wallet' },
+  { img: 'images/pencil.png', word: 'a pencil' },
+  { img: 'images/notebook.png', word: 'a notebook' },
+  { img: 'images/glasses.png', word: 'glasses' },
+  { img: 'images/photo.png', word: 'a photo' },
+  { img: 'images/charger.png', word: 'a charger' },
+  { img: 'images/passport.png', word: 'a passport' },
+  { img: 'images/umbrella.png', word: 'an umbrella' },
+  { img: 'images/camera.png', word: 'a camera' },
+  { img: 'images/credit-card.png', word: 'a credit card' },
+  { img: 'images/key.png', word: 'a key' },
+  { img: 'images/newspaper.png', word: 'a newspaper' }
+];
+
+const ROUNDS = [
+  ALL_ITEMS.slice(0, 5),
+  ALL_ITEMS.slice(5, 10),
+  ALL_ITEMS.slice(10, 15)
+];
+
+let currentRound = 0, score = 0, combo = 0, maxCombo = 0;
+let timeLeft = 90, timerInterval = null;
+let selectedLeft = null, selectedRight = null;
+let leftItems = [], rightItems = [];
+let matchedCount = 0, totalMatches = 0, isBusy = false, soundOn = true;
+let bestScore = parseInt(localStorage.getItem('pw_best') || '0');
+
+document.getElementById('best-score').textContent = bestScore;
+
+const startScreen = document.getElementById('start-screen');
+const gameScreen  = document.getElementById('game-screen');
+const endScreen   = document.getElementById('end-screen');
+const leftList    = document.getElementById('left-list');
+const rightList   = document.getElementById('right-list');
+const overlay     = document.getElementById('overlay');
+const overlayMsg  = document.getElementById('overlay-msg');
+
+document.getElementById('start-btn').addEventListener('click', startGame);
+document.getElementById('replay-btn').addEventListener('click', startGame);
+document.getElementById('back-btn').addEventListener('click', () => {
+  clearInterval(timerInterval);
+  window.location.href = '../';
+});
+document.getElementById('sound-btn').addEventListener('click', () => {
+  soundOn = !soundOn;
+  document.getElementById('sound-btn').textContent = soundOn ? '🔊' : '🔇';
+});
+document.getElementById('hint-btn').addEventListener('click', useHint);
+document.getElementById('shuffle-btn').addEventListener('click', shuffleRight);
+
+function startGame() {
+  if (window.LAStars) window.LAStars.recordPlay("aef-pictures-words");
+  currentRound = 0; score = 0; combo = 0; maxCombo = 0;
+  timeLeft = 90; matchedCount = 0; totalMatches = 0;
+  selectedLeft = null; selectedRight = null; isBusy = false;
+
+  startScreen.classList.remove('active');
+  endScreen.classList.remove('active');
+  gameScreen.classList.add('active');
+
+  updateHUD();
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById('timer').textContent = timeLeft;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      endGame();
+    }
+  }, 1000);
+
+  loadRound();
+}
+
+function updateHUD() {
+  document.getElementById('score').textContent = score;
+  document.getElementById('round').textContent = currentRound + 1;
+  document.getElementById('combo').textContent = combo;
+  document.getElementById('timer').textContent = timeLeft;
+}
+
+function loadRound() {
+  matchedCount = 0;
+  selectedLeft = null; selectedRight = null; isBusy = false;
+
+  const items = ROUNDS[currentRound];
+  leftItems = items.map((it, i) => ({ ...it, id: i, matched: false }));
+  rightItems = items.map((it, i) => ({ ...it, id: i, matched: false }));
+
+  for (let i = rightItems.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [rightItems[i], rightItems[j]] = [rightItems[j], rightItems[i]];
+  }
+
+  renderLists();
+  updateHUD();
+}
+
+function renderLists() {
+  leftList.innerHTML = '';
+  rightList.innerHTML = '';
+
+  leftItems.forEach((item, idx) => {
+    const el = document.createElement('div');
+    el.className = 'match-card' + (item.matched ? ' muted' : '');
+    el.innerHTML = `<img src="${item.img}" alt="" draggable="false">`;
+    if (!item.matched) el.addEventListener('click', () => onSelect('left', idx));
+    leftList.appendChild(el);
+  });
+
+  rightItems.forEach((item, idx) => {
+    const el = document.createElement('div');
+    el.className = 'match-card' + (item.matched ? ' muted' : '');
+    el.textContent = item.word;
+    if (!item.matched) el.addEventListener('click', () => onSelect('right', idx));
+    rightList.appendChild(el);
+  });
+}
+
+function onSelect(side, index) {
+  if (isBusy) return;
+
+  if (side === 'left') {
+    if (leftItems[index].matched) return;
+    if (selectedLeft !== null) leftList.children[selectedLeft].classList.remove('selected');
+    selectedLeft = index;
+    leftList.children[index].classList.add('selected');
+  } else {
+    if (rightItems[index].matched) return;
+    if (selectedRight !== null) rightList.children[selectedRight].classList.remove('selected');
+    selectedRight = index;
+    rightList.children[index].classList.add('selected');
+  }
+
+  if (selectedLeft !== null && selectedRight !== null) checkMatch();
+}
+
+function checkMatch() {
+  isBusy = true;
+  const leftItem = leftItems[selectedLeft];
+  const rightItem = rightItems[selectedRight];
+  const leftEl = leftList.children[selectedLeft];
+  const rightEl = rightList.children[selectedRight];
+
+  if (leftItem.id === rightItem.id) {
+    leftEl.classList.remove('selected');
+    rightEl.classList.remove('selected');
+    leftEl.classList.add('matching');
+    rightEl.classList.add('matching');
+
+    setTimeout(() => {
+      leftItem.matched = true;
+      rightItem.matched = true;
+      leftEl.classList.remove('matching');
+      rightEl.classList.remove('matching');
+      leftEl.classList.add('muted');
+      rightEl.classList.add('muted');
+
+      matchedCount++; totalMatches++;
+      combo++;
+      if (combo > maxCombo) maxCombo = combo;
+      score += 100 * combo;
+      updateHUD();
+
+      selectedLeft = null; selectedRight = null; isBusy = false;
+      if (matchedCount >= 5) finishRound();
+    }, 520);
+  } else {
+    leftEl.classList.add('wrong-flash');
+    rightEl.classList.add('wrong-flash');
+    combo = 0;
+    updateHUD();
+
+    setTimeout(() => {
+      leftEl.classList.remove('selected', 'wrong-flash');
+      rightEl.classList.remove('selected', 'wrong-flash');
+      selectedLeft = null; selectedRight = null; isBusy = false;
+    }, 380);
+  }
+}
+
+function finishRound() {
+  isBusy = true;
+  const isLast = currentRound >= 2;
+
+  if (isLast) {
+    // Final round — go straight to end screen
+    endGame();
+  } else {
+    // Quickly go to next round (no message)
+    currentRound++;
+    timeLeft = Math.min(timeLeft + 15, 99);
+    loadRound();
+    isBusy = false;
+  }
+}
+
+function endGame() {
+  clearInterval(timerInterval);
+  if (score > bestScore) {
+    bestScore = score;
+    localStorage.setItem('pw_best', bestScore);
+    document.getElementById('best-score').textContent = bestScore;
+  }
+  document.getElementById('final-score').textContent = score;
+  if (window.LAStars) {
+    // Stars from progress (best kept in localStorage)
+    // currentRound is 0-based; finishing round 3 means currentRound === 2
+    var stars = 0;
+    if (currentRound >= 2 && matchedCount >= 5) stars = 3; // cleared all 3 rounds
+    else if (totalMatches >= 10 || currentRound >= 1) stars = 2;
+    else if (totalMatches >= 5 || score >= 500) stars = 1;
+    if (score >= 5000) stars = Math.max(stars, 2);
+    if (score >= 9000) stars = 3;
+    window.LAStars.save("aef-pictures-words", stars);
+  }
+  document.getElementById('final-time').textContent = Math.max(0, timeLeft);
+  document.getElementById('final-combo').textContent = maxCombo;
+
+  gameScreen.classList.remove('active');
+  endScreen.classList.add('active');
+}
+
+function useHint() {
+  if (isBusy || timeLeft <= 5) return;
+  const unmatched = leftItems.find(it => !it.matched);
+  if (!unmatched) return;
+
+  timeLeft -= 5;
+  updateHUD();
+
+  const leftIdx = leftItems.findIndex(it => it.id === unmatched.id);
+  const rightIdx = rightItems.findIndex(it => it.id === unmatched.id);
+
+  leftList.children[leftIdx].classList.add('selected');
+  rightList.children[rightIdx].classList.add('selected');
+
+  setTimeout(() => {
+    leftList.children[leftIdx].classList.remove('selected');
+    rightList.children[rightIdx].classList.remove('selected');
+  }, 1000);
+}
+
+function shuffleRight() {
+  if (isBusy) return;
+  const unmatched = rightItems.filter(it => !it.matched);
+  for (let i = unmatched.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [unmatched[i], unmatched[j]] = [unmatched[j], unmatched[i]];
+  }
+  let u = 0;
+  rightItems = rightItems.map(it => it.matched ? it : unmatched[u++]);
+  selectedLeft = null; selectedRight = null;
+  renderLists();
+}
+</script>
+<script src="../../../../../../../learningarcade/la-stars.js"></script>
+
+<script>
+/* Inline LAStars so Unit 3A games always save progress (no broken relative path) */
+(function(){
+  if (window.LAStars) return;
+  var KEY="laGameStars";
+  function load(){ try{return JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){return{};} }
+  window.LAStars={
+    load:load,
+    save:function(id,stars){
+      stars=Math.max(0,Math.min(3,Number(stars)||0));
+      var d=load();
+      if(stars>Number(d[id]||0)){ d[id]=stars; try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){} }
+      return Number(d[id]||0);
+    },
+    saveFromAccuracy:function(id,acc){
+      var s=acc>=90?3:acc>=70?2:acc>=40?1:0;
+      return this.save(id,s);
+    },
+    recordPlay:function(id){
+      if(!id)return 0;
+      var d={};
+      try{d=JSON.parse(localStorage.getItem("laGamePlays")||"{}")||{};}catch(e){}
+      var n=Number(d[id]||0)+1;
+      d[id]=n;
+      try{localStorage.setItem("laGamePlays",JSON.stringify(d));}catch(e){}
+      return n;
+    }
+  };
+})();
+</script>
+
+</body>
+</html>

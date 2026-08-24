@@ -224,6 +224,7 @@ document.addEventListener("DOMContentLoaded", function () {
      ======================================================= */
 
   function startGame() {
+    if (window.LAStars) window.LAStars.recordPlay("food-verb-match");
 
     console.log("Food Verb Match: Starting game");
 
@@ -1272,6 +1273,9 @@ document.addEventListener("DOMContentLoaded", function () {
         accuracy + "%";
     }
 
+    if (window.LAStars) {
+      window.LAStars.saveFromAccuracy("food-verb-match", accuracy);
+    }
 
     if (bestComboEl) {
 

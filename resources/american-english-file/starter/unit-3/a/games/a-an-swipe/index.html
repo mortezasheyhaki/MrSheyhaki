@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+  <meta name="theme-color" content="#050510">
+  <title>A or An Swipe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Exo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game-shell" id="app">
+
+    <a class="game-back" href="../" aria-label="Back to Unit 3A Games">← Games</a>
+
+    <!-- TOP HUD -->
+    <header class="topbar">
+      <div class="hud-box time-box">
+        <div class="hud-icon">⏱</div>
+        <div class="hud-meta">
+          <span class="hud-label">TIME</span>
+          <strong id="timer">01:00</strong>
+        </div>
+      </div>
+
+      <div class="title-block">
+        <div class="title-dots">
+          <span class="dot cyan"></span>
+          <span class="dot yellow">A / AN</span>
+          <span class="dot pink"></span>
+        </div>
+        <h1>A OR AN SWIPE</h1>
+      </div>
+
+      <div class="hud-box score-box">
+        <div class="hud-icon">🏆</div>
+        <div class="hud-meta">
+          <span class="hud-label">SCORE</span>
+          <strong id="score">0</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressFill"></div>
+    </div>
+    <div class="counter" id="counter">0 / 24</div>
+
+    <!-- MAIN -->
+    <main class="game-area">
+
+      <!-- TOP TARGETS -->
+      <div class="targets">
+        <button class="target target-a" id="targetA" type="button" aria-label="Choose a">
+          <span class="article">a</span>
+          <span class="arrow">←</span>
+        </button>
+        <button class="target target-an" id="targetAn" type="button" aria-label="Choose an">
+          <span class="arrow">→</span>
+          <span class="article">an</span>
+        </button>
+      </div>
+
+      <!-- CARD ZONE -->
+      <section class="card-zone">
+        <div class="side-arrows left-arrows" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+
+        <div class="swipe-card" id="swipeCard" role="button" tabindex="0"
+             aria-label="Swipe left for a or right for an">
+          <span class="word" id="word">—</span>
+        </div>
+
+        <div class="side-arrows right-arrows" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+      </section>
+
+      <p class="feedback" id="feedback" aria-live="polite"></p>
+
+      <div class="swipe-labels">
+        <span class="sl-left">SWIPE LEFT<br>FOR “a”</span>
+        <span class="sl-right">SWIPE RIGHT<br>FOR “an”</span>
+      </div>
+
+      <div class="hint-row">
+        <span class="hint-left">🖐 Swipe left for <b>a</b></span>
+        <span class="hint-divider">|</span>
+        <span class="hint-right">🖐 Swipe right for <b>an</b></span>
+      </div>
+
+      <p class="status sr-only" id="status" aria-live="polite"></p>
+    </main>
+
+    <!-- BOTTOM CONTROLS -->
+    <footer class="bottom-bar">
+      <div class="stat-box accuracy-box">
+        <span class="stat-icon">◎</span>
+        <div>
+          <span class="stat-label">ACCURACY</span>
+          <strong id="accuracyLive">100%</strong>
+        </div>
+      </div>
+
+      <!-- Virtual stick (left / right only) -->
+      <div class="stick-wrap">
+        <div class="stick-ring">
+          <div class="stick-label left">A &lt;</div>
+          <div class="stick-label right">AN</div>
+          <div class="stick-knob" id="stickKnob"></div>
+        </div>
+        <div class="stick-hint">DRAG THE STICK TO SEND THE CARD</div>
+      </div>
+
+      <div class="right-stats">
+        <div class="stat-box combo-box">
+          <span class="stat-icon">★</span>
+          <div>
+            <span class="stat-label">BEST COMBO</span>
+            <strong id="bestComboLive">0</strong>
+          </div>
+        </div>
+        <div class="ctrl-row">
+          <button class="ctrl-btn" id="soundBtn" type="button" aria-label="Toggle sound">
+            <span id="soundIcon">🔊</span> SOUND <span id="soundState">ON</span>
+          </button>
+          <button class="ctrl-btn" id="pauseBtn" type="button" aria-label="Pause">
+            ⏸ PAUSE
+          </button>
+        </div>
+      </div>
+    </footer>
+
+    <!-- START OVERLAY -->
+    <div class="overlay" id="startOverlay">
+      <a class="exit-back exit-back--float" href="../" aria-label="Back to Unit 3A Games">← Games</a>
+      <div class="arcade-cabinet" role="dialog" aria-labelledby="arcadeTitle">
+        <div class="arcade-marquee">
+          <h2 id="arcadeTitle">A OR AN</h2>
+          <p class="arcade-marquee-sub">SWIPE</p>
+        </div>
+        <div class="arcade-screen">
+          <div class="arcade-scanlines" aria-hidden="true"></div>
+          <span class="arcade-screen-text">GAME<br>ON!</span>
+        </div>
+        <div class="arcade-controls" aria-hidden="true">
+          <div class="arcade-stick">
+            <div class="arcade-stick-base"></div>
+            <div class="arcade-stick-shaft"></div>
+            <div class="arcade-stick-ball"></div>
+          </div>
+          <div class="arcade-buttons">
+            <span class="ab ab-yellow"></span>
+            <span class="ab ab-purple"></span>
+            <span class="ab ab-cyan"></span>
+            <span class="ab ab-blue"></span>
+            <span class="ab ab-red"></span>
+          </div>
+        </div>
+        <p class="arcade-tagline">Play, learn and master a / an!</p>
+        <button class="arcade-start" id="startBtn" type="button">START</button>
+        <p class="arcade-note">Desktop: ← and → keys work too</p>
+      </div>
+    </div>
+
+    <!-- END MODAL -->
+    <div class="overlay hidden" id="endModal">
+      <div class="panel">
+        <div class="panel-badge" id="resultIcon">🏆</div>
+        <h2 id="endTitle">Excellent!</h2>
+        <p id="endMessage">You matched every word.</p>
+        <div class="results">
+          <div><span>Score</span><strong id="finalScore">0</strong></div>
+          <div><span>Accuracy</span><strong id="accuracy">0%</strong></div>
+          <div><span>Best Combo</span><strong id="bestCombo">0</strong></div>
+        </div>
+        <button class="start-button" id="playAgain">PLAY AGAIN</button>
+        <a class="exit-link" href="../">← Back to Games</a>
+      </div>
+    </div>
+
+    <!-- PAUSE OVERLAY -->
+    <div class="overlay hidden" id="pauseOverlay">
+      <div class="panel">
+        <div class="panel-badge">⏸</div>
+        <h2>PAUSED</h2>
+        <p>Game is paused</p>
+        <button class="start-button" id="resumeBtn">RESUME</button>
+        <a class="exit-link" href="../">← Back to Games</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../../../../../../learningarcade/la-stars.js"></script>
+  
+<script>
+/* Inline LAStars so Unit 3A games always save progress (no broken relative path) */
+(function(){
+  if (window.LAStars) return;
+  var KEY="laGameStars";
+  function load(){ try{return JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){return{};} }
+  window.LAStars={
+    load:load,
+    save:function(id,stars){
+      stars=Math.max(0,Math.min(3,Number(stars)||0));
+      var d=load();
+      if(stars>Number(d[id]||0)){ d[id]=stars; try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){} }
+      return Number(d[id]||0);
+    },
+    saveFromAccuracy:function(id,acc){
+      var s=acc>=90?3:acc>=70?2:acc>=40?1:0;
+      return this.save(id,s);
+    },
+    recordPlay:function(id){
+      if(!id)return 0;
+      var d={};
+      try{d=JSON.parse(localStorage.getItem("laGamePlays")||"{}")||{};}catch(e){}
+      var n=Number(d[id]||0)+1;
+      d[id]=n;
+      try{localStorage.setItem("laGamePlays",JSON.stringify(d));}catch(e){}
+      return n;
+    }
+  };
+})();
+</script>
+
+  <script src="script.js"></script>
+</body>
+</html>

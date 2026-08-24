@@ -103,6 +103,7 @@
 
     let activePairs = [];
     let remainingPairs = [];
+    let matchedIds = new Set(); // matched cards stay on board (muted)
 
     let selectedVerb = null;
     let selectedPhrase = null;
@@ -230,11 +231,12 @@
       hintBtn.onclick = () => {
         if (!gameRunning) return;
 
-        // Find a matching pair currently on the board
+        // Find a matching pair among unmatched cards on the board
         let matchFound = null;
         for (let pair of activePairs) {
+          if (matchedIds.has(pair.id)) continue;
           const valid = verbGroupings[pair.verb] || [];
-          const matchingPhraseCard = activePairs.find(p => valid.includes(p.phrase));
+          const matchingPhraseCard = activePairs.find(p => !matchedIds.has(p.id) && valid.includes(p.phrase));
           if (matchingPhraseCard) {
             matchFound = { verb: pair.verb, phrase: matchingPhraseCard.phrase };
             break;
@@ -247,11 +249,11 @@
             timerLabel.textContent = timeLeft;
           }
 
-          // Temporarily highlight the hint pair
-          container.querySelectorAll("#verbs .word").forEach(el => {
+          // Temporarily highlight the hint pair (skip already matched)
+          container.querySelectorAll("#verbs .word:not(.matched)").forEach(el => {
             if (el.textContent === matchFound.verb) el.classList.add("selected");
           });
-          container.querySelectorAll("#phrases .word").forEach(el => {
+          container.querySelectorAll("#phrases .word:not(.matched)").forEach(el => {
             if (el.textContent === matchFound.phrase) el.classList.add("selected");
           });
 
@@ -263,11 +265,15 @@
     if (shuffleBtn) {
       shuffleBtn.onclick = () => {
         if (!gameRunning) return;
-        // Return active pairs to remaining and draw new ones
-        remainingPairs.push(...activePairs);
-        activePairs = [];
-        for (let i = 0; i < ACTIVE_PAIRS; i++) addRandomPair();
+        // Reshuffle only unmatched cards; matched stay muted in place
+        const unmatched = activePairs.filter(p => !matchedIds.has(p.id));
+        remainingPairs.push(...unmatched);
+        activePairs = activePairs.filter(p => matchedIds.has(p.id));
+        while (activePairs.length < ACTIVE_PAIRS && remainingPairs.length > 0) {
+          addRandomPair();
+        }
         clearSelections();
+        // Keep matched order stable; reshuffle full board layout
         verbOrder = []; phraseOrder = [];
         renderBoard(true);
       };
@@ -293,6 +299,7 @@
       if (timer) clearInterval(timer);
 
       gameRunning = true;
+      if (window.LAStars) window.LAStars.recordPlay("vocab-match-rush");
 
       if (gameMode === "rush") {
         timer = setInterval(updateTimer, 1000);
@@ -300,6 +307,7 @@
 
       remainingPairs = [...gameVocabulary];
       activePairs = [];
+      matchedIds = new Set();
 
       for (let i = 0; i < ACTIVE_PAIRS; i++) {
         addRandomPair();
@@ -355,6 +363,14 @@
       const accuracy = totalAttempts > 0 ? Math.round((correctMatches / totalAttempts) * 100) : 0;
       if (accuracyStat) accuracyStat.textContent = `${accuracy}%`;
       if (maxComboStat) maxComboStat.textContent = `${maxCombo}x`;
+
+      // Progress stars (best of 0–3 kept in localStorage)
+      if (window.LAStars) {
+        var stars = accuracy >= 90 ? 3 : accuracy >= 70 ? 2 : accuracy >= 40 ? 1 : 0;
+        if (isVictory && correctMatches >= 10 && stars < 2) stars = 2;
+        if (isVictory && accuracy >= 80) stars = Math.max(stars, 3);
+        window.LAStars.save("vocab-match-rush", stars);
+      }
 
       // Render Mistakes List
       if (mistakeListDiv) {
@@ -463,20 +479,30 @@
       verbOrder.forEach(id => {
         const pair = byId[id];
         if (!pair) return;
+        const isMatched = matchedIds.has(pair.id);
         const div = document.createElement("div");
-        div.className = "word";
+        div.className = "word" + (isMatched ? " matched" : "");
         div.textContent = pair.verb;
-        div.onclick = () => selectVerb(div, pair);
+        if (isMatched) {
+          div.setAttribute("tabindex", "-1");
+        } else {
+          div.onclick = () => selectVerb(div, pair);
+        }
         verbsDiv.appendChild(div);
       });
 
       phraseOrder.forEach(id => {
         const pair = byId[id];
         if (!pair) return;
+        const isMatched = matchedIds.has(pair.id);
         const div = document.createElement("div");
-        div.className = "word";
+        div.className = "word" + (isMatched ? " matched" : "");
         div.textContent = pair.phrase;
-        div.onclick = () => selectPhrase(div, pair);
+        if (isMatched) {
+          div.setAttribute("tabindex", "-1");
+        } else {
+          div.onclick = () => selectPhrase(div, pair);
+        }
         phrasesDiv.appendChild(div);
       });
     }
@@ -496,7 +522,7 @@
     }
 
     function clearSelections() {
-      container.querySelectorAll(".word").forEach(w => {
+      container.querySelectorAll(".word:not(.matched)").forEach(w => {
         w.classList.remove("selected", "wrong", "correct");
       });
       selectedVerb = null;
@@ -506,14 +532,14 @@
     }
 
     function selectVerb(element, pair) {
-      if (!gameRunning) return;
+      if (!gameRunning || matchedIds.has(pair.id) || element.classList.contains("matched")) return;
       if (selectedVerb && selectedVerb.id === pair.id) {
         element.classList.remove("selected");
         selectedVerb = null;
         selectedVerbElement = null;
         return;
       }
-      container.querySelectorAll("#verbs .word").forEach(w => w.classList.remove("selected"));
+      container.querySelectorAll("#verbs .word:not(.matched)").forEach(w => w.classList.remove("selected"));
       element.classList.add("selected");
       selectedVerb = pair;
       selectedVerbElement = element;
@@ -521,14 +547,14 @@
     }
 
     function selectPhrase(element, pair) {
-      if (!gameRunning) return;
+      if (!gameRunning || matchedIds.has(pair.id) || element.classList.contains("matched")) return;
       if (selectedPhrase && selectedPhrase.id === pair.id) {
         element.classList.remove("selected");
         selectedPhrase = null;
         selectedPhraseElement = null;
         return;
       }
-      container.querySelectorAll("#phrases .word").forEach(w => w.classList.remove("selected"));
+      container.querySelectorAll("#phrases .word:not(.matched)").forEach(w => w.classList.remove("selected"));
       element.classList.add("selected");
       selectedPhrase = pair;
       selectedPhraseElement = element;
@@ -563,13 +589,6 @@
         vEl.classList.add("correct");
         pEl.classList.add("correct");
 
-        // Both matched cards glow, then smoothly fade/scale away.
-        // The board is rendered only after the animation finishes.
-        setTimeout(() => {
-          vEl.classList.add("vanish");
-          pEl.classList.add("vanish");
-        }, 140);
-
         // Pronounce correct pair via Text-to-Speech
         speakText(`${verbText} ${phraseText}`);
 
@@ -583,26 +602,62 @@
           playSound("match");
         }
 
+        // Matching is by verb grouping, so the verb card and phrase card
+        // may belong to different pair objects — mark BOTH as matched
+        // (same as the old removal of both pairs from the board).
+        const matchedVerbId = selectedVerb.id;
+        const matchedPhraseId = selectedPhrase.id;
         gameRunning = false;
 
+        // Keep cards on board — mute (fade) instead of removing
         setTimeout(() => {
-          activePairs = activePairs.filter(p => p.id !== selectedVerb.id && p.id !== selectedPhrase.id);
+          matchedIds.add(matchedVerbId);
+          matchedIds.add(matchedPhraseId);
 
-          if (remainingPairs.length > 0) {
-            while (activePairs.length < ACTIVE_PAIRS && remainingPairs.length > 0) {
-              addRandomPair();
-            }
-            clearSelections();
-            renderBoard();
-            gameRunning = true;
-          } else if (activePairs.length > 0) {
-            clearSelections();
-            renderBoard();
-            gameRunning = true;
-          } else {
-            endGame(true);
+          if (vEl) {
+            vEl.classList.remove("selected");
+            vEl.classList.add("matched");
+            vEl.setAttribute("tabindex", "-1");
+            vEl.onclick = null;
           }
-        }, 520);
+          if (pEl) {
+            pEl.classList.remove("selected");
+            pEl.classList.add("matched");
+            pEl.setAttribute("tabindex", "-1");
+            pEl.onclick = null;
+          }
+
+          selectedVerb = null;
+          selectedPhrase = null;
+          selectedVerbElement = null;
+          selectedPhraseElement = null;
+
+          // Re-render so sibling cards of cross-matched pairs also mute
+          renderBoard(false);
+
+          // All pair objects on the board matched?
+          if (matchedIds.size >= activePairs.length) {
+            if (remainingPairs.length > 0) {
+              // Next batch: clear muted cards and deal a fresh set
+              setTimeout(() => {
+                activePairs = [];
+                matchedIds = new Set();
+                while (activePairs.length < ACTIVE_PAIRS && remainingPairs.length > 0) {
+                  addRandomPair();
+                }
+                verbOrder = [];
+                phraseOrder = [];
+                clearSelections();
+                renderBoard(true);
+                gameRunning = true;
+              }, 450);
+            } else {
+              setTimeout(() => endGame(true), 500);
+            }
+          } else {
+            gameRunning = true;
+          }
+        }, 320);
 
       } else {
         // Track mistake for review
