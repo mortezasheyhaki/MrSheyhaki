@@ -1317,132 +1317,6 @@
     /* Space so content isn't hidden behind bottom nav */
     body { padding-bottom: 72px; }
   </style>
-
-    /* =========================================================
-       PHONE REFINEMENT — Learning Arcade
-       Compact two-card layout, contained buttons, no clipping.
-    ========================================================= */
-    @media (max-width: 700px) {
-      .arcade-bg {
-        min-height: 100dvh;
-        padding: 18px 10px 86px !important;
-      }
-
-      .arcade-header {
-        width: 100%;
-        margin-bottom: 18px !important;
-        padding: 0 4px;
-      }
-
-      .arcade-header .eyebrow {
-        font-size: .68rem !important;
-        letter-spacing: .11em !important;
-        padding: 5px 10px !important;
-        margin-bottom: 8px !important;
-      }
-
-      .arcade-title-flicker {
-        font-size: clamp(1rem, 6.2vw, 1.45rem) !important;
-        line-height: 1.25 !important;
-        margin-bottom: 10px !important;
-        letter-spacing: .02em !important;
-      }
-
-      .tagline-row {
-        width: auto;
-        max-width: 94%;
-        font-size: .58rem !important;
-        letter-spacing: .08em !important;
-        gap: 4px 7px !important;
-        padding: 6px 10px !important;
-      }
-
-      .choice-grid {
-        width: 100% !important;
-        max-width: 430px !important;
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 10px !important;
-        align-items: stretch;
-      }
-
-      .choice-card {
-        min-height: 0 !important;
-        height: auto !important;
-        padding: 12px 8px 13px !important;
-        border-radius: 16px !important;
-        border-width: 1.5px !important;
-        box-shadow: 0 8px 22px rgba(15,23,42,.12) !important;
-      }
-
-      .card-image {
-        width: 100% !important;
-        height: auto !important;
-        aspect-ratio: 1 / 1 !important;
-        max-width: 132px !important;
-        margin: 0 auto 9px !important;
-        border-radius: 13px !important;
-        border-width: 1px !important;
-      }
-
-      .card-image img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: contain !important;
-        display: block !important;
-      }
-
-      .choice-card .card-title {
-        font-size: clamp(.88rem, 4.2vw, 1.08rem) !important;
-        line-height: 1.15 !important;
-        margin: 0 0 5px !important;
-      }
-
-      .choice-card .card-desc {
-        font-size: .62rem !important;
-        line-height: 1.35 !important;
-        margin: 0 0 9px !important;
-      }
-
-      .choice-card .card-btn {
-        width: calc(100% - 8px) !important;
-        min-height: 32px !important;
-        height: 32px !important;
-        margin: auto auto 0 !important;
-        padding: 0 5px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 3px !important;
-        border-width: 1px !important;
-        border-radius: 9px !important;
-        font-size: .53rem !important;
-        line-height: 1 !important;
-        letter-spacing: .035em !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-      }
-
-      .arcade-footer {
-        margin-top: 18px !important;
-        font-size: .66rem !important;
-      }
-
-      .music-toggle {
-        right: 9px !important;
-        bottom: 72px !important;
-        min-height: 34px !important;
-        padding: 7px 10px !important;
-        font-size: .68rem !important;
-        border-radius: 10px !important;
-      }
-    }
-
-    @media (max-width: 380px) {
-      .choice-card { padding: 10px 6px 11px !important; }
-      .card-image { max-width: 112px !important; }
-      .choice-card .card-btn { font-size: .49rem !important; }
-    }
-
 </head>
 
 
@@ -1685,7 +1559,7 @@
   >
 
     <source
-      src="assets/arcade-loop.wav"
+      src="https://cdn.imgurl.ir/uploads/y6889_slimeyfox-arcade-80s-era-481352.mp3"
       type="audio/mpeg"
     >
 
@@ -1877,13 +1751,32 @@
                 this.getAttribute("href");
 
 
+              if (!started) {
+
+                music.play()
+
+                  .then(() => {
+
+                    started = true;
+
+                    updateBtn();
+
+                  })
+
+                  .catch(() => {});
+
+              }
+
+
               playSelectSound();
 
-              // Navigation should not depend on autoplay. The music button
-              // is the explicit user gesture that starts the background track.
+
               setTimeout(() => {
-                window.location.href = href;
-              }, 120);
+
+                window.location.href =
+                  href;
+
+              }, 140);
 
             }
 

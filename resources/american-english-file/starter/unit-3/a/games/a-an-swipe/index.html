@@ -137,33 +137,23 @@
 
     <!-- START OVERLAY -->
     <div class="overlay" id="startOverlay">
-      <a class="exit-back exit-back--float" href="../" aria-label="Back to Unit 3A Games">← Games</a>
-      <div class="arcade-cabinet" role="dialog" aria-labelledby="arcadeTitle">
-        <div class="arcade-marquee">
-          <h2 id="arcadeTitle">A OR AN</h2>
-          <p class="arcade-marquee-sub">SWIPE</p>
-        </div>
-        <div class="arcade-screen">
-          <div class="arcade-scanlines" aria-hidden="true"></div>
-          <span class="arcade-screen-text">GAME<br>ON!</span>
-        </div>
-        <div class="arcade-controls" aria-hidden="true">
-          <div class="arcade-stick">
-            <div class="arcade-stick-base"></div>
-            <div class="arcade-stick-shaft"></div>
-            <div class="arcade-stick-ball"></div>
+      <div class="panel">
+        <a class="exit-back" href="../" aria-label="Back to Unit 3A Games">← Games</a>
+        <div class="panel-badge">A / AN</div>
+        <h2>A OR AN SWIPE</h2>
+        <p>Swipe each word to the correct article.</p>
+        <div class="guide">
+          <div class="guide-a">
+            <b>← A</b>
+            <span>consonant sound</span>
           </div>
-          <div class="arcade-buttons">
-            <span class="ab ab-yellow"></span>
-            <span class="ab ab-purple"></span>
-            <span class="ab ab-cyan"></span>
-            <span class="ab ab-blue"></span>
-            <span class="ab ab-red"></span>
+          <div class="guide-an">
+            <b>AN →</b>
+            <span>vowel sound</span>
           </div>
         </div>
-        <p class="arcade-tagline">Play, learn and master a / an!</p>
-        <button class="arcade-start" id="startBtn" type="button">START</button>
-        <p class="arcade-note">Desktop: ← and → keys work too</p>
+        <button class="start-button" id="startBtn">START GAME</button>
+        <p class="keyboard-note">Desktop: ← and → keys work too</p>
       </div>
     </div>
 
@@ -194,39 +184,6 @@
       </div>
     </div>
   </div>
-
-  <script src="../../../../../../../learningarcade/la-stars.js"></script>
-  
-<script>
-/* Inline LAStars so Unit 3A games always save progress (no broken relative path) */
-(function(){
-  if (window.LAStars) return;
-  var KEY="laGameStars";
-  function load(){ try{return JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){return{};} }
-  window.LAStars={
-    load:load,
-    save:function(id,stars){
-      stars=Math.max(0,Math.min(3,Number(stars)||0));
-      var d=load();
-      if(stars>Number(d[id]||0)){ d[id]=stars; try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){} }
-      return Number(d[id]||0);
-    },
-    saveFromAccuracy:function(id,acc){
-      var s=acc>=90?3:acc>=70?2:acc>=40?1:0;
-      return this.save(id,s);
-    },
-    recordPlay:function(id){
-      if(!id)return 0;
-      var d={};
-      try{d=JSON.parse(localStorage.getItem("laGamePlays")||"{}")||{};}catch(e){}
-      var n=Number(d[id]||0)+1;
-      d[id]=n;
-      try{localStorage.setItem("laGamePlays",JSON.stringify(d));}catch(e){}
-      return n;
-    }
-  };
-})();
-</script>
 
   <script src="script.js"></script>
 </body>

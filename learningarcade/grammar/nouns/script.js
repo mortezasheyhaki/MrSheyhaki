@@ -294,7 +294,6 @@
 
     /* START / ROUNDS */
     function startGame() {
-      if (window.LAStars) window.LAStars.recordPlay("nouns");
       score = 0;
       combo = 0;
       maxCombo = 0;

@@ -1,70 +1,3 @@
-
-/* LAStars bootstrap (stars + play counts) — shared with Learning Arcade */
-(function () {
-  if (window.LAStars && window.LAStars.recordPlay) return;
-  var STARS_KEY = "laGameStars";
-  var PLAYS_KEY = "laGamePlays";
-  function loadJSON(key) {
-    try { return JSON.parse(localStorage.getItem(key) || "{}") || {}; } catch (e) { return {}; }
-  }
-  function saveJSON(key, data) {
-    try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) {}
-  }
-  function load() { return loadJSON(STARS_KEY); }
-  function loadPlays() { return loadJSON(PLAYS_KEY); }
-  function playLabel(n) {
-    n = Number(n) || 0;
-    if (n <= 0) return "Not played yet";
-    if (n === 1) return "Played 1 time";
-    return "Played " + n + " times";
-  }
-  window.LAStars = {
-    load: load,
-    loadPlays: loadPlays,
-    save: function (id, stars) {
-      stars = Math.max(0, Math.min(3, Number(stars) || 0));
-      var data = load();
-      if (stars > Number(data[id] || 0)) {
-        data[id] = stars;
-        saveJSON(STARS_KEY, data);
-      }
-    },
-    saveFromAccuracy: function (id, acc) {
-      var stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 40 ? 1 : 0;
-      this.save(id, stars);
-    },
-    recordPlay: function (id) {
-      if (!id) return 0;
-      var data = loadPlays();
-      var n = Number(data[id] || 0) + 1;
-      data[id] = n;
-      saveJSON(PLAYS_KEY, data);
-      return n;
-    },
-    getPlays: function (id) { return Number(loadPlays()[id] || 0); },
-    playLabel: playLabel,
-    apply: function (root) {
-      var starsData = load();
-      var playsData = loadPlays();
-      (root || document).querySelectorAll(".game-stars[data-game]").forEach(function (el) {
-        var n = Math.max(0, Math.min(3, Number(starsData[el.getAttribute("data-game")] || 0)));
-        el.querySelectorAll(".star").forEach(function (star) {
-          var need = Number(star.getAttribute("data-n") || 0);
-          if (need <= n) { star.classList.add("is-filled"); star.textContent = "★"; }
-          else { star.classList.remove("is-filled"); star.textContent = "☆"; }
-        });
-        el.setAttribute("aria-label", n + " of 3 stars");
-      });
-      (root || document).querySelectorAll(".game-plays[data-game]").forEach(function (el) {
-        var id = el.getAttribute("data-game");
-        var n = Number(playsData[id] || 0);
-        el.textContent = playLabel(n);
-        el.setAttribute("data-count", String(n));
-      });
-    }
-  };
-})();
-
 /*
  * COURSE RENDERER
  * ---------------
@@ -164,6 +97,23 @@
     });
     main.appendChild(grid);
 
+    // Quiz section
+    main.appendChild(
+      el("section", { class: "section-heading" }, [
+        el("div", {}, [
+          el("h2", { text: "Quiz" }),
+          el("p", { text: "Test your grammar and vocabulary from Units 1–12." }),
+        ]),
+      ])
+    );
+    const quizGrid = el("section", { class: "level-grid", "aria-label": "Quizzes" });
+    quizGrid.appendChild(
+      el("a", { class: "level-card", href: "quiz/" }, [
+        el("h3", { text: "🧠 Multiple Choice" }),
+        el("p", { text: "40 questions per unit · Grammar & Vocabulary." }),
+      ])
+    );
+    main.appendChild(quizGrid);
   }
 
   function itemCard(href, index, title, name, isPE) {
@@ -362,31 +312,15 @@
     }
     const grid = el("section", { class: "content-grid unit-resource-grid" });
     items.forEach((item) => {
-      const kids = [
-        el("div", { class: "resource-icon", "aria-hidden": "true", text: meta.icon }),
-        el("h3", { text: item.title }),
-      ];
-      if (section === "games" && item.id) {
-        const stars = el("div", {
-          class: "game-stars",
-          "data-game": item.id,
-          "aria-label": "Progress stars",
-        });
-        for (let n = 1; n <= 3; n++) {
-          stars.appendChild(el("span", { class: "star", "data-n": String(n), text: "☆" }));
-        }
-        kids.push(stars);
-        kids.push(el("div", {
-          class: "game-plays",
-          "data-game": item.id,
-          text: "Not played yet",
-        }));
-      }
-      kids.push(el("span", { class: "resource-button", text: meta.verb + " →" }));
-      grid.appendChild(el("a", { class: "content-card resource-card", href: item.url }, kids));
+      grid.appendChild(
+        el("a", { class: "content-card resource-card", href: item.url }, [
+          el("div", { class: "resource-icon", "aria-hidden": "true", text: meta.icon }),
+          el("h3", { text: item.title }),
+          el("span", { class: "resource-button", text: meta.verb + " →" }),
+        ])
+      );
     });
     main.appendChild(grid);
-    if (section === "games" && window.LAStars) window.LAStars.apply(main);
   }
 
   function renderAudio(body, main) {
@@ -568,11 +502,3 @@
     }
   });
 })();
-
-window.addEventListener("pageshow", function (event) {
-  if (event.persisted) {
-    window.location.reload();
-    return;
-  }
-  if (window.LAStars) window.LAStars.apply(document.getElementById("app") || document);
-});

@@ -163,11 +163,6 @@ const grammarBackButton =
         "grammarBackButton"
     );
 
-const backToMenuButton =
-    document.getElementById(
-        "backToMenu"
-    );
-
 const themeToggle =
     document.getElementById(
         "themeToggle"
@@ -560,24 +555,12 @@ if (grammarBackButton) {
 
 hideGrammarBackButton();
 
-if (backToMenuButton) {
-    backToMenuButton.addEventListener("click", function () {
-        gameActive = false;
-        gameScreen.classList.add("hidden");
-        resultScreen.classList.add("hidden");
-        targetScreen.classList.remove("hidden");
-        hideGrammarBackButton();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-}
-
 
 /* =====================================================
    START BATTLE
 ===================================================== */
 
 function startBattle() {
-    if (window.LAStars) window.LAStars.recordPlay("there-is-there-are");
     document.body.classList.add("playing");
 
     showGrammarBackButton();

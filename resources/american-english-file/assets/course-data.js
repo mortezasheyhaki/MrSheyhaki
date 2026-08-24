@@ -93,8 +93,8 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.audio = [
 
 // Unit 3A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
-  { title: "Pictures + Words Match", url: "pictures-words-match/", id: "aef-pictures-words" },
-  { title: "A or An Swipe", url: "a-an-swipe/", id: "aef-a-an-swipe" },
+  { title: "Pictures + Words Match", url: "pictures-words-match/" },
+  { title: "A or An Swipe", url: "a-an-swipe/" },
 ];
 
 // Unit 9A – Listen & Write game

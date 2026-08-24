@@ -277,7 +277,6 @@
   }
 
   function startGame() {
-    if (window.LAStars) window.LAStars.recordPlay("daily-routines");
     queue = buildQueue();
     index = 0;
     score = 0;
@@ -298,11 +297,6 @@
         (TOTAL ? Math.round((correctCount / TOTAL) * 100) : 0) + "%";
     }
     showScreen("result");
-    if (window.LAStars) {
-      var acc = TOTAL ? Math.round((correctCount / TOTAL) * 100) : 0;
-      window.LAStars.saveFromAccuracy("daily-routines", acc);
-    }
-
   }
 
   function setupDropZones() {

@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { word: "English", article: "an" },
     { word: "ice cream", article: "an" },
     { word: "insect", article: "an" },
+    { word: "internet", article: "an" },
     { word: "orange", article: "an" },
     { word: "octopus", article: "an" },
     { word: "umbrella", article: "an" },
@@ -89,7 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function startGame() {
-    if (window.LAStars) window.LAStars.recordPlay("aef-a-an-swipe");
     if (state?.timer) clearInterval(state.timer);
 
     state = {
@@ -295,13 +295,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     $("finalScore").textContent = state.score;
     $("accuracy").textContent = `${accuracy}%`;
-    if (window.LAStars) {
-      var stars = accuracy >= 90 ? 3 : accuracy >= 70 ? 2 : accuracy >= 40 ? 1 : 0;
-      if (won && state.correct >= Math.floor(TOTAL * 0.5) && stars < 1) stars = 1;
-      if (won && accuracy >= 60) stars = Math.max(stars, 2);
-      if (won && accuracy >= 85) stars = 3;
-      window.LAStars.save("aef-a-an-swipe", stars);
-    }
     $("bestCombo").textContent = state.bestCombo;
     $("endTitle").textContent = won ? "Excellent!" : "Time's up!";
     $("endMessage").textContent = won

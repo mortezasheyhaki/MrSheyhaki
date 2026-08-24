@@ -391,7 +391,6 @@
      ========================================================= */
 
   function startMode(key) {
-    if (window.LAStars) window.LAStars.recordPlay("simple-past");
     modeKey = key;
     const mode = MODES[key];
     if (!mode) return;
@@ -691,11 +690,6 @@
     document.getElementById("finalAccuracy").textContent =
       (TOTAL ? Math.round((correct / TOTAL) * 100) : 0) + "%";
     show("result");
-    if (window.LAStars) {
-      var acc = TOTAL ? Math.round((correct / TOTAL) * 100) : 0;
-      window.LAStars.saveFromAccuracy("simple-past", acc);
-    }
-
   }
 
   /* =========================================================

@@ -443,7 +443,7 @@ let currentRound = 0, score = 0, combo = 0, maxCombo = 0;
 let timeLeft = 90, timerInterval = null;
 let selectedLeft = null, selectedRight = null;
 let leftItems = [], rightItems = [];
-let matchedCount = 0, totalMatches = 0, isBusy = false, soundOn = true;
+let matchedCount = 0, isBusy = false, soundOn = true;
 let bestScore = parseInt(localStorage.getItem('pw_best') || '0');
 
 document.getElementById('best-score').textContent = bestScore;
@@ -470,9 +470,8 @@ document.getElementById('hint-btn').addEventListener('click', useHint);
 document.getElementById('shuffle-btn').addEventListener('click', shuffleRight);
 
 function startGame() {
-  if (window.LAStars) window.LAStars.recordPlay("aef-pictures-words");
   currentRound = 0; score = 0; combo = 0; maxCombo = 0;
-  timeLeft = 90; matchedCount = 0; totalMatches = 0;
+  timeLeft = 90; matchedCount = 0;
   selectedLeft = null; selectedRight = null; isBusy = false;
 
   startScreen.classList.remove('active');
@@ -577,7 +576,7 @@ function checkMatch() {
       leftEl.classList.add('muted');
       rightEl.classList.add('muted');
 
-      matchedCount++; totalMatches++;
+      matchedCount++;
       combo++;
       if (combo > maxCombo) maxCombo = combo;
       score += 100 * combo;
@@ -624,17 +623,6 @@ function endGame() {
     document.getElementById('best-score').textContent = bestScore;
   }
   document.getElementById('final-score').textContent = score;
-  if (window.LAStars) {
-    // Stars from progress (best kept in localStorage)
-    // currentRound is 0-based; finishing round 3 means currentRound === 2
-    var stars = 0;
-    if (currentRound >= 2 && matchedCount >= 5) stars = 3; // cleared all 3 rounds
-    else if (totalMatches >= 10 || currentRound >= 1) stars = 2;
-    else if (totalMatches >= 5 || score >= 500) stars = 1;
-    if (score >= 5000) stars = Math.max(stars, 2);
-    if (score >= 9000) stars = 3;
-    window.LAStars.save("aef-pictures-words", stars);
-  }
   document.getElementById('final-time').textContent = Math.max(0, timeLeft);
   document.getElementById('final-combo').textContent = maxCombo;
 
@@ -675,38 +663,5 @@ function shuffleRight() {
   renderLists();
 }
 </script>
-<script src="../../../../../../../learningarcade/la-stars.js"></script>
-
-<script>
-/* Inline LAStars so Unit 3A games always save progress (no broken relative path) */
-(function(){
-  if (window.LAStars) return;
-  var KEY="laGameStars";
-  function load(){ try{return JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){return{};} }
-  window.LAStars={
-    load:load,
-    save:function(id,stars){
-      stars=Math.max(0,Math.min(3,Number(stars)||0));
-      var d=load();
-      if(stars>Number(d[id]||0)){ d[id]=stars; try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){} }
-      return Number(d[id]||0);
-    },
-    saveFromAccuracy:function(id,acc){
-      var s=acc>=90?3:acc>=70?2:acc>=40?1:0;
-      return this.save(id,s);
-    },
-    recordPlay:function(id){
-      if(!id)return 0;
-      var d={};
-      try{d=JSON.parse(localStorage.getItem("laGamePlays")||"{}")||{};}catch(e){}
-      var n=Number(d[id]||0)+1;
-      d[id]=n;
-      try{localStorage.setItem("laGamePlays",JSON.stringify(d));}catch(e){}
-      return n;
-    }
-  };
-})();
-</script>
-
 </body>
 </html>

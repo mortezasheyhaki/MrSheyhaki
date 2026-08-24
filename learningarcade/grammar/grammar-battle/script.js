@@ -816,7 +816,6 @@ hideGrammarBackButton();
 ===================================================== */
 
 function startBattle() {
-    if (window.LAStars) window.LAStars.recordPlay("grammar-battle");
 
     if (selectedGrammar === "simple-present") {
         window.location.href = "../simple-present/index.html";
@@ -1319,10 +1318,6 @@ function finishBattle() {
 
     finalAccuracy.textContent =
         accuracy + "%";
-    if (window.LAStars) {
-        window.LAStars.saveFromAccuracy("grammar-battle", accuracy);
-    }
-
 
 
     positiveResult.textContent =
