@@ -626,6 +626,13 @@ function endGame() {
   document.getElementById('final-time').textContent = Math.max(0, timeLeft);
   document.getElementById('final-combo').textContent = maxCombo;
 
+  try {
+    if (window.LAStars) {
+      LAStars.recordPlay("starter-3a-pictures-words-match");
+      LAStars.saveFromScore("starter-3a-pictures-words-match", score, [1500, 800, 300]);
+    }
+  } catch (e) {}
+
   gameScreen.classList.remove('active');
   endScreen.classList.add('active');
 }
@@ -663,5 +670,6 @@ function shuffleRight() {
   renderLists();
 }
 </script>
+<script src="../../../../../../../learningarcade/la-stars.js"></script>
 </body>
 </html>

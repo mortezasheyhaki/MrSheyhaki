@@ -322,14 +322,44 @@
     }
 
 
-    /* HIDE FLOATING ICONS ON SMALL SCREENS */
-
+    /* FLOATING ICONS — keep a few on tablet/phone */
     @media (max-width: 900px) {
-
       .float-icons {
+        display: block;
+        opacity: 0.9;
+      }
+      .fi {
+        opacity: 0.55;
+      }
+      /* hide the densest ones so cards stay readable */
+      .fi-2,
+      .fi-4,
+      .fi-5 {
         display: none;
       }
+      .fi-1 {
+        width: 44px !important;
+        height: 44px !important;
+        top: 8% !important;
+      }
+      .fi-3 {
+        width: 40px !important;
+        height: 40px !important;
+        top: 42% !important;
+      }
+      .fi-left { left: 2% !important; }
+      .fi-right { right: 2% !important; }
+    }
 
+    @media (max-width: 480px) {
+      .fi-1 {
+        width: 36px !important;
+        height: 36px !important;
+      }
+      .fi-3 {
+        width: 34px !important;
+        height: 34px !important;
+      }
     }
 
 
@@ -976,6 +1006,17 @@
       color: #fde68a;
     }
 
+    /* Music button clear of bottom nav on phone */
+    @media (max-width: 700px) {
+      .music-toggle {
+        bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px)));
+        right: 12px;
+        padding: 10px 14px;
+        font-size: 0.8rem;
+      }
+    }
+
+
 
     /* =========================================================
        MOBILE
@@ -1017,6 +1058,24 @@
         padding-top: 20px;
       }
 
+    }
+
+  
+    /* Local floating icons */
+    .fi {
+      object-fit: contain;
+      user-select: none;
+      pointer-events: none;
+      -webkit-user-drag: none;
+    }
+    .card-emoji {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      min-height: 140px;
+      font-size: 72px;
+      line-height: 1;
     }
 
   </style>
@@ -1343,73 +1402,19 @@
          FLOATING ARCADE ICONS
     ====================================================== -->
 
-    <div class="float-icons" aria-hidden="true">
-
+        <div class="float-icons" aria-hidden="true">
       <!-- LEFT SIDE -->
-
-      <img
-        class="fi fi-left fi-1"
-        src="https://cdn.imgurl.ir/uploads/a488910_trophy.png"
-        alt=""
-       onerror="this.style.display='none'">
-
-      <img
-        class="fi fi-left fi-2"
-        src="https://cdn.imgurl.ir/uploads/w483632_rocket.png"
-        alt=""
-       onerror="this.style.display='none'">
-
-      <img
-        class="fi fi-left fi-3"
-        src="https://cdn.imgurl.ir/uploads/j590615_star.png"
-        alt=""
-       onerror="this.style.display='none'">
-
-      <img
-        class="fi fi-left fi-4"
-        src="https://cdn.imgurl.ir/uploads/d300258_controller.png"
-        alt=""
-       onerror="this.style.display='none'">
-
-      <img
-        class="fi fi-left fi-5"
-        src="https://cdn.imgurl.ir/uploads/n510291_books.png"
-        alt=""
-       onerror="this.style.display='none'">
-
-
+      <img class="fi fi-left fi-1" src="assets/icons/trophy.png" alt="" width="68" height="68">
+      <img class="fi fi-left fi-2" src="assets/icons/rocket.png" alt="" width="50" height="50">
+      <img class="fi fi-left fi-3" src="assets/icons/star.png" alt="" width="64" height="64">
+      <img class="fi fi-left fi-4" src="assets/icons/controller.png" alt="" width="54" height="54">
+      <img class="fi fi-left fi-5" src="assets/icons/books.png" alt="" width="48" height="48">
       <!-- RIGHT SIDE -->
-
-      <img
-        class="fi fi-right fi-1"
-        src="https://cdn.imgurl.ir/uploads/u97617_arrow.png"
-        alt=""
-       onerror="this.style.display='none'">
-
-      <img
-        class="fi fi-right fi-2"
-        src="https://cdn.imgurl.ir/uploads/c44427_heart.png"
-        alt=""
-       onerror="this.style.display='none'">
-
-      <img
-        class="fi fi-right fi-3"
-        src="https://cdn.imgurl.ir/uploads/w830643_level-up.png"
-        alt=""
-       onerror="this.style.display='none'">
-
-      <img
-        class="fi fi-right fi-4"
-        src="https://cdn.imgurl.ir/uploads/r1013_headphone.png"
-        alt=""
-       onerror="this.style.display='none'">
-
-      <img
-        class="fi fi-right fi-5"
-        src="https://cdn.imgurl.ir/uploads/p83159_medal.png"
-        alt=""
-       onerror="this.style.display='none'">
-
+      <img class="fi fi-right fi-1" src="assets/icons/arrow.png" alt="" width="68" height="68">
+      <img class="fi fi-right fi-2" src="assets/icons/heart.png" alt="" width="50" height="50">
+      <img class="fi fi-right fi-3" src="assets/icons/level-up.png" alt="" width="64" height="64">
+      <img class="fi fi-right fi-4" src="assets/icons/headphone.png" alt="" width="54" height="54">
+      <img class="fi fi-right fi-5" src="assets/icons/medal.png" alt="" width="48" height="48">
     </div>
 
 <!-- =====================================================
@@ -1460,12 +1465,7 @@
         href="adult/"
       >
 
-        <div class="card-image">
-          <img
-            src="https://cdn.imgurl.ir/uploads/v659094_ChatGPT_Image_Aug_22_2026_03_21_43_AM.png"
-            alt="Adults"
-           onerror="this.style.display='none'">
-        </div>
+        <div class="card-image"><img src="assets/adults-card.jpg" alt="Adults" width="720" height="480" loading="lazy"></div>
 
         <h2 class="card-title">
           Adults
@@ -1495,12 +1495,7 @@
         href="kids/"
       >
 
-        <div class="card-image">
-          <img
-            src="https://cdn.imgurl.ir/uploads/r021576_ChatGPT_Image_Aug_22_2026_03_29_37_AM.png"
-            alt="Kids and Teens"
-           onerror="this.style.display='none'">
-        </div>
+        <div class="card-image"><img src="assets/kids-card.jpg" alt="Kids and Teens" width="720" height="788" loading="lazy"></div>
 
         <h2 class="card-title">
 
@@ -1558,10 +1553,7 @@
     preload="auto"
   >
 
-    <source
-      src="https://cdn.imgurl.ir/uploads/y6889_slimeyfox-arcade-80s-era-481352.mp3"
-      type="audio/mpeg"
-    >
+    <source src="assets/arcade-loop.wav" type="audio/wav">
 
   </audio>
 

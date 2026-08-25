@@ -311,16 +311,51 @@
       return;
     }
     const grid = el("section", { class: "content-grid unit-resource-grid" });
+    const levelKey = body.dataset.level || "";
+    const unitKey = body.dataset.unit || "";
+    const lessonKey = body.dataset.lesson || "";
     items.forEach((item) => {
-      grid.appendChild(
-        el("a", { class: "content-card resource-card", href: item.url }, [
+      // Stable id for stars: e.g. starter-3a-a-an-swipe
+      const slug = String(item.url || "")
+        .replace(/\/+$/, "")
+        .split("/")
+        .filter(Boolean)
+        .pop() || "game";
+      const gameId = [levelKey, unitKey + lessonKey, slug].filter(Boolean).join("-");
+      const bodyKids = [el("h3", { text: item.title })];
+      if (section === "games") {
+        bodyKids.push(
+          el("div", {
+            class: "game-stars",
+            "data-game": gameId,
+            "aria-label": "Progress stars",
+          }, [
+            el("span", { class: "star", "data-n": "1", text: "☆" }),
+            el("span", { class: "star", "data-n": "2", text: "☆" }),
+            el("span", { class: "star", "data-n": "3", text: "☆" }),
+          ])
+        );
+      }
+      const children = [
+        el("div", { class: "resource-card-main" }, [
           el("div", { class: "resource-icon", "aria-hidden": "true", text: meta.icon }),
-          el("h3", { text: item.title }),
-          el("span", { class: "resource-button", text: meta.verb + " →" }),
-        ])
+          el("div", { class: "resource-card-body" }, bodyKids),
+        ]),
+        el("span", { class: "resource-button", text: meta.verb + " →" }),
+      ];
+      grid.appendChild(
+        el("a", {
+          class: "content-card resource-card" + (section === "games" ? " resource-card--game" : ""),
+          href: item.url,
+        }, children)
       );
     });
     main.appendChild(grid);
+    if (section === "games") {
+      ensureLAStars(function () {
+        if (window.LAStars && window.LAStars.apply) window.LAStars.apply(main);
+      });
+    }
   }
 
   function renderAudio(body, main) {
@@ -472,6 +507,35 @@
       button.textContent = "▶ Play";
     };
   };
+
+
+  function ensureLAStars(cb) {
+    if (window.LAStars && typeof window.LAStars.apply === "function") {
+      cb && cb();
+      return;
+    }
+    if (!document.getElementById("la-stars-css")) {
+      var style = document.createElement("style");
+      style.id = "la-stars-css";
+      style.textContent =
+        ".game-stars{display:flex;gap:4px;margin:8px 0 4px;font-size:1.15rem;line-height:1}" +
+        ".game-stars .star{opacity:.35;filter:grayscale(1)}" +
+        ".game-stars .star.filled,.game-stars .star.is-filled,.game-stars .star[data-filled=\"1\"]{opacity:1;filter:none;color:#fbbf24}" +
+        ".resource-card .game-stars{justify-content:flex-start}";
+      document.head.appendChild(style);
+    }
+    var existing = document.querySelector('script[data-la-stars]');
+    if (existing) {
+      existing.addEventListener("load", function () { cb && cb(); });
+      return;
+    }
+    var s = document.createElement("script");
+    s.src = "/learningarcade/la-stars.js";
+    s.dataset.laStars = "1";
+    s.onload = function () { cb && cb(); };
+    s.onerror = function () { cb && cb(); };
+    document.head.appendChild(s);
+  }
 
   document.addEventListener("DOMContentLoaded", function () {
     const body = document.body;

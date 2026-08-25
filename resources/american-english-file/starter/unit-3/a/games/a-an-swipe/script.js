@@ -295,6 +295,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     $("finalScore").textContent = state.score;
     $("accuracy").textContent = `${accuracy}%`;
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay("starter-3a-a-an-swipe");
+        LAStars.saveFromAccuracy("starter-3a-a-an-swipe", accuracy);
+      }
+    } catch (e) {}
     $("bestCombo").textContent = state.bestCombo;
     $("endTitle").textContent = won ? "Excellent!" : "Time's up!";
     $("endMessage").textContent = won

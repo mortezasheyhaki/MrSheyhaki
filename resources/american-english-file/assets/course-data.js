@@ -97,6 +97,27 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "A or An Swipe", url: "a-an-swipe/" },
 ];
 
+
+// Unit 5A – Games
+COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.games = [
+  { title: "Food Verb Match", url: "food-verb-match/" },
+  { title: "Food & Drinks Sort", url: "food-drinks-sort/" },
+];
+
+
+
+// Unit 6A – Games
+COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.games = [
+  { title: "Listen & Write", url: "listen-and-write/" },
+];
+
+// Unit 7A – Games
+COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.games = [
+  { title: "Question Builder", url: "question-builder/" },
+  { title: "Build the Question", url: "wh-answer-challenge/" },
+  { title: "Amelia's Days", url: "amelias-days/" },
+];
+
 // Unit 9A – Listen & Write game
 COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
   { title: "Listen & Write", url: "listen-and-write/" },

@@ -374,7 +374,9 @@
 
       gameOverModal.style.display = "flex";
       updateHighScoreDisplay();
-    }
+    
+  try { if(window.LAStars){LAStars.recordPlay("vocab-match-rush");var acc=typeof accuracy!=="undefined"?accuracy:0;LAStars.saveFromAccuracy("vocab-match-rush",acc);} } catch (e) {}
+}
 
     function updateHighScoreDisplay() {
       const highScores = JSON.parse(localStorage.getItem("vocab_high_scores") || "{}");

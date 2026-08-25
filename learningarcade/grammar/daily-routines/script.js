@@ -297,7 +297,9 @@
         (TOTAL ? Math.round((correctCount / TOTAL) * 100) : 0) + "%";
     }
     showScreen("result");
-  }
+  
+  try { if(window.LAStars){LAStars.recordPlay("daily-routines");LAStars.save("daily-routines", typeof score!=="undefined"&&score>=8?3:typeof score!=="undefined"&&score>=5?2:1);} } catch (e) {}
+}
 
   function setupDropZones() {
     if (!answerSlots || !wordBank) return;

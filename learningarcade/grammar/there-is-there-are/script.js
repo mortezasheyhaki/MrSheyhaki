@@ -1115,6 +1115,8 @@ function finishBattle() {
         "hidden"
     );
 
+
+  try { if(window.LAStars){LAStars.recordPlay("there-is-there-are");LAStars.saveFromAccuracy("there-is-there-are",typeof accuracy!=="undefined"?accuracy:0);} } catch (e) {}
 }
 
 

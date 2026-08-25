@@ -1362,6 +1362,8 @@ function finishBattle() {
         "hidden"
     );
 
+
+  try { if(window.LAStars){LAStars.recordPlay("grammar-battle");LAStars.saveFromAccuracy("grammar-battle",typeof accuracy!=="undefined"?accuracy:0);} } catch (e) {}
 }
 
 

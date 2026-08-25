@@ -102,7 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
     gameScreen.classList.add("hidden");
     endScreen.classList.remove("hidden");
     document.body.classList.remove("playing");
-  }
+  
+  try { if(window.LAStars){LAStars.recordPlay("wh-question-meaning");LAStars.save("wh-question-meaning", typeof correct!=="undefined"&&typeof total!=="undefined"? (correct/Math.max(1,total)>=0.9?3:correct/Math.max(1,total)>=0.7?2:1):2);} } catch (e) {}
+}
 
   function choose(button) {
     if (locked) return;

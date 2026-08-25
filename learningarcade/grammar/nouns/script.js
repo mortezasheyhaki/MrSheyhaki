@@ -446,7 +446,9 @@
 
       gameOverModal.style.display = "flex";
       updateHighScoreDisplay();
-    }
+    
+  try { if(window.LAStars){LAStars.recordPlay("nouns");var acc=typeof accuracy!=="undefined"?accuracy:(typeof totalMatched!=="undefined"&&totalMatched?Math.round((score||0)/Math.max(1,totalMatched)*10):0);if(typeof isVictory!=="undefined"&&isVictory){LAStars.save("nouns",3);}else{LAStars.saveFromScore("nouns",typeof score!=="undefined"?score:0,[800,400,150]);}} } catch (e) {}
+}
 
     function arraysAligned(a, b) {
       if (a.length !== b.length) return false;

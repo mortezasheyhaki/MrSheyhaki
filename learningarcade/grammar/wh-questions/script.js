@@ -281,7 +281,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try { localStorage.setItem("laGameStars", JSON.stringify(data)); } catch (e) {}
       }
     })();
-  }
+  
+  try { if(window.LAStars){LAStars.recordPlay("wh-questions");LAStars.save("wh-questions", typeof correct!=="undefined"&&typeof total!=="undefined"? (correct/Math.max(1,total)>=0.9?3:correct/Math.max(1,total)>=0.7?2:1):2);} } catch (e) {}
+}
 
   startBtn.addEventListener('click', startGame);
   playAgainBtn.addEventListener('click', startGame);

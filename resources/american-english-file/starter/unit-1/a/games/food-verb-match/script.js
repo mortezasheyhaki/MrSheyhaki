@@ -225,6 +225,8 @@ function finish(won) {
     : "Play again and try to beat your score.";
   document.getElementById("resultIcon").textContent = won ? "🏆" : "⏱️";
   document.getElementById("endModal").classList.remove("hidden");
+
+  try { if(window.LAStars){var acc=state&&state.attempts?Math.round(state.correct/state.attempts*100):(typeof accuracy!=="undefined"?accuracy:0);LAStars.recordPlay("starter-1a-food-verb-match");LAStars.saveFromAccuracy("starter-1a-food-verb-match",acc);} } catch (e) {}
 }
 
 document.getElementById("playAgain").addEventListener("click", reset);

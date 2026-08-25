@@ -165,6 +165,8 @@
       ? "You sorted all " + TOTAL + " words correctly."
       : "You sorted " + state.correct + " of " + TOTAL + ".";
     $("resultIcon").textContent = won ? "🏆" : "⏱️";
+    
+    try { if(window.LAStars){var acc=state.attempts?Math.round(state.correct/state.attempts*100):0;LAStars.recordPlay("starter-5a-food-drinks-sort");LAStars.saveFromAccuracy("starter-5a-food-drinks-sort",acc);} } catch (e) {}
     $("endModal").classList.remove("hidden");
   }
 

@@ -3374,6 +3374,7 @@ function finishPractice() {
         var prev = Number(data["simple-present"] || 0);
         if (stars > prev) {
             data["simple-present"] = stars;
+            try{if(window.LAStars){LAStars.recordPlay("simple-present");}}catch(e){}
             try { localStorage.setItem("laGameStars", JSON.stringify(data)); } catch (e) {}
         }
     })();
@@ -3450,6 +3451,7 @@ function finishFinalMixed() {
         var prev = Number(data["simple-present"] || 0);
         if (stars > prev) {
             data["simple-present"] = stars;
+            try{if(window.LAStars){LAStars.recordPlay("simple-present");}}catch(e){}
             try { localStorage.setItem("laGameStars", JSON.stringify(data)); } catch (e) {}
         }
     })();

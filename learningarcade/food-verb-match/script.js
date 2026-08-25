@@ -1314,6 +1314,15 @@ document.addEventListener("DOMContentLoaded", function () {
           : "⏱️";
     }
 
+    // Save Learning Arcade stars (best of runs)
+    try {
+      if (window.LAStars) {
+        window.LAStars.recordPlay("starter-5a-food-verb-match");
+        window.LAStars.saveFromAccuracy("starter-5a-food-verb-match", accuracy);
+      }
+    } catch (e) {}
+
+
 
     if (endModal) {
 

@@ -44,5 +44,7 @@ function endGame(){
  const pct=score/order.length;
  $("endStars").textContent=pct>=.9?"★★★":pct>=.7?"★★☆":"★☆☆";
  $("endText").textContent=`You got ${score} out of ${order.length} correct.`;
+
+  try { if(window.LAStars){LAStars.recordPlay("third-person-switch");LAStars.save("third-person-switch",2);} } catch (e) {}
 }
 $("startBtn").onclick=startGame;$("replayBtn").onclick=startGame;

@@ -1310,6 +1310,8 @@ function finishBattle() {
         "hidden"
     );
 
+
+  try { if(window.LAStars){LAStars.recordPlay("be-verbs");LAStars.saveFromAccuracy("be-verbs",typeof accuracy!=="undefined"?accuracy:(correctAnswers&&TOTAL_QUESTIONS?Math.round(correctAnswers/TOTAL_QUESTIONS*100):0));} } catch (e) {}
 }
 
 

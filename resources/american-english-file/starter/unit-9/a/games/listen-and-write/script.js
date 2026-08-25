@@ -268,6 +268,7 @@
       renderBoxes();
 
       if (allBoxesCorrect()) {
+        try { __saveLAStarsFromLaw(100); } catch (e) {}
         setTimeout(() => {
           successOverlay.classList.add("is-visible");
         }, 350);
@@ -289,6 +290,11 @@
   // REVEAL ANSWERS (after 3 fails)
   // -------------------------------------------------------
   function revealAnswers() {
+    try {
+      var ok = boxStates.filter(function(b){ return b.correct; }).length;
+      var tot = boxStates.length || 1;
+      __saveLAStarsFromLaw(Math.round(ok / tot * 100));
+    } catch (e) {}
     boxStates.forEach(b => { b.locked = true; });
 
     let html = `<div class="reveal-list">`;
@@ -391,3 +397,14 @@ successContinue.addEventListener("click", () => {
 
   init();
 })();
+
+
+  // Stars for Unit 9A Listen & Write
+  function __saveLAStarsFromLaw(acc) {
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay("starter-9a-listen-and-write");
+        LAStars.saveFromAccuracy("starter-9a-listen-and-write", acc);
+      }
+    } catch (e) {}
+  }

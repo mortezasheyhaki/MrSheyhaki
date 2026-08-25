@@ -54,23 +54,33 @@
      -ED PRONUNCIATION
      ========================================================= */
 
+  /* Curated 15 regular verbs for Level 3 · Pronunciation
+     5 × /t/   5 × /d/   5 × /ɪd/   (from Common Regular Verbs chart) */
   const SOUND_T = [
-    "asked", "cooked", "finished", "helped", "liked", "looked",
-    "missed", "packed", "parked", "passed", "stopped", "talked",
-    "walked", "watched", "washed", "worked"
+    { base: "ask", past: "asked", ipa: "/t/" },
+    { base: "cook", past: "cooked", ipa: "/t/" },
+    { base: "finish", past: "finished", ipa: "/t/" },
+    { base: "watch", past: "watched", ipa: "/t/" },
+    { base: "work", past: "worked", ipa: "/t/" }
   ];
 
   const SOUND_D = [
-    "answered", "arrived", "called", "carried", "changed", "cleaned",
-    "closed", "cried", "learned", "listened", "lived", "loved",
-    "moved", "offered", "opened", "played", "rained", "snowed",
-    "stayed", "studied", "traveled", "turned", "used"
+    { base: "answer", past: "answered", ipa: "/d/" },
+    { base: "clean", past: "cleaned", ipa: "/d/" },
+    { base: "live", past: "lived", ipa: "/d/" },
+    { base: "open", past: "opened", ipa: "/d/" },
+    { base: "play", past: "played", ipa: "/d/" }
   ];
 
   const SOUND_ID = [
-    "decided", "hated", "invited", "needed", "painted",
-    "rented", "started", "waited", "wanted"
+    { base: "decide", past: "decided", ipa: "/ɪd/" },
+    { base: "need", past: "needed", ipa: "/ɪd/" },
+    { base: "start", past: "started", ipa: "/ɪd/" },
+    { base: "wait", past: "waited", ipa: "/ɪd/" },
+    { base: "want", past: "wanted", ipa: "/ɪd/" }
   ];
+
+  const PRONUNCIATION_BANK = SOUND_T.concat(SOUND_D, SOUND_ID);
 
   /* =========================================================
      HELPERS
@@ -246,22 +256,33 @@
      ========================================================= */
 
   function qRegSound() {
+    // 3 past forms: 2 share a sound, 1 is different — find the odd one out
     const groups = [
-      { list: SOUND_T },
-      { list: SOUND_D },
-      { list: SOUND_ID }
+      { list: SOUND_T, label: "/t/" },
+      { list: SOUND_D, label: "/d/" },
+      { list: SOUND_ID, label: "/ɪd/" }
     ];
     const mainIdx = Math.floor(Math.random() * 3);
-    const oddIdx = (mainIdx + 1 + Math.floor(Math.random() * 2)) % 3;
-    const main = shuffle(groups[mainIdx].list).slice(0, 3);
-    const odd = pick(groups[oddIdx].list);
+    let oddIdx = Math.floor(Math.random() * 3);
+    while (oddIdx === mainIdx) oddIdx = Math.floor(Math.random() * 3);
 
+    const mainList = shuffle(groups[mainIdx].list.slice());
+    const oddList = shuffle(groups[oddIdx].list.slice());
+    const same1 = mainList[0];
+    const same2 = mainList[1] || mainList[0];
+    const odd = oddList[0];
+
+    const choices = shuffle([same1.past, same2.past, odd.past]);
+    // if same2 was duplicate of same1 (tiny bank edge), ensure unique labels still work
     return {
-      type: "mc",
+      type: "pron-pick",
+      mode: "pronunciation",
       hint: "Which past form has a different -ed sound?",
-      prompt: "Find the different pronunciation.",
-      choices: shuffle(main.concat([odd])),
-      answer: odd
+      prompt: "Tap a verb to hear it · then press Check",
+      choices: choices,
+      answer: odd.past,
+      answerSound: groups[oddIdx].label,
+      mainSound: groups[mainIdx].label
     };
   }
 
@@ -346,6 +367,7 @@
   const feedbackEl   = document.getElementById("feedback");
   const promptHint   = document.getElementById("promptHint");
   const promptText   = document.getElementById("promptText");
+  const speakBtn     = document.getElementById("speakBtn");
   const modeLabel    = document.getElementById("modeLabel");
   const scoreEl      = document.getElementById("score");
   const progressFill = document.getElementById("progressFill");
@@ -361,11 +383,40 @@
   let correct = 0;
   let wrong = 0;
   let locked = false;
+  let roundTotal = TOTAL;
+  let selectedChoice = null; // for pronunciation select-then-check
 
   let assemblySelected = [];
   let assemblyAvailable = [];
   let assemblyAnswer = [];
   let assemblyLocked = false;
+
+  /* =========================================================
+     TEXT-TO-SPEECH (pronunciation)
+     ========================================================= */
+
+  function speakWord(text) {
+    if (!text || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    u.rate = 0.85;
+    u.pitch = 1;
+    // Prefer a clear US English voice when available
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(function (v) {
+      return /en-US/i.test(v.lang) && /Google|Samantha|Female|Natural/i.test(v.name);
+    }) || voices.find(function (v) { return /en-US/i.test(v.lang); });
+    if (preferred) u.voice = preferred;
+    window.speechSynthesis.speak(u);
+  }
+
+  if (speakBtn) {
+    speakBtn.addEventListener("click", function () {
+      const word = speakBtn.dataset.word;
+      if (word) speakWord(word);
+    });
+  }
 
   /* =========================================================
      SCREEN CONTROL
@@ -382,7 +433,7 @@
 
   function updateProgress() {
     if (progressFill) {
-      progressFill.style.width = Math.round((index / TOTAL) * 100) + "%";
+      progressFill.style.width = Math.round((index / Math.max(roundTotal, 1)) * 100) + "%";
     }
   }
 
@@ -429,6 +480,11 @@
           });
         }
       });
+    } else if (key === "reg-sound") {
+      // 10 odd-one-out rounds from the 15 curated verbs
+      for (let i = 0; i < TOTAL; i++) {
+        queue.push(qRegSound());
+      }
     } else {
       // Random modes
       for (let i = 0; i < TOTAL; i++) {
@@ -440,6 +496,7 @@
     score = 0;
     correct = 0;
     wrong = 0;
+    roundTotal = queue.length || TOTAL;
 
     if (modeLabel) modeLabel.textContent = mode.label;
     if (scoreEl) scoreEl.textContent = "0";
@@ -465,6 +522,15 @@
     promptHint.textContent = item.hint;
     promptText.textContent = item.prompt;
 
+    // Hide standalone Hear — pronunciation hears on verb tap
+    if (speakBtn) {
+      speakBtn.hidden = true;
+      speakBtn.dataset.word = "";
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    }
+
+    selectedChoice = null;
+
     if (matchArea) {
       matchArea.classList.add("hidden");
       matchArea.style.display = "";
@@ -476,6 +542,12 @@
       return;
     }
 
+    if (item.type === "pron-pick") {
+      choicesArea.classList.remove("hidden");
+      renderPronPick(item);
+      return;
+    }
+
     choicesArea.classList.remove("hidden");
     renderChoices(item);
   }
@@ -483,6 +555,81 @@
   /* =========================================================
      MULTIPLE CHOICE
      ========================================================= */
+
+  /* ---- Pronunciation: select verb (hear) → Check → next ---- */
+  function renderPronPick(item) {
+    choicesArea.innerHTML = "";
+    choicesArea.classList.remove("mk-stagger-fast");
+    void choicesArea.offsetWidth;
+    choicesArea.classList.add("mk-stagger-fast");
+
+    const list = document.createElement("div");
+    list.className = "pron-list";
+
+    item.choices.forEach(function (choice) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "choice-btn pron-verb-btn";
+      btn.textContent = choice;
+      btn.dataset.word = choice;
+      btn.addEventListener("click", function () {
+        if (locked) return;
+        // select + hear
+        selectedChoice = choice;
+        list.querySelectorAll(".pron-verb-btn").forEach(function (b) {
+          b.classList.toggle("selected", b === btn);
+        });
+        speakWord(choice);
+        const check = choicesArea.querySelector(".pron-check-btn");
+        if (check) check.disabled = false;
+      });
+      list.appendChild(btn);
+    });
+
+    choicesArea.appendChild(list);
+
+    const check = document.createElement("button");
+    check.type = "button";
+    check.className = "pron-check-btn primary-action";
+    check.textContent = "Check";
+    check.disabled = true;
+    check.addEventListener("click", function () {
+      if (locked || !selectedChoice) return;
+      onPronCheck(item);
+    });
+    choicesArea.appendChild(check);
+  }
+
+  function onPronCheck(item) {
+    locked = true;
+    const ok = selectedChoice === item.answer;
+    const buttons = choicesArea.querySelectorAll(".pron-verb-btn");
+    buttons.forEach(function (button) {
+      button.disabled = true;
+      if (button.textContent === item.answer) button.classList.add("correct");
+      if (button.textContent === selectedChoice && !ok) button.classList.add("wrong");
+    });
+    const check = choicesArea.querySelector(".pron-check-btn");
+    if (check) check.disabled = true;
+
+    if (ok) {
+      score += 10;
+      correct += 1;
+      feedbackEl.textContent = "Correct! Different sound: " + (item.answerSound || "");
+      feedbackEl.className = "feedback good";
+    } else {
+      wrong += 1;
+      feedbackEl.textContent = "Not quite. The different one is “" + item.answer + "” (" + (item.answerSound || "") + ").";
+      feedbackEl.className = "feedback bad";
+    }
+    if (scoreEl) scoreEl.textContent = String(score);
+
+    setTimeout(function () {
+      index += 1;
+      if (index >= roundTotal) endRound();
+      else loadItem();
+    }, ok ? 900 : 1600);
+  }
 
   function renderChoices(item) {
     choicesArea.innerHTML = "";
@@ -530,7 +677,7 @@
 
     setTimeout(function () {
       index += 1;
-      if (index >= TOTAL) endRound();
+      if (index >= roundTotal) endRound();
       else loadItem();
     }, ok ? 650 : 1300);
   }
@@ -674,7 +821,7 @@
 
   function nextQuestion() {
     index += 1;
-    if (index >= TOTAL) endRound();
+    if (index >= roundTotal) endRound();
     else loadItem();
   }
 
@@ -688,7 +835,7 @@
     document.getElementById("finalCorrect").textContent = String(correct);
     document.getElementById("finalWrong").textContent = String(wrong);
     document.getElementById("finalAccuracy").textContent =
-      (TOTAL ? Math.round((correct / TOTAL) * 100) : 0) + "%";
+      (roundTotal ? Math.round((correct / roundTotal) * 100) : 0) + "%";
     show("result");
   }
 

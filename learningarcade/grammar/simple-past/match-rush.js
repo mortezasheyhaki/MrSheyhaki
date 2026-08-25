@@ -376,7 +376,9 @@
       }
 
       gameOverModal.style.display = "flex";
-    }
+    
+  try { if(window.LAStars){LAStars.recordPlay("simple-past");if(typeof isVictory!=="undefined"&&isVictory){LAStars.save("simple-past",3);}else{LAStars.saveFromScore("simple-past",typeof score!=="undefined"?score:0,[800,400,150]);}} } catch (e) {}
+}
 
     function addRandomPair() {
       if (remainingPairs.length === 0) return;
