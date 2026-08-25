@@ -95,6 +95,14 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.audio = [
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "Pictures + Words Match", url: "pictures-words-match/" },
   { title: "A or An Swipe", url: "a-an-swipe/" },
+  { title: "Plural -s Sound Match", url: "plural-s-sound-match/" },
+];
+
+// Unit 3B – Games
+COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.games = [
+  { title: "Listen & Match", url: "listen-match/" },
+  { title: "Dialogue Completer", url: "dialogue-completer/" },
+  { title: "This / That Sentences", url: "this-that-sentences/" },
 ];
 
 
@@ -114,7 +122,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.games = [
 // Unit 7A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.games = [
   { title: "Question Builder", url: "question-builder/" },
-  { title: "Build the Question", url: "wh-answer-challenge/" },
+  { title: "Build the Question", url: "build-the-question/" },
   { title: "Amelia's Days", url: "amelias-days/" },
 ];
 

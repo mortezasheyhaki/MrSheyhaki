@@ -1,0 +1,764 @@
+/* ==========================================
+   MATCH RUSH — embedded, scoped stylesheet
+   Adapted from: Vocabulary Match Rush Pro.zip
+   Every rule is scoped under .match-rush-game
+   so it cannot leak into the rest of the site.
+   ========================================== */
+
+/* ---------- SCOPED COLORS & THEME (Vocabulary purple) ---------- */
+.match-rush-game {
+  /* Light default — matches main site Vocabulary */
+  --mr-bg: #f4f0ff;
+  --mr-card-bg: #ffffff;
+  --mr-card-hover: #f1edff;
+  --mr-text: #202636;
+  --mr-text-muted: #687184;
+  --mr-accent: #6937d8;
+  --mr-accent-hover: #5425b8;
+  --mr-gold: #d97706;
+  --mr-correct: #16a34a;
+  --mr-correct-border: #4ade80;
+  --mr-wrong: #dc2626;
+  --mr-wrong-border: #f87171;
+  --mr-freeze: #7c5cff;
+  --mr-modal-bg: rgba(32, 38, 54, 0.55);
+  --mr-shadow: 0 10px 30px rgba(105, 55, 216, 0.08);
+}
+
+/* Dark mode when .light is NOT used as "dark" — keep .dark class support */
+.match-rush-game.dark {
+  --mr-bg: #121318;
+  --mr-card-bg: #1e2029;
+  --mr-card-hover: #2a2d3d;
+  --mr-text: #ffffff;
+  --mr-text-muted: #9499b1;
+  --mr-accent: #9a7cf0;
+  --mr-accent-hover: #b39aff;
+  --mr-gold: #fbbf24;
+  --mr-freeze: #7c5cff;
+  --mr-modal-bg: rgba(0, 0, 0, 0.8);
+  --mr-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* legacy: .light kept for old JS that toggles it */
+.match-rush-game.light {
+  --mr-bg: #f4f0ff;
+  --mr-card-bg: #ffffff;
+  --mr-card-hover: #f1edff;
+  --mr-text: #202636;
+  --mr-text-muted: #687184;
+  --mr-accent: #6937d8;
+  --mr-accent-hover: #5425b8;
+  --mr-gold: #d97706;
+  --mr-freeze: #7c5cff;
+  --mr-modal-bg: rgba(32, 38, 54, 0.55);
+}
+
+/* ---------- SCOPED RESET ---------- */
+.match-rush-game,
+.match-rush-game * {
+  box-sizing: border-box;
+}
+
+.match-rush-game * {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ---------- GAME FRAME ---------- */
+.match-rush-game {
+  background-color: var(--mr-bg);
+  color: var(--mr-text);
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 28px 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.match-rush-game #app {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ---------- HEADER & TOGGLES ---------- */
+.match-rush-game header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.match-rush-game header h1 {
+  font-size: 1.5rem;
+  color: var(--mr-accent);
+}
+
+.match-rush-game .header-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.match-rush-game #ttsToggleBtn,
+.match-rush-game #darkModeBtn {
+  background: var(--mr-card-bg);
+  border: 1px solid var(--mr-text-muted);
+  color: var(--mr-text);
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.match-rush-game #ttsToggleBtn:hover,
+.match-rush-game #darkModeBtn:hover {
+  background: var(--mr-card-hover);
+  border-color: var(--mr-accent);
+}
+
+/* ---------- HOME SCREEN & MODE SELECTOR ---------- */
+.match-rush-game #homeScreen {
+  text-align: center;
+  background-color: var(--mr-card-bg);
+  padding: 32px 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  width: 100%;
+}
+
+.match-rush-game #homeScreen h2 {
+  margin-bottom: 12px;
+  font-size: 1.4rem;
+}
+
+.match-rush-game #homeScreen p {
+  color: var(--mr-text-muted);
+  margin-bottom: 20px;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.match-rush-game .mode-select-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.match-rush-game .mode-select-container label {
+  font-size: 0.85rem;
+  color: var(--mr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.match-rush-game #modeSelect {
+  background-color: var(--mr-card-hover);
+  color: var(--mr-text);
+  border: 2px solid var(--mr-accent);
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+  max-width: 320px;
+  transition: all 0.2s ease;
+}
+
+.match-rush-game #modeSelect:hover {
+  box-shadow: 0 0 10px rgba(105, 55, 216, 0.3);
+}
+
+.match-rush-game .high-score-display {
+  font-size: 1.1rem !important;
+  color: var(--mr-gold) !important;
+  margin-bottom: 24px !important;
+}
+
+/* ---------- MAIN BUTTONS ---------- */
+.match-rush-game button#startBtn,
+.match-rush-game button#restartBtn {
+  background-color: var(--mr-accent);
+  color: #ffffff;
+  border: none;
+  padding: 12px 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.match-rush-game button#startBtn:hover,
+.match-rush-game button#restartBtn:hover {
+  background-color: var(--mr-accent-hover);
+  transform: translateY(-2px);
+}
+
+.match-rush-game button#startBtn:active,
+.match-rush-game button#restartBtn:active {
+  transform: translateY(0);
+}
+
+/* ---------- GAME SCREEN & STATS ---------- */
+.match-rush-game #gameScreen {
+  width: 100%;
+}
+
+.match-rush-game #stats {
+  display: flex;
+  justify-content: space-around;
+  background-color: var(--mr-card-bg);
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.match-rush-game .stat {
+  text-align: center;
+}
+
+.match-rush-game .stat span {
+  font-size: 0.75rem;
+  color: var(--mr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.match-rush-game .stat h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* ---------- POWER-UPS BAR & FREEZE BANNER ---------- */
+.match-rush-game .powerups-bar {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.match-rush-game .powerup-btn {
+  background: var(--mr-card-bg);
+  border: 1px solid var(--mr-accent);
+  color: var(--mr-text);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.match-rush-game .powerup-btn:hover {
+  background-color: var(--mr-card-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(105, 55, 216, 0.25);
+}
+
+.match-rush-game .powerup-btn:active {
+  transform: translateY(0);
+}
+
+.match-rush-game #freezeBanner {
+  background-color: var(--mr-freeze);
+  color: white;
+  text-align: center;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+  animation: mrPulseFreeze 1s infinite alternate;
+}
+
+@keyframes mrPulseFreeze {
+  0% { opacity: 0.8; }
+  100% { opacity: 1; box-shadow: 0 0 12px rgba(2, 132, 199, 0.6); }
+}
+
+/* ---------- GAME BOARD & COLUMNS ---------- */
+.match-rush-game #board {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.match-rush-game .column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.match-rush-game .column h3 {
+  margin-bottom: 12px;
+  font-size: 1rem;
+  color: var(--mr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.match-rush-game #verbs,
+.match-rush-game #phrases {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+}
+
+/* ---------- PERFECT SQUARE CARDS ---------- */
+.match-rush-game .word {
+  width: 100%;
+  max-width: 150px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+  border-radius: 12px;
+  background-color: var(--mr-card-bg);
+  color: var(--mr-text);
+  border: 2px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.match-rush-game .word:hover {
+  transform: translateY(-2px);
+  border-color: var(--mr-accent);
+}
+
+.match-rush-game .word:active {
+  transform: scale(0.96);
+}
+
+.match-rush-game .word.selected {
+  border-color: var(--mr-gold);
+  background-color: var(--mr-card-hover);
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.35);
+}
+
+.match-rush-game .word.correct {
+  background-color: var(--mr-correct) !important;
+  border-color: var(--mr-correct-border) !important;
+  color: #ffffff;
+  animation: mrPulseCorrect 0.3s ease;
+}
+
+.match-rush-game .word.wrong {
+  background-color: var(--mr-wrong) !important;
+  border-color: var(--mr-wrong-border) !important;
+  animation: mrShakeWrong 0.3s ease;
+}
+
+/* ---------- MODAL & REVIEW TRACKER ---------- */
+.match-rush-game .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--mr-modal-bg);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.match-rush-game .modal-card {
+  background-color: var(--mr-card-bg);
+  padding: 28px;
+  border-radius: 16px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.match-rush-game .modal-card h2 {
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+
+.match-rush-game .modal-scores {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.match-rush-game .new-high-tag {
+  color: var(--mr-gold);
+  font-weight: bold;
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+}
+
+.match-rush-game .review-section {
+  background-color: var(--mr-bg);
+  border-radius: 12px;
+  padding: 14px;
+  margin: 16px 0;
+  text-align: left;
+}
+
+.match-rush-game .review-section h3 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: var(--mr-text-muted);
+  margin-bottom: 8px;
+}
+
+.match-rush-game .summary-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+}
+
+.match-rush-game .review-section h4 {
+  font-size: 0.85rem;
+  color: var(--mr-text-muted);
+  margin-bottom: 6px;
+}
+
+.match-rush-game #mistakeList {
+  max-height: 120px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.match-rush-game .mistake-item {
+  font-size: 0.85rem;
+  background: var(--mr-card-bg);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border-left: 3px solid var(--mr-wrong-border);
+}
+
+/* ---------- FLOATING FEEDBACK ANNOUNCER ---------- */
+.match-rush-game .floating-feedback {
+  position: fixed;
+  pointer-events: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--mr-gold);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  animation: mrFloatUp 0.8s forwards ease-out;
+  z-index: 1000;
+}
+
+/* ---------- ANIMATIONS ---------- */
+@keyframes mrPulseCorrect {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes mrShakeWrong {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+@keyframes mrFloatUp {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-30px); }
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 480px) {
+  .match-rush-game {
+    padding: 20px 14px;
+  }
+  .match-rush-game #board {
+    gap: 10px;
+  }
+}
+
+
+/* =========================================================
+   MATCH RUSH — PLAYABILITY UPDATE
+   Large square Duolingo-style cards, strong selected shine,
+   and smooth disappearing matched pairs.
+========================================================= */
+.match-rush-game{
+  --mr-bg:#f4f7fb;
+  --mr-card-bg:#ffffff;
+  --mr-card-hover:#eef2ff;
+  --mr-text:#202636;
+  --mr-text-muted:#667085;
+  --mr-accent:#6937d8;
+  --mr-accent-hover:#5425b8;
+  --mr-gold:#ffc62e;
+  --mr-correct:#20a85a;
+  --mr-correct-border:#77e2a1;
+  --mr-wrong:#e5484d;
+  --mr-wrong-border:#ff8b8f;
+  --mr-modal-bg:rgba(20,24,35,.48);
+  background:var(--mr-bg);
+}
+.match-rush-game #app{max-width:900px}
+.match-rush-game #board{gap:34px}
+.match-rush-game #verbs,
+.match-rush-game #phrases{gap:16px}
+.match-rush-game .word{
+  width:min(100%,132px);
+  min-width:0;
+  aspect-ratio:1/1;
+  min-height:0;
+  padding:10px;
+  border:3px solid #e3e7ef;
+  border-radius:16px;
+  background:#fff;
+  color:#202636;
+  font-size:1.08rem;
+  font-weight:800;
+  line-height:1.25;
+  box-shadow:0 5px 0 #dfe3ea,0 9px 22px rgba(32,38,54,.08);
+  transition:transform .12s ease,box-shadow .18s ease,border-color .18s ease,
+             background-color .18s ease,opacity .35s ease,filter .35s ease;
+}
+.match-rush-game .word:hover{
+  transform:translateY(-3px);
+  border-color:#8b6de2;
+  box-shadow:0 7px 0 #d8d1ee,0 13px 25px rgba(105,55,216,.15);
+}
+.match-rush-game .word:active{transform:translateY(2px) scale(.98);box-shadow:0 2px 0 #dfe3ea}
+.match-rush-game .word.selected{
+  border-color:#ffc62e;
+  background:#fffdf1;
+  box-shadow:
+    0 0 0 4px rgba(255,198,46,.16),
+    0 0 25px rgba(255,198,46,.62),
+    0 7px 0 #e5d58c;
+  animation:mrSelectedGlow .9s ease-in-out infinite alternate;
+}
+.match-rush-game .word.correct{
+  background:#20a85a!important;
+  border-color:#77e2a1!important;
+  color:#fff!important;
+  box-shadow:0 0 0 4px rgba(32,168,90,.15),0 7px 0 #168448,0 12px 28px rgba(32,168,90,.25);
+  animation:mrCorrectPop .28s ease-out forwards;
+}
+.match-rush-game .word.vanish{
+  opacity:0;
+  transform:scale(.78);
+  filter:blur(2px);
+  pointer-events:none;
+}
+.match-rush-game .word.wrong{
+  background:#e5484d!important;
+  border-color:#ff8b8f!important;
+  color:#fff!important;
+  box-shadow:0 6px 0 #b83237;
+  animation:mrWrongShake .34s ease;
+}
+.match-rush-game .column h3{font-size:1.05rem;font-weight:900}
+.match-rush-game #stats{padding:18px}
+.match-rush-game .header-controls button{min-height:38px}
+@keyframes mrSelectedGlow{
+  from{filter:brightness(1);box-shadow:0 0 0 3px rgba(255,198,46,.12),0 0 16px rgba(255,198,46,.38),0 7px 0 #e5d58c}
+  to{filter:brightness(1.04);box-shadow:0 0 0 5px rgba(255,198,46,.18),0 0 32px rgba(255,198,46,.78),0 7px 0 #e5d58c}
+}
+@keyframes mrCorrectPop{
+  0%{transform:scale(1)}
+  55%{transform:scale(1.07)}
+  100%{transform:scale(1)}
+}
+@keyframes mrWrongShake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-6px)}
+  80%{transform:translateX(6px)}
+}
+@media(max-width:720px){
+  .match-rush-game #board{gap:14px}
+  .match-rush-game .word{min-width:0;width:100%;max-width:100%;min-height:0;font-size:1.05rem;padding:10px}
+}
+@media(max-width:480px){
+  .match-rush-game #board{gap:10px}
+  .match-rush-game .word{width:100%;max-width:100%;min-height:0;font-size:1rem;padding:10px}
+}
+
+
+/* Mobile override: never force 1:1 squares that clip the 4th pair */
+@media (max-width: 720px), (max-height: 800px) {
+  .match-rush-game .word {
+    aspect-ratio: auto !important;
+    height: auto;
+    min-height: 0;
+    max-width: 100% !important;
+  }
+  .match-rush-game #verbs,
+  .match-rush-game #phrases {
+    gap: 6px;
+  }
+}
+
+
+/* Ensure game screen fills frame */
+.match-rush-game #gameScreen {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.match-rush-game #board {
+  width: 100%;
+}
+
+
+/* ---------- VOCABULARY POLISH ---------- */
+.match-rush-game {
+  background: var(--mr-bg);
+  border: 1px solid #e4dcfa;
+  box-shadow: var(--mr-shadow, 0 10px 30px rgba(105, 55, 216, 0.08));
+}
+
+/* Cabinet already has the title — hide inner "Match Rush Pro" label */
+.match-rush-game > #app > header h1 {
+  font-size: 0;
+  color: transparent;
+  width: 0;
+  overflow: hidden;
+}
+.match-rush-game > #app > header {
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.match-rush-game #homeScreen {
+  border: 1px solid #e4dcfa;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(105, 55, 216, 0.08);
+  padding: 36px 28px;
+}
+
+.match-rush-game #homeScreen h2 {
+  color: var(--mr-text);
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.match-rush-game #modeSelect {
+  border: 2px solid var(--mr-accent);
+  border-radius: 12px;
+  background: #f8f6ff;
+}
+
+.match-rush-game #modeSelect:hover {
+  box-shadow: 0 0 0 4px rgba(105, 55, 216, 0.12);
+}
+
+.match-rush-game button#startBtn,
+.match-rush-game button#restartBtn {
+  min-height: 48px;
+  min-width: 160px;
+  padding: 0 28px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 850;
+  background: var(--mr-accent);
+  box-shadow: 0 8px 20px rgba(105, 55, 216, 0.25);
+}
+
+.match-rush-game button#startBtn:hover,
+.match-rush-game button#restartBtn:hover {
+  background: var(--mr-accent-hover);
+}
+
+.match-rush-game #stats {
+  border: 1px solid #e4dcfa;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(105, 55, 216, 0.06);
+}
+
+.match-rush-game .powerup-btn {
+  border: 1px solid var(--mr-accent);
+  border-radius: 12px;
+  color: var(--mr-accent);
+  background: #fff;
+}
+
+.match-rush-game .powerup-btn:hover {
+  background: #f1edff;
+  box-shadow: 0 4px 12px rgba(105, 55, 216, 0.15);
+}
+
+.match-rush-game #board .column h3 {
+  color: var(--mr-accent);
+  letter-spacing: 0.6px;
+}
+
+
+/* =====================================================
+   HOME vs PLAYING — only show board after Start
+===================================================== */
+.match-rush-game #gameScreen {
+  display: none !important;
+}
+
+.match-rush-game.is-playing #gameScreen {
+  display: block !important;
+}
+
+.match-rush-game.is-playing #homeScreen {
+  display: none !important;
+}
+
+/* Stats bar: compact strip, not a second header */
+.match-rush-game #stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border-radius: 14px;
+  border: 1px solid #e4dcfa;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(105, 55, 216, 0.06);
+}
+
+.match-rush-game .stat span {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.match-rush-game .stat h2 {
+  font-size: 1.35rem;
+  color: var(--mr-accent);
+  margin-top: 2px;
+}

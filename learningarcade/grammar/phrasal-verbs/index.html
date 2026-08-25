@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Phrasal Verbs · Match Rush | Grammar Arcade | Mr. Sheyhaki</title>
+<meta name="description" content="Phrasal Verbs Match Rush — match verbs with their phrases before the timer runs out.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="match-rush.css">
+<link rel="stylesheet" href="cabinet.css">
+<link rel="stylesheet" href="../../../theme.css">
+</head>
+<body class="cabinet-body">
+
+<div class="cabinet-shell">
+
+  <header class="cabinet-topbar">
+    <a class="arcade-back-btn" href="../">
+      <span class="arcade-back-btn__icon" aria-hidden="true">◀</span>
+      <span>Back to Grammar</span>
+    </a>
+
+    <div class="cabinet-marquee">
+      <span class="cabinet-marquee__eyebrow">Grammar Arcade · Match Rush</span>
+      <h1 class="cabinet-marquee__title">Phrasal Verbs</h1>
+    </div>
+
+    <a class="cabinet-brand-mark" href="../../.." aria-label="Mr. Sheyhaki home">MS</a>
+  </header>
+
+  <main class="cabinet-screen">
+
+    <!-- ================================================
+         MATCH RUSH GAME (embedded, scoped)
+         Source: Vocabulary Match Rush Pro.zip
+    ================================================= -->
+    <div class="match-rush-game" id="matchRushGame">
+
+      <div id="app">
+        <header>
+          <h1 class="sr-only">Match Rush</h1>
+          <div class="header-controls">
+            <button id="ttsToggleBtn" class="icon-btn" type="button" aria-label="Sound on" title="Sound">🔊</button>
+          </div>
+        </header>
+
+        <!-- Home Screen -->
+        <div id="homeScreen">
+          <h2>Welcome to Phrasal Verbs Match Rush!</h2>
+          <p>Match verbs with their phrases fast. Build combo streaks to earn bonus points and extra time!</p>
+
+          <div class="mode-select-container">
+            <label for="modeSelect">Select Game Mode:</label>
+            <select id="modeSelect">
+              <option value="rush">⏱️ Timed Rush (90s)</option>
+              <option value="zen">🧘 Zen Mode (Untimed)</option>
+              <option value="streak">🔥 Streak Challenge (1 Mistake = Game Over)</option>
+            </select>
+          </div>
+
+          <p class="high-score-display">Personal Best: <strong id="homeHighScore">0</strong></p>
+          <button id="startBtn">Start Game</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" style="display: none;">
+          <div id="stats">
+            <div class="stat">
+              <span>Score</span>
+              <h2 id="score">0</h2>
+            </div>
+            <div class="stat">
+              <span>Timer</span>
+              <h2 id="timer">90</h2>
+            </div>
+            <div class="stat">
+              <span>Combo</span>
+              <h2 id="combo">0x</h2>
+            </div>
+          </div>
+
+          <!-- Power-Ups Bar -->
+          <div class="powerups-bar">
+            <button id="hintBtn" class="powerup-btn">💡 Hint (-5s)</button>
+            <button id="shuffleBtn" class="powerup-btn">💣 Shuffle</button>
+          </div>
+
+          <div id="freezeBanner" style="display: none;">🧊 TIME FROZEN!</div>
+
+          <div id="board">
+            <div class="column">
+              <h3>Verbs</h3>
+              <div id="verbs"></div>
+            </div>
+            <div class="column">
+              <h3>Phrases</h3>
+              <div id="phrases"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Over / Review Modal -->
+      <div id="gameOverModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+          <h2>⏰ Time's Up!</h2>
+          <div class="modal-scores">
+            <p>Final Score: <strong id="modalFinalScore">0</strong></p>
+            <p>Best Score: <strong id="modalBestScore">0</strong></p>
+          </div>
+          <div id="newHighTag" class="new-high-tag" style="display: none;">🎉 NEW HIGH SCORE! 🎉</div>
+
+          <div class="review-section">
+            <h3>Round Summary</h3>
+            <div class="summary-stats">
+              <p>Accuracy: <strong id="accuracyStat">0%</strong></p>
+              <p>Max Streak: <strong id="maxComboStat">0x</strong></p>
+            </div>
+            <h4>Mistakes to Review:</h4>
+            <div id="mistakeList"></div>
+          </div>
+
+          <button id="restartBtn">Play Again</button>
+        </div>
+      </div>
+
+    </div>
+    <!-- ================================================
+         END MATCH RUSH GAME
+    ================================================= -->
+
+  </main>
+
+</div>
+
+<script src="match-rush.js"></script>
+<script src="../../la-stars.js"></script>
+  <script src="script.js"></script>
+<script src="../../../theme.js"></script>
+</body>
+</html>

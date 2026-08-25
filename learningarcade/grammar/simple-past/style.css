@@ -746,151 +746,317 @@ body.dark-mode .back-button:hover {
    SENTENCE ASSEMBLY (Wh- questions) — matching Simple Present style
    ========================================================= */
 
+/* =========================================================
+   SENTENCE BUILDER — Duolingo-style chips
+   ========================================================= */
+
 .question-builder {
   width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
   align-items: center;
 }
 
 .builder-label {
   font-size: 13px;
   font-weight: 700;
-  color: var(--sp-muted);
+  color: var(--sp-muted, #6b7280);
   text-align: center;
-  margin-bottom: 2px;
+  letter-spacing: 0.02em;
 }
 
-/* The area where selected chunks appear (like .built-sentence) */
+/* Answer area: clean double-line look */
 .builder-answer {
-  min-height: 70px;
+  min-height: 88px;
   width: 100%;
-  padding: 14px 16px;
-  border: 2px solid var(--sp-green-border);
-  border-radius: 16px;
-  background: #f8f7ff;                    /* light purple tint like Simple Present */
+  padding: 18px 12px 14px;
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  border-bottom: 2px solid #e5e7eb;
+  border-radius: 0;
+  background: transparent;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 html[data-theme="dark"] .builder-answer {
-  background: rgba(7, 157, 115, 0.08);
-  border-color: var(--sp-green-border);
+  border-top-color: rgba(255,255,255,0.12);
+  border-bottom-color: rgba(255,255,255,0.12);
+  background: transparent;
 }
 
 .builder-answer.correct {
-  border-style: solid;
-  border-color: var(--sp-ok);
-  background: var(--sp-ok-bg);
+  border-top-color: #34d399;
+  border-bottom-color: #34d399;
+  background: rgba(52, 211, 153, 0.08);
 }
 
 .builder-answer.wrong {
-  border-style: solid;
-  border-color: var(--sp-bad);
-  background: var(--sp-bad-bg);
+  border-top-color: #f87171;
+  border-bottom-color: #f87171;
+  background: rgba(248, 113, 113, 0.08);
 }
 
-/* Placeholder text */
 .builder-placeholder {
-  color: var(--sp-muted);
+  color: #9ca3af;
   font-size: 14px;
-  font-weight: 600;
-  opacity: 0.75;
+  font-weight: 500;
+  opacity: 0.9;
 }
 
-/* Selected chips (like .built-chip) */
+/* Selected chips in the answer line */
 .assembly-answer-chip {
   appearance: none;
-  padding: 12px 18px;
-  border-radius: 12px;
-  border: 1px solid #b9b3ff;
-  background: #eef2ff;
-  color: #312e81;
+  padding: 12px 16px;
+  border-radius: 16px;
+  border: 2px solid #e5e7eb;
+  background: #ffffff;
+  color: #1f2937;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 3px 8px rgba(99, 102, 241, 0.12);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+  box-shadow: 0 2px 0 #e5e7eb;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease;
 }
 
 .assembly-answer-chip:hover {
   transform: translateY(-1px);
-  border-color: #079d73;
-  box-shadow: 0 5px 12px rgba(7, 157, 115, 0.18);
+  border-color: #d1d5db;
+  box-shadow: 0 3px 0 #d1d5db;
 }
 
 html[data-theme="dark"] .assembly-answer-chip {
-  background: rgba(7, 157, 115, 0.18);
-  border-color: rgba(7, 157, 115, 0.4);
-  color: #eef5f1;
-  box-shadow: none;
+  background: #1f2937;
+  border-color: #374151;
+  color: #f3f4f6;
+  box-shadow: 0 2px 0 #111827;
 }
 
-/* The bank of available chunks (like .word-bank) */
+/* Word bank — open, no box */
 .builder-chunks {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
-  margin-top: 8px;
-  padding: 16px;
-  min-height: 70px;
-  border-radius: 16px;
-  background: var(--sp-card);
-  border: 2px dashed var(--sp-green-border);
+  margin-top: 4px;
+  padding: 8px 4px 4px;
+  min-height: 56px;
+  border-radius: 0;
+  background: transparent;
+  border: none;
 }
 
 html[data-theme="dark"] .builder-chunks {
-  background: var(--sp-option);
-  border-color: var(--sp-green-border);
+  background: transparent;
+  border: none;
 }
 
-/* Available chips (like .word-chip) */
+/* Available word chips — soft raised pills */
 .assembly-chip {
   appearance: none;
-  padding: 14px 20px !important;
+  padding: 12px 18px !important;
   font-size: 16px !important;
-  font-weight: 750 !important;
-  border-radius: 14px !important;
-  min-height: 50px !important;
-  min-width: 70px !important;
-  border: 1px solid #b9c1d2;
-  background: #ffffff;
-  color: #172033;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  font-weight: 600 !important;
+  border-radius: 16px !important;
+  min-height: 48px !important;
+  min-width: 64px !important;
+  border: 2px solid #e5e7eb !important;
+  background: #ffffff !important;
+  color: #1f2937 !important;
+  box-shadow: 0 3px 0 #e5e7eb !important;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease !important;
 }
 
 html[data-theme="dark"] .assembly-chip {
-  background: #1e2a25;
-  border-color: rgba(7, 157, 115, 0.35);
-  color: #eef5f1;
-  box-shadow: none;
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #f3f4f6 !important;
+  box-shadow: 0 3px 0 #111827 !important;
 }
 
 .assembly-chip:hover:not(:disabled) {
-  transform: translateY(-2px);
-  border-color: #079d73;
-  background: #eef2ff;
+  transform: translateY(-2px) !important;
+  border-color: #d1d5db !important;
+  background: #ffffff !important;
+  box-shadow: 0 5px 0 #d1d5db !important;
 }
 
 html[data-theme="dark"] .assembly-chip:hover:not(:disabled) {
-  background: #24352e;
-  border-color: #079d73;
+  background: #273549 !important;
+  border-color: #4b5563 !important;
+  box-shadow: 0 5px 0 #0b1220 !important;
 }
 
-/* Make sure the choice-btn styles don’t fight with assembly chips */
+.assembly-chip:active:not(:disabled) {
+  transform: translateY(1px) !important;
+  box-shadow: 0 1px 0 #e5e7eb !important;
+}
+
 #playScreen .assembly-chip.choice-btn {
   flex: 0 0 auto;
   max-width: none;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+/* =========================================================
+   FINISH SCREEN — centered square · Try again · Back
+   ========================================================= */
+
+.result-screen-duo {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100dvh - 80px);
+  padding: 24px 16px;
+}
+
+.result-screen-duo.hidden {
+  display: none !important;
+}
+
+.result-square {
+  position: relative;
+  width: min(300px, 86vw);
+  aspect-ratio: 1;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #e8ebf2;
+  box-shadow:
+    0 12px 40px rgba(15, 23, 42, 0.1),
+    0 2px 8px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 20px 24px;
+}
+
+html[data-theme="dark"] .result-square {
+  background: #1a2332;
+  border-color: #2a3548;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+
+.result-back-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+  background: #f9fafb;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.result-back-btn:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  transform: scale(1.04);
+}
+
+html[data-theme="dark"] .result-back-btn {
+  background: #243044;
+  border-color: #3a4a63;
+  color: #cbd5e1;
+}
+
+.result-square-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+}
+
+.result-score-mini {
+  text-align: center;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
+.result-score-mini span#finalScore,
+.result-score-mini .score-big {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+}
+
+html[data-theme="dark"] .result-score-mini span#finalScore,
+.result-score-mini .score-big {
+  color: #f3f4f6;
+}
+
+.result-try-again {
+  appearance: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  color: #5b4cdb;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.result-try-again:hover {
+  transform: scale(1.06);
+  opacity: 0.92;
+}
+
+.result-try-again:active {
+  transform: scale(0.97);
+}
+
+.try-icon {
+  width: 88px;
+  height: 88px;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #f5f3ff, #ede9fe);
+  border: 1.5px solid #ddd6fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c5ce7;
+  box-shadow: 0 6px 18px rgba(108, 92, 231, 0.18);
+}
+
+html[data-theme="dark"] .try-icon {
+  background: rgba(108, 92, 231, 0.18);
+  border-color: rgba(167, 139, 250, 0.35);
+  color: #c4b5fd;
+}
+
+.try-label {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #4c1d95;
+}
+
+html[data-theme="dark"] .try-label {
+  color: #ddd6fe;
 }
 
 /* ---- Pronunciation: Hear button ---- */
