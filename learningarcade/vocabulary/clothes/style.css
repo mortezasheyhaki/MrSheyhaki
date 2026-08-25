@@ -58,17 +58,21 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Fixed, no-scroll game pages */
+/* Game shell: header fixed height, main scrolls if content is tall */
 body.game-page {
   overflow: hidden;
+  height: 100%;
   height: 100dvh;
-  height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
+  overscroll-behavior: none;
 }
 
 body.game-page .game-header {
   flex-shrink: 0;
+  position: relative;
+  z-index: 20;
 }
 
 .app {
@@ -77,14 +81,20 @@ body.game-page .game-header {
   padding: 20px 16px calc(28px + env(safe-area-inset-bottom));
 }
 
+/* Hub page: room for bottom phone nav */
+.clothes-hub {
+  padding-bottom: max(100px, calc(88px + env(safe-area-inset-bottom, 0px)));
+}
+
 .app-fixed {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   width: 100%;
   max-width: var(--max-w);
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+  padding: 10px 12px max(10px, env(safe-area-inset-bottom, 0px));
   overflow: hidden;
 }
 
@@ -97,12 +107,16 @@ body.game-page .game-header {
 }
 
 .panel-fill {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   padding: 14px 14px 16px;
+  scrollbar-width: thin;
 }
 
 .game-toolbar {
@@ -186,6 +200,11 @@ html[data-theme="dark"] .modes-btn:hover {
 }
 
 .panel-fill .pairs-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
   flex: 1;
   min-height: 0;
   margin-bottom: 4px;
@@ -504,9 +523,11 @@ html[data-theme="dark"] .header-center .eyebrow {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   margin-bottom: 8px;
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   align-content: stretch;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .pairs-grid.pairs-5 {
@@ -949,6 +970,11 @@ button, a, .pair-btn, .mode-tab, .primary-btn, .modes-btn, .icon-square-btn, .di
     min-height: 52px;
   }
   .pairs-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
     gap: 8px;
   }
   .stats-inline .stat {
@@ -973,6 +999,11 @@ button, a, .pair-btn, .mode-tab, .primary-btn, .modes-btn, .icon-square-btn, .di
 /* Short phones (iPhone SE, landscape-ish heights) */
 @media (max-height: 700px) {
   .pairs-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
     gap: 6px;
   }
   .pair-btn,

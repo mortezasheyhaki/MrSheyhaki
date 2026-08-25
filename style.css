@@ -76,7 +76,7 @@ a {
    FLOATING ARCADE NAV (from Learning Arcade)
 ===================================================== */
 
-/* Floating nav — fixed at BOTTOM of viewport (always visible while scrolling, not on games) */
+/* Floating nav — TOP on desktop (floats while scrolling), BOTTOM on phone */
 .arcade-header-bar {
   position: relative;
   z-index: 100;
@@ -86,8 +86,9 @@ a {
 
 .arcade-nav {
   position: fixed !important;
-  top: auto !important;
-  bottom: max(12px, env(safe-area-inset-bottom, 0px)) !important;
+  /* Desktop default: top floating pill */
+  top: max(14px, env(safe-area-inset-top, 0px)) !important;
+  bottom: auto !important;
   left: 50% !important;
   right: auto !important;
   transform: translateX(-50%) scale(1);
@@ -116,6 +117,14 @@ a {
   opacity: 0.95 !important;
   background: rgba(5,7,18,0.88);
   box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+}
+
+/* Phone: keep bottom dock */
+@media (max-width: 700px) {
+  .arcade-nav {
+    top: auto !important;
+    bottom: max(12px, env(safe-area-inset-bottom, 0px)) !important;
+  }
 }
 
 /* Hide floating nav on game pages */
@@ -230,10 +239,16 @@ html:not([data-theme="dark"]) .arcade-nav .theme-toggle {
 /* Hide old site-header if any leftover */
 .site-header { display: none !important; }
 
-/* Space for fixed BOTTOM nav — content never sits under it */
+/* Space for floating nav — top on desktop, bottom on phone */
 body:not(.cabinet-body):not(.wh-body):not(.light-mode) {
-  padding-top: 16px !important;
-  padding-bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
+  padding-top: max(72px, calc(56px + env(safe-area-inset-top, 0px))) !important;
+  padding-bottom: 24px !important;
+}
+@media (max-width: 700px) {
+  body:not(.cabinet-body):not(.wh-body):not(.light-mode) {
+    padding-top: 16px !important;
+    padding-bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
+  }
 }
 
 /* Desktop: show text labels */

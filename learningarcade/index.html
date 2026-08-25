@@ -948,71 +948,88 @@
     ========================================================= */
 
     .music-toggle {
-
       position: fixed;
-
       bottom: 20px;
       right: 20px;
-
       z-index: 50;
-
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       padding: 10px 16px;
-
       border-radius: 999px;
-
-      border:
-        1px solid rgba(125, 211, 252, 0.45);
-
-      background:
-        rgba(15, 23, 42, 0.85);
-
-      backdrop-filter:
-        blur(8px);
-
+      border: 1px solid rgba(125, 211, 252, 0.45);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       color: #e0f2fe;
-
       font-size: 0.85rem;
-
       font-weight: 600;
-
       cursor: pointer;
-
-      box-shadow:
-        0 0 16px rgba(56, 189, 248, 0.25);
-
-      transition:
-        background 0.15s,
-        box-shadow 0.15s,
-        color 0.15s,
-        border-color 0.15s;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+      transition: background 0.15s, box-shadow 0.15s, color 0.15s, border-color 0.15s, transform 0.12s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
+    .music-toggle .music-ico {
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+
+    .music-toggle .music-txt {
+      line-height: 1;
+    }
 
     .music-toggle:hover {
-
-      background:
-        rgba(30, 41, 59, 0.95);
-
-      box-shadow:
-        0 0 24px rgba(56, 189, 248, 0.4);
+      background: rgba(30, 41, 59, 0.95);
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.4);
     }
-
 
     .music-toggle.is-playing {
-
-      border-color:
-        rgba(251, 191, 36, 0.5);
-
+      border-color: rgba(251, 191, 36, 0.5);
       color: #fde68a;
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
     }
 
-    /* Music button clear of bottom nav on phone */
+    /* Phone: round icon-only music button */
     @media (max-width: 700px) {
       .music-toggle {
         bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px)));
-        right: 12px;
-        padding: 10px 14px;
-        font-size: 0.8rem;
+        right: max(12px, env(safe-area-inset-right, 0px));
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        min-height: 52px;
+        padding: 0;
+        border-radius: 50%;
+        gap: 0;
+        font-size: 1.25rem;
+        box-shadow:
+          0 4px 0 rgba(0, 0, 0, 0.25),
+          0 0 18px rgba(56, 189, 248, 0.3);
+      }
+
+      .music-toggle .music-txt {
+        display: none;
+      }
+
+      .music-toggle .music-ico {
+        font-size: 1.35rem;
+      }
+
+      .music-toggle:active {
+        transform: translateY(2px);
+        box-shadow:
+          0 2px 0 rgba(0, 0, 0, 0.25),
+          0 0 12px rgba(56, 189, 248, 0.25);
+      }
+
+      .music-toggle.is-playing {
+        border-color: rgba(251, 191, 36, 0.55);
+        box-shadow:
+          0 4px 0 rgba(0, 0, 0, 0.25),
+          0 0 22px rgba(251, 191, 36, 0.4);
       }
     }
 
@@ -1287,8 +1304,8 @@
     }
     .arcade-nav {
       position: fixed;
-      bottom: 16px;
-      top: auto;
+      top: max(14px, env(safe-area-inset-top, 0px));
+      bottom: auto;
       left: 50%;
       transform: translateX(-50%) scale(1);
       z-index: 9999;
@@ -1349,6 +1366,7 @@
     .arcade-nav .nav-text { display: inline; }
     @media (max-width: 700px) {
       .arcade-nav {
+        top: auto;
         bottom: max(8px, env(safe-area-inset-bottom, 0px));
         width: calc(100% - 12px);
         max-width: 100%;
@@ -1373,8 +1391,11 @@
         height: 2px;
       }
     }
-    /* Space so content isn't hidden behind bottom nav */
-    body { padding-bottom: 72px; }
+    /* Space for floating nav */
+    body { padding-top: 72px; padding-bottom: 24px; }
+    @media (max-width: 700px) {
+      body { padding-top: 12px; padding-bottom: 72px; }
+    }
   </style>
 </head>
 
@@ -1553,7 +1574,7 @@
     preload="auto"
   >
 
-    <source src="assets/arcade-loop.wav" type="audio/wav">
+    <source src="assets/arcade-music.mp3" type="audio/mpeg">
 
   </audio>
 
@@ -1564,11 +1585,11 @@
     id="musicToggle"
     class="music-toggle"
     type="button"
-    aria-label="Toggle music"
+    aria-label="Play music"
+    title="Music"
   >
-
-    🔇 Music
-
+    <span class="music-ico" aria-hidden="true">🔇</span>
+    <span class="music-txt">Music</span>
   </button>
 
 
@@ -1597,27 +1618,19 @@
       /* UPDATE MUSIC BUTTON */
 
       function updateBtn() {
-
+        const ico = toggle.querySelector(".music-ico");
+        const txt = toggle.querySelector(".music-txt");
         if (!music.paused) {
-
-          toggle.textContent =
-            "🔊 Music";
-
-          toggle.classList.add(
-            "is-playing"
-          );
-
+          if (ico) ico.textContent = "🔊";
+          if (txt) txt.textContent = "Music";
+          toggle.setAttribute("aria-label", "Mute music");
+          toggle.classList.add("is-playing");
         } else {
-
-          toggle.textContent =
-            "🔇 Music";
-
-          toggle.classList.remove(
-            "is-playing"
-          );
-
+          if (ico) ico.textContent = "🔇";
+          if (txt) txt.textContent = "Music";
+          toggle.setAttribute("aria-label", "Play music");
+          toggle.classList.remove("is-playing");
         }
-
       }
 
 
