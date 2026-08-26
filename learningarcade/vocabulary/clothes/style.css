@@ -111,12 +111,24 @@ body.game-page .game-header {
   min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  overscroll-behavior: none;
+  padding: 12px 12px 14px;
+  scrollbar-width: thin;
+}
+
+/* Start / end screens may need a little scroll on very short phones */
+#startScreen.panel-fill,
+#endScreen.panel-fill {
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  padding: 14px 14px 16px;
-  scrollbar-width: thin;
+}
+
+/* Game board: lock to viewport, no bounce scroll */
+#gameScreen.panel-fill {
+  overflow: hidden;
 }
 
 .game-toolbar {
@@ -202,12 +214,9 @@ html[data-theme="dark"] .modes-btn:hover {
 .panel-fill .pairs-grid {
   flex: 1 1 auto;
   min-height: 0;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-
-  flex: 1;
-  min-height: 0;
   margin-bottom: 4px;
+  /* Fit all pairs on screen — no internal scroll (like Singular & Plural) */
+  overflow: hidden;
 }
 
 .hub-top {
@@ -517,27 +526,30 @@ html[data-theme="dark"] .header-center .eyebrow {
   box-shadow: 0 1px 0 0 var(--dr-green-border);
 }
 
-/* Game pair grid — soft squares */
+/* Game pair grid — fills viewport like Singular & Plural match */
 .pairs-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 4px;
   flex: 1 1 auto;
   min-height: 0;
+  height: 100%;
   align-content: stretch;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
 }
 
 .pairs-grid.pairs-5 {
-  /* 5 rows × 2 cols */
+  /* 5 equal rows so all pairs fit on screen */
+  grid-template-rows: repeat(5, minmax(0, 1fr));
 }
 
 .pair-btn,
 .pair-btn.soft-square {
   min-height: 0;
-  border-radius: 16px;
+  height: 100%;
+  width: 100%;
+  border-radius: 14px;
   border: 2px solid var(--border);
   background: var(--card);
   box-shadow: 0 2px 0 0 var(--border);
@@ -545,19 +557,23 @@ html[data-theme="dark"] .header-center .eyebrow {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 6px 8px;
   font-weight: 800;
-  font-size: 1rem;
+  font-size: clamp(0.82rem, 2.8vh, 1.05rem);
+  line-height: 1.15;
   color: var(--text);
   -webkit-tap-highlight-color: transparent;
   transition: transform .08s, box-shadow .08s, border-color .12s, background .12s;
+  overflow: hidden;
 }
 
 .pair-btn:active { transform: translateY(2px); box-shadow: 0 0 0 0 transparent; }
 
 .pair-btn img {
   max-width: 100%;
-  max-height: 56px;
+  max-height: min(52px, 9vh);
+  width: auto;
+  height: auto;
   object-fit: contain;
   pointer-events: none;
   background: transparent;
@@ -573,10 +589,12 @@ html[data-theme="dark"] .header-center .eyebrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-width: 88px;
-  min-height: 44px;
-  padding: 10px 18px;
+  gap: 6px;
+  min-width: 72px;
+  min-height: 0;
+  height: auto;
+  max-height: 100%;
+  padding: clamp(6px, 1.2vh, 10px) clamp(12px, 3vw, 18px);
   border-radius: 999px;
   background: #d6f0ff;
   border: 2px solid #9ed4f5;
@@ -967,15 +985,16 @@ button, a, .pair-btn, .mode-tab, .primary-btn, .modes-btn, .icon-square-btn, .di
   .pair-btn,
   .pair-btn.soft-square {
     box-shadow: 0 1px 0 0 var(--border);
-    min-height: 52px;
+    padding: 4px 6px;
+    border-radius: 12px;
+    font-size: clamp(0.78rem, 2.6vh, 0.95rem);
   }
   .pairs-grid {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-
-    gap: 8px;
+    gap: 6px;
+    overflow: hidden;
+  }
+  .pair-btn img {
+    max-height: min(44px, 8vh);
   }
   .stats-inline .stat {
     padding: 5px 2px;
@@ -996,37 +1015,46 @@ button, a, .pair-btn, .mode-tab, .primary-btn, .modes-btn, .icon-square-btn, .di
   }
 }
 
-/* Short phones (iPhone SE, landscape-ish heights) */
+/* Short phones — shrink chrome so 5 rows still fit */
 @media (max-height: 700px) {
   .pairs-grid {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-
-    gap: 6px;
+    gap: 5px;
+    overflow: hidden;
   }
   .pair-btn,
   .pair-btn.soft-square {
-    padding: 4px;
+    padding: 3px 5px;
+    border-radius: 12px;
   }
   .pair-btn img {
-    max-height: 36px;
+    max-height: min(34px, 7vh);
   }
   .audio-pill {
-    min-height: 36px;
-    min-width: 72px;
-    padding: 6px 12px;
+    min-height: 32px;
+    min-width: 64px;
+    padding: 4px 10px;
   }
   .audio-speaker {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
   .audio-bars {
-    height: 14px;
+    height: 12px;
+  }
+  .panel-fill {
+    padding: 10px 10px 12px;
   }
   .panel-fill .prompt {
-    font-size: .9rem;
+    font-size: .85rem;
+    margin-bottom: 2px;
+  }
+  .panel-fill .instruction,
+  .panel-fill .feedback {
+    font-size: .8rem;
+    min-height: 16px;
+    margin-bottom: 2px;
+  }
+  .game-toolbar {
     margin-bottom: 4px;
   }
   .feature-list li {
