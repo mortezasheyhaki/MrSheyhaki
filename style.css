@@ -86,9 +86,9 @@ a {
 
 .arcade-nav {
   position: fixed !important;
-  /* Desktop default: top floating pill */
-  top: max(14px, env(safe-area-inset-top, 0px)) !important;
-  bottom: auto !important;
+  /* Always bottom floating — matches Learning Arcade on all viewports */
+  top: auto !important;
+  bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
   left: 50% !important;
   right: auto !important;
   transform: translateX(-50%) scale(1);
@@ -119,11 +119,16 @@ a {
   box-shadow: 0 8px 24px rgba(0,0,0,0.28);
 }
 
-/* Phone: keep bottom dock */
+/* Phone: tighter bottom dock (same feel as Learning Arcade) */
 @media (max-width: 700px) {
   .arcade-nav {
-    top: auto !important;
-    bottom: max(12px, env(safe-area-inset-bottom, 0px)) !important;
+    bottom: max(8px, env(safe-area-inset-bottom, 0px)) !important;
+    width: calc(100% - 12px);
+    max-width: 100%;
+    padding: 6px;
+    gap: 4px;
+    border-radius: 14px;
+    justify-content: space-between;
   }
 }
 
@@ -239,15 +244,15 @@ html:not([data-theme="dark"]) .arcade-nav .theme-toggle {
 /* Hide old site-header if any leftover */
 .site-header { display: none !important; }
 
-/* Space for floating nav — top on desktop, bottom on phone */
+/* Space for bottom floating nav (matches Learning Arcade on every page) */
 body:not(.cabinet-body):not(.wh-body):not(.light-mode) {
-  padding-top: max(72px, calc(56px + env(safe-area-inset-top, 0px))) !important;
-  padding-bottom: 24px !important;
+  padding-top: 16px !important;
+  padding-bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
 }
 @media (max-width: 700px) {
   body:not(.cabinet-body):not(.wh-body):not(.light-mode) {
-    padding-top: 16px !important;
-    padding-bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
+    padding-top: 12px !important;
+    padding-bottom: max(92px, calc(76px + env(safe-area-inset-bottom, 0px))) !important;
   }
 }
 
