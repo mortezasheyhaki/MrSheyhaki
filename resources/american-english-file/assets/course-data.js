@@ -96,6 +96,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "Pictures + Words Match", url: "pictures-words-match/" },
   { title: "A or An Swipe", url: "a-an-swipe/" },
   { title: "Plural -s Sound Match", url: "plural-s-sound-match/" },
+  { title: "What's in Your Bag?", url: "whats-in-your-bag/" },
 ];
 
 // Unit 3B – Games
