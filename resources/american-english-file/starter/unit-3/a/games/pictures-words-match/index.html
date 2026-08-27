@@ -39,7 +39,7 @@
 
   .app {
     min-height: 100dvh;
-    max-width: 430px;
+    max-width: 480px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -234,24 +234,31 @@
   }
 
   .match-card {
-    flex: 1;
-    min-height: 0;
+    flex: 1 1 0;
+    min-height: 64px;
     background: var(--card);
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: clamp(0.95rem, 4.2vw, 1.2rem);
+    font-size: clamp(0.95rem, 4.2vw, 1.15rem);
     font-weight: 700;
     cursor: pointer;
     border: 2.5px solid transparent;
     transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease,
                 opacity 0.45s ease, transform 0.45s cubic-bezier(0.34, 1.2, 0.64, 1);
-    padding: 4px;
+    padding: 8px 10px;
     line-height: 1.2;
     position: relative;
     overflow: hidden;
+  }
+  /* Keep picture & word columns the same visual size */
+  .match-card.picture-card {
+    padding: 6px;
+  }
+  .match-card.word-card {
+    padding: 10px 12px;
   }
   .match-card:hover:not(.muted):not(.selected):not(.matching) {
     background: var(--card-hover);
@@ -281,8 +288,12 @@
   }
 
   .match-card img {
-    max-width: 95%;
-    max-height: 95%;
+    width: 100%;
+    height: 100%;
+    max-width: 92%;
+    max-height: 92%;
+    min-width: 40px;
+    min-height: 40px;
     object-fit: contain;
     pointer-events: none;
     transition: transform 0.35s ease, opacity 0.35s ease;
@@ -332,22 +343,103 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+    gap: 0;
+    padding: 28px 20px 36px;
+  }
+  #end-screen .end-badge {
+    width: 72px;
+    height: 72px;
+    border-radius: 22px;
+    display: grid;
+    place-items: center;
+    font-size: 2rem;
+    margin-bottom: 14px;
+    background: linear-gradient(145deg, rgba(251, 146, 60, 0.25), rgba(234, 88, 12, 0.12));
+    border: 1px solid rgba(251, 146, 60, 0.35);
+    box-shadow: 0 0 28px rgba(251, 146, 60, 0.25);
   }
   #end-screen h2 {
-    font-size: 1.8rem;
+    font-size: 1.85rem;
     color: var(--accent);
-    text-shadow: 0 0 20px var(--glow);
-    margin-bottom: 14px;
+    text-shadow: 0 0 22px var(--glow);
+    margin: 0 0 18px;
+    letter-spacing: 0.02em;
   }
   .stats {
-    background: var(--panel);
-    border-radius: 16px;
-    padding: 16px 26px;
-    margin-bottom: 22px;
-    line-height: 1.85;
-    font-size: 1rem;
+    width: min(100%, 300px);
+    background: linear-gradient(160deg, rgba(46, 33, 22, 0.95), rgba(30, 22, 14, 0.98));
+    border: 1px solid rgba(251, 146, 60, 0.22);
+    border-radius: 20px;
+    padding: 18px 20px;
+    margin-bottom: 28px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   }
-  .stats strong { color: var(--accent); }
+  .stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 4px;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .stat-row + .stat-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .stat-row strong {
+    color: var(--accent);
+    font-size: 1.15rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+  .end-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+  }
+  .soft-sq {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.55rem;
+    line-height: 1;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .soft-sq:active {
+    transform: translateY(2px) scale(0.97);
+  }
+  .soft-sq.back {
+    background: linear-gradient(160deg, #3a2f28, #2a221c);
+    color: #e8d5c4;
+    box-shadow: 0 6px 0 #1a1410, 0 10px 22px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .soft-sq.back:hover {
+    filter: brightness(1.08);
+  }
+  .soft-sq.again {
+    background: linear-gradient(160deg, #ffb347, #f97316);
+    color: #1a1008;
+    box-shadow: 0 6px 0 #c45e00, 0 10px 26px rgba(249, 115, 22, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+  .soft-sq.again:hover {
+    filter: brightness(1.06);
+  }
+  .soft-sq.again:active {
+    box-shadow: 0 3px 0 #c45e00, 0 6px 14px rgba(249, 115, 22, 0.3);
+  }
+  .soft-sq.back:active {
+    box-shadow: 0 3px 0 #1a1410, 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
 </style>
 </head>
 <body>
@@ -400,14 +492,17 @@
 
   <!-- END -->
   <div id="end-screen" class="screen">
-    <h2>🎉 Well Done!</h2>
+    <div class="end-badge" aria-hidden="true">🎉</div>
+    <h2>Well Done!</h2>
     <div class="stats">
-      Final Score: <strong id="final-score">0</strong><br>
-      Time Left: <strong id="final-time">0</strong>s<br>
-      Max Combo: <strong id="final-combo">0</strong>x
+      <div class="stat-row"><span>Final Score</span><strong id="final-score">0</strong></div>
+      <div class="stat-row"><span>Time Left</span><strong><span id="final-time">0</span>s</strong></div>
+      <div class="stat-row"><span>Max Combo</span><strong><span id="final-combo">0</span>x</strong></div>
     </div>
-    <button class="btn-arcade" id="replay-btn">Play Again</button>
-    <a class="btn-arcade btn-secondary" href="../" style="display:inline-block;text-decoration:none;">← Back to Games</a>
+    <div class="end-actions">
+      <a class="soft-sq back" href="../" id="end-back-btn" aria-label="Back to games" title="Back">←</a>
+      <button class="soft-sq again" type="button" id="replay-btn" aria-label="Play again" title="Again">↻</button>
+    </div>
   </div>
 
 </div>
@@ -524,7 +619,7 @@ function renderLists() {
 
   leftItems.forEach((item, idx) => {
     const el = document.createElement('div');
-    el.className = 'match-card' + (item.matched ? ' muted' : '');
+    el.className = 'match-card picture-card' + (item.matched ? ' muted' : '');
     el.innerHTML = `<img src="${item.img}" alt="" draggable="false">`;
     if (!item.matched) el.addEventListener('click', () => onSelect('left', idx));
     leftList.appendChild(el);
@@ -532,7 +627,7 @@ function renderLists() {
 
   rightItems.forEach((item, idx) => {
     const el = document.createElement('div');
-    el.className = 'match-card' + (item.matched ? ' muted' : '');
+    el.className = 'match-card word-card' + (item.matched ? ' muted' : '');
     el.textContent = item.word;
     if (!item.matched) el.addEventListener('click', () => onSelect('right', idx));
     rightList.appendChild(el);

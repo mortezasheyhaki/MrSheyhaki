@@ -96,6 +96,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "Pictures + Words Match", url: "pictures-words-match/" },
   { title: "A or An Swipe", url: "a-an-swipe/" },
   { title: "Plural -s Sound Match", url: "plural-s-sound-match/" },
+  { title: "What's in Your Bag?", url: "whats-in-your-bag/" },
 ];
 
 // Unit 3B – Games
@@ -124,6 +125,11 @@ COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.games = [
   { title: "Question Builder", url: "question-builder/" },
   { title: "Build the Question", url: "build-the-question/" },
   { title: "Amelia's Days", url: "amelias-days/" },
+];
+
+// Unit 7B – Games
+COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.games = [
+  { title: "Subject vs Object Pronouns", url: "subject-object-pronouns/" },
 ];
 
 // Unit 9A – Listen & Write game

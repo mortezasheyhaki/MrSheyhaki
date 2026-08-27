@@ -38,7 +38,6 @@
   const checkBtn = $("checkBtn");
   const clearBtn = $("clearBtn");
   const feedback = $("feedback");
-  const themeBtn = $("themeBtn");
 
   let level = 0; // 0,1,2
   let order = [];
@@ -288,19 +287,6 @@
     show("game");
     renderItem();
   }
-
-  function applyTheme(dark) {
-    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-    document.body.classList.toggle("dark-mode", dark);
-    if (themeBtn) themeBtn.textContent = dark ? "☀️" : "🌙";
-    try { localStorage.setItem("tts-theme", dark ? "dark" : "light"); } catch (e) {}
-  }
-  if (themeBtn) {
-    themeBtn.addEventListener("click", function () {
-      applyTheme(document.documentElement.getAttribute("data-theme") !== "dark");
-    });
-  }
-  try { applyTheme(localStorage.getItem("tts-theme") === "dark"); } catch (e) { applyTheme(false); }
 
   $("startBtn").addEventListener("click", startGame);
   $("playAgainBtn").addEventListener("click", startGame);

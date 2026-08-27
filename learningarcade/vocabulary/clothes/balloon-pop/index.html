@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Balloon Pop — Clothes</title>
+<style>
+  :root {
+    /* Vocabulary skill palette (purple) */
+    --sky-top: #3d2170;
+    --sky-mid: #5b2fc8;
+    --sky-low: #8b6cf0;
+    --ground-light: #7c5ad4;
+    --ground-dark: #5425b8;
+    --ink: #2a1a4e;
+    --ink-soft: #6b5b8c;
+    --on-sky: #f4ecff;
+    --card: #ffffff;
+    --accent: #ff4d6a;
+    --good: #a78bfa;
+    --gold: #fbbf24;
+    --vocab: #6937d8;
+    --vocab-dark: #5425b8;
+    --shadow: 0 16px 48px rgba(30, 15, 60, 0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+    background: var(--sky-top);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .game {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 80% 50% at 70% 15%, rgba(255,255,255,0.18) 0%, transparent 55%),
+      linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 40%, var(--sky-low) 58%, var(--ground-light) 62%, var(--ground-dark) 100%);
+  }
+
+  /* Soft glow (moon-ish, matches vocab purple night sky) */
+  .sun {
+    position: absolute;
+    top: 8%;
+    right: 12%;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #f5f0ff, #d4c4f7 50%, #a78bfa 100%);
+    box-shadow: 0 0 60px 20px rgba(167, 139, 250, 0.35);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* Hills silhouette — purple vocabulary ground */
+  .hills {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 38%;
+    z-index: 2;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 70% 80% at 15% 100%, #8b6cf0 0%, transparent 70%),
+      radial-gradient(ellipse 60% 70% at 55% 100%, #6937d8 0%, transparent 65%),
+      radial-gradient(ellipse 75% 90% at 85% 100%, #4c1d95 0%, transparent 70%);
+  }
+
+  /* Drifting clouds */
+  .cloud {
+    position: absolute;
+    background: rgba(255,255,255,0.88);
+    border-radius: 50px;
+    filter: blur(0.4px);
+    animation: drift linear infinite;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .cloud::before, .cloud::after {
+    content: "";
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+  }
+  .cloud::before { width: 68px; height: 68px; left: 24px; top: -26px; }
+  .cloud::after  { width: 82px; height: 82px; right: 16px; top: -38px; }
+  .c1 { width: 130px; height: 42px; top: 9%;  left: -12%; animation-duration: 52s; }
+  .c2 { width: 165px; height: 50px; top: 20%; left: -18%; animation-duration: 68s; animation-delay: -18s; }
+  .c3 { width: 105px; height: 36px; top: 38%; left: -10%; animation-duration: 58s; animation-delay: -30s; opacity: 0.75; }
+  .c4 { width: 90px;  height: 32px; top: 14%; left: -8%;  animation-duration: 44s; animation-delay: -8s;  opacity: 0.6; transform: scale(0.85); }
+  @keyframes drift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(130vw); }
+  }
+
+  /* Top timer bar */
+  .timer-track {
+    position: absolute;
+    z-index: 40;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: rgba(255,255,255,0.3);
+  }
+  .timer-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #a78bfa, #fbbf24 60%, #ff4d6a);
+    transition: width 1s linear;
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* HUD */
+  .hud {
+    position: absolute;
+    z-index: 40;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(94vw, 940px);
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .pill {
+    background: rgba(255,255,255,0.93);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 999px;
+    padding: 9px 18px;
+    font-weight: 800;
+    font-size: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pill span { font-variant-numeric: tabular-nums; }
+  .pill.streak-on {
+    background: linear-gradient(135deg, #fff7ed, #ffedd5);
+    border-color: #fdba74;
+    color: #c2410c;
+  }
+
+  /* Target word card */
+  .target {
+    position: absolute;
+    z-index: 40;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(90vw, 520px);
+    text-align: center;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 26px;
+    padding: 14px 24px 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255,255,255,0.8);
+  }
+  .target small {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 2.4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+  #targetWord {
+    font-size: clamp(30px, 5.8vw, 50px);
+    font-weight: 900;
+    letter-spacing: -0.8px;
+    line-height: 1.12;
+    background: linear-gradient(135deg, #3d2170 0%, #6937d8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Playfield */
+  .playfield {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+  }
+
+  /* Balloons — glossy & dimensional */
+  .balloon {
+    position: absolute;
+    width: clamp(96px, 12.5vw, 138px);
+    aspect-ratio: 0.76;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 10px 22px;
+    color: #fff;
+    font-weight: 900;
+    font-size: clamp(13px, 1.75vw, 19px);
+    line-height: 1.15;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    border-radius: 50% 50% 48% 52% / 58% 58% 42% 42%;
+    cursor: pointer;
+    user-select: none;
+    will-change: transform;
+    touch-action: manipulation;
+    animation: floatUp linear forwards;
+    /* glossy highlight + depth */
+    box-shadow:
+      inset -16px -20px 28px rgba(0,0,0,0.18),
+      inset 14px 12px 22px rgba(255,255,255,0.4),
+      0 12px 28px rgba(0,0,0,0.16);
+  }
+  .balloon::before {
+    /* knot */
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: inherit;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    border-radius: 3px;
+    box-shadow: inset -4px -4px 8px rgba(0,0,0,0.15);
+  }
+  .balloon::after {
+    /* string */
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 32px;
+    background: linear-gradient(to bottom, rgba(60,60,60,0.4), rgba(60,60,60,0.15));
+    left: 50%;
+    bottom: -30px;
+    transform: translateX(-50%);
+  }
+  /* shine overlay */
+  .balloon .shine {
+    position: absolute;
+    top: 12%;
+    left: 18%;
+    width: 28%;
+    height: 22%;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.55) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .balloon.correctHint {
+    outline: 5px solid rgba(255,255,255,0.95);
+    outline-offset: 5px;
+    animation: shake 0.42s ease;
+  }
+  .balloon.popping {
+    animation: pop 0.34s cubic-bezier(0.15, 0.85, 0.25, 1) forwards !important;
+    pointer-events: none;
+  }
+  @keyframes floatUp {
+    0%   { transform: translate(var(--dx-start), 112vh) rotate(var(--rot-start)); }
+    100% { transform: translate(var(--dx-end), -42vh) rotate(var(--rot-end)); }
+  }
+  @keyframes pop {
+    0%   { transform: scale(1) rotate(0deg); opacity: 1; filter: brightness(1); }
+    35%  { transform: scale(1.45) rotate(10deg); opacity: 0.95; filter: brightness(1.25); }
+    100% { transform: scale(0.05) rotate(-15deg); opacity: 0; filter: brightness(1.5); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-7px); }
+    40% { transform: translateX(7px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+
+  /* Particles */
+  .particle {
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 25;
+    animation: particle 0.6s ease-out forwards;
+  }
+  @keyframes particle {
+    0%   { transform: translate(0,0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--px), var(--py)) scale(0.15); opacity: 0; }
+  }
+
+  /* Confetti for win */
+  .confetti {
+    position: absolute;
+    width: 10px;
+    height: 14px;
+    z-index: 70;
+    pointer-events: none;
+    animation: confettiFall 2.8s ease-in forwards;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0.3; }
+  }
+
+  /* Flash text */
+  .flash {
+    position: absolute;
+    z-index: 50;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%) scale(0.65);
+    font-size: clamp(42px, 9.5vw, 84px);
+    font-weight: 1000;
+    color: #fff;
+    text-shadow: 0 5px 0 rgba(0,0,0,0.2), 0 0 40px rgba(255,255,255,0.55);
+    pointer-events: none;
+    opacity: 0;
+  }
+  .flash.show { animation: flashIn 0.62s ease-out; }
+  @keyframes flashIn {
+    0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.55); }
+    22%  { opacity: 1; transform: translate(-50%,-50%) scale(1.12); }
+    100% { opacity: 0; transform: translate(-50%,-50%) scale(1.3); }
+  }
+
+  /* Status toast */
+  #status {
+    position: absolute;
+    z-index: 40;
+    bottom: 96px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(45, 20, 90, 0.92);
+    color: #fff;
+    border-radius: 18px;
+    padding: 11px 20px;
+    font-weight: 700;
+    font-size: 15px;
+    max-width: 90vw;
+    text-align: center;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  /* Controls */
+  .controls {
+    position: absolute;
+    z-index: 40;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: min(94vw, 840px);
+  }
+  button {
+    border: 0;
+    border-radius: 20px;
+    padding: 13px 22px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    background: linear-gradient(135deg, #8b6cf0, #6937d8);
+    color: #fff;
+    box-shadow: 0 7px 20px rgba(105, 55, 216, 0.35);
+    transition: transform 0.15s, opacity 0.15s, background 0.2s, box-shadow 0.2s;
+  }
+
+  .back-btn {
+    position: absolute;
+    z-index: 50;
+    top: max(12px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #3d2170;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 6px 18px rgba(30, 15, 60, 0.2);
+    padding: 0;
+  }
+  .back-btn:hover {
+    transform: scale(1.05);
+  }
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+  }
+  button:active:not(:disabled) { transform: translateY(0); }
+  button:disabled { opacity: 0.48; cursor: not-allowed; }
+  #micBtn {
+    background: linear-gradient(135deg, #ff4d6a, #ff6b81);
+    min-width: 172px;
+  }
+  #micBtn.listening {
+    background: linear-gradient(135deg, #8b6cf0, #6937d8);
+    animation: pulse 1.15s infinite;
+  }
+  @keyframes pulse {
+    50% { box-shadow: 0 0 0 14px rgba(105,55,216,0.22); }
+  }
+  .typebox {
+    display: flex;
+    background: rgba(255,255,255,0.97);
+    border-radius: 20px;
+    padding: 5px;
+    box-shadow: 0 7px 22px rgba(0,0,0,0.12);
+    border: 1px solid rgba(255,255,255,0.8);
+  }
+  #answer {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    padding: 11px 14px;
+    width: 185px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  #answer::placeholder { color: #a0b4c4; font-weight: 500; }
+  #submitBtn { background: linear-gradient(135deg, #8b6cf0, #6937d8); }
+  #muteBtn {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 20px;
+    background: rgba(255,255,255,0.92);
+    color: var(--ink);
+    box-shadow: 0 5px 16px rgba(0,0,0,0.1);
+  }
+
+  /* Overlays */
+  .overlay {
+    position: absolute;
+    z-index: 80;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(30, 15, 60, 0.62);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .card {
+    width: min(92vw, 460px);
+    background: var(--card);
+    border-radius: 32px;
+    padding: 40px 34px 32px;
+    text-align: center;
+    box-shadow: 0 32px 90px rgba(0,0,0,0.3);
+    animation: cardIn 0.45s cubic-bezier(0.2, 0.9, 0.25, 1);
+    border: 1px solid rgba(255,255,255,0.9);
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: scale(0.9) translateY(18px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .card .balloon-icon {
+    font-size: 58px;
+    line-height: 1;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));
+  }
+  .card h1 {
+    font-size: clamp(30px, 6.5vw, 44px);
+    font-weight: 900;
+    letter-spacing: -0.8px;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .card .subtitle {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+  .card p {
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .card .hint {
+    font-size: 14px;
+    color: #8aa0b4;
+    margin: 18px 0 24px;
+    line-height: 1.5;
+  }
+  .bigScore {
+    font-size: 56px;
+    font-weight: 900;
+    margin: 10px 0 4px;
+    letter-spacing: -1.5px;
+    background: linear-gradient(135deg, #3d2170, #8b6cf0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .highscore {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .stars {
+    font-size: 28px;
+    letter-spacing: 4px;
+    margin: 8px 0 16px;
+  }
+  .hidden { display: none !important; }
+
+  /* Responsive */
+  @media (max-width: 540px) {
+    .hud { top: 12px; gap: 6px; }
+    .pill { padding: 7px 12px; font-size: 13px; }
+    .target { top: 58px; padding: 11px 16px 13px; border-radius: 20px; }
+    #status { bottom: 112px; font-size: 13px; padding: 9px 15px; }
+    .controls { bottom: 14px; gap: 8px; }
+    button { padding: 11px 16px; font-size: 14px; }
+    #micBtn { min-width: 140px; }
+    #answer { width: 125px; }
+    #muteBtn { width: 42px; height: 42px; font-size: 18px; }
+    .sun { width: 60px; height: 60px; top: 6%; right: 8%; }
+  }
+</style>
+</head>
+<body>
+<div class="game">
+  <a class="back-btn" href="../" aria-label="Back to Clothes" title="Back">←</a>
+  <div class="sun"></div>
+  <div class="hills"></div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+  <div class="cloud c4"></div>
+
+  <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
+
+  <div class="hud">
+    <div class="pill">⭐ <span id="score">0</span></div>
+    <div class="pill" id="streakPill">🔥 <span id="streak">0</span></div>
+    <div class="pill">🎈 <span id="round">0</span>/16</div>
+    <div class="pill">⏱️ <span id="timer">90</span>s</div>
+  </div>
+
+  <div class="target">
+    <small>Say or type this word</small>
+    <div id="targetWord">—</div>
+  </div>
+
+  <div id="playfield" class="playfield"></div>
+  <div id="flash" class="flash">POP!</div>
+  <div id="status">Press Start to play</div>
+
+  <div class="controls">
+    <button id="muteBtn" aria-label="Toggle sound" title="Toggle sound">🔊</button>
+    <button id="micBtn" disabled aria-label="Speak the word">🎤 Say the word</button>
+    <div class="typebox">
+      <input id="answer" type="text" placeholder="Type if needed…" autocomplete="off" disabled aria-label="Type the word">
+      <button id="submitBtn" disabled>Check</button>
+    </div>
+  </div>
+
+  <!-- Start -->
+  <div id="startOverlay" class="overlay">
+    <div class="card">
+      <div class="balloon-icon">🎈</div>
+      <h1>Balloon Pop</h1>
+      <div class="subtitle">Clothes Vocabulary</div>
+      <p>Say or type the target word to pop the matching balloon.</p>
+      <p class="hint">90 seconds · 16 words<br>Build streaks for bonus points!</p>
+      <button id="startBtn">Start Game</button>
+    </div>
+  </div>
+
+  <!-- End -->
+  <div id="endOverlay" class="overlay hidden">
+    <div class="card">
+      <div class="balloon-icon" id="endIcon">🎉</div>
+      <h1 id="endTitle">Great Job!</h1>
+      <div class="bigScore"><span id="finalScore">0</span></div>
+      <div class="stars" id="endStars"></div>
+      <div class="highscore" id="highScoreLine"></div>
+      <p id="endMessage"></p>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap">
+        <a class="back-btn" href="../" style="position:static;width:52px;height:52px" aria-label="Back">←</a>
+        <button id="restartBtn">Play Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const WORDS = [
+    "sweater","T-shirt","shirt","pants","jeans","shorts","suit","dress",
+    "skirt","coat","jacket","socks","sneakers","shoes","hat","cap"
+  ];
+
+  const COLORS = [
+    "#ff4d6a","#3b82f6","#22c55e","#f59e0b","#a855f7",
+    "#14b8a6","#f97316","#ef4444","#6366f1","#06b6d4"
+  ];
+
+  let order = [], currentTarget = "", score = 0, round = 0, timeLeft = 90;
+  let streak = 0, running = false, timerId = null;
+  let recognition = null, listening = false, muted = false;
+  let bestScore = Number(localStorage.getItem("balloonPopClothesBest") || 0);
+
+  const playfield  = document.getElementById("playfield");
+  const targetWord = document.getElementById("targetWord");
+  const scoreEl    = document.getElementById("score");
+  const streakEl   = document.getElementById("streak");
+  const streakPill = document.getElementById("streakPill");
+  const roundEl    = document.getElementById("round");
+  const timerEl    = document.getElementById("timer");
+  const timerFill  = document.getElementById("timerFill");
+  const statusEl   = document.getElementById("status");
+  const flash      = document.getElementById("flash");
+  const micBtn     = document.getElementById("micBtn");
+  const answer     = document.getElementById("answer");
+  const submitBtn  = document.getElementById("submitBtn");
+  const muteBtn    = document.getElementById("muteBtn");
+
+  // ── Audio ──────────────────────────────────────────────────
+  let audioCtx = null;
+  function ensureAudio() {
+    if (muted) return;
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+  }
+  function playTone(freq, dur, type = "sine", gain = 0.14, when = 0) {
+    if (muted) return;
+    ensureAudio();
+    if (!audioCtx) return;
+    const t = audioCtx.currentTime + when;
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(gain, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + dur + 0.02);
+  }
+  function sfxPop() {
+    playTone(260, 0.07, "square", 0.11);
+    playTone(160, 0.11, "triangle", 0.09, 0.025);
+  }
+  function sfxCorrect() {
+    playTone(523, 0.09, "sine", 0.11);
+    playTone(659, 0.11, "sine", 0.09, 0.07);
+    playTone(784, 0.16, "sine", 0.09, 0.14);
+  }
+  function sfxWrong() {
+    playTone(170, 0.14, "sawtooth", 0.07);
+    playTone(130, 0.18, "sawtooth", 0.05, 0.07);
+  }
+  function sfxWin() {
+    [523,659,784,1047].forEach((f,i) => playTone(f, 0.2, "sine", 0.1, i * 0.11));
+  }
+
+  muteBtn.addEventListener("click", () => {
+    muted = !muted;
+    muteBtn.textContent = muted ? "🔇" : "🔊";
+    if (!muted) ensureAudio();
+  });
+
+  // ── Helpers ────────────────────────────────────────────────
+  function normalize(s) {
+    return String(s).toLowerCase()
+      .replace(/[’']/g, "'")
+      .replace(/-/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  function matches(spoken, target) {
+    const a = normalize(spoken), b = normalize(target);
+    if (a === b) return true;
+    if (a.includes(b) || b.includes(a)) return true;
+    const aliases = {
+      "t-shirt": ["t shirt","tee shirt","tee-shirt","tshirt","tee"],
+      "sneakers": ["sneaker","trainers","trainer"],
+      "pants": ["pant","trousers","trouser"],
+      "shorts": ["short"],
+      "socks": ["sock"],
+      "jeans": ["jean"],
+      "shoes": ["shoe"],
+      "sweater": ["jumper","pullover"],
+      "hat": ["cap"]
+    };
+    return (aliases[b] || []).some(x => a === x || a.includes(x));
+  }
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  function setStatus(t) { statusEl.textContent = t; }
+
+  function updateStreakUI() {
+    streakEl.textContent = streak;
+    if (streak >= 2) streakPill.classList.add("streak-on");
+    else streakPill.classList.remove("streak-on");
+  }
+
+  function spawnParticles(x, y, color) {
+    for (let i = 0; i < 14; i++) {
+      const p = document.createElement("div");
+      p.className = "particle";
+      p.style.left = x + "px";
+      p.style.top = y + "px";
+      p.style.background = i % 3 === 0 ? "#fff" : color;
+      const angle = (Math.PI * 2 * i) / 14 + Math.random() * 0.5;
+      const dist = 48 + Math.random() * 60;
+      p.style.setProperty("--px", Math.cos(angle) * dist + "px");
+      p.style.setProperty("--py", Math.sin(angle) * dist + "px");
+      document.querySelector(".game").appendChild(p);
+      setTimeout(() => p.remove(), 650);
+    }
+  }
+
+  function spawnConfetti() {
+    const colors = ["#ff4d6a","#3b82f6","#22c55e","#fbbf24","#a855f7","#fff"];
+    for (let i = 0; i < 48; i++) {
+      const c = document.createElement("div");
+      c.className = "confetti";
+      c.style.left = Math.random() * 100 + "vw";
+      c.style.top = -20 + "px";
+      c.style.background = colors[i % colors.length];
+      c.style.animationDelay = (Math.random() * 0.8) + "s";
+      c.style.transform = `rotate(${Math.random()*360}deg)`;
+      document.querySelector(".game").appendChild(c);
+      setTimeout(() => c.remove(), 3600);
+    }
+  }
+
+  // ── Balloons ───────────────────────────────────────────────
+  function makeBalloon(word, index) {
+    const b = document.createElement("div");
+    b.className = "balloon";
+    b.dataset.word = word;
+    b.style.background = COLORS[index % COLORS.length];
+
+    const label = document.createElement("span");
+    label.textContent = word;
+    b.appendChild(label);
+
+    const shine = document.createElement("div");
+    shine.className = "shine";
+    b.appendChild(shine);
+
+    const startX = 5 + Math.random() * 80;
+    const drift = (Math.random() - 0.5) * 30;
+    b.style.left = startX + "%";
+    b.style.setProperty("--dx-start", "0px");
+    b.style.setProperty("--dx-end", drift + "vw");
+    b.style.setProperty("--rot-start", (Math.random()*12 - 6) + "deg");
+    b.style.setProperty("--rot-end", (Math.random()*16 - 8) + "deg");
+
+    const duration = 10.5 + Math.random() * 7.5;
+    b.style.animationDuration = duration + "s";
+    b.style.animationDelay = (Math.random() * 1.5) + "s";
+
+    b.addEventListener("animationend", e => {
+      if (e.animationName === "floatUp" && b.parentNode) b.remove();
+    });
+
+    b.addEventListener("click", () => {
+      if (!running || b.classList.contains("popping")) return;
+      if (normalize(word) === normalize(currentTarget)) {
+        popBalloon(b);
+      } else {
+        b.classList.add("correctHint");
+        sfxWrong();
+        setStatus("Not that one — aim for “" + currentTarget + "”");
+        setTimeout(() => b.classList.remove("correctHint"), 450);
+      }
+    });
+
+    playfield.appendChild(b);
+    return b;
+  }
+
+  // ── Flow ───────────────────────────────────────────────────
+  function startRound() {
+    if (!running) return;
+    playfield.innerHTML = "";
+    if (round >= order.length) { finish(true); return; }
+
+    currentTarget = order[round];
+    targetWord.textContent = currentTarget;
+    roundEl.textContent = round;
+
+    const distractors = shuffle(WORDS.filter(w => w !== currentTarget)).slice(0, 4);
+    shuffle([currentTarget, ...distractors]).forEach((w, i) => makeBalloon(w, i));
+
+    setStatus(streak >= 2
+      ? `🔥 Streak ×${streak}! Say “${currentTarget}”`
+      : `Say or type “${currentTarget}”`);
+  }
+
+  function popBalloon(balloon) {
+    if (!running || balloon.classList.contains("popping")) return;
+
+    const base = 10;
+    const bonus = Math.min(streak, 5) * 2;
+    const points = base + bonus;
+    score += points;
+    streak++;
+    scoreEl.textContent = score;
+    updateStreakUI();
+
+    const rect = balloon.getBoundingClientRect();
+    const gameRect = document.querySelector(".game").getBoundingClientRect();
+    spawnParticles(
+      rect.left + rect.width/2 - gameRect.left,
+      rect.top + rect.height/2 - gameRect.top,
+      balloon.style.background
+    );
+
+    balloon.classList.add("popping");
+    sfxPop();
+    sfxCorrect();
+
+    flash.textContent = bonus > 0 ? `+${points}!` : "POP!";
+    flash.classList.remove("show");
+    void flash.offsetWidth;
+    flash.classList.add("show");
+
+    setStatus(bonus > 0 ? `Nice! +${points} (streak bonus)` : "Great! 🎉");
+    round++;
+    roundEl.textContent = round;
+    setTimeout(startRound, 380);
+  }
+
+  function updateTimerUI() {
+    timerEl.textContent = timeLeft;
+    timerFill.style.width = (timeLeft / 90 * 100) + "%";
+  }
+
+  function startGame() {
+    ensureAudio();
+    document.getElementById("startOverlay").classList.add("hidden");
+    document.getElementById("endOverlay").classList.add("hidden");
+
+    order = shuffle(WORDS);
+    score = 0; round = 0; streak = 0; timeLeft = 90; running = true;
+    scoreEl.textContent = 0;
+    roundEl.textContent = 0;
+    updateStreakUI();
+    updateTimerUI();
+    answer.value = "";
+    answer.disabled = false;
+    submitBtn.disabled = false;
+    micBtn.disabled = !recognition;
+
+    startRound();
+    clearInterval(timerId);
+    timerId = setInterval(() => {
+      if (!running) return;
+      timeLeft--;
+      updateTimerUI();
+      if (timeLeft <= 0) finish(false);
+    }, 1000);
+  }
+
+  function starsFor(score, won) {
+    if (won && score >= 200) return "⭐⭐⭐";
+    if (won || score >= 140) return "⭐⭐";
+    if (score >= 80) return "⭐";
+    return "✨";
+  }
+
+  function finish(won) {
+    if (!running) return;
+    running = false;
+    clearInterval(timerId);
+    stopSpeech();
+    playfield.innerHTML = "";
+    answer.disabled = true;
+    submitBtn.disabled = true;
+    micBtn.disabled = true;
+
+    document.getElementById("finalScore").textContent = score;
+    document.getElementById("endStars").textContent = starsFor(score, won);
+
+    const isNewBest = score > bestScore;
+    if (isNewBest) {
+      bestScore = score;
+      localStorage.setItem("balloonPopClothesBest", bestScore);
+    }
+
+    const title = document.getElementById("endTitle");
+    const msg = document.getElementById("endMessage");
+    const icon = document.getElementById("endIcon");
+    const hsLine = document.getElementById("highScoreLine");
+
+    if (won) {
+      icon.textContent = "🏆";
+      title.textContent = "You did it!";
+      msg.textContent = `All 16 words popped${timeLeft > 0 ? ` with ${timeLeft}s left` : ""}!`;
+      sfxWin();
+      spawnConfetti();
+    } else {
+      icon.textContent = "⏰";
+      title.textContent = "Time's up!";
+      msg.textContent = `You popped ${round} of 16 words.`;
+    }
+
+    hsLine.textContent = isNewBest
+      ? `🌟 New best: ${bestScore}!`
+      : (bestScore > 0 ? `Best: ${bestScore}` : "");
+
+    document.getElementById("endOverlay").classList.remove("hidden");
+  }
+
+  // ── Answers ────────────────────────────────────────────────
+  function submitAnswer(text) {
+    if (!running || !text) return;
+    if (matches(text, currentTarget)) {
+      const targetBalloon = [...document.querySelectorAll(".balloon:not(.popping)")]
+        .find(b => normalize(b.dataset.word) === normalize(currentTarget));
+      if (targetBalloon) popBalloon(targetBalloon);
+      else {
+        score += 10 + Math.min(streak, 5) * 2;
+        streak++;
+        scoreEl.textContent = score;
+        updateStreakUI();
+        round++;
+        roundEl.textContent = round;
+        sfxCorrect();
+        setStatus("Got it!");
+        setTimeout(startRound, 300);
+      }
+    } else {
+      streak = 0;
+      updateStreakUI();
+      sfxWrong();
+      setStatus(`Heard “${text.trim()}” — try “${currentTarget}”`);
+    }
+    answer.value = "";
+  }
+
+  submitBtn.addEventListener("click", () => submitAnswer(answer.value));
+  answer.addEventListener("keydown", e => { if (e.key === "Enter") submitAnswer(answer.value); });
+
+  // ── Speech ─────────────────────────────────────────────────
+  function setupSpeech() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      setStatus("Voice not available — use the typing box.");
+      return;
+    }
+    recognition = new SR();
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 4;
+
+    recognition.onstart = () => {
+      listening = true;
+      micBtn.classList.add("listening");
+      micBtn.textContent = "🎤 Listening…";
+      setStatus("Listening… say the target word");
+    };
+    recognition.onresult = e => {
+      const alts = Array.from(e.results[0]).map(r => r.transcript);
+      for (const t of alts) {
+        if (matches(t, currentTarget)) { submitAnswer(t); return; }
+      }
+      submitAnswer(alts[0] || "");
+    };
+    recognition.onerror = e => {
+      if (e.error === "not-allowed") setStatus("Microphone blocked — use typing.");
+      else if (e.error !== "aborted" && e.error !== "no-speech") setStatus("Didn't catch that — try again.");
+    };
+    recognition.onend = () => {
+      listening = false;
+      micBtn.classList.remove("listening");
+      micBtn.textContent = "🎤 Say the word";
+    };
+  }
+  function stopSpeech() {
+    if (recognition && listening) try { recognition.stop(); } catch(_) {}
+  }
+  micBtn.addEventListener("click", () => {
+    if (!recognition || !running) return;
+    ensureAudio();
+    try { if (listening) recognition.stop(); else recognition.start(); } catch(_) {}
+  });
+
+  // ── Boot ───────────────────────────────────────────────────
+  document.getElementById("startBtn").addEventListener("click", startGame);
+  document.getElementById("restartBtn").addEventListener("click", startGame);
+  setupSpeech();
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && running) clearInterval(timerId);
+    else if (!document.hidden && running && timeLeft > 0) {
+      clearInterval(timerId);
+      timerId = setInterval(() => {
+        if (!running) return;
+        timeLeft--;
+        updateTimerUI();
+        if (timeLeft <= 0) finish(false);
+      }, 1000);
+    }
+  });
+})();
+</script>
+</body>
+</html>

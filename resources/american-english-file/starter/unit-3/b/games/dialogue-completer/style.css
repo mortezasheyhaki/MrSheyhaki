@@ -307,11 +307,148 @@ body.dark-mode .dialogue-card { background: rgba(255,255,255,.04); }
   .line { font-size: 1.05rem; }
   .blank { min-width: 80px; font-size: 1rem; }
 }
-@media (max-width: 480px) {
+
+/* ---- Phone / small screens: fixed, compact layout ---- */
+@media (max-width: 640px) {
   .back-text { display: none; }
-  .app { padding: 12px 12px calc(20px + env(safe-area-inset-bottom)); }
-  .panel { padding: 16px 14px 20px; border-radius: 16px; }
-  .line { grid-template-columns: 56px 1fr; font-size: .92rem; }
-  .blank { min-width: 64px; min-height: 28px; font-size: .88rem; }
-  .speaker { font-size: .8rem; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+  .game-header {
+    flex-shrink: 0;
+  }
+  .app {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 10px calc(10px + env(safe-area-inset-bottom));
+    overflow: hidden;
+  }
+  .panel {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 12px 14px;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .panel-game {
+    padding-top: 10px;
+  }
+
+  /* Start / end screens can scroll if needed */
+  #startScreen,
+  #endScreen {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Game screen: compact vertical stack */
+  #gameScreen {
+    overflow: hidden;
+  }
+
+  .stats-bar {
+    flex-shrink: 0;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .stat {
+    padding: 6px 4px;
+    border-radius: 10px;
+  }
+  .stat-label { font-size: .55rem; }
+  .stat strong { font-size: .95rem; }
+
+  .scene-wrap {
+    flex-shrink: 0;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    max-height: 28vh;
+  }
+  .scene-img {
+    width: 100%;
+    height: 100%;
+    max-height: 28vh;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .dialogue-card {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 8px;
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
+
+  .line {
+    grid-template-columns: 52px 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: .88rem;
+    line-height: 1.4;
+  }
+  .speaker { font-size: .75rem; }
+  .blank {
+    min-width: 58px;
+    min-height: 26px;
+    padding: 1px 8px;
+    font-size: .82rem;
+    border-radius: 8px;
+  }
+
+  .instruction {
+    flex-shrink: 0;
+    font-size: .8rem;
+    margin-bottom: 6px;
+  }
+
+  .word-bank {
+    flex-shrink: 0;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .word-chip {
+    min-height: 40px;
+    padding: 8px 14px;
+    font-size: .92rem;
+    border-radius: 12px;
+  }
+
+  .feedback {
+    flex-shrink: 0;
+    min-height: 20px;
+    font-size: .88rem;
+    margin-bottom: 8px;
+  }
+
+  #checkBtn {
+    flex-shrink: 0;
+    min-height: 48px;
+    border-radius: 14px;
+    font-size: .95rem;
+  }
+
+  h1 { font-size: 1.25rem; margin-bottom: 8px; }
+  .lead { font-size: .88rem; margin-bottom: 12px; }
+  .hero-icon { width: 52px; height: 52px; font-size: 1.5rem; margin-bottom: 10px; }
+  .feature-list { font-size: .85rem; margin-bottom: 14px; }
+}
+
+@media (max-width: 380px) {
+  .scene-wrap,
+  .scene-img { max-height: 22vh; }
+  .line { font-size: .84rem; }
+  .blank { min-width: 52px; font-size: .78rem; }
 }

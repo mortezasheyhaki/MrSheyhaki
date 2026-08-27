@@ -73,10 +73,12 @@ a {
 
 
 /* =====================================================
-   FLOATING ARCADE NAV (from Learning Arcade)
+   FLOATING ARCADE NAV (single source of truth)
+   Desktop → fixed TOP pill
+   Mobile (≤700px) → fixed BOTTOM dock
+   Low specificity; avoid !important except vs legacy headers
 ===================================================== */
 
-/* Floating nav — TOP on desktop (floats while scrolling), BOTTOM on phone */
 .arcade-header-bar {
   position: relative;
   z-index: 100;
@@ -85,54 +87,38 @@ a {
 }
 
 .arcade-nav {
-  position: fixed !important;
-  /* Always bottom floating — same as Learning Arcade on every page */
-  top: auto !important;
-  bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) scale(1);
-  z-index: 9999 !important;
-  display: flex !important;
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top, 0px));
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
   align-items: center;
   gap: 6px;
   padding: 7px;
-  border: 1px solid rgba(255,255,255,0.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 15px;
-  background: rgba(8,10,20,0.82);
+  background: rgba(8, 10, 20, 0.85);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  box-shadow: 0 12px 35px rgba(0,0,0,0.30), 0 0 0 1px rgba(255,255,255,0.04);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.04);
   white-space: nowrap;
   pointer-events: auto;
   max-width: min(560px, calc(100vw - 24px));
   width: auto;
   transition: transform 0.28s ease, opacity 0.28s ease, background 0.28s ease, box-shadow 0.28s ease;
-  visibility: visible !important;
-  opacity: 1 !important;
 }
 
 .arcade-nav.nav-scrolled {
   transform: translateX(-50%) scale(0.96);
-  opacity: 0.95 !important;
-  background: rgba(5,7,18,0.88);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+  opacity: 0.95;
+  background: rgba(5, 7, 18, 0.88);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
 
-/* Phone: full-width bottom dock */
-@media (max-width: 700px) {
-  .arcade-nav {
-    bottom: max(8px, env(safe-area-inset-bottom, 0px)) !important;
-    width: calc(100% - 12px);
-    max-width: 100%;
-    padding: 6px;
-    gap: 4px;
-    border-radius: 14px;
-    justify-content: space-between;
-  }
-}
-
-/* Hide floating nav on game pages */
+/* Hide on game / cabinet pages */
 body.cabinet-body .arcade-header-bar,
 body.cabinet-body .arcade-nav,
 body.wh-body .arcade-header-bar,
@@ -141,7 +127,7 @@ body.light-mode .arcade-header-bar,
 body.light-mode .arcade-nav,
 body.game-page .arcade-header-bar,
 body.game-page .arcade-nav {
-  display: none !important;
+  display: none;
 }
 
 .arcade-nav .nav-link {
@@ -158,32 +144,33 @@ body.game-page .arcade-nav {
   text-decoration: none;
   font-size: 12px;
   font-weight: 700;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .arcade-nav .nav-link:hover {
-  background: rgba(255,255,255,0.10);
-  border-color: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.12);
   transform: translateY(-1px);
+  color: #fff;
 }
 
 .arcade-nav .nav-link.active {
-  background: linear-gradient(135deg, rgba(124,92,255,0.80), rgba(78,203,255,0.45));
-  border-color: rgba(255,255,255,0.20);
-  color: #ffffff;
-  box-shadow: 0 5px 18px rgba(124,92,255,0.28);
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.8), rgba(78, 203, 255, 0.45));
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  box-shadow: 0 5px 18px rgba(124, 92, 255, 0.28);
 }
 
 .arcade-nav .nav-link.active::after {
   content: "";
   position: absolute;
   left: 50%;
-  top: -3px;
-  transform: translateX(-50%);
-  width: 14px;
+  top: -5px;
+  width: 16px;
   height: 2px;
-  border-radius: 2px;
-  background: rgba(255,255,255,0.85);
+  border-radius: 10px;
+  background: #fff;
+  transform: translateX(-50%);
 }
 
 .arcade-nav .theme-toggle {
@@ -194,122 +181,111 @@ body.game-page .arcade-nav {
   min-height: 38px;
   padding: 0 10px;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
   color: #f1f5f9;
   cursor: pointer;
   font-size: 14px;
 }
 
 .arcade-nav .theme-toggle:hover {
-  background: rgba(255,255,255,0.14);
+  background: rgba(255, 255, 255, 0.14);
 }
 
 .arcade-nav .theme-toggle span {
   display: none;
 }
 
-/* Light theme pill */
-html[data-theme="light"] .arcade-nav,
-html:not([data-theme="dark"]) .arcade-nav {
-  background: rgba(255,255,255,0.90);
-  border-color: rgba(15,23,42,0.10);
-  box-shadow: 0 12px 32px rgba(15,23,42,0.12), 0 0 0 1px rgba(15,23,42,0.04);
+/* Light theme */
+html[data-theme="light"] .arcade-nav {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.04);
 }
 
-html[data-theme="light"] .arcade-nav .nav-link,
-html:not([data-theme="dark"]) .arcade-nav .nav-link {
+html[data-theme="light"] .arcade-nav .nav-link {
   color: #334155;
 }
 
-html[data-theme="light"] .arcade-nav .nav-link:hover,
-html:not([data-theme="dark"]) .arcade-nav .nav-link:hover {
+html[data-theme="light"] .arcade-nav .nav-link:hover {
   color: #1e1b4b;
-  background: rgba(99,102,241,0.08);
-  border-color: rgba(99,102,241,0.14);
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.14);
 }
 
-html[data-theme="light"] .arcade-nav .nav-link.active,
-html:not([data-theme="dark"]) .arcade-nav .nav-link.active {
-  color: #ffffff;
+html[data-theme="light"] .arcade-nav .nav-link.active {
+  color: #fff;
   background: linear-gradient(135deg, #7c5cff, #4ecbff);
-  border-color: rgba(255,255,255,0.25);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
-html[data-theme="light"] .arcade-nav .theme-toggle,
-html:not([data-theme="dark"]) .arcade-nav .theme-toggle {
-  background: rgba(255,255,255,0.72);
+html[data-theme="light"] .arcade-nav .theme-toggle {
+  background: rgba(255, 255, 255, 0.72);
   color: #171a26;
-  border-color: rgba(15,23,42,0.08);
+  border-color: rgba(15, 23, 42, 0.08);
 }
 
-/* Hide old site-header if any leftover */
-.site-header { display: none !important; }
-
-/* Space for bottom floating nav on every standard page */
-body:not(.cabinet-body):not(.wh-body):not(.light-mode) {
-  padding-top: 16px !important;
-  padding-bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
-}
-@media (max-width: 700px) {
-  body:not(.cabinet-body):not(.wh-body):not(.light-mode) {
-    padding-top: 12px !important;
-    padding-bottom: max(92px, calc(76px + env(safe-area-inset-bottom, 0px))) !important;
-  }
+/* Legacy full-width header off */
+.site-header {
+  display: none;
 }
 
-/* Desktop: show text labels */
+/* Page offset for floating nav */
+body:not(.cabinet-body):not(.wh-body):not(.light-mode):not(.game-page) {
+  padding-top: 72px;
+  padding-bottom: 24px;
+}
+
 .arcade-nav .nav-ico {
   display: none;
   font-size: 16px;
   line-height: 1;
 }
+
 .arcade-nav .nav-text {
   display: inline;
 }
 
-/* Mobile: bottom icon-only floating nav (phone tab bar) */
 @media (max-width: 700px) {
-  body:not(.cabinet-body):not(.wh-body):not(.light-mode) {
-    padding-top: 12px !important;
-    padding-bottom: max(92px, calc(76px + env(safe-area-inset-bottom, 0px))) !important;
+  body:not(.cabinet-body):not(.wh-body):not(.light-mode):not(.game-page) {
+    padding-top: 12px;
+    padding-bottom: 72px;
   }
 
   .arcade-nav {
-    top: auto !important;
-    bottom: max(10px, env(safe-area-inset-bottom, 0px)) !important;
-    left: 50% !important;
-    width: calc(100% - 16px);
-    max-width: 420px;
+    top: auto;
+    bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    width: calc(100% - 12px);
+    max-width: 100%;
     padding: 6px;
     gap: 4px;
-    border-radius: 16px;
-    overflow-x: visible;
+    border-radius: 14px;
     justify-content: space-between;
   }
+
   .arcade-nav .nav-link {
     flex: 1 1 0;
     min-width: 0;
-    min-height: 44px;
+    min-height: 40px;
     padding: 0 4px;
     font-size: 0;
-    border-radius: 12px;
-    gap: 0;
+    border-radius: 10px;
   }
+
   .arcade-nav .nav-ico {
     display: inline-block;
     font-size: 18px;
-    line-height: 1;
   }
+
   .arcade-nav .nav-text {
     display: none;
   }
+
   .arcade-nav .nav-link.active::after {
     top: -3px;
-    bottom: auto;
     width: 12px;
-    height: 2px;
   }
+
   .arcade-nav .theme-toggle {
     flex: 0 0 40px;
     width: 40px;
@@ -349,10 +325,7 @@ body:not(.cabinet-body):not(.wh-body):not(.light-mode) {
 }
 
 
-/* Keep the global header the same size and floating on every standard page. */
-body:not(.cabinet-body) {
-  padding-top: 0;
-}
+/* (padding for floating nav is set in the FLOATING ARCADE NAV section above) */
 
 
 .header-inner {
@@ -3098,24 +3071,18 @@ html.swipe-prev body { transform: translateX(12px); }
 
 /* =========================================================
    SMOOTH PAGE TRANSITIONS
+   Opacity only — no transform on body (keeps fixed nav fixed)
 ========================================================= */
 html.pt-ready body {
   opacity: 0;
-  transform: translateY(10px);
 }
 html.pt-ready.pt-enter body {
   opacity: 1;
-  transform: translateY(0);
-  transition:
-    opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 html.pt-ready.pt-exit body {
   opacity: 0;
-  transform: translateY(-8px);
-  transition:
-    opacity 0.22s ease,
-    transform 0.26s cubic-bezier(0.4, 0, 1, 1);
+  transition: opacity 0.22s ease;
   pointer-events: none;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -3123,7 +3090,6 @@ html.pt-ready.pt-exit body {
   html.pt-ready.pt-enter body,
   html.pt-ready.pt-exit body {
     opacity: 1 !important;
-    transform: none !important;
     transition: none !important;
   }
 }

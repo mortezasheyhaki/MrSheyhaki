@@ -1,10 +1,22 @@
-(function () {
+/* =========================================================
+   PLURAL -S SOUND MATCH — SWIPE VERSION
+   Unit 3A | Mr. Sheyhaki
+   Arcade cabinet style (from Food Verb Match)
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
   "use strict";
+
+
+  /* =======================================================
+     DATA
+     ======================================================= */
 
   const WORDS = [
     { word: "watches", sound: "iz" },
     { word: "glasses", sound: "iz" },
-    { word: "chargers", sound: "iz" },
+    { word: "chargers", sound: "z" },
     { word: "change purses", sound: "iz" },
     { word: "wallets", sound: "s" },
     { word: "notebooks", sound: "s" },
@@ -19,399 +31,1632 @@
     { word: "newspapers", sound: "z" },
     { word: "id cards", sound: "z" },
     { word: "credit cards", sound: "z" },
-    { word: "debit cards", sound: "z" },
+    { word: "debit cards", sound: "z" }
   ];
 
   const GAME_ID = "starter-3a-plural-s-sound-match";
-  const $ = function (id) { return document.getElementById(id); };
+  const TOTAL = WORDS.length;
+  const START_TIME = 90;
 
-  const startScreen = $("startScreen");
-  const gameScreen = $("gameScreen");
-  const endScreen = $("endScreen");
-  const card = $("card");
+  /*
+    UP    = /ɪz/
+    LEFT  = /s/
+    RIGHT = /z/
+  */
+
+  const DIRECTION_TO_SOUND = {
+    up: "iz",
+    left: "s",
+    right: "z"
+  };
+
+
+  /* =======================================================
+     ELEMENTS
+     ======================================================= */
+
+  const $ = function (id) {
+    return document.getElementById(id);
+  };
+
+
+  const startOverlay = $("startOverlay");
+  const endModal = $("endModal");
+
+  const startBtn = $("startBtn");
+  const playAgainBtn = $("playAgain");
+
+  const swipeCard = $("swipeCard");
   const wordEl = $("word");
+
   const scoreEl = $("score");
   const timerEl = $("timer");
   const comboEl = $("combo");
-  const feedback = $("feedback");
-  const progressEl = $("progress");
+
+  const progressFill = $("progressFill");
+
+  const feedbackEl = $("feedback");
+  const statusEl = $("status");
+
+  const targetIz = $("targetIz");
+  const targetS = $("targetS");
+  const targetZ = $("targetZ");
+
+  const joystickStick = $("joystickStick");
   const themeBtn = $("themeBtn");
 
-  let deck = [];
-  let currentIndex = 0;
-  let score = 0;
-  let combo = 0;
-  let bestCombo = 0;
-  let correctCount = 0;
-  let totalAnswered = 0;
-  let timeLeft = 90;
-  let timerInterval = null;
-  let gameActive = false;
-  let isDragging = false;
-  let startX = 0, startY = 0;
-  let cardX = 0, cardY = 0;
-  let audioCtx = null;
 
-  function shuffle(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const t = a[i];
-      a[i] = a[j];
-      a[j] = t;
-    }
-    return a;
+  /* =======================================================
+     CHECK HTML
+     ======================================================= */
+
+  if (!startBtn) {
+    console.error("Plural -s Sound Match: #startBtn was not found.");
+    return;
   }
 
-  function show(screen) {
-    startScreen.hidden = screen !== "start";
-    gameScreen.hidden = screen !== "game";
-    endScreen.hidden = screen !== "end";
+  if (!swipeCard) {
+    console.error("Plural -s Sound Match: #swipeCard was not found.");
+    return;
   }
 
-  function getAudioCtx() {
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === "suspended") audioCtx.resume();
-    return audioCtx;
+  if (!wordEl) {
+    console.error("Plural -s Sound Match: #word was not found.");
+    return;
   }
 
-  function playCorrectSound() {
-    try {
-      const ctx = getAudioCtx();
-      const now = ctx.currentTime;
-      [523.25, 659.25].forEach(function (freq, i) {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(0.22, now + 0.02 + i * 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35 + i * 0.1);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now + i * 0.08);
-        osc.stop(now + 0.4 + i * 0.1);
-      });
-    } catch (e) {}
-  }
 
-  function playWrongSound() {
-    try {
-      const ctx = getAudioCtx();
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(180, now);
-      osc.frequency.exponentialRampToValueAtTime(90, now + 0.2);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.28);
-    } catch (e) {}
-  }
+  /* =======================================================
+     STATE
+     ======================================================= */
 
-  function spawnParticles(good) {
-    const area = $("gameArea");
-    if (!area) return;
-    const rect = area.getBoundingClientRect();
-    const originX = rect.width / 2;
-    const originY = rect.height / 2 - 10;
-    const colors = good
-      ? ["#58cc02", "#a8e063", "#ffc800", "#84d8ff", "#ffffff"]
-      : ["#ff4b4b", "#ff8e8e", "#ff4757"];
-    const count = good ? 18 : 10;
-    for (let i = 0; i < count; i++) {
-      const p = document.createElement("div");
-      p.className = "particle";
-      const size = good ? 6 + Math.random() * 9 : 5 + Math.random() * 6;
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
-      const speed = good ? 70 + Math.random() * 120 : 40 + Math.random() * 80;
-      const dx = Math.cos(angle) * speed;
-      const dy = Math.sin(angle) * speed - (good ? 30 : 15);
-      const duration = 0.5 + Math.random() * 0.4;
-      p.style.width = size + "px";
-      p.style.height = size + "px";
-      p.style.background = color;
-      p.style.left = originX + "px";
-      p.style.top = originY + "px";
-      p.style.opacity = "1";
-      area.appendChild(p);
-      if (p.animate) {
-        const anim = p.animate(
-          [
-            { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
-            {
-              transform: "translate(calc(-50% + " + dx + "px), calc(-50% + " + dy + "px)) scale(0.3)",
-              opacity: 0,
-            },
-          ],
-          { duration: duration * 1000, easing: "cubic-bezier(0.15, 0.7, 0.3, 1)", fill: "forwards" }
+  let state = null;
+
+
+  /* =======================================================
+     SPEECH — say "Have breakfast", "Drink tea", etc.
+     ======================================================= */
+
+  function pickEnglishVoice() {
+    if (!window.speechSynthesis) return null;
+    const voices = window.speechSynthesis.getVoices();
+    return (
+      voices.find(function (x) {
+        return (
+          x.lang &&
+          x.lang.indexOf("en") === 0 &&
+          /US|United|Google|Samantha|Daniel|Zira|Female/i.test(x.name)
         );
-        anim.onfinish = function () { p.remove(); };
-      }
-      setTimeout(function () { if (p.parentNode) p.remove(); }, duration * 1000 + 50);
-    }
+      }) ||
+      voices.find(function (x) {
+        return x.lang && x.lang.indexOf("en") === 0;
+      }) ||
+      null
+    );
   }
 
-  function updateProgress() {
-    progressEl.innerHTML = "";
-    deck.forEach(function (_, i) {
-      const d = document.createElement("div");
-      d.className = "dot";
-      if (i < currentIndex) d.classList.add("done");
-      if (i === currentIndex) d.classList.add("current");
-      progressEl.appendChild(d);
+  function speakText(text, options) {
+    if (!window.speechSynthesis) return;
+    options = options || {};
+
+    try {
+      window.speechSynthesis.cancel();
+
+      const utter = new SpeechSynthesisUtterance(String(text));
+      utter.lang = "en-US";
+      utter.rate = options.rate != null ? options.rate : 1;
+      utter.pitch = options.pitch != null ? options.pitch : 1;
+      utter.volume = options.volume != null ? options.volume : 1;
+
+      const preferred = pickEnglishVoice();
+      if (preferred) {
+        utter.voice = preferred;
+      }
+
+      window.speechSynthesis.speak(utter);
+    } catch (err) {}
+  }
+
+  /* Correct match: clear, confident phrase e.g. "Have breakfast" */
+  function speakPhrase(verb, noun) {
+    const v =
+      String(verb).charAt(0).toUpperCase() +
+      String(verb).slice(1).toLowerCase();
+    const phrase = v + " " + String(noun).toLowerCase();
+
+    speakText(phrase, {
+      rate: 0.95,
+      pitch: 1.05,
+      volume: 1
     });
   }
 
-  function showCard() {
-    if (currentIndex >= deck.length) {
-      endGame();
+  /* Wrong match: playful tone */
+  function speakOops() {
+    speakText("Oops! Try again!", {
+      rate: 1.12,   // a bit quicker = more playful
+      pitch: 1.35,  // higher = lighter / playful
+      volume: 1
+    });
+  }
+
+  // Chrome loads voices async
+  if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = function () {
+      window.speechSynthesis.getVoices();
+    };
+  }
+
+
+  /* =======================================================
+     SHUFFLE
+     ======================================================= */
+
+  function shuffle(array) {
+
+    const arr = array.slice();
+
+    for (let i = arr.length - 1; i > 0; i--) {
+
+      const j =
+        Math.floor(Math.random() * (i + 1));
+
+      [arr[i], arr[j]] =
+        [arr[j], arr[i]];
+    }
+
+    return arr;
+  }
+
+
+  /* =======================================================
+     START GAME
+     ======================================================= */
+
+  function startGame() {
+
+    console.log("Plural -s Sound Match: Starting game");
+
+
+    /*
+      Stop previous timer.
+    */
+
+    if (state && state.timer) {
+      clearInterval(state.timer);
+    }
+
+
+    /*
+      New state.
+    */
+
+    state = {
+
+      score: 0,
+
+      combo: 0,
+
+      bestCombo: 0,
+
+      correct: 0,
+
+      attempts: 0,
+
+      time: START_TIME,
+
+      done: false,
+
+      currentIndex: 0,
+
+      questions: shuffle(WORDS),
+
+      timer: null,
+
+      dragging: false,
+
+      answering: false,
+
+      startX: 0,
+
+      startY: 0
+    };
+
+
+    /*
+      Hide start screen.
+    */
+
+    if (startOverlay) {
+      startOverlay.classList.add("hidden");
+    }
+
+
+    /*
+      Hide end screen.
+    */
+
+    if (endModal) {
+      endModal.classList.add("hidden");
+    }
+
+
+    /*
+      Enable card.
+    */
+
+    swipeCard.style.pointerEvents = "auto";
+
+
+    /*
+      Reset card.
+    */
+
+    resetCard();
+
+    updateHUD();
+
+
+    /*
+      Start timer.
+    */
+
+    state.timer = setInterval(function () {
+
+      tick();
+
+    }, 1000);
+
+
+    if (statusEl) {
+
+      statusEl.textContent =
+        "Swipe the word to the correct -s sound.";
+    }
+  }
+
+
+  /* =======================================================
+     RESET CARD
+     ======================================================= */
+
+  function resetCard() {
+
+    if (!state || state.done) {
       return;
     }
-    const item = deck[currentIndex];
-    wordEl.textContent = item.word;
-    card.style.transition = "none";
-    card.style.transform = "translate(0,0) rotate(0deg)";
-    card.style.opacity = "1";
-    cardX = 0;
-    cardY = 0;
-    updateProgress();
-  }
 
-  function startTimer() {
-    clearInterval(timerInterval);
-    timerInterval = setInterval(function () {
-      timeLeft--;
-      timerEl.textContent = String(timeLeft);
-      if (timeLeft <= 0) endGame();
-    }, 1000);
-  }
 
-  function showFeedback(good, direction, pointsEarned) {
-    spawnParticles(good);
-    feedback.textContent = good ? "✓" : "✗";
-    feedback.style.color = good ? "#58cc02" : "#ff4b4b";
-    feedback.classList.add("show");
-    setTimeout(function () { feedback.classList.remove("show"); }, 450);
+    const item =
+      state.questions[state.currentIndex];
 
-    card.classList.remove("correct-flash", "wrong-flash");
-    void card.offsetWidth;
-    card.classList.add(good ? "correct-flash" : "wrong-flash");
-    setTimeout(function () { card.classList.remove("correct-flash", "wrong-flash"); }, 400);
 
-    const dirEl = document.querySelector('.dir[data-dir="' + direction + '"]');
-    if (dirEl) {
-      dirEl.classList.add(good ? "flash-correct" : "flash-wrong");
-      setTimeout(function () {
-        dirEl.classList.remove("flash-correct", "flash-wrong");
-      }, 350);
+    if (!item) {
+
+      finish(true);
+
+      return;
     }
 
-    const flash = $("screenFlash");
-    flash.className = "screen-flash " + (good ? "good" : "bad");
-    setTimeout(function () { flash.className = "screen-flash"; }, 280);
 
-    if (good && pointsEarned) {
-      const pop = document.createElement("div");
-      pop.className = "points-pop";
-      pop.textContent = "+" + pointsEarned;
-      pop.style.left = "50%";
-      pop.style.top = "40%";
-      pop.style.marginLeft = "-20px";
-      $("gameArea").appendChild(pop);
-      setTimeout(function () { pop.remove(); }, 850);
+    /*
+      Display word.
+    */
+
+    wordEl.textContent =
+      item.word.toUpperCase();
+
+
+    /*
+      Remove all animation classes.
+    */
+
+    swipeCard.className =
+      "swipe-card";
+
+
+    /*
+      Reset position.
+    */
+
+    swipeCard.style.transition =
+      "none";
+
+    swipeCard.style.transform =
+      "translate3d(0,0,0) rotate(0deg)";
+
+    swipeCard.style.opacity =
+      "1";
+
+    swipeCard.style.pointerEvents =
+      "auto";
+
+
+    /*
+      Reset highlights.
+    */
+
+    clearTargetHighlights();
+
+
+    /*
+      Reset feedback.
+    */
+
+    if (feedbackEl) {
+
+      feedbackEl.textContent = "";
+
+      feedbackEl.className =
+        "feedback";
     }
 
-    if (good) {
-      const scoreStat = scoreEl.parentElement;
-      scoreStat.classList.add("bump");
-      setTimeout(function () { scoreStat.classList.remove("bump"); }, 350);
+
+    /*
+      Entrance animation.
+    */
+
+    swipeCard.animate(
+      [
+        {
+          opacity: 0,
+
+          transform:
+            "translate3d(0,28px,0) scale(.94)"
+        },
+
+        {
+          opacity: 1,
+
+          transform:
+            "translate3d(0,0,0) scale(1)"
+        }
+      ],
+      {
+        duration: 380,
+        easing: "cubic-bezier(0.22, 1, 0.36, 1)"
+      }
+    );
+  }
+
+
+  /* =======================================================
+     POINTER DOWN
+     ======================================================= */
+
+  function onPointerDown(e) {
+
+    if (
+      !state ||
+      state.done ||
+      state.dragging ||
+      state.answering
+    ) {
+      return;
+    }
+
+
+    /*
+      Ignore right mouse button.
+    */
+
+    if (
+      e.pointerType === "mouse" &&
+      e.button !== 0
+    ) {
+      return;
+    }
+
+
+    e.preventDefault();
+
+
+    state.dragging = true;
+
+    state.startX = e.clientX;
+    state.startY = e.clientY;
+
+
+    swipeCard.classList.add(
+      "dragging"
+    );
+
+
+    /*
+      Capture pointer.
+    */
+
+    try {
+
+      swipeCard.setPointerCapture(
+        e.pointerId
+      );
+
+    } catch (err) {}
+
+
+    if (statusEl) {
+
+      statusEl.textContent =
+        "Move the word to a sound.";
     }
   }
 
-  function checkAnswer(direction) {
-    if (!gameActive) return;
-    const item = deck[currentIndex];
-    let correct = false;
-    if (direction === "up" && item.sound === "iz") correct = true;
-    if (direction === "left" && item.sound === "s") correct = true;
-    if (direction === "right" && item.sound === "z") correct = true;
 
-    totalAnswered++;
-    let pointsEarned = 0;
-    if (correct) {
-      pointsEarned = 10 + combo * 2;
-      score += pointsEarned;
-      combo++;
-      if (combo > bestCombo) bestCombo = combo;
-      correctCount++;
-      playCorrectSound();
-      showFeedback(true, direction, pointsEarned);
+  /* =======================================================
+     POINTER MOVE
+     ======================================================= */
+
+  function onPointerMove(e) {
+
+    if (
+      !state ||
+      !state.dragging ||
+      state.done
+    ) {
+      return;
+    }
+
+
+    e.preventDefault();
+
+
+    const dx =
+      e.clientX - state.startX;
+
+    const dy =
+      e.clientY - state.startY;
+
+
+    /*
+      Rotate slightly.
+    */
+
+    const rotation =
+      Math.max(
+        -15,
+        Math.min(
+          15,
+          dx * 0.05
+        )
+      );
+
+
+    /*
+      Move card.
+    */
+
+    swipeCard.style.transform =
+      "translate3d(" +
+      dx +
+      "px," +
+      dy +
+      "px,0) rotate(" +
+      rotation +
+      "deg)";
+
+
+    /*
+      Highlight target.
+    */
+
+    highlightDirection(
+      dx,
+      dy
+    );
+  }
+
+
+  /* =======================================================
+     POINTER UP
+     ======================================================= */
+
+  function onPointerUp(e) {
+
+    if (
+      !state ||
+      !state.dragging ||
+      state.done
+    ) {
+      return;
+    }
+
+
+    e.preventDefault();
+
+
+    state.dragging = false;
+
+
+    const dx =
+      e.clientX - state.startX;
+
+    const dy =
+      e.clientY - state.startY;
+
+
+    swipeCard.classList.remove(
+      "dragging"
+    );
+
+
+    try {
+
+      swipeCard.releasePointerCapture(
+        e.pointerId
+      );
+
+    } catch (err) {}
+
+
+    clearTargetHighlights();
+
+
+    /*
+      Ignore tiny movements.
+    */
+
+    const distance =
+      Math.sqrt(
+        dx * dx +
+        dy * dy
+      );
+
+
+    if (distance < 45) {
+
+      returnCard();
+
+      if (statusEl) {
+
+        statusEl.textContent =
+          "Swipe left, right, or up.";
+      }
+
+      return;
+    }
+
+
+    const direction =
+      getDirection(dx, dy);
+
+
+    attemptSwipe(direction);
+  }
+
+
+  /* =======================================================
+     POINTER CANCEL
+     ======================================================= */
+
+  function onPointerCancel() {
+
+    if (
+      !state ||
+      !state.dragging
+    ) {
+      return;
+    }
+
+
+    state.dragging = false;
+
+
+    swipeCard.classList.remove(
+      "dragging"
+    );
+
+
+    clearTargetHighlights();
+
+    returnCard();
+  }
+
+
+  /* =======================================================
+     GET DIRECTION
+     ======================================================= */
+
+  function getDirection(dx, dy) {
+
+    if (
+      Math.abs(dy) >
+      Math.abs(dx)
+    ) {
+
+      if (dy < 0) {
+        return "up";
+      }
+
+      return "down";
+    }
+
+
+    if (dx < 0) {
+      return "left";
+    }
+
+
+    return "right";
+  }
+
+
+  /* =======================================================
+     HIGHLIGHT DIRECTION
+     ======================================================= */
+
+  function highlightDirection(dx, dy) {
+
+    clearTargetHighlights();
+
+
+    const distance =
+      Math.sqrt(
+        dx * dx +
+        dy * dy
+      );
+
+
+    if (distance < 30) {
+      return;
+    }
+
+
+    const direction =
+      getDirection(dx, dy);
+
+
+    const target =
+      getTargetForDirection(
+        direction
+      );
+
+
+    if (target) {
+
+      target.classList.add(
+        "active"
+      );
+    }
+
+
+    if (direction === "up") {
+
+      swipeCard.classList.add(
+        "swiping-up"
+      );
+
+    } else if (direction === "left") {
+
+      swipeCard.classList.add(
+        "swiping-left"
+      );
+
+    } else if (direction === "right") {
+
+      swipeCard.classList.add(
+        "swiping-right"
+      );
+    }
+
+    /* Arcade joystick visual tilt */
+    if (joystickStick) {
+      joystickStick.classList.remove(
+        "tilt-up", "tilt-left", "tilt-right", "tilt-down"
+      );
+      if (direction === "up") {
+        joystickStick.classList.add("tilt-up");
+      } else if (direction === "left") {
+        joystickStick.classList.add("tilt-left");
+      } else if (direction === "right") {
+        joystickStick.classList.add("tilt-right");
+      } else if (direction === "down") {
+        joystickStick.classList.add("tilt-down");
+      }
+    }
+  }
+
+
+  /* =======================================================
+     CLEAR HIGHLIGHTS
+     ======================================================= */
+
+  function clearTargetHighlights() {
+
+    if (targetIz) {
+
+      targetIz.classList.remove(
+        "active",
+        "correct",
+        "wrong"
+      );
+    }
+
+
+    if (targetS) {
+
+      targetS.classList.remove(
+        "active",
+        "correct",
+        "wrong"
+      );
+    }
+
+
+    if (targetZ) {
+
+      targetZ.classList.remove(
+        "active",
+        "correct",
+        "wrong"
+      );
+    }
+
+
+    swipeCard.classList.remove(
+      "swiping-up",
+      "swiping-left",
+      "swiping-right"
+    );
+
+    if (joystickStick) {
+      joystickStick.classList.remove(
+        "tilt-up", "tilt-left", "tilt-right", "tilt-down"
+      );
+    }
+  }
+
+
+  /* =======================================================
+     ATTEMPT SWIPE
+     ======================================================= */
+
+  function attemptSwipe(direction) {
+
+    if (
+      !state ||
+      state.done ||
+      state.answering
+    ) {
+      return;
+    }
+
+
+    state.attempts++;
+
+
+    const item =
+      state.questions[state.currentIndex];
+
+
+    if (!item) {
+      return;
+    }
+
+
+    const correctSound =
+      item.sound;
+
+
+    const selectedSound =
+      DIRECTION_TO_SOUND[direction] ||
+      null;
+
+
+    if (
+      selectedSound ===
+      correctSound
+    ) {
+
+      handleCorrect(
+        direction
+      );
+
     } else {
-      combo = 0;
-      playWrongSound();
-      showFeedback(false, direction, 0);
+
+      handleWrong(
+        direction
+      );
+    }
+  }
+
+
+  /* =======================================================
+     CORRECT
+     ======================================================= */
+
+  function handleCorrect(direction) {
+
+    state.correct++;
+
+    state.combo++;
+
+
+    if (
+      state.combo >
+      state.bestCombo
+    ) {
+
+      state.bestCombo =
+        state.combo;
     }
 
-    scoreEl.textContent = String(score);
-    comboEl.textContent = combo + "x";
 
-    const tx = direction === "left" ? -400 : direction === "right" ? 400 : 0;
-    const ty = direction === "up" ? -400 : 0;
-    const rot = direction === "left" ? -30 : direction === "right" ? 30 : 0;
-    card.style.transition = "transform 0.35s ease, opacity 0.35s ease";
-    card.style.transform = "translate(" + tx + "px, " + ty + "px) rotate(" + rot + "deg)";
-    card.style.opacity = "0";
+    const points =
+      15 +
+      Math.max(
+        0,
+        state.combo - 1
+      ) * 3;
+
+
+    state.score += points;
+
+
+    state.answering = true;
+
+
+    /*
+      Correct target.
+    */
+
+    const target =
+      getTargetForDirection(
+        direction
+      );
+
+
+    if (target) {
+
+      target.classList.add(
+        "correct"
+      );
+    }
+
+
+    /*
+      Speak the plural word
+    */
+
+    const item =
+      state.questions[state.currentIndex];
+
+    if (item) {
+      speakText(item.word, {
+        rate: 0.95,
+        pitch: 1.05,
+        volume: 1
+      });
+    }
+
+
+    /*
+      Feedback.
+    */
+
+    if (feedbackEl) {
+
+      feedbackEl.textContent =
+        "+" + points;
+
+      feedbackEl.className =
+        "feedback show correct";
+    }
+
+
+    if (statusEl) {
+
+      statusEl.textContent =
+        "Correct!";
+    }
+
+
+    updateHUD();
+
+
+    /*
+      Card flies away.
+    */
+
+    swipeCard.classList.add(
+      "exit-" + direction
+    );
+
+
+    /*
+      Next card.
+    */
 
     setTimeout(function () {
-      card.style.transition = "none";
-      currentIndex++;
-      showCard();
-    }, 380);
+
+      if (
+        !state ||
+        state.done
+      ) {
+        return;
+      }
+
+
+      state.currentIndex++;
+
+
+      if (
+        state.currentIndex >=
+        TOTAL
+      ) {
+
+        finish(true);
+
+        return;
+      }
+
+
+      state.answering = false;
+
+
+      resetCard();
+
+    }, 480);
   }
 
-  function onStart(e) {
-    if (!gameActive) return;
-    isDragging = true;
-    const point = e.touches ? e.touches[0] : e;
-    startX = point.clientX;
-    startY = point.clientY;
-    card.style.transition = "none";
+
+  /* =======================================================
+     WRONG
+     ======================================================= */
+
+  function handleWrong(direction) {
+
+    state.combo = 0;
+
+
+    const target =
+      getTargetForDirection(
+        direction
+      );
+
+
+    if (target) {
+
+      target.classList.add(
+        "wrong"
+      );
+    }
+
+
+    /* Playful voice */
+    speakOops();
+
+
+    if (feedbackEl) {
+
+      feedbackEl.textContent =
+        "Try again!";
+
+      feedbackEl.className =
+        "feedback show wrong";
+    }
+
+
+    if (statusEl) {
+
+      statusEl.textContent =
+        "Wrong direction — try again.";
+    }
+
+
+    updateHUD();
+
+
+    returnCard();
   }
 
-  function onMove(e) {
-    if (!isDragging || !gameActive) return;
-    e.preventDefault();
-    const point = e.touches ? e.touches[0] : e;
-    cardX = point.clientX - startX;
-    cardY = point.clientY - startY;
-    card.style.transform = "translate(" + cardX + "px, " + cardY + "px) rotate(" + (cardX * 0.08) + "deg)";
+
+  /* =======================================================
+     RETURN CARD
+     ======================================================= */
+
+  function returnCard() {
+
+    swipeCard.style.transition =
+      "transform .42s cubic-bezier(0.22, 1, 0.36, 1)";
+
+
+    swipeCard.style.transform =
+      "translate3d(0,0,0) rotate(0deg)";
+
+
+    setTimeout(function () {
+
+      swipeCard.style.transition =
+        "";
+
+
+      clearTargetHighlights();
+
+    }, 420);
   }
 
-  function onEnd() {
-    if (!isDragging || !gameActive) return;
-    isDragging = false;
-    const threshold = 80;
-    const absX = Math.abs(cardX);
-    const absY = Math.abs(cardY);
-    if (absY > absX && cardY < -threshold) {
-      checkAnswer("up");
-    } else if (absX > absY && cardX < -threshold) {
-      checkAnswer("left");
-    } else if (absX > absY && cardX > threshold) {
-      checkAnswer("right");
-    } else {
-      card.style.transition = "transform 0.25s ease";
-      card.style.transform = "translate(0,0) rotate(0deg)";
-      cardX = 0;
-      cardY = 0;
+
+  /* =======================================================
+     GET TARGET
+     ======================================================= */
+
+  function getTargetForDirection(
+    direction
+  ) {
+
+    if (
+      direction === "up"
+    ) {
+      return targetIz;
+    }
+
+
+    if (
+      direction === "left"
+    ) {
+      return targetS;
+    }
+
+
+    if (
+      direction === "right"
+    ) {
+      return targetZ;
+    }
+
+
+    return null;
+  }
+
+
+  /* =======================================================
+     TIMER
+     ======================================================= */
+
+  function tick() {
+
+    if (
+      !state ||
+      state.done
+    ) {
+      return;
+    }
+
+
+    state.time--;
+
+
+    updateHUD();
+
+
+    if (
+      state.time <= 0
+    ) {
+
+      finish(false);
     }
   }
 
-  function endGame() {
-    gameActive = false;
-    clearInterval(timerInterval);
-    const accuracy = totalAnswered ? Math.round((correctCount / totalAnswered) * 100) : 0;
-    const usedTime = 90 - timeLeft;
 
-    $("finalScore").textContent = String(score);
-    $("finalAcc").textContent = accuracy + "%";
-    $("finalCombo").textContent = bestCombo + "x";
-    $("finalTime").textContent = usedTime + "s";
-    $("endTitle").textContent =
-      accuracy >= 90 ? "Excellent!" :
-      accuracy >= 70 ? "Great job!" :
-      accuracy >= 50 ? "Good effort!" : "Keep practicing!";
-    $("endSummary").textContent =
-      "You got " + correctCount + " of " + totalAnswered + " correct.";
+  /* =======================================================
+     HUD
+     ======================================================= */
 
+  function updateHUD() {
+
+    if (!state) {
+      return;
+    }
+
+
+    if (scoreEl) {
+
+      scoreEl.textContent =
+        state.score;
+    }
+
+
+    if (comboEl) {
+
+      comboEl.textContent =
+        state.combo + "x";
+    }
+
+
+    if (timerEl) {
+
+      timerEl.textContent =
+        Math.max(
+          0,
+          state.time
+        );
+    }
+
+
+    if (progressFill) {
+
+      progressFill.style.width =
+        (
+          state.correct /
+          TOTAL *
+          100
+        ) + "%";
+    }
+  }
+
+
+  /* =======================================================
+     FINISH
+     ======================================================= */
+
+  function finish(won) {
+
+    if (
+      !state ||
+      state.done
+    ) {
+      return;
+    }
+
+
+    state.done = true;
+
+
+    if (state.timer) {
+
+      clearInterval(
+        state.timer
+      );
+
+      state.timer = null;
+    }
+
+
+    swipeCard.style.pointerEvents =
+      "none";
+
+
+    const finalScore =
+      $("finalScore");
+
+    const accuracyEl =
+      $("accuracy");
+
+    const bestComboEl =
+      $("bestCombo");
+
+    const endTitle =
+      $("endTitle");
+
+    const endMessage =
+      $("endMessage");
+
+    const resultIcon =
+      $("resultIcon");
+
+
+    if (finalScore) {
+
+      finalScore.textContent =
+        state.score;
+    }
+
+
+    const accuracy =
+      state.attempts > 0
+
+        ? Math.round(
+            (
+              state.correct /
+              state.attempts
+            ) * 100
+          )
+
+        : 0;
+
+
+    if (accuracyEl) {
+
+      accuracyEl.textContent =
+        accuracy + "%";
+    }
+
+
+    if (bestComboEl) {
+
+      bestComboEl.textContent =
+        state.bestCombo + "x";
+    }
+
+
+    if (endTitle) {
+
+      endTitle.textContent =
+        won
+          ? "Excellent!"
+          : "Time's up!";
+    }
+
+
+    if (endMessage) {
+
+      endMessage.textContent =
+        won
+
+          ? "You matched all " +
+            TOTAL +
+            " food combinations."
+
+          : "You matched " +
+            state.correct +
+            " of " +
+            TOTAL +
+            ".";
+    }
+
+
+    if (resultIcon) {
+
+      resultIcon.textContent =
+        won
+          ? "🏆"
+          : "⏱️";
+    }
+
+    // Save Learning Arcade stars (best of runs)
     try {
       if (window.LAStars) {
-        LAStars.recordPlay(GAME_ID);
-        LAStars.saveFromAccuracy(GAME_ID, accuracy);
-        LAStars.apply(endScreen);
+        window.LAStars.recordPlay(GAME_ID);
+        window.LAStars.saveFromAccuracy(GAME_ID, accuracy);
+        if (endModal) window.LAStars.apply(endModal);
       }
     } catch (e) {}
 
-    const stars = accuracy >= 90 ? 3 : accuracy >= 70 ? 2 : accuracy >= 40 ? 1 : 0;
-    endScreen.querySelectorAll(".end-stars .star").forEach(function (el) {
-      const n = Number(el.getAttribute("data-n") || 0);
-      if (n <= stars) {
-        el.classList.add("is-filled");
-        el.textContent = "★";
-      } else {
-        el.classList.remove("is-filled");
-        el.textContent = "☆";
-      }
-    });
+    // Fill star UI
+    try {
+      const stars = accuracy >= 90 ? 3 : accuracy >= 70 ? 2 : accuracy >= 40 ? 1 : 0;
+      const starEls = document.querySelectorAll(".end-stars .star");
+      starEls.forEach(function (el) {
+        const n = Number(el.getAttribute("data-n") || 0);
+        if (n <= stars) {
+          el.classList.add("is-filled");
+          el.textContent = "★";
+        } else {
+          el.classList.remove("is-filled");
+          el.textContent = "☆";
+        }
+      });
+    } catch (e) {}
 
-    show("end");
+    if (endModal) {
+
+      endModal.classList.remove(
+        "hidden"
+      );
+    }
+
+
+    if (statusEl) {
+
+      statusEl.textContent =
+        won
+          ? "Game complete."
+          : "Time is up.";
+    }
   }
 
-  function initGame() {
-    deck = shuffle(WORDS);
-    currentIndex = 0;
-    score = 0;
-    combo = 0;
-    bestCombo = 0;
-    correctCount = 0;
-    totalAnswered = 0;
-    timeLeft = 90;
-    gameActive = true;
-    scoreEl.textContent = "0";
-    timerEl.textContent = "90";
-    comboEl.textContent = "0x";
-    show("game");
-    updateProgress();
-    showCard();
-    startTimer();
-  }
+
+  /* =======================================================
+     THEME
+     ======================================================= */
 
   function applyTheme(dark) {
-    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-    document.body.classList.toggle("dark-mode", dark);
-    if (themeBtn) themeBtn.textContent = dark ? "☀️" : "🌙";
+
+    document.documentElement.setAttribute(
+      "data-theme",
+      dark
+        ? "dark"
+        : "light"
+    );
+
+
+    if (themeBtn) {
+
+      themeBtn.textContent =
+        dark
+          ? "☀️"
+          : "🌙";
+    }
+
+
     try {
-      localStorage.setItem("pssm-theme", dark ? "dark" : "light");
-    } catch (e) {}
+
+      localStorage.setItem(
+        "pssm-theme",
+        dark
+          ? "dark"
+          : "light"
+      );
+
+    } catch (err) {}
   }
 
+
+  /* =======================================================
+     THEME BUTTON
+     ======================================================= */
+
   if (themeBtn) {
-    themeBtn.addEventListener("click", function () {
-      applyTheme(document.documentElement.getAttribute("data-theme") !== "dark");
-    });
+
+    themeBtn.addEventListener(
+      "click",
+      function () {
+
+        const dark =
+          document.documentElement.getAttribute(
+            "data-theme"
+          ) === "dark";
+
+
+        applyTheme(!dark);
+      }
+    );
   }
+
+
+  /* =======================================================
+     LOAD THEME
+     ======================================================= */
+
   try {
-    applyTheme(localStorage.getItem("pssm-theme") === "dark");
-  } catch (e) {
+
+    const saved =
+      localStorage.getItem(
+        "pssm-theme"
+      );
+
+
+    applyTheme(
+      saved === "dark"
+    );
+
+  } catch (err) {
+
     applyTheme(false);
   }
 
-  $("startBtn").addEventListener("click", function () {
-    getAudioCtx();
-    initGame();
-  });
-  $("playAgainBtn").addEventListener("click", initGame);
 
-  card.addEventListener("mousedown", onStart);
-  card.addEventListener("touchstart", onStart, { passive: false });
-  window.addEventListener("mousemove", onMove);
-  window.addEventListener("touchmove", onMove, { passive: false });
-  window.addEventListener("mouseup", onEnd);
-  window.addEventListener("touchend", onEnd);
+  /* =======================================================
+     BUTTONS
+     ======================================================= */
 
-  window.addEventListener("keydown", function (e) {
-    if (!gameActive) return;
-    if (e.key === "ArrowUp") checkAnswer("up");
-    if (e.key === "ArrowLeft") checkAnswer("left");
-    if (e.key === "ArrowRight") checkAnswer("right");
-  });
-})();
+  startBtn.addEventListener(
+    "click",
+    startGame
+  );
+
+
+  if (playAgainBtn) {
+
+    playAgainBtn.addEventListener(
+      "click",
+      startGame
+    );
+  }
+
+
+  /* =======================================================
+     POINTER EVENTS
+     ======================================================= */
+
+  swipeCard.addEventListener(
+    "pointerdown",
+    onPointerDown
+  );
+
+
+  swipeCard.addEventListener(
+    "pointermove",
+    onPointerMove
+  );
+
+
+  swipeCard.addEventListener(
+    "pointerup",
+    onPointerUp
+  );
+
+
+  swipeCard.addEventListener(
+    "pointercancel",
+    onPointerCancel
+  );
+
+
+  /* =======================================================
+     KEYBOARD
+     ======================================================= */
+
+  swipeCard.addEventListener(
+    "keydown",
+    function (e) {
+
+      if (
+        !state ||
+        state.done ||
+        state.answering
+      ) {
+        return;
+      }
+
+
+      if (
+        e.key === "ArrowUp"
+      ) {
+
+        e.preventDefault();
+
+        attemptSwipe("up");
+
+      } else if (
+        e.key === "ArrowLeft"
+      ) {
+
+        e.preventDefault();
+
+        attemptSwipe("left");
+
+      } else if (
+        e.key === "ArrowRight"
+      ) {
+
+        e.preventDefault();
+
+        attemptSwipe("right");
+      }
+    }
+  );
+
+
+  /* =======================================================
+     JOYSTICK — fully interactive (drag to send card)
+     ======================================================= */
+
+  const joystickBase = document.querySelector(".joystick-base");
+  let joyActive = false;
+  let joyStartX = 0;
+  let joyStartY = 0;
+  const JOY_MAX = 38;       // max pixel travel of the stick (matches larger joystick)
+  const JOY_THRESHOLD = 18; // minimum travel to register a direction
+
+  function resetJoystickVisual() {
+    if (!joystickStick) return;
+    joystickStick.style.transition = "transform .22s cubic-bezier(0.22, 1, 0.36, 1)";
+    joystickStick.style.transform = "translate(-50%, -50%)";
+    joystickStick.classList.remove(
+      "tilt-up", "tilt-left", "tilt-right", "tilt-down"
+    );
+  }
+
+  function onJoyDown(e) {
+    if (!state || state.done || state.answering || state.dragging) {
+      return;
+    }
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    joyActive = true;
+    joyStartX = e.clientX;
+    joyStartY = e.clientY;
+
+    try {
+      (joystickBase || joystickStick).setPointerCapture(e.pointerId);
+    } catch (err) {}
+  }
+
+  function onJoyMove(e) {
+    if (!joyActive || !state || state.done) return;
+
+    e.preventDefault();
+
+    let dx = e.clientX - joyStartX;
+    let dy = e.clientY - joyStartY;
+
+    // Clamp to circle
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > JOY_MAX) {
+      dx = (dx / dist) * JOY_MAX;
+      dy = (dy / dist) * JOY_MAX;
+    }
+
+    // Highlight matching target while dragging (targets only)
+    if (dist > 10) {
+      highlightDirection(dx, dy);
+    } else {
+      clearTargetHighlights();
+    }
+
+    // Always keep stick under the finger (override any class-based tilt)
+    if (joystickStick) {
+      joystickStick.classList.remove(
+        "tilt-up", "tilt-left", "tilt-right", "tilt-down"
+      );
+      joystickStick.style.transition = "none";
+      joystickStick.style.transform =
+        "translate(calc(-50% + " + dx + "px), calc(-50% + " + dy + "px))";
+    }
+  }
+
+  function onJoyUp(e) {
+    if (!joyActive) return;
+
+    e.preventDefault();
+    joyActive = false;
+
+    try {
+      (joystickBase || joystickStick).releasePointerCapture(e.pointerId);
+    } catch (err) {}
+
+    const dx = e.clientX - joyStartX;
+    const dy = e.clientY - joyStartY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    clearTargetHighlights();
+    resetJoystickVisual();
+
+    if (dist < JOY_THRESHOLD) {
+      return; // not far enough — ignore
+    }
+
+    if (!state || state.done || state.answering) {
+      return;
+    }
+
+    const direction = getDirection(dx, dy);
+
+    // Only allow the three valid directions
+    if (direction === "up" || direction === "left" || direction === "right") {
+      attemptSwipe(direction);
+    }
+  }
+
+  function onJoyCancel() {
+    joyActive = false;
+    clearTargetHighlights();
+    resetJoystickVisual();
+  }
+
+  if (joystickBase) {
+    joystickBase.addEventListener("pointerdown", onJoyDown);
+    joystickBase.addEventListener("pointermove", onJoyMove);
+    joystickBase.addEventListener("pointerup", onJoyUp);
+    joystickBase.addEventListener("pointercancel", onJoyCancel);
+  } else if (joystickStick) {
+    joystickStick.addEventListener("pointerdown", onJoyDown);
+    joystickStick.addEventListener("pointermove", onJoyMove);
+    joystickStick.addEventListener("pointerup", onJoyUp);
+    joystickStick.addEventListener("pointercancel", onJoyCancel);
+  }
+
+
+  /* =======================================================
+     INITIAL SCREEN
+     ======================================================= */
+
+  if (startOverlay) {
+
+    startOverlay.classList.remove(
+      "hidden"
+    );
+  }
+
+
+  console.log(
+    "Plural -s Sound Match loaded successfully."
+  );
+
+});

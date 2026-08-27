@@ -69,7 +69,6 @@
   const sceneImg = $("sceneImg");
   const checkBtn = $("checkBtn");
   const feedback = $("feedback");
-  const themeBtn = $("themeBtn");
 
   let sceneIndex = 0;
   let answers = {}; // "scene-blankIdx" -> chosen word (lowercase for compare)
@@ -325,26 +324,6 @@
     correctCount = 0;
     show("game");
     renderScene();
-  }
-
-  function applyTheme(dark) {
-    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-    document.body.classList.toggle("dark-mode", dark);
-    if (themeBtn) themeBtn.textContent = dark ? "☀️" : "🌙";
-    try {
-      localStorage.setItem("dc-theme", dark ? "dark" : "light");
-    } catch (e) {}
-  }
-
-  if (themeBtn) {
-    themeBtn.addEventListener("click", function () {
-      applyTheme(document.documentElement.getAttribute("data-theme") !== "dark");
-    });
-  }
-  try {
-    applyTheme(localStorage.getItem("dc-theme") === "dark");
-  } catch (e) {
-    applyTheme(false);
   }
 
   $("startBtn").addEventListener("click", startGame);

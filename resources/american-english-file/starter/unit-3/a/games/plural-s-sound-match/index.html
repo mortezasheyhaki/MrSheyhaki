@@ -1,121 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
-<title>Plural -s Sound Match · Unit 3A | Mr. Sheyhaki</title>
-<meta name="description" content="Swipe each plural word to the correct -s sound: /ɪz/, /s/, or /z/. Unit 3A.">
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="../../../../../../../theme.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0714">
+  <title>Plural -s Sound Match | Unit 3A | Mr. Sheyhaki</title>
+  <meta name="description" content="Swipe each plural word to the correct -s sound: /ɪz/, /s/, or /z/. Unit 3A.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="cabinet-body">
 
-<header class="game-header">
-  <a class="back-button" href="../" aria-label="Back to Unit 3A games">
-    <span aria-hidden="true">←</span> <span class="back-text">Games</span>
-  </a>
-  <div class="header-center">
-    <span class="eyebrow">UNIT 3A</span>
-    <strong>Plural -s Sound Match</strong>
+  <div class="cabinet-shell" id="app">
+
+    <!-- ========== TOP BAR / MARQUEE ========== -->
+    <header class="cabinet-topbar">
+      <a href="../" class="back-btn" aria-label="Back" title="Back">
+        <span class="back-arrow" aria-hidden="true">←</span>
+      </a>
+
+      <div class="cabinet-marquee">
+        <span class="cabinet-marquee__eyebrow">UNIT 3A · ARCADE</span>
+        <h1 class="cabinet-marquee__title">Plural -s Sound Match</h1>
+      </div>
+
+      <div class="hud-stats">
+        <div class="hud-item">
+          <span class="hud-label">Score</span>
+          <span class="hud-value" id="score">0</span>
+        </div>
+        <div class="hud-item hud-time">
+          <span class="hud-label">Time</span>
+          <span class="hud-value" id="timer">90</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Combo</span>
+          <span class="hud-value" id="combo">0x</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressFill" style="width: 0%;"></div>
+    </div>
+
+    <!-- ========== GAME AREA ========== -->
+    <main class="swipe-area" id="gameScreen">
+
+      <!-- Three targets -->
+      <div class="targets">
+        <div class="target target-have" id="targetIz" data-answer="iz">
+          <span class="target-dir">↑</span>
+          <span class="target-label">/ɪz/</span>
+        </div>
+        <div class="target target-drink" id="targetS" data-answer="s">
+          <span class="target-dir">←</span>
+          <span class="target-label">/s/</span>
+        </div>
+        <div class="target target-eat" id="targetZ" data-answer="z">
+          <span class="target-dir">→</span>
+          <span class="target-label">/z/</span>
+        </div>
+      </div>
+
+      <!-- Card -->
+      <div class="card-area" id="cardArea">
+        <div class="swipe-card" id="swipeCard" role="button" tabindex="0" aria-label="Swipe the word to the correct -s sound">
+          <span class="word" id="word">—</span>
+        </div>
+      </div>
+
+      <!-- Arcade joystick visual -->
+      <div class="joystick-panel" aria-hidden="true">
+        <div class="joystick-base">
+          <div class="joystick-stick" id="joystickStick">
+            <div class="joystick-ball"></div>
+          </div>
+          <div class="joy-label joy-up">/ɪz/</div>
+          <div class="joy-label joy-left">/s/</div>
+          <div class="joy-label joy-right">/z/</div>
+        </div>
+        <p class="joystick-hint">Drag the stick to send the card</p>
+      </div>
+
+      <p class="feedback" id="feedback" aria-live="polite"></p>
+      <p class="sr-only" id="status" aria-live="polite"></p>
+    </main>
+
+    <!-- ========== START OVERLAY ========== -->
+    <div class="overlay" id="startOverlay">
+      <div class="overlay-content arcade-panel">
+        <div class="overlay-title">Plural -s Sound Match</div>
+        <p class="overlay-text">
+          Swipe each plural word to the correct sound of the <strong>-s</strong>.
+        </p>
+        <div class="direction-guide">
+          <span><strong>↑</strong> /ɪz/</span>
+          <span><strong>←</strong> /s/</span>
+          <span><strong>→</strong> /z/</span>
+        </div>
+        <button type="button" class="start-button" id="startBtn">START GAME</button>
+      </div>
+    </div>
+
+    <!-- ========== END OVERLAY ========== -->
+    <div class="overlay hidden" id="endModal">
+      <div class="overlay-content arcade-panel">
+        <div class="overlay-title" id="resultIcon">🏆</div>
+        <h2 id="endTitle">Excellent!</h2>
+        <p class="overlay-text" id="endMessage">Great job!</p>
+        <div class="result-row">
+          <div>
+            <span>Score</span>
+            <strong id="finalScore">0</strong>
+          </div>
+          <div>
+            <span>Accuracy</span>
+            <strong id="accuracy">0%</strong>
+          </div>
+          <div>
+            <span>Best Combo</span>
+            <strong id="bestCombo">0x</strong>
+          </div>
+        </div>
+        <div class="end-stars game-stars" data-game="starter-3a-plural-s-sound-match" aria-label="Progress stars" style="display:flex;justify-content:center;gap:8px;margin:12px 0;font-size:28px;">
+          <span class="star" data-n="1">☆</span>
+          <span class="star" data-n="2">☆</span>
+          <span class="star" data-n="3">☆</span>
+        </div>
+        <button type="button" class="start-button" id="playAgain">PLAY AGAIN</button>
+      </div>
+    </div>
+
   </div>
-  <div class="header-actions">
-    <button id="themeBtn" class="icon-btn" type="button" aria-label="Toggle theme">🌙</button>
-  </div>
-</header>
 
-<main class="app">
-
-  <!-- START -->
-  <section id="startScreen" class="panel">
-    <div class="hero-icon" aria-hidden="true">🔊</div>
-    <h1>Plural -s Sound Match</h1>
-    <p class="lead">Swipe each word to the correct sound of the plural <strong>-s</strong>.</p>
-    <div class="rules">
-      <div class="rule-row"><span class="tag tag-iz">↑ UP</span> <strong>/ɪz/</strong> — watches, glasses, chargers…</div>
-      <div class="rule-row"><span class="tag tag-s">← LEFT</span> <strong>/s/</strong> — wallets, notebooks, tablets…</div>
-      <div class="rule-row"><span class="tag tag-z">→ RIGHT</span> <strong>/z/</strong> — keys, photos, cameras…</div>
-      <p class="example">Example: <strong>watches</strong> ends with <em>-es</em> → /ɪz/ → swipe <strong>UP</strong></p>
-    </div>
-    <ul class="feature-list">
-      <li>18 everyday objects</li>
-      <li>Swipe or use arrow keys</li>
-      <li>90-second challenge</li>
-    </ul>
-    <button id="startBtn" class="primary-btn" type="button">START ▶</button>
-  </section>
-
-  <!-- GAME -->
-  <section id="gameScreen" class="panel panel-game" hidden>
-    <div class="stats-bar">
-      <div class="stat">
-        <span class="stat-label">SCORE</span>
-        <strong id="score">0</strong>
-      </div>
-      <div class="stat">
-        <span class="stat-label">TIME</span>
-        <strong id="timer">90</strong>
-      </div>
-      <div class="stat">
-        <span class="stat-label">COMBO</span>
-        <strong id="combo">0x</strong>
-      </div>
-    </div>
-
-    <div class="directions" aria-hidden="true">
-      <div class="dir left" data-dir="left">
-        <span class="arrow">←</span>
-        <span class="label">/s/</span>
-      </div>
-      <div class="dir up" data-dir="up">
-        <span class="arrow">↑</span>
-        <span class="label">/ɪz/</span>
-      </div>
-      <div class="dir right" data-dir="right">
-        <span class="arrow">→</span>
-        <span class="label">/z/</span>
-      </div>
-    </div>
-
-    <div class="game-area" id="gameArea">
-      <div class="card" id="card" role="button" tabindex="0" aria-label="Swipe the card">
-        <div class="word" id="word">watches</div>
-        <div class="hint">Swipe ↑ ← or →</div>
-      </div>
-      <div class="feedback" id="feedback" aria-hidden="true">✓</div>
-    </div>
-
-    <p class="instruction">Drag the card · Arrow keys work too</p>
-    <div class="progress" id="progress" aria-label="Progress"></div>
-  </section>
-
-  <!-- END -->
-  <section id="endScreen" class="panel" hidden>
-    <div class="hero-icon" aria-hidden="true">🏆</div>
-    <h1 id="endTitle">Great job!</h1>
-    <p id="endSummary" class="lead">You finished the challenge.</p>
-    <div class="end-stats">
-      <div><span class="stat-label">SCORE</span><strong id="finalScore">0</strong></div>
-      <div><span class="stat-label">ACCURACY</span><strong id="finalAcc">0%</strong></div>
-      <div><span class="stat-label">BEST COMBO</span><strong id="finalCombo">0x</strong></div>
-      <div><span class="stat-label">TIME</span><strong id="finalTime">0s</strong></div>
-    </div>
-    <div class="end-stars game-stars" data-game="starter-3a-plural-s-sound-match" aria-label="Progress stars">
-      <span class="star" data-n="1">☆</span>
-      <span class="star" data-n="2">☆</span>
-      <span class="star" data-n="3">☆</span>
-    </div>
-    <div class="end-actions">
-      <button id="playAgainBtn" class="primary-btn" type="button">PLAY AGAIN ↻</button>
-      <a class="ghost-btn link-btn" href="../">Back to Unit 3A Games</a>
-    </div>
-  </section>
-
-</main>
-
-<div class="screen-flash" id="screenFlash"></div>
-
-<script src="../../../../../../../learningarcade/la-stars.js"></script>
-<script src="script.js"></script>
-<script src="../../../../../../../theme.js"></script>
+  <script src="../../../../../../../learningarcade/la-stars.js"></script>
+  <script src="script.js"></script>
+  <script src="../../../../../../../theme.js"></script>
 </body>
 </html>

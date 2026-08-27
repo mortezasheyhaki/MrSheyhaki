@@ -169,11 +169,12 @@ html[data-theme="light"] .cabinet-marquee__eyebrow{color:#6937d8!important;text-
 html[data-theme="light"] .cabinet-brand-mark{box-shadow:0 0 12px rgba(105,55,216,.22)!important}
 html[data-theme="dark"] .cabinet-body{background:#0b0714!important;color:#fff!important}
 
-/* GLOBAL FLOATING HEADER
-   All standard pages use the same 78px header geometry. */
-body:not(.cabinet-body){padding-top:78px!important;}
-.site-header,.arcade-header{position:fixed!important;top:0;left:0;right:0;width:100%;height:78px!important;z-index:1000;}
-.site-header .header-inner,.arcade-header .header-inner{height:78px!important;min-height:78px!important;}
+/* Legacy full-width header geometry disabled — floating .arcade-nav is source of truth (style.css) */
+/* body:not(.cabinet-body){padding-top:78px!important;} */
+.site-header,
+.arcade-header {
+  display: none;
+}
 
 /* =========================================================
    SHARED HEADER — LEARNING ARCADE VISUAL STYLE
@@ -316,91 +317,12 @@ html[data-theme="dark"] .arcade-header .theme-toggle{
 }
 
 /* =========================================================
-   FINAL SHARED HEADER — MATCH THE LIVE LEARNING ARCADE STYLE
-   Visual style only; page-specific text/links remain unchanged.
+   LEGACY FULL-WIDTH HEADER DISABLED
+   Floating .arcade-nav in style.css is the single source of truth.
 ========================================================= */
-body:not(.cabinet-body){
-  padding-top:68px!important;
-}
-
 .site-header,
-.arcade-header{
-  position:fixed!important;
-  top:0!important;
-  left:0!important;
-  right:0!important;
-  width:100%!important;
-  height:68px!important;
-  min-height:68px!important;
-  z-index:1000!important;
-  background:rgba(255,255,255,.96)!important;
-  backdrop-filter:blur(14px)!important;
-  -webkit-backdrop-filter:blur(14px)!important;
-  border-bottom:1px solid #eef0f4!important;
-}
-
-.site-header .header-inner,
-.arcade-header .header-inner{
-  width:92%!important;
-  max-width:1500px!important;
-  height:68px!important;
-  min-height:68px!important;
-  margin:0 auto!important;
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
-  align-items:center!important;
-  gap:24px!important;
-}
-
-.site-header .brand,
-.arcade-header .brand{
-  grid-column:1!important;
-  justify-self:start!important;
-}
-
-.site-header .main-nav,
-.arcade-header .main-nav{
-  grid-column:2!important;
-  justify-self:center!important;
-  display:flex!important;
-  align-items:center!important;
-  gap:28px!important;
-}
-
-.site-header .theme-toggle,
-.arcade-header .theme-toggle{
-  grid-column:3!important;
-  justify-self:end!important;
-  height:40px!important;
-  min-height:40px!important;
-  padding:0 13px!important;
-  border-radius:10px!important;
-  font-size:11px!important;
-}
-
-.site-header .menu-toggle,
-.arcade-header .menu-toggle{
-  grid-column:3!important;
-  justify-self:end!important;
-}
-
-@media(max-width:700px){
-  body:not(.cabinet-body){padding-top:68px!important}
-  .site-header,
-  .arcade-header{height:68px!important;min-height:68px!important}
-  .site-header .header-inner,
-  .arcade-header .header-inner{
-    width:calc(100% - 28px)!important;
-    height:68px!important;
-    min-height:68px!important;
-    display:flex!important;
-    justify-content:space-between!important;
-    gap:12px!important;
-  }
-  .site-header .main-nav,
-  .arcade-header .main-nav{
-    top:68px!important;
-  }
+.arcade-header {
+  display: none;
 }
 
 
@@ -708,12 +630,10 @@ body {
   box-sizing: border-box;
 }
 
-/* Offset page content under fixed header (skip full-screen games) */
+/* Page offset for floating nav is defined in style.css */
 body:not(.cabinet-body) {
-  padding-top: calc(78px + env(safe-area-inset-top, 0px)) !important;
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Sticky in-page game toolbars (Simple Past menu, etc.) sit under the site header when present */
@@ -736,9 +656,7 @@ body:not(.cabinet-body) {
     width: min(calc(100% - 24px), var(--container, 1180px));
   }
 
-  body:not(.cabinet-body) {
-    padding-top: calc(64px + env(safe-area-inset-top, 0px)) !important;
-  }
+  /* mobile padding-top for nav is in style.css */
 
   /* Prevent accidental horizontal drag */
   body {
@@ -791,75 +709,27 @@ html[data-theme="dark"] .site-back-btn{
 }
 
 /* =========================================================
-   FLOATING ARCADE NAV — theme overrides
-   Always fixed at bottom while scrolling (except games)
+   FLOATING ARCADE NAV — theme layer only
+   Layout lives in style.css (low specificity).
+   Here: dark-theme color tweaks only.
 ========================================================= */
-.arcade-header-bar {
-  height: 0 !important;
-  min-height: 0 !important;
-  background: transparent !important;
-  border: none !important;
-  position: relative !important;
-  pointer-events: none !important;
-  z-index: 9999 !important;
-}
-
-/* Keep bottom nav fixed on screen at all times */
-.arcade-nav {
-  position: fixed !important;
-  top: auto !important;
-  bottom: max(14px, env(safe-area-inset-bottom, 0px)) !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  z-index: 9999 !important;
-  pointer-events: auto !important;
-}
-
-.arcade-nav.nav-scrolled {
-  /* Slight shrink on scroll is ok, but stay fixed at bottom */
-  transform: translateX(-50%) scale(0.94) !important;
-  opacity: 0.92;
-}
-
 html[data-theme="dark"] .arcade-nav {
-  background: rgba(8, 10, 20, 0.78) !important;
-  border-color: rgba(255, 255, 255, 0.14) !important;
+  background: rgba(8, 10, 20, 0.85);
+  border-color: rgba(255, 255, 255, 0.18);
 }
+
 html[data-theme="dark"] .arcade-nav .nav-link {
-  color: #e2e8f0 !important;
+  color: #e2e8f0;
 }
+
 html[data-theme="dark"] .arcade-nav .nav-link:hover {
-  color: #ffffff !important;
-  background: rgba(255, 255, 255, 0.10) !important;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
 }
+
 html[data-theme="dark"] .arcade-nav .nav-link.active {
-  color: #ffffff !important;
-  background: linear-gradient(135deg, rgba(124, 92, 255, 0.80), rgba(78, 203, 255, 0.45)) !important;
-}
-
-/* Cancel fixed 78px top-header rules for floating bar */
-body:not(.cabinet-body) {
-  padding-top: 0 !important;
-  padding-bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
-}
-
-/* Hide bottom nav on game / cabinet pages */
-body.cabinet-body .arcade-header-bar,
-body.cabinet-body .arcade-nav,
-.cabinet-body .arcade-header-bar,
-.cabinet-body .arcade-nav {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-@media (max-width: 700px) {
-  .arcade-nav {
-    bottom: max(10px, env(safe-area-inset-bottom, 0px)) !important;
-    width: calc(100% - 16px) !important;
-    max-width: 420px !important;
-  }
+  color: #fff;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.8), rgba(78, 203, 255, 0.45));
 }
 
 
@@ -1128,20 +998,21 @@ body:not(.home-page):not(.cabinet-body) {
 }
 
 
-/* Smooth page transitions */
-html.pt-ready body { opacity: 0; transform: translateY(10px); }
+/* Smooth page transitions — opacity only (no transform on body,
+   so position:fixed nav stays viewport-fixed) */
+html.pt-ready body { opacity: 0; }
 html.pt-ready.pt-enter body {
-  opacity: 1; transform: translateY(0);
-  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1), transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 1;
+  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 html.pt-ready.pt-exit body {
-  opacity: 0; transform: translateY(-8px);
-  transition: opacity 0.22s ease, transform 0.26s cubic-bezier(0.4, 0, 1, 1);
+  opacity: 0;
+  transition: opacity 0.22s ease;
   pointer-events: none;
 }
 @media (prefers-reduced-motion: reduce) {
   html.pt-ready body, html.pt-ready.pt-enter body, html.pt-ready.pt-exit body {
-    opacity: 1 !important; transform: none !important; transition: none !important;
+    opacity: 1 !important; transition: none !important;
   }
 }
 
@@ -1390,46 +1261,7 @@ html[data-theme="dark"] .skill-button {
   }
 }
 
-/* =========================================================
-   FORCE bottom nav fixed site-wide (resources + all pages)
-========================================================= */
-html body .arcade-nav,
-body .arcade-nav,
-.arcade-nav {
-  position: fixed !important;
-  top: auto !important;
-  bottom: max(12px, env(safe-area-inset-bottom, 0px)) !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  z-index: 2147483000 !important;
-  pointer-events: auto !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  display: flex !important;
-}
-
-html body .arcade-nav.nav-scrolled,
-.arcade-nav.nav-scrolled {
-  transform: translateX(-50%) scale(0.94) !important;
-  opacity: 0.95 !important;
-}
-
-/* Old top headers must not replace bottom nav */
-body:not(.cabinet-body) .site-header {
-  display: none !important;
-}
-
-body:not(.cabinet-body) {
-  padding-top: 12px !important;
-  padding-bottom: max(96px, calc(80px + env(safe-area-inset-bottom, 0px))) !important;
-}
-
-/* Games: no bottom nav */
-body.cabinet-body .arcade-nav,
-body.cabinet-body .arcade-header-bar {
-  display: none !important;
-}
+/* site-header hide + page offsets live in style.css */
 
 /* =========================================================
    UNIFIED SITE FOOTER — one style for every non-game page
@@ -1461,9 +1293,11 @@ footer.site-footer,
   text-align: center !important;
 }
 
-/* Extra space above bottom nav so footer isn't hidden */
-body:not(.cabinet-body):not(.playing) {
-  padding-bottom: max(96px, calc(88px + env(safe-area-inset-bottom, 0px))) !important;
+/* Mobile: a bit more bottom space so footer clears the dock */
+@media (max-width: 700px) {
+  body:not(.cabinet-body):not(.playing) {
+    padding-bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px)));
+  }
 }
 
 html[data-theme="dark"] .site-footer,
