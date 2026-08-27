@@ -117,7 +117,17 @@
         typeInput.placeholder = "e.g. This is a book.";
       }
       checkBtn.disabled = true;
-      setTimeout(function () { typeInput.focus(); }, 50);
+      setTimeout(function () {
+        try {
+          typeInput.focus({ preventScroll: false });
+        } catch (e) {
+          typeInput.focus();
+        }
+        try {
+          typeInput.scrollIntoView({ block: "center", behavior: "smooth" });
+          checkBtn.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        } catch (e2) {}
+      }, 80);
     }
     updateStats();
   }
@@ -293,6 +303,14 @@
   checkBtn.addEventListener("click", checkAnswer);
   clearBtn.addEventListener("click", clearAnswer);
 
+  typeInput.addEventListener("focus", function () {
+    setTimeout(function () {
+      try {
+        typeInput.scrollIntoView({ block: "center", behavior: "smooth" });
+        checkBtn.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      } catch (e) {}
+    }, 300);
+  });
   typeInput.addEventListener("input", function () {
     if (locked) return;
     checkBtn.disabled = !typeInput.value.trim();

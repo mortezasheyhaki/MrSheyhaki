@@ -213,50 +213,48 @@ html[data-theme="dark"] .primary-btn:disabled, body.dark-mode .primary-btn:disab
 @media (max-width: 640px) {
   .back-text { display: none; }
 
+  /* Scrollable phone layout — overflow:hidden + fixed height broke
+     word chips and hid CHECK when the keyboard opened. */
   html, body {
-    height: 100%;
-    overflow: hidden;
+    height: auto;
+    min-height: 100%;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   body {
-    display: flex;
-    flex-direction: column;
+    display: block;
   }
   .game-header {
-    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 40;
   }
   .app {
-    flex: 1;
+    display: block;
+    padding: 8px 10px calc(16px + env(safe-area-inset-bottom));
+    overflow: visible;
     min-height: 0;
-    display: flex;
-    flex-direction: column;
-    padding: 8px 10px calc(10px + env(safe-area-inset-bottom));
-    overflow: hidden;
   }
   .panel {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    padding: 12px 12px 14px;
+    display: block;
+    padding: 12px 12px 16px;
     border-radius: 14px;
-    overflow: hidden;
+    overflow: visible;
+    min-height: 0;
   }
   .panel-game {
     padding-top: 10px;
   }
 
   #startScreen,
-  #endScreen {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
+  #endScreen,
   #gameScreen {
-    overflow: hidden;
+    overflow: visible;
   }
 
   .stats-bar {
-    flex-shrink: 0;
     gap: 6px;
     margin-bottom: 8px;
   }
@@ -268,17 +266,15 @@ html[data-theme="dark"] .primary-btn:disabled, body.dark-mode .primary-btn:disab
   .stat strong { font-size: .95rem; }
 
   .level-hint {
-    flex-shrink: 0;
     font-size: .85rem;
     margin-bottom: 8px;
   }
 
   .scene-wrap {
-    flex-shrink: 0;
-    max-width: 180px;
-    max-height: 180px;
+    max-width: 160px;
+    max-height: 160px;
     aspect-ratio: 1 / 1;
-    margin-bottom: 10px;
+    margin: 0 auto 10px;
     border-radius: 12px;
   }
   .scene-img {
@@ -288,71 +284,72 @@ html[data-theme="dark"] .primary-btn:disabled, body.dark-mode .primary-btn:disab
   }
 
   #level1UI {
-    flex: 1;
+    display: block;
+    overflow: visible;
     min-height: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
   }
   .answer-line {
-    flex-shrink: 0;
     min-height: 48px;
     padding: 8px;
     margin-bottom: 8px;
-    border-radius: 12px;
   }
   .word-bank {
-    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+    overflow: visible;
     min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    margin-bottom: 8px;
-    align-content: flex-start;
   }
 
   #typeUI {
-    flex: 1;
+    display: block;
+    overflow: visible;
     min-height: 0;
-    display: flex;
-    flex-direction: column;
   }
   .prompt-line {
-    flex-shrink: 0;
     font-size: .95rem;
     margin-bottom: 8px;
   }
   .type-input {
-    flex-shrink: 0;
     min-height: 48px;
-    font-size: 1rem;
-    padding: 10px 14px;
+    /* 16px prevents iOS auto-zoom on focus */
+    font-size: 16px;
+    padding: 12px 14px;
     margin-bottom: 8px;
     border-radius: 12px;
+    width: 100%;
   }
 
   .word-chip, .built-chip {
-    font-size: .9rem;
-    padding: 8px 12px;
-    min-height: 40px;
+    font-size: .92rem;
+    padding: 10px 14px;
+    min-height: 44px;
     border-radius: 12px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .feedback {
-    flex-shrink: 0;
-    min-height: 20px;
+    min-height: 22px;
     font-size: .88rem;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   .actions-row {
-    flex-shrink: 0;
     gap: 8px;
+    position: sticky;
+    bottom: 0;
+    padding-top: 4px;
+    padding-bottom: env(safe-area-inset-bottom);
+    background: linear-gradient(to top, var(--card) 70%, transparent);
   }
   .primary-btn,
   .ghost-btn {
     min-height: 48px;
     border-radius: 14px;
     font-size: .92rem;
+    touch-action: manipulation;
   }
 
   h1 { font-size: 1.2rem; margin-bottom: 8px; }
@@ -363,12 +360,12 @@ html[data-theme="dark"] .primary-btn:disabled, body.dark-mode .primary-btn:disab
 
 @media (max-width: 380px) {
   .scene-wrap {
-    max-width: 140px;
-    max-height: 140px;
+    max-width: 130px;
+    max-height: 130px;
   }
   .word-chip, .built-chip {
-    font-size: .85rem;
-    padding: 6px 10px;
-    min-height: 36px;
+    font-size: .88rem;
+    padding: 8px 12px;
+    min-height: 40px;
   }
 }
