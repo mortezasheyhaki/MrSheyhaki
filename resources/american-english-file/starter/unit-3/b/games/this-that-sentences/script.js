@@ -59,9 +59,15 @@
   }
 
   function show(screen) {
-    startScreen.hidden = screen !== "start";
-    gameScreen.hidden = screen !== "game";
-    endScreen.hidden = screen !== "end";
+    // Use both the hidden attribute and inline display so CSS rules
+    // like .panel { display:flex/block } cannot un-hide inactive screens.
+    var map = { start: startScreen, game: gameScreen, end: endScreen };
+    Object.keys(map).forEach(function (key) {
+      var el = map[key];
+      var on = key === screen;
+      el.hidden = !on;
+      el.style.display = on ? "" : "none";
+    });
   }
 
   function setFeedback(msg, type) {
