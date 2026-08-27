@@ -102,6 +102,16 @@
     return String(w || "").toLowerCase();
   }
 
+  function ensureActiveBlank() {
+    if (activeBlank && activeBlank.el && document.body.contains(activeBlank.el)) {
+      if (!activeBlank.el.classList.contains("correct")) return true;
+    }
+    const firstEmpty = dialogueCard.querySelector(".blank.empty, .blank.filled:not(.correct)");
+    if (!firstEmpty) return false;
+    selectBlank(firstEmpty, Number(firstEmpty.dataset.idx));
+    return !!activeBlank;
+  }
+
   function renderBank() {
     wordBank.innerHTML = "";
     BANK.forEach(function (w) {
@@ -110,7 +120,9 @@
       btn.className = "word-chip";
       btn.textContent = w;
       btn.addEventListener("click", function () {
-        if (locked || !activeBlank) return;
+        if (locked) return;
+        if (!activeBlank && !ensureActiveBlank()) return;
+        if (!activeBlank) return;
         fillBlank(w);
       });
       wordBank.appendChild(btn);
@@ -152,6 +164,9 @@
     });
     el.classList.add("active");
     activeBlank = { scene: sceneIndex, idx: idx, el: el };
+    try {
+      el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    } catch (e) {}
   }
 
   function renderScene() {
