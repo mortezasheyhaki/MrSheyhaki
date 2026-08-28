@@ -59,9 +59,17 @@
   }
 
   function show(screen) {
-    startScreen.hidden = screen !== "start";
-    gameScreen.hidden = screen !== "game";
-    endScreen.hidden = screen !== "end";
+    // Toggle both property and attribute so [hidden] CSS always applies
+    // (mobile .panel { display:flex } would otherwise override the attribute alone).
+    function setHidden(el, isHidden) {
+      if (!el) return;
+      el.hidden = isHidden;
+      if (isHidden) el.setAttribute("hidden", "");
+      else el.removeAttribute("hidden");
+    }
+    setHidden(startScreen, screen !== "start");
+    setHidden(gameScreen, screen !== "game");
+    setHidden(endScreen, screen !== "end");
   }
 
   function setFeedback(msg, type) {
