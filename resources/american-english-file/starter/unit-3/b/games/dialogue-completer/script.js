@@ -78,9 +78,15 @@
   let locked = false;
 
   function show(screen) {
-    startScreen.hidden = screen !== "start";
-    gameScreen.hidden = screen !== "game";
-    endScreen.hidden = screen !== "end";
+    // Use both the hidden attribute and inline display so CSS rules
+    // like .panel { display:flex/block } cannot un-hide inactive screens.
+    var map = { start: startScreen, game: gameScreen, end: endScreen };
+    Object.keys(map).forEach(function (key) {
+      var el = map[key];
+      var on = key === screen;
+      el.hidden = !on;
+      el.style.display = on ? "" : "none";
+    });
   }
 
   function setFeedback(msg, type) {
@@ -102,6 +108,16 @@
     return String(w || "").toLowerCase();
   }
 
+  function ensureActiveBlank() {
+    if (activeBlank && activeBlank.el && document.body.contains(activeBlank.el)) {
+      if (!activeBlank.el.classList.contains("correct")) return true;
+    }
+    const firstEmpty = dialogueCard.querySelector(".blank.empty, .blank.filled:not(.correct)");
+    if (!firstEmpty) return false;
+    selectBlank(firstEmpty, Number(firstEmpty.dataset.idx));
+    return !!activeBlank;
+  }
+
   function renderBank() {
     wordBank.innerHTML = "";
     BANK.forEach(function (w) {
@@ -110,7 +126,9 @@
       btn.className = "word-chip";
       btn.textContent = w;
       btn.addEventListener("click", function () {
-        if (locked || !activeBlank) return;
+        if (locked) return;
+        if (!activeBlank && !ensureActiveBlank()) return;
+        if (!activeBlank) return;
         fillBlank(w);
       });
       wordBank.appendChild(btn);
@@ -152,6 +170,9 @@
     });
     el.classList.add("active");
     activeBlank = { scene: sceneIndex, idx: idx, el: el };
+    try {
+      el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    } catch (e) {}
   }
 
   function renderScene() {
