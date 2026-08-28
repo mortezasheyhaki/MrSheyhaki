@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Say Color | Mr. Sheyhaki</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../../../../theme.css">
+<link rel="stylesheet" href="../../../theme.css">
+<style>
+  /* Say Color — speech game extras */
+  .mic-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 4px;
+    flex-shrink: 0;
+  }
+  .mic-btn {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    border: 3px solid var(--dr-green-border);
+    background: var(--dr-green-soft);
+    color: var(--dr-green-dark);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 4px 0 0 var(--dr-green-border);
+    transition: transform .1s, box-shadow .1s, background .15s, border-color .15s;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+  }
+  .mic-btn:hover:not(:disabled) {
+    background: var(--dr-green);
+    color: #fff;
+    border-color: var(--dr-green-dark);
+    box-shadow: 0 4px 0 0 var(--dr-green-dark);
+  }
+  .mic-btn:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 0 var(--dr-green-dark);
+  }
+  .mic-btn:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    box-shadow: 0 2px 0 0 var(--border);
+  }
+  .mic-btn.is-listening {
+    background: var(--danger);
+    border-color: #e03e3e;
+    color: #fff;
+    box-shadow: 0 0 0 0 rgba(255, 75, 75, .45);
+    animation: pulse-mic 1.2s ease-out infinite;
+  }
+  @keyframes pulse-mic {
+    0% { box-shadow: 0 0 0 0 rgba(255, 75, 75, .5); }
+    70% { box-shadow: 0 0 0 18px rgba(255, 75, 75, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0); }
+  }
+  .mic-btn svg { width: 36px; height: 36px; display: block; }
+  .mic-hint {
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-align: center;
+    min-height: 1.3em;
+  }
+  .mic-hint.listening { color: var(--danger); }
+  .heard-box {
+    text-align: center;
+    min-height: 28px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text);
+    margin: 4px 0 8px;
+  }
+  .heard-box .label {
+    display: block;
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .say-img-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 4px 0 8px;
+    overflow: hidden;
+  }
+  .say-img-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 16px;
+    border: 2px solid var(--border);
+    background: var(--card);
+  }
+  .unsupported-banner {
+    background: var(--wrong-bg);
+    border: 2px solid var(--danger);
+    color: var(--text);
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: .9rem;
+    line-height: 1.4;
+    margin-bottom: 14px;
+    text-align: left;
+  }
+  .unsupported-banner strong { color: var(--danger); }
+
+  /* Bottom action row: audio + skip side by side */
+  .say-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .skip-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 8px 18px;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-weight: 800;
+    font-size: .9rem;
+    cursor: pointer;
+    box-shadow: 0 3px 0 0 var(--border);
+    transition: transform .08s, box-shadow .08s, background .15s, border-color .15s;
+    -webkit-tap-highlight-color: transparent;
+    text-decoration: none;
+  }
+  .skip-btn:hover {
+    background: var(--dr-green-soft);
+    border-color: var(--dr-green-border);
+    box-shadow: 0 3px 0 0 var(--dr-green-border);
+  }
+  .skip-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 0 var(--border);
+  }
+
+  /* Level tabs on start screen */
+  .level-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 0 0 18px;
+  }
+  .level-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 14px 10px;
+    border-radius: 16px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 800;
+    box-shadow: 0 3px 0 0 var(--border);
+    transition: background .15s, border-color .15s, box-shadow .15s, transform .08s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .level-tab .level-ico { font-size: 1.5rem; line-height: 1; }
+  .level-tab .level-label { font-size: .95rem; }
+  .level-tab .level-desc {
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .level-tab.active {
+    border-color: var(--dr-green-border);
+    background: var(--dr-green-soft);
+    box-shadow: 0 3px 0 0 var(--dr-green-border);
+    color: var(--dr-green-dark);
+  }
+  .level-tab.active .level-desc { color: var(--dr-green-dark); opacity: .85; }
+  .level-tab:active { transform: translateY(2px); box-shadow: 0 1px 0 0 var(--border); }
+  .level-tab.active:active { box-shadow: 0 1px 0 0 var(--dr-green-border); }
+
+  #gameScreen.panel-fill {
+    display: flex;
+    flex-direction: column;
+  }
+  .prompt-cue {
+    text-align: center;
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin: 0 0 2px;
+    min-height: 1.2em;
+  }
+</style>
+</head>
+<body class="game-page">
+<header class="game-header">
+  <a class="back-button" href="../">← Colors</a>
+  <div class="header-center">
+    <span class="eyebrow">VOCABULARY · COLORS</span>
+    <strong>Say Color</strong>
+  </div>
+  <span class="header-spacer" aria-hidden="true"></span>
+</header>
+
+<main class="app app-fixed">
+  <section id="startScreen" class="panel panel-fill">
+    <div class="hero-icon" aria-hidden="true">🎤</div>
+    <h1>Say Color</h1>
+    <p class="lead">Look at the picture and speak out loud — like “Say cheese!”</p>
+
+    <div class="level-tabs" id="levelTabs" role="tablist" aria-label="Choose level">
+      <button type="button" class="level-tab active" data-level="words" role="tab" aria-selected="true">
+        <span class="level-ico" aria-hidden="true">🎨</span>
+        <span class="level-label">Words</span>
+        <span class="level-desc">Say the color</span>
+      </button>
+      <button type="button" class="level-tab" data-level="sentences" role="tab" aria-selected="false">
+        <span class="level-ico" aria-hidden="true">💬</span>
+        <span class="level-label">Sentences</span>
+        <span class="level-desc">It's a red car</span>
+      </button>
+    </div>
+
+    <ul class="feature-list">
+      <li>10 items · speech recognition</li>
+      <li>Words or full sentences</li>
+      <li>Hear the word when you get it right</li>
+    </ul>
+    <div id="supportNote" class="unsupported-banner" hidden>
+      <strong>Mic not available in this browser.</strong>
+      Chrome or Edge on desktop/Android work best. On iPhone, try Safari. You can still play and use Skip.
+    </div>
+    <button id="startBtn" class="primary-btn" type="button">START ▶</button>
+  </section>
+
+  <section id="gameScreen" class="panel panel-fill" hidden>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-label">ITEM</span><strong id="itemText">1 / 10</strong></div>
+      <div class="stat"><span class="stat-label">SCORE</span><strong id="scoreText">0</strong></div>
+      <div class="stat"><span class="stat-label">CORRECT</span><strong id="correctText">0</strong></div>
+    </div>
+    <p class="prompt" id="promptText" style="text-align:center;margin:4px 0 0;font-weight:800">Say the color!</p>
+    <p class="prompt-cue" id="promptCue"></p>
+    <div class="say-img-wrap">
+      <img id="sceneImg" src="../images/red.png" alt="Color" decoding="async">
+    </div>
+    <div class="mic-wrap">
+      <button type="button" id="micBtn" class="mic-btn" aria-label="Tap to speak" title="Speak">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-2.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+        </svg>
+      </button>
+      <p class="mic-hint" id="micHint">Tap the mic and speak</p>
+    </div>
+    <div class="heard-box" id="heardBox" aria-live="polite">
+      <span class="label">You said</span>
+      <span id="heardText">—</span>
+    </div>
+    <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+    <div class="say-actions">
+      <button type="button" id="playAudioBtn" class="audio-pill dict-audio-btn" aria-label="Hear the word" title="Hear the word">
+        <svg class="audio-speaker" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
+        <span class="audio-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      </button>
+      <button type="button" id="skipBtn" class="skip-btn" aria-label="Skip this item">Skip →</button>
+    </div>
+  </section>
+
+  <section id="endScreen" class="panel panel-fill" hidden>
+    <div class="hero-icon" aria-hidden="true">🏆</div>
+    <h1 id="endTitle">Well done!</h1>
+    <p id="endSummary" class="lead"></p>
+    <div class="end-stats">
+      <div><span class="stat-label">SCORE</span><strong id="finalScore">0</strong></div>
+      <div><span class="stat-label">ACCURACY</span><strong id="finalAccuracy">0%</strong></div>
+      <div><span class="stat-label">ITEMS</span><strong id="finalWords">10</strong></div>
+    </div>
+    <div class="end-stars game-stars" data-game="vocab-colors-say-color" aria-label="Progress stars">
+      <span class="star" data-n="1">☆</span><span class="star" data-n="2">☆</span><span class="star" data-n="3">☆</span>
+    </div>
+    <div class="end-actions">
+      <a class="icon-square-btn back-square" href="../" aria-label="Back"><span aria-hidden="true">←</span></a>
+      <button id="playAgainBtn" class="icon-square-btn again-square" type="button" aria-label="Again"><span aria-hidden="true">↻</span></button>
+    </div>
+  </section>
+</main>
+
+<script src="../../../la-stars.js"></script>
+<script src="script.js"></script>
+<script src="../../../../theme.js"></script>
+</body>
+</html>
