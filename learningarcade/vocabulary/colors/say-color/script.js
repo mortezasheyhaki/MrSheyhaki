@@ -3,16 +3,16 @@
 
   // Level 1 — single color words (solid color pictures)
   const WORD_ITEMS = [
-    { id: "black", answers: ["black"], img: "../images/black.png", audio: "../audio/black.mp3" },
-    { id: "blue", answers: ["blue"], img: "../images/blue.png", audio: "../audio/blue.mp3" },
-    { id: "brown", answers: ["brown"], img: "../images/brown.png", audio: "../audio/brown.mp3" },
-    { id: "green", answers: ["green"], img: "../images/green.png", audio: "../audio/green.mp3" },
-    { id: "grey", answers: ["grey", "gray"], img: "../images/grey.png", audio: "../audio/grey.mp3" },
-    { id: "orange", answers: ["orange"], img: "../images/orange.png", audio: "../audio/orange.mp3" },
-    { id: "pink", answers: ["pink"], img: "../images/pink.png", audio: "../audio/pink.mp3" },
-    { id: "red", answers: ["red"], img: "../images/red.png", audio: "../audio/red.mp3" },
-    { id: "white", answers: ["white"], img: "../images/white.png", audio: "../audio/white.mp3" },
-    { id: "yellow", answers: ["yellow"], img: "../images/yellow.png", audio: "../audio/yellow.mp3" },
+    { id: "black", answers: ["black"], img: "../images/black.png", say: "black" },
+    { id: "blue", answers: ["blue"], img: "../images/blue.png", say: "blue" },
+    { id: "brown", answers: ["brown"], img: "../images/brown.png", say: "brown" },
+    { id: "green", answers: ["green"], img: "../images/green.png", say: "green" },
+    { id: "grey", answers: ["grey", "gray"], img: "../images/grey.png", say: "grey" },
+    { id: "orange", answers: ["orange"], img: "../images/orange.png", say: "orange" },
+    { id: "pink", answers: ["pink"], img: "../images/pink.png", say: "pink" },
+    { id: "red", answers: ["red"], img: "../images/red.png", say: "red" },
+    { id: "white", answers: ["white"], img: "../images/white.png", say: "white" },
+    { id: "yellow", answers: ["yellow"], img: "../images/yellow.png", say: "yellow" },
   ];
 
   // Level 2 — full sentences (object pictures from What is it?)
@@ -20,8 +20,8 @@
   const SENTENCE_ITEMS = [
     {
       id: "black",
+      say: "It's a black bag.",
       img: "../what-is-it/images/black.png",
-      audio: "../audio/black.mp3",
       prompt: "What is it?",
       cue: "It's a …",
       answers: [
@@ -33,8 +33,8 @@
     },
     {
       id: "blue",
+      say: "They're blue keys.",
       img: "../what-is-it/images/blue.png",
-      audio: "../audio/blue.mp3",
       prompt: "What are they?",
       cue: "They're …",
       answers: [
@@ -45,8 +45,8 @@
     },
     {
       id: "brown",
+      say: "They're brown eggs.",
       img: "../what-is-it/images/brown.png",
-      audio: "../audio/brown.mp3",
       prompt: "What are they?",
       cue: "They're …",
       answers: [
@@ -57,8 +57,8 @@
     },
     {
       id: "green",
+      say: "They're green pencils.",
       img: "../what-is-it/images/green.png",
-      audio: "../audio/green.mp3",
       prompt: "What are they?",
       cue: "They're …",
       answers: [
@@ -69,8 +69,8 @@
     },
     {
       id: "grey",
+      say: "It's a grey chair.",
       img: "../what-is-it/images/grey.png",
-      audio: "../audio/grey.mp3",
       prompt: "What is it?",
       cue: "It's a …",
       answers: [
@@ -86,8 +86,8 @@
     },
     {
       id: "orange",
+      say: "It's an orange watch.",
       img: "../what-is-it/images/orange.png",
-      audio: "../audio/orange.mp3",
       prompt: "What is it?",
       cue: "It's an …",
       answers: [
@@ -102,8 +102,8 @@
     },
     {
       id: "pink",
+      say: "It's a pink phone.",
       img: "../what-is-it/images/pink.png",
-      audio: "../audio/pink.mp3",
       prompt: "What is it?",
       cue: "It's a …",
       answers: [
@@ -115,8 +115,8 @@
     },
     {
       id: "red",
+      say: "It's a red car.",
       img: "../what-is-it/images/red.png",
-      audio: "../audio/red.mp3",
       prompt: "What is it?",
       cue: "It's a …",
       answers: [
@@ -128,8 +128,8 @@
     },
     {
       id: "white",
+      say: "It's a white bicycle.",
       img: "../what-is-it/images/white.png",
-      audio: "../audio/white.mp3",
       prompt: "What is it?",
       cue: "It's a …",
       answers: [
@@ -145,8 +145,8 @@
     },
     {
       id: "yellow",
+      say: "It's a yellow umbrella.",
       img: "../what-is-it/images/yellow.png",
-      audio: "../audio/yellow.mp3",
       prompt: "What is it?",
       cue: "It's a …",
       answers: [
@@ -172,7 +172,6 @@
   let correct = 0;
   let attempts = 0;
   let locked = false;
-  let currentAudio = null;
   let recognition = null;
   let listening = false;
 
@@ -272,25 +271,33 @@
     el.classList.toggle("listening", !!listeningState);
   }
 
-  function playSrc(src) {
+  function stopSpeech() {
+    try {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    } catch (e) {}
     const btn = $("playAudioBtn");
-    if (currentAudio) {
-      try {
-        currentAudio.pause();
-      } catch (e) {}
-      currentAudio = null;
-    }
     if (btn) btn.classList.remove("is-playing");
-    const a = new Audio(src);
-    currentAudio = a;
+  }
+
+  /** Speak the model answer (word or full sentence) via browser TTS */
+  function speakItem(item) {
+    const btn = $("playAudioBtn");
+    stopSpeech();
+    if (!item) return;
+    const text = item.say || (item.answers && item.answers[0]) || item.id || "";
+    if (!text || !window.speechSynthesis) return;
+
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    u.rate = 0.92;
     if (btn) btn.classList.add("is-playing");
-    a.play().catch(() => {
+    u.onend = function () {
       if (btn) btn.classList.remove("is-playing");
-    });
-    a.onended = () => {
-      if (btn) btn.classList.remove("is-playing");
-      if (currentAudio === a) currentAudio = null;
     };
+    u.onerror = function () {
+      if (btn) btn.classList.remove("is-playing");
+    };
+    window.speechSynthesis.speak(u);
   }
 
   function stopListening() {
@@ -418,14 +425,14 @@
       setMicHint("Great!", false);
       if ($("scoreText")) $("scoreText").textContent = String(score);
       if ($("correctText")) $("correctText").textContent = String(correct);
-      playSrc(item.audio);
+      speakItem(item);
       setTimeout(() => {
         idx++;
         if (idx >= order.length) finish();
         else render();
       }, 1200);
     } else {
-      setFb("Not quite — try again or hear it 🔊", "bad");
+      setFb("Not quite — try again or tap 🔊 to hear it", "bad");
       setMicHint("Tap the mic and try again", false);
       setTimeout(() => {
         locked = false;
@@ -555,7 +562,7 @@
   }
   if (playAudioBtn) {
     playAudioBtn.addEventListener("click", () => {
-      if (order.length && order[idx] != null) playSrc(items[order[idx]].audio);
+      if (order.length && order[idx] != null) speakItem(items[order[idx]]);
     });
   }
   if (skipBtn) skipBtn.addEventListener("click", skip);
