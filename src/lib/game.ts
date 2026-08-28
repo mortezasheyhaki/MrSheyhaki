@@ -15,9 +15,16 @@ export interface Game {
 const STORAGE_KEY = 'gamesData';
 
 export function loadGames(): Game[] {
-  if (typeof localStorage === 'undefined') return [];
+  if (typeof localStorage === 'undefined') return createDefaultGames();
   const saved = localStorage.getItem(STORAGE_KEY);
-  return saved ? JSON.parse(saved) : createDefaultGames();
+  if (!saved) return createDefaultGames();
+  try {
+    const parsed: unknown = JSON.parse(saved);
+    return Array.isArray(parsed) ? parsed as Game[] : createDefaultGames();
+  } catch {
+    localStorage.removeItem(STORAGE_KEY);
+    return createDefaultGames();
+  }
 }
 
 function createDefaultGames(): Game[] {
@@ -51,5 +58,10 @@ function createDefaultGames(): Game[] {
 }
 
 export function saveGames(games: Game[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(games));
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(games));
+  } catch {
+    // Storage may be unavailable, full, or disabled; keep the in-memory game state usable.
+  }
 }

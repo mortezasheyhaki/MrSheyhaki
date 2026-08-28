@@ -2,9 +2,9 @@
 /*
  * GENERATE RESOURCES
  * -------------------
- * Regenerates resources/american-english-file/ entirely from
- * assets/course-data.js. Safe to run any time — it deletes and
- * rebuilds every generated page, so it's always in sync with the data.
+ * Regenerates only the route-shell index pages under
+ * resources/american-english-file/ from assets/course-data.js. It never
+ * deletes course directories, because they contain hand-authored games and media.
  *
  * Usage (from the MrSheyhaki repo root):
  *   node tools/generate-resources.js
@@ -79,12 +79,9 @@ function write(filePath, content) {
   fs.writeFileSync(filePath, content, "utf8");
 }
 
-function rimraf(dir) {
-  if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
-}
-
-// Clean previously generated content for each level (keeps assets/ and the
-// hand-written top-level american-english-file/index.html untouched).
+// This generator overwrites only the route-shell index.html files that it owns.
+// It must never remove a course-level directory: that directory also contains
+// hand-authored game implementations, styles, images, and audio.
 function generate() {
   const course = DATA["american-english-file"];
 
@@ -103,7 +100,6 @@ function generate() {
   Object.keys(course.levels).forEach((levelKey) => {
     const level = course.levels[levelKey];
     const levelDir = path.join(AEF_DIR, levelKey);
-    rimraf(levelDir);
 
     // --- level index (pageDepth 1) ---
     write(

@@ -30,7 +30,7 @@
 
   <!-- StateDisplay right next to PLAY (exactly as you wanted) -->
   <div class="play-area">
-    <button class="play-btn">PLAY</button>
+    <button class="play-btn" type="button" on:click>PLAY</button>
     <StateDisplay bestStars={game.bestStars} size="sm" />
   </div>
 </div>

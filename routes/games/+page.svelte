@@ -18,6 +18,7 @@
     game.bestScore = Math.max(game.bestScore, game.score);
     game.bestAccuracy = Math.max(game.bestAccuracy, game.accuracy);
     
+    games = [...games];
     saveGames(games);
   }
 </script>
