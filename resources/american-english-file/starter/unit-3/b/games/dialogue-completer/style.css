@@ -1,5 +1,10 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* Must win over .panel { display: flex } on mobile */
+[hidden] {
+  display: none !important;
+}
+
 :root {
   --dr-green: #58cc02;
   --dr-green-dark: #46a302;
@@ -331,7 +336,8 @@ body.dark-mode .dialogue-card { background: rgba(255,255,255,.04); }
     padding: 8px 10px calc(10px + env(safe-area-inset-bottom));
     overflow: hidden;
   }
-  .panel {
+  /* Only the visible (non-hidden) panel becomes the flex column */
+  .panel:not([hidden]) {
     flex: 1;
     min-height: 0;
     display: flex;
@@ -340,19 +346,19 @@ body.dark-mode .dialogue-card { background: rgba(255,255,255,.04); }
     border-radius: 14px;
     overflow: hidden;
   }
-  .panel-game {
+  .panel-game:not([hidden]) {
     padding-top: 10px;
   }
 
   /* Start / end screens can scroll if needed */
-  #startScreen,
-  #endScreen {
+  #startScreen:not([hidden]),
+  #endScreen:not([hidden]) {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 
   /* Game screen: compact vertical stack */
-  #gameScreen {
+  #gameScreen:not([hidden]) {
     overflow: hidden;
   }
 
