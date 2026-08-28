@@ -66,6 +66,16 @@
   }
   function renderFinish() {
     $('gameScreen').classList.add('is-hidden'); $('finishScreen').classList.remove('is-hidden');
+    const starRow = $('finishStars');
+    if (starRow) {
+      starRow.innerHTML = [1,2,3].map(n => `<span class="star is-filled">★</span>`).join('');
+    }
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay('writing-sara-daily');
+        LAStars.save('writing-sara-daily', 3);
+      }
+    } catch (e) {}
     const summary = $('storySummary'); summary.textContent = '';
     STAGES.forEach((stage) => { const entry = document.createElement('article'); entry.className = 'story-entry'; entry.innerHTML = `<h3>${stage.phrase}</h3><p></p>`; entry.querySelector('p').textContent = state.entries[stage.key]; summary.appendChild(entry); });
     window.scrollTo({ top: 0, behavior: 'smooth' });

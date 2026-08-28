@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#6937d8" />
+  <title>My Profile | Learning Arcade</title>
+  <meta name="description" content="Your Learning Arcade profile and scores." />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../../style.css" />
+  <link rel="stylesheet" href="../../theme.css" />
+  <style>
+    .profile-wrap { max-width: 640px; margin: 0 auto; padding: 0 16px 48px; }
+    .profile-card {
+      padding: 20px 18px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 8px 0 rgba(84,37,184,.1), 0 14px 28px rgba(32,38,54,.07);
+      margin-bottom: 20px;
+    }
+    .profile-card h2 {
+      margin: 0 0 12px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #202636;
+    }
+    .name-row {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    }
+    .name-row input {
+      flex: 1; min-width: 140px;
+      border: 2px solid #e8e0ff; border-radius: 12px;
+      padding: 12px 14px; font: inherit; font-weight: 700;
+    }
+    .name-row input:read-only {
+      background: #f5f2ff;
+      color: #2c2450;
+      cursor: default;
+    }
+    .name-row button {
+      border: 0; cursor: pointer;
+      padding: 12px 18px; border-radius: 12px;
+      background: #6937d8; color: #fff; font-weight: 800;
+      box-shadow: 0 3px 0 #5425b8;
+      min-width: 52px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .name-row button.is-edit {
+      padding: 12px 14px;
+      font-size: 1.15rem;
+    }
+    .status { min-height: 1.3em; margin: 8px 0 0; font-weight: 700; color: #687184; font-size: 0.9rem; }
+    .status.is-ok { color: #27a76f; }
+    .score-list { display: grid; gap: 10px; }
+    .score-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 4px 0 rgba(84,37,184,.08);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    a.score-row:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 rgba(84,37,184,.12);
+    }
+    a.score-row:active { transform: translateY(1px); }
+    .score-row strong { display: block; font-size: 1rem; color: #202636; }
+    .score-row small { color: #687184; font-weight: 600; }
+    .score-row .pts { font-size: 1.2rem; font-weight: 900; color: #6937d8; align-self: center; }
+    .score-row .play-hint {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #6937d8;
+      margin-top: 2px;
+    }
+    .empty {
+      text-align: center; padding: 28px 16px; color: #687184; font-weight: 600;
+      background: rgba(255,255,255,.85); border-radius: 16px;
+    }
+    #achievements {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .achieve-tile {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 6px 4px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1.5px solid rgba(105, 55, 216, 0.12);
+      box-shadow: 0 3px 0 rgba(84, 37, 184, 0.08);
+      text-align: center;
+      min-height: 0;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease;
+    }
+    a.achieve-tile:hover { transform: scale(1.04); }
+    .achieve-tile strong {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #2c2450;
+      line-height: 1.2;
+      max-width: 100%;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+    .achieve-stars {
+      display: flex;
+      gap: 1px;
+      font-size: 0.95rem;
+      letter-spacing: 0;
+      color: #d5cce8;
+      line-height: 1;
+    }
+    .achieve-star.is-on { color: #f5b942; }
+    .achieve-empty {
+      grid-column: 1 / -1;
+      padding: 20px 14px;
+      text-align: center;
+      color: #687184;
+      font-weight: 600;
+      font-size: 0.92rem;
+      background: #f8f7fc;
+      border-radius: 14px;
+    }
+    @media (min-width: 520px) {
+      #achievements {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+      }
+      .achieve-tile {
+        padding: 8px 6px;
+        border-radius: 14px;
+      }
+      .achieve-tile strong { font-size: 0.72rem; }
+      .achieve-stars { font-size: 0.95rem; }
+    }
+    @media (max-width: 360px) {
+      #achievements { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+<a href="./" class="profile-fab" aria-label="My Profile" title="My Profile">👤</a>
+<header class="arcade-header-bar">
+<nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+      <a href="../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+      <a href="../" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+      <a href="../../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+      <a href="../leaderboard/" class="nav-link" aria-label="Leaderboard" data-icon="🏆"><span class="nav-ico" aria-hidden="true">🏆</span><span class="nav-text">Leaderboard</span></a>
+      <a href="../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+    </nav>
+</header>
+
+<main class="profile-wrap">
+  <section class="arcade-intro skill-intro" style="margin-bottom: 8px;">
+    <div class="skill-intro-top">
+      <a class="skill-back-btn" href="../" data-back-one aria-label="Back" title="Back"><span aria-hidden="true">←</span></a>
+      <span class="eyebrow">LEARNING ARCADE</span>
+    </div>
+    <h1>My Profile</h1>
+    <p style="margin:8px 0 0;color:#687184;font-weight:600;">Your name, achievements, and scores from this device.</p>
+  </section>
+
+  <section class="profile-card">
+    <h2>Display name</h2>
+    <div class="name-row">
+      <input id="playerName" type="text" maxlength="32" placeholder="e.g. Ali" autocomplete="nickname" />
+      <button type="button" id="saveNameBtn" aria-label="Save name">Save</button>
+    </div>
+    <p class="status" id="nameStatus"></p>
+  </section>
+
+  <section class="profile-card">
+    <h2>Achievements</h2>
+    <div class="stars-local" id="achievements">Loading…</div>
+  </section>
+
+  <section class="profile-card">
+    <h2>Saved scores</h2>
+    <p class="status" id="scoresStatus">Loading…</p>
+    <div class="score-list" id="scoreList"></div>
+  </section>
+</main>
+
+<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · English Teacher</p></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-database-compat.js"></script>
+<script src="../firebase-scores.js"></script>
+<script src="../la-stars.js"></script>
+<script src="../../script.js"></script>
+<script src="../../theme.js"></script>
+<script>
+(function () {
+  var year = document.getElementById('year');
+  if (year) year.textContent = new Date().getFullYear();
+
+  var input = document.getElementById('playerName');
+  var nameStatus = document.getElementById('nameStatus');
+  var saveNameBtn = document.getElementById('saveNameBtn');
+  var scoresStatus = document.getElementById('scoresStatus');
+  var scoreList = document.getElementById('scoreList');
+  var editingName = true;
+
+  /* Display names */
+  var TITLES = {
+    'opposite-snap': 'Opposite Snap',
+    'sound-match-picture': 'Sound Match Picture',
+    'vocab-clothes-voice-hunt': 'Voice Treasure Hunt',
+    'writing-sara-daily': "Sara's Daily Routine",
+    'vocab-clothes-match': 'Clothes Match',
+    'vocab-clothes-dictation': 'Clothes Dictation',
+    'there-is-there-are': 'There is / There are',
+    'starter-3a-a-an-swipe': 'A / An Swipe',
+    'starter-7a-question-builder': 'Question Builder',
+    'starter-6a-listen-and-write': 'Listen and Write',
+    'starter-7a-build-the-question': 'Build the Question',
+    'starter-3a-plural-s-sound-match': 'Plural -s Sound Match',
+    'starter-3a-pictures-words-match': 'Pictures & Words Match',
+    'starter-3b-listen-match': 'Listen & Match',
+    'starter-3b-dialogue-completer': 'Dialogue Completer',
+    'starter-3b-this-that-sentences': 'This / That Sentences',
+    'starter-3a-whats-in-your-bag': "What's in Your Bag?",
+    'nouns': 'Nouns',
+    'match-rush': 'Match Rush'
+  };
+
+  /* Paths relative to learningarcade/profile/ */
+  var GAME_URLS = {
+    'opposite-snap': '../vocabulary/Adjectives/Opposite_Snap/',
+    'sound-match-picture': '../vocabulary/Adjectives/Sound_Match_Picture/',
+    'vocab-clothes-voice-hunt': '../vocabulary/clothes/voice-treasure-hunt/',
+    'vocab-clothes-match': '../vocabulary/clothes/match/',
+    'vocab-clothes-dictation': '../vocabulary/clothes/dictation/',
+    'writing-sara-daily': '../writing/Daily%20Routine/Sara/',
+    'there-is-there-are': '../grammar/there-is-there-are/',
+    'nouns': '../grammar/nouns/',
+    'match-rush': '../vocabulary/match-rush/',
+    'starter-3a-a-an-swipe': '../../resources/american-english-file/starter/unit-3/a/games/',
+    'starter-3a-plural-s-sound-match': '../../resources/american-english-file/starter/unit-3/a/games/plural-s-sound-match/',
+    'starter-3a-pictures-words-match': '../../resources/american-english-file/starter/unit-3/a/games/',
+    'starter-3a-whats-in-your-bag': '../../resources/american-english-file/starter/unit-3/a/games/',
+    'starter-3b-listen-match': '../../resources/american-english-file/starter/unit-3/b/games/',
+    'starter-3b-dialogue-completer': '../../resources/american-english-file/starter/unit-3/b/games/',
+    'starter-3b-this-that-sentences': '../../resources/american-english-file/starter/unit-3/b/games/',
+    'starter-6a-listen-and-write': '../../resources/american-english-file/starter/unit-6/a/games/',
+    'starter-7a-question-builder': '../../resources/american-english-file/starter/unit-7/a/games/',
+    'starter-7a-build-the-question': '../../resources/american-english-file/starter/unit-7/a/games/'
+  };
+
+  function prettyTitle(id) {
+    if (TITLES[id]) return TITLES[id];
+    return String(id)
+      .replace(/^starter-\d+[a-z]-/i, '')
+      .replace(/^vocab-/i, '')
+      .replace(/^writing-/i, '')
+      .replace(/[-_]+/g, ' ')
+      .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  }
+
+  function gameUrl(id) {
+    return GAME_URLS[id] || null;
+  }
+
+  function setNameMode(editing) {
+    editingName = editing;
+    if (editing) {
+      input.readOnly = false;
+      saveNameBtn.textContent = 'Save';
+      saveNameBtn.classList.remove('is-edit');
+      saveNameBtn.setAttribute('aria-label', 'Save name');
+      input.focus();
+    } else {
+      input.readOnly = true;
+      saveNameBtn.innerHTML = '✎';
+      saveNameBtn.classList.add('is-edit');
+      saveNameBtn.setAttribute('aria-label', 'Edit name');
+    }
+  }
+
+  var existingName = LAScores.getPlayerName();
+  input.value = existingName;
+  if (existingName) {
+    setNameMode(false);
+  } else {
+    setNameMode(true);
+  }
+
+  saveNameBtn.addEventListener('click', function () {
+    if (!editingName) {
+      setNameMode(true);
+      return;
+    }
+    var n = LAScores.setPlayerName(input.value);
+    input.value = n;
+    if (n) {
+      nameStatus.textContent = 'Name saved: ' + n;
+      nameStatus.className = 'status is-ok';
+      setNameMode(false);
+      loadScores();
+    } else {
+      nameStatus.textContent = 'Enter a name first.';
+      nameStatus.className = 'status';
+    }
+  });
+
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && editingName) {
+      e.preventDefault();
+      saveNameBtn.click();
+    }
+  });
+
+  function formatDate(ms) {
+    if (!ms) return '';
+    try {
+      return new Date(ms).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    } catch (e) { return ''; }
+  }
+
+  function loadAchievements() {
+    var el = document.getElementById('achievements');
+    try {
+      var raw = localStorage.getItem('laGameStars');
+      var data = raw ? JSON.parse(raw) : {};
+      var keys = Object.keys(data || {}).filter(function (id) {
+        return Number(data[id]) > 0;
+      });
+      keys.sort(function (a, b) {
+        return Number(data[b]) - Number(data[a]) || prettyTitle(a).localeCompare(prettyTitle(b));
+      });
+      if (!keys.length) {
+        el.innerHTML = '<div class="achieve-empty">No achievements yet. Finish a game to earn stars.</div>';
+        return;
+      }
+      el.innerHTML = keys.map(function (id) {
+        var n = Math.min(3, Number(data[id]) || 0);
+        var title = prettyTitle(id);
+        var url = gameUrl(id);
+        var stars = [1,2,3].map(function (i) {
+          return '<span class="achieve-star' + (i <= n ? ' is-on' : '') + '">' + (i <= n ? '★' : '☆') + '</span>';
+        }).join('');
+        var inner = '<strong>' + escapeHtml(title) + '</strong>' +
+          '<div class="achieve-stars" aria-label="' + n + ' of 3 stars">' + stars + '</div>';
+        if (url) {
+          return '<a class="achieve-tile" href="' + url + '" title="Play ' + escapeHtml(title) + ' — ' + n + ' of 3 stars">' + inner + '</a>';
+        }
+        return '<article class="achieve-tile" title="' + escapeHtml(title) + ' — ' + n + ' of 3 stars">' + inner + '</article>';
+      }).join('');
+    } catch (e) {
+      el.textContent = 'Could not load achievements.';
+    }
+  }
+
+  function loadScores() {
+    scoresStatus.textContent = 'Loading scores…';
+    scoreList.innerHTML = '';
+    LAScores.ensureAuth().then(function () {
+      return LAScores.myScores();
+    }).then(function (rows) {
+      if (!rows.length) {
+        scoresStatus.textContent = 'No saved scores yet.';
+        scoreList.innerHTML = '<div class="empty">Play a game, then tap <b>Save score</b>.</div>';
+        return;
+      }
+      scoresStatus.textContent = rows.length + ' saved score' + (rows.length === 1 ? '' : 's') + ' — tap a game to play again';
+      scoreList.innerHTML = rows.map(function (r) {
+        var title = r.gameName || TITLES[r.gameId] || r.gameId;
+        var url = gameUrl(r.gameId);
+        var body = '<div><strong>' + escapeHtml(title) + '</strong><small>' + formatDate(r.at) + '</small>' +
+          (url ? '<span class="play-hint">▶ Play again</span>' : '') +
+          '</div><div class="pts">' + r.score + '</div>';
+        if (url) {
+          return '<a class="score-row" href="' + url + '">' + body + '</a>';
+        }
+        return '<div class="score-row">' + body + '</div>';
+      }).join('');
+    }).catch(function () {
+      scoresStatus.textContent = 'Could not load scores. Check Firebase rules.';
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  loadAchievements();
+  loadScores();
+})();
+</script>
+</body>
+</html>

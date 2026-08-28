@@ -136,7 +136,72 @@ function showFinish() {
   finishScreen.classList.remove('hidden');
   finishScore.textContent = String(score);
   exposeState();
+  const acc = prompts.length ? Math.round((score / prompts.length) * 100) : 0;
+  const stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 40 ? 1 : 1;
+  const starRow = document.querySelector('#finishStars');
+  if (starRow) {
+    starRow.innerHTML = [1, 2, 3].map((n) =>
+      `<span class="star ${n <= stars ? 'is-filled' : ''}">${n <= stars ? '★' : '☆'}</span>`
+    ).join('');
+  }
+  try {
+    if (window.LAStars) {
+      LAStars.recordPlay('sound-match-picture');
+      LAStars.saveFromAccuracy('sound-match-picture', acc);
+    }
+  } catch (e) {}
+  prepareScoreSubmit();
 }
+
+function prepareScoreSubmit() {
+  const input = document.querySelector('#playerNameInput');
+  const status = document.querySelector('#scoreSubmitStatus');
+  const btn = document.querySelector('#submitScoreBtn');
+  if (!input || !btn || typeof LAScores === 'undefined') return;
+  input.value = LAScores.getPlayerName();
+  status.textContent = '';
+  status.className = 'score-submit-status';
+  btn.disabled = false;
+  btn.textContent = 'Save score';
+}
+
+function submitScore() {
+  const input = document.querySelector('#playerNameInput');
+  const status = document.querySelector('#scoreSubmitStatus');
+  const btn = document.querySelector('#submitScoreBtn');
+  if (!input || !btn || typeof LAScores === 'undefined') return;
+  const name = input.value.trim();
+  if (!name) {
+    status.textContent = 'Please enter your name.';
+    status.className = 'score-submit-status is-err';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  status.textContent = '';
+  status.className = 'score-submit-status';
+  LAScores.submit({
+    gameId: 'sound-match-picture',
+    gameName: 'Sound Match Picture',
+    score: score,
+    maxScore: prompts.length,
+    name: name
+  }).then((res) => {
+    if (res.ok) {
+      status.textContent = 'Score saved!';
+      status.className = 'score-submit-status is-ok';
+      btn.textContent = 'Saved';
+    } else {
+      status.textContent = res.error || 'Could not save. Check Firebase rules.';
+      status.className = 'score-submit-status is-err';
+      btn.disabled = false;
+      btn.textContent = 'Save score';
+    }
+  });
+}
+
+document.querySelector('#submitScoreBtn')?.addEventListener('click', submitScore);
+
 
 function startGame() {
   stopCurrentAudio();

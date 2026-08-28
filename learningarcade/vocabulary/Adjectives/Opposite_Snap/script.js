@@ -102,8 +102,74 @@
       pair.textContent = `${round.word} ↔ ${round.opposite}`;
       recap.appendChild(pair);
     });
+    // Stars: streak-aware score thresholds (max ~ roughly 120+)
+    const stars = state.score >= 120 ? 3 : state.score >= 80 ? 2 : state.score >= 40 ? 1 : 1;
+    const starRow = $('finishStars');
+    if (starRow) {
+      starRow.innerHTML = [1, 2, 3].map((n) =>
+        `<span class="star ${n <= stars ? 'is-filled' : ''}" data-n="${n}">${n <= stars ? '★' : '☆'}</span>`
+      ).join('');
+    }
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay('opposite-snap');
+        LAStars.save('opposite-snap', stars);
+      }
+    } catch (e) {}
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    prepareScoreSubmit();
   }
+
+  function prepareScoreSubmit() {
+    const input = $('playerNameInput');
+    const status = $('scoreSubmitStatus');
+    const btn = $('submitScoreBtn');
+    if (!input || !btn || typeof LAScores === 'undefined') return;
+    input.value = LAScores.getPlayerName();
+    status.textContent = '';
+    status.className = 'score-submit-status';
+    btn.disabled = false;
+    btn.textContent = 'Save score';
+  }
+
+  function submitScore() {
+    const input = $('playerNameInput');
+    const status = $('scoreSubmitStatus');
+    const btn = $('submitScoreBtn');
+    if (!input || !btn || typeof LAScores === 'undefined') return;
+    const name = input.value.trim();
+    if (!name) {
+      status.textContent = 'Please enter your name.';
+      status.className = 'score-submit-status is-err';
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    status.textContent = '';
+    status.className = 'score-submit-status';
+    LAScores.submit({
+      gameId: 'opposite-snap',
+      gameName: 'Opposite Snap',
+      score: state.score,
+      name: name
+    }).then((res) => {
+      if (res.ok) {
+        status.textContent = 'Score saved!';
+        status.className = 'score-submit-status is-ok';
+        btn.textContent = 'Saved';
+      } else {
+        status.textContent = res.error || 'Could not save. Check Firebase rules.';
+        status.className = 'score-submit-status is-err';
+        btn.disabled = false;
+        btn.textContent = 'Save score';
+      }
+    });
+  }
+
+  if ($('submitScoreBtn')) {
+    $('submitScoreBtn').addEventListener('click', submitScore);
+  }
+
   $('startButton').addEventListener('click', start);
   $('againButton').addEventListener('click', start);
   $('homeButton').addEventListener('click', () => {

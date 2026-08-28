@@ -1296,7 +1296,55 @@
 
   <!-- Bottom floating nav only (does not import main site styles) -->
   <style>
-    .arcade-header-bar {
+    
+    /* Profile icon top-left */
+    .profile-fab {
+      position: fixed;
+      top: max(14px, env(safe-area-inset-top, 0px));
+      left: max(12px, env(safe-area-inset-left, 0px));
+      z-index: 10000;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(8, 10, 20, 0.85);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+      color: #f1f5f9;
+      text-decoration: none;
+      font-size: 1.25rem;
+      line-height: 1;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .profile-fab:hover {
+      transform: scale(1.06);
+      background: rgba(105, 55, 216, 0.9);
+    }
+    html[data-theme="light"] .profile-fab {
+      background: rgba(255, 255, 255, 0.92);
+      border-color: rgba(15, 23, 42, 0.1);
+      color: #1e1b4b;
+    }
+    html[data-theme="light"] .profile-fab:hover {
+      background: #6937d8;
+      color: #fff;
+    }
+    @media (max-width: 700px) {
+      .profile-fab {
+        top: max(10px, env(safe-area-inset-top, 0px));
+        left: max(10px, env(safe-area-inset-left, 0px));
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+      }
+    }
+.arcade-header-bar {
       position: relative;
       z-index: 100;
       height: 0;
@@ -1401,14 +1449,16 @@
   <!-- =================================
        FLOATING ARCADE-STYLE HEADER
   ================================== -->
-  <header class="arcade-header-bar">
-    <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+  <a href="profile/" class="profile-fab" aria-label="My Profile" title="My Profile">👤</a>
+<header class="arcade-header-bar">
+<nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
       <a href="../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
-      <a href="./" class="nav-link active" aria-current="page" aria-label="Learning Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Learning Arcade</span></a>
+      <a href="./" class="nav-link active" aria-current="page" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
       <a href="../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-      <a href="../about/" class="nav-link" aria-label="About" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">About</span></a>
+      <a href="leaderboard/" class="nav-link" aria-label="Leaderboard" data-icon="🏆"><span class="nav-ico" aria-hidden="true">🏆</span><span class="nav-text">Leaderboard</span></a>
+      <a href="../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
     </nav>
-  </header>
+</header>
 
 
 
