@@ -357,7 +357,7 @@ body.dark-mode .dialogue-card { background: rgba(255,255,255,.04); }
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Game screen: compact vertical stack */
+  /* Game screen: compact vertical stack — no page scroll */
   #gameScreen:not([hidden]) {
     overflow: hidden;
   }
@@ -365,58 +365,62 @@ body.dark-mode .dialogue-card { background: rgba(255,255,255,.04); }
   .stats-bar {
     flex-shrink: 0;
     gap: 6px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
   .stat {
-    padding: 6px 4px;
+    padding: 5px 4px;
     border-radius: 10px;
   }
   .stat-label { font-size: .55rem; }
-  .stat strong { font-size: .95rem; }
+  .stat strong { font-size: .9rem; }
 
+  /* Smaller image so dialogue + word bank fit without scrolling */
   .scene-wrap {
     flex-shrink: 0;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     border-radius: 12px;
-    max-height: 28vh;
+    max-height: 18vh;
   }
   .scene-img {
     width: 100%;
     height: 100%;
-    max-height: 28vh;
+    max-height: 18vh;
     object-fit: cover;
     object-position: center;
   }
 
+  /* Dialogue text: fixed, no internal scroll */
   .dialogue-card {
-    flex: 1;
+    flex: 0 1 auto;
     min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    margin-bottom: 8px;
-    padding: 10px 12px;
+    overflow: hidden;
+    margin-bottom: 4px;
+    padding: 8px 10px;
     border-radius: 12px;
   }
 
   .line {
-    grid-template-columns: 52px 1fr;
-    gap: 6px;
-    margin-bottom: 8px;
-    font-size: .88rem;
-    line-height: 1.4;
-  }
-  .speaker { font-size: .75rem; }
-  .blank {
-    min-width: 58px;
-    min-height: 26px;
-    padding: 1px 8px;
+    grid-template-columns: 48px 1fr;
+    gap: 4px 6px;
+    margin-bottom: 5px;
     font-size: .82rem;
+    line-height: 1.35;
+  }
+  .line:last-child { margin-bottom: 0; }
+  .speaker { font-size: .7rem; }
+  .blank {
+    min-width: 52px;
+    min-height: 24px;
+    padding: 1px 6px;
+    font-size: .78rem;
     border-radius: 8px;
   }
 
+  /* Push word bank + check toward the bottom */
   .instruction {
     flex-shrink: 0;
-    font-size: .8rem;
+    font-size: .75rem;
+    margin-top: auto; /* sits just above word bank at bottom */
     margin-bottom: 6px;
   }
 
@@ -426,7 +430,7 @@ body.dark-mode .dialogue-card { background: rgba(255,255,255,.04); }
     margin-bottom: 8px;
   }
   .word-chip {
-    min-height: 40px;
+    min-height: 42px;
     padding: 8px 14px;
     font-size: .92rem;
     border-radius: 12px;
@@ -434,9 +438,9 @@ body.dark-mode .dialogue-card { background: rgba(255,255,255,.04); }
 
   .feedback {
     flex-shrink: 0;
-    min-height: 20px;
-    font-size: .88rem;
-    margin-bottom: 8px;
+    min-height: 18px;
+    font-size: .82rem;
+    margin-bottom: 6px;
   }
 
   #checkBtn {
@@ -454,7 +458,8 @@ body.dark-mode .dialogue-card { background: rgba(255,255,255,.04); }
 
 @media (max-width: 380px) {
   .scene-wrap,
-  .scene-img { max-height: 22vh; }
-  .line { font-size: .84rem; }
-  .blank { min-width: 52px; font-size: .78rem; }
+  .scene-img { max-height: 15vh; }
+  .line { font-size: .78rem; }
+  .blank { min-width: 48px; font-size: .74rem; }
+  .word-chip { min-height: 40px; font-size: .88rem; }
 }
