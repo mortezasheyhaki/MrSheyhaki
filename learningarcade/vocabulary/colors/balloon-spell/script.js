@@ -43,6 +43,41 @@
   let locked = false; // after reveal or word complete
   let currentAudio = null;
   let isDesktop = window.matchMedia("(pointer: fine)").matches;
+  let voiceMode = false;
+  let recognition = null;
+  let voiceSupported = false;
+  let lastVoiceLetter = "";
+  let lastVoiceAt = 0;
+
+  // Spoken letter aliases → single uppercase letter
+  const LETTER_ALIASES = {
+    a: "A", ay: "A", hey: "A",
+    b: "B", be: "B", bee: "B",
+    c: "C", see: "C", sea: "C",
+    d: "D", dee: "D",
+    e: "E", ee: "E",
+    f: "F", ef: "F", eff: "F",
+    g: "G", gee: "G",
+    h: "H", aitch: "H", haitch: "H",
+    i: "I", eye: "I",
+    j: "J", jay: "J",
+    k: "K", kay: "K",
+    l: "L", el: "L", ell: "L",
+    m: "M", em: "M",
+    n: "N", en: "N",
+    o: "O", oh: "O",
+    p: "P", pee: "P",
+    q: "Q", cue: "Q", queue: "Q",
+    r: "R", ar: "R", are: "R",
+    s: "S", ess: "S", es: "S",
+    t: "T", tee: "T",
+    u: "U", you: "U", yu: "U",
+    v: "V", vee: "V",
+    w: "W", doubleu: "W", "double u": "W", doubleyou: "W",
+    x: "X", ex: "X", eks: "X",
+    y: "Y", why: "Y", wye: "Y",
+    z: "Z", zee: "Z", zed: "Z"
+  };
 
   const $ = (id) => document.getElementById(id);
   const startScreen = $("startScreen");
@@ -64,6 +99,9 @@
   const aim = $("aim");
   const againBtn = $("againBtn");
   const backBtn = $("backBtn");
+  const voiceBtn = $("voiceBtn");
+  const voiceStatus = $("voiceStatus");
+  const voiceStatusText = $("voiceStatusText");
 
   function shuffle(a) {
     a = a.slice();
@@ -119,18 +157,24 @@
   }
 
   function buildLetterPool(word) {
+    // Unique letters only — at most one balloon per letter (better for voice)
     const needed = word.toUpperCase().split("");
-    const pool = needed.slice();
-    // Add distractors: about 40% extra, min 2 max 5
-    const extraCount = Math.min(5, Math.max(2, Math.ceil(word.length * 0.5)));
+    const uniqueNeeded = [];
+    const seen = {};
+    needed.forEach((ch) => {
+      if (!seen[ch]) {
+        seen[ch] = true;
+        uniqueNeeded.push(ch);
+      }
+    });
+    const pool = uniqueNeeded.slice();
+    // Distractors: unique letters not already in the word
+    const extraCount = Math.min(5, Math.max(2, Math.ceil(uniqueNeeded.length * 0.5)));
     let guard = 0;
-    while (pool.length < needed.length + extraCount && guard < 40) {
+    while (pool.length < uniqueNeeded.length + extraCount && guard < 60) {
       guard++;
       const ch = EXTRA_LETTERS[Math.floor(Math.random() * EXTRA_LETTERS.length)];
-      // avoid flooding with same letter beyond needed+1
-      const countInPool = pool.filter((c) => c === ch).length;
-      const countNeeded = needed.filter((c) => c === ch).length;
-      if (countInPool <= countNeeded) pool.push(ch);
+      if (pool.indexOf(ch) === -1) pool.push(ch);
     }
     return shuffle(pool);
   }
@@ -143,6 +187,47 @@
       s.textContent = spelled[i] || "";
       slots.appendChild(s);
     }
+  }
+
+  function spawnOneBalloon(letter) {
+    if (locked) return;
+    const rect = stage.getBoundingClientRect();
+    const w = rect.width || 300;
+    const h = (rect.height || 400) * 0.72;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "balloon";
+    btn.setAttribute("aria-label", "Letter " + letter);
+    const color = BALLOON_COLORS[Math.floor(Math.random() * BALLOON_COLORS.length)];
+    btn.innerHTML =
+      '<div class="balloon-body" style="background:' + color + ';border-bottom-color:' + color + '"></div>' +
+      '<div class="balloon-string"></div>';
+    btn.querySelector(".balloon-body").textContent = letter;
+    sky.appendChild(btn);
+    const x = 40 + Math.random() * Math.max(20, w - 80);
+    const y = 40 + Math.random() * Math.max(40, h - 80);
+    const b = {
+      el: btn,
+      letter: letter,
+      x: x,
+      y: y,
+      vx: (Math.random() * 0.6 + 0.2) * (Math.random() < 0.5 ? -1 : 1),
+      vy: -(Math.random() * 0.35 + 0.15),
+      alive: true,
+      phase: Math.random() * Math.PI * 2
+    };
+    btn.style.left = b.x + "px";
+    btn.style.top = b.y + "px";
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onPop(b);
+    });
+    btn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      onPop(b);
+    }, { passive: false });
+    balloons.push(b);
   }
 
   function spawnBalloons(word) {
@@ -295,7 +380,165 @@
     setTimeout(() => burst.remove(), 500);
   }
 
-  function expectedLetter(word) {
+  // ---------- Voice recognition ----------
+  function parseSpokenLetter(transcript) {
+    const raw = (transcript || "").toLowerCase().trim();
+    if (!raw) return null;
+    // Prefer whole-phrase match, then tokens
+    const cleaned = raw.replace(/[.,!?;:'"]/g, " ").replace(/\s+/g, " ").trim();
+    if (LETTER_ALIASES[cleaned]) return LETTER_ALIASES[cleaned];
+    // single character
+    if (cleaned.length === 1 && /[a-z]/i.test(cleaned)) return cleaned.toUpperCase();
+    // try each word / last word
+    const words = cleaned.split(" ");
+    for (const w of words) {
+      if (LETTER_ALIASES[w]) return LETTER_ALIASES[w];
+      if (w.length === 1 && /[a-z]/i.test(w)) return w.toUpperCase();
+    }
+    // "letter A" / "the letter b"
+    const m = cleaned.match(/(?:letter|say|pop)\s+([a-z])/i);
+    if (m) return m[1].toUpperCase();
+    return null;
+  }
+
+  function findBalloonByLetter(letter) {
+    if (!letter) return null;
+    // Prefer the expected next letter match if any; else first alive with that letter
+    const need = deck[index] ? expectedLetter(deck[index].word.toUpperCase()) : null;
+    let candidate = null;
+    for (const b of balloons) {
+      if (!b.alive) continue;
+      if (b.letter !== letter) continue;
+      if (need && b.letter === need) return b;
+      if (!candidate) candidate = b;
+    }
+    return candidate;
+  }
+
+  function onVoiceResult(transcript) {
+    if (!voiceMode || locked || playScreen.hidden) return;
+    const letter = parseSpokenLetter(transcript);
+    if (!letter) return;
+    // Debounce same letter within 700ms
+    const now = performance.now();
+    if (letter === lastVoiceLetter && now - lastVoiceAt < 700) return;
+    lastVoiceLetter = letter;
+    lastVoiceAt = now;
+
+    if (voiceStatusText) {
+      voiceStatusText.textContent = "Heard: “" + letter + "”";
+    }
+
+    const b = findBalloonByLetter(letter);
+    if (b) {
+      onPop(b);
+    } else {
+      // No balloon with that letter — gentle feedback, no life loss
+      showFeedback("info", "No “" + letter + "” balloon");
+      setTimeout(() => {
+        if (voiceMode && !locked) hideFeedback();
+      }, 900);
+    }
+    // Restore listening hint shortly
+    setTimeout(() => {
+      if (voiceMode && voiceStatusText && !locked) {
+        voiceStatusText.textContent = "Listening… say a letter";
+      }
+    }, 1000);
+  }
+
+  function initRecognition() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      voiceSupported = false;
+      return;
+    }
+    voiceSupported = true;
+    recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+    recognition.maxAlternatives = 3;
+
+    recognition.onresult = (event) => {
+      // Prefer final results; fall back to latest interim
+      let best = "";
+      let isFinal = false;
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const res = event.results[i];
+        const text = (res[0] && res[0].transcript) || "";
+        if (res.isFinal) {
+          best = text;
+          isFinal = true;
+        } else if (!isFinal) {
+          best = text;
+        }
+      }
+      if (best) onVoiceResult(best);
+    };
+
+    recognition.onerror = (event) => {
+      const err = event.error || "";
+      if (err === "not-allowed" || err === "service-not-allowed") {
+        stopVoiceMode();
+        showFeedback("error", "Microphone blocked — allow mic access");
+      } else if (err === "no-speech") {
+        // ignore, will restart
+      } else if (err !== "aborted") {
+        console.warn("SpeechRecognition error:", err);
+      }
+    };
+
+    recognition.onend = () => {
+      // Auto-restart while voice mode is on and game is playable
+      if (voiceMode && !playScreen.hidden && !locked) {
+        try {
+          recognition.start();
+        } catch (e) {}
+      }
+    };
+  }
+
+  function startVoiceMode() {
+    if (!voiceSupported) {
+      showFeedback("error", "Voice not supported in this browser");
+      return;
+    }
+    if (!recognition) initRecognition();
+    voiceMode = true;
+    if (voiceBtn) {
+      voiceBtn.classList.add("active");
+      voiceBtn.textContent = "🎤 On";
+    }
+    if (voiceStatus) voiceStatus.hidden = false;
+    if (voiceStatusText) voiceStatusText.textContent = "Listening… say a letter";
+    try {
+      recognition.start();
+    } catch (e) {
+      // already started
+    }
+  }
+
+  function stopVoiceMode() {
+    voiceMode = false;
+    if (voiceBtn) {
+      voiceBtn.classList.remove("active");
+      voiceBtn.textContent = "🎤 Voice";
+    }
+    if (voiceStatus) voiceStatus.hidden = true;
+    if (recognition) {
+      try {
+        recognition.stop();
+      } catch (e) {}
+    }
+  }
+
+  function toggleVoiceMode() {
+    if (voiceMode) stopVoiceMode();
+    else startVoiceMode();
+  }
+
+    function expectedLetter(word) {
     return word.toUpperCase()[spelled.length] || null;
   }
 
@@ -318,6 +561,12 @@
 
       if (spelled.length === word.length) {
         onWordComplete(true);
+      } else {
+        // If this letter is still needed later in the word, spawn a new unique balloon for it
+        const stillNeeded = word.slice(spelled.length);
+        if (stillNeeded.indexOf(b.letter) !== -1) {
+          spawnOneBalloon(b.letter);
+        }
       }
     } else {
       // wrong
@@ -401,9 +650,20 @@
     renderSlots(item.word);
     spawnBalloons(item.word);
     playAudio(item.id);
+
+    // Resume listening after brief audio if voice mode is on
+    if (voiceMode && recognition) {
+      setTimeout(() => {
+        if (voiceMode && !locked) {
+          try { recognition.start(); } catch (e) {}
+          if (voiceStatusText) voiceStatusText.textContent = "Listening… say a letter";
+        }
+      }, 400);
+    }
   }
 
   function finish() {
+    stopVoiceMode();
     clearBalloons();
     const total = deck.length;
     $("endTitle").textContent = "Well done!";
@@ -442,6 +702,16 @@
     });
   }
 
+  initRecognition();
+  if (voiceBtn) {
+    if (!voiceSupported) {
+      voiceBtn.disabled = true;
+      voiceBtn.title = "Voice not supported in this browser";
+      voiceBtn.style.opacity = "0.45";
+    }
+    voiceBtn.addEventListener("click", toggleVoiceMode);
+  }
+
   startBtn.addEventListener("click", startGame);
   hearBtn.addEventListener("click", () => {
     if (deck[index]) playAudio(deck[index].id);
@@ -453,6 +723,7 @@
     muteBtn.textContent = muted ? "🔇 Unmute" : "🔊 Mute";
   });
   againBtn.addEventListener("click", () => {
+    stopVoiceMode();
     showScreen("start");
   });
 
