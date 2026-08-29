@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>Listen & Match | Unit 9A | Mr. Sheyhaki</title>
+  <meta name="description" content="Listen to four people talking about last night’s dinner. Match pictures and speakers. Unit 9A – American English File 1.">
+  <link rel="stylesheet" href="/theme.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --bg: #f4f5fb;
+      --bg-card: #ffffff;
+      --bg-soft: #f1f5f9;
+      --text: #20243a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --border-hover: #a5b4fc;
+      --accent: #6366f1;
+      --accent-soft: #eef2ff;
+      --accent-text: #4338ca;
+      --success: #22c55e;
+      --success-soft: #f0fdf4;
+      --success-text: #15803d;
+      --danger: #ef4444;
+      --danger-soft: #fef2f2;
+      --shadow: rgba(32, 38, 54, 0.06);
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0f1117;
+      --bg-card: #181b24;
+      --bg-soft: #222633;
+      --text: #f4f6fb;
+      --text-muted: #aeb6c8;
+      --border: #2b3040;
+      --border-hover: #7c6cf0;
+      --accent: #818cf8;
+      --accent-soft: #1e1b4b;
+      --accent-text: #c7d2fe;
+      --success: #34d399;
+      --success-soft: #0f2a18;
+      --success-text: #6ee7b7;
+      --danger: #f87171;
+      --danger-soft: #2a1212;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      background: var(--bg) !important;
+      color: var(--text) !important;
+    }
+
+    .game {
+      background:
+        radial-gradient(circle at 50% 0%, rgba(108, 92, 231, 0.08), transparent 45%),
+        var(--bg) !important;
+    }
+
+    .game-title { color: var(--text) !important; }
+    .stat-value { color: var(--text) !important; }
+    .stat-label { color: var(--text-muted) !important; }
+    .instruction { color: var(--text-muted) !important; }
+
+    .back-btn {
+      background: var(--bg-card) !important;
+      border-color: var(--border) !important;
+      color: var(--text) !important;
+    }
+
+    .audio-wrap {
+      background: var(--bg-card) !important;
+      border-color: var(--border) !important;
+    }
+    .audio-label { color: var(--text) !important; }
+    .audio-hint { color: var(--text-muted) !important; }
+
+    .part-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .part-tab {
+      flex: 1;
+      min-width: 120px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .part-tab.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent-text);
+    }
+    .part-tab.done {
+      border-color: var(--success);
+      background: var(--success-soft);
+      color: var(--success-text);
+    }
+    .part-tab:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .match-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (min-width: 640px) {
+      .match-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .pic-card, .desc-card, .who-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: 0.15s;
+      text-align: left;
+      color: var(--text);
+    }
+    .pic-card {
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .pic-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      background: var(--bg-soft);
+    }
+    @media (min-width: 640px) {
+      .pic-card img { height: 160px; }
+    }
+    .pic-card .pic-meta {
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+    }
+    .pic-card .pic-letter { margin-right: 0; }
+
+    .pic-card:hover, .desc-card:hover, .who-card:hover {
+      border-color: var(--border-hover);
+    }
+    .pic-card.selected, .desc-card.selected, .who-card.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.25);
+    }
+    .pic-card.matched, .desc-card.matched, .who-card.matched {
+      border-color: var(--success);
+      background: var(--success-soft);
+      pointer-events: none;
+    }
+    .pic-card.wrong, .desc-card.wrong, .who-card.wrong {
+      border-color: var(--danger);
+      background: var(--danger-soft);
+      animation: shake 0.35s;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    .pic-letter {
+      display: inline-flex;
+      width: 28px; height: 28px;
+      align-items: center; justify-content: center;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-right: 8px;
+    }
+    .pic-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    .desc-num {
+      display: inline-flex;
+      width: 26px; height: 26px;
+      align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: var(--bg-soft);
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-right: 8px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .desc-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+      line-height: 1.4;
+    }
+
+    .who-speaker {
+      display: inline-flex;
+      width: 32px; height: 32px;
+      align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+    .who-card {
+      display: flex;
+      align-items: center;
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin: 10px 0 4px;
+    }
+    .progress-dots span {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+    .progress-dots span.done { background: var(--success); }
+    .progress-dots span.current { background: var(--accent); }
+
+    .check-btn {
+      margin-top: 16px;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .check-btn:disabled {
+      background: var(--border);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    h3 {
+      color: var(--text-muted) !important;
+    }
+
+    .feedback {
+      color: var(--text);
+    }
+    .feedback.success {
+      background: var(--success-soft) !important;
+      color: var(--success-text) !important;
+    }
+    .feedback.error {
+      background: var(--danger-soft) !important;
+      color: var(--danger) !important;
+    }
+    .feedback.info {
+      background: var(--bg-soft) !important;
+      color: var(--text-muted) !important;
+    }
+
+    .overlay-card {
+      background: var(--bg-card) !important;
+    }
+    .overlay-card h2 { color: var(--text) !important; }
+    .overlay-card p { color: var(--text-muted) !important; }
+  </style>
+</head>
+<body>
+  <div class="game" id="app">
+
+    <header class="top-bar">
+      <a href="../" class="back-btn" id="backBtn" aria-label="Back to games">←</a>
+      <div class="top-center">
+        <span class="unit-label">Unit 9A</span>
+        <span class="game-title">Listen & Match</span>
+      </div>
+      <div class="top-stats" style="align-items:center;gap:10px;">
+        <div class="stat">
+          <span class="stat-label">Part</span>
+          <span class="stat-value" id="partNum">1</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Matched</span>
+          <span class="stat-value" id="matchedCount">0/4</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+
+      <div class="part-tabs">
+        <button class="part-tab active" id="tab1" type="button">Part 1 · Pictures</button>
+        <button class="part-tab" id="tab2" type="button" disabled>Part 2 · Who says it?</button>
+      </div>
+
+      <p class="instruction" id="instruction">
+        Listen to the four people. Match each photo (A–D) to the correct description.
+      </p>
+
+      <!-- Audio -->
+      <div class="audio-wrap">
+        <button class="play-btn" id="playBtn" aria-label="Play audio" type="button">
+          <span class="play-icon" id="playIcon">▶</span>
+          <div class="visualizer" id="visualizer" hidden>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </button>
+        <div class="audio-info">
+          <span class="audio-label">Audio · 9.04</span>
+          <span class="audio-hint" id="audioHint">Tap to play · unlimited</span>
+        </div>
+      </div>
+
+      <!-- PART 1 -->
+      <section id="part1" class="part-panel">
+        <div class="progress-dots" id="dots1">
+          <span class="current"></span><span></span><span></span><span></span>
+        </div>
+
+        <h3 style="margin:12px 0 8px;font-size:0.95rem;color:#475569;">Photos</h3>
+        <div class="match-grid" id="picsGrid">
+          <!-- filled by JS -->
+        </div>
+
+        <h3 style="margin:18px 0 8px;font-size:0.95rem;color:#475569;">Descriptions — tap a photo, then its description</h3>
+        <div class="match-grid" id="descsGrid">
+          <!-- filled by JS -->
+        </div>
+      </section>
+
+      <!-- PART 2 -->
+      <section id="part2" class="part-panel" hidden>
+        <div class="progress-dots" id="dots2">
+          <span></span><span></span><span></span><span></span>
+        </div>
+
+        <h3 style="margin:12px 0 8px;font-size:0.95rem;color:#475569;">What do they talk about? Match speaker → topic</h3>
+        <div class="match-grid" id="speakersGrid">
+          <!-- filled by JS -->
+        </div>
+        <h3 style="margin:18px 0 8px;font-size:0.95rem;color:#475569;">Topics</h3>
+        <div class="match-grid" id="topicsGrid">
+          <!-- filled by JS -->
+        </div>
+      </section>
+
+      <div class="feedback" id="feedback" hidden></div>
+
+      <button class="check-btn" id="nextPartBtn" type="button" hidden>
+        Continue to Part 2 →
+      </button>
+
+    </main>
+
+    <!-- Success overlay -->
+    <div class="overlay" id="successOverlay">
+      <div class="overlay-card">
+        <div class="overlay-icon">✓</div>
+        <h2>Well done!</h2>
+        <p id="successMsg">You matched all the pictures and speakers.</p>
+        <button class="continue-btn" id="successContinue" type="button">Continue</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/theme.js"></script>
+  <script src="script.js"></script>
+
+<script>
+(function(){
+  var btn = document.getElementById("backBtn");
+  if (!btn) return;
+  btn.addEventListener("click", function(e){
+    // If we were opened from Unit 9A (or anywhere else), go back in history
+    if (window.history.length > 1) {
+      e.preventDefault();
+      window.history.back();
+    }
+    // else fall through to href="../"
+  });
+})();
+</script>
+
+</body>
+</html>

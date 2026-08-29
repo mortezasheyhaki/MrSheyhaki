@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f5fb">
+  <title>Say Food | Vocabulary | Mr. Sheyhaki</title>
+  <meta name="description" content="Practice saying 45 food words with voice recognition. Look at the picture and say the word.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game" id="app">
+
+    <header class="top-bar">
+      <a href="../" class="back-btn" id="backBtn" aria-label="Back">←</a>
+      <div class="top-center">
+        <span class="unit-label">Vocabulary · Food</span>
+        <span class="game-title">Say Food</span>
+      </div>
+      <div class="top-actions">
+        <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle theme">🌙</button>
+      </div>
+    </header>
+
+    <!-- START -->
+    <section class="screen" id="startScreen">
+      <div class="hero-icon" aria-hidden="true">🎤</div>
+      <h1>Say Food</h1>
+      <p class="lead">Look at the picture and say the food word out loud.</p>
+      <ul class="feature-list">
+        <li>45 food words from Unit 9A</li>
+        <li>Voice recognition (Chrome / Edge / Safari)</li>
+        <li>Hear the model answer anytime</li>
+      </ul>
+      <p class="mic-note" id="micNote">Needs a microphone and HTTPS (or localhost).</p>
+      <button class="primary-btn" id="startBtn" type="button">START ▶</button>
+    </section>
+
+    <!-- PLAY -->
+    <section class="screen" id="playScreen" hidden>
+      <div class="stats-bar">
+        <div class="stat">
+          <span class="stat-label">Word</span>
+          <strong id="progressText">1 / 45</strong>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Correct</span>
+          <strong id="scoreText">0</strong>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Tries</span>
+          <strong id="triesText">3</strong>
+        </div>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="card" id="foodCard">
+        <img id="foodImg" src="" alt="Food" />
+        <p class="prompt" id="promptText">Say the food word</p>
+        <p class="heard" id="heardText" hidden></p>
+      </div>
+
+      <div class="actions">
+        <button class="mic-btn" id="micBtn" type="button" aria-label="Hold to speak">
+          <span class="mic-icon" id="micIcon">🎤</span>
+          <span class="mic-label" id="micLabel">Tap & speak</span>
+        </button>
+        <button class="icon-btn" id="hearBtn" type="button" title="Hear the answer" aria-label="Hear model">🔊</button>
+        <button class="icon-btn" id="skipBtn" type="button" title="Skip" aria-label="Skip">⏭</button>
+      </div>
+
+      <div class="feedback" id="feedback" hidden></div>
+    </section>
+
+    <!-- END -->
+    <section class="screen" id="endScreen" hidden>
+      <div class="hero-icon" aria-hidden="true">🏆</div>
+      <h1 id="endTitle">Well done!</h1>
+      <p class="lead" id="endSummary">You practiced all 45 words.</p>
+      <div class="end-stats">
+        <div><span class="stat-label">Correct</span><strong id="finalScore">0</strong></div>
+        <div><span class="stat-label">Accuracy</span><strong id="finalAcc">0%</strong></div>
+      </div>
+      <button class="primary-btn" id="againBtn" type="button">Play again</button>
+      <a class="secondary-link" href="../">Back to Food games</a>
+    </section>
+
+  </div>
+  <script src="script.js"></script>
+
+<script>
+(function(){
+  var btn = document.getElementById("backBtn");
+  if (!btn) return;
+  btn.addEventListener("click", function(e){
+    if (window.history.length > 1) {
+      e.preventDefault();
+      window.history.back();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -74,5 +74,26 @@
 <script src="../../../la-stars.js"></script>
 <script src="script.js"></script>
 <script src="../../../../theme.js"></script>
+
+<script>
+(function () {
+  function wireBack(el) {
+    if (!el) return;
+    el.addEventListener("click", function (e) {
+      if (window.history.length > 1) {
+        e.preventDefault();
+        window.history.back();
+      }
+    });
+  }
+  // Common patterns
+  wireBack(document.getElementById("headerBack"));
+  wireBack(document.querySelector(".back-btn"));
+  wireBack(document.querySelector(".back-button"));
+  wireBack(document.querySelector("a.back-square"));
+  document.querySelectorAll('a[href="../"][aria-label="Back"], a[href="../"].back-button, a[href="../"].back-btn, a.icon-square-btn[href="../"]').forEach(wireBack);
+})();
+</script>
+
 </body>
 </html>
