@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a1628">
+  <title>A · An · Some | Food | Mr. Sheyhaki</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../../../../theme.css">
+</head>
+<body class="cabinet-body">
+
+  <div class="cabinet-shell" id="app">
+
+    <header class="cabinet-topbar">
+      <a href="../" class="back-btn" aria-label="Back" title="Back">
+        <span class="back-arrow" aria-hidden="true">←</span>
+      </a>
+
+      <div class="cabinet-marquee">
+        <span class="cabinet-marquee__eyebrow">VOCABULARY · ELEMENTARY</span>
+        <h1 class="cabinet-marquee__title">A · An · Some</h1>
+      </div>
+
+      <div class="hud-stats">
+        <div class="hud-item">
+          <span class="hud-label">Score</span>
+          <span class="hud-value" id="score">0</span>
+        </div>
+        <div class="hud-item hud-time">
+          <span class="hud-label">Time</span>
+          <span class="hud-value" id="timer">90</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Combo</span>
+          <span class="hud-value" id="combo">0x</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressFill" style="width: 0%;"></div>
+    </div>
+
+    <main class="swipe-area" id="gameScreen">
+
+      <div class="targets">
+        <div class="target target-some" id="targetSome" data-answer="some">
+          <span class="target-dir">↑</span>
+          <span class="target-label">SOME</span>
+        </div>
+        <div class="target target-a" id="targetA" data-answer="a">
+          <span class="target-dir">←</span>
+          <span class="target-label">A</span>
+        </div>
+        <div class="target target-an" id="targetAn" data-answer="an">
+          <span class="target-dir">→</span>
+          <span class="target-label">AN</span>
+        </div>
+      </div>
+
+      <div class="card-area" id="cardArea">
+        <div class="swipe-card" id="swipeCard" role="button" tabindex="0" aria-label="Send the word to a, an, or some">
+          <span class="word" id="word">—</span>
+        </div>
+      </div>
+
+      <div class="joystick-panel" aria-hidden="true">
+        <div class="joystick-base">
+          <div class="joystick-stick" id="joystickStick">
+            <div class="joystick-ball"></div>
+          </div>
+          <div class="joy-label joy-up">SOME</div>
+          <div class="joy-label joy-left">A</div>
+          <div class="joy-label joy-right">AN</div>
+        </div>
+        <p class="joystick-hint">Drag the stick to send the card</p>
+      </div>
+
+      <p class="feedback" id="feedback" aria-live="polite"></p>
+      <p class="sr-only" id="status" aria-live="polite"></p>
+    </main>
+
+    <div class="overlay" id="startOverlay">
+      <div class="overlay-content arcade-panel">
+        <div class="overlay-title">A · An · Some</div>
+        <p class="overlay-text">
+          Send each food word to the correct article.
+        </p>
+        <div class="direction-guide">
+          <span><strong>↑</strong> SOME</span>
+          <span><strong>←</strong> A</span>
+          <span><strong>→</strong> AN</span>
+        </div>
+        <button type="button" class="start-button" id="startBtn">START GAME</button>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="endModal">
+      <div class="overlay-content arcade-panel">
+        <div class="overlay-title" id="resultIcon">🏆</div>
+        <h2 id="endTitle">Excellent!</h2>
+        <p class="overlay-text" id="endMessage">Great job!</p>
+        <div class="result-row">
+          <div>
+            <span>Score</span>
+            <strong id="finalScore">0</strong>
+          </div>
+          <div>
+            <span>Accuracy</span>
+            <strong id="accuracy">0%</strong>
+          </div>
+          <div>
+            <span>Best Combo</span>
+            <strong id="bestCombo">0x</strong>
+          </div>
+        </div>
+        <div class="end-stars game-stars" data-game="vocab-food-a-an-some" aria-label="Progress stars">
+          <span class="star" data-n="1">☆</span>
+          <span class="star" data-n="2">☆</span>
+          <span class="star" data-n="3">☆</span>
+        </div>
+        <button type="button" class="start-button" id="playAgain">PLAY AGAIN</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../../../la-stars.js"></script>
+  <script src="script.js"></script>
+  <script src="../../../../theme.js"></script>
+</body>
+</html>
