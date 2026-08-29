@@ -143,6 +143,15 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
   { title: "Listen & Write", url: "listen-and-write/" },
 ];
 
+// Level 1 – Unit 9A – Food games (from Vocabulary Arcade)
+COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.a.name = "What I ate yesterday";
+COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.a.games = [
+  { title: "Food Match Rush",   url: "/learningarcade/vocabulary/food/match-rush/" },
+  { title: "A · An · Some",     url: "/learningarcade/vocabulary/food/a-an-some/" },
+  { title: "Food Flashcards",   url: "/learningarcade/vocabulary/food/flashcards/" },
+  { title: "Food Memory Match", url: "/learningarcade/vocabulary/food/memory/" },
+];
+
 // Node (generator script) and browser (rendered pages) both need this object.
 if (typeof module !== "undefined" && module.exports) {
   module.exports = COURSE_DATA;
