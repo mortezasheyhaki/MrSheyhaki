@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Family Tree | Mr. Sheyhaki</title>
+  <meta name="description" content="Look at the family tree. Answer Who's …? questions.">
+  <link rel="stylesheet" href="/theme.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game" id="app">
+    <header class="top-bar">
+      <a href="../" class="back-btn" id="backBtn" aria-label="Back">←</a>
+      <div class="top-center">
+        <span class="unit-label">People &amp; Family</span>
+        <span class="game-title">Family Tree</span>
+      </div>
+      <div class="top-stats" id="topStats" hidden>
+        <div class="stat"><span class="stat-label">Q</span><strong id="qProgress">1/8</strong></div>
+        <div class="stat"><span class="stat-label">Score</span><strong id="scoreText">0</strong></div>
+      </div>
+      <div class="top-spacer" id="topSpacer"></div>
+    </header>
+
+    <main class="main">
+      <!-- START: pick a tree -->
+      <section id="startScreen" class="screen">
+        <p class="instruction">Choose a family tree. Look at the pictures and answer <strong>Who's …?</strong></p>
+        <div class="tree-picks">
+          <button type="button" class="tree-pick" data-tree="joe">
+            <img src="images/joe-tree.png" alt="Joe's Family Tree">
+            <span class="pick-label">Joe's Family Tree</span>
+          </button>
+          <button type="button" class="tree-pick" data-tree="angela">
+            <img src="images/angela-tree.png" alt="Angela's Family Tree">
+            <span class="pick-label">Angela's Family Tree</span>
+          </button>
+        </div>
+        <button type="button" class="primary-btn both-btn" id="bothBtn">Play both trees ▶</button>
+      </section>
+
+      <!-- PLAY -->
+      <section id="playScreen" class="screen" hidden>
+        <p class="instruction" id="playHint">Look at the family tree. Answer the question.</p>
+        <div class="stage">
+          <div class="tree-wrap">
+            <img src="images/joe-tree.png" alt="Family tree" id="treeImg">
+            <button type="button" class="zoom-btn" id="zoomBtn" title="Zoom">🔍</button>
+          </div>
+          <div class="q-panel">
+            <p class="tree-tag" id="treeTag">Joe's family</p>
+            <p class="question" id="questionText">Who's Will?</p>
+            <div class="options" id="options"></div>
+            <div class="feedback" id="feedback" hidden></div>
+            <div class="action-row">
+              <button type="button" class="primary-btn" id="checkBtn" disabled>Check</button>
+              <button type="button" class="primary-btn continue-btn" id="continueBtn" hidden>Continue →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="zoom-overlay" id="zoomOverlay" hidden>
+      <button type="button" class="zoom-close" id="zoomClose">✕</button>
+      <img src="images/joe-tree.png" alt="Family tree large" id="zoomImg">
+    </div>
+
+    <div class="overlay" id="endOverlay" hidden>
+      <div class="overlay-card">
+        <div class="overlay-emoji" id="endEmoji">🎉</div>
+        <h2 id="endTitle">Well done!</h2>
+        <p id="endMsg"></p>
+        <div class="end-actions">
+          <button type="button" class="end-icon-btn" id="againBtn">
+            <span class="end-ico">↻</span><span class="end-ico-label">Again</span>
+          </button>
+          <a class="end-icon-btn" href="../">
+            <span class="end-ico">←</span><span class="end-ico-label">Back</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/theme.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
