@@ -241,6 +241,7 @@
 
 <script src="../../../script.js"></script>
 <script src="../../../theme.js"></script>
+<script src="../../la-stars.js"></script>
 <script>
   // ========== IMAGE PATHS ==========
   const IMG = {
@@ -349,6 +350,34 @@
   let idleTimer = null;
   const idleKeys = ["idle_waiting", "idle_thinking", "idle_phone", "idle_sleeping", "idle_empty"];
   let idleIndex = 0;
+
+  // Progress (stars) — uses site LAStars system
+  const GAME_ID = "speaking-supermarket";
+  const orderedItems = new Set(); // unique successful orders this session
+  let playRecorded = false;
+
+  function updateStars() {
+    if (!window.LAStars) return;
+    const n = orderedItems.size;
+    // 1 unique item → 1★, 3 → 2★, 5+ → 3★
+    const stars = n >= 5 ? 3 : n >= 3 ? 2 : n >= 1 ? 1 : 0;
+    if (stars > 0) LAStars.save(GAME_ID, stars);
+  }
+
+  function recordSuccessfulOrder(itemKey) {
+    // Normalize aliases so "fries" and "french fries" count as one
+    const canonical = itemKey === "fries" ? "french fries"
+      : itemKey === "sandwiches" ? "sandwich"
+      : itemKey === "candy" ? "candies"
+      : itemKey === "chips" ? "potato chips"
+      : itemKey;
+    orderedItems.add(canonical);
+    if (!playRecorded && window.LAStars) {
+      LAStars.recordPlay(GAME_ID);
+      playRecorded = true;
+    }
+    updateStars();
+  }
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   let recognition = null;
@@ -473,6 +502,7 @@
   function handleOrder(transcript) {
     const matched = findMatch(transcript);
     if (matched) {
+      recordSuccessfulOrder(matched);
       playSequence(sequences[matched]);
     } else {
       const fails = [
