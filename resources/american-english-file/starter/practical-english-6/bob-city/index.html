@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bob's City Directions</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .site-back {
+      position: fixed; top: 10px; left: 10px; z-index: 50;
+      padding: 8px 12px; border-radius: 999px;
+      background: rgba(26,29,46,0.92); color: #ffcc00;
+      border: 1px solid #e8a838; text-decoration: none;
+      font-weight: 700; font-size: 0.85rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    }
+    .site-back:hover { filter: brightness(1.1); }
+    body { padding-top: 48px; }
+  </style>
+</head>
+<body>
+  <a href="../" id="site-back" class="site-back" aria-label="Back to Practical English 6">← PE 6</a>
+
+  <h1>BOB'S CITY DIRECTIONS</h1>
+
+  <!-- START SCREEN -->
+  <div id="start-screen" class="screen active">
+    <div class="hero">
+      <h2>Help Bob find his way!</h2>
+      <p>
+        Choose a destination, then guide Bob through the city using your voice or by typing.<br>
+        Say <b>“go straight on”</b>, <b>“turn left”</b> or <b>“turn right”</b>.
+      </p>
+      <button class="btn btn-primary" id="btn-to-dest">Choose Destination →</button>
+    </div>
+    <p class="note">Works best in Chrome. Allow the microphone when asked, or just type the commands.</p>
+  </div>
+
+  <!-- DESTINATION SCREEN -->
+  <div id="dest-screen" class="screen">
+    <h2>Where should Bob go?</h2>
+    <div class="dest-grid" id="dest-grid"></div>
+    <div class="controls-row">
+      <button class="btn btn-secondary" id="btn-back">← Back</button>
+      <button class="btn btn-primary" id="btn-start-mission" disabled>▶ Start Mission</button>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game-screen" class="screen">
+    <div id="game-container">
+      <canvas id="gameCanvas"></canvas>
+      <div id="success-overlay">
+        <h2>🎉 You made it!</h2>
+        <p id="success-text">Bob found the destination</p>
+        <button class="btn btn-primary" id="btn-again">New Mission</button>
+      </div>
+    </div>
+    <div id="ui-panel">
+      <div id="dest-label"></div>
+      <div id="status">Guide Bob with voice or text!</div>
+      <div class="controls-row">
+        <button class="btn btn-green" id="mic-btn">🎤 Start Voice</button>
+      </div>
+      <div class="text-input-group">
+        <input type="text" id="command-input" placeholder="Type: go straight on / turn left / turn right" autocomplete="off">
+        <button class="btn btn-blue" id="submit-btn">Go!</button>
+      </div>
+      <div id="help">
+        Say or type: <b>go straight ahead / go straight on</b> · <b>turn left</b> · <b>turn right</b>
+      </div>
+      <div class="controls-row">
+        <button class="btn btn-secondary" id="btn-quit">Quit to Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>
