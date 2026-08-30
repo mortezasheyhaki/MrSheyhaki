@@ -10,12 +10,44 @@
  *   LAStars.saveFromAccuracy("nouns", 85);
  *   LAStars.recordPlay("vocab-match-rush");  // +1 play
  *   LAStars.apply(); // fill stars + play counts on cards
+ *
+ * Known game IDs on mrsheyhaki.ir (Adult Learning Arcade):
+ *   Vocabulary
+ *     vocab-clothes-match, vocab-clothes-voice-hunt
+ *     vocab-colors-match, vocab-colors-dictation, vocab-colors-balloon-spell,
+ *     vocab-colors-say-color, vocab-colors-what-is-it
+ *     vocab-food-match-rush, vocab-food-a-an-some, vocab-food-memory
+ *   Grammar
+ *     be-verbs, simple-present, there-is-there-are, simple-past,
+ *     grammar-phrasal-verbs, nouns
+ *   Writing
+ *     writing-sara-daily
+ *   Speaking
+ *     speaking-supermarket
  */
 (function (global) {
   "use strict";
 
   var STARS_KEY = "laGameStars";
   var PLAYS_KEY = "laGamePlays";
+
+  /**
+   * Optional aliases: when a mini-game saves under a child id,
+   * also update the parent card id (so the skill list shows stars).
+   * Format: childId → parentId (or array of parent ids)
+   */
+  var ALIASES = {
+    // Clothes hub games → main Vocabulary card
+    "vocab-clothes-voice-hunt": "vocab-clothes-match",
+    // Colors mini-games → main Colors card
+    "vocab-colors-dictation": "vocab-colors-match",
+    "vocab-colors-balloon-spell": "vocab-colors-match",
+    "vocab-colors-say-color": "vocab-colors-match",
+    "vocab-colors-what-is-it": "vocab-colors-match",
+    // Food mini-games → main Food card
+    "vocab-food-a-an-some": "vocab-food-match-rush",
+    "vocab-food-memory": "vocab-food-match-rush"
+  };
 
   function loadJSON(key) {
     try {
@@ -39,17 +71,38 @@
     return loadJSON(PLAYS_KEY);
   }
 
+  function relatedIds(gameId) {
+    var ids = [gameId];
+    var parent = ALIASES[gameId];
+    if (parent) {
+      if (Array.isArray(parent)) {
+        parent.forEach(function (p) {
+          if (ids.indexOf(p) === -1) ids.push(p);
+        });
+      } else if (ids.indexOf(parent) === -1) {
+        ids.push(parent);
+      }
+    }
+    return ids;
+  }
+
   function save(gameId, stars) {
     if (!gameId) return 0;
     stars = Math.max(0, Math.min(3, Number(stars) || 0));
     var data = loadStars();
-    var prev = Number(data[gameId] || 0);
-    if (stars > prev) {
-      data[gameId] = stars;
-      saveJSON(STARS_KEY, data);
-      return stars;
-    }
-    return prev;
+    var ids = relatedIds(gameId);
+    var best = 0;
+    ids.forEach(function (id) {
+      var prev = Number(data[id] || 0);
+      if (stars > prev) {
+        data[id] = stars;
+        best = stars;
+      } else {
+        best = Math.max(best, prev);
+      }
+    });
+    saveJSON(STARS_KEY, data);
+    return best;
   }
 
   function saveFromAccuracy(gameId, accuracyPercent) {
@@ -71,8 +124,12 @@
   function recordPlay(gameId) {
     if (!gameId) return 0;
     var data = loadPlays();
-    var n = Number(data[gameId] || 0) + 1;
-    data[gameId] = n;
+    var ids = relatedIds(gameId);
+    var n = 0;
+    ids.forEach(function (id) {
+      n = Number(data[id] || 0) + 1;
+      data[id] = n;
+    });
     saveJSON(PLAYS_KEY, data);
     return n;
   }
@@ -80,6 +137,11 @@
   function getPlays(gameId) {
     if (!gameId) return 0;
     return Number(loadPlays()[gameId] || 0);
+  }
+
+  function getStars(gameId) {
+    if (!gameId) return 0;
+    return Math.max(0, Math.min(3, Number(loadStars()[gameId] || 0)));
   }
 
   function playLabel(n) {
@@ -122,6 +184,7 @@
   global.LAStars = {
     KEY: STARS_KEY,
     PLAYS_KEY: PLAYS_KEY,
+    ALIASES: ALIASES,
     load: loadStars,
     loadPlays: loadPlays,
     save: save,
@@ -129,6 +192,7 @@
     saveFromScore: saveFromScore,
     recordPlay: recordPlay,
     getPlays: getPlays,
+    getStars: getStars,
     playLabel: playLabel,
     apply: apply,
   };
