@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Supermarket Order | Speaking | Mr. Sheyhaki</title>
+  <meta name="description" content="Speak to the shopkeeper and order food and drinks. Practice real English conversation with voice recognition.">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../../../style.css">
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    /* Game-specific layout on top of site styles */
+    .game-page {
+      width: min(calc(100% - 32px), 760px);
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    .game-page .skill-intro-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .game-page h1 {
+      margin: 6px 0 6px;
+      font-size: clamp(28px, 4vw, 40px);
+      letter-spacing: -1px;
+      color: #202636;
+    }
+
+    .game-page .subtitle {
+      color: #687184;
+      font-size: 15px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    #scene {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #1a1a2e;
+      border-radius: 18px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 12px 36px rgba(32, 38, 54, 0.18);
+      border: 1px solid #e7e9ef;
+    }
+
+    #character {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.4s ease;
+    }
+
+    #dialogue {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.82));
+      padding: 28px 18px 16px;
+      font-size: 1.15rem;
+      text-align: center;
+      line-height: 1.35;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    #controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .game-btn {
+      background: #6937d8;
+      color: #fff;
+      border: none;
+      padding: 13px 26px;
+      font-size: 1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 700;
+      font-family: inherit;
+      transition: transform 0.15s, background 0.2s;
+    }
+
+    .game-btn:hover:not(:disabled) {
+      background: #5425b8;
+      transform: scale(1.03);
+    }
+
+    .game-btn:disabled {
+      background: #a0a6b4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .game-btn.listening {
+      background: #16a34a;
+      animation: pulse 1.1s infinite;
+    }
+
+    .game-btn.secondary {
+      background: #3b82f6;
+    }
+
+    .game-btn.secondary:hover:not(:disabled) {
+      background: #2563eb;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.5); }
+      50% { box-shadow: 0 0 0 12px rgba(22,163,74,0); }
+    }
+
+    #status {
+      margin-top: 12px;
+      font-size: 0.92rem;
+      color: #687184;
+      min-height: 1.4em;
+      text-align: center;
+    }
+
+    .hint {
+      margin-top: 18px;
+      font-size: 0.88rem;
+      color: #687184;
+      text-align: center;
+      line-height: 1.55;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hint b { color: #202636; }
+
+    #fallback {
+      margin-top: 12px;
+      display: none;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    #fallback input {
+      padding: 11px 14px;
+      border-radius: 10px;
+      border: 1px solid #e7e9ef;
+      background: #fff;
+      color: #202636;
+      font-size: 1rem;
+      width: min(240px, 100%);
+      font-family: inherit;
+    }
+
+    #fallback input:focus {
+      outline: 2px solid #6937d8;
+      outline-offset: 1px;
+    }
+
+    .items-list {
+      margin-top: 22px;
+      padding: 16px 18px;
+      background: #f8f7fc;
+      border: 1px solid #e7e9ef;
+      border-radius: 14px;
+      font-size: 0.88rem;
+      color: #687184;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .items-list strong {
+      color: #202636;
+      display: block;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<a href="../../profile/" class="profile-fab" aria-label="My Profile" title="My Profile">👤</a>
+<header class="arcade-header-bar">
+  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+    <a href="../../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+    <a href="../../" class="nav-link active" aria-current="page" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+    <a href="../../../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+    <a href="../../leaderboard/" class="nav-link" aria-label="Leaderboard" data-icon="🏆"><span class="nav-ico" aria-hidden="true">🏆</span><span class="nav-text">Leaderboard</span></a>
+    <a href="../../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+  </nav>
+</header>
+
+<main class="game-page">
+  <section class="arcade-intro skill-intro" style="padding-bottom: 8px;">
+    <div class="skill-intro-top">
+      <a class="skill-back-btn" href="../" data-back-one aria-label="Back" title="Back to Speaking"><span aria-hidden="true">←</span></a>
+      <span class="eyebrow">SPEAKING · SUPERMARKET</span>
+    </div>
+    <h1>Supermarket Order</h1>
+    <p class="subtitle">Speak to the shopkeeper and order what you want. Use your microphone or type.</p>
+  </section>
+
+  <div id="scene">
+    <img id="character" src="supermarket_images/idle_waiting.png" alt="Shopkeeper">
+    <div id="dialogue">Welcome! What would you like today?</div>
+  </div>
+
+  <div id="controls">
+    <button id="speakBtn" class="game-btn">Speak your order</button>
+    <button id="textBtn" class="game-btn secondary">Type instead</button>
+  </div>
+
+  <div id="fallback">
+    <input id="textInput" placeholder="e.g. coffee, sandwich…" autocomplete="off">
+    <button id="submitText" class="game-btn">Go</button>
+  </div>
+
+  <div id="status"></div>
+
+  <div class="hint">
+    Try saying: <b>coffee</b>, <b>tea</b>, <b>sandwich</b>, <b>french fries</b>, <b>meat</b>,
+    <b>carrots</b>, <b>cake</b>, <b>chocolate</b>, <b>potato chips</b>, <b>apples</b>…<br>
+    Best in <b>Chrome</b> or <b>Edge</b>. Press <b>Space</b> to speak.
+  </div>
+
+  <div class="items-list">
+    <strong>You can order</strong>
+    coffee · tea · sandwich · french fries · meat · carrots · lettuce · mushrooms · onions · potatoes · tomatoes · apples · bananas · oranges · pineapple · cake · candies · chocolate · nuts · potato chips
+  </div>
+</main>
+
+<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · English Teacher</p></footer>
+
+<script src="../../../script.js"></script>
+<script src="../../../theme.js"></script>
+<script>
+  // ========== IMAGE PATHS ==========
+  const IMG = {
+    idle_waiting:   "supermarket_images/idle_waiting.png",
+    idle_empty:     "supermarket_images/idle_empty.png",
+    idle_phone:     "supermarket_images/idle_phone.png",
+    idle_sleeping:  "supermarket_images/idle_sleeping.png",
+    idle_thinking:  "supermarket_images/idle_thinking.png",
+
+    making_coffee:  "supermarket_images/making_coffee.png",
+    handing_cup:    "supermarket_images/handing_cup.png",
+
+    making_sandwich:"supermarket_images/making_sandwich.png",
+    handing_sandwich:"supermarket_images/handing_sandwich.png",
+
+    handing_fries:  "supermarket_images/handing_fries.png",
+    handing_bag:    "supermarket_images/handing_bag.png",
+
+    looking_snacks: "supermarket_images/looking_snacks.png",
+    looking_cakes:  "supermarket_images/looking_cakes.png",
+    looking_meat:   "supermarket_images/looking_meat.png",
+
+    falling:        "supermarket_images/falling.png",
+    embarrassed:    "supermarket_images/embarrassed.png"
+  };
+
+  function seq(...steps) { return steps; }
+
+  const sequences = {
+    coffee: seq(
+      { img: "making_coffee", text: "One coffee coming right up!", delay: 3500 },
+      { img: "handing_cup",   text: "Here's your coffee. Enjoy!", delay: 4000 }
+    ),
+    tea: seq(
+      { img: "making_coffee", text: "Brewing a nice cup of tea…", delay: 3500 },
+      { img: "handing_cup",   text: "Your tea is ready!", delay: 4000 }
+    ),
+    sandwich: seq(
+      { img: "making_sandwich",  text: "Making a fresh sandwich…", delay: 3800 },
+      { img: "handing_sandwich", text: "Here's your sandwich!", delay: 4000 }
+    ),
+    sandwiches: seq(
+      { img: "making_sandwich",  text: "Making a fresh sandwich…", delay: 3800 },
+      { img: "handing_sandwich", text: "Here's your sandwich!", delay: 4000 }
+    ),
+    "french fries": seq(
+      { img: "handing_fries", text: "Crispy french fries for you!", delay: 4000 }
+    ),
+    fries: seq(
+      { img: "handing_fries", text: "Crispy french fries for you!", delay: 4000 }
+    ),
+    meat: seq(
+      { img: "looking_meat", text: "Let me grab some meat…", delay: 3200 },
+      { img: "handing_bag",  text: "Here's your meat!", delay: 3800 }
+    ),
+    carrots:   veg("carrots"),
+    lettuce:   veg("lettuce"),
+    mushrooms: veg("mushrooms"),
+    onions:    veg("onions"),
+    potatoes:  veg("potatoes"),
+    tomatoes:  veg("tomatoes"),
+    apples:    bag("apples"),
+    bananas:   bag("bananas"),
+    oranges:   bag("oranges"),
+    pineapple: bag("pineapple"),
+    cake: seq(
+      { img: "looking_cakes", text: "Checking the cake display…", delay: 3200 },
+      { img: "handing_bag",   text: "One cake for you!", delay: 3800 }
+    ),
+    candies:   snack("candies"),
+    candy:     snack("candy"),
+    chocolate: snack("chocolate"),
+    nuts:      snack("nuts"),
+    "potato chips": snack("potato chips"),
+    chips:     snack("chips")
+  };
+
+  function veg(item) {
+    return seq(
+      { img: "idle_thinking", text: `Getting some ${item} for you…`, delay: 3000 },
+      { img: "handing_bag",   text: `Here's your ${item}!`, delay: 3800 }
+    );
+  }
+  function bag(item) {
+    return seq(
+      { img: "handing_bag", text: `Here's your ${item}!`, delay: 3800 }
+    );
+  }
+  function snack(item) {
+    return seq(
+      { img: "looking_snacks", text: `Looking for ${item}…`, delay: 3000 },
+      { img: "handing_bag",    text: `Here's your ${item}!`, delay: 3800 }
+    );
+  }
+
+  const character = document.getElementById("character");
+  const dialogue  = document.getElementById("dialogue");
+  const speakBtn  = document.getElementById("speakBtn");
+  const textBtn   = document.getElementById("textBtn");
+  const statusEl  = document.getElementById("status");
+  const fallback  = document.getElementById("fallback");
+  const textInput = document.getElementById("textInput");
+  const submitText= document.getElementById("submitText");
+
+  let isBusy = false;
+  let idleTimer = null;
+  const idleKeys = ["idle_waiting", "idle_thinking", "idle_phone", "idle_sleeping", "idle_empty"];
+  let idleIndex = 0;
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = null;
+
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 5;
+    recognition.continuous = false;
+
+    recognition.onstart = () => {
+      speakBtn.classList.add("listening");
+      speakBtn.textContent = "Listening…";
+      statusEl.textContent = "Speak now…";
+    };
+
+    recognition.onresult = (event) => {
+      let best = event.results[0][0].transcript.toLowerCase().trim();
+      for (let i = 0; i < event.results[0].length; i++) {
+        const t = event.results[0][i].transcript.toLowerCase().trim();
+        if (findMatch(t)) {
+          best = t;
+          break;
+        }
+      }
+      statusEl.textContent = `Heard: “${best}”`;
+      handleOrder(best);
+    };
+
+    recognition.onerror = (e) => {
+      if (e.error === "no-speech") {
+        statusEl.textContent = "No speech detected. Try again.";
+      } else if (e.error === "not-allowed") {
+        statusEl.textContent = "Microphone permission denied.";
+      } else {
+        statusEl.textContent = "Could not hear you clearly.";
+      }
+      resetButton();
+    };
+
+    recognition.onend = () => {
+      if (!isBusy) resetButton();
+    };
+  } else {
+    speakBtn.disabled = true;
+    statusEl.textContent = "Speech recognition not supported. Use the Type button instead.";
+  }
+
+  function setImage(key) {
+    character.style.opacity = 0.4;
+    setTimeout(() => {
+      character.src = IMG[key] || IMG.idle_waiting;
+      character.style.opacity = 1;
+    }, 120);
+  }
+
+  function setText(txt) {
+    dialogue.textContent = txt;
+  }
+
+  function wait(ms) {
+    return new Promise(r => setTimeout(r, ms));
+  }
+
+  function startIdleCycle() {
+    stopIdleCycle();
+    idleTimer = setInterval(() => {
+      if (isBusy) return;
+      idleIndex = (idleIndex + 1) % idleKeys.length;
+      const key = idleKeys[idleIndex];
+      setImage(key);
+      if (key === "idle_empty")      setText("…");
+      else if (key === "idle_sleeping") setText("Zzz…");
+      else if (key === "idle_phone")    setText("Just a second…");
+      else if (key === "idle_thinking") setText("Hmm…");
+      else                              setText("What can I get for you?");
+    }, 7000);
+  }
+
+  function stopIdleCycle() {
+    if (idleTimer) {
+      clearInterval(idleTimer);
+      idleTimer = null;
+    }
+  }
+
+  function resetButton() {
+    speakBtn.classList.remove("listening");
+    speakBtn.textContent = "Speak your order";
+    speakBtn.disabled = false;
+  }
+
+  function findMatch(transcript) {
+    const keys = Object.keys(sequences).sort((a, b) => b.length - a.length);
+    for (const key of keys) {
+      if (transcript.includes(key)) return key;
+    }
+    return null;
+  }
+
+  async function playSequence(steps) {
+    isBusy = true;
+    stopIdleCycle();
+    speakBtn.disabled = true;
+    textBtn.disabled = true;
+
+    for (const step of steps) {
+      setImage(step.img);
+      setText(step.text);
+      await wait(step.delay);
+    }
+
+    setImage("idle_waiting");
+    setText("Anything else?");
+    isBusy = false;
+    resetButton();
+    textBtn.disabled = false;
+    startIdleCycle();
+  }
+
+  function handleOrder(transcript) {
+    const matched = findMatch(transcript);
+    if (matched) {
+      playSequence(sequences[matched]);
+    } else {
+      const fails = [
+        seq(
+          { img: "falling",     text: "Wait… what?!", delay: 3000 },
+          { img: "embarrassed", text: "Sorry, I didn't catch that…", delay: 3800 }
+        ),
+        seq(
+          { img: "embarrassed", text: "Could you say that again?", delay: 3500 }
+        ),
+        seq(
+          { img: "falling",     text: "Whoa!", delay: 2800 },
+          { img: "embarrassed", text: "I only understand the items on the menu…", delay: 3800 }
+        )
+      ];
+      playSequence(fails[Math.floor(Math.random() * fails.length)]);
+    }
+  }
+
+  speakBtn.addEventListener("click", () => {
+    if (!recognition || isBusy) return;
+    try {
+      recognition.start();
+    } catch (e) {
+      statusEl.textContent = "Already listening…";
+    }
+  });
+
+  textBtn.addEventListener("click", () => {
+    fallback.style.display = fallback.style.display === "none" || !fallback.style.display ? "flex" : "none";
+    if (fallback.style.display !== "none") textInput.focus();
+  });
+
+  function submitTyped() {
+    const val = textInput.value.trim().toLowerCase();
+    if (!val || isBusy) return;
+    statusEl.textContent = `Typed: “${val}”`;
+    textInput.value = "";
+    handleOrder(val);
+  }
+
+  submitText.addEventListener("click", submitTyped);
+  textInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submitTyped();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.code === "Space" && !isBusy && recognition && document.activeElement !== textInput) {
+      e.preventDefault();
+      speakBtn.click();
+    }
+  });
+
+  // Footer year
+  const yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  startIdleCycle();
+</script>
+</body>
+</html>
