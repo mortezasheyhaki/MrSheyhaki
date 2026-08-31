@@ -44,22 +44,27 @@
   applyTheme(getPreferred());
 
   function ensureThemeFab() {
-    // Prefer putting controls inside the floating header (.arcade-nav)
     var nav = document.querySelector(".arcade-nav");
 
-    // Theme toggle (end of header)
-    if (!document.querySelector("[data-theme-toggle]")) {
+    // Fixed top-right theme toggle (always site-theme-fab — never inside nav)
+    var existing = document.querySelector("[data-theme-toggle]");
+    if (existing) {
+      // Move out of nav/header if it was placed there and force FAB class
+      if (existing.closest(".arcade-nav") || existing.closest("header")) {
+        document.body.appendChild(existing);
+      }
+      existing.className = "site-theme-fab theme-icon-only";
+      existing.setAttribute("data-icon-only", "true");
+      existing.setAttribute("data-theme-toggle", "true");
+      existing.type = existing.tagName === "BUTTON" ? "button" : existing.type;
+    } else {
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "theme-toggle theme-icon-only";
+      btn.className = "site-theme-fab theme-icon-only";
       btn.setAttribute("data-theme-toggle", "true");
       btn.setAttribute("data-icon-only", "true");
       btn.setAttribute("aria-label", "Toggle color theme");
-      if (nav) nav.appendChild(btn);
-      else {
-        btn.className = "site-theme-fab theme-icon-only";
-        document.body.appendChild(btn);
-      }
+      document.body.appendChild(btn);
     }
 
     // Profile icon — always last item in the header
