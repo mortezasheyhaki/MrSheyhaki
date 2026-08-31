@@ -834,8 +834,14 @@
     document.getElementById("finalScore").textContent = String(score);
     document.getElementById("finalCorrect").textContent = String(correct);
     document.getElementById("finalWrong").textContent = String(wrong);
-    document.getElementById("finalAccuracy").textContent =
-      (roundTotal ? Math.round((correct / roundTotal) * 100) : 0) + "%";
+    var acc = roundTotal ? Math.round((correct / roundTotal) * 100) : 0;
+    document.getElementById("finalAccuracy").textContent = acc + "%";
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay("simple-past");
+        LAStars.saveFromAccuracy("simple-past", acc);
+      }
+    } catch (e) {}
     show("result");
   }
 

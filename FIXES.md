@@ -15,3 +15,38 @@ This archive contains fixes for the confirmed issues found during the code audit
 The repaired source was checked for local references, route metadata, JavaScript parsing, and generator safety. All local HTML and CSS asset checks returned zero missing references; all 62 JavaScript files parsed successfully; the course metadata checker returned zero mismatches; and an isolated generator run preserved all 20 hand-authored Starter game scripts.
 
 The repaired Unit 1A Games page was also loaded in a browser. It rendered the heading **Unit 1A Games** and both expected game cards without project-asset HTTP 404 requests or JavaScript runtime errors.
+
+## Additional fixes — 31 Aug 2026 (low-volume audit)
+
+| Area | Repair |
+|---|---|
+| Debug leftover | Removed the temporary `console.log("Learning Arcade loaded successfully.")` and its DEBUG MESSAGE comment from `learningarcade/script.js`. |
+
+### Notes from low-volume check
+- All 85 JS files parse without syntax errors.
+- Image/audio references remain (expected after intentional removal); they will 404 until media is restored.
+- Unit 5A still correctly lists the food games (matches AEF Starter curriculum – food & drink / breakfast topics). Unit 1A also has them per prior intentional addition.
+- Root-absolute game URLs in Level 1 Unit 9 of `course-data.js` are intentional (they point outside the resources tree into `/learningarcade/`).
+- Firebase client config is present (standard); ensure database rules restrict writes.
+
+## Universal back button — 31 Aug 2026
+
+| Area | Repair |
+|---|---|
+| Consistent back button | Added a single fixed circular back button (44×44px, top-left, same shape & position on every page). Color changes by section: vocabulary = purple, grammar = green, listening = blue, reading = orange, writing = pink, speaking = teal. |
+| CSS | Full styles added to `learningarcade/style.css`, `learningarcade/theme.css`, and root `theme.css`. Both `.skill-back-btn` and `.site-back-btn` share the same look. |
+| Behavior | Small enhancer in `learningarcade/script.js`: buttons with `data-back-one` prefer `history.back()` when possible. |
+
+### How to use on any page
+```html
+<a class="skill-back-btn" href="../" data-back-one aria-label="Back" title="Back"><span aria-hidden="true">←</span></a>
+```
+Place it inside a container that has the section class (e.g. `<main class="grammar">`) so the correct color is applied.
+
+## Appwrite scores fix (TablesDB constructor)
+- CDN upgraded to appwrite@26.2.0 (TablesDB export).
+- firebase-scores.js hardened with TablesDB/Databases fallback.
+
+## Profile in header + mobile polish
+- Profile icon moved into `.arcade-nav` (end of header) via theme.js; floating `.profile-fab` hidden.
+- Back button z-index raised; mobile nav touch targets 44px; safe-area aware.

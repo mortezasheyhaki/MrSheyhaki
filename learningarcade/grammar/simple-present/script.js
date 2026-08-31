@@ -3366,17 +3366,12 @@ function finishPractice() {
     (function saveGameStars() {
         var total = state.questions.length || 1;
         var acc = Math.round((state.correct / total) * 100);
-        var stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 40 ? 1 : 0;
-        var data = {};
         try {
-            data = JSON.parse(localStorage.getItem("laGameStars") || "{}") || {};
-        } catch (e) { data = {}; }
-        var prev = Number(data["simple-present"] || 0);
-        if (stars > prev) {
-            data["simple-present"] = stars;
-            try{if(window.LAStars){LAStars.recordPlay("simple-present");}}catch(e){}
-            try { localStorage.setItem("laGameStars", JSON.stringify(data)); } catch (e) {}
-        }
+            if (window.LAStars) {
+                LAStars.recordPlay("simple-present");
+                LAStars.saveFromAccuracy("simple-present", acc);
+            }
+        } catch (e) {}
     })();
 
     updateMenuProgress();
@@ -3439,21 +3434,16 @@ function finishFinalMixed() {
         state.correct * 10
     );
 
-    // Stars for Grammar index (final mix counts higher)
+    // Stars for Grammar index (final mix)
     (function saveGameStars() {
         var total = state.questions.length || 1;
         var acc = Math.round((state.correct / total) * 100);
-        var stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 40 ? 1 : 0;
-        var data = {};
         try {
-            data = JSON.parse(localStorage.getItem("laGameStars") || "{}") || {};
-        } catch (e) { data = {}; }
-        var prev = Number(data["simple-present"] || 0);
-        if (stars > prev) {
-            data["simple-present"] = stars;
-            try{if(window.LAStars){LAStars.recordPlay("simple-present");}}catch(e){}
-            try { localStorage.setItem("laGameStars", JSON.stringify(data)); } catch (e) {}
-        }
+            if (window.LAStars) {
+                LAStars.recordPlay("simple-present");
+                LAStars.saveFromAccuracy("simple-present", acc);
+            }
+        } catch (e) {}
     })();
 
     renderHome();

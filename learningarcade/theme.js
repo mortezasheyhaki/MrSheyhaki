@@ -44,15 +44,49 @@
   applyTheme(getPreferred());
 
   function ensureThemeFab() {
-    if (document.querySelector(".site-theme-fab, [data-theme-toggle]")) return;
+    // Prefer putting controls inside the floating header (.arcade-nav)
+    var nav = document.querySelector(".arcade-nav");
 
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "site-theme-fab theme-icon-only";
-    btn.setAttribute("data-theme-toggle", "true");
-    btn.setAttribute("data-icon-only", "true");
-    btn.setAttribute("aria-label", "Toggle color theme");
-    document.body.appendChild(btn);
+    // Theme toggle (end of header)
+    if (!document.querySelector("[data-theme-toggle]")) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "theme-toggle theme-icon-only";
+      btn.setAttribute("data-theme-toggle", "true");
+      btn.setAttribute("data-icon-only", "true");
+      btn.setAttribute("aria-label", "Toggle color theme");
+      if (nav) nav.appendChild(btn);
+      else {
+        btn.className = "site-theme-fab theme-icon-only";
+        document.body.appendChild(btn);
+      }
+    }
+
+    // Profile icon — always last item in the header
+    if (!document.querySelector(".arcade-nav .nav-profile, a.nav-profile")) {
+      var profile = document.createElement("a");
+      profile.href = "./profile/";
+      profile.className = "nav-link nav-profile";
+      profile.setAttribute("aria-label", "My Profile");
+      profile.title = "My Profile";
+      profile.innerHTML = '<span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span>';
+      if (nav) nav.appendChild(profile);
+      else {
+        // fallback: keep off the back-button corner
+        profile.className = "profile-fab profile-fab--header";
+        profile.textContent = "👤";
+        document.body.appendChild(profile);
+      }
+    } else if (nav) {
+      // Ensure profile is the last child
+      var existing = nav.querySelector(".nav-profile");
+      if (existing) nav.appendChild(existing);
+    }
+
+    // Hide legacy floating profile FAB (overlaps back button)
+    document.querySelectorAll("a.profile-fab").forEach(function (el) {
+      if (!el.classList.contains("profile-fab--header")) el.style.display = "none";
+    });
 
     // Refresh icon for current theme
     applyTheme(root.getAttribute("data-theme") || getPreferred());

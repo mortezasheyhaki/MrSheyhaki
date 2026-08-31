@@ -690,23 +690,55 @@ body:not(.cabinet-body) {
   }
 }
 
-/* Universal back button (use class="site-back-btn" on any page) */
-.site-back-btn{
-  display:inline-flex;align-items:center;gap:6px;
-  min-height:40px;padding:0 14px;
-  border-radius:999px;
-  border:1px solid var(--site-border,#e7e9ef);
-  background:var(--site-surface,#fff);
-  color:var(--site-text,#202636);
-  font:700 13px/1 Inter,ui-sans-serif,system-ui,sans-serif;
-  text-decoration:none;
-  box-shadow:0 2px 10px rgba(32,38,54,.06);
-  transition:transform .15s ease, background .15s ease;
+/* Universal back button — same shape/size/position as .skill-back-btn */
+.site-back-btn,
+.skill-back-btn {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top, 0px));
+  left: max(14px, env(safe-area-inset-left, 0px));
+  z-index: 10050;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  color: #fff !important;
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgba(0,0,0,.18), 0 8px 18px rgba(0,0,0,.12);
+  transition: transform .18s ease, box-shadow .18s ease, background .2s ease, filter .2s ease;
+  background: linear-gradient(180deg, #9b6ef5 0%, #6937d8 55%, #4c1d95 100%);
 }
-.site-back-btn:hover{transform:translateY(-1px)}
-html[data-theme="dark"] .site-back-btn{
-  background:#1a1f2c;border-color:#2e3448;color:#f4f6fb;
+.site-back-btn:hover, .skill-back-btn:hover,
+.site-back-btn:focus-visible, .skill-back-btn:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(0,0,0,.2), 0 12px 24px rgba(0,0,0,.16);
+  filter: brightness(1.06);
+  outline: none;
 }
+.site-back-btn:active, .skill-back-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 rgba(0,0,0,.2), 0 4px 10px rgba(0,0,0,.12);
+}
+.vocabulary .site-back-btn, .vocabulary .skill-back-btn { background: linear-gradient(180deg,#9b6ef5 0%,#6937d8 55%,#4c1d95 100%); }
+.grammar .site-back-btn, .grammar .skill-back-btn { background: linear-gradient(180deg,#2dd4a0 0%,#0aa276 55%,#067a58 100%); }
+.listening .site-back-btn, .listening .skill-back-btn { background: linear-gradient(180deg,#5ba8f5 0%,#1478df 55%,#0b5db0 100%); }
+.reading .site-back-btn, .reading .skill-back-btn { background: linear-gradient(180deg,#fb923c 0%,#f18a25 55%,#c2410c 100%); }
+.writing .site-back-btn, .writing .skill-back-btn { background: linear-gradient(180deg,#f472b6 0%,#ef4f72 55%,#be123c 100%); }
+.speaking .site-back-btn, .speaking .skill-back-btn { background: linear-gradient(180deg,#2dd4bf 0%,#0d9488 55%,#115e59 100%); }
+html[data-theme="dark"] .site-back-btn,
+html[data-theme="dark"] .skill-back-btn {
+  box-shadow: 0 4px 0 rgba(0,0,0,.45), 0 10px 22px rgba(0,0,0,.35) !important;
+}
+
 
 /* =========================================================
    FLOATING ARCADE NAV — theme layer only

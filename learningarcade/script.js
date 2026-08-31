@@ -129,16 +129,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* =========================================
-     DEBUG MESSAGE
-     
-     Useful while testing the site.
-  ========================================== */
-
-  console.log(
-    "Learning Arcade loaded successfully."
-  );
-
 });
 
 /* =========================================
@@ -220,4 +210,40 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     true
   );
+})();
+
+/* =========================================================
+   UNIVERSAL BACK BUTTON BEHAVIOR
+   - Consistent click handling for .skill-back-btn / .site-back-btn
+   - data-back-one → prefer history.back() when history exists
+========================================================= */
+(function initUniversalBack() {
+  "use strict";
+
+  function handleBack(e) {
+    var btn = e.currentTarget;
+    if (!btn) return;
+
+    // Prefer browser history when the page was navigated to from within the site
+    if (btn.hasAttribute("data-back-one") && window.history.length > 1) {
+      e.preventDefault();
+      window.history.back();
+      return;
+    }
+    // Otherwise let the href do its job (parent folder, adult/, etc.)
+  }
+
+  function bind() {
+    document.querySelectorAll(".skill-back-btn, .site-back-btn").forEach(function (btn) {
+      if (btn.__backBound) return;
+      btn.__backBound = true;
+      btn.addEventListener("click", handleBack);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bind);
+  } else {
+    bind();
+  }
 })();

@@ -197,9 +197,7 @@
 
 <footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · English Teacher</p></footer>
 
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
 <script src="../firebase-scores.js"></script>
 <script src="../../script.js"></script>
 <script src="../../theme.js"></script>
@@ -253,35 +251,35 @@
     return LAScores.ensureAuth()
       .catch(function () { return null; })
       .then(function () {
-        // Read full scores tree via listGames + top, or direct DB if available
-        if (typeof firebase === 'undefined' || !firebase.database) {
-          throw new Error('Firebase not available');
-        }
-        return firebase.database().ref('scores').once('value');
-      })
-      .then(function (snap) {
-        var perGame = {}; // gameId -> { nameLower: { name, score, at } }
-        var overall = {}; // nameLower -> { name, total, games, best }
-
-        if (snap && snap.forEach) {
-          snap.forEach(function (gameSnap) {
-            var gameId = gameSnap.key;
-            perGame[gameId] = {};
-            gameSnap.forEach(function (child) {
-              var v = child.val() || {};
-              var name = String(v.name || 'Player').trim() || 'Player';
-              var key = name.toLowerCase();
-              var score = Number(v.score) || 0;
-              var at = Number(v.at) || 0;
-
-              // best score per player per game
-              var prev = perGame[gameId][key];
-              if (!prev || score > prev.score || (score === prev.score && at > prev.at)) {
-                perGame[gameId][key] = { name: name, score: score, at: at };
-              }
+        return LAScores.listGames().then(function (ids) {
+          if (!ids || !ids.length) {
+            ids = Object.keys(LAScores.GAMES || {});
+          }
+          return Promise.all((ids || []).map(function (gid) {
+            return LAScores.top(gid, 50).then(function (rows) {
+              return { gameId: gid, rows: rows || [] };
             });
+          }));
+        });
+      })
+      .then(function (gameBuckets) {
+        var perGame = {};
+        var overall = {};
+
+        (gameBuckets || []).forEach(function (bucket) {
+          var gameId = bucket.gameId;
+          perGame[gameId] = {};
+          (bucket.rows || []).forEach(function (v) {
+            var name = String(v.name || 'Player').trim() || 'Player';
+            var key = name.toLowerCase();
+            var score = Number(v.score) || 0;
+            var at = Number(v.at) || 0;
+            var prev = perGame[gameId][key];
+            if (!prev || score > prev.score || (score === prev.score && at > prev.at)) {
+              perGame[gameId][key] = { name: name, score: score, at: at };
+            }
           });
-        }
+        });
 
         // Build overall from best-per-game
         Object.keys(perGame).forEach(function (gameId) {
