@@ -66,31 +66,39 @@
       document.body.appendChild(btn);
     }
 
-    // Profile icon — always last item in the header
-    if (!document.querySelector(".arcade-nav .nav-profile, a.nav-profile")) {
+    // Profile icon — only inside arcade-nav (never floating on kids/world pages)
+    var path = (location.pathname || "").toLowerCase();
+    var isKidsWorld = path.indexOf("/kids/") !== -1 || path.indexOf("select-teacher") !== -1 || path.indexOf("starlight") !== -1;
+
+    if (!isKidsWorld && !document.querySelector(".arcade-nav .nav-profile, a.nav-profile")) {
       var profile = document.createElement("a");
-      profile.href = "./profile/";
+      profile.href = "/learningarcade/profile/";
       profile.className = "nav-link nav-profile";
       profile.setAttribute("aria-label", "My Profile");
       profile.title = "My Profile";
       profile.innerHTML = '<span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span>';
       if (nav) nav.appendChild(profile);
-      else {
-        // fallback: keep off the back-button corner
-        profile.className = "profile-fab profile-fab--header";
-        profile.textContent = "👤";
-        document.body.appendChild(profile);
-      }
-    } else if (nav) {
-      // Ensure profile is the last child
-      var existing = nav.querySelector(".nav-profile");
-      if (existing) nav.appendChild(existing);
+      // Do NOT append a floating profile FAB when there is no nav
+    } else if (nav && !isKidsWorld) {
+      var existingProf = nav.querySelector(".nav-profile");
+      if (existingProf) nav.appendChild(existingProf);
     }
 
-    // Hide legacy floating profile FAB (overlaps back button)
-    document.querySelectorAll("a.profile-fab").forEach(function (el) {
-      if (!el.classList.contains("profile-fab--header")) el.style.display = "none";
+    // Always hide floating profile FABs on kids/world pages (and any legacy ones)
+    document.querySelectorAll("a.profile-fab, .profile-fab").forEach(function (el) {
+      if (isKidsWorld || !el.classList.contains("profile-fab--header") || !nav) {
+        el.style.display = "none";
+        el.setAttribute("hidden", "true");
+      }
     });
+    if (isKidsWorld) {
+      document.querySelectorAll("a.nav-profile, .nav-profile").forEach(function (el) {
+        if (!el.closest(".arcade-nav")) {
+          el.style.display = "none";
+          el.setAttribute("hidden", "true");
+        }
+      });
+    }
 
     // Refresh icon for current theme
     applyTheme(root.getAttribute("data-theme") || getPreferred());

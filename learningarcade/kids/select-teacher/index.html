@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+(function(){try{var t=localStorage.getItem("mrsheyhaki-theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);else if(window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches)document.documentElement.setAttribute("data-theme","dark");else document.documentElement.setAttribute("data-theme","light");}catch(e){document.documentElement.setAttribute("data-theme","light");}})();
+</script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Choose Your Teacher | Kids & Teens · Mr. Sheyhaki</title>
+  <meta name="description" content="Pick your teacher and enter their world of fun English adventures.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #05070f;
+      --card: rgba(12, 18, 35, 0.78);
+      --text: #f0f4ff;
+      --muted: #94a3b8;
+      --accent: #22d3ee;
+      --accent2: #a78bfa;
+      --accent3: #f472b6;
+      --glow: 0 0 32px rgba(34, 211, 238, 0.4);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .space-bg {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(34, 211, 238, 0.14), transparent 50%),
+        radial-gradient(ellipse 70% 40% at 80% 20%, rgba(167, 139, 250, 0.16), transparent 45%),
+        radial-gradient(ellipse 60% 50% at 50% 90%, rgba(244, 114, 182, 0.1), transparent 50%),
+        linear-gradient(180deg, #05070f 0%, #0a0e1a 100%);
+      z-index: -2;
+    }
+
+    .space-bg::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.045) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse at center, black 25%, transparent 75%);
+    }
+
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: float 12s linear infinite;
+    }
+    @keyframes float {
+      0%   { transform: translateY(100vh) scale(0.5); opacity: 0; }
+      10%  { opacity: 0.55; }
+      90%  { opacity: 0.25; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: rgba(5, 7, 15, 0.8);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: var(--accent); }
+
+    .logo {
+      font-family: Orbitron, sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1.2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 40px 20px 28px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(34, 211, 238, 0.12);
+      border: 1px solid rgba(34, 211, 238, 0.28);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      font-family: Orbitron, sans-serif;
+      font-weight: 900;
+      font-size: clamp(26px, 5.5vw, 40px);
+      line-height: 1.15;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #fff 25%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    .teachers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 12px 20px 72px;
+    }
+
+    .teacher-card {
+      position: relative;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius);
+      padding: 32px 26px 26px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      overflow: hidden;
+      backdrop-filter: blur(22px);
+    }
+
+    .teacher-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.5px;
+      background: linear-gradient(145deg, transparent 20%, rgba(34,211,238,0.55), transparent 80%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+
+    .teacher-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      border-color: rgba(34, 211, 238, 0.4);
+      box-shadow: var(--glow), 0 24px 48px rgba(0,0,0,0.45);
+    }
+    .teacher-card:hover::before { opacity: 1; }
+
+    .teacher-card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent), var(--glow);
+    }
+
+    /* Avatar with real image */
+    .avatar-wrap {
+      width: 148px;
+      height: 148px;
+      margin: 0 auto 22px;
+      border-radius: 50%;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .avatar-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--accent), var(--accent2), var(--accent3), var(--accent));
+      animation: spin 7s linear infinite;
+      z-index: 0;
+      opacity: 0.85;
+    }
+
+    .avatar-ring::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      background: #0a0e1a;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .avatar-img {
+      width: 136px;
+      height: 136px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center top;
+      position: relative;
+      z-index: 1;
+      border: 3px solid rgba(15, 23, 42, 0.9);
+      background: #0f172a;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .teacher-name {
+      font-family: Orbitron, sans-serif;
+      font-weight: 700;
+      font-size: 19px;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .teacher-world {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 12px;
+      letter-spacing: 0.6px;
+    }
+
+    .teacher-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 22px;
+      min-height: 44px;
+    }
+
+    .select-btn {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 20px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 4px 18px rgba(14, 165, 233, 0.35);
+    }
+
+    
+    .select-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    .select-btn::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -60%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255,255,255,0.15) 35%,
+        rgba(255,255,255,0.55) 50%,
+        rgba(255,255,255,0.15) 65%,
+        transparent 100%
+      );
+      transform: skewX(-18deg);
+      transition: left 0.55s ease;
+      pointer-events: none;
+    }
+    .select-btn:hover::after {
+      left: 120%;
+    }
+
+    .select-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(14, 165, 233, 0.5);
+    }
+
+    .teacher-card.selected .select-btn {
+      background: linear-gradient(135deg, #22d3ee, #a78bfa);
+    }
+
+    /* Ms Moonlight accent variant */
+    .teacher-card[data-teacher="moonlight"] .avatar-ring {
+      background: conic-gradient(from 0deg, #f472b6, #a78bfa, #fbbf24, #f472b6);
+    }
+    .teacher-card[data-teacher="moonlight"] .teacher-world {
+      color: #f9a8d4;
+    }
+    .teacher-card[data-teacher="moonlight"]:hover {
+      border-color: rgba(244, 114, 182, 0.45);
+      box-shadow: 0 0 32px rgba(244, 114, 182, 0.35), 0 24px 48px rgba(0,0,0,0.45);
+    }
+    .teacher-card[data-teacher="moonlight"].selected {
+      border-color: #f472b6;
+      box-shadow: 0 0 0 2px #f472b6, 0 0 32px rgba(244, 114, 182, 0.4);
+    }
+
+    .footer-note {
+      text-align: center;
+      padding: 0 20px 40px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 640px) {
+      .teachers {
+        grid-template-columns: 1fr;
+        max-width: 360px;
+      }
+      .hero { padding-top: 28px; }
+      .avatar-wrap { width: 132px; height: 132px; }
+      .avatar-img { width: 120px; height: 120px; }
+    }
+  
+    /* Round back button */
+    .back-round {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #7c3aed, #5b21b6);
+      color: #fff;
+      text-decoration: none;
+      box-shadow:
+        0 4px 0 rgba(76, 29, 149, 0.55),
+        0 8px 20px rgba(91, 33, 182, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      flex-shrink: 0;
+    }
+    .back-round:hover {
+      transform: translateY(-2px) scale(1.05);
+      filter: brightness(1.08);
+      box-shadow:
+        0 6px 0 rgba(76, 29, 149, 0.5),
+        0 12px 24px rgba(91, 33, 182, 0.4);
+    }
+    .back-round:active {
+      transform: translateY(2px) scale(0.98);
+      box-shadow:
+        0 2px 0 rgba(76, 29, 149, 0.55),
+        0 4px 10px rgba(91, 33, 182, 0.3);
+    }
+
+    /* Card hover shine */
+    .teacher-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .teacher-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -70%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255,255,255,0.04) 30%,
+        rgba(255,255,255,0.18) 50%,
+        rgba(255,255,255,0.04) 70%,
+        transparent 100%
+      );
+      transform: skewX(-16deg);
+      transition: left 0.6s ease;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .teacher-card:hover::after {
+      left: 120%;
+    }
+    .teacher-card > * {
+      position: relative;
+      z-index: 5;
+    }
+
+    /* Stronger shine on Enter World buttons */
+    .select-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    .select-btn::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -60%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255,255,255,0.15) 35%,
+        rgba(255,255,255,0.6) 50%,
+        rgba(255,255,255,0.15) 65%,
+        transparent 100%
+      );
+      transform: skewX(-18deg);
+      transition: left 0.55s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .select-btn:hover::after {
+      left: 120%;
+    }
+
+  
+    /* Site theme FAB (matches main arcade) */
+    .site-theme-fab {
+      position: fixed;
+      right: max(14px, env(safe-area-inset-right, 0px));
+      top: max(14px, env(safe-area-inset-top, 0px));
+      z-index: 10050;
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.85);
+      color: #fff;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+    .site-theme-fab:hover { transform: translateY(-2px) scale(1.04); }
+    html[data-theme="light"] .site-theme-fab {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(15, 23, 42, 0.1);
+      color: #202636;
+      box-shadow: 0 10px 28px rgba(32, 38, 54, 0.16);
+    }
+
+  
+    /* ---- Light mode ---- */
+    html[data-theme="light"] body {
+      background: #f0f4ff;
+      color: #1e1b4b;
+    }
+    html[data-theme="light"] .space-bg {
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(34, 211, 238, 0.12), transparent 50%),
+        radial-gradient(ellipse 70% 40% at 80% 20%, rgba(167, 139, 250, 0.14), transparent 45%),
+        linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%);
+    }
+    html[data-theme="light"] .space-bg::before {
+      background-image:
+        linear-gradient(rgba(100, 116, 139, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100, 116, 139, 0.06) 1px, transparent 1px);
+    }
+    html[data-theme="light"] .top-bar {
+      background: rgba(255, 255, 255, 0.85);
+      border-bottom-color: rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .logo {
+      background: linear-gradient(90deg, #0891b2, #7c3aed);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    html[data-theme="light"] .hero h1 {
+      background: linear-gradient(135deg, #1e1b4b 20%, #0891b2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    html[data-theme="light"] .hero p { color: #64748b; }
+    html[data-theme="light"] .teacher-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-color: rgba(15, 23, 42, 0.08);
+      box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .teacher-card:hover {
+      border-color: rgba(8, 145, 178, 0.35);
+      box-shadow: 0 0 28px rgba(34, 211, 238, 0.25), 0 16px 36px rgba(15, 23, 42, 0.1);
+    }
+    html[data-theme="light"] .teacher-name { color: #1e1b4b; }
+    html[data-theme="light"] .teacher-desc { color: #64748b; }
+    html[data-theme="light"] .footer-note { color: #94a3b8; }
+    html[data-theme="light"] .avatar {
+      background: #e2e8f0;
+    }
+    html[data-theme="light"] .avatar-wrap {
+      background: linear-gradient(145deg, #e2e8f0, #f1f5f9);
+    }
+
+  
+    .profile-fab, a.profile-fab {
+      display: none !important;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="space-bg"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="top-bar">
+    <a href="../../" class="back-round" aria-label="Back to Arcade" title="Back to Arcade">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+    <div class="logo">MR. SHEYHAKI</div>
+    <div style="width:120px"></div>
+  </div>
+
+  <section class="hero">
+    <div class="eyebrow">Kids & Teens · Learning Worlds</div>
+    <h1>Choose Your Teacher</h1>
+    <p>Every teacher has their own world. Pick the one that feels right and start your English adventure!</p>
+  </section>
+
+  <section class="teachers" id="teacherGrid">
+
+    <!-- Mr. Sheyhaki -->
+    <article class="teacher-card" data-teacher="sheyhaki" data-world="cosmic">
+      <div class="avatar-wrap">
+        <div class="avatar-ring" aria-hidden="true"></div>
+        <img
+          class="avatar-img"
+          src="./assets/mr-sheyhaki.png"
+          alt="Mr. Sheyhaki"
+          width="136"
+          height="136"
+          loading="eager"
+        >
+      </div>
+      <h2 class="teacher-name">Mr. Sheyhaki</h2>
+      <div class="teacher-world">✦ Cosmic Academy</div>
+      <p class="teacher-desc">Your main guide through the stars. Wise, patient, and full of practical English tips.</p>
+      <button class="select-btn" type="button">Enter World →</button>
+    </article>
+
+    <!-- Ms. Moonlight -->
+    <article class="teacher-card" data-teacher="moonlight" data-world="starlight">
+      <div class="avatar-wrap">
+        <div class="avatar-ring" aria-hidden="true"></div>
+        <img
+          class="avatar-img"
+          src="./assets/ms-moonlight.png"
+          alt="Ms. Moonlight"
+          width="136"
+          height="136"
+          loading="eager"
+        >
+      </div>
+      <h2 class="teacher-name">Ms. Moonlight</h2>
+      <div class="teacher-world">✦ Starlight Forest</div>
+      <p class="teacher-desc">Warm, kind, and full of stories. Perfect for songs, reading, and learning with a smile.</p>
+      <button class="select-btn" type="button">Enter World →</button>
+    </article>
+
+  </section>
+
+  <p class="footer-note">Your choice will open a unique learning world with games, challenges & rewards.</p>
+
+  <script>
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 36; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDelay = Math.random() * 12 + 's';
+      p.style.animationDuration = (8 + Math.random() * 10) + 's';
+      p.style.width = p.style.height = (1 + Math.random() * 2.5) + 'px';
+      container.appendChild(p);
+    }
+
+    const cards = document.querySelectorAll('.teacher-card');
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        cards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+
+        const teacher = card.dataset.teacher;
+        const world = card.dataset.world;
+
+        localStorage.setItem('selectedTeacher', teacher);
+        localStorage.setItem('selectedWorld', world);
+
+        const destinations = {
+          sheyhaki: './worlds/cosmic/',
+          moonlight: './worlds/starlight/'
+        };
+
+        const btn = card.querySelector('.select-btn');
+        const original = btn.textContent;
+        btn.textContent = 'Loading world...';
+
+        setTimeout(() => {
+          const dest = destinations[teacher];
+          if (dest) {
+            window.location.href = dest;
+          } else {
+            const name = card.querySelector('.teacher-name').textContent;
+            alert(name + "'s world is coming soon!");
+            btn.textContent = original;
+          }
+        }, 450);
+      });
+    });
+  </script>
+  <script src="../../theme.js"></script>
+</body>
+</html>
