@@ -153,6 +153,17 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
   { title: "Listen & Write", url: "listen-and-write/" },
 ];
 
+
+// Unit 4B – Adjectives (moved from Vocabulary Arcade)
+COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.name = "Adjectives";
+COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.games = [
+  { title: "Opposite Snap", url: "opposite-snap/" },
+  { title: "Match Adjectives", url: "match-adjectives/" },
+  { title: "Sound Match Picture", url: "sound-match-picture/" },
+  { title: "Listen and Write", url: "listen-and-write/" },
+  { title: "Adjective-Sentences", url: "adjective-sentences/" },
+];
+
 // Level 1 – Unit 9A – Food games (from Vocabulary Arcade)
 COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.a.name = "What I ate yesterday";
 COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.a.games = [

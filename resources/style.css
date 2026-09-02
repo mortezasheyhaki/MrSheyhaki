@@ -2452,3 +2452,178 @@ html[data-theme="dark"] .level-card h3 {
 html[data-theme="dark"] .unit-card .unit-card-name {
   color: #94a3b8 !important;
 }
+
+/* =========================================================
+   Hover SHINE — Starter, Level 1, units, A/B, lesson types, games
+   Uses ::before for the light sweep when ::after is already used
+   (e.g. unit-style-card blob decoration).
+   ========================================================= */
+
+/* Shared shine keyframes */
+@keyframes resourceCardShine {
+  0%   { left: -70%; }
+  100% { left: 130%; }
+}
+
+/* Base: cards that can use ::after for shine */
+.resource-card,
+.unit-card,
+.level-card,
+.item-card:not(.unit-style-card),
+.ab-card,
+.content-card,
+.lesson-type-card,
+a.resource-card,
+a.unit-card,
+a.level-card,
+a.item-card:not(.unit-style-card),
+a.ab-card,
+a.content-card,
+a.lesson-type-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.resource-card::after,
+.unit-card::after,
+.level-card::after,
+.item-card:not(.unit-style-card)::after,
+.ab-card::after,
+.content-card::after,
+.lesson-type-card::after,
+a.resource-card::after,
+a.unit-card::after,
+a.level-card::after,
+a.item-card:not(.unit-style-card)::after,
+a.ab-card::after,
+a.content-card::after,
+a.lesson-type-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -70%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 35%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0.1) 65%,
+    transparent 100%
+  );
+  transform: skewX(-18deg);
+  transition: left 0.55s ease;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.resource-card:hover::after,
+.unit-card:hover::after,
+.level-card:hover::after,
+.item-card:not(.unit-style-card):hover::after,
+.ab-card:hover::after,
+.content-card:hover::after,
+.lesson-type-card:hover::after,
+a.resource-card:hover::after,
+a.unit-card:hover::after,
+a.level-card:hover::after,
+a.item-card:not(.unit-style-card):hover::after,
+a.ab-card:hover::after,
+a.content-card:hover::after,
+a.lesson-type-card:hover::after {
+  left: 130%;
+}
+
+/* unit-style-card (Starter / Level 1 unit tiles) — ::after is blob, use ::before for shine */
+.item-card.unit-style-card,
+a.item-card.unit-style-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.item-card.unit-style-card::before,
+a.item-card.unit-style-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -70%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 35%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0.12) 65%,
+    transparent 100%
+  );
+  transform: skewX(-18deg);
+  transition: left 0.55s ease;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.item-card.unit-style-card:hover::before,
+a.item-card.unit-style-card:hover::before {
+  left: 130%;
+}
+
+/* Keep content above shine */
+.resource-card > *,
+.unit-card > *,
+.level-card > *,
+.item-card > *,
+.ab-card > *,
+.content-card > *,
+.lesson-type-card > *,
+.item-card.unit-style-card > * {
+  position: relative;
+  z-index: 5;
+}
+
+/* Stronger hover glow */
+.resource-card:hover,
+.unit-card:hover,
+.level-card:hover,
+.item-card:hover,
+.ab-card:hover,
+.content-card:hover,
+.lesson-type-card:hover {
+  box-shadow:
+    0 15px 34px rgba(32, 38, 54, 0.1),
+    0 0 0 1px rgba(124, 92, 255, 0.14),
+    0 0 28px rgba(124, 92, 255, 0.14);
+}
+
+/* Dark theme softer shine */
+html[data-theme="dark"] .resource-card::after,
+html[data-theme="dark"] .unit-card::after,
+html[data-theme="dark"] .level-card::after,
+html[data-theme="dark"] .item-card:not(.unit-style-card)::after,
+html[data-theme="dark"] .ab-card::after,
+html[data-theme="dark"] .content-card::after,
+html[data-theme="dark"] .lesson-type-card::after,
+html[data-theme="dark"] .item-card.unit-style-card::before {
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 35%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.04) 65%,
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resource-card::after,
+  .unit-card::after,
+  .level-card::after,
+  .item-card::after,
+  .ab-card::after,
+  .content-card::after,
+  .lesson-type-card::after,
+  .item-card.unit-style-card::before {
+    transition: none !important;
+  }
+}

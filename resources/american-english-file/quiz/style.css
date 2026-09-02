@@ -1848,3 +1848,123 @@ body.light-mode footer {
     }
 
 }
+
+
+/* =========================================================
+   Hover SHINE — Quiz unit cards + answer buttons
+   unit-card already uses ::after for corner blob → use ::before
+   ========================================================= */
+.unit-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -70%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 35%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.08) 65%,
+    transparent 100%
+  );
+  transform: skewX(-18deg);
+  transition: left 0.55s ease;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.unit-card:hover::before {
+  left: 130%;
+}
+
+.unit-card > * {
+  position: relative;
+  z-index: 4;
+}
+
+body.light-mode .unit-card::before {
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 35%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.15) 65%,
+    transparent 100%
+  );
+}
+
+/* Answer choice buttons */
+.answer-button {
+  position: relative;
+  overflow: hidden;
+}
+.answer-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -70%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.1) 60%,
+    transparent 100%
+  );
+  transform: skewX(-18deg);
+  transition: left 0.45s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+.answer-button:hover:not(:disabled)::after {
+  left: 130%;
+}
+.answer-button > * {
+  position: relative;
+  z-index: 3;
+}
+
+/* Result / question cards soft shine on hover */
+.question-card,
+.result-card {
+  position: relative;
+  overflow: hidden;
+}
+.question-card::after,
+.result-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -70%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.06) 40%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.06) 60%,
+    transparent 100%
+  );
+  transform: skewX(-18deg);
+  transition: left 0.55s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+.question-card:hover::after,
+.result-card:hover::after {
+  left: 130%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .unit-card::before,
+  .answer-button::after,
+  .question-card::after,
+  .result-card::after {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <title>Listen and Write | Mr. Sheyhaki</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #64748b;
+      --sky: #0ea5e9;
+      --sky-deep: #0284c7;
+      --sky-soft: #e0f2fe;
+      --uk: #7c3aed;
+      --uk-soft: #ede9fe;
+      --ok: #16a34a;
+      --bad: #e11d48;
+      --line: #e2e8f0;
+      --paper: #fff;
+      font-family: Inter, system-ui, sans-serif;
+      color: var(--ink);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
+    body {
+      min-height: 100dvh;
+      background: linear-gradient(165deg, #f0f9ff 0%, #f8fafc 45%, #ede9fe 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px;
+    }
+    .app {
+      width: 100%;
+      max-width: 440px;
+      min-height: calc(100dvh - 24px);
+      background: var(--paper);
+      border-radius: 22px;
+      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    .hidden { display: none !important; }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px 8px;
+      gap: 8px;
+    }
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .back:hover { color: var(--ink); }
+    .progress-pill {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--sky-deep);
+      background: var(--sky-soft);
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 8px 18px 20px;
+      gap: 14px;
+    }
+    .eyebrow {
+      text-align: center;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sky-deep);
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.45rem;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+    .sub {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    /* Accent play buttons */
+    .listen-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .play-card {
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      padding: 16px 10px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+      font: inherit;
+      color: inherit;
+    }
+    .play-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(15,23,42,0.08);
+    }
+    .play-card.us {
+      border-color: #bae6fd;
+      background: linear-gradient(180deg, #f0f9ff, #fff);
+    }
+    .play-card.uk {
+      border-color: #ddd6fe;
+      background: linear-gradient(180deg, #f5f3ff, #fff);
+    }
+    .play-card.us:hover { border-color: var(--sky); }
+    .play-card.uk:hover { border-color: var(--uk); }
+    .play-card.playing.us {
+      border-color: var(--sky);
+      box-shadow: 0 0 0 4px rgba(14,165,233,0.2);
+    }
+    .play-card.playing.uk {
+      border-color: var(--uk);
+      box-shadow: 0 0 0 4px rgba(124,58,237,0.2);
+    }
+    .flag {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+    .accent-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .play-card.us .accent-label { color: var(--sky-deep); }
+    .play-card.uk .accent-label { color: var(--uk); }
+
+    .btn-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.12);
+      position: relative;
+    }
+    .play-card.us .btn-circle {
+      background: linear-gradient(145deg, #38bdf8, #0ea5e9);
+      box-shadow: 0 4px 0 #0284c7, 0 8px 16px rgba(14,165,233,0.25);
+    }
+    .play-card.uk .btn-circle {
+      background: linear-gradient(145deg, #a78bfa, #7c3aed);
+      box-shadow: 0 4px 0 #6d28d9, 0 8px 16px rgba(124,58,237,0.25);
+    }
+    .btn-circle svg {
+      width: 28px;
+      height: 28px;
+      fill: currentColor;
+      margin-left: 3px;
+    }
+    .btn-circle .eq {
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 3px;
+      height: 22px;
+    }
+    .btn-circle .eq span {
+      width: 4px;
+      border-radius: 2px;
+      background: #fff;
+      animation: eqBounce 0.55s ease-in-out infinite;
+      transform-origin: bottom center;
+    }
+    .btn-circle .eq span:nth-child(1) { height: 10px; animation-delay: 0s; }
+    .btn-circle .eq span:nth-child(2) { height: 18px; animation-delay: 0.12s; }
+    .btn-circle .eq span:nth-child(3) { height: 14px; animation-delay: 0.24s; }
+    .btn-circle .eq span:nth-child(4) { height: 20px; animation-delay: 0.08s; }
+    .play-card.playing .btn-circle .play-icon { display: none; }
+    .play-card.playing .btn-circle .eq { display: flex; }
+    .play-card.playing .btn-circle { animation: pulse 1s ease-in-out infinite; }
+    @keyframes eqBounce {
+      0%, 100% { transform: scaleY(0.45); }
+      50% { transform: scaleY(1); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .hint {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Write area */
+    .write-box {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .write-box label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    #answerInput {
+      width: 100%;
+      border: 2px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    #answerInput:focus {
+      border-color: var(--sky);
+      box-shadow: 0 0 0 4px rgba(14,165,233,0.15);
+    }
+    #answerInput.is-ok {
+      border-color: var(--ok);
+      background: #f0fdf4;
+    }
+    #answerInput.is-bad {
+      border-color: var(--bad);
+      background: #fff1f2;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 12px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-check {
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
+      color: #fff;
+      box-shadow: 0 4px 0 #0369a1;
+    }
+    .btn-check:active { transform: translateY(2px); box-shadow: 0 2px 0 #0369a1; }
+    .btn-skip {
+      background: #f1f5f9;
+      color: var(--muted);
+    }
+
+    .feedback {
+      min-height: 24px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+
+    /* Finish */
+    .finish {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 20px;
+      text-align: center;
+      gap: 12px;
+    }
+    .finish h2 { font-size: 1.5rem; font-weight: 900; color: var(--sky-deep); }
+    .finish p { color: var(--muted); }
+    .finish .score-big {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--ink);
+    }
+    .btn-again {
+      margin-top: 8px;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 28px;
+      background: var(--sky);
+      color: #fff;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 0 var(--sky-deep);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="top">
+      <a class="back" href="../">← Back</a>
+      <div class="progress-pill" id="progressPill">1 / 5</div>
+    </div>
+
+    <div class="main" id="gameMain">
+      <p class="eyebrow">Dictation</p>
+      <h1>Listen and Write</h1>
+      <p class="sub">Play the audio, then type what you hear.</p>
+
+      <div class="listen-row">
+        <button type="button" class="play-card us" id="playUS" aria-label="Play American accent">
+          <span class="flag" aria-hidden="true">🇺🇸</span>
+          <span class="accent-label">American</span>
+          <span class="btn-circle">
+            <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            <span class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          </span>
+        </button>
+        <button type="button" class="play-card uk" id="playUK" aria-label="Play British accent">
+          <span class="flag" aria-hidden="true">🇬🇧</span>
+          <span class="accent-label">British</span>
+          <span class="btn-circle">
+            <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            <span class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          </span>
+        </button>
+      </div>
+      <p class="hint">Tap 🇺🇸 or 🇬🇧 to hear the phrase</p>
+
+      <div class="write-box">
+        <label for="answerInput">Type what you hear</label>
+        <input id="answerInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="e.g. good evening" />
+        <div class="actions">
+          <button type="button" class="btn btn-check" id="checkBtn">Check</button>
+          <button type="button" class="btn btn-skip" id="skipBtn">Skip</button>
+        </div>
+        <p class="feedback" id="feedback"></p>
+      </div>
+    </div>
+
+    <div class="finish hidden" id="finishScreen">
+      <h2>Well done!</h2>
+      <p class="score-big" id="finalScore">0 / 5</p>
+      <p id="finishMsg">You finished all phrases.</p>
+      <button type="button" class="btn-again" id="againBtn">Play again</button>
+      <a class="back" href="../" style="margin-top:8px">← Back to games</a>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    const ITEMS = [
+      { id: 1, text: "an ugly house",      us: "american/01.mp3", uk: "british/01.mp3" },
+      { id: 2, text: "an easy exercise",   us: "american/02.mp3", uk: "british/02.mp3" },
+      { id: 3, text: "my old ID card",     us: "american/03.mp3", uk: "british/03.mp3" },
+      { id: 4, text: "good evening",       us: "american/04.mp3", uk: "british/04.mp3" },
+      { id: 5, text: "an American friend", us: "american/05.mp3", uk: "british/05.mp3" },
+    ];
+
+    let index = 0;
+    let score = 0;
+    let currentAudio = null;
+    const audioCache = {};
+
+    const $ = (id) => document.getElementById(id);
+    const input = $("answerInput");
+    const feedback = $("feedback");
+    const playUS = $("playUS");
+    const playUK = $("playUK");
+
+    function normalize(s) {
+      return s
+        .toLowerCase()
+        .trim()
+        .replace(/[’']/g, "'")
+        .replace(/[.,!?;:]/g, "")
+        .replace(/\s+/g, " ");
+    }
+
+    function stopAudio() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+      playUS.classList.remove("playing");
+      playUK.classList.remove("playing");
+    }
+
+    function play(src, btn) {
+      stopAudio();
+      if (!audioCache[src]) audioCache[src] = new Audio(src);
+      const a = audioCache[src];
+      currentAudio = a;
+      btn.classList.add("playing");
+      a.play().catch(() => {});
+      a.onended = () => btn.classList.remove("playing");
+    }
+
+    function showItem() {
+      stopAudio();
+      input.value = "";
+      input.classList.remove("is-ok", "is-bad");
+      feedback.textContent = "";
+      feedback.className = "feedback";
+      $("progressPill").textContent = (index + 1) + " / " + ITEMS.length;
+      input.focus();
+    }
+
+    function check() {
+      const item = ITEMS[index];
+      const ok = normalize(input.value) === normalize(item.text);
+      if (ok) {
+        input.classList.remove("is-bad");
+        input.classList.add("is-ok");
+        feedback.textContent = "Correct!";
+        feedback.className = "feedback ok";
+        score += 1;
+        setTimeout(next, 700);
+      } else {
+        input.classList.remove("is-ok");
+        input.classList.add("is-bad");
+        feedback.textContent = "Try again — or skip to see the answer.";
+        feedback.className = "feedback bad";
+      }
+    }
+
+    function skip() {
+      const item = ITEMS[index];
+      input.value = item.text;
+      input.classList.remove("is-ok");
+      input.classList.add("is-bad");
+      feedback.textContent = "Answer: " + item.text;
+      feedback.className = "feedback bad";
+      setTimeout(next, 1200);
+    }
+
+    function next() {
+      index += 1;
+      if (index >= ITEMS.length) {
+        finish();
+      } else {
+        showItem();
+      }
+    }
+
+    function finish() {
+      stopAudio();
+      $("gameMain").classList.add("hidden");
+      $("finishScreen").classList.remove("hidden");
+      $("finalScore").textContent = score + " / " + ITEMS.length;
+      $("finishMsg").textContent =
+        score === ITEMS.length
+          ? "Perfect! Every phrase was correct."
+          : "Keep practising — listen again anytime.";
+    }
+
+    function restart() {
+      index = 0;
+      score = 0;
+      $("finishScreen").classList.add("hidden");
+      $("gameMain").classList.remove("hidden");
+      showItem();
+    }
+
+    playUS.addEventListener("click", () => play(ITEMS[index].us, playUS));
+    playUK.addEventListener("click", () => play(ITEMS[index].uk, playUK));
+    $("checkBtn").addEventListener("click", check);
+    $("skipBtn").addEventListener("click", skip);
+    $("againBtn").addEventListener("click", restart);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") check();
+    });
+
+    showItem();
+  })();
+  </script>
+</body>
+</html>

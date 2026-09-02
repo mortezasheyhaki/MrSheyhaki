@@ -137,6 +137,11 @@
       backdrop-filter: blur(8px);
     }
 
+
+    /* DOM has panel first for phone stack; desktop restores left/right */
+    .character-col { order: 1; }
+    .panel-col { order: 2; }
+
     /* Stage: character grounded left, panel right-middle */
     .stage-wrap {
       flex: 1 1 auto;
@@ -465,96 +470,121 @@
     }
 
   
-    /* ========== PHONE LAYOUT (portrait composition) ========== */
+    /* ========== PHONE LAYOUT: rectangular panel above character, 3x2 buttons ========== */
     @media (max-width: 900px) {
-      .stage {
-        grid-template-columns: 1fr !important;
-        max-width: 100% !important;
-        height: 100% !important;
-        display: block !important;
-        position: relative !important;
-        padding-bottom: 0 !important;
-      }
       .stage-wrap {
         align-items: stretch !important;
-        padding: 0 8px 8px !important;
+        padding: 4px 14px 0 !important;
+        flex-direction: column !important;
       }
+      .stage {
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: none !important;
+        max-width: 100% !important;
+        height: 100% !important;
+        gap: 0 !important;
+        padding-bottom: 0 !important;
+        align-items: center !important;
+      }
+      /* Panel first (on top) */
+      .panel-col {
+        order: 1 !important;
+        position: relative !important;
+        right: auto !important;
+        left: auto !important;
+        top: auto !important;
+        transform: none !important;
+        width: 100% !important;
+        max-width: 360px !important;
+        height: auto !important;
+        padding: 0 !important;
+        margin: 4px auto 0 !important;
+        flex: 0 0 auto !important;
+        z-index: 6 !important;
+      }
+      .panel {
+        padding: 14px 14px 12px !important;
+        border-radius: 18px !important;
+      }
+      .panel-head .hi {
+        font-size: clamp(18px, 5vw, 22px) !important;
+      }
+      /* 3 buttons top row, 3 bottom */
+      .actions {
+        grid-template-columns: 1fr 1fr 1fr !important;
+        gap: 10px !important;
+      }
+      .action {
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 4px !important;
+        padding: 12px 6px 10px !important;
+        border-radius: 16px !important;
+        min-height: 72px !important;
+        font-size: 13px !important;
+      }
+      .action .icon {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 15px !important;
+      }
+      .action .label {
+        flex: none !important;
+        text-align: center !important;
+        font-size: 12.5px !important;
+      }
+      .action .chev { display: none !important; }
+      .footer-hint { font-size: 11px !important; margin-top: 10px !important; }
+      /* Character below panel */
       .character-col {
-        position: absolute !important;
-        left: 0 !important;
-        bottom: 0 !important;
-        top: 6% !important;
-        width: 58% !important;
-        max-width: 260px !important;
+        order: 2 !important;
+        position: relative !important;
+        left: auto !important;
+        bottom: auto !important;
+        top: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
         height: auto !important;
         max-height: none !important;
-        justify-content: flex-start !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        justify-content: center !important;
         align-items: flex-end !important;
         pointer-events: none !important;
         z-index: 4 !important;
       }
       .character-img {
-        height: min(72vh, 520px) !important;
-        max-height: min(72vh, 520px) !important;
-        max-width: 100% !important;
-        width: auto !important;
-        object-position: left bottom !important;
-      }
-      .panel-col {
-        position: absolute !important;
-        right: 10px !important;
-        left: auto !important;
-        top: 50% !important;
-        transform: translateY(-48%) !important;
-        width: min(52%, 210px) !important;
         height: auto !important;
-        padding-bottom: 0 !important;
-        align-items: center !important;
-        z-index: 6 !important;
+        max-height: 100% !important;
+        max-width: min(85%, 320px) !important;
+        width: auto !important;
+        object-position: bottom center !important;
       }
-      .panel {
-        padding: 14px 12px 10px !important;
-        border-radius: 20px !important;
-      }
-      .panel-head .hi {
-        font-size: clamp(15px, 4.2vw, 18px) !important;
-      }
-      .actions { gap: 8px !important; }
-      .action {
-        font-size: 12.5px !important;
-        padding: 9px 8px 9px 6px !important;
-        min-height: 42px !important;
-      }
-      .action .icon {
-        width: 28px !important;
-        height: 28px !important;
-        font-size: 13px !important;
-      }
-      .footer-hint { font-size: 10px !important; margin-top: 8px !important; }
       .bg-veil {
         background: linear-gradient(
-          100deg,
-          rgba(255, 240, 220, 0.05) 0%,
-          rgba(255, 236, 218, 0.12) 38%,
-          rgba(255, 232, 214, 0.55) 68%,
-          rgba(255, 228, 208, 0.78) 100%
+          180deg,
+          rgba(255, 236, 220, 0.25) 0%,
+          rgba(255, 232, 214, 0.15) 40%,
+          rgba(255, 228, 208, 0.35) 100%
         ) !important;
       }
       html[data-theme="dark"] .bg-veil {
         background: linear-gradient(
-          100deg,
-          rgba(20, 12, 10, 0.2) 0%,
-          rgba(20, 12, 10, 0.15) 38%,
-          rgba(30, 18, 14, 0.45) 68%,
-          rgba(25, 15, 12, 0.55) 100%
+          180deg,
+          rgba(20, 12, 10, 0.35) 0%,
+          rgba(20, 12, 10, 0.2) 40%,
+          rgba(30, 18, 14, 0.4) 100%
         ) !important;
       }
     }
-    @media (max-width: 900px) and (max-height: 680px) {
-      .character-img { max-height: min(65vh, 420px) !important; height: min(65vh, 420px) !important; }
-      .panel { padding: 12px 10px 8px !important; }
-      .action { min-height: 38px !important; font-size: 12px !important; padding: 8px 7px 8px 5px !important; }
-      .action .icon { width: 26px !important; height: 26px !important; font-size: 12px !important; }
+    @media (max-width: 900px) and (max-height: 700px) {
+      .panel { padding: 12px 12px 10px !important; }
+      .panel-head { margin-bottom: 8px !important; }
+      .action { min-height: 62px !important; padding: 10px 4px 8px !important; }
+      .action .icon { width: 28px !important; height: 28px !important; font-size: 13px !important; }
+      .actions { gap: 8px !important; }
     }
 
   </style>
@@ -582,35 +612,6 @@
 
     <div class="stage-wrap">
       <main class="stage">
-        <div class="character-col">
-          <span class="sparkle s1">♡</span>
-          <span class="sparkle s2">✦</span>
-          <span class="sparkle s3">✧</span>
-          <span class="sparkle s4">♡</span>
-          <picture>
-            <source
-              type="image/webp"
-              srcset="./assets/ms-moonlight-480.webp 480w,
-                      ./assets/ms-moonlight-full.webp 560w,
-                      ./assets/ms-moonlight-720.webp 720w"
-              sizes="(max-width: 900px) 220px, min(480px, 42vw)"
-            >
-            <img
-              class="character-img"
-              src="./assets/ms-moonlight-480.png"
-              srcset="./assets/ms-moonlight-480.png 480w,
-                      ./assets/ms-moonlight-full.png 720w"
-              sizes="(max-width: 900px) 220px, min(480px, 42vw)"
-              alt="Ms. Moonlight waving hello"
-              width="720"
-              height="1057"
-              decoding="async"
-              fetchpriority="high"
-              loading="eager"
-            >
-          </picture>
-        </div>
-
         <div class="panel-col">
           <section class="panel" aria-label="Today's activities">
             <span class="deco plane" aria-hidden="true">✈️</span>
@@ -658,7 +659,37 @@
             <p class="footer-hint">Pick one and let’s start learning with a smile 🌸</p>
           </section>
         </div>
-      </main>
+      
+        <div class="character-col">
+          <span class="sparkle s1">♡</span>
+          <span class="sparkle s2">✦</span>
+          <span class="sparkle s3">✧</span>
+          <span class="sparkle s4">♡</span>
+          <picture>
+            <source
+              type="image/webp"
+              srcset="./assets/ms-moonlight-480.webp 480w,
+                      ./assets/ms-moonlight-full.webp 560w,
+                      ./assets/ms-moonlight-720.webp 720w"
+              sizes="(max-width: 900px) 220px, min(480px, 42vw)"
+            >
+            <img
+              class="character-img"
+              src="./assets/ms-moonlight-480.png"
+              srcset="./assets/ms-moonlight-480.png 480w,
+                      ./assets/ms-moonlight-full.png 720w"
+              sizes="(max-width: 900px) 220px, min(480px, 42vw)"
+              alt="Ms. Moonlight waving hello"
+              width="720"
+              height="1057"
+              decoding="async"
+              fetchpriority="high"
+              loading="eager"
+            >
+          </picture>
+        </div>
+
+        </main>
     </div>
   </div>
 
