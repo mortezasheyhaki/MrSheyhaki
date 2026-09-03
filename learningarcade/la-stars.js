@@ -46,7 +46,14 @@
     "vocab-colors-what-is-it": "vocab-colors-match",
     // Food mini-games → main Food card
     "vocab-food-a-an-some": "vocab-food-match-rush",
-    "vocab-food-memory": "vocab-food-match-rush"
+    "vocab-food-memory": "vocab-food-match-rush",
+    "vocab-food-flashcards": "vocab-food-match-rush",
+    "vocab-food-say-food": "vocab-food-match-rush",
+    // Clothes
+    "vocab-clothes-balloon-pop": "vocab-clothes-match",
+    "vocab-clothes-dictation": "vocab-clothes-match",
+    // School subjects
+    "vocab-school-subjects": "vocab-school-subjects"
   };
 
   function loadJSON(key) {

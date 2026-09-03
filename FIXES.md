@@ -50,3 +50,12 @@ Place it inside a container that has the section class (e.g. `<main class="gramm
 ## Profile in header + mobile polish
 - Profile icon moved into `.arcade-nav` (end of header) via theme.js; floating `.profile-fab` hidden.
 - Back button z-index raised; mobile nav touch targets 44px; safe-area aware.
+
+## Star system fixes — Sep 2026
+
+- Ensured `la-stars.js` is included on game pages that were missing the script tag (simple-past match-rush, colors balloon-spell, food say-food, clothes balloon-pop, food flashcards, school-subjects, amelias-days).
+- Added `LAStars.recordPlay` / `saveFromAccuracy` (or equivalent) calls to games that previously lacked them so stars and play counts persist.
+- Extended `ALIASES` in `la-stars.js` for new child game IDs (balloon-pop, flashcards, say-food, school-subjects) so parent skill cards update correctly.
+- Cleaned duplicated content where present in redirect pages.
+
+Pictures and audio remain intentionally omitted (size reduction); games already guard missing media with `.catch()` / silent fallbacks.

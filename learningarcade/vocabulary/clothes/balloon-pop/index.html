@@ -939,6 +939,15 @@
       : (bestScore > 0 ? `Best: ${bestScore}` : "");
 
     document.getElementById("endOverlay").classList.remove("hidden");
+
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay("vocab-clothes-balloon-pop");
+        // Map score roughly: high score ~3 stars
+        var acc = won ? 100 : Math.min(100, Math.round((round / 16) * 100));
+        LAStars.saveFromAccuracy("vocab-clothes-balloon-pop", acc);
+      }
+    } catch (e) {}
   }
 
   // ── Answers ────────────────────────────────────────────────
@@ -1035,5 +1044,6 @@
   });
 })();
 </script>
+<script src="../../../la-stars.js"></script>
 </body>
 </html>

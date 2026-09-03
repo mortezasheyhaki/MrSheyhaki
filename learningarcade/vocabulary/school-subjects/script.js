@@ -137,3 +137,5 @@ $('#resetMatch').addEventListener('click',renderMatch);
 $('#nextSpeak').addEventListener('click',()=>{speakIndex++;renderSpeak();});
 $('#year').textContent=new Date().getFullYear();
 renderLearn();
+
+try { if (window.LAStars) { LAStars.recordPlay("vocab-school-subjects"); LAStars.save("vocab-school-subjects", 1); } } catch(e) {}

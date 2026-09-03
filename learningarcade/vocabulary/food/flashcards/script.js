@@ -204,6 +204,7 @@
   }
 
   function start() {
+    try { if (window.LAStars) LAStars.recordPlay("vocab-food-flashcards"); } catch(e) {}
     deck = shuffle(BANK.slice());
     index = 0;
     show("study");
