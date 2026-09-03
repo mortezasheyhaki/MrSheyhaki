@@ -7,8 +7,8 @@
   <title>My Profile | Learning Arcade</title>
   <meta name="description" content="Your Learning Arcade profile and scores." />
   <link rel="stylesheet" href="../style.css" />
-  <link rel="stylesheet" href="../../style.css" />
-  <link rel="stylesheet" href="../../theme.css" />
+  <!-- site style.css optional -->
+  <link rel="stylesheet" href="../theme.css" />
   <style>
     .profile-wrap { max-width: 640px; margin: 0 auto; padding: 0 16px 48px; }
     .profile-card {
@@ -160,13 +160,14 @@
   </style>
 </head>
 <body>
-<a href="../profile/" class="profile-fab" aria-label="My Profile" title="My Profile">👤</a>
+<a href="./" class="profile-fab" aria-label="My Profile" title="My Profile">👤</a>
 <header class="arcade-header-bar">
   <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
       <a href="../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
       <a href="../" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
       <a href="../../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
       <a href="../leaderboard/" class="nav-link" aria-label="Leaderboard" data-icon="🏆"><span class="nav-ico" aria-hidden="true">🏆</span><span class="nav-text">Leaderboard</span></a>
+      <a href="./" class="nav-link nav-profile" aria-label="My Profile" title="My Profile"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
       <a href="../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
     </nav>
 </header>
@@ -182,12 +183,21 @@
   </section>
 
   <section class="profile-card">
-    <h2>Display name</h2>
+    <h2>Player identity</h2>
+    <p class="status" style="margin-bottom:12px;color:#64748b;">
+      Name + class code keep scores unique (e.g. two students both named Ali).
+    </p>
+    <label for="playerName" style="display:block;font-weight:700;font-size:0.85rem;margin-bottom:6px;">Name</label>
     <div class="name-row">
       <input id="playerName" type="text" maxlength="32" placeholder="e.g. Ali" autocomplete="nickname" />
-      <button type="button" id="saveNameBtn" aria-label="Save name">Save</button>
+    </div>
+    <label for="classCode" style="display:block;font-weight:700;font-size:0.85rem;margin:14px 0 6px;">Class code</label>
+    <div class="name-row">
+      <input id="classCode" type="text" maxlength="12" placeholder="e.g. 7A or G1" autocomplete="off" spellcheck="false" style="text-transform:uppercase;" />
+      <button type="button" id="saveNameBtn" aria-label="Save identity">Save</button>
     </div>
     <p class="status" id="nameStatus"></p>
+    <p class="status" id="identityPreview" style="margin-top:8px;font-weight:700;color:#6937d8;"></p>
   </section>
 
   <section class="profile-card">
@@ -207,8 +217,8 @@
 <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
 <script src="../firebase-scores.js"></script>
 <script src="../la-stars.js"></script>
-<script src="../../script.js"></script>
-<script src="../../theme.js"></script>
+<!-- site script.js optional -->
+<script src="../theme.js"></script>
 <script>
 (function () {
   var year = document.getElementById('year');
@@ -281,29 +291,51 @@
     return GAME_URLS[id] || null;
   }
 
+  var classInput = document.getElementById('classCode');
+  var identityPreview = document.getElementById('identityPreview');
+
+  function updatePreview() {
+    if (!identityPreview || !window.LAScores) return;
+    var n = (input.value || '').trim();
+    var c = (classInput && classInput.value || '').trim().toUpperCase();
+    if (n && c) {
+      identityPreview.textContent = 'Scores will show as: ' + n + ' · ' + c;
+    } else if (n) {
+      identityPreview.textContent = 'Add a class code so your name stays unique.';
+    } else {
+      identityPreview.textContent = '';
+    }
+  }
+
   function setNameMode(editing) {
     editingName = editing;
     if (editing) {
       input.readOnly = false;
+      if (classInput) classInput.readOnly = false;
       saveNameBtn.textContent = 'Save';
       saveNameBtn.classList.remove('is-edit');
-      saveNameBtn.setAttribute('aria-label', 'Save name');
+      saveNameBtn.setAttribute('aria-label', 'Save identity');
       input.focus();
     } else {
       input.readOnly = true;
+      if (classInput) classInput.readOnly = true;
       saveNameBtn.innerHTML = '✎';
       saveNameBtn.classList.add('is-edit');
-      saveNameBtn.setAttribute('aria-label', 'Edit name');
+      saveNameBtn.setAttribute('aria-label', 'Edit identity');
     }
+    updatePreview();
   }
 
   var existingName = LAScores.getPlayerName();
+  var existingClass = LAScores.getClassCode ? LAScores.getClassCode() : '';
   input.value = existingName;
-  if (existingName) {
+  if (classInput) classInput.value = existingClass;
+  if (existingName && existingClass) {
     setNameMode(false);
   } else {
     setNameMode(true);
   }
+  updatePreview();
 
   saveNameBtn.addEventListener('click', function () {
     if (!editingName) {
@@ -311,17 +343,38 @@
       return;
     }
     var n = LAScores.setPlayerName(input.value);
+    var c = LAScores.setClassCode ? LAScores.setClassCode(classInput ? classInput.value : '') : '';
     input.value = n;
-    if (n) {
-      nameStatus.textContent = 'Name saved: ' + n;
+    if (classInput) classInput.value = c;
+    if (n && c) {
+      var display = LAScores.getDisplayName ? LAScores.getDisplayName() : (n + ' · ' + c);
+      nameStatus.textContent = 'Saved as: ' + display;
       nameStatus.className = 'status is-ok';
       setNameMode(false);
       loadScores();
-    } else {
+    } else if (!n) {
       nameStatus.textContent = 'Enter a name first.';
       nameStatus.className = 'status';
+    } else {
+      nameStatus.textContent = 'Enter a class code (e.g. 7A) so scores stay unique.';
+      nameStatus.className = 'status';
     }
+    updatePreview();
   });
+
+  input.addEventListener('input', updatePreview);
+  if (classInput) {
+    classInput.addEventListener('input', function () {
+      classInput.value = classInput.value.toUpperCase();
+      updatePreview();
+    });
+    classInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && editingName) {
+        e.preventDefault();
+        saveNameBtn.click();
+      }
+    });
+  }
 
   input.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && editingName) {

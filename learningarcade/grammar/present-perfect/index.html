@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Present Perfect | MrSheyhaki.ir – Grammar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --primary-light: #818cf8;
+      --success: #10b981;
+      --success-bg: #d1fae5;
+      --error: #ef4444;
+      --error-bg: #fee2e2;
+      --warning: #f59e0b;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', system-ui, sans-serif;
+      background: linear-gradient(135deg, #eef2ff 0%, #f0f9ff 50%, #fdf4ff 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px 12px 50px;
+    }
+
+    /* Progress bar with CSS animation */
+    .progress-wrap {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #818cf8, #4f46e5, #6366f1, #818cf8);
+      background-size: 200% 100%;
+      transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: progressShimmer 1.8s linear infinite;
+      position: relative;
+    }
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255,255,255,0.35) 50%,
+        transparent 100%
+      );
+      background-size: 200% 100%;
+      animation: progressShine 1.6s ease-in-out infinite;
+      border-radius: inherit;
+    }
+    @keyframes progressShimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    @keyframes progressShine {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-top: 12px;
+    }
+
+    .site-badge {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    /* Menu */
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    @media (min-width: 640px) {
+      .menu { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    }
+
+    .menu-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px 12px;
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid transparent;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.3s ease,
+                  border-color 0.25s ease,
+                  background 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .menu-card:hover, .menu-card:active {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-light);
+    }
+
+    .menu-card.active {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    }
+
+    .menu-icon {
+      font-size: 1.9rem;
+      margin-bottom: 8px;
+    }
+
+    .menu-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .menu-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    /* Game screens */
+    .game-screen {
+      display: none;
+      animation: fadeIn 0.35s ease;
+    }
+
+    .game-screen.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .game-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .game-header h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.45rem;
+      color: var(--primary-dark);
+    }
+
+    .back-btn {
+      background: white;
+      border: 2px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  border-color 0.25s ease,
+                  color 0.25s ease,
+                  background 0.25s ease;
+    }
+
+    .back-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateX(-3px);
+      background: #eef2ff;
+    }
+
+    /* Cards / panels */
+    .panel {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border: none;
+      border-radius: 999px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background 0.25s ease,
+                  color 0.25s ease,
+                  box-shadow 0.25s ease,
+                  opacity 0.25s ease;
+      min-height: 48px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+    .btn-success:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-outline {
+      background: white;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+    }
+    .btn-outline:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    /* Progress / score */
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      align-items: center;
+      margin-bottom: 14px;
+      font-weight: 600;
+      font-size: 0.88rem;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #f1f5f9;
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+
+    .status-item .label { color: var(--text-muted); font-weight: 600; }
+    .status-item .value { color: var(--primary-dark); }
+
+    /* ========== MATCH RUSH ========== */
+    .match-board {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 420px) {
+      .match-board { gap: 8px; }
+      .match-card { padding: 12px 8px; font-size: 0.95rem; }
+    }
+
+    .match-column h3 {
+      text-align: center;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .match-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .match-card {
+      background: #f8fafc;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 12px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  border-color 0.25s ease,
+                  background 0.25s ease,
+                  box-shadow 0.25s ease,
+                  opacity 0.3s ease;
+      user-select: none;
+    }
+
+    .match-card:hover:not(.matched):not(.selected) {
+      border-color: var(--primary-light);
+      background: #eef2ff;
+      transform: translateY(-2px) scale(1.03);
+    }
+
+    .match-card.selected {
+      border-color: var(--primary);
+      background: #e0e7ff;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+      transform: scale(1.04);
+    }
+
+    .match-card.matched {
+      background: var(--success-bg);
+      border-color: var(--success);
+      color: #065f46;
+      cursor: default;
+      opacity: 0.85;
+      transform: scale(1);
+    }
+
+    .match-card.wrong {
+      animation: shake 0.4s ease;
+      border-color: var(--error);
+      background: var(--error-bg);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    .round-complete {
+      text-align: center;
+      padding: 24px;
+      background: var(--success-bg);
+      border-radius: var(--radius);
+      margin-top: 12px;
+    }
+
+    .round-complete h3 {
+      color: #065f46;
+      margin-bottom: 8px;
+    }
+
+    /* ========== WRITE GAME ========== */
+    .write-item {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .write-prompt {
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .type-badge {
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 2px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .type-pos { background: #d1fae5; color: #065f46; }
+    .type-neg { background: #fee2e2; color: #991b1b; }
+    .type-q { background: #dbeafe; color: #1e40af; }
+
+    .write-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .write-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .write-input.correct {
+      border-color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .write-input.incorrect {
+      border-color: var(--error);
+      background: var(--error-bg);
+    }
+
+    .feedback {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .feedback.ok { color: #065f46; }
+    .feedback.bad { color: #991b1b; }
+
+    .choose-panel {
+      background: transparent;
+      padding: 8px 0 12px;
+      margin-bottom: 8px;
+    }
+
+    /* ========== CHOOSE GAME ========== */
+    .choose-item {
+      background: transparent;
+      border: none;
+      padding: 8px 0 0;
+      margin-bottom: 0;
+      text-align: center;
+    }
+
+    .choose-q {
+      font-weight: 700;
+      margin-bottom: 28px;
+      font-size: clamp(1.25rem, 4.5vw, 1.65rem);
+      line-height: 1.45;
+      color: var(--text);
+      padding: 8px 4px;
+      text-align: center;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 480px) {
+      .options { grid-template-columns: 1fr; gap: 12px; }
+    }
+
+    .option-btn {
+      text-align: center;
+      padding: 20px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      background: #f8fafc;
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  border-color 0.25s ease,
+                  background 0.25s ease,
+                  color 0.25s ease,
+                  box-shadow 0.3s ease;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(79,70,229,0.08), rgba(129,140,248,0.12));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: #eef2ff;
+      transform: translateY(-5px) scale(1.04);
+      box-shadow: 0 10px 24px rgba(79, 70, 229, 0.22);
+      color: var(--primary-dark);
+    }
+
+    .option-btn:hover:not(:disabled)::before {
+      opacity: 1;
+    }
+
+    .option-btn:active:not(:disabled) {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.18);
+    }
+
+    .option-btn.selected {
+      border-color: var(--primary);
+      background: #e0e7ff;
+    }
+
+    .option-btn.correct {
+      border-color: var(--success);
+      background: var(--success-bg);
+      color: #065f46;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .option-btn.wrong {
+      border-color: var(--error);
+      background: var(--error-bg);
+      color: #991b1b;
+    }
+
+    .option-btn:disabled { cursor: default; transform: none; }
+
+    /* ========== FILL GAME ========== */
+    .dialogue {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .line {
+      margin-bottom: 14px;
+      line-height: 1.7;
+      font-size: 1.05rem;
+    }
+
+    .speaker {
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-right: 6px;
+    }
+
+    .blank-input {
+      display: inline-block;
+      width: 90px;
+      max-width: 30vw;
+      padding: 6px 6px;
+      margin: 2px 1px;
+      border: none;
+      border-bottom: 2px solid var(--primary);
+      background: #eef2ff;
+      border-radius: 4px 4px 0 0;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: center;
+      color: var(--primary-dark);
+    }
+
+    .blank-input:focus {
+      outline: none;
+      background: #e0e7ff;
+    }
+
+    .blank-input.correct {
+      background: var(--success-bg);
+      border-bottom-color: var(--success);
+      color: #065f46;
+    }
+
+    .blank-input.incorrect {
+      background: var(--error-bg);
+      border-bottom-color: var(--error);
+      color: #991b1b;
+    }
+
+    .blank-input.wide { width: 120px; max-width: 40vw; }
+
+    .line { word-wrap: break-word; overflow-wrap: break-word; }
+
+    /* Results */
+    .results-box {
+      text-align: center;
+      padding: 28px 20px;
+      background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+      border-radius: var(--radius);
+      margin-top: 16px;
+    }
+
+    .results-box h3 {
+      font-size: 1.4rem;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .score-big {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .hint {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 12px 10px 40px; }
+      .panel { padding: 16px 12px; }
+      .game-header h2 { font-size: 1.2rem; }
+      .back-btn { padding: 7px 12px; font-size: 0.85rem; }
+      .write-input { font-size: 16px; } /* prevent iOS zoom */
+      .blank-input { font-size: 16px; }
+      .option-btn { padding: 14px 12px; font-size: 0.95rem; }
+      .btn { width: 100%; max-width: 320px; }
+      .btn-group { flex-direction: column; align-items: center; }
+    }
+  </style>
+  <link rel="stylesheet" href="../../theme.css">
+  
+  <style>
+    /* Arcade integration + dark mode */
+    a.profile-fab, .profile-fab, a.nav-profile, .nav-profile {
+      display: none !important;
+    }
+    .arcade-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .pp-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 2px solid var(--border, #e2e8f0);
+      background: var(--card, #fff);
+      color: var(--text, #1e293b);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: border-color 0.2s, transform 0.2s, background 0.2s;
+    }
+    .pp-back:hover {
+      border-color: var(--primary, #4f46e5);
+      color: var(--primary, #4f46e5);
+      transform: translateX(-2px);
+    }
+
+    /* Dark mode via html[data-theme="dark"] */
+    html[data-theme="dark"] {
+      --primary: #818cf8;
+      --primary-dark: #a5b4fc;
+      --primary-light: #6366f1;
+      --success: #34d399;
+      --success-bg: #064e3b;
+      --error: #f87171;
+      --error-bg: #7f1d1d;
+      --warning: #fbbf24;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.35), 0 4px 6px -4px rgb(0 0 0 / 0.25);
+    }
+    html[data-theme="dark"] body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%) !important;
+      color: var(--text) !important;
+    }
+    html[data-theme="dark"] .menu-card,
+    html[data-theme="dark"] .panel,
+    html[data-theme="dark"] .status-item,
+    html[data-theme="dark"] .match-card,
+    html[data-theme="dark"] .write-item,
+    html[data-theme="dark"] .option-btn,
+    html[data-theme="dark"] .dialogue,
+    html[data-theme="dark"] .results-box,
+    html[data-theme="dark"] .round-complete {
+      background: var(--card) !important;
+      border-color: var(--border) !important;
+      color: var(--text) !important;
+    }
+    html[data-theme="dark"] .menu-card.active {
+      background: linear-gradient(135deg, #1e1b4b, #312e81) !important;
+      border-color: #818cf8 !important;
+    }
+    html[data-theme="dark"] .menu-title,
+    html[data-theme="dark"] .game-header h2,
+    html[data-theme="dark"] h1,
+    html[data-theme="dark"] .choose-q {
+      color: #e0e7ff !important;
+    }
+    html[data-theme="dark"] .menu-desc,
+    html[data-theme="dark"] .subtitle,
+    html[data-theme="dark"] .hint,
+    html[data-theme="dark"] .match-column h3 {
+      color: #94a3b8 !important;
+    }
+    html[data-theme="dark"] .back-btn,
+    html[data-theme="dark"] .pp-back {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+      color: #e2e8f0 !important;
+    }
+    html[data-theme="dark"] .back-btn:hover,
+    html[data-theme="dark"] .pp-back:hover {
+      border-color: #818cf8 !important;
+      color: #a5b4fc !important;
+      background: #312e81 !important;
+    }
+    html[data-theme="dark"] .btn-outline {
+      background: #1e293b !important;
+      border-color: #818cf8 !important;
+      color: #a5b4fc !important;
+    }
+    html[data-theme="dark"] .btn-outline:hover {
+      background: #4f46e5 !important;
+      color: #fff !important;
+    }
+    html[data-theme="dark"] .match-card {
+      background: #0f172a !important;
+      border-color: #334155 !important;
+      color: #f1f5f9 !important;
+    }
+    html[data-theme="dark"] .match-card:hover:not(.matched):not(.selected) {
+      background: #312e81 !important;
+      border-color: #818cf8 !important;
+    }
+    html[data-theme="dark"] .match-card.selected {
+      background: #3730a3 !important;
+      border-color: #818cf8 !important;
+    }
+    html[data-theme="dark"] .match-card.matched {
+      background: #064e3b !important;
+      border-color: #34d399 !important;
+      color: #a7f3d0 !important;
+    }
+    html[data-theme="dark"] .option-btn {
+      background: #0f172a !important;
+      border-color: #334155 !important;
+      color: #f1f5f9 !important;
+    }
+    html[data-theme="dark"] .option-btn:hover:not(:disabled) {
+      background: #312e81 !important;
+      border-color: #818cf8 !important;
+      color: #e0e7ff !important;
+    }
+    html[data-theme="dark"] .option-btn.correct {
+      background: #064e3b !important;
+      border-color: #34d399 !important;
+      color: #a7f3d0 !important;
+    }
+    html[data-theme="dark"] .option-btn.wrong {
+      background: #7f1d1d !important;
+      border-color: #f87171 !important;
+      color: #fecaca !important;
+    }
+    html[data-theme="dark"] .write-input,
+    html[data-theme="dark"] .blank-input {
+      background: #0f172a !important;
+      border-color: #818cf8 !important;
+      color: #e0e7ff !important;
+    }
+    html[data-theme="dark"] .write-input:focus,
+    html[data-theme="dark"] .blank-input:focus {
+      background: #1e1b4b !important;
+    }
+    html[data-theme="dark"] .write-input.correct,
+    html[data-theme="dark"] .blank-input.correct {
+      background: #064e3b !important;
+      border-color: #34d399 !important;
+      color: #a7f3d0 !important;
+    }
+    html[data-theme="dark"] .write-input.incorrect,
+    html[data-theme="dark"] .blank-input.incorrect {
+      background: #7f1d1d !important;
+      border-color: #f87171 !important;
+      color: #fecaca !important;
+    }
+    html[data-theme="dark"] .progress-wrap {
+      background: #334155 !important;
+    }
+    html[data-theme="dark"] .status-item {
+      background: #0f172a !important;
+    }
+    html[data-theme="dark"] .status-item .value {
+      color: #a5b4fc !important;
+    }
+    html[data-theme="dark"] .results-box {
+      background: linear-gradient(135deg, #1e1b4b, #312e81) !important;
+    }
+    html[data-theme="dark"] .results-box h3 {
+      color: #e0e7ff !important;
+    }
+    html[data-theme="dark"] .round-complete {
+      background: #064e3b !important;
+    }
+    html[data-theme="dark"] .round-complete h3 {
+      color: #a7f3d0 !important;
+    }
+    html[data-theme="dark"] footer {
+      border-top-color: #334155 !important;
+      color: #94a3b8 !important;
+    }
+    html[data-theme="dark"] .site-badge {
+      background: #4f46e5 !important;
+    }
+    html[data-theme="dark"] .type-pos { background: #064e3b; color: #a7f3d0; }
+    html[data-theme="dark"] .type-neg { background: #7f1d1d; color: #fecaca; }
+    html[data-theme="dark"] .type-q { background: #1e3a5f; color: #93c5fd; }
+    html[data-theme="dark"] .speaker { color: #a5b4fc !important; }
+    html[data-theme="dark"] .feedback.ok { color: #34d399 !important; }
+    html[data-theme="dark"] .feedback.bad { color: #f87171 !important; }
+  </style>
+</head>
+<body>
+  <div class="arcade-topbar">
+    <a class="pp-back" href="../">← Grammar</a>
+  </div>
+
+  <div class="container">
+    <header>
+      <div class="site-badge">MrSheyhaki.ir · Grammar</div>
+      <h1>Present Perfect</h1>
+      <p class="subtitle">Practice with four interactive games · Learning Arcade</p>
+    </header>
+
+    <!-- MENU -->
+    <div id="menu" class="menu">
+      <div class="menu-card" onclick="startGame(1)">
+        <div class="menu-icon">⚡</div>
+        <div class="menu-title">Match Rush</div>
+        <div class="menu-desc">Base form ↔ Past participle</div>
+      </div>
+      <div class="menu-card" onclick="startGame(2)">
+        <div class="menu-icon">✍️</div>
+        <div class="menu-title">Write +, −, ?</div>
+        <div class="menu-desc">Make positive, negative & questions</div>
+      </div>
+      <div class="menu-card" onclick="startGame(3)">
+        <div class="menu-icon">✅</div>
+        <div class="menu-title">Choose the form</div>
+        <div class="menu-desc">Present Perfect vs Past Simple</div>
+      </div>
+      <div class="menu-card" onclick="startGame(4)">
+        <div class="menu-icon">📝</div>
+        <div class="menu-title">Fill the blanks</div>
+        <div class="menu-desc">Present Perfect or Simple Past</div>
+      </div>
+    </div>
+
+    <!-- ========== GAME 1: MATCH RUSH ========== -->
+    <div id="game1" class="game-screen">
+      <div class="game-header">
+        <h2>⚡ Match Rush</h2>
+        <button class="back-btn" onclick="showMenu()">← Menu</button>
+      </div>
+
+      <div class="progress-wrap"><div class="progress-bar" id="mr-progress"></div></div>
+
+      <div class="status-bar">
+        <div class="status-item"><span class="label">Part</span> <span class="value" id="mr-part">1</span>/2</div>
+        <div class="status-item"><span class="label">Round</span> <span class="value" id="mr-round">1</span>/5</div>
+        <div class="status-item"><span class="label">Score</span> <span class="value" id="mr-score">0</span></div>
+        <div class="status-item"><span class="label">Matched</span> <span class="value" id="mr-matched">0</span>/5</div>
+      </div>
+
+      <div class="panel">
+        <p style="text-align:center;color:var(--text-muted);margin-bottom:16px;font-size:0.95rem;">
+          Click a base verb on the left, then its past participle on the right.
+        </p>
+        <div class="match-board">
+          <div class="match-column">
+            <h3>Base form</h3>
+            <div class="match-list" id="base-list"></div>
+          </div>
+          <div class="match-column">
+            <h3>Past participle</h3>
+            <div class="match-list" id="pp-list"></div>
+          </div>
+        </div>
+        <div id="round-msg"></div>
+      </div>
+    </div>
+
+    <!-- ========== GAME 2: WRITE ========== -->
+    <div id="game2" class="game-screen">
+      <div class="game-header">
+        <h2>✍️ Write +, −, ?</h2>
+        <button class="back-btn" onclick="showMenu()">← Menu</button>
+      </div>
+
+      <div class="progress-wrap"><div class="progress-bar" id="w-progress"></div></div>
+
+      <div class="status-bar">
+        <div class="status-item"><span class="label">Question</span> <span class="value" id="w-qnum">1</span>/<span id="w-total">11</span></div>
+        <div class="status-item"><span class="label">Score</span> <span class="value" id="w-score">0</span></div>
+      </div>
+
+      <div class="panel" id="write-container"></div>
+
+      <div class="btn-group" id="write-btns">
+        <button class="btn btn-primary" id="w-check-btn" onclick="checkWriteOne()">Check</button>
+        <button class="btn btn-success" id="w-show-btn" onclick="showWriteOneAnswer()" style="display:none;">Show answer</button>
+      </div>
+      <div id="write-results"></div>
+    </div>
+
+    <!-- ========== GAME 3: CHOOSE ========== -->
+    <div id="game3" class="game-screen">
+      <div class="game-header">
+        <h2>✅ Choose the correct form</h2>
+        <button class="back-btn" onclick="showMenu()">← Menu</button>
+      </div>
+
+      <div class="progress-wrap"><div class="progress-bar" id="c-progress"></div></div>
+
+      <div class="status-bar">
+        <div class="status-item"><span class="label">Question</span> <span class="value" id="c-qnum">1</span>/<span id="c-total">10</span></div>
+        <div class="status-item"><span class="label">Score</span> <span class="value" id="c-score">0</span></div>
+      </div>
+
+      <div id="choose-container" class="choose-panel"></div>
+
+      <div class="btn-group" id="choose-btns" style="display:none;"></div>
+      <div id="choose-results"></div>
+    </div>
+
+    <!-- ========== GAME 4: FILL ========== -->
+    <div id="game4" class="game-screen">
+      <div class="game-header">
+        <h2>📝 Present Perfect or Simple Past</h2>
+        <button class="back-btn" onclick="showMenu()">← Menu</button>
+      </div>
+
+      <div class="progress-wrap"><div class="progress-bar" id="f-progress"></div></div>
+
+      <div class="status-bar">
+        <div class="status-item"><span class="label">Score</span> <span class="value" id="f-score">0</span>/<span id="f-total">10</span></div>
+      </div>
+
+      <div class="panel">
+        <p style="margin-bottom:16px;color:var(--text-muted);font-size:0.95rem;">
+          Put the verbs in parentheses in the <strong>present perfect</strong> or <strong>simple past</strong>.
+        </p>
+        <div class="dialogue" id="fill-dialogue"></div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="checkFill()">Check answers</button>
+        <button class="btn btn-outline" onclick="resetFill()">Reset</button>
+        <button class="btn btn-success" id="f-show-btn" onclick="showFillAnswers()" style="display:none;">Show answers</button>
+      </div>
+      <div id="fill-results"></div>
+    </div>
+
+    <footer>
+      <p>Present Perfect practice · <a href="https://MrSheyhaki.ir" target="_blank">MrSheyhaki.ir</a> – Grammar</p>
+    </footer>
+  </div>
+
+  <script>
+    /* ============================================================
+       DATA
+    ============================================================ */
+
+    // 50 verb pairs (know fixed to known)
+    const ALL_PAIRS = [
+      ["be","been"],["become","become"],["begin","begun"],["break","broken"],["bring","brought"],
+      ["build","built"],["buy","bought"],["catch","caught"],["come","come"],["cost","cost"],
+      ["do","done"],["drink","drunk"],["drive","driven"],["eat","eaten"],["fall","fallen"],
+      ["feel","felt"],["find","found"],["fly","flown"],["forget","forgotten"],["get","gotten"],
+      ["give","given"],["go","gone"],["have","had"],["hear","heard"],["know","known"],
+      ["leave","left"],["lose","lost"],["make","made"],["meet","met"],["pay","paid"],
+      ["put","put"],["read","read"],["run","run"],["say","said"],["see","seen"],
+      ["send","sent"],["sing","sung"],["sit","sat"],["sleep","slept"],["spend","spent"],
+      ["stand","stood"],["swim","swum"],["teach","taught"],["take","taken"],["tell","told"],
+      ["think","thought"],["wake","woken"],["wear","worn"],["win","won"],["write","written"]
+    ];
+
+    // Pre-shuffled into 10 rounds of 5 (not alphabetical)
+    const MATCH_ROUNDS = [
+      // Part 1
+      [ ["go","gone"],["break","broken"],["see","seen"],["buy","bought"],["write","written"] ],
+      [ ["eat","eaten"],["come","come"],["think","thought"],["build","built"],["swim","swum"] ],
+      [ ["do","done"],["fly","flown"],["leave","left"],["sing","sung"],["get","gotten"] ],
+      [ ["make","made"],["fall","fallen"],["teach","taught"],["read","read"],["lose","lost"] ],
+      [ ["give","given"],["stand","stood"],["catch","caught"],["know","known"],["put","put"] ],
+      // Part 2
+      [ ["take","taken"],["drink","drunk"],["meet","met"],["bring","brought"],["sleep","slept"] ],
+      [ ["have","had"],["begin","begun"],["say","said"],["win","won"],["feel","felt"] ],
+      [ ["find","found"],["drive","driven"],["pay","paid"],["wear","worn"],["cost","cost"] ],
+      [ ["hear","heard"],["become","become"],["run","run"],["forget","forgotten"],["sit","sat"] ],
+      [ ["send","sent"],["wake","woken"],["tell","told"],["spend","spent"],["be","been"] ]
+    ];
+
+    // Game 2 – Write
+    const WRITE_ITEMS = [
+      { type: "+", prompt: "I / see a famous actor", answer: "I've seen a famous actor.", alts: ["I have seen a famous actor."] },
+      { type: "+", prompt: "I / change my email address", answer: "I've changed my email address.", alts: ["I have changed my email address."] },
+      { type: "−", prompt: "my husband / work abroad", answer: "My husband hasn't worked abroad.", alts: ["My husband has not worked abroad."] },
+      { type: "?", prompt: "you / decide what to do", answer: "Have you decided what to do?", alts: ["Have you decided what to do"] },
+      { type: "−", prompt: "they / pass the exam", answer: "They haven't passed the exam.", alts: ["They have not passed the exam."] },
+      { type: "?", prompt: "he / accept the invitation", answer: "Has he accepted the invitation?", alts: ["Has he accepted the invitation"] },
+      { type: "+", prompt: "she / study three languages", answer: "She's studied three languages.", alts: ["She has studied three languages."] },
+      { type: "−", prompt: "the train / arrive", answer: "The train hasn't arrived.", alts: ["The train has not arrived."] },
+      { type: "?", prompt: "the children / clean their room", answer: "Have the children cleaned their room?", alts: ["Have the children cleaned their room"] },
+      { type: "−", prompt: "my wife / call me", answer: "My wife hasn't called me.", alts: ["My wife has not called me."] },
+      { type: "+", prompt: "my father / help me a lot", answer: "My father has helped me a lot.", alts: ["My father's helped me a lot."] }
+    ];
+
+    // Game 3 – Choose
+    const CHOOSE_ITEMS = [
+      { q: "... a Japanese movie?", options: ["Have you ever seen", "Did you ever see"], correct: 0 },
+      { q: "I ... this book. I'm on page 210.", options: ["haven't finished", "didn't finish"], correct: 0 },
+      { q: "My husband ... me a ring for my last birthday.", options: ["has given", "gave"], correct: 1 },
+      { q: "They ... a new house last month.", options: ["have bought", "bought"], correct: 1 },
+      { q: "... ever danced the tango?", options: ["Have you", "Did you"], correct: 0 },
+      { q: "My friends ... to a party last weekend.", options: ["have gone", "went"], correct: 1 },
+      { q: "The secretary isn't here. She's ... for lunch.", options: ["been", "gone"], correct: 1 },
+      { q: "I've never ... to the US.", options: ["been", "gone"], correct: 0 },
+      { q: "My neighbors aren't at home. They've ... on vacation.", options: ["been", "gone"], correct: 1 },
+      { q: "We have lots of food. I've ... to the supermarket.", options: ["been", "gone"], correct: 0 }
+    ];
+
+    // Game 4 – Fill blanks (dialogue)
+    // answers in order for blanks 1-10
+    const FILL_ANSWERS = [
+      ["Have", "visited"],           // 1
+      ["went"],                      // 2
+      ["did", "go"],                 // 3
+      ["paid"],                      // 4
+      ["Were"],                      // 5
+      ["were"],                      // 6
+      ["did", "stay"],               // 7
+      ["had"],                       // 8
+      ["Has", "invited"],            // 9
+      ["stopped"]                    // 10
+    ];
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+
+    /* ---- LAStars (Learning Arcade progress) ---- */
+    var PP_GAME_ID = "present-perfect";
+    function ppRecordPlay() {
+      try {
+        if (window.LAStars) LAStars.recordPlay(PP_GAME_ID);
+      } catch (e) {}
+    }
+    function ppSubmitScore(correct, total, label) {
+      try {
+        if (!window.LAScores || !LAScores.getPlayerName || !LAScores.getPlayerName()) return;
+        if (!LAScores.getClassCode || !LAScores.getClassCode()) return;
+        LAScores.submit({
+          gameId: PP_GAME_ID,
+          gameName: label || "Present Perfect",
+          score: Number(correct) || 0,
+          maxScore: Number(total) || undefined
+        });
+      } catch (e) {}
+    }
+    function ppSaveAccuracy(correct, total) {
+      try {
+        if (!window.LAStars || !total) return;
+        var acc = Math.round((Number(correct) / Number(total)) * 100);
+        LAStars.saveFromAccuracy(PP_GAME_ID, acc);
+      } catch (e) {}
+    }
+
+    function showMenu() {
+      document.querySelectorAll('.game-screen').forEach(el => el.classList.remove('active'));
+      document.getElementById('menu').style.display = 'grid';
+      document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('active'));
+    }
+
+    function startGame(n) {
+      ppRecordPlay();
+      document.getElementById('menu').style.display = 'none';
+      document.querySelectorAll('.game-screen').forEach(el => el.classList.remove('active'));
+      document.getElementById('game' + n).classList.add('active');
+
+      if (n === 1) initMatchRush();
+      if (n === 2) initWrite();
+      if (n === 3) initChoose();
+      if (n === 4) initFill();
+    }
+
+    /* ============================================================
+       GAME 1 – MATCH RUSH
+    ============================================================ */
+    let mrPart = 0;      // 0 or 1
+    let mrRound = 0;     // 0–4 inside part
+    let mrScore = 0;
+    let selectedBase = null;
+    let selectedPP = null;
+    let matchedCount = 0;
+    let currentPairs = [];
+
+    function initMatchRush() {
+      mrPart = 0;
+      mrRound = 0;
+      mrScore = 0;
+      loadRound();
+    }
+
+    function loadRound() {
+      const globalRound = mrPart * 5 + mrRound;
+      currentPairs = MATCH_ROUNDS[globalRound].map(p => [...p]);
+
+      // shuffle left and right independently
+      const bases = currentPairs.map(p => p[0]);
+      const pps = currentPairs.map(p => p[1]);
+      shuffle(bases);
+      shuffle(pps);
+
+      matchedCount = 0;
+      selectedBase = null;
+      selectedPP = null;
+
+      document.getElementById('mr-part').textContent = mrPart + 1;
+      document.getElementById('mr-round').textContent = mrRound + 1;
+      document.getElementById('mr-score').textContent = mrScore;
+      document.getElementById('mr-matched').textContent = '0';
+      document.getElementById('round-msg').innerHTML = '';
+      // progress: 10 rounds total
+      const globalR = mrPart * 5 + mrRound;
+      document.getElementById('mr-progress').style.width = (globalR / 10 * 100) + '%';
+
+      const baseList = document.getElementById('base-list');
+      const ppList = document.getElementById('pp-list');
+      baseList.innerHTML = '';
+      ppList.innerHTML = '';
+
+      bases.forEach(b => {
+        const div = document.createElement('div');
+        div.className = 'match-card';
+        div.textContent = b;
+        div.dataset.val = b;
+        div.onclick = () => selectBase(div);
+        baseList.appendChild(div);
+      });
+
+      pps.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'match-card';
+        div.textContent = p;
+        div.dataset.val = p;
+        div.onclick = () => selectPP(div);
+        ppList.appendChild(div);
+      });
+    }
+
+    function selectBase(el) {
+      if (el.classList.contains('matched')) return;
+      document.querySelectorAll('#base-list .match-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedBase = el;
+      tryMatch();
+    }
+
+    function selectPP(el) {
+      if (el.classList.contains('matched')) return;
+      document.querySelectorAll('#pp-list .match-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedPP = el;
+      tryMatch();
+    }
+
+    function tryMatch() {
+      if (!selectedBase || !selectedPP) return;
+
+      const base = selectedBase.dataset.val;
+      const pp = selectedPP.dataset.val;
+      const isCorrect = currentPairs.some(p => p[0] === base && p[1] === pp);
+
+      if (isCorrect) {
+        selectedBase.classList.add('matched');
+        selectedPP.classList.add('matched');
+        selectedBase.classList.remove('selected');
+        selectedPP.classList.remove('selected');
+        mrScore += 1;
+        matchedCount += 1;
+        document.getElementById('mr-score').textContent = mrScore;
+        document.getElementById('mr-matched').textContent = matchedCount;
+        selectedBase = null;
+        selectedPP = null;
+
+        if (matchedCount === 5) {
+          setTimeout(nextRoundOrFinish, 600);
+        }
+      } else {
+        selectedBase.classList.add('wrong');
+        selectedPP.classList.add('wrong');
+        const b = selectedBase, p = selectedPP;
+        selectedBase = null;
+        selectedPP = null;
+        setTimeout(() => {
+          b.classList.remove('selected', 'wrong');
+          p.classList.remove('selected', 'wrong');
+        }, 450);
+      }
+    }
+
+    function nextRoundOrFinish() {
+      const msg = document.getElementById('round-msg');
+      if (mrRound < 4) {
+        mrRound++;
+        msg.innerHTML = `<div class="round-complete"><h3>Round complete! 🎉</h3><p>Get ready for the next round…</p></div>`;
+        setTimeout(loadRound, 1200);
+      } else if (mrPart === 0) {
+        mrPart = 1;
+        mrRound = 0;
+        msg.innerHTML = `<div class="round-complete"><h3>Part 1 finished!</h3><p>Starting Part 2…</p></div>`;
+        setTimeout(loadRound, 1400);
+      } else {
+        document.getElementById('mr-progress').style.width = '100%';
+        ppSaveAccuracy(mrScore, 50); ppSubmitScore(mrScore, 50, 'Present Perfect · Match Rush');
+        msg.innerHTML = `
+          <div class="results-box">
+            <h3>Match Rush Complete!</h3>
+            <div class="score-big">${mrScore} / 50</div>
+            <p style="margin-top:8px;">Great job matching all the verbs!</p>
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="initMatchRush()">Play again</button>
+              <button class="btn btn-outline" onclick="showMenu()">Back to menu</button>
+            </div>
+          </div>`;
+      }
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    /* ============================================================
+       GAME 2 – WRITE (one by one, auto-advance)
+    ============================================================ */
+    let wIndex = 0;
+    let wScore = 0;
+    let wChecked = false;
+
+    function updateWProgress() {
+      const pct = (wIndex / WRITE_ITEMS.length) * 100;
+      document.getElementById('w-progress').style.width = pct + '%';
+    }
+
+    function initWrite() {
+      wIndex = 0;
+      wScore = 0;
+      wChecked = false;
+      document.getElementById('write-results').innerHTML = '';
+      document.getElementById('w-score').textContent = '0';
+      document.getElementById('w-total').textContent = WRITE_ITEMS.length;
+      document.getElementById('write-btns').style.display = 'flex';
+      showWriteItem();
+    }
+
+    function showWriteItem() {
+      wChecked = false;
+      const item = WRITE_ITEMS[wIndex];
+      const typeClass = item.type === '+' ? 'type-pos' : item.type === '−' ? 'type-neg' : 'type-q';
+      const typeLabel = item.type === '+' ? 'Positive' : item.type === '−' ? 'Negative' : 'Question';
+
+      document.getElementById('w-qnum').textContent = wIndex + 1;
+      updateWProgress();
+
+      const container = document.getElementById('write-container');
+      container.innerHTML = `
+        <div class="write-item" style="margin-bottom:0;">
+          <div class="write-prompt">
+            <span class="type-badge ${typeClass}">${typeLabel}</span>
+            <span>${item.prompt}</span>
+          </div>
+          <input type="text" class="write-input" id="w-input" placeholder="Type your answer here…" autocomplete="off" autofocus>
+          <div class="feedback" id="w-fb"></div>
+        </div>
+      `;
+
+      document.getElementById('w-check-btn').style.display = 'inline-flex';
+      document.getElementById('w-check-btn').disabled = false;
+      document.getElementById('w-show-btn').style.display = 'none';
+      document.getElementById('write-results').innerHTML = '';
+
+      const input = document.getElementById('w-input');
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !wChecked) checkWriteOne();
+      });
+      input.addEventListener('input', function() {
+        input.classList.remove('incorrect', 'correct');
+        document.getElementById('w-fb').textContent = '';
+      });
+      setTimeout(() => input.focus(), 50);
+    }
+
+    function normalize(str) {
+      return str.trim().toLowerCase()
+        .replace(/[’‘']/g, "'")
+        .replace(/\s+/g, ' ')
+        .replace(/\?$/, '')
+        .replace(/\.$/, '');
+    }
+
+    function checkWriteOne() {
+      if (wChecked) return;
+      const item = WRITE_ITEMS[wIndex];
+      const input = document.getElementById('w-input');
+      const fb = document.getElementById('w-fb');
+      const val = normalize(input.value);
+      const answers = [item.answer, ...(item.alts || [])].map(normalize);
+
+      const isCorrect = answers.includes(val) ||
+                        answers.some(a => a === val + '?') ||
+                        answers.some(a => a === val + '.');
+
+      if (isCorrect) {
+        wChecked = true;
+        document.getElementById('w-check-btn').disabled = true;
+        input.classList.add('correct');
+        input.classList.remove('incorrect');
+        fb.className = 'feedback ok';
+        fb.textContent = '✓ Correct!';
+        wScore++;
+        document.getElementById('w-score').textContent = wScore;
+        setTimeout(advanceWrite, 900);
+      } else {
+        input.classList.add('incorrect');
+        input.classList.remove('correct');
+        fb.className = 'feedback bad';
+        fb.textContent = '✗ Not quite. Try again or show the answer.';
+        document.getElementById('w-show-btn').style.display = 'inline-flex';
+      }
+    }
+
+    function showWriteOneAnswer() {
+      const item = WRITE_ITEMS[wIndex];
+      const input = document.getElementById('w-input');
+      const fb = document.getElementById('w-fb');
+      input.value = item.answer;
+      input.classList.add('correct');
+      input.classList.remove('incorrect');
+      fb.className = 'feedback ok';
+      fb.textContent = '✓ Correct answer';
+      wChecked = true;
+      document.getElementById('w-check-btn').style.display = 'none';
+      document.getElementById('w-show-btn').style.display = 'none';
+      setTimeout(advanceWrite, 1400);
+    }
+
+    function advanceWrite() {
+      wIndex++;
+      if (wIndex >= WRITE_ITEMS.length) {
+        document.getElementById('w-progress').style.width = '100%';
+        ppSaveAccuracy(wScore, WRITE_ITEMS.length); ppSubmitScore(wScore, WRITE_ITEMS.length, 'Present Perfect · Write');
+        document.getElementById('write-container').innerHTML = '';
+        document.getElementById('write-btns').style.display = 'none';
+        document.getElementById('write-results').innerHTML = `
+          <div class="results-box">
+            <h3>Well done!</h3>
+            <div class="score-big">${wScore} / ${WRITE_ITEMS.length}</div>
+            <p style="margin-top:8px;">You finished all the sentences.</p>
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="restartWrite()">Play again</button>
+              <button class="btn btn-outline" onclick="showMenu()">Back to menu</button>
+            </div>
+          </div>`;
+      } else {
+        showWriteItem();
+      }
+    }
+
+    function restartWrite() {
+      document.getElementById('write-btns').style.display = 'flex';
+      initWrite();
+    }
+
+    /* ============================================================
+       GAME 3 – CHOOSE (one by one, auto-advance)
+    ============================================================ */
+    let cIndex = 0;
+    let cScore = 0;
+    let cAnswered = false;
+
+    function updateCProgress() {
+      const pct = (cIndex / CHOOSE_ITEMS.length) * 100;
+      document.getElementById('c-progress').style.width = pct + '%';
+    }
+
+    function initChoose() {
+      cIndex = 0;
+      cScore = 0;
+      cAnswered = false;
+      document.getElementById('choose-results').innerHTML = '';
+      document.getElementById('c-score').textContent = '0';
+      document.getElementById('c-total').textContent = CHOOSE_ITEMS.length;
+      showChooseItem();
+    }
+
+    function showChooseItem() {
+      cAnswered = false;
+      const item = CHOOSE_ITEMS[cIndex];
+      document.getElementById('c-qnum').textContent = cIndex + 1;
+      updateCProgress();
+
+      const container = document.getElementById('choose-container');
+      let optsHtml = item.options.map((opt, j) =>
+        `<button class="option-btn" id="c-opt-${j}" onclick="selectChooseOption(${j})">${opt}</button>`
+      ).join('');
+
+      container.innerHTML = `
+        <div class="choose-item">
+          <div class="choose-q">${item.q}</div>
+          <div class="options">${optsHtml}</div>
+          <div class="feedback" id="c-fb" style="margin-top:18px; text-align:center; font-size:1.05rem;"></div>
+        </div>
+      `;
+      document.getElementById('choose-results').innerHTML = '';
+    }
+
+    function selectChooseOption(oi) {
+      if (cAnswered) return;
+      cAnswered = true;
+      const item = CHOOSE_ITEMS[cIndex];
+      const fb = document.getElementById('c-fb');
+
+      item.options.forEach((_, j) => {
+        const btn = document.getElementById('c-opt-' + j);
+        btn.disabled = true;
+        if (j === item.correct) {
+          btn.classList.add('correct');
+        } else if (j === oi) {
+          btn.classList.add('wrong');
+        }
+      });
+
+      if (oi === item.correct) {
+        fb.className = 'feedback ok';
+        fb.textContent = '✓ Correct!';
+        cScore++;
+        document.getElementById('c-score').textContent = cScore;
+      } else {
+        fb.className = 'feedback bad';
+        fb.textContent = '✗ The correct answer is highlighted in green.';
+      }
+
+      setTimeout(advanceChoose, 1100);
+    }
+
+    function advanceChoose() {
+      cIndex++;
+      if (cIndex >= CHOOSE_ITEMS.length) {
+        document.getElementById('c-progress').style.width = '100%';
+        ppSaveAccuracy(cScore, CHOOSE_ITEMS.length); ppSubmitScore(cScore, CHOOSE_ITEMS.length, 'Present Perfect · Choose');
+        document.getElementById('choose-container').innerHTML = '';
+        document.getElementById('choose-results').innerHTML = `
+          <div class="results-box">
+            <h3>Well done!</h3>
+            <div class="score-big">${cScore} / ${CHOOSE_ITEMS.length}</div>
+            <p style="margin-top:8px;">You finished all the questions.</p>
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="initChoose()">Play again</button>
+              <button class="btn btn-outline" onclick="showMenu()">Back to menu</button>
+            </div>
+          </div>`;
+      } else {
+        showChooseItem();
+      }
+    }
+
+    /* ============================================================
+       GAME 4 – FILL
+    ============================================================ */
+    function initFill() {
+      document.getElementById('fill-results').innerHTML = '';
+      document.getElementById('f-score').textContent = '0';
+      document.getElementById('f-show-btn').style.display = 'none';
+      document.getElementById('f-progress').style.width = '0%';
+
+      const html = `
+        <div class="line"><span class="speaker">A</span> <em>Have</em> you ever <em>been</em> to Thailand? <span style="color:var(--text-muted);font-size:0.85rem;">(be)</span></div>
+        <div class="line"><span class="speaker">B</span> No, but I <em>went</em> to South Korea last year. <span style="color:var(--text-muted);font-size:0.85rem;">(go)</span></div>
+
+        <div class="line"><span class="speaker">A</span>
+          <input class="blank-input" id="f0" data-idx="0" placeholder="..."> you ever
+          <input class="blank-input wide" id="f1" data-idx="1" placeholder="..."> any countries in South America?
+          <span style="color:var(--text-muted);font-size:0.85rem;">(visit)</span>
+        </div>
+
+        <div class="line"><span class="speaker">B</span> Yes, I have. I
+          <input class="blank-input" id="f2" data-idx="2" placeholder="..."> to Brazil a few years ago.
+          <span style="color:var(--text-muted);font-size:0.85rem;">(go)</span>
+        </div>
+
+        <div class="line"><span class="speaker">A</span> Who
+          <input class="blank-input" id="f3" data-idx="3" placeholder="..."> you
+          <input class="blank-input" id="f4" data-idx="4" placeholder="..."> with?
+          <span style="color:var(--text-muted);font-size:0.85rem;">(go)</span>
+        </div>
+
+        <div class="line"><span class="speaker">B</span> My boyfriend. It was a work trip and his company
+          <input class="blank-input" id="f5" data-idx="5" placeholder="..."> for everything.
+          <span style="color:var(--text-muted);font-size:0.85rem;">(pay)</span>
+        </div>
+
+        <div class="line"><span class="speaker">A</span> How wonderful!
+          <input class="blank-input" id="f6" data-idx="6" placeholder="..."> you there for long?
+          <span style="color:var(--text-muted);font-size:0.85rem;">(be)</span>
+        </div>
+
+        <div class="line"><span class="speaker">B</span> No, we
+          <input class="blank-input" id="f7" data-idx="7" placeholder="..."> only there for five days.
+          <span style="color:var(--text-muted);font-size:0.85rem;">(be)</span>
+        </div>
+
+        <div class="line"><span class="speaker">A</span> Where
+          <input class="blank-input" id="f8" data-idx="8" placeholder="..."> you
+          <input class="blank-input" id="f9" data-idx="9" placeholder="...">?
+          <span style="color:var(--text-muted);font-size:0.85rem;">(stay)</span>
+        </div>
+
+        <div class="line"><span class="speaker">B</span> We
+          <input class="blank-input" id="f10" data-idx="10" placeholder="..."> a suite in a five-star hotel. It was beautiful!
+          <span style="color:var(--text-muted);font-size:0.85rem;">(have)</span>
+        </div>
+
+        <div class="line"><span class="speaker">A</span>
+          <input class="blank-input" id="f11" data-idx="11" placeholder="..."> the company
+          <input class="blank-input wide" id="f12" data-idx="12" placeholder="..."> you on any other trips recently?
+          <span style="color:var(--text-muted);font-size:0.85rem;">(invite)</span>
+        </div>
+
+        <div class="line"><span class="speaker">B</span> No. My boyfriend
+          <input class="blank-input wide" id="f13" data-idx="13" placeholder="..."> working there a year later, so that was our only trip.
+          <span style="color:var(--text-muted);font-size:0.85rem;">(stop)</span>
+        </div>
+      `;
+      document.getElementById('fill-dialogue').innerHTML = html;
+    }
+
+    // Mapping of input ids to answer groups
+    // blanks: 0+1 → ["Have","visited"], 2→["went"], 3+4→["did","go"], 5→["paid"],
+    // 6→["Were"], 7→["were"], 8+9→["did","stay"], 10→["had"], 11+12→["Has","invited"], 13→["stopped"]
+    const FILL_MAP = [
+      { ids: ['f0','f1'], answers: ['Have','visited'] },
+      { ids: ['f2'], answers: ['went'] },
+      { ids: ['f3','f4'], answers: ['did','go'] },
+      { ids: ['f5'], answers: ['paid'] },
+      { ids: ['f6'], answers: ['Were'] },
+      { ids: ['f7'], answers: ['were'] },
+      { ids: ['f8','f9'], answers: ['did','stay'] },
+      { ids: ['f10'], answers: ['had'] },
+      { ids: ['f11','f12'], answers: ['Has','invited'] },
+      { ids: ['f13'], answers: ['stopped'] }
+    ];
+
+    function checkFill() {
+      let score = 0;
+      FILL_MAP.forEach((group, gi) => {
+        let allCorrect = true;
+        group.ids.forEach((id, j) => {
+          const input = document.getElementById(id);
+          const val = input.value.trim();
+          const expected = group.answers[j];
+          // case-insensitive for most, but keep capital for sentence start
+          const ok = val.toLowerCase() === expected.toLowerCase();
+          if (ok) {
+            input.classList.add('correct');
+            input.classList.remove('incorrect');
+          } else {
+            input.classList.add('incorrect');
+            input.classList.remove('correct');
+            allCorrect = false;
+          }
+        });
+        if (allCorrect) score++;
+      });
+      document.getElementById('f-score').textContent = score;
+      ppSaveAccuracy(score, 10); ppSubmitScore(score, 10, 'Present Perfect · Fill');
+      document.getElementById('f-show-btn').style.display = 'inline-flex';
+      document.getElementById('f-progress').style.width = (score / 10 * 100) + '%';
+
+      document.getElementById('fill-results').innerHTML = `
+        <div class="results-box">
+          <h3>Your score</h3>
+          <div class="score-big">${score} / 10</div>
+          <p class="hint">Each numbered blank group counts as one point.</p>
+        </div>`;
+    }
+
+    function showFillAnswers() {
+      FILL_MAP.forEach(group => {
+        group.ids.forEach((id, j) => {
+          const input = document.getElementById(id);
+          input.value = group.answers[j];
+          input.classList.add('correct');
+          input.classList.remove('incorrect');
+        });
+      });
+      document.getElementById('f-score').textContent = '10';
+      document.getElementById('f-progress').style.width = '100%';
+    }
+
+    function resetFill() {
+      initFill();
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
+  <script src="../../firebase-scores.js"></script>
+  <script src="../../la-stars.js"></script>
+  <script src="../../theme.js"></script>
+  
+</body>
+</html>

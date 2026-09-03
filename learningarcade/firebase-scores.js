@@ -14,6 +14,7 @@
   var TABLE_ID = 'scores';
 
   var NAME_KEY = 'laPlayerName';
+  var CLASS_KEY = 'laClassCode';
   var ready = false;
   var initError = null;
   var tablesDB = null;
@@ -95,8 +96,64 @@
     var clean = String(name || '').trim().slice(0, 32);
     try {
       if (clean) localStorage.setItem(NAME_KEY, clean);
+      else localStorage.removeItem(NAME_KEY);
     } catch (e) {}
     return clean;
+  }
+
+  /** Class code: short school/class id, e.g. 7A, G1, SPRING26 */
+  function sanitizeClassCode(code) {
+    return String(code || '')
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9\-]/g, '')
+      .slice(0, 12);
+  }
+
+  function getClassCode() {
+    try {
+      return sanitizeClassCode(localStorage.getItem(CLASS_KEY) || '');
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function setClassCode(code) {
+    var clean = sanitizeClassCode(code);
+    try {
+      if (clean) localStorage.setItem(CLASS_KEY, clean);
+      else localStorage.removeItem(CLASS_KEY);
+    } catch (e) {}
+    return clean;
+  }
+
+  /**
+   * Unique leaderboard label: "Ali · 7A"
+   * Keeps same first names in different classes distinct.
+   */
+  function getDisplayName(name, classCode) {
+    var n = (name != null ? String(name) : getPlayerName()).trim().slice(0, 32);
+    var c = sanitizeClassCode(classCode != null ? classCode : getClassCode());
+    if (!n) return '';
+    if (!c) return n;
+    return n + ' · ' + c;
+  }
+
+  /** Match a stored score row name to this player (with or without class code). */
+  function nameMatchesPlayer(rowName) {
+    var row = String(rowName || '').trim().toLowerCase();
+    if (!row) return false;
+    var display = getDisplayName().toLowerCase();
+    if (display && row === display) return true;
+    var plain = getPlayerName().toLowerCase();
+    var code = getClassCode().toLowerCase();
+    if (!plain) return false;
+    if (row === plain) return true;
+    if (code && row === plain + ' · ' + code) return true;
+    if (code && row.indexOf(plain + ' · ') === 0) {
+      return row.slice(plain.length + 3) === code;
+    }
+    return false;
   }
 
   function sanitizeGameId(id) {
@@ -109,11 +166,22 @@
       return Promise.resolve({ ok: false, error: initError || 'Appwrite not ready' });
     }
 
-    var name = (opts.name != null ? String(opts.name) : getPlayerName()).trim().slice(0, 32);
-    if (!name) {
+    var rawName = (opts.name != null ? String(opts.name) : getPlayerName()).trim().slice(0, 32);
+    if (!rawName) {
       return Promise.resolve({ ok: false, error: 'Please enter a name' });
     }
-    setPlayerName(name);
+    setPlayerName(rawName);
+
+    if (opts.classCode != null) {
+      setClassCode(opts.classCode);
+    }
+    var classCode = getClassCode();
+    if (!classCode) {
+      return Promise.resolve({ ok: false, error: 'Please enter a class code' });
+    }
+
+    // Unique on leaderboard: "Name · CLASS"
+    var name = getDisplayName(rawName, classCode);
 
     var gameId = sanitizeGameId(opts.gameId);
     var score = Number(opts.score);
@@ -230,8 +298,7 @@
 
   function myScores() {
     if (!init()) return Promise.resolve([]);
-    var name = getPlayerName().toLowerCase();
-    if (!name) return Promise.resolve([]);
+    if (!getPlayerName()) return Promise.resolve([]);
 
     return tablesDB
       .listRows({
@@ -242,7 +309,7 @@
       .then(function (res) {
         var rows = [];
         (res.rows || res.documents || []).forEach(function (r) {
-          if (String(r.name || '').toLowerCase() === name) {
+          if (nameMatchesPlayer(r.name)) {
             rows.push({
               key: r.$id,
               gameId: r.gameId,
@@ -272,6 +339,9 @@
     ensureAuth: ensureAuth,
     getPlayerName: getPlayerName,
     setPlayerName: setPlayerName,
+    getClassCode: getClassCode,
+    setClassCode: setClassCode,
+    getDisplayName: getDisplayName,
     submit: submit,
     top: top,
     myScores: myScores,

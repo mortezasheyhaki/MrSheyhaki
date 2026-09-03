@@ -1443,7 +1443,8 @@
   </style>
 
   <style id="profile-header-fix">
-    a.profile-fab { display: none !important; }
+    /* profile-fab hidden when nav has profile */
+    body:has(.arcade-nav .nav-profile) a.profile-fab { display: none !important; }
     .arcade-nav .nav-profile {
       flex: 0 0 auto; min-width: 38px; min-height: 38px; padding: 0 10px;
       border-radius: 10px; border: 1px solid rgba(255,255,255,.14);
@@ -1462,6 +1463,93 @@
       }
     }
   </style>
+<style>
+    /* Glossy blue music orb */
+    .music-toggle {
+      position: fixed !important;
+      bottom: max(24px, env(safe-area-inset-bottom, 0px)) !important;
+      right: max(16px, env(safe-area-inset-right, 0px)) !important;
+      width: 56px !important;
+      height: 56px !important;
+      min-width: 56px !important;
+      min-height: 56px !important;
+      padding: 0 !important;
+      border-radius: 50% !important;
+      border: 3px solid rgba(255, 255, 255, 0.45) !important;
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.55) 0%, transparent 45%),
+        linear-gradient(180deg, #60a5fa 0%, #3b82f6 45%, #2563eb 100%) !important;
+      color: #fff !important;
+      box-shadow:
+        0 5px 0 #1d4ed8,
+        0 10px 18px rgba(37, 99, 235, 0.32),
+        inset 0 2px 0 rgba(255, 255, 255, 0.45),
+        inset 0 -3px 8px rgba(0, 0, 0, 0.15) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0 !important;
+      cursor: pointer !important;
+      z-index: 80 !important;
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease, filter 0.18s ease !important;
+      overflow: visible !important;
+    }
+    .music-toggle::before {
+      content: "" !important;
+      position: absolute !important;
+      left: 12%; right: 12%; top: 8%;
+      height: 42% !important;
+      border-radius: 50% 50% 45% 45% / 60% 60% 40% 40% !important;
+      background: linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.2) 55%, transparent 100%) !important;
+      pointer-events: none !important;
+      z-index: 1 !important;
+    }
+    .music-toggle .music-ico {
+      position: relative !important;
+      z-index: 2 !important;
+      font-size: 1.4rem !important;
+      line-height: 1 !important;
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+    }
+    .music-toggle .music-txt { display: none !important; }
+    .music-toggle:hover {
+      transform: translateY(-4px) scale(1.06) !important;
+      filter: brightness(1.08) !important;
+      box-shadow:
+        0 7px 0 #1d4ed8,
+        0 14px 24px rgba(37, 99, 235, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.55) !important;
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.6) 0%, transparent 45%),
+        linear-gradient(180deg, #60a5fa 0%, #3b82f6 45%, #2563eb 100%) !important;
+      color: #fff !important;
+    }
+    .music-toggle:active {
+      transform: translateY(2px) scale(0.97) !important;
+      box-shadow: 0 2px 0 #1d4ed8, 0 6px 12px rgba(37, 99, 235, 0.3) !important;
+    }
+    .music-toggle.is-playing {
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.55) 0%, transparent 45%),
+        linear-gradient(180deg, #fbbf24 0%, #f59e0b 45%, #d97706 100%) !important;
+      box-shadow:
+        0 5px 0 #b45309,
+        0 10px 18px rgba(217, 119, 6, 0.35),
+        inset 0 2px 0 rgba(255, 255, 255, 0.45) !important;
+      border-color: rgba(255, 255, 255, 0.5) !important;
+      color: #fff !important;
+    }
+    @media (max-width: 700px) {
+      .music-toggle {
+        bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
+        right: max(12px, env(safe-area-inset-right, 0px)) !important;
+        width: 52px !important;
+        height: 52px !important;
+        min-width: 52px !important;
+        min-height: 52px !important;
+      }
+    }
+</style>
 </head>
 
 
@@ -1477,6 +1565,7 @@
       <a href="./" class="nav-link active" aria-current="page" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
       <a href="../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
       <a href="./leaderboard/" class="nav-link" aria-label="Leaderboard" data-icon="🏆"><span class="nav-ico" aria-hidden="true">🏆</span><span class="nav-text">Leaderboard</span></a>
+      <a href="./profile/" class="nav-link nav-profile" aria-label="My Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
       <a href="../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
     </nav>
 </header>
@@ -1862,8 +1951,8 @@
   </script>
 
 
-  <script src="../theme.js"></script>
-<script src="../swipe-nav.js"></script>
+  <script src="theme.js"></script>
+<!-- swipe-nav.js optional -->
 
 </body>
 </html>

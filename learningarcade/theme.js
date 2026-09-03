@@ -6,6 +6,42 @@
   "use strict";
 
   var STORAGE_KEY = "mrsheyhaki-theme";
+
+  /** Build a working href into the Learning Arcade folder (works on local servers too). */
+  function resolveArcadeHref(subPath) {
+    subPath = (subPath || "").replace(/^\/+/, "");
+    var path = location.pathname || "";
+    var lower = path.toLowerCase();
+    var marker = "/learningarcade/";
+    var idx = lower.lastIndexOf(marker);
+    if (idx !== -1) {
+      return path.slice(0, idx + marker.length) + subPath;
+    }
+    idx = lower.lastIndexOf("/learningarcade");
+    if (idx !== -1) {
+      return path.slice(0, idx) + "/learningarcade/" + subPath;
+    }
+    // Relative fallbacks by depth under arcade
+    if (/\/profile\/?$/i.test(lower) || lower.indexOf("/profile/") !== -1) return "../" + subPath;
+    if (lower.indexOf("/grammar/") !== -1) {
+      // grammar/index or grammar/simple-present/ etc.
+      var after = lower.split("/grammar/")[1] || "";
+      var depth = after.split("/").filter(Boolean).length;
+      // grammar/ -> ../profile ; grammar/x/ -> ../../profile ; grammar/x/y/ -> ../../../profile
+      var prefix = depth <= 1 ? "../" : depth === 2 ? "../../" : "../../../";
+      // If path ends with .html, depth counts the file as a segment
+      if (/\.html?$/i.test(lower)) {
+        prefix = depth <= 1 ? "../" : depth === 2 ? "../../" : "../../../";
+      }
+      return prefix + subPath;
+    }
+    if (lower.indexOf("/vocabulary/") !== -1 || lower.indexOf("/writing/") !== -1 || lower.indexOf("/speaking/") !== -1) {
+      return "../" + subPath;
+    }
+    return subPath;
+  }
+
+  
   var root = document.documentElement;
 
   function getPreferred() {
@@ -72,7 +108,7 @@
 
     if (!isKidsWorld && !document.querySelector(".arcade-nav .nav-profile, a.nav-profile")) {
       var profile = document.createElement("a");
-      profile.href = "/learningarcade/profile/";
+      profile.href = resolveArcadeHref("profile/");
       profile.className = "nav-link nav-profile";
       profile.setAttribute("aria-label", "My Profile");
       profile.title = "My Profile";
@@ -81,22 +117,75 @@
       // Do NOT append a floating profile FAB when there is no nav
     } else if (nav && !isKidsWorld) {
       var existingProf = nav.querySelector(".nav-profile");
-      if (existingProf) nav.appendChild(existingProf);
+      if (existingProf) {
+        // Fix broken absolute profile links
+        try {
+          var href = existingProf.getAttribute("href") || "";
+          if (href.indexOf("/learningarcade/profile") === 0 || href === "/profile/" || href === "profile") {
+            existingProf.setAttribute("href", resolveArcadeHref("profile/"));
+          }
+        } catch (e) {}
+        nav.appendChild(existingProf);
+      }
     }
 
-    // Always hide floating profile FABs on kids/world pages (and any legacy ones)
-    document.querySelectorAll("a.profile-fab, .profile-fab").forEach(function (el) {
-      if (isKidsWorld || !el.classList.contains("profile-fab--header") || !nav) {
-        el.style.display = "none";
-        el.setAttribute("hidden", "true");
+    // Fix any existing profile links on the page (absolute → relative)
+    document.querySelectorAll("a.nav-profile, a.profile-fab").forEach(function (el) {
+      if (isKidsWorld) return;
+      var href = el.getAttribute("href") || "";
+      if (
+        href === "/learningarcade/profile/" ||
+        href === "/learningarcade/profile" ||
+        href.indexOf("/learningarcade/profile/") === 0
+      ) {
+        el.setAttribute("href", resolveArcadeHref("profile/"));
+      }
+      // Ensure clickable
+      el.style.pointerEvents = "auto";
+      el.style.cursor = "pointer";
+      el.removeAttribute("hidden");
+      if (el.classList.contains("nav-profile") && el.closest(".arcade-nav")) {
+        el.style.display = "";
       }
     });
+
+    // Profile FABs: keep one usable control on arcade pages
+    document.querySelectorAll("a.profile-fab, .profile-fab").forEach(function (el) {
+      if (isKidsWorld) {
+        el.style.display = "none";
+        el.setAttribute("hidden", "true");
+        return;
+      }
+      // Prefer nav profile; hide floating fab when nav already has profile
+      if (nav && nav.querySelector(".nav-profile")) {
+        el.style.display = "none";
+        el.setAttribute("hidden", "true");
+        return;
+      }
+      // No nav profile → show fab with correct href
+      el.setAttribute("href", resolveArcadeHref("profile/"));
+      el.style.display = "";
+      el.style.pointerEvents = "auto";
+      el.style.cursor = "pointer";
+      el.removeAttribute("hidden");
+    });
+
+    // If still no profile control anywhere, inject a fixed one (game pages without arcade-nav)
+    if (!isKidsWorld && !document.querySelector("a.nav-profile, a.profile-fab:not([hidden])")) {
+      var fab = document.createElement("a");
+      fab.href = resolveArcadeHref("profile/");
+      fab.className = "profile-fab profile-fab--header";
+      fab.setAttribute("aria-label", "My Profile");
+      fab.title = "My Profile";
+      fab.textContent = "👤";
+      fab.style.cssText = "position:fixed;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:10060;width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(30,41,59,0.9);color:#fff;text-decoration:none;font-size:1.2rem;box-shadow:0 4px 14px rgba(0,0,0,0.25);";
+      document.body.appendChild(fab);
+    }
+
     if (isKidsWorld) {
-      document.querySelectorAll("a.nav-profile, .nav-profile").forEach(function (el) {
-        if (!el.closest(".arcade-nav")) {
-          el.style.display = "none";
-          el.setAttribute("hidden", "true");
-        }
+      document.querySelectorAll("a.nav-profile, .nav-profile, a.profile-fab").forEach(function (el) {
+        el.style.display = "none";
+        el.setAttribute("hidden", "true");
       });
     }
 

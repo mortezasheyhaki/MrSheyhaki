@@ -18,7 +18,7 @@
  *     vocab-colors-say-color, vocab-colors-what-is-it
  *     vocab-food-match-rush, vocab-food-a-an-some, vocab-food-memory
  *   Grammar
- *     be-verbs, simple-present, there-is-there-are, simple-past,
+ *     be-verbs, simple-present, there-is-there-are, simple-past, present-perfect,
  *     grammar-phrasal-verbs, nouns
  *   Writing
  *     writing-sara-daily
@@ -70,12 +70,30 @@
     } catch (e) {}
   }
 
+  /** Per-player storage when name + class code are set (shared tablets). */
+  function identitySuffix() {
+    try {
+      var name = (localStorage.getItem("laPlayerName") || "").trim().toLowerCase();
+      var code = (localStorage.getItem("laClassCode") || "").trim().toUpperCase();
+      if (name && code) return "::" + name + "::" + code;
+    } catch (e) {}
+    return "";
+  }
+
+  function starsKey() {
+    return STARS_KEY + identitySuffix();
+  }
+
+  function playsKey() {
+    return PLAYS_KEY + identitySuffix();
+  }
+
   function loadStars() {
-    return loadJSON(STARS_KEY);
+    return loadJSON(starsKey());
   }
 
   function loadPlays() {
-    return loadJSON(PLAYS_KEY);
+    return loadJSON(playsKey());
   }
 
   function relatedIds(gameId) {
@@ -108,7 +126,7 @@
         best = Math.max(best, prev);
       }
     });
-    saveJSON(STARS_KEY, data);
+    saveJSON(starsKey(), data);
     return best;
   }
 
@@ -137,7 +155,7 @@
       n = Number(data[id] || 0) + 1;
       data[id] = n;
     });
-    saveJSON(PLAYS_KEY, data);
+    saveJSON(playsKey(), data);
     return n;
   }
 
@@ -202,6 +220,9 @@
     getStars: getStars,
     playLabel: playLabel,
     apply: apply,
+    identitySuffix: identitySuffix,
+    starsKey: starsKey,
+    playsKey: playsKey,
   };
 
   function boot() {

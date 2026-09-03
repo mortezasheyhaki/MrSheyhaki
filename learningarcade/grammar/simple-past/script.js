@@ -841,6 +841,16 @@
         LAStars.recordPlay("simple-past");
         LAStars.saveFromAccuracy("simple-past", acc);
       }
+      try {
+        if (window.LAScores && LAScores.getPlayerName && LAScores.getPlayerName() && LAScores.getClassCode && LAScores.getClassCode()) {
+          LAScores.submit({
+            gameId: "simple-past",
+            gameName: "Simple Past",
+            score: typeof state !== "undefined" && state.correct != null ? state.correct : Math.round((acc/100)*12),
+            maxScore: typeof state !== "undefined" && state.questions ? state.questions.length : 12
+          });
+        }
+      } catch (e2) {}
     } catch (e) {}
     show("result");
   }

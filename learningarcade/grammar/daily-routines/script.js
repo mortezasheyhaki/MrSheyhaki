@@ -48,6 +48,7 @@
   let index = 0;
   let score = 0;
   let correctCount = 0;
+  let attempts = 0;
   let wrongCount = 0;
   let locked = false;
   /** @type {Map<string, HTMLButtonElement>} */
@@ -91,6 +92,7 @@
   }
 
   function loadItem() {
+    attempts = 0;
     locked = false;
     builtUids = [];
     dragUid = null;
@@ -234,16 +236,20 @@
 
   function checkAnswer() {
     if (locked || !builtUids.length) return;
-    locked = true;
 
     const item = current();
     const user = builtUids.map(function (uid) {
       const btn = chipMap.get(uid);
       return btn ? btn.dataset.word : "";
     });
+    // Only check when all slots filled
+    if (user.length < (item.answer || []).length) return;
+
     const success = isCorrect(user, item.answer);
 
     if (success) {
+      locked = true;
+      attempts = 0;
       score += 10;
       correctCount += 1;
       if (scoreEl) scoreEl.textContent = String(score);
@@ -256,24 +262,51 @@
         const btn = chipMap.get(uid);
         if (btn) btn.classList.add("chip-correct");
       });
-    } else {
-      wrongCount += 1;
-      if (feedbackEl) {
-        feedbackEl.textContent = "Not quite — " + item.answer.join(" ");
-        feedbackEl.className = "feedback bad";
-      }
-      if (answerSlots) answerSlots.classList.add("wrong");
-      builtUids.forEach(function (uid) {
-        const btn = chipMap.get(uid);
-        if (btn) btn.classList.add("chip-wrong");
-      });
+      setTimeout(function () {
+        index += 1;
+        if (index >= TOTAL) endGame();
+        else loadItem();
+      }, 900);
+      return;
     }
 
-    setTimeout(function () {
-      index += 1;
-      if (index >= TOTAL) endGame();
-      else loadItem();
-    }, success ? 900 : 1600);
+    // Wrong — try again (up to 3 times)
+    attempts += 1;
+    wrongCount += 1;
+    if (answerSlots) {
+      answerSlots.classList.add("wrong");
+      setTimeout(function () {
+        if (answerSlots) answerSlots.classList.remove("wrong");
+      }, 400);
+    }
+    builtUids.forEach(function (uid) {
+      const btn = chipMap.get(uid);
+      if (btn) {
+        btn.classList.add("chip-wrong");
+        setTimeout(function () { btn.classList.remove("chip-wrong"); }, 400);
+      }
+    });
+
+    if (attempts >= 3) {
+      locked = true;
+      if (feedbackEl) {
+        feedbackEl.textContent = "Correct: " + item.answer.join(" ");
+        feedbackEl.className = "feedback bad";
+      }
+      setTimeout(function () {
+        attempts = 0;
+        index += 1;
+        if (index >= TOTAL) endGame();
+        else loadItem();
+      }, 1600);
+      return;
+    }
+
+    if (feedbackEl) {
+      feedbackEl.textContent = "Not quite — try again! (" + (3 - attempts) + " left)";
+      feedbackEl.className = "feedback bad";
+    }
+    locked = false;
   }
 
   function startGame() {
@@ -299,6 +332,16 @@
     showScreen("result");
   
   try { if(window.LAStars){LAStars.recordPlay("daily-routines");LAStars.save("daily-routines", typeof score!=="undefined"&&score>=8?3:typeof score!=="undefined"&&score>=5?2:1);} } catch (e) {}
+  try {
+    if (window.LAScores && LAScores.getPlayerName && LAScores.getPlayerName() && LAScores.getClassCode && LAScores.getClassCode()) {
+      LAScores.submit({
+        gameId: "daily-routines",
+        gameName: "Daily Routines",
+        score: typeof correctCount !== "undefined" ? correctCount : 0,
+        maxScore: typeof TOTAL !== "undefined" ? TOTAL : 10
+      });
+    }
+  } catch (e2) {}
 }
 
   function setupDropZones() {

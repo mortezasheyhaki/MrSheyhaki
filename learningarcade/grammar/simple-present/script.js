@@ -1507,92 +1507,33 @@ function renderHome() {
         );
 
 
-    // Group cards
-    const group1Card =
-        document.querySelector(
-            '[data-group="group1"]'
-        );
+    // Soft-rect completion marks (any button for that group)
+    $$('.soft-rect[data-group="group1"]').forEach(function (el) {
+        el.classList.toggle("completed", group1Done);
+    });
+    $$('.soft-rect[data-group="group2"]').forEach(function (el) {
+        el.classList.toggle("completed", group2Done);
+    });
 
-
-    const group2Card =
-        document.querySelector(
-            '[data-group="group2"]'
-        );
-
-
-    const mixedCard =
-        document.querySelector(
-            '[data-group="mixed"]'
-        );
-
-
-    if (group1Card) {
-
-        group1Card.classList.toggle(
-            "completed",
-            group1Done
-        );
-
-    }
-
-
-    if (group2Card) {
-
-        group2Card.classList.toggle(
-            "completed",
-            group2Done
-        );
-
-    }
-
-
+    // Mixed challenge button
+    const mixedCard = document.querySelector('[data-group="mixed"]');
     if (mixedCard) {
-
         if (mixedUnlocked) {
-
-            mixedCard.disabled =
-                false;
-
-
-            mixedCard.classList.remove(
-                "locked-card"
-            );
-
-
-            mixedCard.querySelector(
-                ".group-action"
-            ).textContent =
-                isFinalMixedDone()
-                    ? "PLAY AGAIN →"
-                    : "START FINAL →";
-
-
-            const lockNote =
-                $("#mixedLockNote");
-
-
+            mixedCard.disabled = false;
+            mixedCard.classList.remove("locked-card");
+            const lockNote = $("#mixedLockNote");
             if (lockNote) {
-
-                lockNote.textContent =
-                    isFinalMixedDone()
-                        ? "✓ COMPLETED"
-                        : "UNLOCKED";
-
+                lockNote.textContent = isFinalMixedDone()
+                    ? "✓ COMPLETED — play again"
+                    : "Unlocked — all subjects mixed";
             }
-
-
-            if (
-                isFinalMixedDone()
-            ) {
-
-                mixedCard.classList.add(
-                    "final-completed"
-                );
-
+            if (isFinalMixedDone()) {
+                mixedCard.classList.add("completed");
             }
-
+        } else {
+            mixedCard.disabled = true;
+            mixedCard.classList.add("locked-card");
         }
-
     }
 
 }
@@ -1967,6 +1908,8 @@ function startFinalMixed() {
 ===================================================== */
 
 function renderQuestion() {
+    state.attempts = 0;
+
 
     state.answered =
         false;
@@ -2118,400 +2061,294 @@ function renderBuild(
     `;
 
 
-    const bank =
-        $("#wordBank");
-
-
-    const built =
-        $("#builtSentence");
-
+    const bank = $("#wordBank");
+    const built = $("#builtSentence");
 
     // Create shuffled word chips
-    shuffle(
-        [
-            ...words
-        ]
-    )
-    .forEach(
-        function (word, index) {
+    shuffle([...words]).forEach(function (word, index) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "word-chip";
+        button.textContent = word;
+        button.dataset.uid = "chip-" + index + "-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7);
+        button.dataset.word = word;
 
-            const button =
-                document.createElement(
-                    "button"
-                );
+        // Click fallback (tap to place)
+        button.addEventListener("click", function (e) {
+            if (button._dragMoved) {
+                button._dragMoved = false;
+                return;
+            }
+            chooseWord(button, word);
+        });
 
+        bank.appendChild(button);
+    });
 
-            button.type =
-                "button";
-
-
-            button.className =
-                "word-chip";
-
-
-            button.textContent =
-                word;
-
-
-            button.dataset.uid =
-                "chip-" +
-                index +
-                "-" +
-                Date.now();
-
-
-            button.draggable =
-                true;
-
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    chooseWord(
-                        button,
-                        word
-                    );
-
-                }
-            );
-
-
-            // Drag from bank
-            button.addEventListener(
-                "dragstart",
-                function (e) {
-
-                    if (
-                        state.answered
-                    ) {
-
-                        e.preventDefault();
-
-                        return;
-
-                    }
-
-
-                    button.classList.add(
-                        "dragging"
-                    );
-
-
-                    e.dataTransfer.setData(
-                        "text/plain",
-                        button.dataset.uid ||
-                            button.textContent
-                    );
-
-
-                    e.dataTransfer.effectAllowed =
-                        "move";
-
-
-                    window._dragChip =
-                        button;
-
-                }
-            );
-
-
-            button.addEventListener(
-                "dragend",
-                function () {
-
-                    button.classList.remove(
-                        "dragging"
-                    );
-
-
-                    window._dragChip =
-                        null;
-
-
-                    if (built) {
-
-                        built.classList.remove(
-                            "drag-over"
-                        );
-
-                    }
-
-
-                    if (bank) {
-
-                        bank.classList.remove(
-                            "drag-over"
-                        );
-
-                    }
-
-                }
-            );
-
-
-            bank.appendChild(
-                button
-            );
-
-        }
-    );
-
-
-    setupBuildDropZones(
-        built,
-        bank
-    );
-
+    // Unified pointer drag-and-drop (mouse + touch)
+    initBuildPointerDnD(built, bank);
 }
 
 
-function setupBuildDropZones(
-    built,
-    bank
-) {
+/**
+ * Pointer-based DnD for Build the Sentence.
+ * - Drag word-chip from bank → drop on sentence (or anywhere over sentence)
+ * - Drag built-chip → reorder inside sentence, or drop on bank to return
+ * Works with mouse and touch.
+ */
+function initBuildPointerDnD(built, bank) {
+    if (!built || !bank) return;
 
-    if (
-        !built ||
-        !bank
-    ) {
+    let active = null; // { el, source, uid, word, ghost, startX, startY, moved, originParent }
 
-        return;
-
+    function clearDragOver() {
+        built.classList.remove("drag-over");
+        bank.classList.remove("drag-over");
+        built.querySelectorAll(".built-chip.drop-target").forEach(function (c) {
+            c.classList.remove("drop-target");
+        });
     }
 
-
-    built.addEventListener(
-        "dragover",
-        function (e) {
-
-            e.preventDefault();
-
-            built.classList.add(
-                "drag-over"
-            );
-
+    function destroyGhost() {
+        if (active && active.ghost && active.ghost.parentNode) {
+            active.ghost.parentNode.removeChild(active.ghost);
         }
-    );
-
-
-    built.addEventListener(
-        "dragleave",
-        function () {
-
-            built.classList.remove(
-                "drag-over"
-            );
-
+        if (active && active.el) {
+            active.el.classList.remove("dragging", "dnd-source");
+            active.el.style.opacity = "";
         }
-    );
+        clearDragOver();
+        active = null;
+    }
 
+    function createGhost(el, x, y) {
+        const ghost = el.cloneNode(true);
+        ghost.classList.add("dnd-ghost");
+        ghost.classList.remove("dragging", "used", "dnd-source");
+        ghost.style.position = "fixed";
+        ghost.style.left = x + "px";
+        ghost.style.top = y + "px";
+        ghost.style.zIndex = "9999";
+        ghost.style.pointerEvents = "none";
+        ghost.style.margin = "0";
+        ghost.style.transform = "translate(-50%, -50%) scale(1.08)";
+        ghost.style.opacity = "0.95";
+        document.body.appendChild(ghost);
+        return ghost;
+    }
 
-    built.addEventListener(
-        "drop",
-        function (e) {
+    function elementFromPointSafe(x, y) {
+        // Temporarily hide ghost so elementFromPoint hits real targets
+        if (active && active.ghost) active.ghost.style.visibility = "hidden";
+        const el = document.elementFromPoint(x, y);
+        if (active && active.ghost) active.ghost.style.visibility = "visible";
+        return el;
+    }
 
-            e.preventDefault();
-
-            built.classList.remove(
-                "drag-over"
-            );
-
-
-            const chip =
-                window._dragChip;
-
-
-            if (
-                !chip ||
-                state.answered
-            ) {
-
-                return;
-
+    function getDragAfterElement(container, x) {
+        const chips = [...container.querySelectorAll(".built-chip:not(.dnd-source):not(.dragging)")];
+        return chips.reduce(function (closest, child) {
+            const box = child.getBoundingClientRect();
+            const offset = x - box.left - box.width / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
             }
+            return closest;
+        }, { offset: Number.NEGATIVE_INFINITY, element: null }).element;
+    }
 
+    function onPointerDown(e) {
+        if (state.answered) return;
 
-            // From bank → sentence
-            if (
-                chip.classList.contains(
-                    "word-chip"
-                ) &&
-                !chip.classList.contains(
-                    "used"
-                )
-            ) {
+        const chip = e.target.closest(".word-chip, .built-chip");
+        if (!chip) return;
+        if (chip.classList.contains("used")) return;
+        // Only chips in bank or built sentence
+        if (!bank.contains(chip) && !built.contains(chip)) return;
 
-                chooseWord(
-                    chip,
-                    chip.textContent
-                );
+        // Ignore non-primary mouse button
+        if (e.pointerType === "mouse" && e.button !== 0) return;
 
-            }
+        const isBank = bank.contains(chip);
+        const rect = chip.getBoundingClientRect();
+        const cx = e.clientX;
+        const cy = e.clientY;
 
-        }
-    );
+        active = {
+            el: chip,
+            source: isBank ? "bank" : "built",
+            uid: chip.dataset.uid,
+            word: chip.dataset.word || chip.textContent,
+            ghost: null,
+            startX: cx,
+            startY: cy,
+            moved: false,
+            pointerId: e.pointerId
+        };
 
+        try {
+            chip.setPointerCapture(e.pointerId);
+        } catch (err) {}
 
-    bank.addEventListener(
-        "dragover",
-        function (e) {
+        chip.addEventListener("pointermove", onPointerMove);
+        chip.addEventListener("pointerup", onPointerUp);
+        chip.addEventListener("pointercancel", onPointerUp);
+    }
 
+    function onPointerMove(e) {
+        if (!active || active.pointerId !== e.pointerId) return;
+
+        const dx = e.clientX - active.startX;
+        const dy = e.clientY - active.startY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Threshold before treating as drag (keeps click working)
+        if (!active.moved && dist < 8) return;
+
+        if (!active.moved) {
+            active.moved = true;
+            active.el._dragMoved = true;
+            active.el.classList.add("dragging", "dnd-source");
+            active.el.style.opacity = "0.35";
+            active.ghost = createGhost(active.el, e.clientX, e.clientY);
+            // Prevent scroll while dragging on touch
             e.preventDefault();
-
-            bank.classList.add(
-                "drag-over"
-            );
-
         }
-    );
 
-
-    bank.addEventListener(
-        "dragleave",
-        function () {
-
-            bank.classList.remove(
-                "drag-over"
-            );
-
+        if (active.ghost) {
+            active.ghost.style.left = e.clientX + "px";
+            active.ghost.style.top = e.clientY + "px";
         }
-    );
 
+        e.preventDefault();
 
-    bank.addEventListener(
-        "drop",
-        function (e) {
+        const under = elementFromPointSafe(e.clientX, e.clientY);
+        clearDragOver();
 
-            e.preventDefault();
+        if (!under) return;
 
-            bank.classList.remove(
-                "drag-over"
-            );
-
-
-            const chip =
-                window._dragChip;
-
-
-            if (
-                !chip ||
-                state.answered
-            ) {
-
-                return;
-
+        if (built.contains(under) || under === built || under.closest(".built-sentence")) {
+            built.classList.add("drag-over");
+            // Highlight insert position among built chips
+            const after = getDragAfterElement(built, e.clientX);
+            if (after) after.classList.add("drop-target");
+        } else if (bank.contains(under) || under === bank || under.closest(".word-bank")) {
+            if (active.source === "built") {
+                bank.classList.add("drag-over");
             }
-
-
-            // From sentence → bank
-            if (
-                chip.classList.contains(
-                    "built-chip"
-                )
-            ) {
-
-                returnBuiltChipToBank(
-                    chip
-                );
-
-            }
-
         }
-    );
+    }
 
+    function onPointerUp(e) {
+        if (!active || active.pointerId !== e.pointerId) return;
+
+        const chip = active.el;
+        const wasMoved = active.moved;
+        const source = active.source;
+        const word = active.word;
+
+        chip.removeEventListener("pointermove", onPointerMove);
+        chip.removeEventListener("pointerup", onPointerUp);
+        chip.removeEventListener("pointercancel", onPointerUp);
+
+        try {
+            chip.releasePointerCapture(e.pointerId);
+        } catch (err) {}
+
+        if (!wasMoved) {
+            // Treat as click — let the click handler run
+            destroyGhost();
+            return;
+        }
+
+        const under = elementFromPointSafe(e.clientX, e.clientY);
+        const overBuilt = under && (built.contains(under) || under === built || under.closest("#builtSentence") || under.closest(".built-sentence"));
+        const overBank = under && (bank.contains(under) || under === bank || under.closest("#wordBank") || under.closest(".word-bank"));
+
+        if (source === "bank" && overBuilt && !chip.classList.contains("used")) {
+            // Place word into sentence (at insert position if possible)
+            const after = getDragAfterElement(built, e.clientX);
+            chooseWord(chip, word, after);
+        } else if (source === "built" && overBank) {
+            returnBuiltChipToBank(chip);
+        } else if (source === "built" && overBuilt) {
+            // Reorder inside sentence
+            const after = getDragAfterElement(built, e.clientX);
+            if (after == null) {
+                built.appendChild(chip);
+            } else if (after !== chip) {
+                built.insertBefore(chip, after);
+            }
+            // Re-check answer if all slots filled
+            maybeCheckBuiltAnswer();
+        }
+        // else: cancelled — chip stays where it was
+
+        destroyGhost();
+
+        // Reset click-guard shortly after
+        setTimeout(function () {
+            if (chip) chip._dragMoved = false;
+        }, 40);
+    }
+
+    // Use pointer events on the container so newly created chips work too
+    bank.addEventListener("pointerdown", onPointerDown);
+    built.addEventListener("pointerdown", onPointerDown);
+
+    // Prevent native image/text drag ghosts
+    bank.addEventListener("dragstart", function (e) { e.preventDefault(); });
+    built.addEventListener("dragstart", function (e) { e.preventDefault(); });
 }
 
 
-function returnBuiltChipToBank(
-    builtChip
-) {
+function returnBuiltChipToBank(builtChip) {
+    const built = $("#builtSentence");
+    const bank = $("#wordBank");
+    if (!built || !bank || !builtChip) return;
 
-    const built =
-        $("#builtSentence");
-
-
-    const bank =
-        $("#wordBank");
-
-
-    if (
-        !built ||
-        !bank
-    ) {
-
-        return;
-
-    }
-
-
-    const uid =
-        builtChip.dataset.uid;
-
-
-    const word =
-        builtChip.textContent;
-
+    const uid = builtChip.dataset.uid;
+    const word = builtChip.dataset.word || builtChip.textContent;
 
     builtChip.remove();
 
-
     // Restore matching bank chip
-    const bankChip =
-        [
-            ...bank.querySelectorAll(
-                ".word-chip"
-            )
-        ]
-        .find(
-            function (btn) {
-
-                if (uid) {
-
-                    return (
-                        btn.dataset.uid ===
-                        uid
-                    );
-
-                }
-
-
-                return (
-                    btn.textContent ===
-                        word &&
-                    btn.classList.contains(
-                        "used"
-                    )
-                );
-
-            }
-        );
-
+    const bankChip = [...bank.querySelectorAll(".word-chip")].find(function (btn) {
+        if (uid) return btn.dataset.uid === uid;
+        return btn.textContent === word && btn.classList.contains("used");
+    });
 
     if (bankChip) {
-
-        bankChip.classList.remove(
-            "used"
-        );
-
+        bankChip.classList.remove("used");
     }
 
-
-    if (
-        !built.querySelector(
-            ".built-chip"
-        )
-    ) {
-
-        built.innerHTML =
-            `
+    if (!built.querySelector(".built-chip")) {
+        built.innerHTML = `
             <span class="empty-note">
                 Click or drag the words below
             </span>
-            `;
-
+        `;
     }
+}
 
+
+function maybeCheckBuiltAnswer() {
+    const built = $("#builtSentence");
+    if (!built) return;
+
+    const current = state.questions[state.index];
+    let correctWords = null;
+    if (Array.isArray(current)) correctWords = current;
+    else if (current && Array.isArray(current.words)) correctWords = current.words;
+    if (!correctWords) return;
+
+    const selected = [...built.querySelectorAll(".built-chip")].map(function (item) {
+        return item.textContent;
+    });
+
+    if (selected.length === correctWords.length) {
+        checkAnswer(selected.join(" "), correctWords.join(" "));
+    }
 }
 
 
@@ -2519,264 +2356,43 @@ function returnBuiltChipToBank(
    CHOOSE WORD
 ===================================================== */
 
-function chooseWord(
-    button,
-    word
-) {
+function chooseWord(button, word, insertBeforeEl) {
+    if (state.answered) return;
+    if (button.classList.contains("used")) return;
 
-    if (
-        state.answered
-    ) {
+    const built = $("#builtSentence");
+    if (!built) return;
 
-        return;
+    button.classList.add("used");
+
+    if (built.querySelector(".empty-note")) {
+        built.innerHTML = "";
     }
 
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "built-chip";
+    chip.textContent = word;
+    chip.dataset.uid = button.dataset.uid || "";
+    chip.dataset.word = word;
 
-    if (
-        button.classList.contains(
-            "used"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    const built =
-        $("#builtSentence");
-
-
-    button.classList.add(
-        "used"
-    );
-
-
-    if (
-        built.querySelector(
-            ".empty-note"
-        )
-    ) {
-
-        built.innerHTML =
-            "";
-
-    }
-
-
-    const chip =
-        document.createElement(
-            "button"
-        );
-
-
-    chip.type =
-        "button";
-
-
-    chip.className =
-        "built-chip";
-
-
-    chip.textContent =
-        word;
-
-
-    chip.dataset.uid =
-        button.dataset.uid ||
-        "";
-
-
-    chip.draggable =
-        true;
-
-
-    chip.addEventListener(
-        "click",
-        function () {
-
-            if (
-                state.answered
-            ) {
-
-                return;
-            }
-
-
-            returnBuiltChipToBank(
-                chip
-            );
-
+    // Click to return to bank
+    chip.addEventListener("click", function () {
+        if (state.answered) return;
+        if (chip._dragMoved) {
+            chip._dragMoved = false;
+            return;
         }
-    );
+        returnBuiltChipToBank(chip);
+    });
 
-
-    enableBuiltChipDrag(
-        chip
-    );
-
-
-    built.appendChild(
-        chip
-    );
-
-
-    const current =
-        state.questions[
-            state.index
-        ];
-
-
-    let correctWords =
-        null;
-
-
-    if (
-        Array.isArray(
-            current
-        )
-    ) {
-
-        correctWords =
-            current;
-
+    if (insertBeforeEl && built.contains(insertBeforeEl)) {
+        built.insertBefore(chip, insertBeforeEl);
+    } else {
+        built.appendChild(chip);
     }
 
-    else if (
-        current &&
-        Array.isArray(
-            current.words
-        )
-    ) {
-
-        correctWords =
-            current.words;
-
-    }
-
-
-    if (
-        !correctWords
-    ) {
-
-        return;
-
-    }
-
-
-    const selected =
-        [
-            ...built.querySelectorAll(
-                ".built-chip"
-            )
-        ]
-        .map(
-            function (item) {
-
-                return item.textContent;
-
-            }
-        );
-
-
-    if (
-        selected.length ===
-        correctWords.length
-    ) {
-
-        checkAnswer(
-            selected.join(" "),
-            correctWords.join(" ")
-        );
-
-    }
-
-}
-
-
-function enableBuiltChipDrag(
-    chip
-) {
-
-    chip.addEventListener(
-        "dragstart",
-        function (e) {
-
-            if (
-                state.answered
-            ) {
-
-                e.preventDefault();
-
-                return;
-
-            }
-
-
-            chip.classList.add(
-                "dragging"
-            );
-
-
-            e.dataTransfer.setData(
-                "text/plain",
-                chip.dataset.uid ||
-                    chip.textContent
-            );
-
-
-            e.dataTransfer.effectAllowed =
-                "move";
-
-
-            window._dragChip =
-                chip;
-
-        }
-    );
-
-
-    chip.addEventListener(
-        "dragend",
-        function () {
-
-            chip.classList.remove(
-                "dragging"
-            );
-
-
-            window._dragChip =
-                null;
-
-
-            const built =
-                $("#builtSentence");
-
-
-            const bank =
-                $("#wordBank");
-
-
-            if (built) {
-
-                built.classList.remove(
-                    "drag-over"
-                );
-
-            }
-
-
-            if (bank) {
-
-                bank.classList.remove(
-                    "drag-over"
-                );
-
-            }
-
-        }
-    );
-
+    maybeCheckBuiltAnswer();
 }
 
 
@@ -3019,64 +2635,64 @@ function checkChoice(
     correct
 ) {
 
-    if (
-        state.answered
-    ) {
-
+    if (state.answered) {
         return;
     }
 
-
-    state.answered =
-        true;
-
+    if (typeof state.attempts !== "number") {
+        state.attempts = 0;
+    }
 
     const isCorrect =
         normalize(chosen) ===
         normalize(correct);
 
-
-    button.classList.add(
-        isCorrect
-            ? "correct"
-            : "wrong"
-    );
-
-
-    if (
-        !isCorrect
-    ) {
-
-        $$(".answer-option")
-            .forEach(
-                function (item) {
-
-                    if (
-                        normalize(
-                            item.textContent
-                        ) ===
-                        normalize(
-                            correct
-                        )
-                    ) {
-
-                        item.classList.add(
-                            "correct"
-                        );
-
-                    }
-
-                }
-            );
-
+    if (isCorrect) {
+        state.answered = true;
+        state.attempts = 0;
+        button.classList.add("correct");
+        $$(".answer-option").forEach(function (item) {
+            item.disabled = true;
+        });
+        finishAnswer(true, correct);
+        return;
     }
 
+    // Wrong choice
+    state.attempts += 1;
+    button.classList.add("wrong");
+    button.disabled = true;
 
-    finishAnswer(
-        isCorrect,
-        correct
-    );
+    const feedback = document.getElementById("feedback");
 
+    if (state.attempts >= 3) {
+        state.answered = true;
+        state.streak = 0;
+        $$(".answer-option").forEach(function (item) {
+            item.disabled = true;
+            if (normalize(item.textContent) === normalize(correct)) {
+                item.classList.add("correct");
+            }
+        });
+        if (feedback) {
+            feedback.textContent = "Correct answer: " + correct;
+            feedback.className = "feedback bad";
+        }
+        setTimeout(function () {
+            state.attempts = 0;
+            nextQuestion();
+        }, 1400);
+        return;
+    }
+
+    if (feedback) {
+        feedback.textContent =
+            "Not quite — try again! (" + (3 - state.attempts) + " left)";
+        feedback.className = "feedback bad";
+    }
+
+    // Allow other options; keep wrong ones disabled so they can't re-pick the same
+    state.answered = false;
 }
 
 
@@ -3096,21 +2712,74 @@ function checkAnswer(
         return;
     }
 
-
-    state.answered =
-        true;
-
+    if (typeof state.attempts !== "number") {
+        state.attempts = 0;
+    }
 
     const isCorrect =
         normalize(answer) ===
         normalize(correct);
 
+    if (isCorrect) {
+        state.answered = true;
+        state.attempts = 0;
+        finishAnswer(true, correct);
+        return;
+    }
 
-    finishAnswer(
-        isCorrect,
-        correct
-    );
+    // Wrong answer: do not lock the question yet
+    state.attempts += 1;
 
+    const feedback = document.getElementById("feedback");
+    const isChoice = !!(document.querySelector(".answer-option, .option-btn"));
+
+    if (isChoice && state.attempts >= 3) {
+        // Multiple choice: reveal correct after 3 tries, then advance
+        state.answered = true;
+        if (feedback) {
+            feedback.textContent = "Correct answer: " + correct;
+            feedback.className = "feedback bad";
+        }
+        // Highlight correct option if present
+        document.querySelectorAll(".answer-option, .option-btn").forEach(function (btn) {
+            btn.disabled = true;
+            if (normalize(btn.textContent) === normalize(correct)) {
+                btn.classList.add("correct");
+            }
+        });
+        state.streak = 0;
+        setTimeout(function () {
+            state.attempts = 0;
+            nextQuestion();
+        }, 1400);
+        return;
+    }
+
+    // Try again (build / short / early MC mistakes)
+    if (feedback) {
+        const left = isChoice ? Math.max(0, 3 - state.attempts) : 0;
+        feedback.textContent = isChoice && left
+            ? ("Not quite — try again! (" + left + " left)")
+            : "Not quite — try again!";
+        feedback.className = "feedback bad";
+    }
+
+    // Build-the-sentence: unlock chips so they can rearrange
+    state.answered = false;
+    const built = document.getElementById("builtSentence");
+    if (built) {
+        // soft pulse wrong state without clearing
+        built.classList.add("wrong");
+        setTimeout(function () {
+            built.classList.remove("wrong");
+        }, 450);
+    }
+
+    // MC: re-enable options except disable the wrong one briefly
+    document.querySelectorAll(".answer-option.wrong, .option-btn.wrong").forEach(function (btn) {
+        btn.classList.remove("wrong");
+        btn.disabled = false;
+    });
 }
 
 
@@ -3313,6 +2982,24 @@ function nextQuestion() {
    NORMAL PRACTICE COMPLETE
 ===================================================== */
 
+
+function laSubmitScore(gameId, gameName, correct, total) {
+  try {
+    if (!window.LAScores || typeof LAScores.submit !== "function") return;
+    var name = LAScores.getPlayerName ? LAScores.getPlayerName() : "";
+    var code = LAScores.getClassCode ? LAScores.getClassCode() : "";
+    if (!name || !code) return; // need identity
+    var score = Math.max(0, Math.round(Number(correct) || 0));
+    var maxScore = Math.max(0, Math.round(Number(total) || 0));
+    LAScores.submit({
+      gameId: gameId,
+      gameName: gameName || gameId,
+      score: score,
+      maxScore: maxScore || undefined
+    });
+  } catch (e) {}
+}
+
 function finishPractice() {
 
     markPracticeDone(
@@ -3371,6 +3058,7 @@ function finishPractice() {
                 LAStars.recordPlay("simple-present");
                 LAStars.saveFromAccuracy("simple-present", acc);
             }
+            laSubmitScore("simple-present", "Simple Present", state.correct, total);
         } catch (e) {}
     })();
 
@@ -3443,6 +3131,7 @@ function finishFinalMixed() {
                 LAStars.recordPlay("simple-present");
                 LAStars.saveFromAccuracy("simple-present", acc);
             }
+            laSubmitScore("simple-present", "Simple Present · Final Mix", state.correct, total);
         } catch (e) {}
     })();
 
@@ -3695,42 +3384,74 @@ window.addEventListener(
    EVENT LISTENERS
 ===================================================== */
 
-$$(".group-card")
-    .forEach(
-        function (button) {
+// Home: open group picker for a practice type
+const PRACTICE_LABELS = {
+    build: "Build the Sentence",
+    complete: "Complete It",
+    question: "Make the Question",
+    short: "Short Answers",
+    mixed: "Group Mix"
+};
 
-            button.addEventListener(
-                "click",
-                function () {
+const PRACTICE_DESCS = {
+    build: "Put the words in the right order.",
+    complete: "Choose the correct verb or helper.",
+    question: "Build yes / no questions.",
+    short: "Choose the correct short answer.",
+    mixed: "Positive, negative, questions and answers mixed."
+};
 
-                    openGroup(
-                        button.dataset.group
-                    );
+$$("[data-open-picker]")
+    .forEach(function (button) {
+        button.addEventListener("click", function () {
+            const practice = button.dataset.practice;
+            state.practice = practice;
+            state.finalMixed = false;
 
-                }
-            );
+            const label = PRACTICE_LABELS[practice] || practice;
+            const desc = PRACTICE_DESCS[practice] || "";
 
-        }
-    );
+            const eye = $("#menuEyebrow");
+            const title = $("#menuTitle");
+            const description = $("#menuDescription");
+            if (eye) eye.textContent = label.toUpperCase();
+            if (title) title.textContent = "Choose a group";
+            if (description) description.textContent = desc + " Which subjects?";
 
+            show("practiceMenu");
+        });
+    });
 
+// Group picker → start the selected practice with that group
+$$(".soft-rect-group[data-group]")
+    .forEach(function (button) {
+        button.addEventListener("click", function () {
+            const group = button.dataset.group;
+            if (!group || group === "mixed") return;
+            state.group = group;
+            state.finalMixed = false;
+            startPractice(state.practice || "build");
+        });
+    });
+
+// Challenge mixed button
+const mixedLaunch = $("#mixedLaunchBtn");
+if (mixedLaunch) {
+    mixedLaunch.addEventListener("click", function () {
+        if (mixedLaunch.disabled) return;
+        startFinalMixed();
+    });
+}
+
+// Legacy practice-card handlers (hidden list — keep harmless)
 $$(".practice-card")
-    .forEach(
-        function (button) {
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    startPractice(
-                        button.dataset.practice
-                    );
-
-                }
-            );
-
-        }
-    );
+    .forEach(function (button) {
+        button.addEventListener("click", function () {
+            if (button.dataset.practice) {
+                startPractice(button.dataset.practice);
+            }
+        });
+    });
 
 
 $("#backHome")
@@ -3771,27 +3492,8 @@ $("#backMenu")
 
             } else {
 
-                if (
-                    state.finalMixed
-                ) {
-
-                    renderHome();
-
-                    show(
-                        "homeScreen",
-                        false
-                    );
-
-                } else {
-
-                    updateMenuProgress();
-
-                    show(
-                        "practiceMenu",
-                        false
-                    );
-
-                }
+                renderHome();
+                show("homeScreen", false);
 
             }
 
@@ -3812,27 +3514,8 @@ $("#resultMenuButton")
 
             } else {
 
-                if (
-                    state.finalMixed
-                ) {
-
-                    renderHome();
-
-                    show(
-                        "homeScreen",
-                        false
-                    );
-
-                } else {
-
-                    updateMenuProgress();
-
-                    show(
-                        "practiceMenu",
-                        false
-                    );
-
-                }
+                renderHome();
+                show("homeScreen", false);
 
             }
 
@@ -3900,61 +3583,4 @@ show(
     false
 );
 
-/* =====================================================
-   DRAG REORDERING INSIDE SENTENCE AREA
-   Polished & conflict-free version
-===================================================== */
 
-function getDragAfterElement(container, x) {
-  const chips = [...container.querySelectorAll(".built-chip:not(.dragging)")];
-
-  return chips.reduce((closest, child) => {
-    const box = child.getBoundingClientRect();
-    const offset = x - box.left - box.width / 2;
-
-    if (offset < 0 && offset > closest.offset) {
-      return { offset: offset, element: child };
-    } else {
-      return closest;
-    }
-  }, { offset: Number.NEGATIVE_INFINITY }).element;
-}
-
-(function enableSentenceReordering() {
-  // Use capture phase so it runs before the original drop handlers
-  document.body.addEventListener("dragover", function (e) {
-    const built = e.target.closest("#builtSentence") || e.target.closest(".built-sentence");
-    if (!built) return;
-
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-  }, true);
-
-  document.body.addEventListener("drop", function (e) {
-    const built = e.target.closest("#builtSentence") || e.target.closest(".built-sentence");
-    if (!built) return;
-
-    const dragged = window._dragChip;
-
-    // Only reorder chips that are already inside the sentence area
-    if (
-      !dragged ||
-      state.answered ||
-      !built.contains(dragged) ||
-      !dragged.classList.contains("built-chip")
-    ) {
-      return;
-    }
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    const afterElement = getDragAfterElement(built, e.clientX);
-
-    if (afterElement == null) {
-      built.appendChild(dragged);
-    } else {
-      built.insertBefore(dragged, afterElement);
-    }
-  }, true);
-})();

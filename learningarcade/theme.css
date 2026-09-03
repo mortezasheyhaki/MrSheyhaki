@@ -1382,3 +1382,778 @@ html[data-theme="dark"] .game-launch,
 html[data-theme="dark"] .skill-button {
   color: #fff !important;
 }
+
+
+/* =========================================================
+   GLOSSY CIRCLE CONTROLS — try again / play / back / sound / music
+   Soft 3D candy buttons with hover shine
+========================================================= */
+
+.arcade-orb,
+.result-try-again .try-icon,
+button.result-try-again,
+.music-toggle,
+.sound-toggle,
+.sound-btn,
+.btn-sound,
+.btn-music,
+.audio-toggle {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  border: 3px solid rgba(255, 255, 255, 0.45) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  overflow: visible !important;
+  transition:
+    transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.18s ease,
+    filter 0.18s ease !important;
+}
+
+/* Shine highlight on top of every orb */
+.arcade-orb::before,
+.result-try-again .try-icon::before,
+.music-toggle::before,
+.sound-toggle::before,
+.sound-btn::before,
+.btn-sound::before,
+.btn-music::before,
+.audio-toggle::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 12% !important;
+  right: 12% !important;
+  top: 8% !important;
+  height: 42% !important;
+  border-radius: 50% 50% 45% 45% / 60% 60% 40% 40% !important;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.2) 55%,
+    transparent 100%
+  ) !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+  transition: opacity 0.2s ease, transform 0.2s ease !important;
+}
+
+/* Hover: lift + brighter shine */
+.arcade-orb:hover,
+.result-try-again:hover .try-icon,
+.music-toggle:hover,
+.sound-toggle:hover,
+.sound-btn:hover,
+.btn-sound:hover,
+.btn-music:hover,
+.audio-toggle:hover {
+  transform: translateY(-4px) scale(1.06) !important;
+  filter: brightness(1.08) saturate(1.05) !important;
+}
+
+.arcade-orb:hover::before,
+.result-try-again:hover .try-icon::before,
+.music-toggle:hover::before,
+.sound-toggle:hover::before,
+.sound-btn:hover::before,
+.btn-sound:hover::before,
+.btn-music:hover::before,
+.audio-toggle:hover::before {
+  opacity: 1 !important;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 100%
+  ) !important;
+}
+
+.arcade-orb:active,
+.result-try-again:active .try-icon,
+.music-toggle:active,
+.sound-toggle:active,
+.sound-btn:active,
+.btn-sound:active,
+.btn-music:active,
+.audio-toggle:active {
+  transform: translateY(2px) scale(0.97) !important;
+  filter: brightness(0.98) !important;
+}
+
+/* ---- TRY AGAIN — red glossy ---- */
+.result-try-again {
+  appearance: none !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 8px !important;
+  cursor: pointer !important;
+}
+
+.result-try-again .try-icon {
+  width: 88px !important;
+  height: 88px !important;
+  min-width: 88px !important;
+  min-height: 88px !important;
+  border-radius: 50% !important;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.55) 0%, transparent 45%),
+    linear-gradient(180deg, #ff6b6b 0%, #ef4444 45%, #dc2626 100%) !important;
+  border: 3px solid rgba(255, 255, 255, 0.4) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 6px 0 #991b1b,
+    0 12px 22px rgba(220, 38, 38, 0.35),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.result-try-again:hover .try-icon {
+  box-shadow:
+    0 8px 0 #991b1b,
+    0 16px 28px rgba(220, 38, 38, 0.4),
+    inset 0 2px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.18) !important;
+}
+
+.result-try-again:active .try-icon {
+  box-shadow:
+    0 2px 0 #991b1b,
+    0 6px 12px rgba(220, 38, 38, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.35) !important;
+}
+
+.result-try-again .try-icon svg {
+  width: 40px !important;
+  height: 40px !important;
+  stroke: #ffffff !important;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+  position: relative;
+  z-index: 3;
+}
+
+.result-try-again .try-label {
+  font-weight: 800 !important;
+  font-size: 1rem !important;
+  color: #b91c1c !important;
+}
+
+html[data-theme="dark"] .result-try-again .try-label,
+body.dark-mode .result-try-again .try-label {
+  color: #fca5a5 !important;
+}
+
+/* ---- PLAY — green glossy circle ---- */
+.btn-play,
+.play-btn,
+button.btn-play,
+a.play-btn,
+.main-btn.play-orb {
+  width: 84px !important;
+  height: 84px !important;
+  min-width: 84px !important;
+  min-height: 84px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.55) 0%, transparent 45%),
+    linear-gradient(180deg, #86efac 0%, #4ade80 40%, #22c55e 100%) !important;
+  border: 3px solid rgba(255, 255, 255, 0.45) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 6px 0 #15803d,
+    0 12px 22px rgba(34, 197, 94, 0.35),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.15) !important;
+  font-size: 0 !important; /* hide text if any; use icon */
+}
+
+.btn-play::after,
+.play-btn::after {
+  content: "" !important;
+  position: relative !important;
+  z-index: 3 !important;
+  width: 0 !important;
+  height: 0 !important;
+  border-style: solid !important;
+  border-width: 14px 0 14px 24px !important;
+  border-color: transparent transparent transparent #ffffff !important;
+  margin-left: 4px !important;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+}
+
+.btn-play:hover,
+.play-btn:hover {
+  box-shadow:
+    0 8px 0 #15803d,
+    0 16px 28px rgba(34, 197, 94, 0.4),
+    inset 0 2px 0 rgba(255, 255, 255, 0.55) !important;
+}
+
+/* ---- BACK — blue glossy (compact circular when .arcade-orb / .back-orb) ---- */
+.back-orb,
+.pp-back.back-orb,
+a.back-orb,
+button.back-orb {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.55) 0%, transparent 45%),
+    linear-gradient(180deg, #60a5fa 0%, #3b82f6 45%, #2563eb 100%) !important;
+  border: 3px solid rgba(255, 255, 255, 0.45) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 5px 0 #1d4ed8,
+    0 10px 18px rgba(37, 99, 235, 0.32),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.15) !important;
+  font-size: 0 !important;
+  text-indent: -9999px !important;
+  overflow: hidden !important;
+}
+
+.back-orb::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 3 !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: 14px !important;
+  height: 14px !important;
+  border-left: 3.5px solid #fff !important;
+  border-bottom: 3.5px solid #fff !important;
+  transform: translate(-30%, -50%) rotate(45deg) !important;
+  text-indent: 0 !important;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+}
+
+.back-orb:hover {
+  box-shadow:
+    0 7px 0 #1d4ed8,
+    0 14px 24px rgba(37, 99, 235, 0.4),
+    inset 0 2px 0 rgba(255, 255, 255, 0.55) !important;
+}
+
+/* ---- SOUND / MUSIC — blue glossy ---- */
+.music-toggle,
+.sound-toggle,
+.sound-btn,
+.btn-sound,
+.btn-music,
+.audio-toggle {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.55) 0%, transparent 45%),
+    linear-gradient(180deg, #60a5fa 0%, #3b82f6 45%, #2563eb 100%) !important;
+  border: 3px solid rgba(255, 255, 255, 0.45) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 5px 0 #1d4ed8,
+    0 10px 18px rgba(37, 99, 235, 0.32),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.15) !important;
+  font-size: 1.35rem !important;
+  gap: 0 !important;
+  z-index: 50;
+}
+
+.music-toggle .music-txt,
+.sound-toggle .sound-txt {
+  display: none !important;
+}
+
+.music-toggle .music-ico,
+.sound-toggle .sound-ico {
+  position: relative !important;
+  z-index: 3 !important;
+  font-size: 1.4rem !important;
+  line-height: 1 !important;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+}
+
+.music-toggle:hover,
+.sound-toggle:hover,
+.sound-btn:hover,
+.btn-sound:hover,
+.btn-music:hover,
+.audio-toggle:hover {
+  box-shadow:
+    0 7px 0 #1d4ed8,
+    0 14px 24px rgba(37, 99, 235, 0.4),
+    inset 0 2px 0 rgba(255, 255, 255, 0.55) !important;
+  color: #ffffff !important;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.6) 0%, transparent 45%),
+    linear-gradient(180deg, #60a5fa 0%, #3b82f6 45%, #2563eb 100%) !important;
+}
+
+.music-toggle.is-playing,
+.sound-toggle.is-on,
+.audio-toggle.is-on {
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.55) 0%, transparent 45%),
+    linear-gradient(180deg, #fbbf24 0%, #f59e0b 45%, #d97706 100%) !important;
+  box-shadow:
+    0 5px 0 #b45309,
+    0 10px 18px rgba(217, 119, 6, 0.35),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  color: #ffffff !important;
+}
+
+/* Keep fixed music button placement on arcade home */
+.music-toggle {
+  position: fixed !important;
+  bottom: max(24px, env(safe-area-inset-bottom, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+@media (max-width: 700px) {
+  .music-toggle {
+    bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
+    right: max(12px, env(safe-area-inset-right, 0px)) !important;
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    min-height: 52px !important;
+  }
+}
+
+
+/* =========================================================
+   GLOBAL HOVER SHINE — cards & buttons
+========================================================= */
+
+.la-shine,
+.game-card,
+.skill-card,
+.menu-card,
+.hub-card,
+.home-card,
+.soft-rect,
+.practice-card,
+.group-card,
+.profile-card,
+.match-card,
+.option-btn,
+.word-chip,
+.built-chip,
+.answer-option,
+.btn,
+.btn-primary,
+.btn-outline,
+.btn-success,
+.main-btn,
+.primary-btn,
+.primary-button,
+.secondary-button,
+.hub-card-btn,
+.card-btn,
+.game-launch,
+.skill-button,
+.back-btn,
+.pp-back,
+.ghost-btn,
+.clear-btn,
+.nav-link,
+.arcade-nav .nav-link,
+.menu-card,
+.result-try-again .try-icon,
+.music-toggle,
+.sound-toggle,
+.sound-btn,
+.btn-play,
+.play-btn {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Diagonal shine sweep */
+.la-shine::after,
+.game-card::after,
+.skill-card::after,
+.menu-card::after,
+.hub-card::after,
+.home-card::after,
+.soft-rect::after,
+.practice-card::after,
+.group-card::after,
+.profile-card::after,
+.match-card::after,
+.option-btn::after,
+.word-chip::after,
+.built-chip::after,
+.answer-option::after,
+.btn::after,
+.btn-primary::after,
+.btn-outline::after,
+.btn-success::after,
+.main-btn::after,
+.primary-btn::after,
+.primary-button::after,
+.secondary-button::after,
+.hub-card-btn::after,
+.card-btn::after,
+.game-launch::after,
+.skill-button::after,
+.back-btn::after,
+.pp-back::after,
+.ghost-btn::after,
+.clear-btn::after,
+.arcade-nav .nav-link::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 35%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0) 65%,
+    transparent 100%
+  );
+  transform: skewX(-18deg);
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  transition: none;
+}
+
+.la-shine:hover::after,
+.game-card:hover::after,
+.skill-card:hover::after,
+.menu-card:hover::after,
+.hub-card:hover::after,
+.home-card:hover::after,
+.soft-rect:hover:not(:disabled)::after,
+.practice-card:hover::after,
+.group-card:hover:not(:disabled)::after,
+.profile-card:hover::after,
+.match-card:hover:not(.matched):not(.selected)::after,
+.option-btn:hover:not(:disabled)::after,
+.word-chip:hover:not(.used)::after,
+.built-chip:hover::after,
+.answer-option:hover:not(:disabled)::after,
+.btn:hover:not(:disabled)::after,
+.btn-primary:hover:not(:disabled)::after,
+.btn-outline:hover:not(:disabled)::after,
+.btn-success:hover:not(:disabled)::after,
+.main-btn:hover:not(:disabled)::after,
+.primary-btn:hover:not(:disabled)::after,
+.primary-button:hover:not(:disabled)::after,
+.secondary-button:hover:not(:disabled)::after,
+.hub-card-btn:hover:not(:disabled)::after,
+.card-btn:hover:not(:disabled)::after,
+.game-launch:hover::after,
+.skill-button:hover:not(:disabled)::after,
+.back-btn:hover::after,
+.pp-back:hover::after,
+.ghost-btn:hover::after,
+.clear-btn:hover::after,
+.arcade-nav .nav-link:hover::after {
+  animation: laShineSweep 0.65s ease forwards;
+  opacity: 1;
+}
+
+@keyframes laShineSweep {
+  0% {
+    left: -75%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    left: 130%;
+    opacity: 0;
+  }
+}
+
+/* Soft lift on cards */
+.game-card,
+.skill-card,
+.menu-card,
+.hub-card,
+.soft-rect,
+.practice-card,
+.group-card,
+.profile-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    filter 0.2s ease;
+}
+
+.game-card:hover,
+.skill-card:hover,
+.menu-card:hover,
+.hub-card:hover,
+.soft-rect:hover:not(:disabled),
+.practice-card:hover,
+.group-card:hover:not(:disabled),
+.profile-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Keep label text above shine */
+.game-card > *,
+.skill-card > *,
+.menu-card > *,
+.soft-rect > *,
+.btn > *,
+.main-btn > *,
+.game-launch > *,
+.skill-button > *,
+.option-btn > *,
+.word-chip > *,
+.nav-link > * {
+  position: relative;
+  z-index: 5;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .la-shine:hover::after,
+  .game-card:hover::after,
+  .skill-card:hover::after,
+  .menu-card:hover::after,
+  .hub-card:hover::after,
+  .home-card:hover::after,
+  .soft-rect:hover:not(:disabled)::after,
+  .practice-card:hover::after,
+  .group-card:hover:not(:disabled)::after,
+  .profile-card:hover::after,
+  .match-card:hover:not(.matched):not(.selected)::after,
+  .option-btn:hover:not(:disabled)::after,
+  .word-chip:hover:not(.used)::after,
+  .built-chip:hover::after,
+  .answer-option:hover:not(:disabled)::after,
+  .btn:hover:not(:disabled)::after,
+  .btn-primary:hover:not(:disabled)::after,
+  .btn-outline:hover:not(:disabled)::after,
+  .btn-success:hover:not(:disabled)::after,
+  .main-btn:hover:not(:disabled)::after,
+  .primary-btn:hover:not(:disabled)::after,
+  .primary-button:hover:not(:disabled)::after,
+  .secondary-button:hover:not(:disabled)::after,
+  .hub-card-btn:hover:not(:disabled)::after,
+  .card-btn:hover:not(:disabled)::after,
+  .game-launch:hover::after,
+  .skill-button:hover:not(:disabled)::after,
+  .back-btn:hover::after,
+  .pp-back:hover::after,
+  .ghost-btn:hover::after,
+  .clear-btn:hover::after,
+  .arcade-nav .nav-link:hover::after {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}
+
+
+/* =========================================================
+   FLOATING ARCADE NAV (global via theme.css)
+========================================================= */
+.arcade-nav {
+  position: fixed !important;
+  top: max(14px, env(safe-area-inset-top, 0px)) !important;
+  bottom: auto !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 7px 8px !important;
+  margin: 0 !important;
+  width: auto !important;
+  max-width: calc(100vw - 28px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 15px !important;
+  background: rgba(8, 10, 20, 0.9) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.32),
+    0 0 0 1px rgba(255, 255, 255, 0.04) !important;
+  white-space: nowrap !important;
+  pointer-events: auto !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.arcade-nav::-webkit-scrollbar { display: none; }
+
+.arcade-nav .nav-link,
+.arcade-nav a.nav-link {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  gap: 5px !important;
+  min-height: 38px !important;
+  min-width: unset !important;
+  padding: 0 12px !important;
+  margin: 0 !important;
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  color: #e2e8f0 !important;
+  background: transparent !important;
+  text-decoration: none !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease !important;
+}
+
+.arcade-nav .nav-link:hover,
+.arcade-nav a.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  transform: translateY(-1px) !important;
+  color: #fff !important;
+  filter: none !important;
+}
+
+.arcade-nav .nav-link.active,
+.arcade-nav a.nav-link.active {
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.85), rgba(78, 203, 255, 0.45)) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  box-shadow: 0 5px 18px rgba(124, 92, 255, 0.28) !important;
+}
+
+.arcade-nav .nav-ico {
+  display: none !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+.arcade-nav .nav-text {
+  display: inline !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+/* Show icons from data-icon when no .nav-ico content on small screens handled below */
+.arcade-nav .nav-link[data-icon] .nav-ico:empty::before {
+  content: attr(data-icon);
+}
+
+html[data-theme="light"] .arcade-nav {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12) !important;
+}
+html[data-theme="light"] .arcade-nav .nav-link {
+  color: #334155 !important;
+}
+html[data-theme="light"] .arcade-nav .nav-link:hover {
+  color: #0f172a !important;
+  background: rgba(15, 23, 42, 0.06) !important;
+}
+html[data-theme="light"] .arcade-nav .nav-link.active {
+  color: #fff !important;
+}
+
+.arcade-nav .nav-profile {
+  flex: 0 0 auto !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  padding: 0 10px !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #f1f5f9 !important;
+}
+html[data-theme="light"] .arcade-nav .nav-profile {
+  background: rgba(15, 23, 42, 0.06) !important;
+  color: #171a26 !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+
+.arcade-header-bar {
+  min-height: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  overflow: visible !important;
+}
+
+/* Clear fixed top nav */
+body.skill-page,
+body {
+  padding-top: 62px;
+}
+@media (max-width: 700px) {
+  body {
+    padding-top: 12px;
+    padding-bottom: 76px;
+  }
+  .arcade-nav {
+    top: auto !important;
+    bottom: max(8px, env(safe-area-inset-bottom, 0px)) !important;
+    left: 50% !important;
+    width: calc(100% - 12px) !important;
+    max-width: 100% !important;
+    padding: 6px !important;
+    gap: 3px !important;
+    border-radius: 14px !important;
+    justify-content: space-between !important;
+  }
+  .arcade-nav .nav-link {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    min-height: 42px !important;
+    padding: 0 2px !important;
+    font-size: 0 !important;
+  }
+  .arcade-nav .nav-text { display: none !important; }
+  .arcade-nav .nav-ico {
+    display: inline-block !important;
+    font-size: 18px !important;
+  }
+  .arcade-nav .nav-profile {
+    flex: 0 0 44px !important;
+    width: 44px !important;
+    padding: 0 !important;
+  }
+}
+
+/* Kill hover-shine overlay on nav links (was washing out text) */
+.arcade-nav .nav-link::after,
+.arcade-nav a.nav-link::after {
+  display: none !important;
+  content: none !important;
+  animation: none !important;
+}
