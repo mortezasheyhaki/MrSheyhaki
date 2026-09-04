@@ -485,12 +485,26 @@
     } catch (e) {}
   }
 
+
+  function stripProfileControls() {
+    try {
+      document.querySelectorAll("a.profile-fab, .profile-fab, a.nav-profile, .nav-profile").forEach(function (el) {
+        el.remove();
+      });
+    } catch (e) {}
+  }
+
   function bind() {
+    stripProfileControls();
+    setTimeout(stripProfileControls, 0);
+    setTimeout(stripProfileControls, 100);
+
     state.mode = isSpeakingMode() ? "speaking" : "grammar";
     initSpeech();
 
     if (state.mode === "speaking") {
       document.body.setAttribute("data-mode", "speaking");
+      document.body.classList.add("speaking", "hmm-speaking");
       var kicker = document.querySelector("#screenStart .hmm-kicker");
       if (kicker) kicker.textContent = "SPEAKING · A1–A2";
       var lead = document.querySelector("#screenStart .hmm-lead");
@@ -506,11 +520,19 @@
           "<li><strong>How much</strong> → uncountable (water, money, time)</li>" +
           "<li><strong>Speaking</strong> → you must use the mic (typing alone does not count)</li>";
       }
-      var back = document.querySelector(".hmm-screen a.hmm-btn--ghost[href='../']");
-      if (back) {
-        back.href = "../../speaking/";
-        back.textContent = "Back to Speaking";
+      // Back always returns to Speaking arcade (not Grammar)
+      var backMain = document.getElementById("hmmBack");
+      if (backMain) {
+        backMain.href = "../../speaking/";
+        backMain.removeAttribute("data-back-one");
       }
+      var backResult = document.getElementById("hmmBackResult");
+      if (backResult) {
+        backResult.href = "../../speaking/";
+        backResult.textContent = "Back to Speaking";
+      }
+    } else {
+      document.body.classList.add("grammar");
     }
 
     $("btnStart").addEventListener("click", startGame);
@@ -529,25 +551,7 @@
     if (mic) {
       mic.addEventListener("click", startListening);
     }
-
-    var themeBtn = $("themeToggle");
-    if (themeBtn) {
-      themeBtn.addEventListener("click", function () {
-        var html = document.documentElement;
-        var next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
-        html.setAttribute("data-theme", next);
-        themeBtn.textContent = next === "dark" ? "☀" : "☾";
-        try { localStorage.setItem("la-theme", next); } catch (e) {}
-      });
-      try {
-        var saved = localStorage.getItem("la-theme");
-        if (saved === "dark" || saved === "light") {
-          document.documentElement.setAttribute("data-theme", saved);
-          themeBtn.textContent = saved === "dark" ? "☀" : "☾";
-        }
-      } catch (e) {}
-    }
-  }
+}
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", bind);

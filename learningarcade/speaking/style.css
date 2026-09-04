@@ -619,13 +619,61 @@ a.game-launch:visited,
   line-height: 1.4;
   max-width: 100%;
 }
-a.game-launch,
-.game-launch {
+/* Bottom row: PLAY + stars to the right */
+.game-card-actions {
+  position: relative;
+  z-index: 1;
   grid-column: 1 / -1 !important;
   grid-row: 5 !important;
-  justify-self: end !important;
-  align-self: end !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
   margin-top: 8px !important;
+  min-height: 84px;
+}
+.game-stars {
+  position: relative;
+  z-index: 1;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin: 0 !important;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: 1px;
+  user-select: none;
+  flex-shrink: 0;
+}
+.game-stars .star {
+  color: #cbd5e1;
+  transition: color 0.25s ease, text-shadow 0.25s ease, filter 0.25s ease;
+}
+.game-stars .star.is-filled {
+  color: #fbbf24;
+  text-shadow:
+    0 0 3px #fde68a,
+    0 0 8px rgba(251, 191, 36, 0.75),
+    0 0 14px rgba(245, 158, 11, 0.45);
+  filter: drop-shadow(0 0 3px rgba(251, 191, 36, 0.55));
+}
+html[data-theme="dark"] .game-stars .star { color: #475569; }
+html[data-theme="dark"] .game-stars .star.is-filled {
+  color: #fde68a;
+  text-shadow:
+    0 0 3px #fef3c7,
+    0 0 10px rgba(251, 191, 36, 0.8),
+    0 0 16px rgba(245, 158, 11, 0.5);
+}
+a.game-launch,
+.game-launch {
+  /* inside .game-card-actions flex row */
+  margin-top: 0 !important;
+  grid-column: unset !important;
+  grid-row: unset !important;
+  justify-self: unset !important;
+  align-self: unset !important;
+  flex-shrink: 0;
 }
 
 /* ===== Unified responsive game grid (900 / 700 / 560) ===== */
@@ -1087,3 +1135,77 @@ a.game-launch,
   }
 }
 
+
+
+
+/* =========================================================
+   MOBILE UI POLISH (best practices pass)
+========================================================= */
+@media (max-width: 700px) {
+  /* Readable PLAY on circular buttons */
+  a.game-launch,
+  .game-launch {
+    font-size: 11px !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  /* Tags: still small but not 8px */
+  .game-tag {
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+  }
+
+  .game-meta {
+    font-size: 12px !important;
+    color: #5c6575 !important; /* stronger contrast than #8a92a2 */
+  }
+
+  .game-card p {
+    font-size: 13px !important;
+  }
+
+  /* Stars row beside PLAY — don't wrap into a column */
+  .game-card-actions {
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    min-height: 56px !important;
+  }
+  .game-stars {
+    font-size: 16px !important;
+    gap: 2px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Eyebrow readable */
+  .arcade-intro.skill-intro .eyebrow,
+  .skill-intro .eyebrow {
+    font-size: 10px !important;
+  }
+
+  .arcade-intro.skill-intro h1,
+  .skill-intro h1 {
+    font-size: clamp(24px, 7vw, 32px) !important;
+  }
+}
+
+@media (max-width: 380px) {
+  /* Very narrow: slightly smaller PLAY circle, keep label readable */
+  a.game-launch,
+  .game-launch {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    min-height: 52px !important;
+    max-width: 52px !important;
+    max-height: 52px !important;
+    font-size: 10px !important;
+  }
+  .game-stars {
+    font-size: 14px !important;
+  }
+}
+
+/* Base meta contrast (all viewports) */
+.game-meta {
+  color: #5c6575;
+}

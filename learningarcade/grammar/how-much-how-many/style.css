@@ -51,21 +51,6 @@ html, body {
   box-shadow: 0 4px 0 rgba(0,0,0,.18), 0 8px 18px rgba(0,0,0,.12);
 }
 
-.theme-fab {
-  position: fixed;
-  top: max(14px, env(safe-area-inset-top, 0px));
-  right: max(14px, env(safe-area-inset-right, 0px));
-  z-index: 50;
-  width: 44px;
-  height: 44px;
-  border: none;
-  border-radius: 50%;
-  background: var(--hmm-card);
-  color: var(--hmm-text);
-  font-size: 18px;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0,0,0,.1);
-}
 
 .hmm-wrap {
   width: min(560px, 100%);
@@ -403,46 +388,71 @@ body[data-mode="speaking"] .skill-back-btn {
   line-height: 1.4;
 }
 
-.hmm-mic-btn {
+.hmm-mic-row {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  min-height: 88px;
+  gap: 10px;
   margin-bottom: 10px;
-  border: 2px solid rgba(13, 148, 136, 0.35);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(45, 212, 191, 0.2), rgba(13, 148, 136, 0.12));
-  color: var(--hmm-text);
+}
+
+.hmm-mic-btn {
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
+  min-height: 72px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,.4);
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255,255,255,.45) 0%, transparent 42%),
+    linear-gradient(180deg, rgba(255,255,255,.28) 0%, transparent 45%),
+    linear-gradient(180deg, #2dd4bf 0%, #0d9488 48%, #115e59 100%);
+  color: #fff;
   cursor: pointer;
-  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  box-shadow:
+    0 6px 0 #0f4c47,
+    0 10px 20px rgba(13, 148, 136, 0.35),
+    inset 0 2px 0 rgba(255,255,255,.35);
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
 }
 
 .hmm-mic-btn:hover {
-  transform: translateY(-1px);
-  border-color: #0d9488;
+  transform: translateY(-2px);
+  filter: brightness(1.05);
 }
 
 .hmm-mic-btn.is-listening {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2), 0 0 24px rgba(239, 68, 68, 0.25);
+  border-color: rgba(255,255,255,.7);
+  box-shadow:
+    0 0 0 6px rgba(239, 68, 68, 0.25),
+    0 6px 0 #0f4c47,
+    0 0 28px rgba(239, 68, 68, 0.4);
   animation: hmm-mic-pulse 1s ease-in-out infinite;
 }
 
 .hmm-mic-btn.is-done {
-  border-color: var(--hmm-ok);
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+  box-shadow:
+    0 0 0 4px rgba(5, 150, 105, 0.3),
+    0 6px 0 #0f4c47,
+    0 10px 20px rgba(13, 148, 136, 0.35);
 }
 
-@keyframes hmm-mic-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
+.hmm-mic-icon {
+  font-size: 28px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.25));
 }
 
-.hmm-mic-icon { font-size: 28px; line-height: 1; }
-.hmm-mic-label { font-size: 14px; font-weight: 800; letter-spacing: 0.3px; }
+.hmm-mic-label {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  color: var(--hmm-text);
+  text-align: center;
+}
 
 .hmm-transcript {
   margin: 0 0 10px;
@@ -469,4 +479,147 @@ body[data-mode="speaking"] .skill-back-btn {
 body[data-mode="speaking"] .hmm-answer[readonly] {
   opacity: 0.85;
   background: rgba(13, 148, 136, 0.06);
+}
+
+
+/* ===== Speaking mode: teal palette (match Speaking arcade) ===== */
+body.hmm-speaking,
+body[data-mode="speaking"] {
+  --hmm-green: #0d9488;
+  --hmm-green-dark: #115e59;
+  --hmm-bg: #f2fbfa;
+  --hmm-border: #c5ebe7;
+  --hmm-ok: #0f766e;
+}
+
+html[data-theme="dark"] body.hmm-speaking,
+html[data-theme="dark"] body[data-mode="speaking"] {
+  --hmm-bg: #0a1211;
+  --hmm-card: #121c1b;
+  --hmm-border: #1e3330;
+}
+
+body.hmm-speaking .skill-back-btn,
+body[data-mode="speaking"] .skill-back-btn {
+  background: linear-gradient(180deg, #2dd4bf 0%, #0d9488 55%, #115e59 100%) !important;
+}
+
+body.hmm-speaking .hmm-btn--primary,
+body.hmm-speaking .hmm-btn--spin,
+body[data-mode="speaking"] .hmm-btn--primary,
+body[data-mode="speaking"] .hmm-btn--spin {
+  background: linear-gradient(180deg, #2dd4bf 0%, #0d9488 50%, #115e59 100%) !important;
+  box-shadow: 0 6px 0 #0f4c47, 0 10px 20px rgba(13, 148, 136, 0.3) !important;
+}
+
+body.hmm-speaking .hmm-kicker,
+body[data-mode="speaking"] .hmm-kicker {
+  color: #0d9488;
+}
+
+body.hmm-speaking .hmm-tips,
+body[data-mode="speaking"] .hmm-tips {
+  background: rgba(13, 148, 136, 0.1);
+}
+
+body.hmm-speaking .hmm-card-label,
+body[data-mode="speaking"] .hmm-card-label {
+  background: rgba(13, 148, 136, 0.14);
+  color: #0d9488;
+}
+
+body.hmm-speaking .hmm-choice-btn:hover:not(:disabled),
+body[data-mode="speaking"] .hmm-choice-btn:hover:not(:disabled) {
+  border-color: #0d9488;
+}
+
+body.hmm-speaking .hmm-spinner-ring.is-spinning,
+body[data-mode="speaking"] .hmm-spinner-ring.is-spinning {
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.28), 0 0 24px rgba(13, 148, 136, 0.22);
+}
+
+/* Keep site theme fab clear of content */
+.site-theme-fab {
+  z-index: 10050;
+}
+
+
+/* No profile icon on this game (Grammar + Speaking entry) */
+.hmm-page a.profile-fab,
+.hmm-page .profile-fab,
+.hmm-page a.nav-profile,
+.hmm-page .nav-profile,
+body.hmm-page a.profile-fab,
+body.hmm-page .profile-fab--header {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+
+
+/* =========================================================
+   MOBILE UI POLISH
+========================================================= */
+.hmm-answer {
+  font-size: 16px !important; /* prevent iOS zoom-on-focus */
+  min-height: 96px;
+}
+
+.hmm-btn {
+  min-height: 48px;
+  font-size: 16px;
+}
+
+.hmm-choice-btn {
+  min-height: 48px;
+  font-size: 16px;
+}
+
+.hmm-mic-btn {
+  width: 72px !important;
+  height: 72px !important;
+  min-width: 72px !important;
+  min-height: 72px !important;
+}
+
+.hmm-card-text {
+  font-size: 16px;
+}
+
+.hmm-full-q,
+.hmm-question-line {
+  font-size: 16px;
+}
+
+@media (max-width: 700px) {
+  .hmm-page {
+    padding: 60px 12px max(24px, env(safe-area-inset-bottom, 0px));
+  }
+  .hmm-screen {
+    padding: 20px 14px 18px;
+  }
+  .hmm-lead,
+  .hmm-tips {
+    font-size: 14px;
+  }
+  .hmm-btn--spin {
+    font-size: 16px;
+    min-height: 52px;
+  }
+  .hmm-actions {
+    flex-direction: column;
+  }
+  .hmm-actions .hmm-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .hmm-mic-btn {
+    width: 64px !important;
+    height: 64px !important;
+    min-width: 64px !important;
+    min-height: 64px !important;
+  }
 }
