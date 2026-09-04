@@ -1,21 +1,21 @@
 /* Learning Arcade style: the sound is the prompt; sixteen soft-square photo cards are the choices. */
 const prompts = [
-  { word: 'big', image: '01-big.jpg', audio: '01-big.mp3' },
-  { word: 'small', image: '02-small.jpg', audio: '02-small.mp3' },
-  { word: 'old', image: '03-old.jpg', audio: '03-old.mp3' },
-  { word: 'new', image: '04-new.jpg', audio: '04-new.mp3' },
-  { word: 'fast', image: '05-fast.jpg', audio: '05-fast.mp3' },
-  { word: 'slow', image: '06-slow.jpg', audio: '06-slow.mp3' },
-  { word: 'beautiful', image: '07-beautiful.jpg', audio: '07-beautiful.mp3' },
-  { word: 'ugly', image: '08-ugly.jpg', audio: '08-ugly.mp3' },
-  { word: 'cheap', image: '09-cheap.jpg', audio: '09-cheap.mp3' },
-  { word: 'expensive', image: '10-expensive.jpg', audio: '10-expensive.mp3' },
-  { word: 'long', image: '11-long.jpg', audio: '11-long.mp3' },
-  { word: 'short', image: '12-short.jpg', audio: '12-short.mp3' },
-  { word: 'clean', image: '13-clean.jpg', audio: '13-clean.mp3' },
-  { word: 'dirty', image: '14-dirty.jpg', audio: '14-dirty.mp3' },
-  { word: 'easy', image: '15-easy.jpg', audio: '15-easy.mp3' },
-  { word: 'difficult', image: '16-difficult.jpg', audio: '16-difficult.mp3' }
+  { word: 'big', image: '01-big.png', audio: '01-big.mp3' },
+  { word: 'small', image: '02-small.png', audio: '02-small.mp3' },
+  { word: 'old', image: '03-old.png', audio: '03-old.mp3' },
+  { word: 'new', image: '04-new.png', audio: '04-new.mp3' },
+  { word: 'fast', image: '05-fast.png', audio: '05-fast.mp3' },
+  { word: 'slow', image: '06-slow.png', audio: '06-slow.mp3' },
+  { word: 'beautiful', image: '07-beautiful.png', audio: '07-beautiful.mp3' },
+  { word: 'ugly', image: '08-ugly.png', audio: '08-ugly.mp3' },
+  { word: 'cheap', image: '09-cheap.png', audio: '09-cheap.mp3' },
+  { word: 'expensive', image: '10-expensive.png', audio: '10-expensive.mp3' },
+  { word: 'long', image: '11-long.png', audio: '11-long.mp3' },
+  { word: 'short', image: '12-short.png', audio: '12-short.mp3' },
+  { word: 'clean', image: '13-clean.png', audio: '13-clean.mp3' },
+  { word: 'dirty', image: '14-dirty.png', audio: '14-dirty.mp3' },
+  { word: 'easy', image: '15-easy.png', audio: '15-easy.mp3' },
+  { word: 'difficult', image: '16-difficult.png', audio: '16-difficult.mp3' }
 ];
 
 const startScreen = document.querySelector('#startScreen');
