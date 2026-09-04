@@ -112,8 +112,8 @@
     }
     try {
       if (window.LAStars) {
-        LAStars.recordPlay('opposite-snap');
-        LAStars.save('opposite-snap', stars);
+        LAStars.recordPlay('starter-4b-opposite-snap');
+        LAStars.save('starter-4b-opposite-snap', stars);
       }
     } catch (e) {}
     window.scrollTo({ top: 0, behavior: 'smooth' });

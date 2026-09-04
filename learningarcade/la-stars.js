@@ -54,6 +54,20 @@
     "vocab-clothes-dictation": "vocab-clothes-match",
     // School subjects
     "vocab-school-subjects": "vocab-school-subjects",
+    // Unit 4B – hub ids used by course-render (starter-4b-*)
+    "adj-sentences": "starter-4b-adjective-sentences",
+    "adj-sentences-a": "starter-4b-adjective-sentences",
+    "adj-sentences-b": "starter-4b-adjective-sentences",
+    "sound-match-picture": "starter-4b-sound-match-picture",
+    "match-adjectives-4b": "starter-4b-match-adjectives",
+    "listen-and-write-4b": "starter-4b-listen-and-write",
+    "opposite-snap": "starter-4b-opposite-snap",
+    "starter-4b-adjective-sentences": "starter-4b-adjective-sentences",
+    "starter-4b-sound-match-picture": "starter-4b-sound-match-picture",
+    "starter-4b-match-adjectives": "starter-4b-match-adjectives",
+    "starter-4b-listen-and-write": "starter-4b-listen-and-write",
+    "starter-4b-opposite-snap": "starter-4b-opposite-snap"
+,
     // Unit 4B resources
     "adj-sentences-a": "adj-sentences",
     "adj-sentences-b": "adj-sentences",

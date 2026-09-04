@@ -146,8 +146,8 @@ function showFinish() {
   }
   try {
     if (window.LAStars) {
-      LAStars.recordPlay('sound-match-picture');
-      LAStars.saveFromAccuracy('sound-match-picture', acc);
+      LAStars.recordPlay('starter-4b-sound-match-picture');
+      LAStars.saveFromAccuracy('starter-4b-sound-match-picture', acc);
     }
   } catch (e) {}
   prepareScoreSubmit();
