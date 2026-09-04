@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>How much / How many | Mr. Sheyhaki</title>
-  <meta name="description" content="Spin a prompt, choose How much or How many, then write a full answer.">
+  <meta name="description" content="Pick a card, choose How much or How many, then write or speak a full answer.">
   <link rel="stylesheet" href="../../style.css">
   <link rel="stylesheet" href="../../theme.css">
   <link rel="stylesheet" href="style.css">
@@ -19,8 +19,8 @@
       <p class="hmm-kicker">GRAMMAR · A1–A2</p>
       <h1>How much / How many</h1>
       <p class="hmm-lead">
-        Spin the board to get a question. Choose <strong>much</strong> or <strong>many</strong>,
-        then write a <strong>full answer</strong> in a complete sentence.
+        Tap the circle to pick a card. Choose <strong>much</strong> or <strong>many</strong>,
+        then give a <strong>full answer</strong>.
       </p>
       <ul class="hmm-tips">
         <li><strong>How many</strong> → countable (books, friends, emails)</li>
@@ -29,67 +29,75 @@
       <button type="button" class="hmm-btn hmm-btn--primary" id="btnStart">Start game</button>
     </section>
 
-    <!-- PLAY SCREEN -->
+    <!-- PLAY SCREEN: single viewport, no scroll-to-answer -->
     <section class="hmm-screen hmm-screen--play" id="screenPlay" hidden aria-label="Play">
       <header class="hmm-hud">
-        <div class="hmm-hud-item">Round <strong id="roundNum">1</strong> / <span id="roundMax">8</span></div>
+        <div class="hmm-hud-item">Round <strong id="roundNum">1</strong>/<span id="roundMax">8</span></div>
         <div class="hmm-hud-item">Score <strong id="scoreNum">0</strong></div>
         <div class="hmm-hud-item hmm-hud-stars" id="liveStars" aria-label="Stars">☆☆☆</div>
       </header>
 
-      <div class="hmm-board" aria-live="polite">
-        <div class="hmm-spinner-ring" id="spinnerRing">
-          <div class="hmm-card-prompt" id="promptCard">
-            <span class="hmm-card-label">Press spin</span>
-            <p class="hmm-card-text" id="promptText">Your question will appear here.</p>
-          </div>
-        </div>
-        <button type="button" class="hmm-btn hmm-btn--spin" id="btnSpin">SPIN</button>
+      <!-- PANEL A: board -->
+      <div class="hmm-panel hmm-panel--board" id="panelBoard">
+        <p class="hmm-board-hint" id="promptText">Tap the circle to pick a card</p>
+        <div class="hmm-card-grid" id="cardGrid" role="list"></div>
+        <button type="button" class="hmm-pick-btn" id="btnSpin" aria-label="Pick a random card">
+          <span class="hmm-pick-btn-inner" aria-hidden="true"></span>
+          <span class="hmm-pick-btn-label" id="hubLabel">PICK</span>
+        </button>
       </div>
 
-      <div class="hmm-step" id="stepChoice" hidden>
-        <p class="hmm-step-title">1. Complete the question</p>
-        <p class="hmm-question-line" id="questionLine"></p>
-        <div class="hmm-choice" role="group" aria-label="Choose much or many">
-          <button type="button" class="hmm-choice-btn" data-choice="much">How <strong>much</strong></button>
-          <button type="button" class="hmm-choice-btn" data-choice="many">How <strong>many</strong></button>
+      <!-- PANEL B: answer (replaces board in place) -->
+      <div class="hmm-panel hmm-panel--answer" id="panelAnswer" hidden>
+        <button type="button" class="hmm-back-board" id="btnBackBoard" aria-label="Back to cards">← Cards</button>
+
+        <div class="hmm-focus-card" id="zoomCard">
+          <span class="hmm-focus-tag" id="zoomTag">Your card</span>
+          <p class="hmm-focus-text" id="zoomText"></p>
         </div>
-        <p class="hmm-feedback" id="choiceFeedback" hidden></p>
-      </div>
 
-      <div class="hmm-step" id="stepAnswer" hidden>
-        <p class="hmm-step-title" id="answerStepTitle">2. Write a full answer</p>
-        <p class="hmm-hint" id="answerHint">Use a complete sentence (not only “a lot” or “a few”).</p>
-        <p class="hmm-full-q" id="fullQuestion"></p>
-
-        <!-- Speaking: must use microphone -->
-        <div class="hmm-speak-box" id="speakBox" hidden>
-          <p class="hmm-speak-status" id="speakStatus">Tap the mic and say your full answer.</p>
-          <div class="hmm-mic-row">
-            <button type="button" class="hmm-mic-btn" id="btnMic" aria-label="Start listening">
-              <span class="hmm-mic-icon" aria-hidden="true">🎤</span>
-            </button>
-            <span class="hmm-mic-label" id="micLabel">Tap to speak</span>
+        <div class="hmm-step hmm-step--choice" id="stepChoice" hidden>
+          <p class="hmm-step-title">Complete the question</p>
+          <div class="hmm-choice" role="group" aria-label="Choose much or many">
+            <button type="button" class="hmm-choice-btn" data-choice="much">How <strong>much</strong></button>
+            <button type="button" class="hmm-choice-btn" data-choice="many">How <strong>many</strong></button>
           </div>
-          <p class="hmm-transcript" id="transcriptBox" hidden>
-            <span class="hmm-transcript-label">You said</span>
-            <span id="transcriptText"></span>
-          </p>
-          <p class="hmm-hint hmm-hint--soft">You must speak a full sentence. Typing alone is not enough in Speaking mode.</p>
+          <p class="hmm-feedback" id="choiceFeedback" hidden></p>
         </div>
 
-        <!-- Grammar: write; Speaking: filled from speech (read-only until spoken) -->
-        <label class="hmm-sr" for="answerInput">Your answer</label>
-        <textarea id="answerInput" class="hmm-answer" rows="3" placeholder="e.g. I drink about two litres of water a day."></textarea>
+        <div class="hmm-step hmm-step--answer" id="stepAnswer" hidden>
+          <p class="hmm-step-title" id="answerStepTitle">Your full answer</p>
+          <p class="hmm-hint" id="answerHint">Write a complete sentence.</p>
+          <p class="hmm-full-q" id="fullQuestion"></p>
 
-        <div class="hmm-actions">
-          <button type="button" class="hmm-btn hmm-btn--primary" id="btnSubmit">Check answer</button>
-          <button type="button" class="hmm-btn hmm-btn--ghost" id="btnSkip" hidden>Next</button>
-        </div>
-        <p class="hmm-feedback" id="answerFeedback" hidden></p>
-        <div class="hmm-model" id="modelAnswer" hidden>
-          <p class="hmm-model-label">Example answer</p>
-          <p class="hmm-model-text" id="modelText"></p>
+          <div class="hmm-speak-box" id="speakBox" hidden>
+            <p class="hmm-speak-status" id="speakStatus">Tap the mic and say your full answer.</p>
+            <div class="hmm-mic-row">
+              <button type="button" class="hmm-mic-btn" id="btnMic" aria-label="Start listening">
+                <span class="hmm-mic-icon" aria-hidden="true">🎤</span>
+              </button>
+              <span class="hmm-mic-label" id="micLabel">Tap to speak</span>
+            </div>
+            <p class="hmm-transcript" id="transcriptBox" hidden>
+              <span class="hmm-transcript-label">You said</span>
+              <span id="transcriptText"></span>
+            </p>
+          </div>
+
+          <div id="writeBox">
+            <label class="hmm-sr" for="answerInput">Your answer</label>
+            <textarea id="answerInput" class="hmm-answer" rows="2" placeholder="e.g. I drink about two litres of water a day."></textarea>
+          </div>
+
+          <div class="hmm-actions">
+            <button type="button" class="hmm-btn hmm-btn--primary" id="btnSubmit">Check</button>
+            <button type="button" class="hmm-btn hmm-btn--ghost" id="btnSkip" hidden>Next</button>
+          </div>
+          <p class="hmm-feedback" id="answerFeedback" hidden></p>
+          <div class="hmm-model" id="modelAnswer" hidden>
+            <p class="hmm-model-label">Example</p>
+            <p class="hmm-model-text" id="modelText"></p>
+          </div>
         </div>
       </div>
     </section>

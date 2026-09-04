@@ -623,3 +623,880 @@ body.hmm-page .profile-fab--header {
     min-height: 64px !important;
   }
 }
+
+
+/* =========================================================
+   CIRCULAR SPIN WHEEL
+========================================================= */
+.hmm-board {
+  margin-bottom: 8px;
+}
+
+.hmm-wheel-stage {
+  position: relative;
+  width: min(300px, 86vw);
+  margin: 0 auto 12px;
+  aspect-ratio: 1;
+}
+
+.hmm-wheel-pointer {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  z-index: 5;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,.25));
+}
+
+.hmm-wheel-pointer-tip {
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-top: 26px solid var(--hmm-green-dark, #067a58);
+}
+
+.hmm-wheel-outer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  padding: 10px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.55), transparent 45%),
+    linear-gradient(145deg, #1a1a1a 0%, #3a3a3a 40%, #111 100%);
+  box-shadow:
+    0 12px 28px rgba(0,0,0,.22),
+    inset 0 2px 0 rgba(255,255,255,.2),
+    inset 0 -4px 12px rgba(0,0,0,.35);
+}
+
+.hmm-wheel {
+  --wheel-a: #e8faf4;
+  --wheel-b: #b8f0dc;
+  --slices: 12;
+  --rot: 0deg;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  transform: rotate(0deg);
+  border: 3px solid rgba(255,255,255,.35);
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.08);
+  will-change: transform;
+}
+
+.hmm-wheel.is-spinning {
+  filter: saturate(1.15) brightness(1.05);
+}
+
+.hmm-wheel-seg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  transform: rotate(calc(var(--i) * var(--slice) + var(--slice) / 2));
+}
+
+.hmm-wheel-seg-label {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 72px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  text-align: center;
+  color: #0f3d32;
+  line-height: 1.15;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+}
+
+.hmm-wheel-hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 4;
+  width: 28%;
+  height: 28%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,.5), transparent 50%),
+    linear-gradient(180deg, #2dd4a0 0%, #0aa276 50%, #067a58 100%);
+  border: 3px solid rgba(255,255,255,.45);
+  box-shadow:
+    0 4px 0 #045c42,
+    0 8px 16px rgba(0,0,0,.25),
+    inset 0 2px 0 rgba(255,255,255,.35);
+  color: #fff;
+}
+
+.hmm-hub-label {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-align: center;
+  line-height: 1.1;
+  padding: 0 4px;
+  text-shadow: 0 1px 2px rgba(0,0,0,.25);
+}
+
+.hmm-wheel-result {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--hmm-text);
+  min-height: 2.8em;
+}
+
+/* Speaking teal wheel */
+body.hmm-speaking .hmm-wheel,
+body[data-mode="speaking"] .hmm-wheel {
+  --wheel-a: #e6faf8;
+  --wheel-b: #a5f3fc;
+}
+body.hmm-speaking .hmm-wheel-seg-label,
+body[data-mode="speaking"] .hmm-wheel-seg-label {
+  color: #134e4a;
+}
+body.hmm-speaking .hmm-wheel-hub,
+body[data-mode="speaking"] .hmm-wheel-hub {
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,.5), transparent 50%),
+    linear-gradient(180deg, #2dd4bf 0%, #0d9488 50%, #115e59 100%);
+  box-shadow:
+    0 4px 0 #0f4c47,
+    0 8px 16px rgba(0,0,0,.25),
+    inset 0 2px 0 rgba(255,255,255,.35);
+}
+body.hmm-speaking .hmm-wheel-pointer-tip,
+body[data-mode="speaking"] .hmm-wheel-pointer-tip {
+  border-top-color: #115e59;
+}
+
+html[data-theme="dark"] .hmm-wheel {
+  --wheel-a: #1a3d34;
+  --wheel-b: #0f2a24;
+}
+html[data-theme="dark"] .hmm-wheel-seg-label {
+  color: #e7fbf4;
+  text-shadow: 0 1px 2px rgba(0,0,0,.5);
+}
+html[data-theme="dark"] body.hmm-speaking .hmm-wheel,
+html[data-theme="dark"] body[data-mode="speaking"] .hmm-wheel {
+  --wheel-a: #134e4a;
+  --wheel-b: #0f3d3a;
+}
+
+@media (max-width: 400px) {
+  .hmm-wheel-stage {
+    width: min(260px, 84vw);
+  }
+  .hmm-wheel-seg-label {
+    font-size: 9px;
+    max-width: 58px;
+    top: 11%;
+  }
+  .hmm-hub-label {
+    font-size: 10px;
+  }
+}
+
+
+/* =========================================================
+   SENTENCE CARD GRID + PICK CIRCLE
+========================================================= */
+.hmm-board {
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.hmm-board-hint {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--hmm-muted);
+  line-height: 1.4;
+  min-height: 1.4em;
+}
+
+.hmm-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 0 auto 16px;
+  max-width: 360px;
+  transition: opacity 0.25s ease;
+}
+
+.hmm-card-grid.is-dimmed {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.hmm-sq {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 12px;
+  padding: 6px;
+  background: linear-gradient(160deg, #0b1220 0%, #151b2e 55%, #0a0e18 100%);
+  color: #e8eef8;
+  box-shadow:
+    0 4px 0 #05080f,
+    0 8px 16px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  cursor: default;
+  display: grid;
+  place-items: center;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease, opacity 0.2s ease;
+}
+
+.hmm-sq-short {
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+  letter-spacing: 0.2px;
+  padding: 0 2px;
+}
+
+.hmm-sq.is-flash {
+  transform: scale(1.06);
+  filter: brightness(1.25);
+  box-shadow:
+    0 0 0 2px var(--hmm-green),
+    0 6px 0 #05080f,
+    0 0 18px rgba(7, 157, 115, 0.45);
+}
+
+.hmm-sq.is-winner {
+  box-shadow:
+    0 0 0 3px #fbbf24,
+    0 6px 0 #05080f,
+    0 0 22px rgba(251, 191, 36, 0.5);
+}
+
+.hmm-sq.is-used {
+  opacity: 0.35;
+  filter: grayscale(0.4);
+}
+
+/* Big circular PICK button */
+.hmm-pick-btn {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  margin: 4px auto 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.hmm-pick-btn-inner {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255,255,255,.45) 0%, transparent 42%),
+    linear-gradient(180deg, #2dd4a0 0%, #0aa276 48%, #067a58 100%);
+  border: 3px solid rgba(255,255,255,.4);
+  box-shadow:
+    0 7px 0 #045c42,
+    0 12px 22px rgba(7, 157, 115, 0.35),
+    inset 0 2px 0 rgba(255,255,255,.35);
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hmm-pick-btn-label {
+  position: relative;
+  z-index: 1;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.3);
+}
+
+.hmm-pick-btn:hover .hmm-pick-btn-inner {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.hmm-pick-btn:active .hmm-pick-btn-inner,
+.hmm-pick-btn.is-busy .hmm-pick-btn-inner {
+  transform: translateY(3px);
+  box-shadow:
+    0 3px 0 #045c42,
+    0 6px 12px rgba(7, 157, 115, 0.3),
+    inset 0 2px 4px rgba(0,0,0,.2);
+}
+
+.hmm-pick-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Zoom overlay */
+.hmm-zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(8, 12, 20, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+
+.hmm-zoom.is-in {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hmm-zoom.is-out {
+  opacity: 0;
+}
+
+.hmm-zoom-card {
+  width: min(420px, 100%);
+  padding: 28px 22px 24px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff 0%, #f3fbf8 100%);
+  border: 2px solid var(--hmm-green);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.6) inset,
+    0 20px 50px rgba(0,0,0,.25),
+    0 0 40px rgba(7, 157, 115, 0.25);
+  transform: scale(0.72);
+  transition: transform 0.35s cubic-bezier(0.22, 1.2, 0.36, 1);
+  text-align: center;
+}
+
+.hmm-zoom.is-in .hmm-zoom-card {
+  transform: scale(1);
+}
+
+.hmm-zoom-tag {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(7, 157, 115, 0.14);
+  color: var(--hmm-green);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.hmm-zoom-text {
+  margin: 0;
+  font-size: clamp(18px, 4.5vw, 22px);
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.3px;
+  color: #182033;
+}
+
+html[data-theme="dark"] .hmm-zoom-card {
+  background: linear-gradient(180deg, #14201c 0%, #0e1614 100%);
+  border-color: var(--hmm-green);
+}
+html[data-theme="dark"] .hmm-zoom-text {
+  color: #eef5f2;
+}
+
+/* Speaking teal accents on pick + flash */
+body.hmm-speaking .hmm-sq.is-flash,
+body[data-mode="speaking"] .hmm-sq.is-flash {
+  box-shadow:
+    0 0 0 2px #0d9488,
+    0 6px 0 #05080f,
+    0 0 18px rgba(13, 148, 136, 0.45);
+}
+body.hmm-speaking .hmm-pick-btn-inner,
+body[data-mode="speaking"] .hmm-pick-btn-inner {
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255,255,255,.45) 0%, transparent 42%),
+    linear-gradient(180deg, #2dd4bf 0%, #0d9488 48%, #115e59 100%);
+  box-shadow:
+    0 7px 0 #0f4c47,
+    0 12px 22px rgba(13, 148, 136, 0.35),
+    inset 0 2px 0 rgba(255,255,255,.35);
+}
+body.hmm-speaking .hmm-zoom-card,
+body[data-mode="speaking"] .hmm-zoom-card {
+  border-color: #0d9488;
+  background: linear-gradient(180deg, #ffffff 0%, #f0fdfa 100%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.6) inset,
+    0 20px 50px rgba(0,0,0,.25),
+    0 0 40px rgba(13, 148, 136, 0.28);
+}
+body.hmm-speaking .hmm-zoom-tag,
+body[data-mode="speaking"] .hmm-zoom-tag {
+  background: rgba(13, 148, 136, 0.14);
+  color: #0d9488;
+}
+
+@media (max-width: 400px) {
+  .hmm-card-grid {
+    gap: 6px;
+    max-width: 100%;
+  }
+  .hmm-sq {
+    border-radius: 10px;
+  }
+  .hmm-sq-short {
+    font-size: 9px;
+  }
+  .hmm-pick-btn {
+    width: 72px;
+    height: 72px;
+  }
+}
+
+/* When answering, keep zoom card visible above steps — stack layout */
+.hmm-screen--play {
+  position: relative;
+}
+.hmm-zoom.is-in {
+  position: relative;
+  inset: auto;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 0 0 12px;
+  margin-bottom: 4px;
+}
+.hmm-zoom.is-in .hmm-zoom-card {
+  width: 100%;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.5) inset,
+    0 10px 28px rgba(0,0,0,.12),
+    0 0 24px rgba(7, 157, 115, 0.2);
+}
+
+
+/* =========================================================
+   INTERACTIVE NO-SCROLL PLAY + PREMIUM CARDS
+========================================================= */
+html, body.hmm-page {
+  height: 100%;
+}
+body.hmm-page {
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(7,157,115,.12), transparent 55%),
+    var(--hmm-bg);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+body.hmm-page.hmm-playing {
+  overflow: hidden;
+  max-height: 100dvh;
+}
+
+.hmm-wrap {
+  flex: 1;
+  width: min(520px, 100%);
+  margin: 0 auto;
+  padding:
+    max(56px, calc(12px + env(safe-area-inset-top, 0px)))
+    14px
+    max(12px, env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.hmm-screen {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 16px 14px 14px !important;
+  border-radius: 20px !important;
+}
+
+.hmm-screen--play {
+  gap: 8px;
+}
+
+.hmm-hud {
+  flex-shrink: 0;
+  margin-bottom: 4px !important;
+}
+
+.hmm-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.hmm-panel--answer {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  animation: hmm-panel-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes hmm-panel-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.hmm-board-hint {
+  flex-shrink: 0;
+  margin: 0 0 8px !important;
+  font-size: 13px !important;
+}
+
+/* ---- Premium card grid ---- */
+.hmm-card-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  grid-template-rows: repeat(5, 1fr);
+  gap: 7px !important;
+  margin: 0 auto 10px !important;
+  max-width: 100% !important;
+  width: 100%;
+  align-content: stretch;
+}
+
+.hmm-sq {
+  position: relative;
+  aspect-ratio: auto !important;
+  height: 100%;
+  min-height: 0;
+  border: none !important;
+  border-radius: 14px !important;
+  padding: 6px 4px !important;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.14), transparent 45%),
+    linear-gradient(155deg, #1b2438 0%, #121826 48%, #0c101a 100%) !important;
+  color: #f1f5f9 !important;
+  box-shadow:
+    0 3px 0 #060a12,
+    0 8px 14px rgba(0,0,0,.2),
+    inset 0 1px 0 rgba(255,255,255,.1) !important;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease !important;
+}
+
+.hmm-sq-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(45, 212, 160, 0.22), transparent 60%);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.hmm-sq-badge { display: none !important; /* answers — hidden */
+
+  position: relative;
+  z-index: 1;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.1);
+  color: #94a3b8;
+  line-height: 1.2;
+}
+
+.hmm-sq[data-key="much"] .hmm-sq-badge { display: none !important; /* answers — hidden */
+
+  background: rgba(56, 189, 248, 0.18);
+  color: #7dd3fc;
+}
+.hmm-sq[data-key="many"] .hmm-sq-badge { display: none !important; /* answers — hidden */
+
+  background: rgba(52, 211, 153, 0.18);
+  color: #6ee7b7;
+}
+
+.hmm-sq-short {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(9px, 2.6vw, 11px) !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  text-align: center;
+  letter-spacing: 0.15px;
+  color: #f8fafc;
+  text-shadow: 0 1px 2px rgba(0,0,0,.35);
+  padding: 0 2px;
+}
+
+.hmm-sq.is-flash {
+  transform: scale(1.05) !important;
+  filter: brightness(1.2) !important;
+  box-shadow:
+    0 0 0 2px #34d399,
+    0 6px 0 #060a12,
+    0 0 20px rgba(52, 211, 153, 0.55) !important;
+  z-index: 2;
+}
+
+.hmm-sq.is-winner {
+  box-shadow:
+    0 0 0 3px #fbbf24,
+    0 6px 0 #060a12,
+    0 0 24px rgba(251, 191, 36, 0.55) !important;
+}
+
+.hmm-sq.is-used {
+  opacity: 0.32 !important;
+  filter: grayscale(0.5) !important;
+}
+
+.hmm-sq.is-used .hmm-sq-glow { opacity: 0; }
+
+/* Pick button compact */
+.hmm-pick-btn {
+  flex-shrink: 0;
+  width: 68px !important;
+  height: 68px !important;
+  margin: 0 auto 2px !important;
+}
+
+/* Focus card in answer panel */
+.hmm-focus-card {
+  flex-shrink: 0;
+  margin-bottom: 10px;
+  padding: 16px 14px;
+  border-radius: 16px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(7,157,115,.12), transparent 60%),
+    linear-gradient(180deg, #ffffff, #f3fbf8);
+  border: 2px solid rgba(7, 157, 115, 0.45);
+  box-shadow: 0 10px 28px rgba(7, 157, 115, 0.12);
+}
+
+.hmm-focus-tag {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(7, 157, 115, 0.14);
+  color: var(--hmm-green);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.hmm-focus-text {
+  margin: 0;
+  font-size: clamp(16px, 4.2vw, 19px);
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.2px;
+  color: var(--hmm-text);
+}
+
+.hmm-step {
+  flex-shrink: 0;
+  margin-top: 0 !important;
+  padding-top: 10px !important;
+  border-top: 1px solid var(--hmm-border);
+}
+
+.hmm-step-title {
+  margin-bottom: 8px !important;
+}
+
+.hmm-answer {
+  min-height: 64px !important;
+  max-height: 100px;
+  font-size: 16px !important;
+  margin-bottom: 8px !important;
+}
+
+.hmm-full-q {
+  font-size: 14px !important;
+  margin-bottom: 8px !important;
+}
+
+.hmm-choice {
+  gap: 8px !important;
+}
+
+.hmm-choice-btn {
+  min-height: 46px !important;
+}
+
+.hmm-actions {
+  margin-top: 6px !important;
+}
+
+.hmm-model {
+  margin-top: 8px !important;
+  padding: 8px 10px !important;
+}
+
+/* Speaking theme on focus card */
+body.hmm-speaking .hmm-focus-card,
+body[data-mode="speaking"] .hmm-focus-card {
+  border-color: rgba(13, 148, 136, 0.5);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(13,148,136,.12), transparent 60%),
+    linear-gradient(180deg, #ffffff, #f0fdfa);
+}
+body.hmm-speaking .hmm-focus-tag,
+body[data-mode="speaking"] .hmm-focus-tag {
+  background: rgba(13, 148, 136, 0.14);
+  color: #0d9488;
+}
+
+body.hmm-speaking .hmm-sq-glow,
+body[data-mode="speaking"] .hmm-sq-glow {
+  background: radial-gradient(circle at 50% 0%, rgba(45, 212, 191, 0.25), transparent 60%);
+}
+
+html[data-theme="dark"] .hmm-focus-card {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(7,157,115,.16), transparent 60%),
+    linear-gradient(180deg, #14201c, #0e1614);
+}
+html[data-theme="dark"] .hmm-sq {
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.08), transparent 45%),
+    linear-gradient(155deg, #1e293b 0%, #0f172a 100%) !important;
+}
+
+/* Start/result screens can scroll if needed */
+#screenStart,
+#screenResult {
+  overflow-y: auto;
+}
+
+@media (max-width: 380px) {
+  .hmm-card-grid {
+    gap: 5px !important;
+  }
+  .hmm-sq {
+    border-radius: 11px !important;
+  }
+  .hmm-sq-badge { display: none !important; /* answers — hidden */
+
+    font-size: 7px;
+    padding: 1px 4px;
+  }
+  .hmm-pick-btn {
+    width: 62px !important;
+    height: 62px !important;
+  }
+}
+
+@media (max-height: 700px) {
+  .hmm-card-grid {
+    gap: 5px !important;
+  }
+  .hmm-pick-btn {
+    width: 58px !important;
+    height: 58px !important;
+  }
+  .hmm-board-hint {
+    font-size: 12px !important;
+    margin-bottom: 6px !important;
+  }
+}
+
+
+/* =========================================================
+   HIDDEN FIX — display:flex must not override [hidden]
+========================================================= */
+.hmm-screen[hidden],
+.hmm-panel[hidden],
+.hmm-step[hidden],
+.hmm-speak-box[hidden],
+.hmm-feedback[hidden],
+.hmm-model[hidden],
+.hmm-transcript[hidden],
+.hmm-zoom[hidden],
+[hidden] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* Only the active play panel fills space */
+.hmm-panel--board:not([hidden]),
+.hmm-panel--answer:not([hidden]) {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+
+.hmm-back-board {
+  align-self: flex-start;
+  flex-shrink: 0;
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--hmm-text);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.hmm-back-board:hover {
+  background: rgba(15, 23, 42, 0.12);
+}
+body.hmm-speaking .hmm-back-board,
+body[data-mode="speaking"] .hmm-back-board {
+  background: rgba(13, 148, 136, 0.12);
+  color: #0f766e;
+}
+html[data-theme="dark"] .hmm-back-board {
+  background: rgba(255,255,255,0.08);
+  color: #e2e8f0;
+}

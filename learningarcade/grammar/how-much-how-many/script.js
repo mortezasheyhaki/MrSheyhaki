@@ -10,27 +10,30 @@
 
   /** Board prompts from AEF-style communicative activity */
   var CARDS = [
-    { blank: "How ______ exercise do you do a week?", key: "much", noun: "exercise", example: "I do about three hours of exercise a week." },
-    { blank: "How ______ time do you spend online in a day?", key: "much", noun: "time", example: "I spend about two hours online every day." },
-    { blank: "How ______ pairs of shoes do you have?", key: "many", noun: "pairs of shoes", example: "I have five pairs of shoes." },
-    { blank: "How ______ water do you drink in a day?", key: "much", noun: "water", example: "I drink about one and a half litres of water a day." },
-    { blank: "How ______ money did you spend on clothes last month?", key: "much", noun: "money", example: "I spent about fifty dollars on clothes last month." },
-    { blank: "How ______ books did you read last month?", key: "many", noun: "books", example: "I read two books last month." },
-    { blank: "How ______ countries did you visit last year?", key: "many", noun: "countries", example: "I visited one country last year." },
-    { blank: "How ______ free time do you have during the week?", key: "much", noun: "free time", example: "I don't have much free time during the week." },
-    { blank: "How ______ tea or coffee did you drink yesterday?", key: "much", noun: "tea or coffee", example: "I drank two cups of coffee yesterday." },
-    { blank: "How ______ pictures do you have on your bedroom wall?", key: "many", noun: "pictures", example: "I have three pictures on my bedroom wall." },
-    { blank: "How ______ times do you eat out in a week?", key: "many", noun: "times", example: "I eat out once or twice a week." },
-    { blank: "How ______ emails do you get a day?", key: "many", noun: "emails", example: "I get about ten emails a day." },
-    { blank: "How ______ games do you have on your phone and computer?", key: "many", noun: "games", example: "I have about twelve games on my phone and computer." },
-    { blank: "How ______ time did you spend doing English homework last week?", key: "much", noun: "time", example: "I spent about four hours on English homework last week." },
-    { blank: "How ______ photos do you have on your phone?", key: "many", noun: "photos", example: "I have hundreds of photos on my phone." },
-    { blank: "How ______ people in your family speak English?", key: "many", noun: "people", example: "Three people in my family speak English." },
-    { blank: "How ______ fruit do you eat in a day?", key: "much", noun: "fruit", example: "I eat one or two pieces of fruit a day." },
-    { blank: "How ______ meat do you eat in a week?", key: "much", noun: "meat", example: "I don't eat much meat in a week." },
-    { blank: "How ______ text messages did you send yesterday?", key: "many", noun: "text messages", example: "I sent about twenty text messages yesterday." },
-    { blank: "How ______ friends do you have on Facebook?", key: "many", noun: "friends", example: "I have about eighty friends on Facebook." }
+    { short: "Exercise", blank: "How ______ exercise do you do a week?", key: "much", noun: "exercise", example: "I do about three hours of exercise a week." },
+    { short: "Online", blank: "How ______ time do you spend online in a day?", key: "much", noun: "time", example: "I spend about two hours online every day." },
+    { short: "Shoes", blank: "How ______ pairs of shoes do you have?", key: "many", noun: "pairs of shoes", example: "I have five pairs of shoes." },
+    { short: "Water", blank: "How ______ water do you drink in a day?", key: "much", noun: "water", example: "I drink about one and a half litres of water a day." },
+    { short: "Money", blank: "How ______ money did you spend on clothes last month?", key: "much", noun: "money", example: "I spent about fifty dollars on clothes last month." },
+    { short: "Books", blank: "How ______ books did you read last month?", key: "many", noun: "books", example: "I read two books last month." },
+    { short: "Countries", blank: "How ______ countries did you visit last year?", key: "many", noun: "countries", example: "I visited one country last year." },
+    { short: "Free time", blank: "How ______ free time do you have during the week?", key: "much", noun: "free time", example: "I don't have much free time during the week." },
+    { short: "Tea/coffee", blank: "How ______ tea or coffee did you drink yesterday?", key: "much", noun: "tea or coffee", example: "I drank two cups of coffee yesterday." },
+    { short: "Pictures", blank: "How ______ pictures do you have on your bedroom wall?", key: "many", noun: "pictures", example: "I have three pictures on my bedroom wall." },
+    { short: "Eat out", blank: "How ______ times do you eat out in a week?", key: "many", noun: "times", example: "I eat out once or twice a week." },
+    { short: "Emails", blank: "How ______ emails do you get a day?", key: "many", noun: "emails", example: "I get about ten emails a day." },
+    { short: "Games", blank: "How ______ games do you have on your phone and computer?", key: "many", noun: "games", example: "I have about twelve games on my phone and computer." },
+    { short: "Homework", blank: "How ______ time did you spend doing English homework last week?", key: "much", noun: "time", example: "I spent about four hours on English homework last week." },
+    { short: "Photos", blank: "How ______ photos do you have on your phone?", key: "many", noun: "photos", example: "I have hundreds of photos on my phone." },
+    { short: "Family", blank: "How ______ people in your family speak English?", key: "many", noun: "people", example: "Three people in my family speak English." },
+    { short: "Fruit", blank: "How ______ fruit do you eat in a day?", key: "much", noun: "fruit", example: "I eat one or two pieces of fruit a day." },
+    { short: "Meat", blank: "How ______ meat do you eat in a week?", key: "much", noun: "meat", example: "I don't eat much meat in a week." },
+    { short: "Messages", blank: "How ______ text messages did you send yesterday?", key: "many", noun: "text messages", example: "I sent about twenty text messages yesterday." },
+    { short: "Friends", blank: "How ______ friends do you have on Facebook?", key: "many", noun: "friends", example: "I have about eighty friends on Facebook." }
   ];
+
+  /** Cards still available on the board this game */
+  var boardLeft = [];
 
   var state = {
     mode: "grammar",
@@ -123,23 +126,26 @@
       state.saidIt = false;
       if ($("speakStatus")) {
         $("speakStatus").textContent =
-          "That was too short. Say a full sentence (e.g. “I drink two litres of water a day”).";
+          "That was too short. Say a full sentence (e.g. “I eat two pieces of fruit a day”).";
       }
       return;
     }
     state.saidIt = true;
     state.lastTranscript = transcript;
-    if ($("answerInput")) {
-      $("answerInput").value = transcript;
-      $("answerInput").readOnly = false;
-    }
+    if ($("transcriptText")) $("transcriptText").textContent = transcript;
+    show($("transcriptBox"), true);
     if ($("speakStatus")) {
-      $("speakStatus").textContent = "Heard! You can edit the text, then press Check answer.";
+      $("speakStatus").textContent = "Heard! Tap Check to continue.";
     }
     if ($("micLabel")) $("micLabel").textContent = "Say again";
     var btn = $("btnMic");
     if (btn) btn.classList.add("is-done");
+    // Grammar write box only
+    if (state.mode !== "speaking" && $("answerInput")) {
+      $("answerInput").value = transcript;
+    }
   }
+
 
   function startListening() {
     if (state.mode !== "speaking") return;
@@ -238,12 +244,81 @@
     show($("screenStart"), false);
     show($("screenResult"), false);
     show($("screenPlay"), true);
+    document.body.classList.add("hmm-playing");
+    hideZoom();
+    if ($("panelBoard")) $("panelBoard").hidden = false;
+    if ($("panelAnswer")) $("panelAnswer").hidden = true;
     show($("stepChoice"), false);
     show($("stepAnswer"), false);
-    $("promptText").textContent = "Tap SPIN to get a question.";
-    $("promptCard").querySelector(".hmm-card-label").textContent = "Ready";
+    if ($("promptText")) $("promptText").textContent = "Tap the circle — a random card zooms in.";
+    if ($("hubLabel")) $("hubLabel").textContent = "PICK";
+    buildGrid();
     $("btnSpin").disabled = false;
     updateHud();
+  }
+
+  function buildGrid() {
+    var grid = $("cardGrid");
+    if (!grid) return;
+    boardLeft = shuffle(CARDS.map(function (_, i) { return i; }));
+    grid.innerHTML = "";
+    grid.classList.remove("is-picking", "is-dimmed");
+    CARDS.forEach(function (card, i) {
+      var el = document.createElement("button");
+      el.type = "button";
+      el.className = "hmm-sq";
+      el.setAttribute("role", "listitem");
+      el.setAttribute("data-idx", String(i));
+      el.setAttribute("data-key", card.key);
+      el.setAttribute("aria-label", card.blank);
+      el.innerHTML =
+        '<span class="hmm-sq-glow" aria-hidden="true"></span>' +
+        '<span class="hmm-sq-short">' + card.short + "</span>";
+      el.disabled = true;
+      grid.appendChild(el);
+    });
+  }
+
+  function markUsed(idx) {
+    var el = document.querySelector('.hmm-sq[data-idx="' + idx + '"]');
+    if (el) {
+      el.classList.add("is-used");
+      el.disabled = true;
+    }
+  }
+
+  function clearHighlights() {
+    document.querySelectorAll(".hmm-sq.is-flash").forEach(function (el) {
+      el.classList.remove("is-flash");
+    });
+  }
+
+  function showZoom(card) {
+    var board = $("panelBoard");
+    var answer = $("panelAnswer");
+    if ($("zoomText")) $("zoomText").textContent = card.blank;
+    if ($("zoomTag")) $("zoomTag").textContent = card.short;
+    if (board) board.hidden = true;
+    if (answer) {
+      answer.hidden = false;
+      answer.classList.remove("is-out");
+      void answer.offsetWidth;
+      answer.classList.add("is-in");
+    }
+    document.body.classList.add("hmm-answering");
+  }
+
+  function hideZoom() {
+    var board = $("panelBoard");
+    var answer = $("panelAnswer");
+    if (answer) {
+      answer.classList.remove("is-in");
+      answer.hidden = true;
+    }
+    if (board) board.hidden = false;
+    document.body.classList.remove("hmm-answering");
+    show($("stepChoice"), false);
+    show($("stepAnswer"), false);
   }
 
   function spin() {
@@ -252,6 +327,21 @@
       endGame();
       return;
     }
+    // Refresh board pool if empty
+    if (!boardLeft.length) {
+      boardLeft = shuffle(
+        CARDS.map(function (_, i) { return i; }).filter(function (i) {
+          return !document.querySelector('.hmm-sq[data-idx="' + i + '"].is-used');
+        })
+      );
+      if (!boardLeft.length) {
+        boardLeft = shuffle(CARDS.map(function (_, i) { return i; }));
+        document.querySelectorAll(".hmm-sq.is-used").forEach(function (el) {
+          el.classList.remove("is-used");
+        });
+      }
+    }
+
     state.spinning = true;
     state.choiceOk = false;
     state.saidIt = false;
@@ -260,34 +350,61 @@
     show($("choiceFeedback"), false);
     show($("answerFeedback"), false);
     show($("modelAnswer"), false);
+    hideZoom();
     $("btnSpin").disabled = true;
+    $("btnSpin").classList.add("is-busy");
+    if ($("hubLabel")) $("hubLabel").textContent = "…";
+    if ($("promptText")) $("promptText").textContent = "Picking a card…";
 
-    var ring = $("spinnerRing");
-    ring.classList.add("is-spinning");
-    $("promptCard").querySelector(".hmm-card-label").textContent = "Selecting…";
+    var grid = $("cardGrid");
+    if (grid) grid.classList.add("is-picking");
+
+    // Rapid random highlight, then land on winner
+    var winIdx = boardLeft[Math.floor(Math.random() * boardLeft.length)];
+    boardLeft = boardLeft.filter(function (i) { return i !== winIdx; });
+    state.card = CARDS[winIdx];
+    if (state.used.indexOf(winIdx) === -1) state.used.push(winIdx);
 
     var ticks = 0;
-    var maxTicks = 12 + Math.floor(Math.random() * 6);
+    var maxTicks = 14 + Math.floor(Math.random() * 8);
     var timer = setInterval(function () {
-      var preview = CARDS[Math.floor(Math.random() * CARDS.length)];
-      $("promptText").textContent = preview.blank;
+      clearHighlights();
+      var flashIdx = boardLeft.length
+        ? boardLeft[Math.floor(Math.random() * boardLeft.length)]
+        : Math.floor(Math.random() * CARDS.length);
+      // prefer flashing unused
+      var flashEl = document.querySelector('.hmm-sq[data-idx="' + flashIdx + '"]:not(.is-used)');
+      if (!flashEl) {
+        flashEl = document.querySelector('.hmm-sq[data-idx="' + Math.floor(Math.random() * CARDS.length) + '"]');
+      }
+      if (flashEl) flashEl.classList.add("is-flash");
       ticks++;
       if (ticks >= maxTicks) {
         clearInterval(timer);
-        ring.classList.remove("is-spinning");
-        state.card = pickCard();
-        $("promptText").textContent = state.card.blank;
-        $("promptCard").querySelector(".hmm-card-label").textContent = "Your card";
-        state.spinning = false;
-        openChoice();
+        clearHighlights();
+        var winEl = document.querySelector('.hmm-sq[data-idx="' + winIdx + '"]');
+        if (winEl) winEl.classList.add("is-flash", "is-winner");
+        if ($("hubLabel")) $("hubLabel").textContent = "PICK";
+        if ($("promptText")) $("promptText").textContent = state.card.blank;
+        $("btnSpin").classList.remove("is-busy");
+
+        // Zoom in
+        setTimeout(function () {
+          if (winEl) winEl.classList.remove("is-flash");
+          markUsed(winIdx);
+          showZoom(state.card);
+          state.spinning = false;
+          if (grid) grid.classList.remove("is-picking");
+          openChoice();
+        }, 420);
       }
-    }, 90);
+    }, 70);
   }
+
 
   function openChoice() {
     show($("stepChoice"), true);
-    $("questionLine").textContent = state.card.blank;
-    var btns = document.querySelectorAll(".hmm-choice-btn");
+        var btns = document.querySelectorAll(".hmm-choice-btn");
     btns.forEach(function (b) {
       b.classList.remove("is-correct", "is-wrong", "is-selected");
       b.disabled = false;
@@ -334,7 +451,6 @@
   function openAnswer(key) {
     show($("stepAnswer"), true);
     $("fullQuestion").textContent = filledQuestion(state.card, key);
-    $("answerInput").value = "";
     $("btnSubmit").disabled = false;
     $("btnSubmit").hidden = false;
     $("btnSkip").hidden = true;
@@ -346,41 +462,48 @@
     state.listening = false;
 
     if (state.mode === "speaking") {
-      if ($("answerStepTitle")) $("answerStepTitle").textContent = "2. Say a full answer";
+      if ($("answerStepTitle")) $("answerStepTitle").textContent = "Say a full answer";
       if ($("answerHint")) {
         $("answerHint").textContent =
-          "Use the microphone. You must speak a complete sentence — not only “a lot” or “a few”.";
+          "Use the microphone only. Speak a complete sentence — not only “a lot” or “a few”.";
       }
       show($("speakBox"), true);
-      $("answerInput").readOnly = true;
-      $("answerInput").placeholder = "Your spoken answer will appear here…";
-      var mic = $("btnMic");
-      if (mic) {
-        mic.classList.remove("is-listening", "is-done");
+      if ($("writeBox")) $("writeBox").hidden = true;
+      if ($("answerInput")) {
+        $("answerInput").value = "";
+        $("answerInput").hidden = true;
       }
+      var mic = $("btnMic");
+      if (mic) mic.classList.remove("is-listening", "is-done");
       if ($("micLabel")) $("micLabel").textContent = "Tap to speak";
       if ($("speakStatus")) {
         if (recognition) {
           $("speakStatus").textContent = "Tap the mic and say your full answer.";
         } else {
           $("speakStatus").textContent =
-            "Speech recognition not supported here. Use Chrome, then allow the microphone.";
+            "Speech recognition not supported in this browser. Try Chrome and allow the microphone.";
         }
       }
       if ($("btnSubmit")) $("btnSubmit").textContent = "Check spoken answer";
     } else {
-      if ($("answerStepTitle")) $("answerStepTitle").textContent = "2. Write a full answer";
+      if ($("answerStepTitle")) $("answerStepTitle").textContent = "Write a full answer";
       if ($("answerHint")) {
         $("answerHint").textContent =
           "Use a complete sentence (not only “a lot” or “a few”).";
       }
       show($("speakBox"), false);
-      $("answerInput").readOnly = false;
-      $("answerInput").placeholder = "e.g. I drink about two litres of water a day.";
+      if ($("writeBox")) $("writeBox").hidden = false;
+      if ($("answerInput")) {
+        $("answerInput").hidden = false;
+        $("answerInput").readOnly = false;
+        $("answerInput").value = "";
+        $("answerInput").placeholder = "e.g. I drink about two litres of water a day.";
+        $("answerInput").focus();
+      }
       if ($("btnSubmit")) $("btnSubmit").textContent = "Check answer";
-      $("answerInput").focus();
     }
   }
+
 
   function looksLikeFullAnswer(text) {
     var t = (text || "").trim();
@@ -391,51 +514,51 @@
   }
 
   function submitAnswer() {
-    var text = ($("answerInput").value || "").trim();
-
     if (state.mode === "speaking") {
-      if (!state.saidIt || !state.lastTranscript) {
+      if (!state.saidIt || !looksLikeFullAnswer(state.lastTranscript)) {
         $("answerFeedback").textContent =
-          "You must speak your answer with the microphone first.";
-        $("answerFeedback").className = "hmm-feedback is-bad";
-        show($("answerFeedback"), true);
-        return;
-      }
-      if (!looksLikeFullAnswer(state.lastTranscript) && !looksLikeFullAnswer(text)) {
-        $("answerFeedback").textContent =
-          "Say a longer full sentence, then check again.";
+          "You must speak a full sentence with the microphone first.";
         $("answerFeedback").className = "hmm-feedback is-bad";
         show($("answerFeedback"), true);
         return;
       }
       state.spokenOk++;
       state.score += 8;
-      $("answerFeedback").textContent = "Great speaking — full answer accepted.";
-    } else {
-      if (!looksLikeFullAnswer(text)) {
-        $("answerFeedback").textContent =
-          "Write a full sentence (at least a few words), not only a short phrase.";
-        $("answerFeedback").className = "hmm-feedback is-bad";
-        show($("answerFeedback"), true);
-        return;
-      }
-      state.score += 5;
-      $("answerFeedback").textContent = "Nice — full answer saved.";
+      $("answerFeedback").textContent = "Great speaking — answer accepted.";
+      $("answerFeedback").className = "hmm-feedback is-ok";
+      show($("answerFeedback"), true);
+      $("modelText").textContent = state.card.example;
+      show($("modelAnswer"), true);
+      $("btnSubmit").hidden = true;
+      $("btnSkip").hidden = false;
+      $("btnSkip").textContent = state.round + 1 >= ROUNDS ? "See results" : "Next card";
+      updateHud();
+      return;
     }
 
+    var text = ($("answerInput") && $("answerInput").value || "").trim();
+    if (!looksLikeFullAnswer(text)) {
+      $("answerFeedback").textContent =
+        "Write a full sentence (at least a few words), not only a short phrase.";
+      $("answerFeedback").className = "hmm-feedback is-bad";
+      show($("answerFeedback"), true);
+      return;
+    }
+    state.score += 5;
+    $("answerFeedback").textContent = "Nice — full answer saved.";
     $("answerFeedback").className = "hmm-feedback is-ok";
     show($("answerFeedback"), true);
-
     $("modelText").textContent = state.card.example;
     show($("modelAnswer"), true);
-
     $("btnSubmit").hidden = true;
     $("btnSkip").hidden = false;
     $("btnSkip").textContent = state.round + 1 >= ROUNDS ? "See results" : "Next card";
     updateHud();
   }
 
+
   function nextRound() {
+    hideZoom();
     state.round++;
     if (state.round >= ROUNDS) {
       endGame();
@@ -443,8 +566,8 @@
     }
     show($("stepChoice"), false);
     show($("stepAnswer"), false);
-    $("promptText").textContent = "Tap SPIN for the next question.";
-    $("promptCard").querySelector(".hmm-card-label").textContent = "Ready";
+    if ($("promptText")) $("promptText").textContent = "Tap the circle for the next card.";
+    if ($("hubLabel")) $("hubLabel").textContent = "PICK";
     $("btnSpin").disabled = false;
     updateHud();
   }
@@ -452,6 +575,7 @@
   function endGame() {
     show($("screenPlay"), false);
     show($("screenResult"), true);
+    document.body.classList.remove("hmm-playing");
     var acc = state.answered ? Math.round((state.correctChoices / state.answered) * 100) : 0;
     var stars = starsFromAccuracy(acc);
     setStarsDisplay($("resultStars"), stars);
@@ -494,7 +618,40 @@
     } catch (e) {}
   }
 
+  function backToBoard() {
+    // Cancel current card attempt and return to grid
+    try { if (recognition) recognition.stop(); } catch (e) {}
+    state.listening = false;
+    state.saidIt = false;
+    state.lastTranscript = "";
+    state.choiceOk = false;
+    // Return last card to the pool if it was marked used this attempt
+    if (state.card) {
+      var idx = CARDS.indexOf(state.card);
+      if (idx >= 0) {
+        var el = document.querySelector('.hmm-sq[data-idx="' + idx + '"]');
+        if (el) {
+          el.classList.remove("is-used", "is-winner", "is-flash");
+        }
+        if (state.used.indexOf(idx) !== -1) {
+          state.used = state.used.filter(function (u) { return u !== idx; });
+        }
+        if (boardLeft.indexOf(idx) === -1) boardLeft.push(idx);
+      }
+    }
+    state.card = null;
+    hideZoom();
+    if ($("btnSpin")) {
+      $("btnSpin").disabled = false;
+      $("btnSpin").classList.remove("is-busy");
+    }
+    if ($("hubLabel")) $("hubLabel").textContent = "PICK";
+    if ($("promptText")) $("promptText").textContent = "Tap the circle to pick a card";
+    state.spinning = false;
+  }
+
   function bind() {
+
     stripProfileControls();
     setTimeout(stripProfileControls, 0);
     setTimeout(stripProfileControls, 100);
@@ -535,8 +692,10 @@
       document.body.classList.add("grammar");
     }
 
+    buildGrid();
     $("btnStart").addEventListener("click", startGame);
     $("btnSpin").addEventListener("click", spin);
+    if ($("btnBackBoard")) $("btnBackBoard").addEventListener("click", backToBoard);
     $("btnSubmit").addEventListener("click", submitAnswer);
     $("btnSkip").addEventListener("click", nextRound);
     $("btnAgain").addEventListener("click", startGame);
