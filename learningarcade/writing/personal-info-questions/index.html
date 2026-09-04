@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Personal Information | Writing Arcade</title>
+  <link rel="stylesheet" href="../../theme.css" />
+  <style>
+    :root {
+      --bg: #ede9fe;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --primary: #7c3aed;
+      --primary-dark: #5b21b6;
+      --ok: #059669;
+      --bad: #dc2626;
+      --border: #e9e5ff;
+      --m1: #8b5cf6;
+      --m2: #3b82f6;
+      --m3: #10b981;
+      --m4: #f59e0b;
+      --shadow: 0 12px 32px rgba(91, 33, 182, 0.1);
+    }
+    html[data-theme="dark"] {
+      --bg: #0f1220;
+      --card: #1a1f2e;
+      --text: #e8ecf4;
+      --muted: #94a3b8;
+      --border: #2d3548;
+      --shadow: 0 12px 32px rgba(0,0,0,0.35);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background:
+        radial-gradient(900px 500px at 100% 0%, rgba(167, 139, 250, 0.35), transparent 55%),
+        radial-gradient(700px 400px at 0% 100%, rgba(196, 181, 253, 0.25), transparent 50%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      line-height: 1.45;
+      padding: 16px 16px 36px;
+    }
+    .wrap { max-width: 520px; margin: 0 auto; }
+    @media (min-width: 900px) {
+      .wrap { max-width: 640px; }
+    }
+
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 20px;
+    }
+    .back-pill, .badge-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 999px; font-weight: 800; font-size: 0.88rem;
+      padding: 10px 16px; text-decoration: none; border: none;
+      cursor: pointer; font-family: inherit;
+    }
+    .back-pill {
+      background: #fff; color: var(--text);
+      box-shadow: 0 4px 14px rgba(15,23,42,0.08);
+    }
+    html[data-theme="dark"] .back-pill { background: var(--card); color: var(--text); }
+    .badge-pill {
+      background: var(--primary); color: #fff;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+    }
+    .badge-pill.m2 { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+    .badge-pill.m3 { background: linear-gradient(135deg, #34d399, #059669); }
+    .badge-pill.m4 { background: linear-gradient(135deg, #fbbf24, #d97706); }
+
+    h1 {
+      font-size: clamp(1.75rem, 5vw, 2.15rem);
+      font-weight: 900; letter-spacing: -0.03em;
+      margin-bottom: 6px; color: #0f172a;
+    }
+    html[data-theme="dark"] h1 { color: var(--text); }
+    .lead {
+      color: var(--muted); font-weight: 600; font-size: 1rem;
+      margin-bottom: 22px;
+    }
+
+    /* ===== MODE MENU (mockup style) ===== */
+    .mode-list { display: flex; flex-direction: column; gap: 12px; }
+    .mode-card {
+      display: flex; align-items: center; gap: 14px;
+      width: 100%; text-align: left;
+      background: var(--card); border: none;
+      border-radius: 18px; padding: 18px 16px 18px 0;
+      box-shadow: var(--shadow); cursor: pointer;
+      font: inherit; color: inherit;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      position: relative; overflow: hidden;
+    }
+    .mode-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba(91, 33, 182, 0.14);
+    }
+    .mode-card:active { transform: translateY(0); }
+    .mode-stripe {
+      width: 6px; align-self: stretch; border-radius: 18px 0 0 18px;
+      margin-right: 4px; flex-shrink: 0;
+    }
+    .mode-card[data-mode="questions"] .mode-stripe { background: var(--m1); }
+    .mode-card[data-mode="self"] .mode-stripe { background: var(--m2); }
+    .mode-card[data-mode="male"] .mode-stripe { background: var(--m3); }
+    .mode-card[data-mode="female"] .mode-stripe { background: var(--m4); }
+    .mode-body { flex: 1; min-width: 0; padding-left: 12px; }
+    .mode-num {
+      font-size: 0.72rem; font-weight: 900; letter-spacing: 0.06em;
+      text-transform: uppercase; margin-bottom: 2px;
+    }
+    .mode-card[data-mode="questions"] .mode-num { color: var(--m1); }
+    .mode-card[data-mode="self"] .mode-num { color: var(--m2); }
+    .mode-card[data-mode="male"] .mode-num { color: var(--m3); }
+    .mode-card[data-mode="female"] .mode-num { color: #d97706; }
+    .mode-title {
+      font-size: 1.15rem; font-weight: 900; color: var(--text);
+      margin-bottom: 2px;
+    }
+    .mode-desc { font-size: 0.88rem; color: var(--muted); font-weight: 600; }
+    .mode-ico {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; flex-shrink: 0; margin-right: 14px;
+    }
+    .mode-card[data-mode="questions"] .mode-ico { background: #f3e8ff; }
+    .mode-card[data-mode="self"] .mode-ico { background: #dbeafe; }
+    .mode-card[data-mode="male"] .mode-ico { background: #d1fae5; }
+    .mode-card[data-mode="female"] .mode-ico { background: #fef3c7; }
+
+    /* ===== PLAY CHROME ===== */
+    .progress-wrap {
+      height: 8px; background: rgba(124, 58, 237, 0.15);
+      border-radius: 999px; overflow: hidden; margin-bottom: 12px;
+    }
+    .progress-bar {
+      height: 100%; width: 0%; border-radius: 999px;
+      background: linear-gradient(90deg, #a78bfa, #7c3aed);
+      transition: width 0.35s ease;
+    }
+    .progress-wrap.m3 .progress-bar { background: linear-gradient(90deg, #34d399, #059669); }
+    .progress-wrap.m4 .progress-bar { background: linear-gradient(90deg, #fbbf24, #d97706); }
+
+    .status {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; font-weight: 800;
+      padding: 7px 12px; border-radius: 999px;
+      background: #fff; color: var(--muted);
+      box-shadow: 0 2px 8px rgba(15,23,42,0.06);
+    }
+    html[data-theme="dark"] .pill { background: var(--card); }
+    .pill strong { color: var(--primary); }
+
+    .panel {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 22px 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+
+    .prompt {
+      font-size: 1.25rem; font-weight: 900; text-align: center;
+      margin-bottom: 6px; color: var(--text);
+    }
+    .hint {
+      text-align: center; color: var(--muted); font-weight: 600;
+      font-size: 0.9rem; margin-bottom: 16px;
+    }
+
+    .built {
+      min-height: 64px;
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center;
+      padding: 14px; border-radius: 16px;
+      border: 2px dashed #c4b5fd;
+      background: rgba(124, 58, 237, 0.04);
+      margin-bottom: 14px;
+    }
+    .built.is-ok { border-color: var(--ok); background: rgba(5,150,105,0.08); }
+    .built.is-bad { border-color: var(--bad); background: rgba(220,38,38,0.06); }
+
+    .bank-label {
+      text-align: center; font-size: 0.72rem; font-weight: 900;
+      letter-spacing: 0.1em; color: var(--primary); margin-bottom: 10px;
+    }
+    .bank {
+      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+      margin-bottom: 18px;
+    }
+    .chip {
+      appearance: none; border: none; cursor: pointer;
+      font: inherit; font-weight: 800; font-size: 1rem;
+      color: #fff; padding: 12px 18px; border-radius: 14px;
+      background: linear-gradient(180deg, #60a5fa, #2563eb);
+      box-shadow: 0 6px 0 #1d4ed8, 0 8px 16px rgba(37, 99, 235, 0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chip:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #1d4ed8, 0 4px 8px rgba(37, 99, 235, 0.2);
+    }
+    .chip.built-chip {
+      background: linear-gradient(180deg, #818cf8, #4f46e5);
+      box-shadow: 0 5px 0 #3730a3;
+    }
+
+    .q-display {
+      font-size: clamp(1.35rem, 4.5vw, 1.7rem);
+      font-weight: 900; text-align: center; line-height: 1.3;
+      padding: 22px 16px; margin-bottom: 18px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #ede9fe, #dbeafe);
+      color: #1e1b4b;
+    }
+    html[data-theme="dark"] .q-display {
+      background: linear-gradient(135deg, #2e1065, #1e3a5f);
+      color: #e8ecf4;
+    }
+    .theme-male .q-display {
+      background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+      color: #064e3b;
+    }
+    .theme-female .q-display {
+      background: linear-gradient(135deg, #fef3c7, #fff7ed);
+      color: #78350f;
+    }
+
+    .answer-field input,
+    .answer-field select {
+      width: 100%; padding: 15px 16px; border-radius: 14px;
+      border: 2px solid var(--border); font: inherit; font-weight: 700;
+      font-size: 16px; background: #f8fafc; color: var(--text);
+      margin-bottom: 4px;
+    }
+    html[data-theme="dark"] .answer-field input,
+    html[data-theme="dark"] .answer-field select {
+      background: #12161f; border-color: var(--border);
+    }
+    .answer-field input:focus,
+    .answer-field select:focus {
+      outline: none; border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+    }
+
+    .choice-list { display: grid; gap: 10px; margin-bottom: 8px; }
+    .choice-btn {
+      appearance: none; width: 100%; text-align: left;
+      padding: 14px 16px; border-radius: 14px;
+      border: 2px solid var(--border); background: #fff;
+      font: inherit; font-weight: 800; cursor: pointer;
+      display: flex; align-items: center; gap: 10px;
+      color: var(--text); transition: border-color 0.15s, background 0.15s;
+    }
+    html[data-theme="dark"] .choice-btn { background: var(--card); }
+    .choice-btn .dot {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid #cbd5e1; flex-shrink: 0;
+    }
+    .choice-btn.selected {
+      border-color: #f59e0b; background: #fffbeb;
+    }
+    .choice-btn.selected .dot {
+      border-color: #f59e0b;
+      background: #f59e0b;
+      box-shadow: inset 0 0 0 4px #fff;
+    }
+
+    .actions {
+      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+      margin-top: 16px;
+    }
+    .btn {
+      appearance: none; border: none; cursor: pointer;
+      font: inherit; font-weight: 800; font-size: 1rem;
+      padding: 14px 24px; border-radius: 999px;
+      min-height: 52px; min-width: 120px;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(180deg, #8b5cf6, #7c3aed);
+      color: #fff;
+      box-shadow: 0 6px 0 #5b21b6, 0 10px 20px rgba(124, 58, 237, 0.3);
+      flex: 1; max-width: 280px;
+    }
+    .btn-primary:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #5b21b6;
+    }
+    .btn-ghost {
+      background: #fff; color: var(--primary);
+      border: 2px solid #ddd6fe;
+      box-shadow: 0 3px 0 #e9e5ff;
+    }
+    html[data-theme="dark"] .btn-ghost {
+      background: var(--card); border-color: var(--border); color: var(--text);
+    }
+
+    .feedback {
+      min-height: 1.4em; margin-top: 12px; text-align: center;
+      font-weight: 800; font-size: 0.95rem;
+    }
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+
+    .done-list {
+      list-style: none; display: grid; gap: 6px; margin-top: 8px;
+    }
+    .done-list li {
+      padding: 8px 12px; border-radius: 12px;
+      background: rgba(5, 150, 105, 0.1);
+      border: 1px solid rgba(5, 150, 105, 0.2);
+      font-weight: 700; font-size: 0.9rem;
+    }
+
+    .summary-card {
+      background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(59,130,246,0.08));
+      border-radius: 16px; padding: 16px; margin-top: 8px;
+    }
+    .summary-card p { margin: 5px 0; font-weight: 600; font-size: 0.92rem; }
+
+    .screen { display: none; }
+    .screen.active { display: block; animation: fadeIn 0.28s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    a.profile-fab, .profile-fab { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- MENU -->
+    <section id="screen-menu" class="screen active">
+      <div class="topbar">
+        <a class="back-pill" href="../">← Writing</a>
+        <span class="badge-pill">WRITING · A1</span>
+      </div>
+      <h1>Personal Information</h1>
+      <p class="lead">Four practice modes</p>
+      <div class="mode-list">
+        <button type="button" class="mode-card" data-mode="questions">
+          <span class="mode-stripe"></span>
+          <div class="mode-body">
+            <div class="mode-num">Mode 1</div>
+            <div class="mode-title">Make the questions</div>
+            <div class="mode-desc">Unscramble words to build questions</div>
+          </div>
+          <div class="mode-ico" aria-hidden="true">🧩</div>
+        </button>
+        <button type="button" class="mode-card" data-mode="self">
+          <span class="mode-stripe"></span>
+          <div class="mode-body">
+            <div class="mode-num">Mode 2</div>
+            <div class="mode-title">About me</div>
+            <div class="mode-desc">Answer about yourself one at a time</div>
+          </div>
+          <div class="mode-ico" aria-hidden="true">👤</div>
+        </button>
+        <button type="button" class="mode-card" data-mode="male">
+          <span class="mode-stripe"></span>
+          <div class="mode-body">
+            <div class="mode-num">Mode 3</div>
+            <div class="mode-title">About a man</div>
+            <div class="mode-desc">Answer with he / his</div>
+          </div>
+          <div class="mode-ico" aria-hidden="true">👨</div>
+        </button>
+        <button type="button" class="mode-card" data-mode="female">
+          <span class="mode-stripe"></span>
+          <div class="mode-body">
+            <div class="mode-num">Mode 4</div>
+            <div class="mode-title">About a woman</div>
+            <div class="mode-desc">Answer with she / her</div>
+          </div>
+          <div class="mode-ico" aria-hidden="true">👩</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- PLAY -->
+    <section id="screen-play" class="screen">
+      <div class="topbar">
+        <button type="button" class="back-pill" id="btnToMenu">← Modes</button>
+        <span class="badge-pill" id="modeBadge">MODE 1 · QUESTIONS</span>
+      </div>
+      <div class="progress-wrap" id="progressWrap"><div class="progress-bar" id="progress"></div></div>
+      <div class="status">
+        <span class="pill">Question <strong id="qNum">1</strong> / <strong id="qTotal">8</strong></span>
+        <span class="pill">Score <strong id="score">0</strong></span>
+      </div>
+
+      <div id="ui-questions" class="panel" hidden>
+        <div class="prompt">Put the words in order</div>
+        <p class="hint">Tap words to build the question</p>
+        <div class="built" id="built"></div>
+        <div class="bank-label">WORD BANK</div>
+        <div class="bank" id="bank"></div>
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" id="btnClear">Clear</button>
+          <button type="button" class="btn btn-primary" id="btnCheckQ">Check ✓</button>
+        </div>
+        <div class="feedback" id="qFeedback"></div>
+      </div>
+
+      <div id="ui-answer" class="panel" hidden>
+        <div class="prompt" id="answerPrompt">About me</div>
+        <p class="hint" id="answerHint">One question at a time</p>
+        <div class="q-display" id="qDisplay"></div>
+        <div class="answer-field" id="answerField"></div>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="btnNextA">Next →</button>
+        </div>
+        <div class="feedback" id="aFeedback"></div>
+      </div>
+
+      <div class="panel" id="unlockedPanel" hidden>
+        <div class="prompt" style="font-size:1rem;">Questions you made</div>
+        <ul class="done-list" id="doneList"></ul>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="screen-results" class="screen">
+      <div class="topbar">
+        <button type="button" class="back-pill" id="btnResMenu">← Modes</button>
+        <span class="badge-pill">DONE</span>
+      </div>
+      <div class="panel">
+        <div class="prompt" id="resultTitle">Complete!</div>
+        <p class="hint" id="resultSummary"></p>
+        <div class="summary-card" id="summaryOut"></div>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="btnAgain">Play again</button>
+          <button type="button" class="btn btn-ghost" id="btnModes">All modes</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="../../la-stars.js"></script>
+  <script src="../../theme.js"></script>
+  <script>
+(function () {
+  "use strict";
+
+  var QUESTIONS = [
+    { id: "name", words: ["What's", "your", "name?"], answer: "What's your name?",
+      forms: { self: "What's your name?", male: "What's his name?", female: "What's her name?" } },
+    { id: "age", words: ["How", "old", "are", "you?"], answer: "How old are you?",
+      forms: { self: "How old are you?", male: "How old is he?", female: "How old is she?" } },
+    { id: "married", words: ["Are", "you", "married?"], answer: "Are you married?",
+      forms: { self: "Are you married?", male: "Is he married?", female: "Is she married?" } },
+    { id: "email", words: ["What's", "your", "email?"], answer: "What's your email?",
+      forms: { self: "What's your email?", male: "What's his email?", female: "What's her email?" } },
+    { id: "cell", words: ["What's", "your", "cell", "phone", "number?"], answer: "What's your cell phone number?",
+      forms: { self: "What's your cell phone number?", male: "What's his cell phone number?", female: "What's her cell phone number?" } },
+    { id: "home", words: ["What's", "your", "home", "phone", "number?"], answer: "What's your home phone number?",
+      forms: { self: "What's your home phone number?", male: "What's his home phone number?", female: "What's her home phone number?" } },
+    { id: "zip", words: ["What's", "your", "zip", "code?"], answer: "What's your zip code?",
+      forms: { self: "What's your zip code?", male: "What's his zip code?", female: "What's her zip code?" } },
+    { id: "address", words: ["What's", "your", "address?"], answer: "What's your address?",
+      forms: { self: "What's your address?", male: "What's his address?", female: "What's her address?" } }
+  ];
+
+  var MODE_META = {
+    questions: { badge: "MODE 1 · QUESTIONS", title: "Make the questions", theme: "" },
+    self: { badge: "MODE 2 · ABOUT ME", title: "About me", persona: "self", theme: "", badgeClass: "m2" },
+    male: { badge: "MODE 3 · A MAN", title: "About a man", persona: "male", theme: "theme-male", badgeClass: "m3" },
+    female: { badge: "MODE 4 · A WOMAN", title: "About a woman", persona: "female", theme: "theme-female", badgeClass: "m4" }
+  };
+
+  var state = { mode: null, index: 0, built: [], bank: [], unlocked: [], attempts: 0, score: 0, answers: {}, choice: "" };
+
+  function $(id) { return document.getElementById(id); }
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function normalize(s) {
+    return String(s || "").toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ").replace(/\s+\?/g, "?").trim();
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(function (s) {
+      s.classList.toggle("active", s.id === id);
+    });
+  }
+
+  function updateProgress() {
+    var total = QUESTIONS.length;
+    var done = state.index;
+    if ($("screen-results").classList.contains("active")) done = total;
+    $("progress").style.width = Math.round((done / total) * 100) + "%";
+    $("qNum").textContent = String(Math.min(state.index + 1, total));
+    $("qTotal").textContent = String(total);
+    $("score").textContent = String(state.score);
+  }
+
+  function startMode(mode) {
+    state.mode = mode;
+    state.index = 0;
+    state.built = [];
+    state.bank = [];
+    state.unlocked = [];
+    state.attempts = 0;
+    state.score = 0;
+    state.answers = {};
+    state.choice = "";
+    var meta = MODE_META[mode];
+    $("modeBadge").textContent = meta.badge;
+    $("modeBadge").className = "badge-pill" + (meta.badgeClass ? " " + meta.badgeClass : "");
+    $("progressWrap").className = "progress-wrap" + (mode === "male" ? " m3" : mode === "female" ? " m4" : "");
+    $("ui-answer").className = "panel" + (meta.theme ? " " + meta.theme : "");
+    $("unlockedPanel").hidden = true;
+    $("doneList").innerHTML = "";
+    showScreen("screen-play");
+    if (mode === "questions") {
+      $("ui-questions").hidden = false;
+      $("ui-answer").hidden = true;
+      renderUnscramble();
+    } else {
+      $("ui-questions").hidden = true;
+      $("ui-answer").hidden = false;
+      renderAnswerOne();
+    }
+    updateProgress();
+  }
+
+  function renderUnscramble() {
+    var q = QUESTIONS[state.index];
+    state.built = [];
+    state.attempts = 0;
+    state.bank = shuffle(q.words.map(function (w, i) { return { id: i + "-" + w, word: w }; }));
+    $("qFeedback").textContent = "";
+    $("qFeedback").className = "feedback";
+    $("built").className = "built";
+    renderBuilt();
+    renderBank();
+    updateProgress();
+  }
+
+  function renderBuilt() {
+    var box = $("built");
+    box.innerHTML = "";
+    state.built.forEach(function (item, idx) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip built-chip";
+      b.textContent = item.word;
+      b.addEventListener("click", function () {
+        state.built.splice(idx, 1);
+        state.bank.push(item);
+        renderBuilt();
+        renderBank();
+      });
+      box.appendChild(b);
+    });
+  }
+
+  function renderBank() {
+    var box = $("bank");
+    box.innerHTML = "";
+    state.bank.forEach(function (item) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip";
+      b.textContent = item.word;
+      b.addEventListener("click", function () {
+        state.bank = state.bank.filter(function (x) { return x.id !== item.id; });
+        state.built.push(item);
+        renderBuilt();
+        renderBank();
+      });
+      box.appendChild(b);
+    });
+  }
+
+  function checkQuestion() {
+    var q = QUESTIONS[state.index];
+    var user = state.built.map(function (x) { return x.word; }).join(" ");
+    if (!state.built.length) {
+      $("qFeedback").textContent = "Build the question first.";
+      $("qFeedback").className = "feedback bad";
+      return;
+    }
+    if (normalize(user) === normalize(q.answer)) {
+      $("built").className = "built is-ok";
+      $("qFeedback").textContent = "Correct!";
+      $("qFeedback").className = "feedback ok";
+      state.score += Math.max(5, 15 - state.attempts * 3);
+      state.unlocked.push(q);
+      renderDoneList();
+      state.index += 1;
+      if (state.index >= QUESTIONS.length) setTimeout(function () { finishMode("questions"); }, 700);
+      else setTimeout(renderUnscramble, 650);
+    } else {
+      state.attempts += 1;
+      $("built").className = "built is-bad";
+      if (state.attempts >= 3) {
+        $("qFeedback").textContent = "Answer: " + q.answer;
+        $("qFeedback").className = "feedback bad";
+        state.unlocked.push(q);
+        renderDoneList();
+        state.index += 1;
+        setTimeout(function () {
+          if (state.index >= QUESTIONS.length) finishMode("questions");
+          else renderUnscramble();
+        }, 1400);
+      } else {
+        $("qFeedback").textContent = "Not quite — try again! (" + (3 - state.attempts) + " left)";
+        $("qFeedback").className = "feedback bad";
+      }
+    }
+    updateProgress();
+  }
+
+  function renderDoneList() {
+    if (!state.unlocked.length) { $("unlockedPanel").hidden = true; return; }
+    $("unlockedPanel").hidden = false;
+    $("doneList").innerHTML = state.unlocked.map(function (q, i) {
+      return "<li>" + (i + 1) + ". " + q.answer + "</li>";
+    }).join("");
+  }
+
+  function renderAnswerOne() {
+    var q = QUESTIONS[state.index];
+    var persona = MODE_META[state.mode].persona;
+    $("answerPrompt").textContent = MODE_META[state.mode].title;
+    $("answerHint").textContent = "One question at a time";
+    $("qDisplay").textContent = q.forms[persona];
+    $("aFeedback").textContent = "";
+    $("aFeedback").className = "feedback";
+    state.choice = state.answers[q.id] || "";
+
+    var field = $("answerField");
+    var placeholders = {
+      name: persona === "self" ? "e.g. I'm Sara. / My name's Sara." :
+            persona === "male" ? "e.g. He's David. / His name is David." :
+            "e.g. She's Emma. / Her name's Emma.",
+      age: persona === "self" ? "e.g. I'm 25. / I'm 25 years old." :
+           persona === "male" ? "e.g. He's 30 years old." :
+           "e.g. She's 28 years old.",
+      married: persona === "self" ? "e.g. Yes, I am. / No, I'm not. / No, I'm single." :
+               persona === "male" ? "e.g. Yes, he is. / No, he isn't. / No, he's single." :
+               "e.g. Yes, she is. / No, she isn't. / No, she's single.",
+      email: "e.g. It's sara@email.com.",
+      cell: "e.g. It's 0912 345 6789.",
+      home: "e.g. It's 021 1234 5678.",
+      zip: "e.g. It's 12345.",
+      address: "e.g. It's 12 Main Street."
+    };
+    var ph = placeholders[q.id] || "Type your full answer…";
+    field.innerHTML = '<input id="answerInput" type="text" value="' +
+      String(state.choice).replace(/"/g, "&quot;") +
+      '" placeholder="' + ph.replace(/"/g, "&quot;") + '" autocomplete="off" />';
+    state.attempts = 0;
+    $("btnNextA").textContent = state.index >= QUESTIONS.length - 1 ? "Finish" : "Next →";
+    updateProgress();
+    setTimeout(function () {
+      var inp = $("answerInput");
+      if (inp) inp.focus();
+    }, 40);
+  }
+
+  function cleanAns(s) {
+    return String(s || "")
+      .toLowerCase()
+      .replace(/[’']/g, "'")
+      .replace(/\s+/g, " ")
+      .replace(/\s+([,.!?])/g, "$1")
+      .trim()
+      .replace(/[.!?]+$/, "");
+  }
+
+  /* Returns { ok:bool, hint:string } */
+  function validateAnswer(qId, persona, raw) {
+    var s = cleanAns(raw);
+    if (!s) return { ok: false, hint: "Please write a full answer." };
+
+    // NAME
+    if (qId === "name") {
+      if (persona === "self") {
+        if (/^(i'?m|i am)\s+\S+/.test(s) || /^(my name('?s| is))\s+\S+/.test(s))
+          return { ok: true };
+        return { ok: false, hint: "Use: I'm …  or  My name's / My name is …" };
+      }
+      if (persona === "male") {
+        if (/^(he'?s|he is)\s+\S+/.test(s) || /^(his name('?s| is))\s+\S+/.test(s))
+          return { ok: true };
+        return { ok: false, hint: "Use: He's …  or  His name's / His name is …" };
+      }
+      if (/^(she'?s|she is)\s+\S+/.test(s) || /^(her name('?s| is))\s+\S+/.test(s))
+        return { ok: true };
+      return { ok: false, hint: "Use: She's …  or  Her name's / Her name is …" };
+    }
+
+    // AGE — must be a sentence, not only digits
+    if (qId === "age") {
+      if (/^\d+$/.test(s)) {
+        return { ok: false, hint: "Don't write only a number. Use a full sentence." };
+      }
+      if (persona === "self") {
+        if (/^(i'?m|i am)\s+\d+(\s+years?\s+old)?$/.test(s) ||
+            /^(i'?m|i am)\s+\d+\s+years?\s+old$/.test(s))
+          return { ok: true };
+        return { ok: false, hint: "Use: I'm 25.  or  I'm 25 years old." };
+      }
+      if (persona === "male") {
+        if (/^(he'?s|he is)\s+\d+(\s+years?\s+old)?$/.test(s))
+          return { ok: true };
+        return { ok: false, hint: "Use: He's 30.  or  He's 30 years old." };
+      }
+      if (/^(she'?s|she is)\s+\d+(\s+years?\s+old)?$/.test(s))
+        return { ok: true };
+      return { ok: false, hint: "Use: She's 28.  or  She's 28 years old." };
+    }
+
+    // MARRIED
+    if (qId === "married") {
+      // Accept short forms + fuller answers
+      if (persona === "self") {
+        if (/^(yes,?\s*)?(i am|i'?m)(\s+married)?$/.test(s) ||
+            /^yes,?\s*i am\.?(\s*i'?m married)?$/.test(s) ||
+            /^yes[,.]?\s*(i'?m|i am)(\s+married)?/.test(s))
+          return { ok: true };
+        if (/^(no,?\s*)?(i'?m not|i am not)(\s+married)?$/.test(s) ||
+            /^no[,.]?\s*(i'?m not|i am not)/.test(s) ||
+            /^(no,?\s*)?(i'?m|i am)\s+single$/.test(s) ||
+            /i'?m single/.test(s) ||
+            /i am single/.test(s))
+          return { ok: true };
+        return { ok: false, hint: "Use: Yes, I am. / Yes, I'm married.  or  No, I'm not. / No, I'm single. / No, I'm not. I'm single." };
+      }
+      if (persona === "male") {
+        if (/^(yes,?\s*)?(he is|he'?s)(\s+married)?$/.test(s) ||
+            /^yes[,.]?\s*(he is|he'?s)/.test(s))
+          return { ok: true };
+        if (/^(no,?\s*)?(he isn'?t|he'?s not|he is not)(\s+married)?$/.test(s) ||
+            /^no[,.]?\s*(he isn'?t|he'?s not|he is not)/.test(s) ||
+            /^(no,?\s*)?(he'?s|he is)\s+single$/.test(s) ||
+            /he'?s single/.test(s) ||
+            /he is single/.test(s))
+          return { ok: true };
+        return { ok: false, hint: "Use: Yes, he is. / Yes, he's married.  or  No, he isn't. / No, he's single." };
+      }
+      if (/^(yes,?\s*)?(she is|she'?s)(\s+married)?$/.test(s) ||
+          /^yes[,.]?\s*(she is|she'?s)/.test(s))
+        return { ok: true };
+      if (/^(no,?\s*)?(she isn'?t|she'?s not|she is not)(\s+married)?$/.test(s) ||
+          /^no[,.]?\s*(she isn'?t|she'?s not|she is not)/.test(s) ||
+          /^(no,?\s*)?(she'?s|she is)\s+single$/.test(s) ||
+          /she'?s single/.test(s) ||
+          /she is single/.test(s))
+        return { ok: true };
+      return { ok: false, hint: "Use: Yes, she is. / Yes, she's married.  or  No, she isn't. / No, she's single." };
+    }
+
+    // EMAIL / PHONE / ZIP / ADDRESS — must start with It's
+    if (["email", "cell", "home", "zip", "address"].indexOf(qId) !== -1) {
+      if (/^(it'?s|it is)\s+\S+/.test(s))
+        return { ok: true };
+      var examples = {
+        email: "It's name@email.com.",
+        cell: "It's 0912…",
+        home: "It's 021…",
+        zip: "It's 12345.",
+        address: "It's 12 Main Street."
+      };
+      return { ok: false, hint: "Start with It's …  e.g. " + (examples[qId] || "It's …") };
+    }
+
+    return { ok: true };
+  }
+
+  function nextAnswer() {
+    var q = QUESTIONS[state.index];
+    var persona = MODE_META[state.mode].persona;
+    var inp = $("answerInput");
+    var val = (inp && inp.value || "").trim();
+
+    if (!val) {
+      $("aFeedback").textContent = "Please write a full answer.";
+      $("aFeedback").className = "feedback bad";
+      return;
+    }
+
+    var result = validateAnswer(q.id, persona, val);
+    if (!result.ok) {
+      state.attempts = (state.attempts || 0) + 1;
+      if (state.attempts >= 3) {
+        $("aFeedback").textContent = result.hint + " (example shown — try again)";
+      } else {
+        $("aFeedback").textContent = result.hint;
+      }
+      $("aFeedback").className = "feedback bad";
+      return;
+    }
+
+    state.attempts = 0;
+    state.answers[q.id] = val;
+    state.score += 10;
+    state.index += 1;
+    if (state.index >= QUESTIONS.length) finishMode(state.mode);
+    else renderAnswerOne();
+  }
+
+
+  function finishMode(mode) {
+    showScreen("screen-results");
+    var meta = MODE_META[mode];
+    $("resultTitle").textContent = meta.title + " — done!";
+    if (mode === "questions") {
+      $("resultSummary").textContent = "You built " + QUESTIONS.length + " questions. Score: " + state.score;
+      $("summaryOut").innerHTML = "<ol style='margin:0;padding-left:18px;font-weight:700;'>" +
+        QUESTIONS.map(function (q) { return "<li style='margin:4px 0'>" + q.answer + "</li>"; }).join("") + "</ol>";
+    } else {
+      $("resultSummary").textContent = "You answered " + QUESTIONS.length + " questions. Score: " + state.score;
+      var persona = meta.persona;
+      $("summaryOut").innerHTML = QUESTIONS.map(function (q) {
+        return "<p><strong>" + q.forms[persona] + "</strong> " + (state.answers[q.id] || "—") + "</p>";
+      }).join("");
+    }
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay("writing-personal-info");
+        LAStars.saveFromAccuracy("writing-personal-info", Math.min(100, Math.round((state.score / (QUESTIONS.length * 15)) * 100)));
+      }
+    } catch (e) {}
+    updateProgress();
+  }
+
+  document.querySelectorAll(".mode-card").forEach(function (card) {
+    card.addEventListener("click", function () { startMode(card.getAttribute("data-mode")); });
+  });
+  $("btnToMenu").addEventListener("click", function () { showScreen("screen-menu"); });
+  $("btnResMenu").addEventListener("click", function () { showScreen("screen-menu"); });
+  $("btnModes").addEventListener("click", function () { showScreen("screen-menu"); });
+  $("btnAgain").addEventListener("click", function () {
+    if (state.mode) startMode(state.mode); else showScreen("screen-menu");
+  });
+  $("btnClear").addEventListener("click", function () {
+    var q = QUESTIONS[state.index];
+    state.built = [];
+    state.bank = shuffle(q.words.map(function (w, i) { return { id: i + "-" + w, word: w }; }));
+    $("built").className = "built";
+    $("qFeedback").textContent = "";
+    renderBuilt();
+    renderBank();
+  });
+  $("btnCheckQ").addEventListener("click", checkQuestion);
+  $("btnNextA").addEventListener("click", nextAnswer);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !$("ui-answer").hidden) { e.preventDefault(); nextAnswer(); }
+  });
+})();
+  </script>
+</body>
+</html>
