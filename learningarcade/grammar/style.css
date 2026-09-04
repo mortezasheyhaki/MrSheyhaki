@@ -654,38 +654,35 @@ html[data-theme="dark"] .arcade-intro.skill-intro .eyebrow {
   color: #fff !important;
 }
 
-/* ===== skill-intro-top row ===== */
+/* ===== skill-intro-top row (match Vocabulary layout) ===== */
 .skill-intro-top {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
   margin-bottom: 4px;
 }
 .skill-intro-top .skill-back-btn {
-  margin-bottom: 0;
+  /* fixed top-left — same as Vocabulary */
+  position: fixed !important;
+  top: max(14px, env(safe-area-inset-top, 0px)) !important;
+  left: max(14px, env(safe-area-inset-left, 0px)) !important;
+  margin-bottom: 0 !important;
   order: 1;
 }
 .skill-intro-top .eyebrow {
   order: 2;
 }
 .arcade-intro.skill-intro .skill-back-btn {
-  margin-bottom: 0;
+  position: fixed !important;
+  margin-bottom: 0 !important;
 }
 
-/* ===== Play btn round + back order ===== */
-.skill-intro-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.skill-intro-top .skill-back-btn {
-  order: 1;
-  margin-bottom: 0;
-}
-.skill-intro-top .eyebrow {
-  order: 2;
+/* Narrow screens: keep eyebrow clear of fixed back button */
+@media (max-width: 900px) {
+  .skill-intro-top {
+    padding-left: 56px;
+  }
 }
 
 /* Round Play button — skill color */

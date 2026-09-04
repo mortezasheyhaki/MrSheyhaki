@@ -1114,10 +1114,9 @@ html[data-theme="dark"] .site-back-btn:hover {
   }
 }
 
-/* When the button sits inside skill-intro-top, remove any layout push */
+/* skill-intro-top back button stays fixed top-left (Vocabulary layout) */
 .skill-intro-top .skill-back-btn {
-  /* still fixed — does not take flow space */
-  position: fixed;
+  position: fixed !important;
 }
 
 
@@ -1592,6 +1591,29 @@ html[data-theme="light"] .arcade-nav .nav-profile {
   top: max(14px, env(safe-area-inset-top, 0px)) !important;
   left: max(14px, env(safe-area-inset-left, 0px)) !important;
   z-index: 10050 !important;
+}
+
+/* skill-intro-top: back stays fixed top-left; eyebrow sits in content column */
+.skill-intro-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.skill-intro-top .skill-back-btn,
+.skill-intro-top .site-back-btn {
+  /* fixed — same corner placement as Vocabulary */
+  position: fixed !important;
+  top: max(14px, env(safe-area-inset-top, 0px)) !important;
+  left: max(14px, env(safe-area-inset-left, 0px)) !important;
+  margin-bottom: 0 !important;
+}
+
+/* On narrow screens content is near the left edge — clear the fixed button */
+@media (max-width: 900px) {
+  .skill-intro-top {
+    padding-left: 56px;
+  }
 }
 
 /* Page content clears fixed nav */
