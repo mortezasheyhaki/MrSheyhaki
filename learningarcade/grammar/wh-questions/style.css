@@ -705,3 +705,279 @@ html[data-theme="dark"] .answer-option:hover,
 html[data-theme="dark"] .option-btn:hover {
   background: #13241c !important;
 }
+
+
+/* ===== Layout fixes: sequential steps, no scroll, floating back, end orbs ===== */
+.fab-back {
+  position: fixed !important;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  z-index: 10060 !important;
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  display: flex !important; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #8b5cf6, #6d28d9);
+  color: #fff !important; text-decoration: none !important;
+  font-size: 1.25rem; font-weight: 900;
+  box-shadow: 0 6px 0 #4c1d95, 0 10px 22px rgba(109, 40, 217, 0.35);
+  border: none;
+}
+.fab-back:active { transform: translateY(2px); box-shadow: 0 3px 0 #4c1d95; }
+
+.answer-stage-locked,
+#answerStage[hidden] { display: none !important; }
+
+#answerStage:not([hidden]) {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+.end-orbs {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin-top: 22px;
+}
+.orb {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  border: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; font-weight: 900;
+  cursor: pointer; text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.orb-back {
+  background: linear-gradient(180deg, #60a5fa, #2563eb);
+  color: #fff;
+  box-shadow: 0 6px 0 #1d4ed8, 0 10px 20px rgba(37,99,235,0.3);
+}
+.orb-retry {
+  background: linear-gradient(180deg, #34d399, #059669);
+  color: #fff;
+  box-shadow: 0 6px 0 #047857, 0 10px 20px rgba(5,150,105,0.3);
+}
+.orb:hover { transform: translateY(-2px); }
+.orb:active { transform: translateY(2px); }
+
+@media (max-width: 700px) {
+  html, body.wh-body {
+    height: 100dvh; max-height: 100dvh;
+    overflow: hidden !important;
+  }
+  body.wh-body.playing {
+    display: flex; flex-direction: column;
+  }
+  .wh-shell {
+    flex: 1 1 auto; min-height: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    padding: 8px 10px 12px !important;
+    max-width: 100% !important;
+  }
+  .wh-topbar { display: none !important; } /* use fab-back instead while playing */
+  body.wh-body:not(.playing) .wh-topbar { display: flex !important; }
+  body.wh-body:not(.playing) .fab-back { display: none !important; }
+  .wh-screen {
+    flex: 1 1 auto; min-height: 0;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .wh-main-card {
+    flex: 1 1 auto; min-height: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 !important;
+    padding: 12px 12px !important;
+  }
+  #gameScreen.wh-main-card {
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  #gameScreen .game-head { flex: 0 0 auto; margin-bottom: 8px; }
+  #gameScreen .step-section { flex: 1 1 auto; min-height: 0; overflow: auto; }
+  #gameScreen .step-section.step-done { display: none; }
+  .section-divider { display: none; }
+  .tile, .word-bank button {
+    min-height: 44px;
+  }
+}
+
+@media (min-width: 701px) {
+  body.wh-body:not(.playing) .fab-back { display: none !important; }
+  .wh-shell { max-width: 960px !important; margin: 0 auto; }
+}
+
+
+/* =========================================================
+   FIXED LAYOUT — no page scroll, shell fills viewport
+========================================================= */
+html {
+  height: 100%;
+  height: 100dvh;
+}
+body.wh-body,
+body.no-profile-fab,
+body.be-fit {
+  min-height: 100%;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box;
+}
+
+/* Outer shell fills viewport */
+.wh-shell,
+.game-container,
+main.game-container,
+main {
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Top chrome fixed height */
+.wh-topbar,
+.game-header,
+.play-top,
+.game-head {
+  flex: 0 0 auto;
+}
+
+/* Main play area takes remaining space */
+.wh-screen,
+#gameScreen,
+#startScreen,
+#endScreen,
+.screen {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.wh-main-card,
+.home-card,
+.result-card,
+.prompt-card,
+.panel {
+  min-height: 0;
+}
+
+/* Active game screen: internal structure */
+#gameScreen.wh-main-card,
+#gameScreen.screen:not(.hidden),
+#gameScreen:not([hidden]) {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Scroll only inside content blocks if needed */
+#gameScreen .step-section,
+#gameScreen .prompt-card,
+#questionStep,
+#answerStage:not([hidden]) {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Footer never pushes layout */
+.site-footer,
+footer {
+  flex: 0 0 auto;
+  display: none !important; /* hide during fixed game layout */
+}
+body:not(.playing) .site-footer,
+body:not(.playing) footer {
+  display: block !important;
+}
+
+/* Desktop: centered fixed-width stage, still no document scroll */
+@media (min-width: 901px) {
+  body.wh-body,
+  body.no-profile-fab,
+  body.be-fit {
+    overflow: hidden !important;
+  }
+  .wh-shell,
+  .game-container {
+    width: min(1100px, calc(100% - 48px));
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+  .wh-main-card,
+  #gameScreen {
+    max-height: calc(100dvh - 80px);
+  }
+}
+
+/* Phone */
+@media (max-width: 700px) {
+  body.wh-body,
+  body.no-profile-fab,
+  body.be-fit {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden !important;
+  }
+  .wh-shell,
+  .game-container,
+  main {
+    height: 100dvh;
+    max-height: 100dvh;
+    padding: 8px 10px !important;
+    padding-top: max(8px, env(safe-area-inset-top)) !important;
+    padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+  }
+  body.playing .wh-topbar,
+  body.playing .game-header {
+    display: none !important;
+  }
+  .fab-back {
+    position: fixed !important;
+    top: max(10px, env(safe-area-inset-top));
+    left: max(10px, env(safe-area-inset-left));
+    z-index: 10060 !important;
+  }
+  /* Keep action rows pinned */
+  .check-btn,
+  .submit-btn,
+  .answer-form,
+  .choices,
+  .end-orbs,
+  .result-actions {
+    flex: 0 0 auto;
+  }
+}
+
+/* Utility: force a fixed full-viewport game root */
+.la-fixed-root {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  z-index: 1;
+}

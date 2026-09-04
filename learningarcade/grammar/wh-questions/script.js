@@ -74,6 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const answerLine = document.getElementById('answerLine');
 
   const checkQuestionBtn = document.getElementById('checkQuestionBtn');
+  const answerStage = document.getElementById('answerStage');
+  const questionStep = document.getElementById('questionStep');
   const questionFeedback = document.getElementById('questionFeedback');
 
   const cueText = document.getElementById('cueText');
@@ -181,6 +183,12 @@ document.addEventListener('DOMContentLoaded', () => {
     submitAnswerBtn.disabled = true;
     answerInput.value = '';
     checkQuestionBtn.disabled = false;
+    // Hide answer step until question is built correctly
+    if (answerStage) {
+      answerStage.hidden = true;
+      answerStage.classList.add('answer-stage-locked');
+    }
+    if (questionStep) questionStep.hidden = false;
   }
 
   function handleCheckQuestion() {
@@ -196,12 +204,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const built = selected.map(item => item.word).join(' ');
     if (normalize(built) === normalize(round.words.join(' '))) {
-      setFeedback(questionFeedback, '✓ Correct question! Now type your full sentence below.', 'good');
+      setFeedback(questionFeedback, '✓ Correct! Now answer the question.', 'good');
 
       cueText.textContent = `"${round.cue}"`;
       answerInput.disabled = false;
       submitAnswerBtn.disabled = false;
       checkQuestionBtn.disabled = true;
+
+      // Reveal answer stage only after correct question
+      if (answerStage) {
+        answerStage.hidden = false;
+        answerStage.classList.remove('answer-stage-locked');
+      }
+      // Optionally collapse build section on small screens
+      if (questionStep && window.matchMedia('(max-width: 700px)').matches) {
+        questionStep.classList.add('step-done');
+      }
 
       setTimeout(() => answerInput.focus(), 50);
     } else {
@@ -260,11 +278,13 @@ document.addEventListener('DOMContentLoaded', () => {
     startScreen.hidden = true;
     endScreen.hidden = true;
     gameScreen.hidden = false;
+    document.body.classList.add('playing');
 
     loadRound();
   }
 
   function finishGame() {
+    document.body.classList.remove('playing');
     gameScreen.hidden = true;
     endScreen.hidden = false;
     finalScore.textContent = score;

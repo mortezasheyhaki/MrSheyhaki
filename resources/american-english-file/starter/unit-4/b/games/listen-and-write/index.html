@@ -481,6 +481,13 @@
         score === ITEMS.length
           ? "Perfect! Every phrase was correct."
           : "Keep practising — listen again anytime.";
+      try {
+        if (window.LAStars) {
+          var acc = ITEMS.length ? Math.round((score / ITEMS.length) * 100) : 0;
+          LAStars.recordPlay("listen-and-write-4b");
+          LAStars.saveFromAccuracy("listen-and-write-4b", acc);
+        }
+      } catch (e) {}
     }
 
     function restart() {
@@ -503,5 +510,6 @@
     showItem();
   })();
   </script>
+<script src="../../../../../../../learningarcade/la-stars.js"></script>
 </body>
 </html>

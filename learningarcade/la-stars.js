@@ -53,7 +53,14 @@
     "vocab-clothes-balloon-pop": "vocab-clothes-match",
     "vocab-clothes-dictation": "vocab-clothes-match",
     // School subjects
-    "vocab-school-subjects": "vocab-school-subjects"
+    "vocab-school-subjects": "vocab-school-subjects",
+    // Unit 4B resources
+    "adj-sentences-a": "adj-sentences",
+    "adj-sentences-b": "adj-sentences",
+    "sound-match-picture": "sound-match-picture",
+    "match-adjectives-4b": "match-adjectives-4b",
+    "listen-and-write-4b": "listen-and-write-4b",
+    "opposite-snap": "opposite-snap"
   };
 
   function loadJSON(key) {

@@ -706,6 +706,16 @@
         score === total ? "Perfect score!" : "Keep practising — you can replay this part.";
       $("aBar").style.width = "100%";
       $("bBar").style.width = "100%";
+      try {
+        if (window.LAStars) {
+          var acc = total ? Math.round((score / total) * 100) : 0;
+          var gid = part === "a" ? "adj-sentences-a" : "adj-sentences-b";
+          LAStars.recordPlay(gid);
+          LAStars.recordPlay("adj-sentences");
+          LAStars.saveFromAccuracy(gid, acc);
+          LAStars.saveFromAccuracy("adj-sentences", acc);
+        }
+      } catch (e) {}
     }
 
     function startPart(p) {
@@ -737,5 +747,6 @@
     $("finishHub").addEventListener("click", () => show(hub));
   })();
   </script>
+<script src="../../../../../../../learningarcade/la-stars.js"></script>
 </body>
 </html>

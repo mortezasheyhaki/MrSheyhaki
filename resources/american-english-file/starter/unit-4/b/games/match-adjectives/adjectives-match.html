@@ -939,6 +939,14 @@
           renderBoard();
         };
         overlay.classList.add('show');
+        try {
+          if (window.LAStars) {
+            // 2 rounds x 5 matches x 10 pts = 100 max typical
+            var acc = Math.min(100, Math.round((score / 100) * 100));
+            LAStars.recordPlay('match-adjectives-4b');
+            LAStars.saveFromAccuracy('match-adjectives-4b', acc);
+          }
+        } catch (e) {}
       }
     }
 
@@ -992,5 +1000,6 @@
       img.src = item.img;
     });
   </script>
+<script src="../../../../../../../learningarcade/la-stars.js"></script>
 </body>
 </html>
