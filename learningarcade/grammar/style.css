@@ -222,7 +222,7 @@ body {
   padding: 18px 20px 16px;
   display: grid;
   grid-template-columns: 48px 1fr;
-  grid-template-rows: auto auto auto auto auto auto;
+  grid-template-rows: auto auto auto auto auto;
   column-gap: 12px;
   row-gap: 0;
   align-items: center;
@@ -342,57 +342,99 @@ body {
   line-height: 1.4;
 }
 
-/* Progress stars on game cards */
-.game-stars {
+/* Bottom row: Play/Explore button + stars to its right */
+.game-card-actions {
   position: relative;
   z-index: 1;
   grid-column: 1 / -1;
   grid-row: 5;
   display: flex;
   align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  min-height: 84px;
+}
+
+/* Progress stars on game cards — sit to the right of the button */
+.game-stars {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
   gap: 4px;
-  margin-top: 8px;
+  margin: 0;
   font-size: 18px;
   line-height: 1;
   letter-spacing: 1px;
   user-select: none;
+  flex-shrink: 0;
 }
 
 .game-stars .star {
   color: #cbd5e1;
-  transition: color 0.2s ease, transform 0.15s ease;
+  transition: color 0.25s ease, transform 0.2s ease, text-shadow 0.25s ease, filter 0.25s ease;
 }
 
 .game-stars .star.is-filled {
-  color: #f59e0b;
-  text-shadow: 0 0 8px rgba(245, 158, 11, 0.45);
+  color: #fde68a;
+  text-shadow:
+    0 0 4px #fbbf24,
+    0 0 10px #f59e0b,
+    0 0 18px rgba(245, 158, 11, 0.85),
+    0 0 28px rgba(251, 191, 36, 0.55),
+    0 0 40px rgba(245, 158, 11, 0.35);
+  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.7));
+  animation: star-neon-pulse 2.2s ease-in-out infinite;
 }
 
-.game-stars .star.is-filled:nth-child(1) { transition-delay: 0ms; }
-.game-stars .star.is-filled:nth-child(2) { transition-delay: 40ms; }
-.game-stars .star.is-filled:nth-child(3) { transition-delay: 80ms; }
+.game-stars .star.is-filled:nth-child(1) { transition-delay: 0ms; animation-delay: 0s; }
+.game-stars .star.is-filled:nth-child(2) { transition-delay: 40ms; animation-delay: 0.15s; }
+.game-stars .star.is-filled:nth-child(3) { transition-delay: 80ms; animation-delay: 0.3s; }
+
+@keyframes star-neon-pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 4px #fbbf24,
+      0 0 10px #f59e0b,
+      0 0 18px rgba(245, 158, 11, 0.85),
+      0 0 28px rgba(251, 191, 36, 0.55),
+      0 0 40px rgba(245, 158, 11, 0.35);
+    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.7));
+  }
+  50% {
+    text-shadow:
+      0 0 6px #fde68a,
+      0 0 14px #fbbf24,
+      0 0 24px rgba(251, 191, 36, 0.95),
+      0 0 36px rgba(245, 158, 11, 0.7),
+      0 0 52px rgba(251, 191, 36, 0.45);
+    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.95));
+  }
+}
 
 html[data-theme="dark"] .game-stars .star {
   color: #475569;
 }
 
 html[data-theme="dark"] .game-stars .star.is-filled {
-  color: #fbbf24;
-  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+  color: #fef3c7;
+  text-shadow:
+    0 0 5px #fde68a,
+    0 0 12px #fbbf24,
+    0 0 22px rgba(251, 191, 36, 0.9),
+    0 0 34px rgba(245, 158, 11, 0.6),
+    0 0 48px rgba(251, 191, 36, 0.4);
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.85));
 }
 
 .game-launch {
   position: relative;
   z-index: 1;
-  grid-column: 1 / -1;
-  grid-row: 6;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  align-self: flex-end;
-  justify-self: start;
-  margin-top: 12px;
+  margin: 0;
   min-height: 48px;
   min-width: 140px;
   padding: 0 24px;
@@ -405,6 +447,7 @@ html[data-theme="dark"] .game-stars .star.is-filled {
   white-space: nowrap;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
 }
 
 .game-launch span {
@@ -804,13 +847,15 @@ a.game-launch:visited,
   line-height: 1.4;
   max-width: 100%;
 }
-a.game-launch,
-.game-launch {
+.game-card-actions {
   grid-column: 1 / -1 !important;
   grid-row: 5 !important;
-  justify-self: end !important;
-  align-self: end !important;
   margin-top: 8px !important;
+}
+a.game-launch,
+.game-launch {
+  /* stays inside .game-card-actions flex row */
+  margin-top: 0 !important;
 }
 
 /* ===== Unified responsive game grid (900 / 700 — match skill cards on phone) ===== */
@@ -886,7 +931,7 @@ a.game-launch,
   }
 
   .game-stars {
-    margin-top: 4px !important;
+    margin-top: 0 !important;
     font-size: 14px !important;
     gap: 2px !important;
   }
@@ -1088,7 +1133,7 @@ html[data-theme="dark"] .game-card:not(.game-card--playable) .game-meta { color:
 
   .game-stars {
     font-size: 14px !important;
-    margin-top: 4px !important;
+    margin-top: 0 !important;
   }
 
   a.game-launch,
@@ -1384,7 +1429,7 @@ a.game-launch,
   }
 
   .game-stars {
-    margin-top: 4px !important;
+    margin-top: 0 !important;
     font-size: 14px !important;
     gap: 2px !important;
   }

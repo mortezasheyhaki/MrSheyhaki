@@ -911,6 +911,429 @@
     html[data-theme="dark"] .feedback.ok { color: #34d399 !important; }
     html[data-theme="dark"] .feedback.bad { color: #f87171 !important; }
   </style>
+
+  <style id="pp-mobile-fit">
+    /* Phone: lock game screens to viewport — no page scroll */
+    @media (max-width: 700px) {
+      html, body {
+        height: 100%;
+        height: 100dvh;
+        max-height: 100dvh;
+        overflow: hidden !important;
+        overscroll-behavior: none;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100dvh;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+      }
+      .container {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        max-width: 100%;
+        width: 100%;
+        margin: 0 auto;
+        padding: 6px 8px 8px !important;
+        min-height: 0;
+        height: 100dvh;
+        max-height: 100dvh;
+        overflow: hidden !important;
+        box-sizing: border-box;
+      }
+      /* Hide site chrome while playing / on phone PP page */
+      .arcade-topbar,
+      footer,
+      .pp-site-footer,
+      .site-badge,
+      header .subtitle {
+        display: none !important;
+      }
+      header {
+        margin: 0 0 6px !important;
+        padding: 0 !important;
+        flex: 0 0 auto;
+      }
+      header h1 {
+        font-size: 1.15rem !important;
+        margin: 0 !important;
+        line-height: 1.2;
+      }
+      /* Menu: compact grid, no scroll */
+      #menu {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: auto;
+        gap: 8px !important;
+        padding: 4px 0 !important;
+      }
+      .menu-card {
+        padding: 12px 12px !important;
+        margin: 0 !important;
+      }
+      .menu-title { font-size: 0.95rem !important; }
+      .menu-desc { font-size: 0.75rem !important; line-height: 1.3; }
+
+      /* Active game fills remaining height */
+      .game-screen.active {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        animation: none !important;
+      }
+      .game-header {
+        flex: 0 0 auto;
+        margin-bottom: 6px !important;
+        gap: 6px !important;
+      }
+      .game-header h2 {
+        font-size: 1.05rem !important;
+        margin: 0;
+      }
+      .back-btn, .pp-back {
+        padding: 6px 10px !important;
+        font-size: 0.8rem !important;
+        min-height: 36px !important;
+      }
+      .progress-wrap {
+        height: 6px !important;
+        margin-bottom: 6px !important;
+        flex: 0 0 auto;
+      }
+      .status-bar {
+        flex: 0 0 auto;
+        gap: 4px !important;
+        margin-bottom: 6px !important;
+        flex-wrap: wrap;
+      }
+      .status-item {
+        padding: 4px 8px !important;
+        font-size: 0.72rem !important;
+        border-radius: 999px !important;
+      }
+      .panel {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 8px 8px !important;
+        margin-bottom: 0 !important;
+        overflow: hidden !important;
+      }
+      .panel > .hint,
+      .panel > p.hint,
+      #mr-msg {
+        flex: 0 0 auto;
+        font-size: 0.78rem !important;
+        margin: 0 0 6px !important;
+        line-height: 1.3;
+      }
+      /* Match Rush board */
+      .match-board,
+      .match-columns,
+      #mr-board {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px 8px !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        align-content: stretch;
+      }
+      .match-column {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 5px !important;
+        min-height: 0 !important;
+      }
+      .match-column h3 {
+        flex: 0 0 auto;
+        font-size: 0.65rem !important;
+        letter-spacing: 0.04em;
+        margin: 0 0 2px !important;
+        text-align: center;
+        opacity: 0.75;
+      }
+      .match-column .match-list,
+      .match-cards {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        min-height: 0;
+      }
+      .match-card {
+        flex: 1 1 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 6px 6px !important;
+        font-size: clamp(0.8rem, 3.4vw, 0.95rem) !important;
+        min-height: 0 !important;
+        border-radius: 10px !important;
+        line-height: 1.15 !important;
+      }
+
+      .mr-instructions {
+        text-align: center;
+        color: var(--text-muted);
+        margin: 0 0 6px !important;
+        font-size: 0.75rem !important;
+        line-height: 1.25 !important;
+        flex: 0 0 auto;
+      }
+      #game1 .panel {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      #game1 .match-board {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        margin-bottom: 0 !important;
+        gap: 6px 8px !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+      }
+      #game1 .match-column {
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 0 !important;
+        gap: 0 !important;
+      }
+      #game1 .match-column h3 {
+        margin: 0 0 4px !important;
+        font-size: 0.62rem !important;
+      }
+      #game1 .match-list {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 5px !important;
+      }
+      #game1 .match-card {
+        flex: 1 1 0 !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        padding: 4px 6px !important;
+        font-size: clamp(0.78rem, 3.2vw, 0.92rem) !important;
+      }
+      #round-msg {
+        flex: 0 0 auto;
+        max-height: 30vh;
+        overflow: auto;
+      }
+
+
+      /* ===== Write / Choose / Fill — phone fit ===== */
+      #game2.game-screen.active,
+      #game3.game-screen.active,
+      #game4.game-screen.active {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+      }
+
+      #game2 .panel,
+      #game2 #write-container,
+      #game3 .choose-panel,
+      #game3 #choose-container,
+      #game4 .panel {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+        margin-bottom: 0 !important;
+        padding: 8px !important;
+      }
+
+      /* Write: one question fills screen */
+      #write-container .write-item {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 10px 8px !important;
+        overflow: auto !important;
+        -webkit-overflow-scrolling: touch;
+      }
+      #write-container .write-prompt {
+        font-size: 0.95rem !important;
+        margin-bottom: 10px !important;
+      }
+      #write-container .write-input {
+        font-size: 16px !important; /* no iOS zoom */
+        padding: 12px !important;
+        min-height: 48px !important;
+      }
+      #write-container .feedback {
+        font-size: 0.8rem !important;
+        margin-top: 6px !important;
+      }
+      #write-container .btn-group,
+      #game2 .btn-group {
+        flex: 0 0 auto;
+        margin-top: 8px !important;
+        gap: 8px !important;
+      }
+
+      /* Choose: question + options fill screen */
+      #choose-container .choose-item {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 4px 0 !important;
+        overflow: hidden !important;
+      }
+      #choose-container .choose-q {
+        flex: 0 0 auto;
+        font-size: clamp(1rem, 4.2vw, 1.25rem) !important;
+        margin-bottom: 14px !important;
+        padding: 4px 2px !important;
+        line-height: 1.35 !important;
+      }
+      #choose-container .options {
+        flex: 0 0 auto;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+        max-width: 100%;
+      }
+      #choose-container .option-btn {
+        min-height: 48px !important;
+        padding: 12px 14px !important;
+        font-size: 0.95rem !important;
+        width: 100% !important;
+      }
+      #choose-container .feedback {
+        flex: 0 0 auto;
+        margin-top: 8px !important;
+        font-size: 0.85rem !important;
+      }
+
+      /* Fill: dialogue fits with internal scroll only if needed */
+      #game4 .dialogue,
+      #fill-dialogue {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        overflow: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding: 8px !important;
+        margin: 0 !important;
+        font-size: 0.9rem !important;
+        line-height: 1.45 !important;
+      }
+      #game4 .blank-input {
+        font-size: 16px !important;
+        width: min(90px, 28vw) !important;
+        padding: 4px 4px !important;
+        margin: 1px !important;
+      }
+      #game4 .blank-input.wide {
+        width: min(120px, 40vw) !important;
+      }
+      #game4 .btn-group,
+      #game4 .panel > .btn-group {
+        flex: 0 0 auto;
+        margin-top: 8px !important;
+        gap: 8px !important;
+      }
+      #game4 .status-bar {
+        margin-bottom: 4px !important;
+      }
+
+      /* Shared: results inside game shouldn't force page scroll */
+      .game-screen.active .results-box,
+      .game-screen.active .round-complete {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 16px 12px !important;
+      }
+
+      .results-box, .round-complete {
+        padding: 14px 12px !important;
+        margin-top: 8px !important;
+      }
+      .score-big { font-size: 1.8rem !important; }
+      .btn {
+        min-height: 42px !important;
+        padding: 10px 16px !important;
+        font-size: 0.9rem !important;
+      }
+    }
+
+
+      /* Pin action buttons to bottom of game screen */
+      #game2 .btn-group,
+      #game3 .btn-group,
+      #game4 .btn-group,
+      #write-btns,
+      #choose-btns {
+        flex: 0 0 auto !important;
+        margin-top: auto !important;
+        padding-top: 8px !important;
+        width: 100% !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 8px !important;
+      }
+      #game2 #write-results,
+      #game3 #choose-results,
+      #game4 #fill-results {
+        flex: 0 0 auto;
+        max-height: 40vh;
+        overflow: auto;
+      }
+      .fill-instructions {
+        flex: 0 0 auto;
+        margin: 0 0 6px !important;
+        color: var(--text-muted);
+        font-size: 0.75rem !important;
+        line-height: 1.3 !important;
+      }
+      /* Shorten long titles on phone */
+      #game3 .game-header h2,
+      #game4 .game-header h2 {
+        font-size: 0.95rem !important;
+        max-width: 62vw;
+        line-height: 1.2;
+      }
+      /* Hide arcade topbar during play too */
+      body.pp-playing .arcade-topbar {
+        display: none !important;
+      }
+
+    /* When a game is active, hide main page header title block to free space */
+    @media (max-width: 700px) {
+      body.pp-playing header,
+      body.pp-playing .pp-home-header {
+        display: none !important;
+      }
+      body.pp-playing #menu {
+        display: none !important;
+      }
+    }
+  </style>
+
 </head>
 <body>
   <div class="arcade-topbar">
@@ -965,9 +1388,7 @@
       </div>
 
       <div class="panel">
-        <p style="text-align:center;color:var(--text-muted);margin-bottom:16px;font-size:0.95rem;">
-          Click a base verb on the left, then its past participle on the right.
-        </p>
+        <p class="mr-instructions">Click a base verb on the left, then its past participle on the right.</p>
         <div class="match-board">
           <div class="match-column">
             <h3>Base form</h3>
@@ -1039,9 +1460,7 @@
       </div>
 
       <div class="panel">
-        <p style="margin-bottom:16px;color:var(--text-muted);font-size:0.95rem;">
-          Put the verbs in parentheses in the <strong>present perfect</strong> or <strong>simple past</strong>.
-        </p>
+        <p class="fill-instructions">Put the verbs in the <strong>present perfect</strong> or <strong>simple past</strong>.</p>
         <div class="dialogue" id="fill-dialogue"></div>
       </div>
 
@@ -1169,12 +1588,14 @@
     }
 
     function showMenu() {
+      document.body.classList.remove('pp-playing');
       document.querySelectorAll('.game-screen').forEach(el => el.classList.remove('active'));
       document.getElementById('menu').style.display = 'grid';
       document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('active'));
     }
 
     function startGame(n) {
+      document.body.classList.add('pp-playing');
       ppRecordPlay();
       document.getElementById('menu').style.display = 'none';
       document.querySelectorAll('.game-screen').forEach(el => el.classList.remove('active'));
