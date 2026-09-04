@@ -19,11 +19,11 @@
  *     vocab-food-match-rush, vocab-food-a-an-some, vocab-food-memory
  *   Grammar
  *     be-verbs, simple-present, there-is-there-are, simple-past, present-perfect,
- *     grammar-phrasal-verbs, nouns
+ *     grammar-phrasal-verbs, nouns, grammar-how-much-how-many
  *   Writing
  *     writing-sara-daily
  *   Speaking
- *     speaking-supermarket
+ *     speaking-supermarket, speaking-how-much-how-many
  */
 (function (global) {
   "use strict";
