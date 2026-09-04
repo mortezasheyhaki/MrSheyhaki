@@ -2,12 +2,527 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0; url=../adjective-sentences/" />
-  <link rel="canonical" href="../adjective-sentences/" />
-  <title>Redirecting…</title>
-  <script>location.replace("../adjective-sentences/");</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Adjective Sentences · Unit 4B</title>
+  <script>
+  (function () {
+    try {
+      var t = localStorage.getItem("mrsheyhaki-theme");
+      if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+      else if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches)
+        document.documentElement.setAttribute("data-theme", "dark");
+      else document.documentElement.setAttribute("data-theme", "light");
+    } catch (e) {}
+  })();
+  </script>
+  <style>
+    :root {
+      --bg: #f3efff;
+      --paper: #ffffff;
+      --ink: #1e2433;
+      --muted: #6b7280;
+      --purple: #6937d8;
+      --purple-deep: #5425b8;
+      --line: #e5e7eb;
+      --ok: #16a34a;
+      --bad: #e11d48;
+      --soft: #f3efff;
+    }
+    html[data-theme="dark"] {
+      --bg: #0f1220;
+      --paper: #1a1f2e;
+      --ink: #e8ecf4;
+      --muted: #94a3b8;
+      --line: #2d3548;
+      --soft: #243044;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { min-height: 100%; min-height: 100dvh; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      display: flex;
+      justify-content: center;
+      padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+    }
+    body.no-profile-fab .profile-fab,
+    body.no-profile-fab a.profile-fab,
+    .profile-fab { display: none !important; }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      background: var(--paper);
+      border-radius: 22px;
+      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+      display: flex;
+      flex-direction: column;
+      min-height: min(640px, calc(100dvh - 24px));
+      overflow: hidden;
+    }
+
+    .screen { display: none; flex-direction: column; flex: 1; padding: 18px 16px 20px; }
+    .screen.active { display: flex; }
+
+    .top {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 12px;
+    }
+    .back-btn {
+      appearance: none; border: none; cursor: pointer;
+      background: var(--soft); color: var(--ink);
+      font-weight: 800; font-size: 0.9rem;
+      padding: 10px 14px; border-radius: 999px;
+      min-height: 44px; text-decoration: none;
+      display: inline-flex; align-items: center;
+    }
+    .pill {
+      font-size: 0.8rem; font-weight: 800; color: var(--purple);
+      background: var(--soft); padding: 8px 12px; border-radius: 999px;
+    }
+    .eyebrow {
+      font-size: 0.72rem; font-weight: 900; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--purple); margin-bottom: 6px;
+    }
+    h1 { font-size: 1.55rem; font-weight: 900; margin-bottom: 8px; }
+    h2 { font-size: 1.2rem; font-weight: 900; margin-bottom: 8px; }
+    .lead { color: var(--muted); font-weight: 600; margin-bottom: 16px; line-height: 1.45; }
+    .instr { color: var(--muted); font-weight: 600; font-size: 0.92rem; margin-bottom: 12px; }
+
+    .part-list { display: grid; gap: 10px; margin-top: 8px; }
+    .part-btn {
+      appearance: none; border: 2px solid var(--line); background: var(--paper);
+      border-radius: 16px; padding: 14px; text-align: left; cursor: pointer;
+      display: flex; gap: 12px; align-items: flex-start; font: inherit; color: inherit;
+      min-height: 48px; transition: border-color 0.15s, transform 0.15s;
+    }
+    .part-btn:hover { border-color: var(--purple); transform: translateY(-1px); }
+    .part-btn .letter {
+      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--purple); color: #fff; font-weight: 900;
+    }
+    .part-btn strong { display: block; font-size: 1rem; margin-bottom: 2px; }
+    .part-btn small { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
+
+    .progress {
+      height: 8px; background: var(--soft); border-radius: 999px;
+      overflow: hidden; margin-bottom: 14px;
+    }
+    .progress > span {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, #a78bfa, var(--purple));
+      transition: width 0.3s ease;
+    }
+
+    .a-card {
+      background: var(--soft); border-radius: 16px; padding: 14px;
+      margin-bottom: 12px;
+    }
+    .pic-wrap {
+      width: 100%; aspect-ratio: 16/10; border-radius: 12px;
+      background: #ddd6fe; display: flex; align-items: center; justify-content: center;
+      overflow: hidden; margin-bottom: 10px;
+    }
+    html[data-theme="dark"] .pic-wrap { background: #2e1065; }
+    .pic-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .placeholder { text-align: center; color: var(--muted); font-weight: 700; padding: 12px; font-size: 0.9rem; }
+    .adj-tag {
+      display: inline-block; font-weight: 900; color: var(--purple);
+      background: var(--paper); padding: 6px 12px; border-radius: 999px; font-size: 0.9rem;
+    }
+
+    input[type="text"] {
+      width: 100%; padding: 14px 14px; border-radius: 14px;
+      border: 2px solid var(--line); font: inherit; font-weight: 700;
+      font-size: 16px; background: var(--paper); color: var(--ink); margin-bottom: 10px;
+    }
+    input[type="text"]:focus {
+      outline: none; border-color: var(--purple);
+      box-shadow: 0 0 0 4px rgba(105, 55, 216, 0.15);
+    }
+    input.is-ok { border-color: var(--ok); }
+    input.is-bad { border-color: var(--bad); }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+    .btn {
+      appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+      padding: 14px 18px; border-radius: 999px; min-height: 48px; font-size: 1rem;
+    }
+    .btn-primary {
+      background: linear-gradient(180deg, #8b5cf6, var(--purple));
+      color: #fff; box-shadow: 0 5px 0 var(--purple-deep);
+      flex: 1;
+    }
+    .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--purple-deep); }
+    .btn-ghost {
+      background: var(--soft); color: var(--ink);
+    }
+
+    .feedback { min-height: 1.3em; margin-top: 10px; font-weight: 800; font-size: 0.92rem; }
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+
+    .slots, .bank {
+      display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+      min-height: 52px; margin-bottom: 12px;
+    }
+    .slots {
+      border: 2px dashed var(--line); border-radius: 14px; padding: 12px;
+      background: var(--soft);
+    }
+    .chip {
+      appearance: none; border: none; cursor: pointer;
+      font: inherit; font-weight: 800; font-size: 0.95rem;
+      padding: 12px 14px; border-radius: 12px; min-height: 44px;
+      background: var(--purple); color: #fff;
+    }
+    .chip.in-slot { opacity: 0.35; }
+    .label-sm {
+      font-size: 0.72rem; font-weight: 900; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 8px;
+    }
+
+    .finish-inner {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center; gap: 10px;
+    }
+    .score-big { font-size: 2.2rem; font-weight: 900; color: var(--purple); }
+
+    .site-theme-fab, [data-theme-toggle] {
+      position: fixed !important;
+      top: max(12px, env(safe-area-inset-top)) !important;
+      right: max(12px, env(safe-area-inset-right)) !important;
+      z-index: 10070 !important;
+      width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
+      background: linear-gradient(180deg, #8b5cf6, #6d28d9); color: #fff; font-size: 1.1rem;
+    }
+
+    @media (max-width: 700px) {
+      body { padding: 8px; }
+      .app { min-height: calc(100dvh - 16px); border-radius: 16px; }
+    }
+  </style>
 </head>
-<body>
-  <p>Redirecting to <a href="../adjective-sentences/">Adjective Sentences</a>…</p>
+<body class="no-profile-fab">
+  <button type="button" class="site-theme-fab" data-theme-toggle aria-label="Toggle theme" title="Theme">🌓</button>
+
+  <div class="app">
+    <!-- HUB -->
+    <section id="hub" class="screen active">
+      <div class="top">
+        <a class="back-btn" href="../">← Games</a>
+      </div>
+      <p class="eyebrow">Unit 4B · Adjectives</p>
+      <h1>Adjective Sentences</h1>
+      <p class="lead">Practice <strong>It's a / an</strong> and <strong>They're</strong> with adjectives — then put words in order.</p>
+      <div class="part-list">
+        <button type="button" class="part-btn" data-part="a">
+          <span class="letter">A</span>
+          <span>
+            <strong>Write sentences</strong>
+            <small>It's a/an or They're + adjective + noun.</small>
+          </span>
+        </button>
+        <button type="button" class="part-btn" data-part="b">
+          <span class="letter">B</span>
+          <span>
+            <strong>Order the words</strong>
+            <small>Tap words to build the correct sentence.</small>
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <!-- PART A -->
+    <section id="partA" class="screen">
+      <div class="top">
+        <button type="button" class="back-btn" id="aBack">← Parts</button>
+        <span class="pill" id="aPill">1 / 6</span>
+      </div>
+      <p class="instr">Write a sentence with <strong>It's a / an</strong> or <strong>They're</strong> + adjective + noun.</p>
+      <div class="progress"><span id="aBar"></span></div>
+      <div class="a-card">
+        <div class="pic-wrap" id="aPic">
+          <div class="placeholder" id="aPlaceholder">Image</div>
+        </div>
+        <span class="adj-tag" id="aAdj">(old)</span>
+      </div>
+      <input id="aInput" type="text" placeholder="e.g. It's an old car." autocomplete="off" />
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" id="aSkip">Skip</button>
+        <button type="button" class="btn btn-primary" id="aCheck">Check</button>
+      </div>
+      <div class="feedback" id="aFeedback"></div>
+    </section>
+
+    <!-- PART B -->
+    <section id="partB" class="screen">
+      <div class="top">
+        <button type="button" class="back-btn" id="bBack">← Parts</button>
+        <span class="pill" id="bPill">1 / 7</span>
+      </div>
+      <p class="instr">Tap the words in the correct order.</p>
+      <div class="progress"><span id="bBar"></span></div>
+      <p class="label-sm">Your sentence</p>
+      <div class="slots" id="bSlot"></div>
+      <p class="label-sm">Word bank</p>
+      <div class="bank" id="bBank"></div>
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" id="bClear">Clear</button>
+        <button type="button" class="btn btn-primary" id="bCheck">Check</button>
+      </div>
+      <div class="feedback" id="bFeedback"></div>
+    </section>
+
+    <!-- FINISH -->
+    <section id="finish" class="screen">
+      <div class="finish-inner">
+        <h2>Part complete!</h2>
+        <p class="score-big" id="finishScore">0 / 0</p>
+        <p class="lead" id="finishMsg"></p>
+        <div class="actions" style="justify-content:center;width:100%">
+          <button type="button" class="btn btn-primary" id="finishAgain">Play again</button>
+          <button type="button" class="btn btn-ghost" id="finishHub">All parts</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var PART_A = [
+      { adj: "old", img: "images/01.png", hint: "old car",
+        answers: ["it's an old car", "it is an old car"] },
+      { adj: "black", img: "images/02.png", hint: "black coats / jackets",
+        answers: ["they're black coats", "they are black coats", "they're black jackets", "they are black jackets"] },
+      { adj: "new", img: "images/03.png", hint: "new phone",
+        answers: ["it's a new phone", "it is a new phone", "it's a new mobile", "it is a new mobile"] },
+      { adj: "big", img: "images/04.png", hint: "big houses",
+        answers: ["they're big houses", "they are big houses", "they're big homes", "they are big homes"] },
+      { adj: "expensive", img: "images/05.png", hint: "expensive glasses",
+        answers: ["they're expensive glasses", "they are expensive glasses", "they're expensive sunglasses", "they are expensive sunglasses"] },
+      { adj: "good", img: "images/06.png", hint: "good book",
+        answers: ["it's a good book", "it is a good book"] }
+    ];
+
+    var PART_B = [
+      { words: ["It's", "a", "beautiful", "day"], answer: "It's a beautiful day." },
+      { words: ["Amy's", "husband", "is", "very", "nice"], answer: "Amy's husband is very nice." },
+      { words: ["They're", "very", "difficult", "questions"], answer: "They're very difficult questions." },
+      { words: ["This", "is", "a", "cheap", "phone"], answer: "This is a cheap phone." },
+      { words: ["It's", "a", "terrible", "photo"], answer: "It's a terrible photo." },
+      { words: ["Natsuko", "is", "a", "fantastic", "teacher"], answer: "Natsuko is a fantastic teacher." },
+      { words: ["Our", "cat", "is", "very", "old"], answer: "Our cat is very old." }
+    ];
+
+    var part = "a";
+    var index = 0;
+    var score = 0;
+    var built = [];
+
+    function $(id) { return document.getElementById(id); }
+
+    function show(id) {
+      ["hub", "partA", "partB", "finish"].forEach(function (s) {
+        var el = $(s);
+        if (!el) return;
+        if (s === id) el.classList.add("active");
+        else el.classList.remove("active");
+      });
+    }
+
+    function norm(s) {
+      return String(s || "").toLowerCase().replace(/[’']/g, "'").replace(/[.,!?]/g, "").replace(/\s+/g, " ").trim();
+    }
+
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function startPart(p) {
+      part = p;
+      index = 0;
+      score = 0;
+      built = [];
+      if (p === "a") {
+        show("partA");
+        loadA();
+      } else {
+        show("partB");
+        loadB();
+      }
+    }
+
+    function loadA() {
+      var item = PART_A[index];
+      $("aPill").textContent = (index + 1) + " / " + PART_A.length;
+      $("aBar").style.width = (index / PART_A.length * 100) + "%";
+      $("aAdj").textContent = "(" + item.adj + ")";
+      $("aFeedback").textContent = "";
+      $("aFeedback").className = "feedback";
+      $("aInput").value = "";
+      $("aInput").className = "";
+      $("aInput").placeholder = "e.g. " + item.answers[0].replace(/^./, function(c){ return c.toUpperCase(); });
+
+      var pic = $("aPic");
+      pic.innerHTML = "";
+      var img = document.createElement("img");
+      img.src = item.img;
+      img.alt = item.hint;
+      img.onerror = function () {
+        pic.innerHTML = '<div class="placeholder"><strong>' + item.hint + "</strong><br/>Add " + item.img + "</div>";
+      };
+      pic.appendChild(img);
+      setTimeout(function () { $("aInput").focus(); }, 50);
+    }
+
+    function checkA() {
+      var item = PART_A[index];
+      var val = norm($("aInput").value);
+      if (!val) {
+        $("aFeedback").textContent = "Please write a sentence.";
+        $("aFeedback").className = "feedback bad";
+        return;
+      }
+      var ok = item.answers.some(function (a) { return norm(a) === val; });
+      if (ok) {
+        score += 1;
+        $("aInput").className = "is-ok";
+        $("aFeedback").textContent = "Correct!";
+        $("aFeedback").className = "feedback ok";
+        setTimeout(function () {
+          index += 1;
+          if (index >= PART_A.length) endPart(PART_A.length);
+          else loadA();
+        }, 650);
+      } else {
+        $("aInput").className = "is-bad";
+        $("aFeedback").textContent = "Try again — use It's a/an or They're + " + item.adj + ".";
+        $("aFeedback").className = "feedback bad";
+      }
+    }
+
+    function skipA() {
+      index += 1;
+      if (index >= PART_A.length) endPart(PART_A.length);
+      else loadA();
+    }
+
+    function loadB() {
+      var item = PART_B[index];
+      built = [];
+      $("bPill").textContent = (index + 1) + " / " + PART_B.length;
+      $("bBar").style.width = (index / PART_B.length * 100) + "%";
+      $("bFeedback").textContent = "";
+      $("bFeedback").className = "feedback";
+      $("bSlot").innerHTML = "";
+      $("bBank").innerHTML = "";
+      shuffle(item.words).forEach(function (w, i) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "chip";
+        b.textContent = w;
+        b.dataset.word = w;
+        b.dataset.id = String(i);
+        b.addEventListener("click", function () {
+          if (b.classList.contains("in-slot")) return;
+          b.classList.add("in-slot");
+          built.push({ word: w, btn: b });
+          renderSlots();
+        });
+        $("bBank").appendChild(b);
+      });
+    }
+
+    function renderSlots() {
+      var box = $("bSlot");
+      box.innerHTML = "";
+      built.forEach(function (item, idx) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "chip";
+        b.textContent = item.word;
+        b.addEventListener("click", function () {
+          item.btn.classList.remove("in-slot");
+          built.splice(idx, 1);
+          renderSlots();
+        });
+        box.appendChild(b);
+      });
+    }
+
+    function clearB() {
+      built.forEach(function (item) { item.btn.classList.remove("in-slot"); });
+      built = [];
+      renderSlots();
+      $("bFeedback").textContent = "";
+    }
+
+    function checkB() {
+      var item = PART_B[index];
+      if (!built.length) {
+        $("bFeedback").textContent = "Build the sentence first.";
+        $("bFeedback").className = "feedback bad";
+        return;
+      }
+      var user = built.map(function (x) { return x.word; }).join(" ");
+      if (norm(user) === norm(item.answer)) {
+        score += 1;
+        $("bFeedback").textContent = "Correct! " + item.answer;
+        $("bFeedback").className = "feedback ok";
+        setTimeout(function () {
+          index += 1;
+          if (index >= PART_B.length) endPart(PART_B.length);
+          else loadB();
+        }, 800);
+      } else {
+        $("bFeedback").textContent = "Not quite — try a different order.";
+        $("bFeedback").className = "feedback bad";
+      }
+    }
+
+    function endPart(total) {
+      show("finish");
+      $("finishScore").textContent = score + " / " + total;
+      $("finishMsg").textContent = score === total ? "Perfect score!" : "Keep practising — you can replay this part.";
+      $("aBar").style.width = "100%";
+      $("bBar").style.width = "100%";
+      try {
+        if (window.LAStars) {
+          var acc = total ? Math.round((score / total) * 100) : 0;
+          LAStars.recordPlay("starter-4b-adjective-sentences");
+          LAStars.saveFromAccuracy("starter-4b-adjective-sentences", acc);
+        }
+      } catch (e) {}
+    }
+
+    document.querySelectorAll(".part-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () { startPart(btn.getAttribute("data-part")); });
+    });
+    $("aBack").addEventListener("click", function () { show("hub"); });
+    $("bBack").addEventListener("click", function () { show("hub"); });
+    $("aCheck").addEventListener("click", checkA);
+    $("aSkip").addEventListener("click", skipA);
+    $("aInput").addEventListener("keydown", function (e) { if (e.key === "Enter") checkA(); });
+    $("bCheck").addEventListener("click", checkB);
+    $("bClear").addEventListener("click", clearB);
+    $("finishAgain").addEventListener("click", function () { startPart(part); });
+    $("finishHub").addEventListener("click", function () { show("hub"); });
+
+    // Always show hub on load
+    show("hub");
+  })();
+  </script>
+  <script src="../../../../../../../learningarcade/la-stars.js"></script>
+  <script src="../../../../../../../learningarcade/theme.js"></script>
 </body>
 </html>

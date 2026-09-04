@@ -171,7 +171,9 @@
     });
 
     // If still no profile control anywhere, inject a fixed one (game pages without arcade-nav)
-    if (!isKidsWorld && !document.querySelector("a.nav-profile, a.profile-fab:not([hidden])")) {
+    // Skip when page opts out: body.no-profile-fab / body.no-profile
+    var noProfile = document.body.classList.contains("no-profile-fab") || document.body.classList.contains("no-profile");
+    if (!isKidsWorld && !noProfile && !document.querySelector("a.nav-profile, a.profile-fab:not([hidden])")) {
       var fab = document.createElement("a");
       fab.href = resolveArcadeHref("profile/");
       fab.className = "profile-fab profile-fab--header";
@@ -182,8 +184,8 @@
       document.body.appendChild(fab);
     }
 
-    if (isKidsWorld) {
-      document.querySelectorAll("a.nav-profile, .nav-profile, a.profile-fab").forEach(function (el) {
+    if (isKidsWorld || document.body.classList.contains("no-profile-fab") || document.body.classList.contains("no-profile")) {
+      document.querySelectorAll("a.nav-profile, .nav-profile, a.profile-fab, .profile-fab").forEach(function (el) {
         el.style.display = "none";
         el.setAttribute("hidden", "true");
       });
