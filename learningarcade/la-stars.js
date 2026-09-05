@@ -37,6 +37,15 @@
    * Format: childId → parentId (or array of parent ids)
    */
   var ALIASES = {
+    // Topics · Numbers (child games → parent topic card)
+    "topics-numbers-match": "topics-numbers",
+    "topics-numbers-write-word": "topics-numbers",
+    "topics-numbers-speak": "topics-numbers",
+    "topics-numbers-listen-write": "topics-numbers",
+    "topics-numbers-listen-choose": "topics-numbers",
+    "topics-numbers-personal-form": "topics-numbers",
+    "topics-numbers-flashcards": "topics-numbers",
+
     // Clothes hub games → main Vocabulary card
     "vocab-clothes-voice-hunt": "vocab-clothes-match",
     // Colors mini-games → main Colors card

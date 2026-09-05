@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Listen & Write · Personal info</title>
+  <script>
+  (function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+  if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+  else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+  document.documentElement.setAttribute("data-theme","dark");
+  else document.documentElement.setAttribute("data-theme","light");
+  }catch(e){}})();
+  </script>
+  <link rel="stylesheet" href="../../../learningarcade/theme.css" />
+  <style>
+    :root {
+      --bg: #f8fafc; --card: #fff; --text: #0f172a; --muted: #64748b;
+      --line: #e2e8f0; --blue: #2563eb; --blue-deep: #1d4ed8;
+      --ok: #059669; --bad: #e11d48; --shadow: 0 14px 36px rgba(15,23,42,.08);
+    }
+    html[data-theme="dark"] {
+      --bg: #0f1220; --card: #1a1f2e; --text: #f1f5f9; --muted: #94a3b8;
+      --line: #2d3548; --shadow: 0 14px 36px rgba(0,0,0,.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(700px 360px at 0% 0%, rgba(37,99,235,.12), transparent 55%), var(--bg);
+      color: var(--text); min-height: 100dvh; padding: 14px 14px 28px;
+    }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    .top {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 12px;
+    }
+    .back {
+      display: inline-flex; text-decoration: none; font-weight: 800; color: var(--text);
+      background: var(--card); border: 1px solid var(--line);
+      padding: 10px 14px; border-radius: 999px; min-height: 44px;
+    }
+    .badge {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 0.06em;
+      text-transform: uppercase; color: #fff;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      padding: 8px 12px; border-radius: 999px;
+    }
+    h1 { font-size: clamp(1.25rem, 3.5vw, 1.55rem); font-weight: 900; margin-bottom: 4px; }
+    .lead { color: var(--muted); font-weight: 600; font-size: 0.95rem; margin-bottom: 16px; line-height: 1.45; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .start-card, .stage, .finish-box {
+      background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+      padding: 22px 18px; box-shadow: var(--shadow);
+    }
+    .start-card { text-align: center; }
+    .start-card p { color: var(--muted); font-weight: 600; margin-bottom: 16px; line-height: 1.45; }
+
+    .hud {
+      display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; margin-bottom: 12px;
+    }
+    .pill {
+      font-weight: 800; font-size: 0.85rem; padding: 8px 12px; border-radius: 999px;
+      background: var(--card); border: 1px solid var(--line); color: var(--blue);
+    }
+    .progress { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
+    .progress > span {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, #60a5fa, #2563eb); transition: width .3s ease;
+    }
+
+    .q-label {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 6px; text-align: center;
+    }
+    .form-line {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+      gap: 8px; margin: 10px 0 14px; font-weight: 800; font-size: 1.15rem;
+    }
+    .form-line .icon { font-size: 1.4rem; }
+    .form-line .fixed { color: var(--muted); }
+
+    .listen-btn {
+      appearance: none; border: none; cursor: pointer;
+      width: 68px; height: 68px; border-radius: 50%;
+      background: linear-gradient(180deg, #60a5fa, #2563eb); color: #fff;
+      font-size: 1.6rem; margin: 4px auto 12px;
+      box-shadow: 0 6px 0 var(--blue-deep);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .listen-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--blue-deep); }
+    .listen-btn.playing { animation: pulse 1s ease infinite; }
+    @keyframes pulse {
+      0%, 100% { outline: 0 solid rgba(96,165,250,0.3); }
+      50% { outline: 8px solid rgba(96,165,250,0.25); }
+    }
+    .hint { color: var(--muted); font-weight: 600; font-size: 0.9rem; text-align: center; margin-bottom: 12px; }
+
+    input[type="text"] {
+      padding: 12px 14px; border-radius: 12px; border: 2px solid var(--line);
+      font: inherit; font-weight: 800; font-size: 1.15rem; text-align: center;
+      background: var(--bg); color: var(--text); min-width: 120px;
+    }
+    input.wide { min-width: 180px; width: min(100%, 240px); letter-spacing: 0.04em; }
+    input[type="text"]:focus {
+      outline: none; border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+    }
+    input.is-ok { border-color: var(--ok); }
+    input.is-bad { border-color: var(--bad); }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .btn {
+      appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+      min-height: 48px; padding: 12px 20px; border-radius: 999px;
+    }
+    .btn-primary {
+      background: linear-gradient(180deg, #60a5fa, #2563eb); color: #fff;
+      box-shadow: 0 5px 0 var(--blue-deep);
+    }
+    .btn-ghost { background: var(--bg); color: var(--text); border: 2px solid var(--line); }
+
+    .feedback { min-height: 1.4em; margin-top: 12px; font-weight: 800; text-align: center; }
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+
+    .finish-box { text-align: center; }
+    .finish-box h2 { font-size: 1.45rem; font-weight: 900; margin-bottom: 8px; }
+    .score-big { font-size: 2rem; font-weight: 900; color: var(--blue); margin-bottom: 8px; }
+    .finish-box p { color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+
+    .overview {
+      margin-top: 16px; text-align: left; font-size: 0.9rem; font-weight: 600;
+      color: var(--muted); line-height: 1.5;
+    }
+    .overview strong { color: var(--text); }
+  </style>
+</head>
+<body class="no-profile-fab">
+  <div class="wrap">
+    <div class="top">
+      <a class="back" href="../">← Numbers</a>
+      <span class="badge">Personal info</span>
+    </div>
+
+    <section id="menu" class="screen active">
+      <h1>Listen &amp; write the numbers</h1>
+      <p class="lead">Listen to four short conversations. Write the missing numbers on the form.</p>
+      <div class="start-card">
+        <p>Phone · Address · Age · Email</p>
+        <button type="button" class="btn btn-primary" id="btnStart">Start</button>
+      </div>
+    </section>
+
+    <section id="play" class="screen">
+      <div class="hud">
+        <span class="pill" id="qPill">1 / 4</span>
+        <span class="pill" id="scorePill">0 correct</span>
+      </div>
+      <div class="progress"><span id="bar"></span></div>
+      <div class="stage">
+        <p class="q-label" id="qLabel">1 · Phone number</p>
+        <button type="button" class="listen-btn" id="btnListen" aria-label="Play">🔊</button>
+        <p class="hint" id="hint">Write the number you hear.</p>
+        <div class="form-line" id="formLine"></div>
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" id="btnReplay">Play again</button>
+          <button type="button" class="btn btn-primary" id="btnCheck">Check</button>
+        </div>
+        <p class="feedback" id="feedback"></p>
+      </div>
+    </section>
+
+    <section id="finish" class="screen">
+      <div class="finish-box">
+        <h2>Form complete!</h2>
+        <div class="score-big" id="finishScore">0 / 4</div>
+        <p id="finishMsg">Nice listening.</p>
+        <div class="overview" id="overview"></div>
+        <div class="actions" style="margin-top:16px">
+          <button type="button" class="btn btn-primary" id="btnAgain">Play again</button>
+          <a class="btn btn-ghost" href="../" style="text-decoration:none;display:inline-flex;align-items:center">Numbers</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="../../../learningarcade/theme.js"></script>
+  <script>
+  (function () {
+    "use strict";
+
+    var ITEMS = [
+      {
+        id: 1,
+        title: "1 · Phone number",
+        hint: "Write the cell phone number.",
+        start: 6.5,
+        end: 22.0,
+        // 303-555-04152 from audio (3 0 3 5 5 5 0 4 1 5 2)
+        answers: ["30355504152", "3035550415"],
+        display: "303-555-04152",
+        render: "phone"
+      },
+      {
+        id: 2,
+        title: "2 · Address",
+        hint: "Write the house number for Oak Street.",
+        start: 23.5,
+        end: 30.5,
+        answers: ["57"],
+        display: "57 Oak Street",
+        render: "address"
+      },
+      {
+        id: 3,
+        title: "3 · Age",
+        hint: "How old is he?",
+        start: 31.0,
+        end: 42.5,
+        answers: ["39"],
+        display: "39",
+        render: "age"
+      },
+      {
+        id: 4,
+        title: "4 · Email",
+        hint: "Write the numbers in the email address.",
+        start: 43.0,
+        end: 58.5,
+        answers: ["85"],
+        display: "james85@geemail.com",
+        render: "email"
+      }
+    ];
+
+    var index = 0;
+    var score = 0;
+    var audio = null;
+    var stopTimer = null;
+
+    function $(id) { return document.getElementById(id); }
+
+    function show(id) {
+      ["menu", "play", "finish"].forEach(function (s) {
+        $(s).classList.toggle("active", s === id);
+      });
+    }
+
+    function digitsOnly(s) {
+      return String(s || "").replace(/\D/g, "");
+    }
+
+    function stopClip() {
+      if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
+      if (audio) { try { audio.pause(); } catch (e) {} }
+      $("btnListen").classList.remove("playing");
+    }
+
+    function playClip() {
+      var item = ITEMS[index];
+      if (!item) return;
+      stopClip();
+      if (!audio) {
+        audio = new Audio("audio/personal-info.mp3");
+        audio.preload = "auto";
+      }
+      var run = function () {
+        try { audio.currentTime = item.start; } catch (e) {}
+        var p = audio.play();
+        $("btnListen").classList.add("playing");
+        if (p && p.catch) p.catch(function () { $("btnListen").classList.remove("playing"); });
+        var ms = Math.max(400, (item.end - item.start) * 1000);
+        stopTimer = setTimeout(function () {
+          try { audio.pause(); } catch (e) {}
+          $("btnListen").classList.remove("playing");
+        }, ms);
+      };
+      if (audio.readyState >= 2) run();
+      else {
+        audio.addEventListener("canplay", function once() {
+          audio.removeEventListener("canplay", once);
+          run();
+        });
+        audio.load();
+      }
+    }
+
+    function renderForm(item) {
+      var line = $("formLine");
+      line.innerHTML = "";
+      if (item.render === "phone") {
+        line.innerHTML = '<span class="icon" aria-hidden="true">📞</span>';
+        var inp = document.createElement("input");
+        inp.type = "text";
+        inp.id = "answer";
+        inp.className = "wide";
+        inp.inputMode = "numeric";
+        inp.autocomplete = "off";
+        inp.placeholder = "e.g. 303-555-…";
+        line.appendChild(inp);
+      } else if (item.render === "address") {
+        var inp = document.createElement("input");
+        inp.type = "text";
+        inp.id = "answer";
+        inp.inputMode = "numeric";
+        inp.autocomplete = "off";
+        inp.placeholder = "??";
+        inp.style.width = "90px";
+        line.appendChild(inp);
+        var fix = document.createElement("span");
+        fix.className = "fixed";
+        fix.textContent = "Oak Street";
+        line.appendChild(fix);
+      } else if (item.render === "age") {
+        var lab = document.createElement("span");
+        lab.className = "fixed";
+        lab.textContent = "Age:";
+        line.appendChild(lab);
+        var inp = document.createElement("input");
+        inp.type = "text";
+        inp.id = "answer";
+        inp.inputMode = "numeric";
+        inp.autocomplete = "off";
+        inp.placeholder = "??";
+        inp.style.width = "90px";
+        line.appendChild(inp);
+      } else if (item.render === "email") {
+        var pre = document.createElement("span");
+        pre.className = "fixed";
+        pre.textContent = "james";
+        line.appendChild(pre);
+        var inp = document.createElement("input");
+        inp.type = "text";
+        inp.id = "answer";
+        inp.inputMode = "numeric";
+        inp.autocomplete = "off";
+        inp.placeholder = "??";
+        inp.style.width = "80px";
+        line.appendChild(inp);
+        var post = document.createElement("span");
+        post.className = "fixed";
+        post.textContent = "@geemail.com";
+        line.appendChild(post);
+      }
+      var a = $("answer");
+      if (a) {
+        a.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") check();
+        });
+      }
+    }
+
+    function loadItem() {
+      stopClip();
+      if (index >= ITEMS.length) {
+        endGame();
+        return;
+      }
+      var item = ITEMS[index];
+      $("qPill").textContent = (index + 1) + " / " + ITEMS.length;
+      $("scorePill").textContent = score + " correct";
+      $("bar").style.width = (index / ITEMS.length * 100) + "%";
+      $("qLabel").textContent = item.title;
+      $("hint").textContent = item.hint;
+      $("feedback").textContent = "";
+      $("feedback").className = "feedback";
+      renderForm(item);
+      setTimeout(function () {
+        var a = $("answer");
+        if (a) a.focus();
+        playClip();
+      }, 200);
+    }
+
+    function check() {
+      var item = ITEMS[index];
+      var a = $("answer");
+      if (!a) return;
+      var val = digitsOnly(a.value);
+      if (!val) {
+        $("feedback").textContent = "Write the number.";
+        $("feedback").className = "feedback bad";
+        return;
+      }
+      var ok = item.answers.indexOf(val) !== -1;
+      if (ok) {
+        score += 1;
+        a.className = (a.className.replace(/is-ok|is-bad/g, "") + " is-ok").trim();
+        $("feedback").textContent = "Correct! " + item.display;
+        $("feedback").className = "feedback ok";
+        $("scorePill").textContent = score + " correct";
+        setTimeout(function () {
+          index += 1;
+          loadItem();
+        }, 850);
+      } else {
+        a.className = (a.className.replace(/is-ok|is-bad/g, "") + " is-bad").trim();
+        $("feedback").textContent = "Not quite — listen again.";
+        $("feedback").className = "feedback bad";
+        playClip();
+      }
+    }
+
+    function endGame() {
+      stopClip();
+      $("bar").style.width = "100%";
+      $("finishScore").textContent = score + " / " + ITEMS.length;
+      $("finishMsg").textContent = score === ITEMS.length ? "Perfect form!" : "Good try — play again to improve.";
+      $("overview").innerHTML =
+        "<strong>Answers</strong><br/>" +
+        "1. 📞 " + ITEMS[0].display + "<br/>" +
+        "2. " + ITEMS[1].display + "<br/>" +
+        "3. Age: " + ITEMS[2].display + "<br/>" +
+        "4. " + ITEMS[3].display;
+      show("finish");
+      try {
+        if (window.LAStars) {
+          var acc = Math.round((score / ITEMS.length) * 100);
+          LAStars.recordPlay("topics-numbers-personal-form");
+          LAStars.saveFromAccuracy("topics-numbers-personal-form", acc);
+        }
+      } catch (e) {}
+    }
+
+    function start() {
+      index = 0;
+      score = 0;
+      show("play");
+      loadItem();
+    }
+
+    $("btnStart").addEventListener("click", start);
+    $("btnAgain").addEventListener("click", start);
+    $("btnListen").addEventListener("click", playClip);
+    $("btnReplay").addEventListener("click", playClip);
+    $("btnCheck").addEventListener("click", check);
+  })();
+  </script>
+  <script src="../../../learningarcade/la-stars.js"></script>
+</body>
+</html>

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Listen & Write Numbers · Topics</title>
+  <script>
+  (function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+  if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+  else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+  document.documentElement.setAttribute("data-theme","dark");
+  else document.documentElement.setAttribute("data-theme","light");
+  }catch(e){}})();
+  </script>
+  <link rel="stylesheet" href="../../../learningarcade/theme.css" />
+  <style>
+    :root {
+      --bg: #f0fdf4; --card: #fff; --text: #0f172a; --muted: #64748b;
+      --line: #d1fae5; --green: #059669; --green-deep: #047857;
+      --ok: #059669; --bad: #e11d48;
+      --shadow: 0 14px 36px rgba(15,23,42,.08);
+    }
+    html[data-theme="dark"] {
+      --bg: #0f1220; --card: #1a1f2e; --text: #f1f5f9; --muted: #94a3b8;
+      --line: #2d3548; --shadow: 0 14px 36px rgba(0,0,0,.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(700px 360px at 50% 0%, rgba(16,185,129,.14), transparent 55%), var(--bg);
+      color: var(--text); min-height: 100dvh; padding: 14px 14px 28px;
+    }
+    .wrap { max-width: 520px; margin: 0 auto; }
+    .top {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 12px;
+    }
+    .back {
+      display: inline-flex; text-decoration: none; font-weight: 800; color: var(--text);
+      background: var(--card); border: 1px solid var(--line);
+      padding: 10px 14px; border-radius: 999px; min-height: 44px;
+    }
+    .badge {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 0.06em;
+      text-transform: uppercase; color: #fff;
+      background: linear-gradient(135deg, #34d399, #059669);
+      padding: 8px 12px; border-radius: 999px;
+    }
+    h1 { font-size: clamp(1.3rem, 3.5vw, 1.65rem); font-weight: 900; margin-bottom: 4px; }
+    .lead { color: var(--muted); font-weight: 600; font-size: 0.95rem; margin-bottom: 16px; line-height: 1.45; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .part-grid { display: grid; gap: 12px; }
+    .part-card {
+      appearance: none; border: 2px solid var(--line); background: var(--card);
+      border-radius: 18px; padding: 18px; text-align: left; cursor: pointer;
+      color: inherit; font: inherit; box-shadow: var(--shadow);
+    }
+    .part-card:hover { border-color: var(--green); }
+    .part-card h2 { font-size: 1.1rem; font-weight: 900; margin-bottom: 4px; }
+    .part-card p { color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+    .part-tag {
+      display: inline-block; margin-top: 10px; font-size: 0.72rem; font-weight: 800;
+      padding: 5px 10px; border-radius: 999px; background: var(--bg); color: var(--green);
+    }
+
+    .hud {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      justify-content: space-between; margin-bottom: 12px;
+    }
+    .pill {
+      font-weight: 800; font-size: 0.85rem; padding: 8px 12px; border-radius: 999px;
+      background: var(--card); border: 1px solid var(--line); color: var(--green);
+    }
+    .progress { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
+    .progress > span {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, #34d399, #059669); transition: width .3s ease;
+    }
+
+    .stage {
+      background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+      padding: 22px 18px; box-shadow: var(--shadow); text-align: center;
+    }
+    .q-label {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 8px;
+    }
+    .listen-btn {
+      appearance: none; border: none; cursor: pointer;
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(180deg, #34d399, #059669); color: #fff;
+      font-size: 1.8rem; margin: 8px auto 12px;
+      box-shadow: 0 6px 0 var(--green-deep);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .listen-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--green-deep); }
+    .listen-btn.playing { animation: pulse 1s ease infinite; }
+    @keyframes pulse {
+      0%, 100% { outline: 0 solid rgba(52,211,153,0.3); }
+      50% { outline: 8px solid rgba(52,211,153,0.25); }
+    }
+    .hint { color: var(--muted); font-weight: 600; font-size: 0.9rem; margin-bottom: 14px; }
+
+    input[type="text"] {
+      width: 100%; padding: 14px 16px; border-radius: 14px;
+      border: 2px solid var(--line); font: inherit; font-weight: 700;
+      font-size: 1.2rem; letter-spacing: 0.06em; text-align: center;
+      background: var(--bg); color: var(--text); margin-bottom: 12px;
+    }
+    input[type="text"]:focus {
+      outline: none; border-color: var(--green);
+      box-shadow: 0 0 0 4px rgba(16,185,129,.15);
+    }
+    input.is-ok { border-color: var(--ok); }
+    input.is-bad { border-color: var(--bad); }
+
+    /* Phone number UI */
+    .phone-shell {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+      gap: 6px; margin: 8px 0 16px; font-weight: 900; font-size: 1.35rem;
+    }
+    .phone-shell .seg {
+      display: inline-flex; gap: 4px; align-items: center;
+    }
+    .phone-shell .dash { color: var(--muted); padding: 0 2px; }
+    .digit-slot {
+      width: 36px; height: 46px; border-radius: 10px;
+      border: 2px solid var(--line); background: var(--bg);
+      text-align: center; font: inherit; font-weight: 900; font-size: 1.2rem;
+      color: var(--text);
+    }
+    .digit-slot:focus {
+      outline: none; border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(16,185,129,.2);
+    }
+    .digit-slot.filled { border-color: rgba(5,150,105,.45); }
+    .digit-slot.is-ok { border-color: var(--ok); background: rgba(5,150,105,.1); }
+    .digit-slot.is-bad { border-color: var(--bad); }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .btn {
+      appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+      min-height: 48px; padding: 12px 20px; border-radius: 999px;
+    }
+    .btn-primary {
+      background: linear-gradient(180deg, #34d399, #059669); color: #fff;
+      box-shadow: 0 5px 0 var(--green-deep);
+    }
+    .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--green-deep); }
+    .btn-ghost { background: var(--bg); color: var(--text); border: 2px solid var(--line); }
+
+    .feedback { min-height: 1.4em; margin-top: 12px; font-weight: 800; }
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+
+    .finish-box {
+      text-align: center; background: var(--card); border: 1px solid var(--line);
+      border-radius: 20px; padding: 28px 18px; box-shadow: var(--shadow);
+    }
+    .finish-box h2 { font-size: 1.45rem; font-weight: 900; margin-bottom: 8px; }
+    .score-big { font-size: 2rem; font-weight: 900; color: var(--green); margin-bottom: 8px; }
+    .finish-box p { color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+
+    @media (max-width: 420px) {
+      .digit-slot { width: 30px; height: 42px; font-size: 1.05rem; }
+      .phone-shell { font-size: 1.15rem; }
+    }
+  
+    .part-grid { display: grid; gap: 12px; }
+    @media (min-width: 640px) {
+      .part-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .part-card {
+      position: relative;
+      overflow: hidden;
+      text-align: left;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .part-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba(15,23,42,.1);
+    }
+    .part-card .part-ico {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.35rem; margin-bottom: 10px;
+      background: rgba(5,150,105,.12);
+    }
+    .part-card[data-part="phone"] .part-ico { background: rgba(37,99,235,.12); }
+    .part-card[data-part="list10"] .part-ico { background: rgba(124,58,237,.12); }
+    .part-card[data-part="medium10"] .part-ico {
+      background: rgba(245,158,11,.15);
+    }
+    .part-card[data-part="medium10"] {
+      border-color: rgba(245,158,11,.45);
+      background: linear-gradient(180deg, rgba(245,158,11,.08), var(--card) 42%);
+    }
+    .part-card[data-part="sequences"] {
+      border-color: rgba(5,150,105,.4);
+      background: linear-gradient(180deg, rgba(5,150,105,.07), var(--card) 42%);
+    }
+
+  </style>
+</head>
+<body class="no-profile-fab">
+  <div class="wrap">
+    <div class="top">
+      <a class="back" href="../">← Numbers</a>
+      <span class="badge">Listen &amp; write</span>
+    </div>
+
+    <section id="menu" class="screen active">
+      <h1>Listen &amp; write</h1>
+      <p class="lead">Listen carefully and write the numbers you hear.</p>
+      <div class="part-grid">
+        <button type="button" class="part-card" data-part="sequences">
+          <div class="part-ico" aria-hidden="true">🔢</div>
+          <h2>Part 1 · Number sequences</h2>
+          <p>Hear 3 short clips and write the numbers in order.</p>
+          <span class="part-tag">3 questions</span>
+        </button>
+        <button type="button" class="part-card" data-part="phone">
+          <div class="part-ico" aria-hidden="true">📞</div>
+          <h2>Part 2 · Phone number</h2>
+          <p>Listen and complete the phone number digit by digit.</p>
+          <span class="part-tag">1 phone number</span>
+        </button>
+        <button type="button" class="part-card" data-part="list10">
+          <div class="part-ico" aria-hidden="true">🔟</div>
+          <h2>Part 3 · Ten numbers</h2>
+          <p>Listen to 10 numbers and write each one you hear.</p>
+          <span class="part-tag">10 questions</span>
+        </button>
+        <button type="button" class="part-card" data-part="medium10">
+          <div class="part-ico" aria-hidden="true">🔥</div>
+          <h2>Part 4 · Medium numbers</h2>
+          <p>Listen and write bigger numbers — hundreds to millions.</p>
+          <span class="part-tag">●●○ Medium · 10 questions</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="play" class="screen">
+      <div class="hud">
+        <span class="pill" id="qPill">Question 1 / 3</span>
+        <span class="pill" id="scorePill">0 correct</span>
+      </div>
+      <div class="progress"><span id="bar"></span></div>
+      <div class="stage">
+        <p class="q-label" id="qLabel">Listen</p>
+        <button type="button" class="listen-btn" id="btnListen" aria-label="Play audio">🔊</button>
+        <p class="hint" id="hint">Write the numbers you hear.</p>
+
+        <!-- Part 1 input -->
+        <div id="seqUI">
+          <input id="answer" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 7 3 0 8" />
+        </div>
+
+        <!-- Part 2 phone slots: (212) 555-0375 style → 212-555-0375 -->
+        <div id="phoneUI" style="display:none">
+          <div class="phone-shell" aria-label="Phone number">
+            <span class="seg" id="seg0"></span>
+            <span class="dash">-</span>
+            <span class="seg" id="seg1"></span>
+            <span class="dash">-</span>
+            <span class="seg" id="seg2"></span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" id="btnReplay">Play again</button>
+          <button type="button" class="btn btn-primary" id="btnCheck">Check</button>
+        </div>
+        <p class="feedback" id="feedback"></p>
+      </div>
+    </section>
+
+    <section id="finish" class="screen">
+      <div class="finish-box">
+        <h2>Done!</h2>
+        <div class="score-big" id="finishScore">0 / 3</div>
+        <p id="finishMsg">Nice listening.</p>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="btnAgain">Play again</button>
+          <button type="button" class="btn btn-ghost" id="btnMenu">Parts</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="../../../learningarcade/theme.js"></script>
+  <script>
+  (function () {
+    "use strict";
+
+    var SEQ_ITEMS = [
+      { file: "audio/listen-and-write.mp3", start: 0.5, end: 9.5, answerDigits: "7308", label: "7 3 0 8" },
+      { file: "audio/listen-and-write.mp3", start: 11.5, end: 20.5, answerDigits: "9145", label: "9 1 4 5" },
+      { file: "audio/listen-and-write.mp3", start: 22.5, end: 30.5, answerDigits: "6210", label: "6 2 10" }
+    ];
+    // Part 3 — 10 numbers from numbers-list.mp3 (prompt + answer windows)
+    var LIST10 = [
+      { start: 0.0, end: 6.5, answer: "15", label: "15" },
+      { start: 7.5, end: 14.5, answer: "97", label: "97" },
+      { start: 15.0, end: 24.0, answer: "11", label: "11" },
+      { start: 24.0, end: 32.0, answer: "100", label: "100" },
+      { start: 32.0, end: 38.5, answer: "40", label: "40" },
+      { start: 38.5, end: 46.0, answer: "29", label: "29" },
+      { start: 46.5, end: 54.5, answer: "16", label: "16" },
+      { start: 55.0, end: 62.0, answer: "62", label: "62" },
+      { start: 62.5, end: 70.5, answer: "56", label: "56" },
+      { start: 71.0, end: 80.0, answer: "78", label: "78" }
+    ];
+    // Part 4 — medium (hundreds → millions)
+    var MEDIUM10 = [
+      { start: 0.0, end: 7.5, answer: "199", label: "199" },
+      { start: 7.5, end: 13.5, answer: "450", label: "450" },
+      { start: 13.5, end: 18.5, answer: "920", label: "920" },
+      { start: 18.5, end: 25.5, answer: "1300", label: "1,300" },
+      { start: 25.5, end: 31.5, answer: "3437", label: "3,437" },
+      { start: 31.5, end: 38.5, answer: "7700", label: "7,700" },
+      { start: 38.5, end: 44.0, answer: "50000", label: "50,000" },
+      { start: 44.0, end: 50.5, answer: "120000", label: "120,000" },
+      { start: 50.5, end: 56.0, answer: "40000000", label: "40,000,000" },
+      { start: 56.0, end: 62.0, answer: "2600000", label: "2,600,000" }
+    ];
+    // Phone: 2 1 2 5 5 5 0 3 7 5 → 212-555-0375
+    var PHONE = {
+      file: "audio/phone-number.mp3",
+      start: 0,
+      end: 6.5,
+      digits: ["2","1","2","5","5","5","0","3","7","5"],
+      groups: [3, 3, 4], // 212 - 555 - 0375
+      label: "212-555-0375"
+    };
+
+    var mode = "sequences"; // sequences | phone | list10 | medium10
+    var index = 0;
+    var score = 0;
+    var audio = null;
+    var stopTimer = null;
+    var audioCache = {};
+
+    function $(id) { return document.getElementById(id); }
+
+    function show(id) {
+      ["menu", "play", "finish"].forEach(function (s) {
+        $(s).classList.toggle("active", s === id);
+      });
+    }
+
+    function stopClip() {
+      if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
+      Object.keys(audioCache).forEach(function (k) {
+        try { audioCache[k].pause(); } catch (e) {}
+      });
+      $("btnListen").classList.remove("playing");
+    }
+
+    function playRange(file, start, end) {
+      stopClip();
+      if (!audioCache[file]) {
+        audioCache[file] = new Audio(file);
+        audioCache[file].preload = "auto";
+      }
+      var a = audioCache[file];
+      var run = function () {
+        try { a.currentTime = start; } catch (e) {}
+        var p = a.play();
+        $("btnListen").classList.add("playing");
+        if (p && p.catch) p.catch(function () { $("btnListen").classList.remove("playing"); });
+        var ms = Math.max(200, (end - start) * 1000);
+        stopTimer = setTimeout(function () {
+          try { a.pause(); } catch (e) {}
+          $("btnListen").classList.remove("playing");
+        }, ms);
+      };
+      if (a.readyState >= 2) run();
+      else {
+        a.addEventListener("canplay", function once() {
+          a.removeEventListener("canplay", once);
+          run();
+        });
+        a.load();
+      }
+    }
+
+    function playCurrent() {
+      if (mode === "phone") {
+        playRange(PHONE.file, PHONE.start, PHONE.end);
+      } else if (mode === "list10") {
+        var item = LIST10[index];
+        if (item) playRange("audio/numbers-list.mp3", item.start, item.end);
+      } else if (mode === "medium10") {
+        var item = MEDIUM10[index];
+        if (item) playRange("audio/medium-numbers.mp3", item.start, item.end);
+      } else {
+        var item = SEQ_ITEMS[index];
+        if (item) playRange(item.file, item.start, item.end);
+      }
+    }
+
+    function digitsOnly(s) {
+      return String(s || "").replace(/\D/g, "");
+    }
+
+    function normalizeSeq(s) {
+      var t = String(s || "").toLowerCase().replace(/\bten\b/g, "10");
+      return digitsOnly(t);
+    }
+
+    function buildPhoneSlots() {
+      var groups = PHONE.groups;
+      var digits = PHONE.digits;
+      var di = 0;
+      for (var g = 0; g < groups.length; g++) {
+        var seg = $("seg" + g);
+        seg.innerHTML = "";
+        for (var i = 0; i < groups[g]; i++) {
+          var input = document.createElement("input");
+          input.type = "text";
+          input.className = "digit-slot";
+          input.inputMode = "numeric";
+          input.maxLength = 1;
+          input.autocomplete = "off";
+          input.dataset.index = String(di);
+          input.setAttribute("aria-label", "Digit " + (di + 1));
+          input.addEventListener("input", onSlotInput);
+          input.addEventListener("keydown", onSlotKey);
+          seg.appendChild(input);
+          di++;
+        }
+      }
+    }
+
+    function onSlotInput(e) {
+      var el = e.target;
+      var v = digitsOnly(el.value).slice(0, 1);
+      el.value = v;
+      if (v) {
+        el.classList.add("filled");
+        var next = nextSlot(el);
+        if (next) next.focus();
+      } else {
+        el.classList.remove("filled");
+      }
+    }
+
+    function onSlotKey(e) {
+      var el = e.target;
+      if (e.key === "Backspace" && !el.value) {
+        var prev = prevSlot(el);
+        if (prev) {
+          prev.focus();
+          prev.value = "";
+          prev.classList.remove("filled");
+        }
+      }
+      if (e.key === "Enter") check();
+    }
+
+    function allSlots() {
+      return Array.prototype.slice.call(document.querySelectorAll(".digit-slot"));
+    }
+
+    function nextSlot(el) {
+      var list = allSlots();
+      var i = list.indexOf(el);
+      return i >= 0 && i < list.length - 1 ? list[i + 1] : null;
+    }
+
+    function prevSlot(el) {
+      var list = allSlots();
+      var i = list.indexOf(el);
+      return i > 0 ? list[i - 1] : null;
+    }
+
+    function readPhoneDigits() {
+      return allSlots().map(function (el) { return el.value || ""; }).join("");
+    }
+
+    function clearPhoneSlots() {
+      allSlots().forEach(function (el) {
+        el.value = "";
+        el.classList.remove("filled", "is-ok", "is-bad");
+      });
+    }
+
+    function startPart(part) {
+      mode = part;
+      index = 0;
+      score = 0;
+      stopClip();
+      $("seqUI").style.display = (mode === "sequences" || mode === "list10" || mode === "medium10") ? "block" : "none";
+      $("phoneUI").style.display = mode === "phone" ? "block" : "none";
+      if (mode === "phone") buildPhoneSlots();
+      if (mode === "list10") {
+        $("answer").placeholder = "e.g. 15";
+      } else if (mode === "medium10") {
+        $("answer").placeholder = "e.g. 1300 or 1,300";
+      } else if (mode === "sequences") {
+        $("answer").placeholder = "e.g. 7 3 0 8";
+      }
+      show("play");
+      loadItem();
+    }
+
+    function loadItem() {
+      stopClip();
+      $("feedback").textContent = "";
+      $("feedback").className = "feedback";
+      $("answer").value = "";
+      $("answer").className = "";
+
+      if (mode === "medium10") {
+        if (index >= MEDIUM10.length) {
+          endGame(MEDIUM10.length);
+          return;
+        }
+        $("qPill").textContent = "Part 4 · Medium · " + (index + 1) + " / " + MEDIUM10.length;
+        $("scorePill").textContent = score + " correct";
+        $("bar").style.width = (index / MEDIUM10.length * 100) + "%";
+        $("qLabel").textContent = "Listen · number " + (index + 1);
+        $("hint").textContent = "Write the number you hear (commas optional).";
+        setTimeout(function () {
+          $("answer").focus();
+          playCurrent();
+        }, 200);
+      } else if (mode === "list10") {
+        if (index >= LIST10.length) {
+          endGame(LIST10.length);
+          return;
+        }
+        $("qPill").textContent = "Part 3 · " + (index + 1) + " / " + LIST10.length;
+        $("scorePill").textContent = score + " correct";
+        $("bar").style.width = (index / LIST10.length * 100) + "%";
+        $("qLabel").textContent = "Listen · number " + (index + 1);
+        $("hint").textContent = "Write the number you hear.";
+        setTimeout(function () {
+          $("answer").focus();
+          playCurrent();
+        }, 200);
+      } else if (mode === "sequences") {
+        if (index >= SEQ_ITEMS.length) {
+          endGame(SEQ_ITEMS.length);
+          return;
+        }
+        $("qPill").textContent = "Part 1 · " + (index + 1) + " / " + SEQ_ITEMS.length;
+        $("scorePill").textContent = score + " correct";
+        $("bar").style.width = (index / SEQ_ITEMS.length * 100) + "%";
+        $("qLabel").textContent = "Listen · sequence";
+        $("hint").textContent = "Write the numbers you hear (spaces OK).";
+        setTimeout(function () {
+          $("answer").focus();
+          playCurrent();
+        }, 200);
+      } else {
+        $("qPill").textContent = "Part 2 · Phone number";
+        $("scorePill").textContent = "10 digits";
+        $("bar").style.width = "0%";
+        $("qLabel").textContent = "Listen · phone number";
+        $("hint").textContent = "Fill each box with one digit.";
+        clearPhoneSlots();
+        setTimeout(function () {
+          var first = allSlots()[0];
+          if (first) first.focus();
+          playCurrent();
+        }, 200);
+      }
+    }
+
+    function check() {
+      if (mode === "list10" || mode === "medium10") {
+        var item = mode === "medium10" ? MEDIUM10[index] : LIST10[index];
+        var typed = $("answer").value;
+        var d = normalizeSeq(typed);
+        if (!d) {
+          $("feedback").textContent = "Write the number you heard.";
+          $("feedback").className = "feedback bad";
+          return;
+        }
+        if (d === item.answer) {
+          score += 1;
+          $("answer").className = "is-ok";
+          $("feedback").textContent = "Correct! " + item.label;
+          $("feedback").className = "feedback ok";
+          $("scorePill").textContent = score + " correct";
+          setTimeout(function () {
+            index += 1;
+            loadItem();
+          }, 700);
+        } else {
+          $("answer").className = "is-bad";
+          $("feedback").textContent = "Not quite — listen again.";
+          $("feedback").className = "feedback bad";
+          playCurrent();
+        }
+      } else if (mode === "sequences") {
+        var item = SEQ_ITEMS[index];
+        var typed = $("answer").value;
+        if (!normalizeSeq(typed)) {
+          $("feedback").textContent = "Write the numbers you heard.";
+          $("feedback").className = "feedback bad";
+          return;
+        }
+        if (normalizeSeq(typed) === item.answerDigits) {
+          score += 1;
+          $("answer").className = "is-ok";
+          $("feedback").textContent = "Correct! " + item.label;
+          $("feedback").className = "feedback ok";
+          $("scorePill").textContent = score + " correct";
+          setTimeout(function () {
+            index += 1;
+            loadItem();
+          }, 800);
+        } else {
+          $("answer").className = "is-bad";
+          $("feedback").textContent = "Not quite — listen again.";
+          $("feedback").className = "feedback bad";
+          playCurrent();
+        }
+      } else {
+        var got = readPhoneDigits();
+        var need = PHONE.digits.join("");
+        var slots = allSlots();
+        if (got.length < need.length || /_/.test(got) || got.indexOf("") !== -1 && got.length < 10) {
+          // check empty
+          if (digitsOnly(got).length < 10) {
+            $("feedback").textContent = "Fill all 10 digits.";
+            $("feedback").className = "feedback bad";
+            return;
+          }
+        }
+        var ok = digitsOnly(got) === need;
+        slots.forEach(function (el, i) {
+          el.classList.remove("is-ok", "is-bad");
+          if (ok) el.classList.add("is-ok");
+          else if (el.value !== PHONE.digits[i]) el.classList.add("is-bad");
+          else el.classList.add("is-ok");
+        });
+        if (ok) {
+          score = 1;
+          $("feedback").textContent = "Correct! " + PHONE.label;
+          $("feedback").className = "feedback ok";
+          $("bar").style.width = "100%";
+          setTimeout(function () { endGame(1); }, 900);
+        } else {
+          $("feedback").textContent = "Not quite — listen again and fix the digits.";
+          $("feedback").className = "feedback bad";
+          playCurrent();
+        }
+      }
+    }
+
+    function endGame(total) {
+      stopClip();
+      $("bar").style.width = "100%";
+      $("finishScore").textContent = score + " / " + total;
+      $("finishMsg").textContent = score === total
+        ? "Perfect listening!"
+        : "Good try — play again to improve.";
+      show("finish");
+      try {
+        if (window.LAStars) {
+          var acc = total ? Math.round((score / total) * 100) : 0;
+          LAStars.recordPlay("topics-numbers-listen-write");
+          LAStars.saveFromAccuracy("topics-numbers-listen-write", acc);
+        }
+      } catch (e) {}
+    }
+
+    document.querySelectorAll(".part-card").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        startPart(btn.getAttribute("data-part"));
+      });
+    });
+    $("btnListen").addEventListener("click", playCurrent);
+    $("btnReplay").addEventListener("click", playCurrent);
+    $("btnCheck").addEventListener("click", check);
+    $("answer").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") check();
+    });
+    $("btnAgain").addEventListener("click", function () {
+      startPart(mode);
+    });
+    $("btnMenu").addEventListener("click", function () {
+      stopClip();
+      show("menu");
+    });
+  })();
+  </script>
+  <script src="../../../learningarcade/la-stars.js"></script>
+</body>
+</html>

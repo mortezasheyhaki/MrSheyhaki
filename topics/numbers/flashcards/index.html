@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Number Flashcards · Topics</title>
+  <script>
+  (function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+  if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+  else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+  document.documentElement.setAttribute("data-theme","dark");
+  else document.documentElement.setAttribute("data-theme","light");
+  }catch(e){}})();
+  </script>
+  <link rel="stylesheet" href="../../../learningarcade/theme.css" />
+  <style>
+    :root {
+      --bg: #eef2ff;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #e0e7ff;
+      --purple: #7c3aed;
+      --purple-deep: #5b21b6;
+      --ok: #059669;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.1);
+    }
+    html[data-theme="dark"] {
+      --bg: #0f1220;
+      --card: #1a1f2e;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --line: #2d3548;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { min-height: 100%; min-height: 100dvh; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background:
+        radial-gradient(700px 360px at 100% 0%, rgba(124, 58, 237, 0.18), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      padding: 14px 14px 28px;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; }
+    .top {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 14px;
+    }
+    .back {
+      display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none; font-weight: 800; color: var(--text);
+      background: var(--card); border: 1px solid var(--line);
+      padding: 10px 14px; border-radius: 999px; min-height: 44px;
+    }
+    .badge {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 0.06em;
+      text-transform: uppercase; color: #fff;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      padding: 8px 12px; border-radius: 999px;
+    }
+    h1 {
+      font-size: clamp(1.35rem, 3.5vw, 1.7rem);
+      font-weight: 900; margin-bottom: 4px;
+    }
+    .lead {
+      color: var(--muted); font-weight: 600; font-size: 0.95rem;
+      margin-bottom: 14px; line-height: 1.4;
+    }
+
+    .filters {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+    }
+    .filter-btn {
+      appearance: none; border: 2px solid var(--line); background: var(--card);
+      color: var(--muted); font: inherit; font-weight: 800; font-size: 0.85rem;
+      padding: 10px 14px; border-radius: 999px; cursor: pointer; min-height: 44px;
+    }
+    .filter-btn.active {
+      background: var(--purple); border-color: var(--purple); color: #fff;
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.28);
+    }
+
+    .stage {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 20px 16px 18px;
+      margin-bottom: 16px;
+    }
+    .flashcard {
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto 16px;
+      min-height: 220px;
+      border-radius: 22px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(160deg, #8b5cf6 0%, #6d28d9 55%, #4c1d95 100%);
+      color: #fff;
+      box-shadow: 0 12px 0 #3b0764, 0 18px 32px rgba(109, 40, 217, 0.35);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px;
+      padding: 24px 16px;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      -webkit-user-select: none; user-select: none;
+    }
+    .flashcard:active {
+      transform: translateY(6px);
+      box-shadow: 0 6px 0 #3b0764, 0 10px 20px rgba(109, 40, 217, 0.3);
+    }
+    .flashcard.is-playing {
+      outline: 3px solid #fde68a;
+    }
+    .flash-num {
+      font-size: clamp(3.2rem, 12vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .flash-word {
+      font-size: clamp(1.25rem, 4vw, 1.6rem);
+      font-weight: 800;
+      opacity: 0.95;
+      text-transform: lowercase;
+    }
+    .flash-hint {
+      font-size: 0.8rem;
+      font-weight: 700;
+      opacity: 0.75;
+      margin-top: 6px;
+    }
+    .speaker {
+      width: 52px; height: 52px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.18);
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+
+    .nav-row {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      flex-wrap: wrap;
+    }
+    .nav-btn {
+      appearance: none; border: none; cursor: pointer;
+      font: inherit; font-weight: 800;
+      min-height: 48px; min-width: 48px;
+      padding: 12px 18px; border-radius: 999px;
+      background: var(--bg); color: var(--text); border: 2px solid var(--line);
+    }
+    .nav-btn.primary {
+      background: linear-gradient(180deg, #8b5cf6, #7c3aed);
+      color: #fff; border-color: transparent;
+      box-shadow: 0 5px 0 var(--purple-deep);
+    }
+    .nav-btn.primary:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 var(--purple-deep);
+    }
+    .counter {
+      font-weight: 800; color: var(--muted); font-size: 0.9rem;
+      min-width: 5ch; text-align: center;
+    }
+
+    .grid-label {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+    }
+    .num-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+      gap: 10px;
+    }
+    .num-tile {
+      appearance: none; border: 2px solid var(--line);
+      background: var(--card); color: var(--text);
+      border-radius: 14px; min-height: 64px;
+      font: inherit; font-weight: 900; font-size: 1.05rem;
+      cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2px;
+      transition: border-color 0.15s, transform 0.12s, background 0.15s;
+    }
+    .num-tile small {
+      font-size: 0.65rem; font-weight: 700; color: var(--muted);
+      text-transform: lowercase;
+    }
+    .num-tile:hover { border-color: var(--purple); }
+    .num-tile.active {
+      background: linear-gradient(180deg, #8b5cf6, #7c3aed);
+      border-color: transparent; color: #fff;
+      box-shadow: 0 4px 0 var(--purple-deep);
+    }
+    .num-tile.active small { color: rgba(255,255,255,0.85); }
+
+    .audio-note {
+      margin-top: 14px; font-size: 0.85rem; color: var(--muted); font-weight: 600;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 700px) {
+      .flashcard { min-height: 200px; }
+      .num-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+      .num-tile { min-height: 58px; font-size: 0.95rem; }
+    }
+  </style>
+
+  <style>
+    a.profile-fab, .profile-fab { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+  </style>
+</head>
+<body class="no-profile-fab">
+  <div class="wrap">
+    <div class="top">
+      <a class="back" href="../">← Numbers</a>
+      <span class="badge">Flashcards</span>
+    </div>
+    <h1>Number flashcards</h1>
+    <p class="lead">Tap a number to see the word and hear it. Easy: 0–20. Medium: 10 bigger numbers.</p>
+
+    <div class="filters" role="tablist" aria-label="Filter numbers">
+      <button type="button" class="filter-btn active" data-filter="easy">Easy · 0–20</button>
+      <button type="button" class="filter-btn" data-filter="medium">Medium · Big numbers</button>
+      <button type="button" class="filter-btn" data-filter="all">All</button>
+    </div>
+
+    <section class="stage">
+      <button type="button" class="flashcard" id="flashcard" aria-label="Play number sound">
+        <span class="speaker" aria-hidden="true">🔊</span>
+        <span class="flash-num" id="flashNum">0</span>
+        <span class="flash-word" id="flashWord">zero</span>
+        <span class="flash-hint">Tap to hear</span>
+      </button>
+      <div class="nav-row">
+        <button type="button" class="nav-btn" id="btnPrev" aria-label="Previous">←</button>
+        <span class="counter"><span id="idxLabel">1</span> / <span id="totalLabel">0</span></span>
+        <button type="button" class="nav-btn primary" id="btnPlay">Hear again</button>
+        <button type="button" class="nav-btn" id="btnNext" aria-label="Next">→</button>
+      </div>
+    </section>
+
+    <p class="grid-label">Or pick any number</p>
+    <div class="num-grid" id="numGrid"></div>
+    <p class="audio-note" id="audioNote">Audio loaded from this folder. If a file is missing, the browser voice is used as a backup.</p>
+  </div>
+
+  <script src="../../../learningarcade/theme.js"></script>
+  <script>
+  (function () {
+    "use strict";
+
+    var ALL = [
+      { n: 0, word: "zero", groups: ["easy"] },
+      { n: 1, word: "one", groups: ["easy"] },
+      { n: 2, word: "two", groups: ["easy"] },
+      { n: 3, word: "three", groups: ["easy"] },
+      { n: 4, word: "four", groups: ["easy"] },
+      { n: 5, word: "five", groups: ["easy"] },
+      { n: 6, word: "six", groups: ["easy"] },
+      { n: 7, word: "seven", groups: ["easy"] },
+      { n: 8, word: "eight", groups: ["easy"] },
+      { n: 9, word: "nine", groups: ["easy"] },
+      { n: 10, word: "ten", groups: ["easy"] },
+      { n: 11, word: "eleven", groups: ["easy"] },
+      { n: 12, word: "twelve", groups: ["easy"] },
+      { n: 13, word: "thirteen", groups: ["easy"] },
+      { n: 14, word: "fourteen", groups: ["easy"] },
+      { n: 15, word: "fifteen", groups: ["easy"] },
+      { n: 16, word: "sixteen", groups: ["easy"] },
+      { n: 17, word: "seventeen", groups: ["easy"] },
+      { n: 18, word: "eighteen", groups: ["easy"] },
+      { n: 19, word: "nineteen", groups: ["easy"] },
+      { n: 20, word: "twenty", groups: ["easy"] },
+      { n: 100, word: "one hundred", groups: ["medium"] },
+      { n: 105, word: "one hundred and five", groups: ["medium"] },
+      { n: 200, word: "two hundred", groups: ["medium"] },
+      { n: 875, word: "eight hundred and seventy-five", groups: ["medium"] },
+      { n: 1000, word: "one thousand", groups: ["medium"] },
+      { n: 1500, word: "one thousand five hundred", groups: ["medium"] },
+      { n: 5420, word: "five thousand four hundred and twenty", groups: ["medium"] },
+      { n: 25000, word: "twenty-five thousand", groups: ["medium"] },
+      { n: 100000, word: "one hundred thousand", groups: ["medium"] },
+      { n: 1000000, word: "one million", groups: ["medium"] }
+    ];
+
+    var filter = "easy";
+    var list = ALL.slice();
+    var index = 0;
+    var currentAudio = null;
+    var audioCache = {};
+
+    function $(id) { return document.getElementById(id); }
+
+    function formatNum(n) {
+      if (n >= 1000) return n.toLocaleString("en-US");
+      return String(n);
+    }
+
+    function filtered() {
+      if (filter === "all") return ALL.slice();
+      return ALL.filter(function (item) {
+        return item.groups.indexOf(filter) !== -1;
+      });
+    }
+
+    function audioSrc(n) {
+      return "audio/" + n + ".mp3";
+    }
+
+    function speakWord(word) {
+      try {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(word);
+        u.lang = "en-US";
+        u.rate = 0.9;
+        window.speechSynthesis.speak(u);
+      } catch (e) {}
+    }
+
+    var heardIds = {};
+    function playSound(item) {
+      try {
+        heardIds[item.n] = true;
+        var count = Object.keys(heardIds).length;
+        if (window.LAStars && count >= 5) {
+          var stars = count >= 20 ? 3 : count >= 10 ? 2 : 1;
+          LAStars.recordPlay("topics-numbers-flashcards");
+          LAStars.save("topics-numbers-flashcards", stars);
+        }
+      } catch (e) {}
+
+      var card = $("flashcard");
+      card.classList.add("is-playing");
+      setTimeout(function () { card.classList.remove("is-playing"); }, 400);
+
+      if (currentAudio) {
+        try { currentAudio.pause(); } catch (e) {}
+        currentAudio = null;
+      }
+
+      var key = String(item.n);
+      var tryPlay = function (audio) {
+        currentAudio = audio;
+        var p = audio.play();
+        if (p && typeof p.catch === "function") {
+          p.catch(function () { speakWord(item.word); });
+        }
+      };
+
+      if (audioCache[key] === false) {
+        speakWord(item.word);
+        return;
+      }
+
+      if (audioCache[key] instanceof Audio) {
+        audioCache[key].currentTime = 0;
+        tryPlay(audioCache[key]);
+        return;
+      }
+
+      var a = new Audio(audioSrc(item.n));
+      a.addEventListener("canplaythrough", function onReady() {
+        a.removeEventListener("canplaythrough", onReady);
+        audioCache[key] = a;
+        tryPlay(a);
+      });
+      a.addEventListener("error", function onErr() {
+        a.removeEventListener("error", onErr);
+        audioCache[key] = false;
+        speakWord(item.word);
+      });
+      // kick load
+      a.load();
+      // also try play soon (some browsers)
+      setTimeout(function () {
+        if (audioCache[key] === false) return;
+        if (a.readyState >= 2) tryPlay(a);
+      }, 80);
+    }
+
+    function show(i) {
+      if (!list.length) return;
+      index = (i + list.length) % list.length;
+      var item = list[index];
+      $("flashNum").textContent = formatNum(item.n);
+      $("flashWord").textContent = item.word;
+      $("idxLabel").textContent = String(index + 1);
+      $("totalLabel").textContent = String(list.length);
+      document.querySelectorAll(".num-tile").forEach(function (btn) {
+        btn.classList.toggle("active", Number(btn.getAttribute("data-n")) === item.n);
+      });
+    }
+
+    function renderGrid() {
+      var grid = $("numGrid");
+      grid.innerHTML = "";
+      list.forEach(function (item, i) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "num-tile";
+        b.setAttribute("data-n", String(item.n));
+        b.innerHTML = formatNum(item.n) + "<small>" + item.word + "</small>";
+        b.addEventListener("click", function () {
+          show(i);
+          playSound(item);
+        });
+        grid.appendChild(b);
+      });
+    }
+
+    function applyFilter(next) {
+      filter = next;
+      document.querySelectorAll(".filter-btn").forEach(function (btn) {
+        btn.classList.toggle("active", btn.getAttribute("data-filter") === filter);
+      });
+      list = filtered();
+      index = 0;
+      renderGrid();
+      show(0);
+    }
+
+    $("flashcard").addEventListener("click", function () {
+      playSound(list[index]);
+    });
+    $("btnPlay").addEventListener("click", function () {
+      playSound(list[index]);
+    });
+    $("btnPrev").addEventListener("click", function () {
+      show(index - 1);
+      playSound(list[index]);
+    });
+    $("btnNext").addEventListener("click", function () {
+      show(index + 1);
+      playSound(list[index]);
+    });
+    document.querySelectorAll(".filter-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        applyFilter(btn.getAttribute("data-filter"));
+      });
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") { e.preventDefault(); $("btnNext").click(); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); $("btnPrev").click(); }
+      if (e.key === " " || e.key === "Enter") {
+        if (e.target && (e.target.tagName === "BUTTON" || e.target.tagName === "A")) return;
+        e.preventDefault();
+        playSound(list[index]);
+      }
+    });
+
+    applyFilter("easy");
+  })();
+  </script>
+  <script src="../../../learningarcade/la-stars.js"></script>
+</body>
+</html>

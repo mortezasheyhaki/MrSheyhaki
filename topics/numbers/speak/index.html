@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Say the Number · Topics</title>
+  <script>
+  (function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+  if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+  else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+  document.documentElement.setAttribute("data-theme","dark");
+  else document.documentElement.setAttribute("data-theme","light");
+  }catch(e){}})();
+  </script>
+  <link rel="stylesheet" href="../../../learningarcade/theme.css" />
+  <style>
+    :root {
+      --bg: #eff6ff; --card: #fff; --text: #0f172a; --muted: #64748b;
+      --line: #dbeafe; --blue: #2563eb; --blue-deep: #1d4ed8;
+      --purple: #7c3aed; --ok: #059669; --bad: #e11d48;
+      --shadow: 0 14px 36px rgba(15,23,42,.08);
+    }
+    html[data-theme="dark"] {
+      --bg: #0f1220; --card: #1a1f2e; --text: #f1f5f9; --muted: #94a3b8;
+      --line: #2d3548; --shadow: 0 14px 36px rgba(0,0,0,.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(700px 360px at 0% 0%, rgba(37,99,235,.14), transparent 55%), var(--bg);
+      color: var(--text); min-height: 100dvh; padding: 14px 14px 28px;
+    }
+    .wrap { max-width: 520px; margin: 0 auto; }
+    .top {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 12px;
+    }
+    .back {
+      display: inline-flex; text-decoration: none; font-weight: 800; color: var(--text);
+      background: var(--card); border: 1px solid var(--line);
+      padding: 10px 14px; border-radius: 999px; min-height: 44px;
+    }
+    .badge {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 0.06em;
+      text-transform: uppercase; color: #fff;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      padding: 8px 12px; border-radius: 999px;
+    }
+    h1 { font-size: clamp(1.3rem, 3.5vw, 1.65rem); font-weight: 900; margin-bottom: 4px; }
+    .lead { color: var(--muted); font-weight: 600; font-size: 0.95rem; margin-bottom: 16px; line-height: 1.4; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .level-grid { display: grid; gap: 12px; }
+    .level-card {
+      appearance: none; border: 2px solid var(--line); background: var(--card);
+      border-radius: 18px; padding: 18px; text-align: left; cursor: pointer;
+      color: inherit; font: inherit; box-shadow: var(--shadow);
+    }
+    .level-card[data-level="easy"] {
+      border-color: rgba(16,185,129,.45);
+      background: linear-gradient(180deg, rgba(16,185,129,.07), var(--card) 45%);
+    }
+    .level-card[data-level="medium"] {
+      border-color: rgba(245,158,11,.5);
+      background: linear-gradient(180deg, rgba(245,158,11,.09), var(--card) 45%);
+    }
+    .level-card h2 { font-size: 1.15rem; font-weight: 900; margin-bottom: 4px; }
+    .level-card p { color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+    .diff-badge {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+      font-size: 0.75rem; font-weight: 900; text-transform: uppercase;
+      padding: 6px 12px; border-radius: 999px;
+    }
+    .diff-badge.easy { background: rgba(16,185,129,.15); color: #059669; }
+    .diff-badge.medium { background: rgba(245,158,11,.15); color: #d97706; }
+
+    .hud {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      justify-content: space-between; margin-bottom: 12px;
+    }
+    .pill {
+      font-weight: 800; font-size: 0.85rem; padding: 8px 12px; border-radius: 999px;
+      background: var(--card); border: 1px solid var(--line); color: var(--muted);
+    }
+    .pill.diff-easy { color: #059669; border-color: rgba(16,185,129,.35); background: rgba(16,185,129,.1); }
+    .pill.diff-medium { color: #d97706; border-color: rgba(245,158,11,.4); background: rgba(245,158,11,.12); }
+    .progress { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
+    .progress > span {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, #60a5fa, #2563eb); transition: width .3s ease;
+    }
+
+    .stage {
+      background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+      padding: 24px 18px; box-shadow: var(--shadow); text-align: center;
+    }
+    .num-display {
+      font-size: clamp(2.8rem, 12vw, 3.8rem); font-weight: 900;
+      letter-spacing: -0.03em; line-height: 1; margin-bottom: 6px;
+    }
+    .hear-row {
+      display: flex; justify-content: center; gap: 10px; margin-bottom: 8px;
+    }
+    .icon-btn {
+      appearance: none; border: none; cursor: pointer;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--bg); color: var(--text); border: 2px solid var(--line);
+      font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+    }
+    .hint { color: var(--muted); font-weight: 600; font-size: 0.9rem; margin-bottom: 18px; }
+
+    .mic-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      margin: 8px 0 16px;
+    }
+    .mic-btn {
+      appearance: none; border: none; cursor: pointer;
+      width: 100px; height: 100px; border-radius: 50%;
+      background: linear-gradient(180deg, #60a5fa, #2563eb);
+      color: #fff; font-size: 2.4rem;
+      box-shadow: 0 8px 0 var(--blue-deep), 0 14px 28px rgba(37,99,235,.35);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      position: relative;
+    }
+    .mic-btn:active, .mic-btn.listening {
+      transform: translateY(4px);
+      box-shadow: 0 4px 0 var(--blue-deep), 0 8px 18px rgba(37,99,235,.3);
+    }
+    .mic-btn.listening {
+      background: linear-gradient(180deg, #f87171, #dc2626);
+      box-shadow: 0 8px 0 #991b1b, 0 14px 28px rgba(220,38,38,.35);
+      animation: pulse 1.2s ease infinite;
+    }
+    .mic-btn:disabled {
+      opacity: 0.5; cursor: not-allowed;
+    }
+    @keyframes pulse {
+      0%, 100% { outline: 0 solid rgba(248,113,113,0.3); }
+      50% { outline: 10px solid rgba(248,113,113,0.2); }
+    }
+    .mic-label {
+      font-weight: 800; font-size: 0.9rem; color: var(--muted);
+    }
+    .heard {
+      min-height: 1.4em; font-weight: 800; font-size: 1rem;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .feedback { min-height: 1.4em; font-weight: 800; }
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+    .support-note {
+      margin-top: 12px; font-size: 0.82rem; color: var(--muted); font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 12px; }
+    .btn {
+      appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+      min-height: 48px; padding: 12px 18px; border-radius: 999px;
+    }
+    .btn-primary {
+      background: linear-gradient(180deg, #60a5fa, #2563eb); color: #fff;
+      box-shadow: 0 5px 0 var(--blue-deep);
+    }
+    .btn-ghost { background: var(--bg); color: var(--text); border: 2px solid var(--line); }
+
+    .finish-box {
+      text-align: center; background: var(--card); border: 1px solid var(--line);
+      border-radius: 20px; padding: 28px 18px; box-shadow: var(--shadow);
+    }
+    .finish-box h2 { font-size: 1.45rem; font-weight: 900; margin-bottom: 8px; }
+    .finish-box p { color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+    .score-big { font-size: 2rem; font-weight: 900; color: var(--blue); margin-bottom: 8px; }
+  </style>
+</head>
+<body class="no-profile-fab">
+  <div class="wrap">
+    <div class="top">
+      <a class="back" href="../">← Numbers</a>
+      <span class="badge">Say it</span>
+    </div>
+
+    <section id="menu" class="screen active">
+      <h1>Say the number</h1>
+      <p class="lead">See the number, hear it, then press the mic and say the word.</p>
+      <div class="level-grid">
+        <button type="button" class="level-card" data-level="easy">
+          <h2>Easy</h2>
+          <p>Say numbers from 0 to 20.</p>
+          <span class="diff-badge easy">●○○ Easy · 10 questions</span>
+        </button>
+        <button type="button" class="level-card" data-level="medium">
+          <h2>Medium</h2>
+          <p>Say bigger numbers (hundred, thousand, million…).</p>
+          <span class="diff-badge medium">●●○ Medium · 10 questions</span>
+        </button>
+      </div>
+      <p class="support-note" id="supportNote">Uses your device microphone (Chrome / Edge work best).</p>
+    </section>
+
+    <section id="play" class="screen">
+      <div class="hud">
+        <span class="pill" id="levelPill">Easy</span>
+        <span class="pill" id="progPill">1 / 10</span>
+      </div>
+      <div class="progress"><span id="bar"></span></div>
+      <div class="stage">
+        <div class="num-display" id="numDisplay">0</div>
+        <div class="hear-row">
+          <button type="button" class="icon-btn" id="btnListen" aria-label="Play sound">🔊</button>
+        </div>
+        <p class="hint">Press the circle and say the number word.</p>
+        <div class="mic-wrap">
+          <button type="button" class="mic-btn" id="micBtn" aria-label="Hold or press to speak">🎤</button>
+          <span class="mic-label" id="micLabel">Tap to speak</span>
+        </div>
+        <p class="heard" id="heard"></p>
+        <p class="feedback" id="feedback"></p>
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" id="btnSkip">Skip</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="finish" class="screen">
+      <div class="finish-box">
+        <h2>Round complete!</h2>
+        <div class="score-big" id="finishScore">0 / 10</div>
+        <p id="finishMsg">Great speaking practice.</p>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="btnAgain">Play again</button>
+          <button type="button" class="btn btn-ghost" id="btnMenu">Levels</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="../../../learningarcade/theme.js"></script>
+  <script>
+  (function () {
+    "use strict";
+
+    var EASY = [
+      { n: 0, word: "zero" }, { n: 1, word: "one" }, { n: 2, word: "two" },
+      { n: 3, word: "three" }, { n: 4, word: "four" }, { n: 5, word: "five" },
+      { n: 6, word: "six" }, { n: 7, word: "seven" }, { n: 8, word: "eight" },
+      { n: 9, word: "nine" }, { n: 10, word: "ten" }, { n: 11, word: "eleven" },
+      { n: 12, word: "twelve" }, { n: 13, word: "thirteen" }, { n: 14, word: "fourteen" },
+      { n: 15, word: "fifteen" }, { n: 16, word: "sixteen" }, { n: 17, word: "seventeen" },
+      { n: 18, word: "eighteen" }, { n: 19, word: "nineteen" }, { n: 20, word: "twenty" }
+    ];
+    var MEDIUM = [
+      { n: 100, word: "one hundred" },
+      { n: 105, word: "one hundred and five" },
+      { n: 200, word: "two hundred" },
+      { n: 875, word: "eight hundred and seventy-five" },
+      { n: 1000, word: "one thousand" },
+      { n: 1500, word: "one thousand five hundred" },
+      { n: 5420, word: "five thousand four hundred and twenty" },
+      { n: 25000, word: "twenty-five thousand" },
+      { n: 100000, word: "one hundred thousand" },
+      { n: 1000000, word: "one million" }
+    ];
+
+    var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var level = "easy";
+    var queue = [];
+    var index = 0;
+    var score = 0;
+    var TOTAL = 10;
+    var currentAudio = null;
+    var audioCache = {};
+    var recognition = null;
+    var listening = false;
+    var locked = false;
+
+    function $(id) { return document.getElementById(id); }
+
+    function show(id) {
+      ["menu", "play", "finish"].forEach(function (s) {
+        $(s).classList.toggle("active", s === id);
+      });
+    }
+
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function formatNum(n) {
+      return Number(n).toLocaleString("en-US");
+    }
+
+    function norm(s) {
+      return String(s || "")
+        .toLowerCase()
+        .replace(/[’']/g, "'")
+        .replace(/-/g, " ")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    // digit words → allow saying "20" or "twenty"
+    var DIGIT_WORDS = {
+      "0": "zero", "1": "one", "2": "two", "3": "three", "4": "four",
+      "5": "five", "6": "six", "7": "seven", "8": "eight", "9": "nine",
+      "10": "ten", "11": "eleven", "12": "twelve", "13": "thirteen", "14": "fourteen",
+      "15": "fifteen", "16": "sixteen", "17": "seventeen", "18": "eighteen",
+      "19": "nineteen", "20": "twenty"
+    };
+
+    function expandSpoken(text) {
+      var v = norm(text);
+      // if pure digits, map small ones
+      if (/^\d+$/.test(v) && DIGIT_WORDS[v]) return DIGIT_WORDS[v];
+      return v;
+    }
+
+    function acceptedList(item) {
+      var list = [norm(item.word)];
+      list.push(String(item.n));
+      list.push(formatNum(item.n).replace(/,/g, ""));
+      // variants
+      var extra = {
+        100: ["a hundred", "one hundred", "100", "hundred"],
+        105: ["one hundred five", "a hundred and five", "one hundred and five", "105"],
+        200: ["two hundred", "200"],
+        875: ["eight hundred seventy five", "eight hundred and seventy five", "eight hundred and seventy-five", "875"],
+        1000: ["a thousand", "one thousand", "1000", "thousand"],
+        1500: ["fifteen hundred", "one thousand five hundred", "1500"],
+        5420: ["five thousand four hundred twenty", "five thousand four hundred and twenty", "5420"],
+        25000: ["twenty five thousand", "twenty-five thousand", "25000"],
+        100000: ["a hundred thousand", "one hundred thousand", "100000"],
+        1000000: ["a million", "one million", "1000000", "million"]
+      };
+      (extra[item.n] || []).forEach(function (x) { list.push(norm(x)); });
+      return list;
+    }
+
+    function isMatch(item, spoken) {
+      var v = expandSpoken(spoken);
+      if (!v) return false;
+      var ok = acceptedList(item);
+      for (var i = 0; i < ok.length; i++) {
+        if (v === ok[i]) return true;
+        // loose contains for longer phrases
+        if (ok[i].length > 4 && (v.indexOf(ok[i]) !== -1 || ok[i].indexOf(v) !== -1)) return true;
+      }
+      return false;
+    }
+
+    function speakWord(word) {
+      try {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(word);
+        u.lang = "en-US";
+        u.rate = 0.9;
+        window.speechSynthesis.speak(u);
+      } catch (e) {}
+    }
+
+    function playSound(item) {
+      if (currentAudio) {
+        try { currentAudio.pause(); } catch (e) {}
+        currentAudio = null;
+      }
+      var key = String(item.n);
+      var src = "../flashcards/audio/" + item.n + ".mp3";
+      if (audioCache[key] === false) {
+        speakWord(item.word);
+        return;
+      }
+      if (audioCache[key] instanceof Audio) {
+        audioCache[key].currentTime = 0;
+        currentAudio = audioCache[key];
+        currentAudio.play().catch(function () { speakWord(item.word); });
+        return;
+      }
+      var a = new Audio(src);
+      a.addEventListener("error", function () {
+        audioCache[key] = false;
+        speakWord(item.word);
+      });
+      a.addEventListener("canplaythrough", function () {
+        audioCache[key] = a;
+        currentAudio = a;
+        a.play().catch(function () { speakWord(item.word); });
+      });
+      a.load();
+      setTimeout(function () {
+        if (audioCache[key] === false) return;
+        if (a.readyState >= 2) {
+          audioCache[key] = a;
+          currentAudio = a;
+          a.play().catch(function () { speakWord(item.word); });
+        }
+      }, 60);
+    }
+
+    function stopListening() {
+      listening = false;
+      $("micBtn").classList.remove("listening");
+      $("micLabel").textContent = "Tap to speak";
+      if (recognition) {
+        try { recognition.stop(); } catch (e) {}
+      }
+    }
+
+    function startListening() {
+      if (!SpeechRec) {
+        $("feedback").textContent = "Speech recognition is not supported in this browser.";
+        $("feedback").className = "feedback bad";
+        return;
+      }
+      if (locked || listening) return;
+      if (recognition) {
+        try { recognition.abort(); } catch (e) {}
+      }
+      recognition = new SpeechRec();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 3;
+      recognition.continuous = false;
+
+      listening = true;
+      $("micBtn").classList.add("listening");
+      $("micLabel").textContent = "Listening…";
+      $("heard").textContent = "";
+      $("feedback").textContent = "";
+      $("feedback").className = "feedback";
+
+      recognition.onresult = function (event) {
+        var said = "";
+        try {
+          said = event.results[0][0].transcript;
+        } catch (e) {}
+        stopListening();
+        $("heard").textContent = said ? ('You said: "' + said + '"') : "";
+        evaluate(said);
+      };
+      recognition.onerror = function (event) {
+        stopListening();
+        var msg = "Could not hear you — try again.";
+        if (event.error === "not-allowed") msg = "Microphone blocked. Allow mic access and retry.";
+        if (event.error === "no-speech") msg = "No speech detected — press the mic and speak.";
+        $("feedback").textContent = msg;
+        $("feedback").className = "feedback bad";
+      };
+      recognition.onend = function () {
+        if (listening) stopListening();
+      };
+
+      try {
+        recognition.start();
+      } catch (e) {
+        stopListening();
+        $("feedback").textContent = "Could not start the microphone.";
+        $("feedback").className = "feedback bad";
+      }
+    }
+
+    function evaluate(said) {
+      if (locked) return;
+      var item = queue[index];
+      if (!item) return;
+      if (isMatch(item, said)) {
+        locked = true;
+        score += 1;
+        $("feedback").textContent = "Correct! " + item.word;
+        $("feedback").className = "feedback ok";
+        setTimeout(function () {
+          locked = false;
+          index += 1;
+          loadItem();
+        }, 850);
+      } else {
+        $("feedback").textContent = "Not quite — listen and try again.";
+        $("feedback").className = "feedback bad";
+      }
+    }
+
+    function startLevel(lv) {
+      level = lv;
+      if (level === "easy") {
+        queue = shuffle(EASY).slice(0, TOTAL);
+      } else {
+        queue = shuffle(MEDIUM).slice(0, TOTAL);
+      }
+      index = 0;
+      score = 0;
+      locked = false;
+      stopListening();
+      var pill = $("levelPill");
+      pill.classList.remove("diff-easy", "diff-medium");
+      if (level === "easy") {
+        pill.textContent = "●○○ Easy";
+        pill.classList.add("diff-easy");
+      } else {
+        pill.textContent = "●●○ Medium";
+        pill.classList.add("diff-medium");
+      }
+      show("play");
+      loadItem();
+    }
+
+    function loadItem() {
+      stopListening();
+      if (index >= queue.length) {
+        endRound();
+        return;
+      }
+      var item = queue[index];
+      $("numDisplay").textContent = formatNum(item.n);
+      $("progPill").textContent = (index + 1) + " / " + queue.length;
+      $("bar").style.width = (index / queue.length * 100) + "%";
+      $("heard").textContent = "";
+      $("feedback").textContent = "";
+      $("feedback").className = "feedback";
+      setTimeout(function () { playSound(item); }, 150);
+    }
+
+    function skip() {
+      stopListening();
+      var item = queue[index];
+      $("feedback").textContent = "Answer: " + item.word;
+      $("feedback").className = "feedback bad";
+      locked = true;
+      setTimeout(function () {
+        locked = false;
+        index += 1;
+        loadItem();
+      }, 900);
+    }
+
+    function endRound() {
+      $("bar").style.width = "100%";
+      $("finishScore").textContent = score + " / " + queue.length;
+      $("finishMsg").textContent = score === queue.length
+        ? "Perfect pronunciation round!"
+        : "Nice work — play again to improve.";
+      show("finish");
+      try {
+        if (window.LAStars) {
+          var acc = queue.length ? Math.round((score / queue.length) * 100) : 0;
+          LAStars.recordPlay("topics-numbers-speak");
+          LAStars.saveFromAccuracy("topics-numbers-speak", acc);
+        }
+      } catch (e) {}
+    }
+
+    if (!SpeechRec) {
+      $("supportNote").textContent = "Voice recognition needs Chrome, Edge, or Safari. Typing game: Write the word.";
+      $("micBtn").disabled = true;
+    }
+
+    document.querySelectorAll(".level-card").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        startLevel(btn.getAttribute("data-level"));
+      });
+    });
+    $("micBtn").addEventListener("click", function () {
+      if (listening) stopListening();
+      else startListening();
+    });
+    $("btnListen").addEventListener("click", function () {
+      if (queue[index]) playSound(queue[index]);
+    });
+    $("btnSkip").addEventListener("click", skip);
+    $("btnAgain").addEventListener("click", function () { startLevel(level); });
+    $("btnMenu").addEventListener("click", function () { show("menu"); stopListening(); });
+  })();
+  </script>
+  <script src="../../../learningarcade/la-stars.js"></script>
+</body>
+</html>

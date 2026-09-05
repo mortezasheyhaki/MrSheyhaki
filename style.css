@@ -3389,3 +3389,239 @@ html[data-theme="light"] .arcade-nav .nav-profile {
     }
   }
 }
+
+
+
+/* ========== HOME HUB CARDS — premium polish ========== */
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+}
+@media (max-width: 960px) {
+  .hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .hub-grid { grid-template-columns: 1fr; gap: 14px; }
+}
+
+.hub-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  padding: 28px 20px 22px;
+  border-radius: 22px;
+  min-height: 280px;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    filter 0.25s ease;
+}
+.hub-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 48%,
+    transparent 65%
+  );
+  transform: translateX(-140%);
+  transition: transform 0.6s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+.hub-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  filter: brightness(1.06);
+}
+.hub-card:hover::before {
+  transform: translateX(140%);
+}
+
+.hub-card-glow {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  top: -40px;
+  right: -40px;
+  opacity: 0.35;
+  filter: blur(12px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hub-card-icon {
+  position: relative;
+  z-index: 2;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.hub-card-icon svg {
+  width: 32px;
+  height: 32px;
+}
+.hub-card:hover .hub-card-icon {
+  transform: scale(1.08) translateY(-2px);
+}
+
+.hub-card h2 {
+  position: relative;
+  z-index: 2;
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.hub-card-rule {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 42px;
+  height: 3px;
+  border-radius: 999px;
+  margin: 0 auto 12px;
+}
+.hub-card p {
+  position: relative;
+  z-index: 2;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  opacity: 0.85;
+  margin-bottom: 18px;
+  flex: 1;
+}
+.hub-card-btn {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.hub-card:hover .hub-card-btn {
+  transform: translateY(-1px);
+}
+
+/* Topics — indigo (matches Numbers section) */
+.hub-card--topics {
+  background: linear-gradient(165deg, rgba(99, 102, 241, 0.14), rgba(15, 18, 32, 0.92) 45%);
+  border: 1px solid rgba(129, 140, 248, 0.45);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(129, 140, 248, 0.08) inset,
+    0 0 40px rgba(99, 102, 241, 0.12);
+}
+.hub-card--topics .hub-card-glow {
+  background: #818cf8;
+}
+.hub-card--topics .hub-card-icon {
+  background: linear-gradient(145deg, rgba(165, 180, 252, 0.25), rgba(99, 102, 241, 0.35));
+  color: #c7d2fe;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+}
+.hub-card--topics .hub-card-rule {
+  background: linear-gradient(90deg, #a5b4fc, #6366f1);
+}
+.hub-card--topics .hub-card-btn {
+  color: #fff;
+  background: linear-gradient(180deg, #a5b4fc, #6366f1);
+  box-shadow: 0 5px 0 #4338ca, 0 10px 22px rgba(67, 56, 202, 0.4);
+}
+.hub-card--topics:hover {
+  border-color: rgba(165, 180, 252, 0.7);
+  box-shadow:
+    0 22px 50px rgba(0, 0, 0, 0.4),
+    0 0 48px rgba(99, 102, 241, 0.28);
+}
+
+/* Arcade — purple */
+.hub-card--arcade {
+  background: linear-gradient(165deg, rgba(168, 85, 247, 0.14), rgba(15, 18, 32, 0.92) 45%);
+  border: 1px solid rgba(192, 132, 252, 0.4);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35), 0 0 40px rgba(168, 85, 247, 0.1);
+}
+.hub-card--arcade .hub-card-icon {
+  background: linear-gradient(145deg, rgba(216, 180, 254, 0.2), rgba(168, 85, 247, 0.3));
+  color: #e9d5ff;
+  box-shadow: 0 8px 20px rgba(168, 85, 247, 0.3);
+}
+.hub-card--arcade .hub-card-rule { background: linear-gradient(90deg, #d8b4fe, #a855f7); }
+.hub-card--arcade .hub-card-btn {
+  color: #fff;
+  background: linear-gradient(180deg, #c084fc, #9333ea);
+  box-shadow: 0 5px 0 #6b21a8, 0 10px 22px rgba(147, 51, 234, 0.35);
+}
+.hub-card--arcade:hover {
+  border-color: rgba(216, 180, 254, 0.65);
+  box-shadow: 0 22px 50px rgba(0,0,0,0.4), 0 0 48px rgba(168, 85, 247, 0.25);
+}
+
+/* Resources — blue */
+.hub-card--resources {
+  background: linear-gradient(165deg, rgba(59, 130, 246, 0.14), rgba(15, 18, 32, 0.92) 45%);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35), 0 0 40px rgba(59, 130, 246, 0.1);
+}
+.hub-card--resources .hub-card-icon {
+  background: linear-gradient(145deg, rgba(147, 197, 253, 0.2), rgba(37, 99, 235, 0.3));
+  color: #bfdbfe;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+}
+.hub-card--resources .hub-card-rule { background: linear-gradient(90deg, #93c5fd, #2563eb); }
+.hub-card--resources .hub-card-btn {
+  color: #fff;
+  background: linear-gradient(180deg, #60a5fa, #2563eb);
+  box-shadow: 0 5px 0 #1d4ed8, 0 10px 22px rgba(37, 99, 235, 0.35);
+}
+.hub-card--resources:hover {
+  border-color: rgba(147, 197, 253, 0.65);
+  box-shadow: 0 22px 50px rgba(0,0,0,0.4), 0 0 48px rgba(59, 130, 246, 0.25);
+}
+
+/* About — amber/gold */
+.hub-card--about {
+  background: linear-gradient(165deg, rgba(245, 158, 11, 0.12), rgba(15, 18, 32, 0.92) 45%);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35), 0 0 40px rgba(245, 158, 11, 0.1);
+}
+.hub-card--about .hub-card-icon {
+  background: linear-gradient(145deg, rgba(253, 230, 138, 0.2), rgba(217, 119, 6, 0.3));
+  color: #fde68a;
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.3);
+}
+.hub-card--about .hub-card-rule { background: linear-gradient(90deg, #fcd34d, #d97706); }
+.hub-card--about .hub-card-btn {
+  color: #1c1917;
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
+  box-shadow: 0 5px 0 #b45309, 0 10px 22px rgba(245, 158, 11, 0.35);
+}
+.hub-card--about:hover {
+  border-color: rgba(252, 211, 77, 0.65);
+  box-shadow: 0 22px 50px rgba(0,0,0,0.4), 0 0 48px rgba(245, 158, 11, 0.22);
+}

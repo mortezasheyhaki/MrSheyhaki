@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Numbers · Topics</title>
+  <script>
+  (function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+  if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+  else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+  document.documentElement.setAttribute("data-theme","dark");
+  else document.documentElement.setAttribute("data-theme","light");
+  }catch(e){}})();
+  </script>
+  <link rel="stylesheet" href="../../learningarcade/theme.css" />
+  <link rel="stylesheet" href="../../learningarcade/style.css" />
+  <style>
+    :root {
+      --bg: #eef2ff;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: rgba(99, 102, 241, 0.28);
+      --accent: #818cf8;
+      --accent-2: #6366f1;
+      --accent-deep: #4338ca;
+      --accent-soft: rgba(129, 140, 248, 0.14);
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="dark"] {
+      --bg: #0b1020;
+      --card: #121826;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --line: rgba(129, 140, 248, 0.35);
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(900px 420px at 100% 0%, rgba(99, 102, 241, 0.16), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      padding: 20px 16px 48px;
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; }
+    .back {
+      display: inline-flex; text-decoration: none; font-weight: 800; color: var(--text);
+      background: var(--card); border: 1px solid var(--line);
+      padding: 10px 16px; border-radius: 999px; margin-bottom: 16px;
+    }
+    .eyebrow {
+      font-size: 0.72rem; font-weight: 900; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+    }
+    h1 {
+      font-size: clamp(1.7rem, 3.5vw, 2.1rem);
+      font-weight: 900; letter-spacing: -0.03em; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    h1 .title-ico {
+      width: 42px; height: 42px; border-radius: 12px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      font-size: 1.2rem;
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+    }
+    .lead {
+      color: var(--muted); font-weight: 600; max-width: 56ch;
+      margin-bottom: 22px; line-height: 1.5;
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      align-items: stretch;
+    }
+    @media (max-width: 1100px) {
+      .game-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 800px) {
+      .game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 520px) {
+      .game-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Same proportions as Grammar arcade cards */
+    .game-card {
+      position: relative;
+      background: var(--card);
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 16px 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 200px;
+      max-height: none;
+      height: 100%;
+      aspect-ratio: auto;
+      transition:
+        transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.22s ease,
+        border-color 0.22s ease,
+        filter 0.22s ease;
+    }
+    .game-card::after {
+      content: "";
+      position: absolute;
+      right: -28px; top: -28px;
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      background: rgba(129, 140, 248, 0.12);
+      pointer-events: none;
+    }
+    .game-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(165, 180, 252, 0.55);
+      box-shadow: 0 22px 48px rgba(0,0,0,0.35), 0 0 28px rgba(99,102,241,0.2);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    .game-card-icon {
+      width: 44px; height: 44px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(99, 102, 241, 0.35);
+    }
+    .card-head h3 {
+      font-size: 1.12rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .game-tag {
+      display: inline-flex;
+      align-self: flex-start;
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #c7d2fe;
+      background: var(--accent-soft);
+      border: 1px solid rgba(129, 140, 248, 0.28);
+      padding: 5px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    html[data-theme="dark"] .game-tag { color: #c7d2fe; }
+    html[data-theme="light"] .game-tag { color: var(--accent-2); }
+    .game-card > p {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.88rem;
+      line-height: 1.4;
+      flex: 1;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    .game-meta {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+    .game-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: auto;
+      position: relative;
+      z-index: 1;
+    }
+    /* Circular button like Grammar cards */
+    .game-launch {
+      width: 52px;
+      height: 52px;
+      min-width: 52px;
+      min-height: 52px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 0.58rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      color: #fff !important;
+      background: radial-gradient(circle at 35% 30%, #a5b4fc, var(--accent) 40%, var(--accent-2) 75%);
+      box-shadow:
+        0 4px 0 var(--accent-deep),
+        0 8px 16px rgba(67, 56, 202, 0.4),
+        inset 0 2px 0 rgba(255,255,255,0.25);
+      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+    }
+    .game-launch:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+    .game-launch:active {
+      transform: translateY(3px);
+      box-shadow:
+        0 3px 0 var(--accent-deep),
+        0 6px 14px rgba(67, 56, 202, 0.35),
+        inset 0 2px 0 rgba(255,255,255,0.2);
+    }
+    .game-stars {
+      display: inline-flex;
+      gap: 4px;
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+    .game-stars .star { color: #475569; }
+    .game-stars .star.is-filled {
+      color: #fbbf24;
+      text-shadow: 0 0 10px rgba(251, 191, 36, 0.45);
+    }
+  
+    .game-card > p {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.84rem;
+      line-height: 1.35;
+      margin-bottom: 8px;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+    .game-meta { font-size: 0.72rem; margin-bottom: 8px; }
+    .game-tag { margin-bottom: 6px; font-size: 0.64rem; padding: 4px 8px; }
+    .card-head { margin-bottom: 6px; gap: 10px; }
+    .card-head h3 { font-size: 1rem; }
+    .game-card-icon { width: 38px; height: 38px; border-radius: 12px; font-size: 1.15rem; }
+    .game-launch {
+      width: 46px;
+      height: 46px;
+      min-width: 46px;
+      min-height: 46px;
+      font-size: 0.55rem;
+    }
+    .game-stars { font-size: 1rem; }
+
+  
+    /* Soft-rectangle hover */
+    .game-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(
+        115deg,
+        transparent 25%,
+        rgba(255, 255, 255, 0.14) 48%,
+        transparent 70%
+      );
+      transform: translateX(-130%);
+      transition: transform 0.55s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .game-card:hover {
+      transform: translateY(-5px) scale(1.015);
+      border-color: rgba(165, 180, 252, 0.65);
+      box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(165, 180, 252, 0.2),
+        0 0 28px rgba(99, 102, 241, 0.22);
+      filter: brightness(1.05);
+    }
+    .game-card:hover::before {
+      transform: translateX(130%);
+    }
+    .game-card:hover .game-card-icon {
+      transform: scale(1.08) rotate(-5deg);
+    }
+    .game-card-icon {
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .game-card:hover .game-launch {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+    .game-launch {
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      position: relative;
+      z-index: 3;
+      overflow: hidden;
+    }
+    .game-launch::after {
+      content: "";
+      position: absolute;
+      top: 0; left: -50%;
+      width: 45%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+      transform: skewX(-18deg);
+      transition: left 0.45s ease;
+      pointer-events: none;
+    }
+    .game-card:hover .game-launch::after { left: 120%; }
+    .game-stars .star {
+      display: inline-block;
+      transition: transform 0.18s ease;
+    }
+    .game-card:hover .game-stars .star.is-filled {
+      transform: scale(1.12);
+    }
+    html[data-theme="light"] .game-card:hover {
+      box-shadow:
+        0 18px 36px rgba(15, 23, 42, 0.12),
+        0 0 0 1px rgba(99, 102, 241, 0.15),
+        0 0 24px rgba(99, 102, 241, 0.12);
+    }
+
+  
+    /* —— Phone / small tablet layout —— */
+    @media (max-width: 800px) {
+      body { padding: 12px 12px 36px; padding-bottom: max(36px, env(safe-area-inset-bottom)); }
+      .wrap { padding: 0; max-width: 100%; }
+      .back {
+        min-height: 44px;
+        padding: 10px 14px;
+        margin-bottom: 12px;
+      }
+      h1 { font-size: 1.45rem; }
+      h1 .title-ico { width: 36px; height: 36px; font-size: 1.05rem; }
+      .lead { font-size: 0.9rem; margin-bottom: 16px; }
+      .game-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+      .game-card {
+        min-height: 180px;
+        max-height: none;
+        aspect-ratio: auto;
+        padding: 12px 12px 10px;
+        border-radius: 16px;
+      }
+      .card-head { gap: 8px; margin-bottom: 4px; }
+      .card-head h3 { font-size: 0.92rem; }
+      .game-card-icon { width: 34px; height: 34px; border-radius: 10px; font-size: 1rem; }
+      .game-tag { font-size: 0.6rem; padding: 3px 7px; margin-bottom: 4px; }
+      .game-card > p {
+        font-size: 0.75rem;
+        -webkit-line-clamp: 2;
+        margin-bottom: 4px;
+      }
+      .game-meta { font-size: 0.68rem; margin-bottom: 8px; }
+      .game-launch {
+        width: 44px; height: 44px;
+        min-width: 44px; min-height: 44px;
+        font-size: 0.52rem;
+        box-shadow: 0 3px 0 var(--accent-deep), 0 6px 12px rgba(67, 56, 202, 0.35);
+      }
+      .game-stars { font-size: 0.9rem; gap: 2px; }
+      .game-card-actions { gap: 8px; }
+    }
+    @media (max-width: 520px) {
+      .game-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .game-card {
+        min-height: 140px;
+        padding: 14px 14px 12px;
+      }
+      .card-head h3 { font-size: 1.05rem; }
+      .game-card > p {
+        font-size: 0.84rem;
+        -webkit-line-clamp: 3;
+      }
+      .game-launch {
+        width: 46px; height: 46px;
+        min-width: 46px; min-height: 46px;
+        font-size: 0.55rem;
+      }
+    }
+    /* Very narrow */
+    @media (max-width: 360px) {
+      .game-card > p { -webkit-line-clamp: 2; font-size: 0.8rem; }
+      .game-tag { display: none; }
+    }
+
+  </style>
+</head>
+<body class="no-profile-fab">
+  <div class="wrap">
+    <a class="back" href="../">← Topics</a>
+    <p class="eyebrow">Topic</p>
+    <h1><span class="title-ico" aria-hidden="true">🔢</span> Numbers</h1>
+    <p class="lead">Practice numbers with flashcards, matching, writing, speaking, and listening games.</p>
+
+    <section class="game-grid" aria-label="Number games">
+      <article class="game-card">
+        <div class="card-head">
+          <div class="game-card-icon" aria-hidden="true">🃏</div>
+          <h3>Flashcards</h3>
+        </div>
+        <span class="game-tag">Practice · A1</span>
+        <p>Tap a number to see the word and hear it — Easy 0–20 and Medium big numbers.</p>
+        <div class="game-meta">Listen · Word + number</div>
+        <div class="game-card-actions">
+          <a class="game-launch" href="flashcards/">Explore</a>
+          <div class="game-stars" data-game="topics-numbers-flashcards" aria-label="Progress stars">
+            <span class="star" data-n="1">☆</span><span class="star" data-n="2">☆</span><span class="star" data-n="3">☆</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="game-card">
+        <div class="card-head">
+          <div class="game-card-icon" aria-hidden="true">🔗</div>
+          <h3>Match the numbers</h3>
+        </div>
+        <span class="game-tag">Match · A1–A2</span>
+        <p>Match numbers with words. Easy 0–20 in two rounds · Medium big numbers.</p>
+        <div class="game-meta">Easy · Medium</div>
+        <div class="game-card-actions">
+          <a class="game-launch" href="match/">Explore</a>
+          <div class="game-stars" data-game="topics-numbers-match" aria-label="Progress stars">
+            <span class="star" data-n="1">☆</span><span class="star" data-n="2">☆</span><span class="star" data-n="3">☆</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="game-card">
+        <div class="card-head">
+          <div class="game-card-icon" aria-hidden="true">✍️</div>
+          <h3>Write the word</h3>
+        </div>
+        <span class="game-tag">Spelling · A1–A2</span>
+        <p>See the number, hear the audio, type the English word.</p>
+        <div class="game-meta">Easy · Medium</div>
+        <div class="game-card-actions">
+          <a class="game-launch" href="write-word/">Explore</a>
+          <div class="game-stars" data-game="topics-numbers-write-word" aria-label="Progress stars">
+            <span class="star" data-n="1">☆</span><span class="star" data-n="2">☆</span><span class="star" data-n="3">☆</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="game-card">
+        <div class="card-head">
+          <div class="game-card-icon" aria-hidden="true">🎤</div>
+          <h3>Say the number</h3>
+        </div>
+        <span class="game-tag">Speaking · A1–A2</span>
+        <p>Press the mic and say the number word. Voice recognition.</p>
+        <div class="game-meta">Easy · Medium</div>
+        <div class="game-card-actions">
+          <a class="game-launch" href="speak/">Explore</a>
+          <div class="game-stars" data-game="topics-numbers-speak" aria-label="Progress stars">
+            <span class="star" data-n="1">☆</span><span class="star" data-n="2">☆</span><span class="star" data-n="3">☆</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="game-card">
+        <div class="card-head">
+          <div class="game-card-icon" aria-hidden="true">🎧</div>
+          <h3>Listen &amp; write</h3>
+        </div>
+        <span class="game-tag">Listening · A1–A2</span>
+        <p>Sequences, phone number, ten numbers, and medium big numbers.</p>
+        <div class="game-meta">4 parts</div>
+        <div class="game-card-actions">
+          <a class="game-launch" href="listen-write/">Explore</a>
+          <div class="game-stars" data-game="topics-numbers-listen-write" aria-label="Progress stars">
+            <span class="star" data-n="1">☆</span><span class="star" data-n="2">☆</span><span class="star" data-n="3">☆</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="game-card">
+        <div class="card-head">
+          <div class="game-card-icon" aria-hidden="true">👆</div>
+          <h3>Listen &amp; choose</h3>
+        </div>
+        <span class="game-tag">Listening · A1</span>
+        <p>Teens or tens? Hear a number and pick the correct one (13 or 30…).</p>
+        <div class="game-meta">7 questions</div>
+        <div class="game-card-actions">
+          <a class="game-launch" href="listen-choose/">Explore</a>
+          <div class="game-stars" data-game="topics-numbers-listen-choose" aria-label="Progress stars">
+            <span class="star" data-n="1">☆</span><span class="star" data-n="2">☆</span><span class="star" data-n="3">☆</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="game-card">
+        <div class="card-head">
+          <div class="game-card-icon" aria-hidden="true">📋</div>
+          <h3>Personal info form</h3>
+        </div>
+        <span class="game-tag">Listening · A1</span>
+        <p>Listen and write numbers for phone, address, age, and email.</p>
+        <div class="game-meta">4 questions</div>
+        <div class="game-card-actions">
+          <a class="game-launch" href="personal-form/">Explore</a>
+          <div class="game-stars" data-game="topics-numbers-personal-form" aria-label="Progress stars">
+            <span class="star" data-n="1">☆</span><span class="star" data-n="2">☆</span><span class="star" data-n="3">☆</span>
+          </div>
+        </div>
+      </article>
+    </section>
+  </div>
+  <script src="../../learningarcade/theme.js"></script>
+  <script src="../../learningarcade/la-stars.js"></script>
+</body>
+</html>

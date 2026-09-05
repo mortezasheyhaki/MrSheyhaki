@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Write the Number Word · Topics</title>
+  <script>
+  (function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+  if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+  else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+  document.documentElement.setAttribute("data-theme","dark");
+  else document.documentElement.setAttribute("data-theme","light");
+  }catch(e){}})();
+  </script>
+  <link rel="stylesheet" href="../../../learningarcade/theme.css" />
+  <style>
+    :root {
+      --bg: #f5f3ff; --card: #fff; --text: #0f172a; --muted: #64748b;
+      --line: #e9e5ff; --purple: #7c3aed; --purple-deep: #5b21b6;
+      --ok: #059669; --bad: #e11d48; --shadow: 0 14px 36px rgba(15,23,42,.08);
+    }
+    html[data-theme="dark"] {
+      --bg: #0f1220; --card: #1a1f2e; --text: #f1f5f9; --muted: #94a3b8;
+      --line: #2d3548; --shadow: 0 14px 36px rgba(0,0,0,.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(700px 360px at 100% 0%, rgba(124,58,237,.16), transparent 55%), var(--bg);
+      color: var(--text); min-height: 100dvh; padding: 14px 14px 28px;
+    }
+    .wrap { max-width: 520px; margin: 0 auto; }
+    .top {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 12px;
+    }
+    .back {
+      display: inline-flex; text-decoration: none; font-weight: 800; color: var(--text);
+      background: var(--card); border: 1px solid var(--line);
+      padding: 10px 14px; border-radius: 999px; min-height: 44px;
+    }
+    .badge {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 0.06em;
+      text-transform: uppercase; color: #fff;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      padding: 8px 12px; border-radius: 999px;
+    }
+    h1 { font-size: clamp(1.3rem, 3.5vw, 1.65rem); font-weight: 900; margin-bottom: 4px; }
+    .lead { color: var(--muted); font-weight: 600; font-size: 0.95rem; margin-bottom: 16px; line-height: 1.4; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .level-grid { display: grid; gap: 12px; }
+    .level-card {
+      appearance: none; border: 2px solid var(--line); background: var(--card);
+      border-radius: 18px; padding: 18px; text-align: left; cursor: pointer;
+      color: inherit; font: inherit; box-shadow: var(--shadow);
+    }
+    .level-card[data-level="easy"] {
+      border-color: rgba(16,185,129,.45);
+      background: linear-gradient(180deg, rgba(16,185,129,.07), var(--card) 45%);
+    }
+    .level-card[data-level="medium"] {
+      border-color: rgba(245,158,11,.5);
+      background: linear-gradient(180deg, rgba(245,158,11,.09), var(--card) 45%);
+    }
+    .level-card h2 { font-size: 1.15rem; font-weight: 900; margin-bottom: 4px; }
+    .level-card p { color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+    .diff-badge {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+      font-size: 0.75rem; font-weight: 900; text-transform: uppercase;
+      padding: 6px 12px; border-radius: 999px;
+    }
+    .diff-badge.easy { background: rgba(16,185,129,.15); color: #059669; }
+    .diff-badge.medium { background: rgba(245,158,11,.15); color: #d97706; }
+    .diff-dots { display: inline-flex; gap: 4px; }
+    .diff-dots i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0.25; }
+    .diff-badge.easy .diff-dots i:first-child { opacity: 1; }
+    .diff-badge.medium .diff-dots i:nth-child(1),
+    .diff-badge.medium .diff-dots i:nth-child(2) { opacity: 1; }
+
+    .hud {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      justify-content: space-between; margin-bottom: 12px;
+    }
+    .pill {
+      font-weight: 800; font-size: 0.85rem; padding: 8px 12px; border-radius: 999px;
+      background: var(--card); border: 1px solid var(--line); color: var(--muted);
+    }
+    .pill.diff-easy { color: #059669; border-color: rgba(16,185,129,.35); background: rgba(16,185,129,.1); }
+    .pill.diff-medium { color: #d97706; border-color: rgba(245,158,11,.4); background: rgba(245,158,11,.12); }
+    .progress { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
+    .progress > span {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, #a78bfa, #7c3aed); transition: width .3s ease;
+    }
+
+    .stage {
+      background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+      padding: 22px 18px; box-shadow: var(--shadow); text-align: center;
+    }
+    .num-display {
+      font-size: clamp(2.8rem, 12vw, 3.8rem); font-weight: 900;
+      letter-spacing: -0.03em; line-height: 1; margin-bottom: 8px;
+    }
+    .listen-btn {
+      appearance: none; border: none; cursor: pointer;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(180deg, #8b5cf6, #7c3aed); color: #fff;
+      font-size: 1.4rem; margin: 8px auto 16px;
+      box-shadow: 0 5px 0 var(--purple-deep);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .listen-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--purple-deep); }
+    .hint { color: var(--muted); font-weight: 600; font-size: 0.88rem; margin-bottom: 12px; }
+
+    input[type="text"] {
+      width: 100%; padding: 14px 16px; border-radius: 14px;
+      border: 2px solid var(--line); font: inherit; font-weight: 700;
+      font-size: 16px; text-align: center; background: var(--bg); color: var(--text);
+      margin-bottom: 12px;
+    }
+    input[type="text"]:focus {
+      outline: none; border-color: var(--purple);
+      box-shadow: 0 0 0 4px rgba(124,58,237,.15);
+    }
+    input.is-ok { border-color: var(--ok); }
+    input.is-bad { border-color: var(--bad); }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .btn {
+      appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+      min-height: 48px; padding: 12px 18px; border-radius: 999px;
+    }
+    .btn-primary {
+      background: linear-gradient(180deg, #8b5cf6, #7c3aed); color: #fff;
+      box-shadow: 0 5px 0 var(--purple-deep); flex: 1; min-width: 120px;
+    }
+    .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--purple-deep); }
+    .btn-ghost { background: var(--bg); color: var(--text); border: 2px solid var(--line); }
+
+    .feedback { min-height: 1.4em; margin-top: 12px; font-weight: 800; }
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+
+    .finish-box {
+      text-align: center; background: var(--card); border: 1px solid var(--line);
+      border-radius: 20px; padding: 28px 18px; box-shadow: var(--shadow);
+    }
+    .finish-box h2 { font-size: 1.45rem; font-weight: 900; margin-bottom: 8px; }
+    .finish-box p { color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+    .score-big { font-size: 2rem; font-weight: 900; color: var(--purple); margin-bottom: 8px; }
+  </style>
+</head>
+<body class="no-profile-fab">
+  <div class="wrap">
+    <div class="top">
+      <a class="back" href="../">← Numbers</a>
+      <span class="badge">Write the word</span>
+    </div>
+
+    <section id="menu" class="screen active">
+      <h1>Write the word</h1>
+      <p class="lead">See the number, hear it, then type the English word.</p>
+      <div class="level-grid">
+        <button type="button" class="level-card" data-level="easy">
+          <h2>Easy</h2>
+          <p>Numbers 0 to 20 — write zero, one, two… twenty.</p>
+          <span class="diff-badge easy">
+            <span class="diff-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            Easy · 10 questions
+          </span>
+        </button>
+        <button type="button" class="level-card" data-level="medium">
+          <h2>Medium</h2>
+          <p>Bigger numbers — hundred, thousand, million…</p>
+          <span class="diff-badge medium">
+            <span class="diff-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            Medium · 10 questions
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <section id="play" class="screen">
+      <div class="hud">
+        <span class="pill" id="levelPill">Easy</span>
+        <span class="pill" id="progPill">1 / 10</span>
+      </div>
+      <div class="progress"><span id="bar"></span></div>
+      <div class="stage">
+        <div class="num-display" id="numDisplay">0</div>
+        <button type="button" class="listen-btn" id="btnListen" aria-label="Play sound">🔊</button>
+        <p class="hint">Listen, then type the word for this number.</p>
+        <input id="answer" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Type the word…" />
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" id="btnSkip">Skip</button>
+          <button type="button" class="btn btn-primary" id="btnCheck">Check</button>
+        </div>
+        <p class="feedback" id="feedback"></p>
+      </div>
+    </section>
+
+    <section id="finish" class="screen">
+      <div class="finish-box">
+        <h2>Round complete!</h2>
+        <div class="score-big" id="finishScore">0 / 10</div>
+        <p id="finishMsg">Great work.</p>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="btnAgain">Play again</button>
+          <button type="button" class="btn btn-ghost" id="btnMenu">Levels</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="../../../learningarcade/theme.js"></script>
+  <script>
+  (function () {
+    "use strict";
+
+    var EASY = [
+      { n: 0, word: "zero" }, { n: 1, word: "one" }, { n: 2, word: "two" },
+      { n: 3, word: "three" }, { n: 4, word: "four" }, { n: 5, word: "five" },
+      { n: 6, word: "six" }, { n: 7, word: "seven" }, { n: 8, word: "eight" },
+      { n: 9, word: "nine" }, { n: 10, word: "ten" }, { n: 11, word: "eleven" },
+      { n: 12, word: "twelve" }, { n: 13, word: "thirteen" }, { n: 14, word: "fourteen" },
+      { n: 15, word: "fifteen" }, { n: 16, word: "sixteen" }, { n: 17, word: "seventeen" },
+      { n: 18, word: "eighteen" }, { n: 19, word: "nineteen" }, { n: 20, word: "twenty" }
+    ];
+    var MEDIUM = [
+      { n: 100, word: "one hundred" },
+      { n: 105, word: "one hundred and five" },
+      { n: 200, word: "two hundred" },
+      { n: 875, word: "eight hundred and seventy-five" },
+      { n: 1000, word: "one thousand" },
+      { n: 1500, word: "one thousand five hundred" },
+      { n: 5420, word: "five thousand four hundred and twenty" },
+      { n: 25000, word: "twenty-five thousand" },
+      { n: 100000, word: "one hundred thousand" },
+      { n: 1000000, word: "one million" }
+    ];
+    // Accept common variants
+    var ALTS = {
+      100: ["a hundred", "one hundred"],
+      105: ["one hundred five", "a hundred and five", "one hundred and five"],
+      200: ["two hundred"],
+      875: ["eight hundred seventy-five", "eight hundred and seventy five", "eight hundred and seventy-five"],
+      1000: ["a thousand", "one thousand"],
+      1500: ["fifteen hundred", "one thousand five hundred", "a thousand five hundred"],
+      5420: ["five thousand four hundred twenty", "five thousand four hundred and twenty"],
+      25000: ["twenty five thousand", "twenty-five thousand"],
+      100000: ["a hundred thousand", "one hundred thousand"],
+      1000000: ["a million", "one million"]
+    };
+
+    var level = "easy";
+    var queue = [];
+    var index = 0;
+    var score = 0;
+    var TOTAL = 10;
+    var currentAudio = null;
+    var audioCache = {};
+
+    function $(id) { return document.getElementById(id); }
+
+    function show(id) {
+      ["menu", "play", "finish"].forEach(function (s) {
+        $(s).classList.toggle("active", s === id);
+      });
+    }
+
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function formatNum(n) {
+      return Number(n).toLocaleString("en-US");
+    }
+
+    function norm(s) {
+      return String(s || "")
+        .toLowerCase()
+        .replace(/[’']/g, "'")
+        .replace(/-/g, " ")
+        .replace(/[^a-z\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function isCorrect(item, typed) {
+      var v = norm(typed);
+      if (!v) return false;
+      if (v === norm(item.word)) return true;
+      var alts = ALTS[item.n] || [];
+      for (var i = 0; i < alts.length; i++) {
+        if (v === norm(alts[i])) return true;
+      }
+      return false;
+    }
+
+    function speakWord(word) {
+      try {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(word);
+        u.lang = "en-US";
+        u.rate = 0.9;
+        window.speechSynthesis.speak(u);
+      } catch (e) {}
+    }
+
+    function playSound(item) {
+      if (currentAudio) {
+        try { currentAudio.pause(); } catch (e) {}
+        currentAudio = null;
+      }
+      var key = String(item.n);
+      var src = "../flashcards/audio/" + item.n + ".mp3";
+      if (audioCache[key] === false) {
+        speakWord(item.word);
+        return;
+      }
+      if (audioCache[key] instanceof Audio) {
+        audioCache[key].currentTime = 0;
+        currentAudio = audioCache[key];
+        currentAudio.play().catch(function () { speakWord(item.word); });
+        return;
+      }
+      var a = new Audio(src);
+      a.addEventListener("error", function () {
+        audioCache[key] = false;
+        speakWord(item.word);
+      });
+      a.addEventListener("canplaythrough", function () {
+        audioCache[key] = a;
+        currentAudio = a;
+        a.play().catch(function () { speakWord(item.word); });
+      });
+      a.load();
+      setTimeout(function () {
+        if (audioCache[key] === false) return;
+        if (a.readyState >= 2) {
+          audioCache[key] = a;
+          currentAudio = a;
+          a.play().catch(function () { speakWord(item.word); });
+        }
+      }, 60);
+    }
+
+    function startLevel(lv) {
+      level = lv;
+      var pool = level === "medium" ? MEDIUM : EASY;
+      queue = shuffle(pool).slice(0, TOTAL);
+      if (queue.length < TOTAL && level === "medium") {
+        queue = shuffle(MEDIUM); // medium has exactly 10
+      }
+      if (level === "easy") {
+        queue = shuffle(EASY).slice(0, TOTAL);
+      }
+      index = 0;
+      score = 0;
+      var pill = $("levelPill");
+      pill.classList.remove("diff-easy", "diff-medium");
+      if (level === "easy") {
+        pill.textContent = "●○○ Easy";
+        pill.classList.add("diff-easy");
+      } else {
+        pill.textContent = "●●○ Medium";
+        pill.classList.add("diff-medium");
+      }
+      show("play");
+      loadItem();
+    }
+
+    function loadItem() {
+      if (index >= queue.length) {
+        endRound();
+        return;
+      }
+      var item = queue[index];
+      $("numDisplay").textContent = formatNum(item.n);
+      $("progPill").textContent = (index + 1) + " / " + queue.length;
+      $("bar").style.width = (index / queue.length * 100) + "%";
+      $("answer").value = "";
+      $("answer").className = "";
+      $("feedback").textContent = "";
+      $("feedback").className = "feedback";
+      setTimeout(function () {
+        $("answer").focus();
+        playSound(item);
+      }, 120);
+    }
+
+    function check() {
+      var item = queue[index];
+      var typed = $("answer").value;
+      if (!norm(typed)) {
+        $("feedback").textContent = "Type the word for this number.";
+        $("feedback").className = "feedback bad";
+        return;
+      }
+      if (isCorrect(item, typed)) {
+        score += 1;
+        $("answer").className = "is-ok";
+        $("feedback").textContent = "Correct! " + item.word;
+        $("feedback").className = "feedback ok";
+        setTimeout(function () {
+          index += 1;
+          loadItem();
+        }, 700);
+      } else {
+        $("answer").className = "is-bad";
+        $("feedback").textContent = "Try again — listen once more.";
+        $("feedback").className = "feedback bad";
+        playSound(item);
+      }
+    }
+
+    function skip() {
+      var item = queue[index];
+      $("feedback").textContent = "Answer: " + item.word;
+      $("feedback").className = "feedback bad";
+      setTimeout(function () {
+        index += 1;
+        loadItem();
+      }, 900);
+    }
+
+    function endRound() {
+      $("bar").style.width = "100%";
+      $("finishScore").textContent = score + " / " + queue.length;
+      $("finishMsg").textContent = score === queue.length
+        ? "Perfect score!"
+        : "Keep practising — you can play again.";
+      show("finish");
+      try {
+        if (window.LAStars) {
+          var acc = queue.length ? Math.round((score / queue.length) * 100) : 0;
+          LAStars.recordPlay("topics-numbers-write-word");
+          LAStars.saveFromAccuracy("topics-numbers-write-word", acc);
+        }
+      } catch (e) {}
+    }
+
+    document.querySelectorAll(".level-card").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        startLevel(btn.getAttribute("data-level"));
+      });
+    });
+    $("btnCheck").addEventListener("click", check);
+    $("btnSkip").addEventListener("click", skip);
+    $("btnListen").addEventListener("click", function () {
+      if (queue[index]) playSound(queue[index]);
+    });
+    $("answer").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") check();
+    });
+    $("btnAgain").addEventListener("click", function () { startLevel(level); });
+    $("btnMenu").addEventListener("click", function () { show("menu"); });
+  })();
+  </script>
+  <script src="../../../learningarcade/la-stars.js"></script>
+</body>
+</html>

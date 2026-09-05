@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Number Match · Topics</title>
+  <script>
+  (function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+  if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+  else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+  document.documentElement.setAttribute("data-theme","dark");
+  else document.documentElement.setAttribute("data-theme","light");
+  }catch(e){}})();
+  </script>
+  <link rel="stylesheet" href="../../../learningarcade/theme.css" />
+  <style>
+    :root {
+      --bg: #ecfdf5;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #d1fae5;
+      --purple: #7c3aed;
+      --green: #059669;
+      --green-deep: #047857;
+      --bad: #e11d48;
+      --shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="dark"] {
+      --bg: #0f1220;
+      --card: #1a1f2e;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --line: #2d3548;
+      --shadow: 0 14px 36px rgba(0,0,0,0.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(700px 360px at 0% 0%, rgba(16,185,129,.15), transparent 55%), var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      padding: 14px 14px 28px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; }
+    .top {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 12px;
+    }
+    .back {
+      display: inline-flex; text-decoration: none; font-weight: 800; color: var(--text);
+      background: var(--card); border: 1px solid var(--line);
+      padding: 10px 14px; border-radius: 999px; min-height: 44px;
+    }
+    .badge {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 0.06em;
+      text-transform: uppercase; color: #fff;
+      background: linear-gradient(135deg, #10b981, #059669);
+      padding: 8px 12px; border-radius: 999px;
+    }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.7rem); font-weight: 900; margin-bottom: 4px; }
+    .lead { color: var(--muted); font-weight: 600; font-size: 0.95rem; margin-bottom: 14px; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .level-grid { display: grid; gap: 12px; max-width: 480px; }
+    .level-card {
+      appearance: none; border: 2px solid var(--line); background: var(--card);
+      border-radius: 18px; padding: 18px; text-align: left; cursor: pointer;
+      color: inherit; font: inherit; box-shadow: var(--shadow);
+      transition: transform 0.15s ease, border-color 0.15s;
+    }
+    .level-card:hover { transform: translateY(-2px); border-color: var(--green); }
+    .level-card h2 { font-size: 1.15rem; font-weight: 900; margin-bottom: 4px; }
+    .level-card p { color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+    .level-card .tag {
+      display: inline-block; margin-top: 10px; font-size: 0.72rem; font-weight: 800;
+      padding: 5px 10px; border-radius: 999px; background: var(--bg); color: var(--green);
+    }
+
+    .hud {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 12px;
+    }
+    .pill {
+      font-weight: 800; font-size: 0.85rem; color: var(--green);
+      background: var(--card); border: 1px solid var(--line);
+      padding: 8px 12px; border-radius: 999px;
+    }
+    .progress {
+      height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 14px;
+    }
+    .progress > span {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, #34d399, #059669);
+      transition: width 0.3s ease;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .col-title {
+      grid-column: span 1;
+      font-size: 0.72rem; font-weight: 900; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
+    }
+    .col-title.right { text-align: right; }
+    .cols {
+      display: contents;
+    }
+    .left-col, .right-col {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .tile {
+      appearance: none; border: 2px solid var(--line); background: var(--bg);
+      color: var(--text); font: inherit; font-weight: 900;
+      min-height: 56px; border-radius: 14px; cursor: pointer;
+      padding: 12px 14px; text-align: center;
+      transition: border-color 0.15s, background 0.15s, transform 0.12s, opacity 0.2s;
+    }
+    .tile:hover:not(:disabled) { border-color: var(--purple); }
+    .tile.selected {
+      border-color: var(--purple);
+      background: rgba(124, 58, 237, 0.12);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+    }
+    .tile.matched {
+      background: rgba(5, 150, 105, 0.15);
+      border-color: var(--green);
+      color: var(--green);
+      opacity: 0.55;
+      cursor: default;
+    }
+    .tile.wrong {
+      border-color: var(--bad);
+      animation: shake 0.35s ease;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+    .tile.word { font-size: 0.95rem; font-weight: 800; }
+
+    .feedback {
+      min-height: 1.4em; margin-top: 12px; font-weight: 800; text-align: center;
+    }
+    .feedback.ok { color: var(--green); }
+    .feedback.bad { color: var(--bad); }
+
+    .finish-box {
+      text-align: center; background: var(--card); border: 1px solid var(--line);
+      border-radius: 20px; padding: 28px 18px; box-shadow: var(--shadow);
+      max-width: 420px; margin: 0 auto;
+    }
+    .finish-box h2 { font-size: 1.5rem; font-weight: 900; margin-bottom: 8px; }
+    .finish-box p { color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .btn {
+      appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+      min-height: 48px; padding: 12px 18px; border-radius: 999px;
+    }
+    .btn-primary {
+      background: linear-gradient(180deg, #34d399, #059669); color: #fff;
+      box-shadow: 0 5px 0 var(--green-deep);
+    }
+    .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--green-deep); }
+    .btn-ghost { background: var(--bg); color: var(--text); border: 2px solid var(--line); }
+
+    @media (max-width: 560px) {
+      .board { grid-template-columns: 1fr; gap: 10px; }
+      .col-title.right { text-align: left; }
+      .tile { min-height: 52px; }
+    }
+  
+    /* Difficulty indicators */
+    .diff-row {
+      display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap;
+    }
+    .diff-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; font-weight: 900; letter-spacing: 0.04em;
+      text-transform: uppercase; padding: 6px 12px; border-radius: 999px;
+    }
+    .diff-badge.easy {
+      background: rgba(16, 185, 129, 0.15); color: #059669;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .diff-badge.medium {
+      background: rgba(245, 158, 11, 0.15); color: #d97706;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .diff-badge.hard {
+      background: rgba(239, 68, 68, 0.12); color: #dc2626;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+    .diff-dots {
+      display: inline-flex; gap: 4px; align-items: center;
+    }
+    .diff-dots i {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--line); display: block;
+    }
+    .diff-badge.easy .diff-dots i:nth-child(1) { background: #10b981; }
+    .diff-badge.medium .diff-dots i:nth-child(1),
+    .diff-badge.medium .diff-dots i:nth-child(2) { background: #f59e0b; }
+    .diff-badge.hard .diff-dots i { background: #ef4444; }
+
+    .level-card[data-level="easy"] {
+      border-color: rgba(16, 185, 129, 0.45);
+      background: linear-gradient(180deg, rgba(16,185,129,0.06), var(--card) 40%);
+    }
+    .level-card[data-level="medium"] {
+      border-color: rgba(245, 158, 11, 0.5);
+      background: linear-gradient(180deg, rgba(245,158,11,0.08), var(--card) 40%);
+    }
+    .level-card[data-level="easy"]:hover { border-color: #059669; }
+    .level-card[data-level="medium"]:hover { border-color: #d97706; }
+
+    .level-card .level-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.35rem; margin-bottom: 10px;
+    }
+    .level-card[data-level="easy"] .level-icon {
+      background: rgba(16, 185, 129, 0.15);
+    }
+    .level-card[data-level="medium"] .level-icon {
+      background: rgba(245, 158, 11, 0.18);
+    }
+
+    .pill.diff-easy {
+      color: #059669;
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .pill.diff-medium {
+      color: #d97706;
+      background: rgba(245, 158, 11, 0.14);
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+    .hud .diff-meter {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-weight: 800; font-size: 0.82rem;
+    }
+    .hud .diff-meter .diff-dots i {
+      width: 9px; height: 9px;
+    }
+
+  </style>
+</head>
+<body class="no-profile-fab">
+  <div class="wrap">
+    <div class="top">
+      <a class="back" href="../">← Numbers</a>
+      <span class="badge">Match</span>
+    </div>
+
+    <!-- MENU -->
+    <section id="menu" class="screen active">
+      <h1>Number match</h1>
+      <p class="lead">Match the number with its word. Easy: 0–20 in two rounds. Medium: big numbers.</p>
+      <div class="level-grid">
+        <button type="button" class="level-card" data-level="easy">
+          <div class="level-icon" aria-hidden="true">🌱</div>
+          <h2>Easy</h2>
+          <p>Round 1: 0–10 · Round 2: 11–20<br/>5 numbers + 5 words each set.</p>
+          <div class="diff-row">
+            <span class="diff-badge easy" title="Easy difficulty">
+              <span class="diff-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              Easy
+            </span>
+            <span class="tag">2 rounds · 10 pairs</span>
+          </div>
+        </button>
+        <button type="button" class="level-card" data-level="medium">
+          <div class="level-icon" aria-hidden="true">🔥</div>
+          <h2>Medium</h2>
+          <p>Numbers above one hundred — 105 up to 2,300,000.</p>
+          <div class="diff-row">
+            <span class="diff-badge medium" title="Medium difficulty">
+              <span class="diff-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              Medium
+            </span>
+            <span class="tag">10 pairs</span>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- PLAY -->
+    <section id="play" class="screen">
+      <div class="hud">
+        <span class="pill" id="roundPill">Easy · Round 1</span>
+        <span class="pill" id="scorePill">0 matched</span>
+      </div>
+      <div class="progress"><span id="bar"></span></div>
+      <div class="board">
+        <div class="col-title">Numbers</div>
+        <div class="col-title right">Words</div>
+        <div class="left-col" id="leftCol"></div>
+        <div class="right-col" id="rightCol"></div>
+      </div>
+      <p class="feedback" id="feedback"></p>
+    </section>
+
+    <!-- FINISH -->
+    <section id="finish" class="screen">
+      <div class="finish-box">
+        <h2 id="finishTitle">Well done!</h2>
+        <p id="finishMsg">You matched all pairs.</p>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="btnAgain">Play again</button>
+          <button type="button" class="btn btn-ghost" id="btnMenu">Levels</button>
+          <a class="btn btn-ghost" href="../" style="text-decoration:none;display:inline-flex;align-items:center">Numbers</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="../../../learningarcade/theme.js"></script>
+  <script>
+  (function () {
+    "use strict";
+
+    var EASY_A = [
+      { n: 0, word: "zero" },
+      { n: 1, word: "one" },
+      { n: 2, word: "two" },
+      { n: 3, word: "three" },
+      { n: 4, word: "four" },
+      { n: 5, word: "five" },
+      { n: 6, word: "six" },
+      { n: 7, word: "seven" },
+      { n: 8, word: "eight" },
+      { n: 9, word: "nine" },
+      { n: 10, word: "ten" }
+    ];
+    var EASY_B = [
+      { n: 11, word: "eleven" },
+      { n: 12, word: "twelve" },
+      { n: 13, word: "thirteen" },
+      { n: 14, word: "fourteen" },
+      { n: 15, word: "fifteen" },
+      { n: 16, word: "sixteen" },
+      { n: 17, word: "seventeen" },
+      { n: 18, word: "eighteen" },
+      { n: 19, word: "nineteen" },
+      { n: 20, word: "twenty" }
+    ];
+    var MEDIUM = [
+      { n: 105, word: "one hundred and five" },
+      { n: 200, word: "two hundred" },
+      { n: 875, word: "eight hundred and seventy-five" },
+      { n: 1000, word: "one thousand" },
+      { n: 2012, word: "two thousand and twelve" },
+      { n: 5420, word: "five thousand four hundred and twenty" },
+      { n: 25000, word: "twenty-five thousand" },
+      { n: 100000, word: "one hundred thousand" },
+      { n: 1000000, word: "one million" },
+      { n: 2300000, word: "two million three hundred thousand" }
+    ];
+
+    var level = "easy";
+    var roundIndex = 0; // easy: 0 then 1
+    var pairs = [];
+    var matched = 0;
+    var totalInSet = 0;
+    var selectedLeft = null;
+    var selectedRight = null;
+    var locked = false;
+    var currentAudio = null;
+    var audioCache = {};
+
+    function $(id) { return document.getElementById(id); }
+
+    function show(id) {
+      ["menu", "play", "finish"].forEach(function (s) {
+        $(s).classList.toggle("active", s === id);
+      });
+    }
+
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function formatNum(n) {
+      return Number(n).toLocaleString("en-US");
+    }
+
+    function pickFive(pool) {
+      return shuffle(pool).slice(0, 5);
+    }
+
+    function speakWord(word) {
+      try {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(word);
+        u.lang = "en-US";
+        u.rate = 0.9;
+        window.speechSynthesis.speak(u);
+      } catch (e) {}
+    }
+
+    function playMatchSound(item) {
+      if (currentAudio) {
+        try { currentAudio.pause(); } catch (e) {}
+        currentAudio = null;
+      }
+      var key = String(item.n);
+      if (audioCache[key] === false) {
+        speakWord(item.word);
+        return;
+      }
+      if (audioCache[key] instanceof Audio) {
+        audioCache[key].currentTime = 0;
+        currentAudio = audioCache[key];
+        currentAudio.play().catch(function () { speakWord(item.word); });
+        return;
+      }
+      var a = new Audio("audio/" + item.n + ".mp3");
+      a.addEventListener("error", function () {
+        audioCache[key] = false;
+        speakWord(item.word);
+      });
+      a.addEventListener("canplaythrough", function () {
+        audioCache[key] = a;
+        currentAudio = a;
+        a.play().catch(function () { speakWord(item.word); });
+      });
+      a.load();
+      setTimeout(function () {
+        if (audioCache[key] === false) return;
+        if (a.readyState >= 2) {
+          audioCache[key] = a;
+          currentAudio = a;
+          a.play().catch(function () { speakWord(item.word); });
+        }
+      }, 60);
+    }
+
+    function setPairsForRound() {
+      var pill = $("roundPill");
+      pill.classList.remove("diff-easy", "diff-medium");
+      if (level === "medium") {
+        pairs = MEDIUM.slice();
+        totalInSet = pairs.length;
+        pill.textContent = "●●○ Medium · Big numbers";
+        pill.classList.add("diff-medium");
+      } else if (roundIndex === 0) {
+        pairs = pickFive(EASY_A);
+        totalInSet = 5;
+        pill.textContent = "●○○ Easy · Round 1 · 0–10";
+        pill.classList.add("diff-easy");
+      } else {
+        pairs = pickFive(EASY_B);
+        totalInSet = 5;
+        pill.textContent = "●○○ Easy · Round 2 · 11–20";
+        pill.classList.add("diff-easy");
+      }
+      matched = 0;
+      selectedLeft = null;
+      selectedRight = null;
+      locked = false;
+      $("scorePill").textContent = "0 / " + totalInSet + " matched";
+      $("bar").style.width = "0%";
+      $("feedback").textContent = "";
+      $("feedback").className = "feedback";
+      renderBoard();
+    }
+
+    function renderBoard() {
+      var left = $("leftCol");
+      var right = $("rightCol");
+      left.innerHTML = "";
+      right.innerHTML = "";
+      var nums = shuffle(pairs);
+      var words = shuffle(pairs);
+      nums.forEach(function (item) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "tile";
+        b.textContent = formatNum(item.n);
+        b.dataset.n = String(item.n);
+        b.dataset.side = "left";
+        b.addEventListener("click", function () { onPick(b, item, "left"); });
+        left.appendChild(b);
+      });
+      words.forEach(function (item) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "tile word";
+        b.textContent = item.word;
+        b.dataset.n = String(item.n);
+        b.dataset.side = "right";
+        b.addEventListener("click", function () { onPick(b, item, "right"); });
+        right.appendChild(b);
+      });
+    }
+
+    function clearSelection() {
+      document.querySelectorAll(".tile.selected").forEach(function (el) {
+        el.classList.remove("selected");
+      });
+      selectedLeft = null;
+      selectedRight = null;
+    }
+
+    function onPick(btn, item, side) {
+      if (locked || btn.classList.contains("matched")) return;
+
+      if (side === "left") {
+        if (selectedLeft && selectedLeft.btn === btn) {
+          btn.classList.remove("selected");
+          selectedLeft = null;
+          return;
+        }
+        document.querySelectorAll('.tile[data-side="left"].selected').forEach(function (el) {
+          el.classList.remove("selected");
+        });
+        btn.classList.add("selected");
+        selectedLeft = { btn: btn, item: item };
+      } else {
+        if (selectedRight && selectedRight.btn === btn) {
+          btn.classList.remove("selected");
+          selectedRight = null;
+          return;
+        }
+        document.querySelectorAll('.tile[data-side="right"].selected').forEach(function (el) {
+          el.classList.remove("selected");
+        });
+        btn.classList.add("selected");
+        selectedRight = { btn: btn, item: item };
+      }
+
+      if (selectedLeft && selectedRight) {
+        checkMatch();
+      }
+    }
+
+    function checkMatch() {
+      locked = true;
+      var a = selectedLeft.item;
+      var b = selectedRight.item;
+      if (a.n === b.n) {
+        selectedLeft.btn.classList.remove("selected");
+        selectedRight.btn.classList.remove("selected");
+        selectedLeft.btn.classList.add("matched");
+        selectedRight.btn.classList.add("matched");
+        selectedLeft.btn.disabled = true;
+        selectedRight.btn.disabled = true;
+        matched += 1;
+        $("scorePill").textContent = matched + " / " + totalInSet + " matched";
+        $("bar").style.width = (matched / totalInSet * 100) + "%";
+        $("feedback").textContent = "Match! " + formatNum(a.n) + " — " + a.word;
+        $("feedback").className = "feedback ok";
+        playMatchSound(a);
+        selectedLeft = null;
+        selectedRight = null;
+        locked = false;
+        if (matched >= totalInSet) {
+          setTimeout(onSetComplete, 700);
+        }
+      } else {
+        selectedLeft.btn.classList.add("wrong");
+        selectedRight.btn.classList.add("wrong");
+        $("feedback").textContent = "Not a match — try again.";
+        $("feedback").className = "feedback bad";
+        setTimeout(function () {
+          selectedLeft.btn.classList.remove("wrong", "selected");
+          selectedRight.btn.classList.remove("wrong", "selected");
+          selectedLeft = null;
+          selectedRight = null;
+          locked = false;
+          $("feedback").textContent = "";
+        }, 550);
+      }
+    }
+
+    function onSetComplete() {
+      if (level === "easy" && roundIndex === 0) {
+        roundIndex = 1;
+        setPairsForRound();
+        $("feedback").textContent = "Round 2 — numbers 11 to 20!";
+        $("feedback").className = "feedback ok";
+        return;
+      }
+      $("finishTitle").textContent = "Well done!";
+      $("finishMsg").textContent = level === "easy"
+        ? "You finished Easy (0–20) in two rounds."
+        : "You matched all the big numbers.";
+      show("finish");
+      try {
+        if (window.LAStars) {
+          LAStars.recordPlay("topics-numbers-match");
+          LAStars.saveFromAccuracy("topics-numbers-match", 100);
+        }
+      } catch (e) {}
+    }
+
+    function startLevel(lv) {
+      level = lv;
+      roundIndex = 0;
+      show("play");
+      setPairsForRound();
+    }
+
+    document.querySelectorAll(".level-card").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        startLevel(btn.getAttribute("data-level"));
+      });
+    });
+    $("btnAgain").addEventListener("click", function () {
+      startLevel(level);
+    });
+    $("btnMenu").addEventListener("click", function () {
+      show("menu");
+    });
+  })();
+  </script>
+  <script src="../../../learningarcade/la-stars.js"></script>
+</body>
+</html>

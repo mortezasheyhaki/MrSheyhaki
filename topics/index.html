@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Topics | Mr. Sheyhaki</title>
+  <meta name="description" content="Theme-based English practice — Numbers and more." />
+  <script>
+  (function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+  if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+  else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+  document.documentElement.setAttribute("data-theme","dark");
+  else document.documentElement.setAttribute("data-theme","light");
+  }catch(e){}})();
+  </script>
+  <link rel="stylesheet" href="../learningarcade/theme.css" />
+  <link rel="stylesheet" href="../learningarcade/style.css" />
+  <style>
+    :root {
+      --bg: #eef7f1;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #d1fae5;
+      --green: #6366f1;
+      --green-deep: #4338ca;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="dark"] {
+      --bg: #0f1220;
+      --card: #1a1f2e;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --line: #2d3548;
+      --shadow: 0 16px 40px rgba(0,0,0,0.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(800px 400px at 100% 0%, rgba(16,185,129,.12), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      padding-bottom: 48px;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 20px 16px; }
+    .eyebrow {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 6px;
+    }
+    h1 { font-size: clamp(1.75rem, 4vw, 2.2rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 8px; }
+    .lead { color: var(--muted); font-weight: 600; max-width: 52ch; margin-bottom: 24px; line-height: 1.5; }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .game-card {
+      position: relative;
+      background: var(--card);
+      border: 2px solid rgba(99, 102, 241, 0.28);
+      border-radius: 24px;
+      padding: 22px 20px 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 240px;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .game-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 22px 48px rgba(15, 23, 42, 0.12);
+    }
+    .game-card::after {
+      content: "";
+      position: absolute;
+      right: -30px; top: -30px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: rgba(99, 102, 241, 0.1);
+      pointer-events: none;
+    }
+    .game-card-icon {
+      width: 52px; height: 52px;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      background: linear-gradient(180deg, #a5b4fc, #6366f1);
+      color: #fff;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.28);
+    }
+    .game-tag {
+      display: inline-flex;
+      align-self: flex-start;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--green);
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      padding: 5px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    .game-card h3 {
+      font-size: 1.35rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .game-card > p {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      flex: 1;
+      margin-bottom: 12px;
+    }
+    .game-meta {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .game-card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: auto;
+    }
+    .game-launch {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 112px;
+      min-height: 48px;
+      padding: 12px 20px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #a5b4fc, #6366f1);
+      color: #fff !important;
+      font-weight: 900;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      box-shadow: 0 6px 0 var(--green-deep), 0 10px 20px rgba(5,150,105,.25);
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+    .game-launch:active {
+      transform: translateY(3px);
+      box-shadow: 0 3px 0 var(--green-deep), 0 6px 12px rgba(5,150,105,.2);
+    }
+    .game-stars {
+      display: inline-flex;
+      gap: 4px;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    .game-stars .star {
+      color: #cbd5e1;
+    }
+    .game-stars .star.is-filled {
+      color: #fbbf24;
+      text-shadow: 0 1px 0 #d97706;
+    }
+    html[data-theme="dark"] .game-card {
+      border-color: rgba(52, 211, 153, 0.25);
+    }
+
+    /* Card hover effects */
+    .game-card {
+      cursor: pointer;
+      transition:
+        transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.22s ease,
+        border-color 0.22s ease,
+        filter 0.22s ease;
+    }
+    .game-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(
+        120deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.18) 48%,
+        transparent 62%
+      );
+      transform: translateX(-120%);
+      transition: transform 0.55s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .game-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      border-color: rgba(167, 139, 250, 0.55);
+      box-shadow:
+        0 22px 44px rgba(15, 23, 42, 0.16),
+        0 0 0 1px rgba(167, 139, 250, 0.15),
+        0 0 28px rgba(124, 58, 237, 0.18);
+      filter: brightness(1.04);
+    }
+    .game-card:hover::before {
+      transform: translateX(120%);
+    }
+    .game-card:hover .game-card-icon {
+      transform: scale(1.08) rotate(-4deg);
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
+    }
+    .game-card-icon {
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .game-card:hover .game-launch {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+    .game-launch {
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+      position: relative;
+      z-index: 3;
+      overflow: hidden;
+    }
+    .game-launch::after {
+      content: "";
+      position: absolute;
+      top: 0; left: -40%;
+      width: 40%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.45s ease;
+      pointer-events: none;
+    }
+    .game-card:hover .game-launch::after {
+      left: 120%;
+    }
+    .game-card:hover .game-stars .star.is-filled {
+      transform: scale(1.12);
+    }
+    .game-stars .star {
+      transition: transform 0.18s ease, color 0.18s ease;
+      display: inline-block;
+    }
+    html[data-theme="dark"] .game-card:hover {
+      border-color: rgba(167, 139, 250, 0.45);
+      box-shadow:
+        0 22px 44px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(167, 139, 250, 0.2),
+        0 0 32px rgba(124, 58, 237, 0.25);
+    }
+
+  
+    @media (max-width: 700px) {
+      .wrap {
+        padding: 14px 12px 32px;
+        padding-bottom: max(32px, env(safe-area-inset-bottom));
+      }
+      h1 { font-size: 1.5rem; }
+      .lead { font-size: 0.92rem; margin-bottom: 16px; }
+      .game-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .game-card {
+        min-height: 0;
+        padding: 18px 16px 14px;
+        border-radius: 18px;
+      }
+      .game-card-icon { width: 44px; height: 44px; }
+      .game-launch {
+        width: 56px;
+        height: 56px;
+        min-width: 56px;
+        min-height: 56px;
+        border-radius: 50%;
+        padding: 0;
+        font-size: 0.65rem;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <a href="../learningarcade/profile/" class="profile-fab" aria-label="My Profile" title="My Profile">👤</a>
+  <header class="arcade-header-bar">
+    <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+      <a href="../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+      <a href="../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+      <a href="./" class="nav-link active" aria-current="page" aria-label="Topics" data-icon="🎯"><span class="nav-ico" aria-hidden="true">🎯</span><span class="nav-text">Topics</span></a>
+      <a href="../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+      <a href="../learningarcade/leaderboard/" class="nav-link" aria-label="Leaderboard" data-icon="🏆"><span class="nav-ico" aria-hidden="true">🏆</span><span class="nav-text">Board</span></a>
+      <a href="../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+    </nav>
+  </header>
+
+  <div class="wrap">
+    <p class="eyebrow">Site section</p>
+    <h1>Topics</h1>
+    <p class="lead">Theme-based practice. Open a topic and play the games inside.</p>
+
+    <section class="game-grid" aria-label="Topics">
+      <article class="game-card game-card--playable">
+        <div class="game-card-icon" aria-hidden="true">🔢</div>
+        <span class="game-tag">Numbers · A1–A2</span>
+        <h3>Numbers</h3>
+        <p>Flashcards, match, write, speak, and listen games from 0–20 to big numbers.</p>
+        <div class="game-meta">7+ games · Ready to play</div>
+        <div class="game-card-actions">
+          <a class="game-launch" href="numbers/">Explore</a>
+          <div class="game-stars" data-game="topics-numbers" aria-label="Progress stars">
+            <span class="star" data-n="1">☆</span>
+            <span class="star" data-n="2">☆</span>
+            <span class="star" data-n="3">☆</span>
+          </div>
+        </div>
+      </article>
+    </section>
+  </div>
+
+  <script src="../learningarcade/theme.js"></script>
+  <script src="../swipe-nav.js"></script>
+  <script src="../learningarcade/la-stars.js"></script>
+</body>
+</html>

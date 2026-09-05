@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Listen & Choose · Numbers</title>
+  <script>
+  (function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+  if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+  else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+  document.documentElement.setAttribute("data-theme","dark");
+  else document.documentElement.setAttribute("data-theme","light");
+  }catch(e){}})();
+  </script>
+  <link rel="stylesheet" href="../../../learningarcade/theme.css" />
+  <style>
+    :root {
+      --bg: #ecfdf5; --card: #fff; --text: #0f172a; --muted: #64748b;
+      --line: #d1fae5; --green: #16a34a; --green-deep: #15803d;
+      --teal: #0d9488; --ok: #059669; --bad: #e11d48;
+      --shadow: 0 14px 36px rgba(15,23,42,.08);
+    }
+    html[data-theme="dark"] {
+      --bg: #0f1220; --card: #1a1f2e; --text: #f1f5f9; --muted: #94a3b8;
+      --line: #2d3548; --shadow: 0 14px 36px rgba(0,0,0,.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(700px 360px at 50% 0%, rgba(22,163,74,.12), transparent 55%), var(--bg);
+      color: var(--text); min-height: 100dvh; padding: 14px 14px 28px;
+    }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    .top {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 12px;
+    }
+    .back {
+      display: inline-flex; text-decoration: none; font-weight: 800; color: var(--text);
+      background: var(--card); border: 1px solid var(--line);
+      padding: 10px 14px; border-radius: 999px; min-height: 44px;
+    }
+    .badge {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 0.06em;
+      text-transform: uppercase; color: #fff;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      padding: 8px 12px; border-radius: 999px;
+    }
+    h1 { font-size: clamp(1.3rem, 3.5vw, 1.6rem); font-weight: 900; margin-bottom: 4px; }
+    .lead { color: var(--muted); font-weight: 600; font-size: 0.95rem; margin-bottom: 16px; line-height: 1.45; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .start-card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+      padding: 22px 18px; box-shadow: var(--shadow); text-align: center;
+    }
+    .start-card p { color: var(--muted); font-weight: 600; margin-bottom: 16px; line-height: 1.45; }
+
+    .hud {
+      display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .pill {
+      font-weight: 800; font-size: 0.85rem; padding: 8px 12px; border-radius: 999px;
+      background: var(--card); border: 1px solid var(--line); color: var(--green);
+    }
+    .progress { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
+    .progress > span {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, #4ade80, #16a34a); transition: width .3s ease;
+    }
+
+    .stage {
+      background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+      padding: 22px 16px; box-shadow: var(--shadow); text-align: center;
+    }
+    .q-num {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 8px;
+    }
+    .listen-btn {
+      appearance: none; border: none; cursor: pointer;
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(180deg, #4ade80, #16a34a); color: #fff;
+      font-size: 1.8rem; margin: 6px auto 14px;
+      box-shadow: 0 6px 0 var(--green-deep);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .listen-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--green-deep); }
+    .listen-btn.playing { animation: pulse 1s ease infinite; }
+    @keyframes pulse {
+      0%, 100% { outline: 0 solid rgba(74,222,128,0.3); }
+      50% { outline: 8px solid rgba(74,222,128,0.25); }
+    }
+    .hint { color: var(--muted); font-weight: 600; font-size: 0.9rem; margin-bottom: 16px; }
+
+    .choices {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      max-width: 340px; margin: 0 auto;
+    }
+    .choice {
+      appearance: none; border: 3px solid var(--line); background: var(--bg);
+      border-radius: 18px; min-height: 88px; cursor: pointer;
+      font: inherit; font-weight: 900; font-size: 2rem;
+      color: var(--text); transition: border-color .15s, transform .12s, background .15s;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px;
+    }
+    .choice small {
+      font-size: 0.75rem; font-weight: 800; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .choice:hover:not(:disabled) { border-color: var(--green); transform: translateY(-2px); }
+    .choice.selected { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(13,148,136,.2); }
+    .choice.correct {
+      border-color: var(--ok); background: rgba(5,150,105,.12); color: var(--ok);
+    }
+    .choice.wrong {
+      border-color: var(--bad); background: rgba(225,29,72,.08); color: var(--bad);
+    }
+    .choice:disabled { cursor: default; }
+
+    .feedback { min-height: 1.4em; margin-top: 14px; font-weight: 800; }
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+
+    .btn {
+      appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+      min-height: 48px; padding: 12px 20px; border-radius: 999px;
+    }
+    .btn-primary {
+      background: linear-gradient(180deg, #4ade80, #16a34a); color: #fff;
+      box-shadow: 0 5px 0 var(--green-deep);
+    }
+    .btn-ghost { background: var(--bg); color: var(--text); border: 2px solid var(--line); }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 8px; }
+
+    .finish-box {
+      text-align: center; background: var(--card); border: 1px solid var(--line);
+      border-radius: 20px; padding: 28px 18px; box-shadow: var(--shadow);
+    }
+    .finish-box h2 { font-size: 1.45rem; font-weight: 900; margin-bottom: 8px; }
+    .score-big { font-size: 2rem; font-weight: 900; color: var(--green); margin-bottom: 8px; }
+    .finish-box p { color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+  </style>
+</head>
+<body class="no-profile-fab">
+  <div class="wrap">
+    <div class="top">
+      <a class="back" href="../">← Numbers</a>
+      <span class="badge">Listen &amp; choose</span>
+    </div>
+
+    <section id="menu" class="screen active">
+      <h1>Teens or tens?</h1>
+      <p class="lead">Listen and choose the number you hear — <strong>13 or 30</strong>, <strong>14 or 40</strong>, and so on.</p>
+      <div class="start-card">
+        <p>7 questions · two choices each time</p>
+        <button type="button" class="btn btn-primary" id="btnStart">Start</button>
+      </div>
+    </section>
+
+    <section id="play" class="screen">
+      <div class="hud">
+        <span class="pill" id="qPill">1 / 7</span>
+        <span class="pill" id="scorePill">0 correct</span>
+      </div>
+      <div class="progress"><span id="bar"></span></div>
+      <div class="stage">
+        <p class="q-num" id="qLabel">Question 1</p>
+        <button type="button" class="listen-btn" id="btnListen" aria-label="Play">🔊</button>
+        <p class="hint">Tap the number you hear.</p>
+        <div class="choices">
+          <button type="button" class="choice" id="btnA" data-side="a"><small>a</small><span id="valA">13</span></button>
+          <button type="button" class="choice" id="btnB" data-side="b"><small>b</small><span id="valB">30</span></button>
+        </div>
+        <p class="feedback" id="feedback"></p>
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" id="btnReplay">Play again</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="finish" class="screen">
+      <div class="finish-box">
+        <h2>Finished!</h2>
+        <div class="score-big" id="finishScore">0 / 7</div>
+        <p id="finishMsg">Great listening.</p>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="btnAgain">Play again</button>
+          <a class="btn btn-ghost" href="../" style="text-decoration:none;display:inline-flex;align-items:center">Numbers</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="../../../learningarcade/theme.js"></script>
+  <script>
+  (function () {
+    "use strict";
+
+    var ITEMS = [{"q": 1, "a": 13, "b": 30, "answer": 13, "start": 0.0, "end": 3.8}, {"q": 2, "a": 14, "b": 40, "answer": 40, "start": 3.8, "end": 8.5}, {"q": 3, "a": 15, "b": 50, "answer": 50, "start": 8.5, "end": 14.0}, {"q": 4, "a": 16, "b": 60, "answer": 16, "start": 14.0, "end": 20.0}, {"q": 5, "a": 17, "b": 70, "answer": 70, "start": 20.0, "end": 24.5}, {"q": 6, "a": 18, "b": 80, "answer": 18, "start": 24.5, "end": 28.0}, {"q": 7, "a": 19, "b": 90, "answer": 19, "start": 28.0, "end": 32.0}];
+
+    var index = 0;
+    var score = 0;
+    var locked = false;
+    var audio = null;
+    var stopTimer = null;
+
+    function $(id) { return document.getElementById(id); }
+
+    function show(id) {
+      ["menu", "play", "finish"].forEach(function (s) {
+        $(s).classList.toggle("active", s === id);
+      });
+    }
+
+    function stopClip() {
+      if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
+      if (audio) { try { audio.pause(); } catch (e) {} }
+      $("btnListen").classList.remove("playing");
+    }
+
+    function playClip() {
+      var item = ITEMS[index];
+      if (!item) return;
+      stopClip();
+      if (!audio) {
+        audio = new Audio("audio/teens-tens.mp3");
+        audio.preload = "auto";
+      }
+      var run = function () {
+        try { audio.currentTime = item.start; } catch (e) {}
+        var p = audio.play();
+        $("btnListen").classList.add("playing");
+        if (p && p.catch) p.catch(function () { $("btnListen").classList.remove("playing"); });
+        var ms = Math.max(300, (item.end - item.start) * 1000);
+        stopTimer = setTimeout(function () {
+          try { audio.pause(); } catch (e) {}
+          $("btnListen").classList.remove("playing");
+        }, ms);
+      };
+      if (audio.readyState >= 2) run();
+      else {
+        audio.addEventListener("canplay", function once() {
+          audio.removeEventListener("canplay", once);
+          run();
+        });
+        audio.load();
+      }
+    }
+
+    function loadItem() {
+      locked = false;
+      stopClip();
+      if (index >= ITEMS.length) {
+        endGame();
+        return;
+      }
+      var item = ITEMS[index];
+      $("qPill").textContent = (index + 1) + " / " + ITEMS.length;
+      $("scorePill").textContent = score + " correct";
+      $("bar").style.width = (index / ITEMS.length * 100) + "%";
+      $("qLabel").textContent = "Question " + item.q;
+      $("valA").textContent = String(item.a);
+      $("valB").textContent = String(item.b);
+      ["btnA", "btnB"].forEach(function (id) {
+        var el = $(id);
+        el.disabled = false;
+        el.classList.remove("correct", "wrong", "selected");
+      });
+      $("feedback").textContent = "";
+      $("feedback").className = "feedback";
+      setTimeout(playClip, 200);
+    }
+
+    function pick(side) {
+      if (locked) return;
+      locked = true;
+      var item = ITEMS[index];
+      var chosen = side === "a" ? item.a : item.b;
+      var btn = side === "a" ? $("btnA") : $("btnB");
+      var other = side === "a" ? $("btnB") : $("btnA");
+      $("btnA").disabled = true;
+      $("btnB").disabled = true;
+
+      if (chosen === item.answer) {
+        score += 1;
+        btn.classList.add("correct");
+        $("feedback").textContent = "Correct! " + item.answer;
+        $("feedback").className = "feedback ok";
+        $("scorePill").textContent = score + " correct";
+      } else {
+        btn.classList.add("wrong");
+        other.classList.add("correct");
+        $("feedback").textContent = "It was " + item.answer;
+        $("feedback").className = "feedback bad";
+      }
+      setTimeout(function () {
+        index += 1;
+        loadItem();
+      }, 900);
+    }
+
+    function endGame() {
+      stopClip();
+      $("bar").style.width = "100%";
+      $("finishScore").textContent = score + " / " + ITEMS.length;
+      $("finishMsg").textContent = score === ITEMS.length
+        ? "Perfect — teens and tens!"
+        : "Good practice — try again to beat your score.";
+      show("finish");
+      try {
+        if (window.LAStars) {
+          var acc = Math.round((score / ITEMS.length) * 100);
+          LAStars.recordPlay("topics-numbers-listen-choose");
+          LAStars.saveFromAccuracy("topics-numbers-listen-choose", acc);
+        }
+      } catch (e) {}
+    }
+
+    function start() {
+      index = 0;
+      score = 0;
+      show("play");
+      loadItem();
+    }
+
+    $("btnStart").addEventListener("click", start);
+    $("btnAgain").addEventListener("click", start);
+    $("btnListen").addEventListener("click", playClip);
+    $("btnReplay").addEventListener("click", playClip);
+    $("btnA").addEventListener("click", function () { pick("a"); });
+    $("btnB").addEventListener("click", function () { pick("b"); });
+  })();
+  </script>
+  <script src="../../../learningarcade/la-stars.js"></script>
+</body>
+</html>
