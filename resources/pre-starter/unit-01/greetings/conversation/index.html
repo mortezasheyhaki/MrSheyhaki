@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The conversation | Unit 1 Greetings | Pre-starter</title>
+<link rel="stylesheet" href="../../../../../style.css">
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../../theme.css">
+<style>
+:root {
+    --u-purple: #14b8a6;
+    --u-purple-light: #ccfbf1;
+    --u-purple-border: #99f6e4;
+    --u-on-accent: #ffffff;
+    --u-text: #202636;
+    --u-muted: #687184;
+    --u-border: #e7e9ef;
+    --u-ok: #07966d;
+    --u-bad: #ed3036;
+    --u-orange: #ed7d00;
+    --u-bg: #f6f5fa;
+    --u-card: #ffffff;
+    --u-soft: #faf9fc;
+    --u-bank: #f3f4f8;
+    --u-shadow: 0 6px 20px rgba(32,38,54,.05);
+  }
+  html[data-theme="dark"] {
+    --u-purple: #5eead4;
+    --u-purple-light: rgba(94, 234, 212, 0.12);
+    --u-purple-border: rgba(94, 234, 212, 0.25);
+    --u-on-accent: #042f2e;
+    --u-text: #e8ecf4;
+    --u-muted: #94a3b8;
+    --u-border: #2d3548;
+    --u-ok: #34d399;
+    --u-bad: #f87171;
+    --u-orange: #fb923c;
+    --u-bg: #0f1220;
+    --u-card: #1a1f2e;
+    --u-soft: #151a28;
+    --u-bank: #121722;
+    --u-shadow: 0 8px 28px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--u-bg);
+    color: var(--u-text);
+  }
+  .wrap { width: min(calc(100% - 24px), 640px); margin: 0 auto 48px; }
+  @media (min-width: 480px) { .wrap { width: min(calc(100% - 32px), 640px); } }
+  .back-row { width: min(calc(100% - 32px), 640px); margin: 20px auto 12px; }
+  .back-row a { color: var(--u-purple); font-weight: 800; text-decoration: none; font-size: 0.9rem; }
+  .panel {
+    background: var(--u-card);
+    border: 1px solid var(--u-border);
+    border-radius: 20px;
+    padding: 16px 14px 20px;
+    box-shadow: var(--u-shadow);
+  }
+  @media (min-width: 480px) {
+    .panel { padding: 22px 20px 24px; }
+  }
+  .tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--u-purple-light);
+    color: var(--u-purple);
+    margin-bottom: 10px;
+  }
+  .tag.while { background: rgba(59,130,246,.15); color: #60a5fa; }
+  .tag.post { background: rgba(237,125,0,.12); color: var(--u-orange); }
+  h1 { margin: 0 0 8px; font-size: 1.4rem; font-weight: 900; color: var(--u-text); }
+  .desc { color: var(--u-muted); font-weight: 600; font-size: 0.95rem; margin: 0 0 18px; line-height: 1.45; }
+  .phrase-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+  .phrase-chip {
+    appearance: none; border: 2px solid var(--u-purple-border); background: var(--u-card);
+    color: var(--u-text); font: inherit; font-weight: 800; font-size: 0.95rem;
+    padding: 12px 16px; border-radius: 14px; cursor: pointer;
+  }
+  .phrase-chip:hover { border-color: var(--u-purple); }
+  .phrase-chip.selected { background: var(--u-purple-light); border-color: var(--u-purple); color: var(--u-purple); }
+  .phrase-chip.correct { background: rgba(7,150,109,.12); border-color: var(--u-ok); color: var(--u-ok); }
+  .phrase-chip.wrong { background: rgba(237,48,54,.12); border-color: var(--u-bad); color: var(--u-bad); }
+  .match-row { display: grid; grid-template-columns: 1fr 28px 1fr; gap: 8px; align-items: center; margin-bottom: 12px; }
+  @media (max-width: 520px) { .match-row { grid-template-columns: 1fr; } .match-arrow { display: none; } }
+  .match-left { padding: 12px 14px; border-radius: 12px; font-weight: 700; background: var(--u-purple-light); color: var(--u-purple); }
+  .match-right select {
+    width: 100%; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--u-border);
+    font: inherit; font-weight: 700; background: var(--u-card); cursor: pointer;
+  }
+  .match-arrow { text-align: center; color: var(--u-muted); font-weight: 900; }
+  .dialogue { background: var(--u-soft); border: 1px solid var(--u-purple-border); border-radius: 16px; padding: 16px; }
+  .line { display: flex; gap: 12px; margin-bottom: 12px; }
+  .line:last-child { margin-bottom: 0; }
+  .speaker { flex: 0 0 52px; font-weight: 900; font-size: 0.85rem; color: var(--u-purple); }
+  .speaker.amy { color: var(--u-orange); }
+  .speech { font-size: 1.02rem; font-weight: 600; line-height: 1.4; }
+  .order-bank, .order-built {
+    display: flex; flex-wrap: wrap; gap: 8px; min-height: 56px; padding: 12px;
+    border-radius: 14px; margin-bottom: 12px;
+  }
+  .order-bank { background: var(--u-bank); border: 1px dashed var(--u-border); }
+  .order-built { background: var(--u-soft); border: 2px dashed var(--u-purple-border); }
+  .order-chip {
+    appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+    font-size: 0.9rem; padding: 11px 14px; border-radius: 12px; background: var(--u-purple); color: var(--u-on-accent, #fff);
+  }
+  .gap-line { font-size: 1.05rem; font-weight: 600; margin-bottom: 14px; line-height: 1.7; }
+  .gap-line input {
+    border: none; border-bottom: 2px solid var(--u-purple); background: transparent;
+    font: inherit; font-weight: 800; min-width: 5em; text-align: center; color: var(--u-purple); padding: 2px 6px;
+  }
+  .gap-line input:focus { outline: none; background: var(--u-purple-light); border-radius: 6px; }
+  .act-btn {
+    appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+    font-size: 0.95rem; padding: 12px 20px;
+    min-height: 44px; border-radius: 12px; background: var(--u-purple); color: var(--u-on-accent, #fff);
+    margin-top: 6px; margin-right: 8px;
+  }
+  .act-btn.ghost { background: var(--u-card); color: var(--u-text); border: 1px solid var(--u-border); }
+  .feedback { margin-top: 12px; font-weight: 800; font-size: 0.95rem; min-height: 22px; }
+  .feedback.ok { color: var(--u-ok); }
+  .feedback.bad { color: var(--u-bad); }
+  .drill-progress { font-size: 0.85rem; font-weight: 800; color: var(--u-muted); margin-bottom: 12px; }
+  .drill-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .drill-card { border: 2px solid var(--u-purple-border); border-radius: 16px; padding: 14px 16px; background: var(--u-soft); }
+  .drill-card.active { border-color: var(--u-purple); background: var(--u-purple-light); }
+  .drill-card.done { border-color: var(--u-ok); background: rgba(7,150,109,.12); }
+  .drill-phrase { font-size: 1.25rem; font-weight: 900; margin-bottom: 4px; }
+  .drill-syll { font-size: 0.95rem; font-weight: 700; color: var(--u-purple); margin-bottom: 2px; }
+  .drill-tip { font-size: 0.85rem; color: var(--u-muted); font-weight: 600; margin-bottom: 10px; }
+  .drill-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .drill-btn {
+    appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+    font-size: 0.88rem; padding: 10px 16px; border-radius: 12px; background: var(--u-purple); color: var(--u-on-accent, #fff);
+  }
+  .drill-btn.ghost { background: var(--u-card); color: var(--u-text); border: 1px solid var(--u-border); }
+  .drill-btn:disabled { opacity: 0.55; cursor: default; }
+  .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 520px) { .role-grid { grid-template-columns: 1fr; } }
+  .role-card { border-radius: 14px; padding: 16px; border: 2px solid var(--u-border); }
+  .role-card.sue { border-color: var(--u-purple-border); background: var(--u-soft); }
+  .role-card.amy { border-color: rgba(237,125,0,.25); background: rgba(237,125,0,.08); }
+  .role-card h3 { margin: 0 0 10px; font-size: 1rem; }
+  .role-card ol { margin: 0; padding-left: 18px; font-weight: 600; font-size: 0.92rem; line-height: 1.55; }
+  .role-card li { margin-bottom: 6px; }
+  .site-footer { text-align: center; padding: 24px; color: var(--u-muted); font-size: 0.85rem; font-weight: 600; }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--u-purple-light, #ccfbf1);
+    color: var(--u-purple, #14b8a6);
+    text-decoration: none;
+    border: 1px solid var(--u-purple-border, #99f6e4);
+    transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 0 rgba(0,0,0,.04);
+  }
+  .back-btn:hover {
+    transform: translateY(-1px);
+    background: color-mix(in srgb, var(--u-purple, #14b8a6) 18%, var(--u-card, #fff));
+  }
+  .back-btn:active { transform: translateY(0); }
+  .back-btn svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+  .back-row { margin-bottom: 8px; }
+
+</style>
+</head>
+<body>
+<header class="arcade-header-bar">
+  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+    <a href="../../../../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+    <a href="../../../../../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+    <a href="../../../../../topics/" class="nav-link" aria-label="Topics" data-icon="🎯"><span class="nav-ico" aria-hidden="true">🎯</span><span class="nav-text">Topics</span></a>
+    <a href="../../../../" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+    <a href="../../../../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+  </nav>
+</header>
+<main>
+  <div class="back-row"><a class="back-btn" href="../" aria-label="Back to Greetings" title="Back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+  </a></div>
+  <div class="wrap">
+    <div class="panel">
+      <h1>The conversation</h1>
+      <p class="desc">Sue and Amy meet for the first time. Read the dialogue.</p>
+      <div class="dialogue">
+    <div class="line"><span class="speaker">Sue</span><span class="speech">Hello.</span></div>
+    <div class="line"><span class="speaker amy">Amy</span><span class="speech">Hi. How are you?</span></div>
+    <div class="line"><span class="speaker">Sue</span><span class="speech">I'm fine, thank you. And you?</span></div>
+    <div class="line"><span class="speaker amy">Amy</span><span class="speech">Fine, thanks.</span></div>
+    <div class="line"><span class="speaker">Sue</span><span class="speech">What's your name?</span></div>
+    <div class="line"><span class="speaker amy">Amy</span><span class="speech">My name's Amy. What's your name?</span></div>
+    <div class="line"><span class="speaker">Sue</span><span class="speech">My name's Sue. Nice to meet you!</span></div>
+    <div class="line"><span class="speaker amy">Amy</span><span class="speech">Nice to meet you, too.</span></div>
+    <div class="line"><span class="speaker">Sue</span><span class="speech">Good bye.</span></div>
+    <div class="line"><span class="speaker amy">Amy</span><span class="speech">Bye. Have a nice time.</span></div>
+  </div>
+    </div>
+  </div>
+</main>
+<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Resources</p></footer>
+<script src="../../../../script.js">
+  function markGreetingDone(id) {
+    try {
+      var KEY = "ps-u1-greetings-done";
+      var data = JSON.parse(localStorage.getItem(KEY) || "{}") || {};
+      data[id] = true;
+      localStorage.setItem(KEY, JSON.stringify(data));
+    } catch (e) {}
+  }
+
+markGreetingDone("conversation");
+</script>
+<script src="../../../../../theme.js"></script>
+<script>
+document.getElementById("year")&&(document.getElementById("year").textContent=new Date().getFullYear());
+
+</script>
+</body>
+</html>

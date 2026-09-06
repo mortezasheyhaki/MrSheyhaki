@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Useful phrases | Greetings | Unit 1 | Pre-starter</title>
+<link rel="stylesheet" href="../../../../../style.css">
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../../theme.css">
+<style>
+  :root {
+    --u-purple: #14b8a6;
+    --u-purple-light: #ccfbf1;
+    --u-purple-border: #99f6e4;
+    --u-on-accent: #ffffff;
+    --u-text: #202636;
+    --u-muted: #687184;
+    --u-border: #e7e9ef;
+    --u-ok: #07966d;
+    --u-bad: #ed3036;
+    --u-orange: #ed7d00;
+    --u-bg: #f6f5fa;
+    --u-card: #ffffff;
+    --u-soft: #faf9fc;
+    --u-shadow: 0 8px 28px rgba(32,38,54,.06);
+  }
+  html[data-theme="dark"] {
+    --u-purple: #5eead4;
+    --u-purple-light: rgba(94, 234, 212, 0.12);
+    --u-purple-border: rgba(94, 234, 212, 0.25);
+    --u-on-accent: #042f2e;
+    --u-text: #e8ecf4;
+    --u-muted: #94a3b8;
+    --u-border: #2d3548;
+    --u-ok: #34d399;
+    --u-bad: #f87171;
+    --u-orange: #fb923c;
+    --u-bg: #0f1220;
+    --u-card: #1a1f2e;
+    --u-soft: #151a28;
+    --u-shadow: 0 8px 28px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--u-bg);
+    color: var(--u-text);
+  }
+  .back-row { width: min(calc(100% - 32px), 720px); margin: 20px auto 12px; }
+  .back-row a { color: var(--u-purple); font-weight: 800; text-decoration: none; font-size: 0.9rem; }
+  .wrap { width: min(calc(100% - 32px), 720px); margin: 0 auto 56px; }
+
+  .hero {
+    text-align: center;
+    padding: 8px 0 22px;
+  }
+  .hero h1 {
+    margin: 0 0 8px;
+    font-size: clamp(1.5rem, 4vw, 1.85rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+  }
+  .hero p {
+    margin: 0;
+    color: var(--u-muted);
+    font-weight: 600;
+    font-size: 0.98rem;
+  }
+
+  .phrase-board {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 520px) {
+    .phrase-board { grid-template-columns: 1fr; gap: 10px; }
+    .phrase-tile { padding: 16px 14px; }
+    .phrase-tile .text { font-size: 1.02rem; }
+    .meaning-panel { padding: 16px 14px 18px; }
+    .opt-btn { padding: 14px; font-size: 0.95rem; min-height: 48px; }
+  }
+
+  .phrase-tile {
+    appearance: none;
+    border: 2px solid var(--u-border);
+    background: var(--u-card);
+    border-radius: 18px;
+    padding: 18px 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    box-shadow: var(--u-shadow);
+    font: inherit;
+    color: var(--u-text);
+  }
+  .phrase-tile:hover {
+    transform: translateY(-2px);
+    border-color: var(--u-purple-border);
+  }
+  .phrase-tile.selected {
+    border-color: var(--u-purple);
+    background: var(--u-purple-light);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--u-purple) 20%, transparent);
+  }
+  .phrase-tile .emoji {
+    font-size: 1.4rem;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .phrase-tile .text {
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  .meaning-panel {
+    background: var(--u-card);
+    border: 1px solid var(--u-border);
+    border-radius: 22px;
+    padding: 20px 18px 22px;
+    box-shadow: var(--u-shadow);
+    min-height: 160px;
+  }
+  .meaning-panel.idle .idle-msg {
+    color: var(--u-muted);
+    font-weight: 600;
+    text-align: center;
+    padding: 28px 12px;
+    margin: 0;
+  }
+  .meaning-panel .ask {
+    margin: 0 0 6px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--u-purple);
+  }
+  .meaning-panel .picked {
+    margin: 0 0 14px;
+    font-size: 1.25rem;
+    font-weight: 900;
+  }
+  .opt-grid {
+    display: grid;
+    gap: 10px;
+  }
+  .opt-btn {
+    appearance: none;
+    width: 100%;
+    text-align: left;
+    border: 2px solid var(--u-border);
+    background: var(--u-soft);
+    color: var(--u-text);
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.98rem;
+    padding: 14px 16px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: border-color 0.12s ease, background 0.12s ease, transform 0.12s ease;
+  }
+  .opt-btn:hover { border-color: var(--u-purple-border); transform: translateX(2px); }
+  .opt-btn.correct {
+    border-color: var(--u-ok);
+    background: rgba(7,150,109,.12);
+    color: var(--u-ok);
+  }
+  .opt-btn.wrong {
+    border-color: var(--u-bad);
+    background: rgba(237,48,54,.1);
+    color: var(--u-bad);
+  }
+  .feedback {
+    margin-top: 14px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    min-height: 22px;
+    text-align: center;
+  }
+  .feedback.ok { color: var(--u-ok); }
+  .feedback.bad { color: var(--u-bad); }
+  .site-footer { text-align: center; padding: 24px; color: var(--u-muted); font-size: 0.85rem; font-weight: 600; }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--u-purple-light, #ccfbf1);
+    color: var(--u-purple, #14b8a6);
+    text-decoration: none;
+    border: 1px solid var(--u-purple-border, #99f6e4);
+    transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 0 rgba(0,0,0,.04);
+  }
+  .back-btn:hover {
+    transform: translateY(-1px);
+    background: color-mix(in srgb, var(--u-purple, #14b8a6) 18%, var(--u-card, #fff));
+  }
+  .back-btn:active { transform: translateY(0); }
+  .back-btn svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+  .back-row { margin-bottom: 8px; }
+
+</style>
+</head>
+<body>
+<header class="arcade-header-bar">
+  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+    <a href="../../../../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+    <a href="../../../../../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+    <a href="../../../../../topics/" class="nav-link" aria-label="Topics" data-icon="🎯"><span class="nav-ico" aria-hidden="true">🎯</span><span class="nav-text">Topics</span></a>
+    <a href="../../../../" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+    <a href="../../../../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+  </nav>
+</header>
+<main>
+  <div class="back-row"><a class="back-btn" href="../" aria-label="Back to Greetings" title="Back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+  </a></div>
+  <div class="wrap">
+    <div class="hero">
+      <h1>Useful phrases</h1>
+      <p>Tap a phrase. Then choose what it means.</p>
+    </div>
+
+    <div class="phrase-board" id="prePhrases">
+      <button type="button" class="phrase-tile" data-id="hello"><div class="emoji">👋</div><div class="text">Hello.</div></button>
+      <button type="button" class="phrase-tile" data-id="howareyou"><div class="emoji">💬</div><div class="text">How are you?</div></button>
+      <button type="button" class="phrase-tile" data-id="imfine"><div class="emoji">😊</div><div class="text">I'm fine, thank you.</div></button>
+      <button type="button" class="phrase-tile" data-id="whatsname"><div class="emoji">🪪</div><div class="text">What's your name?</div></button>
+      <button type="button" class="phrase-tile" data-id="nicemeet"><div class="emoji">🤝</div><div class="text">Nice to meet you!</div></button>
+      <button type="button" class="phrase-tile" data-id="goodbye"><div class="emoji">🚪</div><div class="text">Good bye.</div></button>
+    </div>
+
+    <div class="meaning-panel idle" id="meaningPanel">
+      <p class="idle-msg" id="idleMsg">Choose a phrase above</p>
+      <div id="meaningActive" hidden>
+        <p class="ask">What does it mean?</p>
+        <p class="picked" id="pickedPhrase"></p>
+        <div class="opt-grid" id="preOptions"></div>
+        <div class="feedback" id="preFeedback"></div>
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Resources</p></footer>
+<script src="../../../../script.js"></script>
+<script src="../../../../../theme.js"></script>
+<script>
+(function () {
+  document.getElementById("year") && (document.getElementById("year").textContent = new Date().getFullYear());
+
+  function markGreetingDone(id) {
+    try {
+      var KEY = "ps-u1-greetings-done";
+      var data = JSON.parse(localStorage.getItem(KEY) || "{}") || {};
+      data[id] = true;
+      localStorage.setItem(KEY, JSON.stringify(data));
+    } catch (e) {}
+  }
+
+  var donePhrases = {};
+  var selectedPhraseId = null;
+
+  var MEANINGS = {
+    hello: { label: "Hello.", correct: "A greeting when you see someone", options: ["A greeting when you see someone", "Asking for a name", "Saying goodbye"] },
+    howareyou: { label: "How are you?", correct: "Asking about feelings", options: ["Asking about feelings", "Saying your name", "Saying goodbye"] },
+    imfine: { label: "I'm fine, thank you.", correct: "Saying you are OK", options: ["Saying you are OK", "Asking a name", "A greeting"] },
+    whatsname: { label: "What's your name?", correct: "Asking for a name", options: ["Asking for a name", "Saying goodbye", "Saying thank you"] },
+    nicemeet: { label: "Nice to meet you!", correct: "Happy to meet someone new", options: ["Happy to meet someone new", "Asking how they are", "Saying goodbye"] },
+    goodbye: { label: "Good bye.", correct: "Leaving / end of talk", options: ["Leaving / end of talk", "Saying hello", "Asking a name"] }
+  };
+  document.querySelectorAll("#prePhrases .phrase-tile").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll("#prePhrases .phrase-tile").forEach(function (b) { b.classList.remove("selected"); });
+      btn.classList.add("selected");
+      selectedPhraseId = btn.getAttribute("data-id");
+      var data = MEANINGS[btn.getAttribute("data-id")];
+      document.getElementById("idleMsg").hidden = true;
+      document.getElementById("meaningActive").hidden = false;
+      document.getElementById("meaningPanel").classList.remove("idle");
+      document.getElementById("pickedPhrase").textContent = data.label;
+      var box = document.getElementById("preOptions");
+      box.innerHTML = "";
+      data.options.forEach(function (opt) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "opt-btn";
+        b.textContent = opt;
+        b.addEventListener("click", function () {
+          var fb = document.getElementById("preFeedback");
+          box.querySelectorAll(".opt-btn").forEach(function (x) { x.classList.remove("correct", "wrong"); });
+          if (opt === data.correct) {
+            b.classList.add("correct");
+            fb.textContent = "Yes! ✓";
+            fb.className = "feedback ok";
+            if (selectedPhraseId) donePhrases[selectedPhraseId] = true;
+            if (Object.keys(donePhrases).length >= 6) markGreetingDone("useful-phrases");
+          } else {
+            b.classList.add("wrong");
+            fb.textContent = "Try again.";
+            fb.className = "feedback bad";
+          }
+        });
+        box.appendChild(b);
+      });
+      document.getElementById("preFeedback").textContent = "";
+      document.getElementById("preFeedback").className = "feedback";
+    });
+  });
+})();
+</script>
+</body>
+</html>

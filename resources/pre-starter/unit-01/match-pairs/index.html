@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Match the pairs | Unit 1 Greetings | Pre-starter</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../style.css">
+<link rel="stylesheet" href="../../../../theme.css">
+<style>
+  :root {
+    --u-purple: #6937d8;
+    --u-purple-light: #f1edff;
+    --u-purple-border: #e6ddfa;
+    --u-text: #202636;
+    --u-muted: #687184;
+    --u-border: #e7e9ef;
+    --u-ok: #07966d;
+    --u-bad: #ed3036;
+    --u-orange: #ed7d00;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f6f5fa;
+    color: var(--u-text);
+  }
+  .wrap { width: min(calc(100% - 32px), 640px); margin: 0 auto 56px; }
+  .back-row { width: min(calc(100% - 32px), 640px); margin: 20px auto 12px; }
+  .back-row a { color: var(--u-purple); font-weight: 800; text-decoration: none; font-size: 0.9rem; }
+  .panel {
+    background: #fff;
+    border: 1px solid var(--u-border);
+    border-radius: 20px;
+    padding: 22px 20px 24px;
+    box-shadow: 0 6px 20px rgba(32,38,54,.05);
+  }
+  .tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--u-purple-light);
+    color: var(--u-purple);
+    margin-bottom: 10px;
+  }
+  .tag.while { background: #edf6ff; color: #176fd0; }
+  .tag.post { background: #fff4e6; color: #ed7d00; }
+  h1 { margin: 0 0 8px; font-size: 1.4rem; font-weight: 900; }
+  .desc { color: var(--u-muted); font-weight: 600; font-size: 0.95rem; margin: 0 0 18px; line-height: 1.45; }
+  .phrase-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+  .phrase-chip {
+    appearance: none; border: 2px solid var(--u-purple-border); background: #fff;
+    color: var(--u-text); font: inherit; font-weight: 800; font-size: 0.95rem;
+    padding: 12px 16px; border-radius: 14px; cursor: pointer;
+  }
+  .phrase-chip:hover { border-color: var(--u-purple); }
+  .phrase-chip.selected { background: var(--u-purple-light); border-color: var(--u-purple); color: var(--u-purple); }
+  .phrase-chip.correct { background: #eaf8f4; border-color: var(--u-ok); color: var(--u-ok); }
+  .phrase-chip.wrong { background: #fff0f0; border-color: var(--u-bad); color: var(--u-bad); }
+  .match-row { display: grid; grid-template-columns: 1fr 28px 1fr; gap: 8px; align-items: center; margin-bottom: 12px; }
+  @media (max-width: 520px) { .match-row { grid-template-columns: 1fr; } .match-arrow { display: none; } }
+  .match-left { padding: 12px 14px; border-radius: 12px; font-weight: 700; background: var(--u-purple-light); color: var(--u-purple); }
+  .match-right select {
+    width: 100%; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--u-border);
+    font: inherit; font-weight: 700; background: #fff; cursor: pointer;
+  }
+  .match-arrow { text-align: center; color: var(--u-muted); font-weight: 900; }
+  .dialogue { background: #faf9fc; border: 1px solid var(--u-purple-border); border-radius: 16px; padding: 16px; }
+  .line { display: flex; gap: 12px; margin-bottom: 12px; }
+  .line:last-child { margin-bottom: 0; }
+  .speaker { flex: 0 0 52px; font-weight: 900; font-size: 0.85rem; color: var(--u-purple); }
+  .speaker.amy { color: var(--u-orange); }
+  .speech { font-size: 1.02rem; font-weight: 600; line-height: 1.4; }
+  .order-bank, .order-built {
+    display: flex; flex-wrap: wrap; gap: 8px; min-height: 56px; padding: 12px;
+    border-radius: 14px; margin-bottom: 12px;
+  }
+  .order-bank { background: #f3f4f8; border: 1px dashed #c5cad6; }
+  .order-built { background: #faf9fc; border: 2px dashed var(--u-purple-border); }
+  .order-chip {
+    appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+    font-size: 0.9rem; padding: 11px 14px; border-radius: 12px; background: var(--u-purple); color: #fff;
+  }
+  .gap-line { font-size: 1.05rem; font-weight: 600; margin-bottom: 14px; line-height: 1.7; }
+  .gap-line input {
+    border: none; border-bottom: 2px solid var(--u-purple); background: transparent;
+    font: inherit; font-weight: 800; min-width: 5em; text-align: center; color: var(--u-purple); padding: 2px 6px;
+  }
+  .gap-line input:focus { outline: none; background: var(--u-purple-light); border-radius: 6px; }
+  .act-btn {
+    appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+    font-size: 0.95rem; padding: 12px 20px; border-radius: 12px; background: var(--u-purple); color: #fff;
+    margin-top: 6px; margin-right: 8px;
+  }
+  .act-btn.ghost { background: #fff; color: var(--u-text); border: 1px solid var(--u-border); }
+  .feedback { margin-top: 12px; font-weight: 800; font-size: 0.95rem; min-height: 22px; }
+  .feedback.ok { color: var(--u-ok); }
+  .feedback.bad { color: var(--u-bad); }
+  .drill-progress { font-size: 0.85rem; font-weight: 800; color: var(--u-muted); margin-bottom: 12px; }
+  .drill-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .drill-card { border: 2px solid var(--u-purple-border); border-radius: 16px; padding: 14px 16px; background: #faf9fc; }
+  .drill-card.active { border-color: var(--u-purple); background: var(--u-purple-light); }
+  .drill-card.done { border-color: var(--u-ok); background: #eaf8f4; }
+  .drill-phrase { font-size: 1.25rem; font-weight: 900; margin-bottom: 4px; }
+  .drill-syll { font-size: 0.95rem; font-weight: 700; color: var(--u-purple); margin-bottom: 2px; }
+  .drill-tip { font-size: 0.85rem; color: var(--u-muted); font-weight: 600; margin-bottom: 10px; }
+  .drill-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .drill-btn {
+    appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
+    font-size: 0.88rem; padding: 10px 16px; border-radius: 12px; background: var(--u-purple); color: #fff;
+  }
+  .drill-btn.ghost { background: #fff; color: var(--u-text); border: 1px solid var(--u-border); }
+  .drill-btn:disabled { opacity: 0.55; cursor: default; }
+  .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 520px) { .role-grid { grid-template-columns: 1fr; } }
+  .role-card { border-radius: 14px; padding: 16px; border: 2px solid var(--u-border); }
+  .role-card.sue { border-color: var(--u-purple-border); background: #faf9fc; }
+  .role-card.amy { border-color: #fae5ca; background: #fffaf3; }
+  .role-card h3 { margin: 0 0 10px; font-size: 1rem; }
+  .role-card ol { margin: 0; padding-left: 18px; font-weight: 600; font-size: 0.92rem; line-height: 1.55; }
+  .role-card li { margin-bottom: 6px; }
+  .site-footer { text-align: center; padding: 24px; color: var(--u-muted); font-size: 0.85rem; font-weight: 600; }
+</style>
+</head>
+<body>
+<header class="arcade-header-bar">
+  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+    <a href="../../../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+    <a href="../../../../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+    <a href="../../../../topics/" class="nav-link" aria-label="Topics" data-icon="🎯"><span class="nav-ico" aria-hidden="true">🎯</span><span class="nav-text">Topics</span></a>
+    <a href="../../../" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+    <a href="../../../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+  </nav>
+</header>
+<main>
+  <div class="back-row"><a href="../">← Unit 1 · Greetings</a></div>
+  <div class="wrap">
+    <div class="panel">
+      <span class="tag">PRE</span>
+      <h1>Match the pairs</h1>
+      <p class="desc">Choose the best reply for each line.</p>
+      <div id="matchArea"></div>
+  <button type="button" class="act-btn" id="btnCheckMatch">Check</button>
+  <button type="button" class="act-btn ghost" id="btnResetMatch">Reset</button>
+  <div class="feedback" id="matchFeedback"></div>
+    </div>
+  </div>
+</main>
+<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Resources</p></footer>
+<script src="../../../script.js"></script>
+<script src="../../../../theme.js"></script>
+<script>
+document.getElementById("year")&&(document.getElementById("year").textContent=new Date().getFullYear());
+
+  var MATCH = [
+    { left: "Hello.", options: ["Hi.", "Good bye.", "My name's Amy."], answer: "Hi." },
+    { left: "How are you?", options: ["I'm fine, thank you.", "Nice to meet you!", "Good bye."], answer: "I'm fine, thank you." },
+    { left: "What's your name?", options: ["My name's Amy.", "Fine, thanks.", "Have a nice time."], answer: "My name's Amy." },
+    { left: "Nice to meet you!", options: ["Nice to meet you, too.", "Hello.", "How are you?"], answer: "Nice to meet you, too." },
+    { left: "Good bye.", options: ["Bye.", "What's your name?", "I'm fine."], answer: "Bye." }
+  ];
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"); }
+  function renderMatch(){
+    var area = document.getElementById("matchArea"); area.innerHTML = "";
+    MATCH.forEach(function(m,i){
+      var row = document.createElement("div"); row.className = "match-row";
+      var opts = m.options.slice().sort(function(){ return Math.random()-0.5; });
+      row.innerHTML = '<div class="match-left">'+esc(m.left)+'</div><div class="match-arrow">→</div><div class="match-right"><select data-i="'+i+'"><option value="">— choose —</option>'+
+        opts.map(function(o){ return '<option value="'+esc(o)+'">'+esc(o)+'</option>'; }).join("")+'</select></div>';
+      area.appendChild(row);
+    });
+  }
+  renderMatch();
+  document.getElementById("btnCheckMatch").onclick = function(){
+    var ok=0;
+    document.querySelectorAll("#matchArea select").forEach(function(sel){
+      if(sel.value===MATCH[parseInt(sel.getAttribute("data-i"),10)].answer) ok++;
+    });
+    var fb=document.getElementById("matchFeedback");
+    if(ok===MATCH.length){ fb.textContent="Perfect! All "+ok+" correct. ✓"; fb.className="feedback ok"; }
+    else { fb.textContent=ok+" / "+MATCH.length+" correct. Try again."; fb.className="feedback bad"; }
+  };
+  document.getElementById("btnResetMatch").onclick=function(){ renderMatch(); document.getElementById("matchFeedback").textContent=""; };
+
+</script>
+</body>
+</html>

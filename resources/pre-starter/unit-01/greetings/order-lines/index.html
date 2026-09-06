@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Put the lines in order | Greetings | Unit 1 | Pre-starter</title>
+<link rel="stylesheet" href="../../../../../style.css">
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../../theme.css">
+<style>
+  :root {
+    --u-purple: #14b8a6;
+    --u-purple-light: #ccfbf1;
+    --u-purple-border: #99f6e4;
+    --u-on-accent: #ffffff;
+    --u-text: #202636;
+    --u-muted: #687184;
+    --u-border: #e7e9ef;
+    --u-ok: #07966d;
+    --u-bad: #ed3036;
+    --u-bg: #f6f5fa;
+    --u-card: #ffffff;
+    --u-soft: #faf9fc;
+    --u-bank: #f3f4f8;
+    --u-shadow: 0 6px 20px rgba(32,38,54,.05);
+  }
+  html[data-theme="dark"] {
+    --u-purple: #5eead4;
+    --u-purple-light: rgba(94, 234, 212, 0.12);
+    --u-purple-border: rgba(94, 234, 212, 0.25);
+    --u-on-accent: #042f2e;
+    --u-text: #e8ecf4;
+    --u-muted: #94a3b8;
+    --u-border: #2d3548;
+    --u-ok: #34d399;
+    --u-bad: #f87171;
+    --u-bg: #0f1220;
+    --u-card: #1a1f2e;
+    --u-soft: #151a28;
+    --u-bank: #121722;
+    --u-shadow: 0 8px 28px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--u-bg);
+    color: var(--u-text);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .back-row { width: min(calc(100% - 24px), 640px); margin: 16px auto 10px; }
+  .back-row a { color: var(--u-purple); font-weight: 800; text-decoration: none; font-size: 0.9rem; }
+  .wrap { width: min(calc(100% - 24px), 640px); margin: 0 auto 48px; }
+  .panel {
+    background: var(--u-card);
+    border: 1px solid var(--u-border);
+    border-radius: 20px;
+    padding: 18px 14px 22px;
+    box-shadow: var(--u-shadow);
+  }
+  @media (min-width: 480px) {
+    .panel { padding: 22px 18px 24px; }
+  }
+  h1 { margin: 0 0 6px; font-size: 1.25rem; font-weight: 900; color: var(--u-text); }
+  @media (min-width: 480px) {
+    h1 { font-size: 1.35rem; }
+  }
+  .desc { color: var(--u-muted); font-weight: 600; font-size: 0.9rem; margin: 0 0 16px; line-height: 1.45; }
+
+  .boxes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .sentence-box {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 8px;
+    align-items: stretch;
+    min-height: 48px;
+  }
+  @media (min-width: 480px) {
+    .sentence-box { grid-template-columns: 36px 1fr; gap: 10px; min-height: 52px; }
+  }
+  .box-num {
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--u-purple-light);
+    color: var(--u-purple);
+    font-weight: 900;
+    font-size: 0.9rem;
+  }
+  .box-slot {
+    border: 2px dashed var(--u-purple-border);
+    border-radius: 14px;
+    background: var(--u-soft);
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  }
+  @media (min-width: 480px) {
+    .box-slot { min-height: 52px; padding: 8px 10px; }
+  }
+  .box-slot.drag-over {
+    border-color: var(--u-purple);
+    border-style: solid;
+    background: var(--u-purple-light);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--u-purple) 18%, transparent);
+  }
+  .box-slot.filled {
+    border-style: solid;
+    border-color: var(--u-purple);
+    background: var(--u-purple-light);
+  }
+  .box-slot.correct {
+    border-color: var(--u-ok);
+    background: rgba(7,150,109,.12);
+  }
+  .box-slot.wrong {
+    border-color: var(--u-bad);
+    background: rgba(237,48,54,.1);
+  }
+  .box-slot .placeholder {
+    color: var(--u-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    pointer-events: none;
+  }
+  .chip {
+    appearance: none;
+    border: none;
+    cursor: grab;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--u-purple);
+    color: var(--u-on-accent, #fff);
+    width: 100%;
+    text-align: left;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  @media (min-width: 480px) {
+    .chip { font-size: 0.9rem; }
+  }
+  .chip:active { cursor: grabbing; }
+  .chip.dragging { opacity: 0.45; }
+
+  .bank-label {
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: var(--u-purple);
+    margin: 0 0 8px;
+  }
+  .order-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-content: flex-start;
+    min-height: 52px;
+    padding: 10px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    background: var(--u-bank);
+    border: 1px dashed var(--u-border);
+    transition: background 0.15s ease, border-color 0.15s ease;
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+  }
+  .order-bank.drag-over {
+    border-color: var(--u-purple);
+    background: var(--u-purple-light);
+  }
+  .order-chip {
+    appearance: none;
+    border: none;
+    cursor: grab;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--u-purple);
+    color: var(--u-on-accent, #042f2e);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    max-width: 100%;
+  }
+  .order-chip:active { cursor: grabbing; }
+  .order-chip.dragging { opacity: 0.45; }
+
+  /* ghost for pointer drag */
+  .drag-ghost {
+    position: fixed;
+    z-index: 99999;
+    pointer-events: none;
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--u-purple);
+    color: var(--u-on-accent, #fff);
+    font-weight: 800;
+    font-size: 0.85rem;
+    box-shadow: 0 12px 30px rgba(0,0,0,.25);
+    opacity: 0.95;
+    max-width: min(90vw, 320px);
+    transform: translate(-50%, -120%);
+  }
+
+  .act-btn {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.95rem;
+    padding: 12px 18px;
+    border-radius: 12px;
+    background: var(--u-purple);
+    color: var(--u-on-accent, #fff);
+    margin-top: 4px;
+    margin-right: 8px;
+    min-height: 44px;
+  }
+  .act-btn.ghost {
+    background: var(--u-card);
+    color: var(--u-text);
+    border: 1px solid var(--u-border);
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .feedback { margin-top: 12px; font-weight: 800; font-size: 0.95rem; min-height: 22px; }
+  .feedback.ok { color: var(--u-ok); }
+  .feedback.bad { color: var(--u-bad); }
+  .hint {
+    font-size: 0.8rem;
+    color: var(--u-muted);
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+  .site-footer { text-align: center; padding: 24px; color: var(--u-muted); font-size: 0.85rem; font-weight: 600; }
+
+  /* Completion celebration */
+  .box-slot.celebrate {
+    animation: slot-pop 0.55s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  @keyframes slot-pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.04); }
+    100% { transform: scale(1); }
+  }
+  .box-num.celebrate {
+    animation: num-bounce 0.6s cubic-bezier(.2,1.4,.4,1) both;
+    background: rgba(7,150,109,.2);
+    color: var(--u-ok);
+  }
+  @keyframes num-bounce {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+  .success-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 18, 32, 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .success-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .success-card {
+    background: var(--u-card);
+    border: 1px solid var(--u-border);
+    border-radius: 24px;
+    padding: 28px 28px 22px;
+    text-align: center;
+    max-width: min(90vw, 340px);
+    box-shadow: 0 24px 60px rgba(0,0,0,.35);
+    transform: scale(0.7) translateY(20px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(.2,1.3,.4,1), opacity 0.3s ease;
+  }
+  .success-overlay.show .success-card {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  .success-emoji {
+    font-size: 3rem;
+    line-height: 1;
+    margin-bottom: 10px;
+    animation: emoji-spin 0.7s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  @keyframes emoji-spin {
+    0% { transform: scale(0) rotate(-30deg); }
+    60% { transform: scale(1.2) rotate(8deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+  .success-card h2 {
+    margin: 0 0 6px;
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: var(--u-text);
+  }
+  .success-card p {
+    margin: 0 0 16px;
+    color: var(--u-muted);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .success-stars {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 18px;
+    font-size: 1.6rem;
+  }
+  .success-stars span {
+    display: inline-block;
+    opacity: 0;
+    transform: scale(0) rotate(-20deg);
+    animation: star-in 0.45s cubic-bezier(.2,1.4,.4,1) forwards;
+  }
+  .success-stars span:nth-child(1) { animation-delay: 0.15s; }
+  .success-stars span:nth-child(2) { animation-delay: 0.28s; }
+  .success-stars span:nth-child(3) { animation-delay: 0.41s; }
+  @keyframes star-in {
+    to { opacity: 1; transform: scale(1) rotate(0); }
+  }
+  .success-card .act-btn { margin: 0; }
+  .confetti-piece {
+    position: fixed;
+    z-index: 100001;
+    width: 8px;
+    height: 12px;
+    border-radius: 2px;
+    pointer-events: none;
+    opacity: 1;
+    animation: confetti-fall 1.4s ease-out forwards;
+  }
+  @keyframes confetti-fall {
+    0% { transform: translate3d(0,0,0) rotate(0deg); opacity: 1; }
+    100% { transform: translate3d(var(--dx), var(--dy), 0) rotate(var(--rot)); opacity: 0; }
+  }
+
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--u-purple-light, #ccfbf1);
+    color: var(--u-purple, #14b8a6);
+    text-decoration: none;
+    border: 1px solid var(--u-purple-border, #99f6e4);
+    transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 0 rgba(0,0,0,.04);
+  }
+  .back-btn:hover {
+    transform: translateY(-1px);
+    background: color-mix(in srgb, var(--u-purple, #14b8a6) 18%, var(--u-card, #fff));
+  }
+  .back-btn:active { transform: translateY(0); }
+  .back-btn svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+  .back-row { margin-bottom: 8px; }
+
+</style>
+</head>
+<body>
+<header class="arcade-header-bar">
+  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+    <a href="../../../../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+    <a href="../../../../../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+    <a href="../../../../../topics/" class="nav-link" aria-label="Topics" data-icon="🎯"><span class="nav-ico" aria-hidden="true">🎯</span><span class="nav-text">Topics</span></a>
+    <a href="../../../../" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+    <a href="../../../../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+  </nav>
+</header>
+<main>
+  <div class="back-row"><a class="back-btn" href="../" aria-label="Back to Greetings" title="Back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+  </a></div>
+  <div class="wrap">
+    <div class="panel">
+      <h1>Put the lines in order</h1>
+      <p class="desc">Drag lines into the boxes, or tap a line then a box.</p>
+      <p class="hint">Tip: on phone, press and hold a line, then drag it into a box.</p>
+
+      <div class="boxes" id="boxes"></div>
+
+      <p class="bank-label">LINE BANK</p>
+      <div class="order-bank" id="orderBank"></div>
+
+      <div class="actions">
+        <button type="button" class="act-btn" id="btnCheckOrder">Check</button>
+        <button type="button" class="act-btn ghost" id="btnResetOrder">Reset</button>
+      </div>
+      <div class="feedback" id="orderFeedback"></div>
+    </div>
+  </div>
+</main>
+<div class="success-overlay" id="successOverlay" aria-hidden="true">
+  <div class="success-card" role="dialog" aria-label="Success">
+    <div class="success-emoji">🎉</div>
+    <h2>Perfect!</h2>
+    <p>You put all the lines in the right order.</p>
+    <div class="success-stars" aria-hidden="true"><span>⭐</span><span>⭐</span><span>⭐</span></div>
+    <button type="button" class="act-btn" id="btnSuccessOk">Continue</button>
+  </div>
+</div>
+<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Resources</p></footer>
+<script src="../../../../script.js"></script>
+<script src="../../../../../theme.js"></script>
+<script>
+(function () {
+  document.getElementById("year") && (document.getElementById("year").textContent = new Date().getFullYear());
+
+  function markGreetingDone(id) {
+    try {
+      var KEY = "ps-u1-greetings-done";
+      var data = JSON.parse(localStorage.getItem(KEY) || "{}") || {};
+      data[id] = true;
+      localStorage.setItem(KEY, JSON.stringify(data));
+    } catch (e) {}
+  }
+
+
+  var ORDER_LINES = [
+    "Hello.",
+    "Hi. How are you?",
+    "I'm fine, thank you. And you?",
+    "Fine, thanks.",
+    "What's your name?",
+    "My name's Amy. What's your name?"
+  ];
+  var slots = ORDER_LINES.map(function () { return null; });
+  var selectedFromBank = null;
+  var dragState = null;
+  var ghost = null;
+
+  function shuffle(a) {
+    var x = a.slice();
+    for (var i = x.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = x[i]; x[i] = x[j]; x[j] = tmp;
+    }
+    return x;
+  }
+
+  function clearMarks() {
+    document.querySelectorAll(".box-slot").forEach(function (s) {
+      s.classList.remove("correct", "wrong", "drag-over");
+    });
+    var bank = document.getElementById("orderBank");
+    if (bank) bank.classList.remove("drag-over");
+    var fb = document.getElementById("orderFeedback");
+    if (fb) { fb.textContent = ""; fb.className = "feedback"; }
+  }
+
+  function placeInSlot(index, text) {
+    for (var i = 0; i < slots.length; i++) {
+      if (slots[i] === text) slots[i] = null;
+    }
+    slots[index] = text;
+  }
+
+  function removeGhost() {
+    if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
+    ghost = null;
+    document.querySelectorAll(".dragging").forEach(function (el) {
+      el.classList.remove("dragging");
+    });
+  }
+
+  function makeGhost(text, x, y) {
+    removeGhost();
+    ghost = document.createElement("div");
+    ghost.className = "drag-ghost";
+    ghost.textContent = text;
+    ghost.style.left = x + "px";
+    ghost.style.top = y + "px";
+    document.body.appendChild(ghost);
+  }
+
+  function moveGhost(x, y) {
+    if (!ghost) return;
+    ghost.style.left = x + "px";
+    ghost.style.top = y + "px";
+  }
+
+  function findSlotIndexFromEl(el) {
+    while (el && el !== document.body) {
+      if (el.classList && el.classList.contains("box-slot")) {
+        return parseInt(el.getAttribute("data-index"), 10);
+      }
+      el = el.parentNode;
+    }
+    return -1;
+  }
+
+  function isOverBank(el) {
+    while (el && el !== document.body) {
+      if (el.id === "orderBank") return true;
+      el = el.parentNode;
+    }
+    return false;
+  }
+
+  function onPointerMove(ev) {
+    if (!dragState) return;
+    moveGhost(ev.clientX, ev.clientY);
+    document.querySelectorAll(".box-slot").forEach(function (s) { s.classList.remove("drag-over"); });
+    var bank = document.getElementById("orderBank");
+    if (bank) bank.classList.remove("drag-over");
+    var under = document.elementFromPoint(ev.clientX, ev.clientY);
+    var idx = findSlotIndexFromEl(under);
+    if (idx >= 0) {
+      var slot = document.querySelector('.box-slot[data-index="' + idx + '"]');
+      if (slot) slot.classList.add("drag-over");
+    } else if (isOverBank(under) && bank) {
+      bank.classList.add("drag-over");
+    }
+  }
+
+  function onPointerUp(ev) {
+    if (!dragState) return;
+    var el = document.elementFromPoint(ev.clientX, ev.clientY);
+    var slotIndex = findSlotIndexFromEl(el);
+    document.querySelectorAll(".box-slot").forEach(function (s) { s.classList.remove("drag-over"); });
+    var bank = document.getElementById("orderBank");
+    if (bank) bank.classList.remove("drag-over");
+
+    if (slotIndex >= 0) {
+      placeInSlot(slotIndex, dragState.text);
+    } else if (isOverBank(el)) {
+      if (dragState.from === "slot") {
+        slots[dragState.slotIndex] = null;
+      }
+    } else {
+      if (dragState.from === "slot" && slots[dragState.slotIndex] === null) {
+        slots[dragState.slotIndex] = dragState.text;
+      }
+    }
+
+    dragState = null;
+    selectedFromBank = null;
+    removeGhost();
+    document.removeEventListener("pointermove", onPointerMove);
+    document.removeEventListener("pointerup", onPointerUp);
+    document.removeEventListener("pointercancel", onPointerUp);
+    clearMarks();
+    render();
+  }
+
+  function startDrag(text, from, slotIndex, clientX, clientY) {
+    // cancel any previous drag
+    removeGhost();
+    dragState = { text: text, from: from, slotIndex: slotIndex };
+    if (from === "slot") {
+      slots[slotIndex] = null;
+    }
+    // Re-render so source chip leaves the bank/slot; listeners live on document
+    render();
+    makeGhost(text, clientX, clientY);
+    document.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("pointerup", onPointerUp);
+    document.addEventListener("pointercancel", onPointerUp);
+  }
+
+  function render() {
+    var boxes = document.getElementById("boxes");
+    boxes.innerHTML = "";
+    slots.forEach(function (line, i) {
+      var row = document.createElement("div");
+      row.className = "sentence-box";
+      var num = document.createElement("div");
+      num.className = "box-num";
+      num.textContent = String(i + 1);
+      var slot = document.createElement("div");
+      slot.className = "box-slot" + (line ? " filled" : "");
+      slot.setAttribute("data-index", String(i));
+
+      slot.addEventListener("click", function () {
+        if (dragState) return;
+        if (selectedFromBank && !slots[i]) {
+          placeInSlot(i, selectedFromBank);
+          selectedFromBank = null;
+          clearMarks();
+          render();
+        }
+      });
+
+      if (line) {
+        var chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "chip";
+        chip.textContent = line;
+        chip.addEventListener("click", function (e) {
+          if (dragState) return;
+          e.stopPropagation();
+          // simple remove on click
+          slots[i] = null;
+          clearMarks();
+          render();
+        });
+        chip.addEventListener("pointerdown", function (e) {
+          if (e.button != null && e.button !== 0) return;
+          e.preventDefault();
+          e.stopPropagation();
+          startDrag(line, "slot", i, e.clientX, e.clientY);
+        });
+        slot.appendChild(chip);
+      } else {
+        var ph = document.createElement("span");
+        ph.className = "placeholder";
+        ph.textContent = "Drop sentence " + (i + 1);
+        slot.appendChild(ph);
+      }
+      row.appendChild(num);
+      row.appendChild(slot);
+      boxes.appendChild(row);
+    });
+
+    var bank = document.getElementById("orderBank");
+    bank.innerHTML = "";
+    var used = slots.filter(Boolean);
+    var remaining = ORDER_LINES.filter(function (l) { return used.indexOf(l) === -1; });
+    // Hide the line currently being dragged from bank so it doesn't duplicate
+    if (dragState && dragState.from === "bank") {
+      remaining = remaining.filter(function (l) { return l !== dragState.text; });
+    }
+    shuffle(remaining).forEach(function (line) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "order-chip";
+      b.textContent = line;
+      if (selectedFromBank === line) {
+        b.style.outline = "3px solid color-mix(in srgb, var(--u-purple) 50%, transparent)";
+      }
+      b.addEventListener("click", function () {
+        if (dragState) return;
+        selectedFromBank = selectedFromBank === line ? null : line;
+        render();
+      });
+      b.addEventListener("pointerdown", function (e) {
+        if (e.button != null && e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+        selectedFromBank = null;
+        startDrag(line, "bank", -1, e.clientX, e.clientY);
+      });
+      bank.appendChild(b);
+    });
+  }
+
+  function burstConfetti() {
+    var colors = ["#14b8a6", "#5eead4", "#fbbf24", "#f472b6", "#60a5fa", "#a78bfa"];
+    var cx = window.innerWidth / 2;
+    var cy = window.innerHeight * 0.4;
+    for (var i = 0; i < 48; i++) {
+      var el = document.createElement("div");
+      el.className = "confetti-piece";
+      el.style.left = cx + "px";
+      el.style.top = cy + "px";
+      el.style.background = colors[i % colors.length];
+      var angle = (Math.PI * 2 * i) / 48 + (Math.random() * 0.4);
+      var dist = 80 + Math.random() * 160;
+      el.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+      el.style.setProperty("--dy", Math.sin(angle) * dist + 80 + "px");
+      el.style.setProperty("--rot", (Math.random() * 520 - 260) + "deg");
+      el.style.animationDelay = (Math.random() * 0.12) + "s";
+      document.body.appendChild(el);
+      setTimeout(function (node) { if (node.parentNode) node.parentNode.removeChild(node); }, 1600, el);
+    }
+  }
+
+  function showSuccess() {
+      markGreetingDone("order-lines");
+    var slotsEl = document.querySelectorAll(".box-slot");
+    var nums = document.querySelectorAll(".box-num");
+    slotsEl.forEach(function (s, i) {
+      s.classList.add("celebrate");
+      s.style.animationDelay = (i * 0.06) + "s";
+    });
+    nums.forEach(function (n, i) {
+      n.classList.add("celebrate");
+      n.style.animationDelay = (i * 0.06) + "s";
+    });
+    burstConfetti();
+    var overlay = document.getElementById("successOverlay");
+    overlay.classList.add("show");
+    overlay.setAttribute("aria-hidden", "false");
+  }
+
+  function hideSuccess() {
+    var overlay = document.getElementById("successOverlay");
+    overlay.classList.remove("show");
+    overlay.setAttribute("aria-hidden", "true");
+    document.querySelectorAll(".box-slot, .box-num").forEach(function (el) {
+      el.classList.remove("celebrate");
+      el.style.animationDelay = "";
+    });
+  }
+
+  document.getElementById("btnSuccessOk").addEventListener("click", hideSuccess);
+  document.getElementById("successOverlay").addEventListener("click", function (e) {
+    if (e.target.id === "successOverlay") hideSuccess();
+  });
+
+  document.getElementById("btnCheckOrder").addEventListener("click", function () {
+    var slotsEl = document.querySelectorAll(".box-slot");
+    var ok = 0;
+    slots.forEach(function (line, i) {
+      slotsEl[i].classList.remove("correct", "wrong", "celebrate");
+      if (line === ORDER_LINES[i]) {
+        slotsEl[i].classList.add("correct");
+        ok++;
+      } else if (line) {
+        slotsEl[i].classList.add("wrong");
+      }
+    });
+    var fb = document.getElementById("orderFeedback");
+    if (ok === ORDER_LINES.length) {
+      fb.textContent = "";
+      fb.className = "feedback";
+      showSuccess();
+    } else {
+      fb.textContent = ok + " / " + ORDER_LINES.length + " in the right place.";
+      fb.className = "feedback bad";
+    }
+  });
+
+  document.getElementById("btnResetOrder").addEventListener("click", function () {
+    slots = ORDER_LINES.map(function () { return null; });
+    selectedFromBank = null;
+    dragState = null;
+    removeGhost();
+    document.removeEventListener("pointermove", onPointerMove);
+    document.removeEventListener("pointerup", onPointerUp);
+    document.removeEventListener("pointercancel", onPointerUp);
+    clearMarks();
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
