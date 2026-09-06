@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Conversation Questions | Writing Arcade</title>
+  <link rel="stylesheet" href="../../theme.css" />
+  <style>
+    /* Hide profile / theme FABs injected by shared scripts */
+    a.profile-fab, .profile-fab,
+    .site-theme-fab, button.site-theme-fab,
+    [data-theme-toggle] { display: none !important; }
+
+    :root {
+      --bg: #0f0c08;
+      --card: #1a1510;
+      --card-hover: #241e16;
+      --text: #f8f4ef;
+      --muted: #a89b8c;
+      --primary: #ed7d00;
+      --primary-dark: #c46200;
+      --primary-glow: rgba(237, 125, 0, 0.35);
+      --ok: #10b981;
+      --bad: #ef4444;
+      --border: rgba(237, 125, 0, 0.12);
+      --m1: #f59e0b;
+      --m2: #fb923c;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+      --radius: 18px;
+    }
+    html[data-theme="light"] {
+      --bg: #fff4e6;
+      --card: #ffffff;
+      --card-hover: #fffaf3;
+      --text: #1c1410;
+      --muted: #78716c;
+      --primary: #ed7d00;
+      --primary-dark: #c46200;
+      --primary-glow: rgba(237, 125, 0, 0.2);
+      --border: #fae5ca;
+      --shadow: 0 12px 32px rgba(237, 125, 0, 0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(237, 125, 0, 0.2), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(245, 158, 11, 0.1), transparent 50%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      line-height: 1.45;
+      padding: 20px 16px 48px;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; }
+
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 28px;
+    }
+    .back-pill, .badge-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 999px; font-weight: 800; font-size: 0.85rem;
+      padding: 10px 18px; text-decoration: none; border: none;
+      cursor: pointer; font-family: inherit;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .back-pill {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    .back-pill:hover { transform: translateY(-1px); }
+    .badge-pill {
+      background: linear-gradient(135deg, #ed7d00, #c46200);
+      color: #fff;
+      box-shadow: 0 4px 18px var(--primary-glow);
+    }
+    .badge-pill.m2 { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+
+    h1 {
+      font-size: clamp(1.75rem, 5vw, 2.25rem);
+      font-weight: 900; letter-spacing: -0.03em;
+      margin-bottom: 8px; color: var(--text);
+      text-align: center;
+    }
+    .lead {
+      color: var(--muted); font-weight: 600; font-size: 1rem;
+      margin-bottom: 28px; text-align: center;
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (min-width: 520px) {
+      .cat-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (min-width: 780px) {
+      .cat-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .cat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      font: inherit;
+      color: inherit;
+      text-align: left;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 100px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cat-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #ed7d00, #f59e0b);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .cat-card:hover {
+      transform: translateY(-3px);
+      background: var(--card-hover);
+      border-color: rgba(237, 125, 0, 0.35);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(237, 125, 0, 0.15);
+    }
+    .cat-card:hover::before { opacity: 1; }
+    .cat-card:active { transform: translateY(-1px); }
+    .cat-num {
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+    .cat-title {
+      font-weight: 800;
+      font-size: 1rem;
+      line-height: 1.3;
+      color: var(--text);
+    }
+    .cat-count {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: auto;
+    }
+
+    .mode-list { display: flex; flex-direction: column; gap: 14px; max-width: 480px; margin: 0 auto; }
+    .mode-card {
+      display: flex; align-items: center; gap: 14px;
+      width: 100%; text-align: left;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 18px 20px 0;
+      box-shadow: var(--shadow); cursor: pointer;
+      font: inherit; color: inherit;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      position: relative; overflow: hidden;
+    }
+    .mode-card:hover {
+      transform: translateY(-3px);
+      background: var(--card-hover);
+      border-color: rgba(237, 125, 0, 0.35);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    }
+    .mode-stripe {
+      width: 5px; align-self: stretch;
+      border-radius: 0 6px 6px 0;
+      background: linear-gradient(180deg, #f59e0b, #ed7d00);
+      flex-shrink: 0;
+    }
+    .mode-card[data-mode="answer"] .mode-stripe { background: linear-gradient(180deg, #60a5fa, #2563eb); }
+    .mode-body { flex: 1; padding-right: 8px; }
+    .mode-num { font-size: 0.68rem; font-weight: 900; letter-spacing: 0.1em; color: var(--m1); margin-bottom: 3px; text-transform: uppercase; }
+    .mode-card[data-mode="answer"] .mode-num { color: var(--m2); }
+    .mode-title { font-weight: 800; font-size: 1.1rem; }
+    .mode-desc { font-size: 0.88rem; color: var(--muted); font-weight: 600; margin-top: 3px; }
+    .mode-ico {
+      width: 52px; height: 52px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.55rem; margin-right: 4px; margin-left: 14px;
+      background: rgba(237, 125, 0, 0.15); flex-shrink: 0;
+    }
+    .mode-card[data-mode="answer"] .mode-ico { background: rgba(96, 165, 250, 0.15); }
+
+    .screen { display: none; }
+    .screen.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .progress-wrap {
+      height: 7px; background: rgba(237, 125, 0, 0.15);
+      border-radius: 999px; overflow: hidden; margin-bottom: 14px;
+    }
+    .progress-bar {
+      height: 100%; width: 0%; border-radius: 999px;
+      background: linear-gradient(90deg, #f59e0b, #ed7d00);
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 0 12px rgba(237, 125, 0, 0.5);
+    }
+    .progress-wrap.m2 .progress-bar { background: linear-gradient(90deg, #60a5fa, #3b82f6); box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); }
+
+    .status {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+      justify-content: center;
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; font-weight: 800;
+      padding: 8px 14px; border-radius: 999px;
+      background: var(--card); color: var(--muted);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .pill strong { color: var(--primary); }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 26px 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+
+    .prompt {
+      font-size: 1.25rem; font-weight: 900; text-align: center;
+      margin-bottom: 6px; color: var(--text);
+    }
+    .hint {
+      text-align: center; color: var(--muted); font-weight: 600;
+      font-size: 0.9rem; margin-bottom: 18px;
+    }
+
+    .built {
+      min-height: 72px;
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center;
+      padding: 16px; border-radius: 16px;
+      border: 2px dashed rgba(237, 125, 0, 0.4);
+      background: rgba(237, 125, 0, 0.06);
+      margin-bottom: 16px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .built.is-ok { border-color: var(--ok); background: rgba(16, 185, 129, 0.1); }
+    .built.is-bad { border-color: var(--bad); background: rgba(239, 68, 68, 0.08); }
+
+    .bank-label {
+      text-align: center; font-size: 0.7rem; font-weight: 900;
+      letter-spacing: 0.12em; color: var(--primary); margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .bank {
+      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+      margin-bottom: 18px;
+    }
+    .chip {
+      appearance: none; border: none; cursor: pointer;
+      font: inherit; font-weight: 800; font-size: 1rem;
+      color: #fff; padding: 12px 16px; border-radius: 14px;
+      background: linear-gradient(180deg, #60a5fa, #2563eb);
+      box-shadow: 0 5px 0 #1d4ed8, 0 6px 14px rgba(37, 99, 235, 0.3);
+      transition: transform 0.1s ease;
+    }
+    .chip:active { transform: translateY(3px); box-shadow: 0 2px 0 #1d4ed8; }
+    .built-chip {
+      background: linear-gradient(180deg, #f59e0b, #ed7d00);
+      box-shadow: 0 5px 0 #c46200, 0 6px 14px rgba(196, 98, 0, 0.3);
+    }
+    .built-chip:active { box-shadow: 0 2px 0 #c46200; }
+
+    .btn-row {
+      display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+    }
+    .btn {
+      appearance: none; border: none; cursor: pointer;
+      font: inherit; font-weight: 800; font-size: 1rem;
+      padding: 14px 24px; border-radius: 14px;
+      color: #fff;
+      background: linear-gradient(180deg, #f59e0b, #ed7d00);
+      box-shadow: 0 5px 0 #c46200, 0 8px 20px rgba(196, 98, 0, 0.3);
+      transition: transform 0.1s ease, filter 0.15s ease;
+    }
+    .btn:hover { filter: brightness(1.08); }
+    .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #c46200; }
+    .btn-ghost {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+    }
+    .btn-ghost:active { box-shadow: 0 1px 6px rgba(0,0,0,0.2); }
+    .btn-ok {
+      background: linear-gradient(180deg, #34d399, #059669);
+      box-shadow: 0 5px 0 #047857, 0 8px 20px rgba(5, 150, 105, 0.3);
+    }
+    .btn-ok:active { box-shadow: 0 2px 0 #047857; }
+
+    .feedback {
+      text-align: center; font-weight: 700; min-height: 24px;
+      margin-bottom: 12px; font-size: 0.95rem;
+    }
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+
+    .answer-input {
+      width: 100%;
+      min-height: 100px;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      font: inherit; font-size: 1.05rem; font-weight: 600;
+      resize: vertical;
+      background: rgba(0,0,0,0.25);
+      color: var(--text);
+      margin-bottom: 14px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .answer-input::placeholder { color: var(--muted); opacity: 0.7; }
+    .answer-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .answer-prompt {
+      font-size: 1.2rem; font-weight: 800; text-align: center;
+      margin-bottom: 14px; color: var(--text);
+    }
+
+    .result-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px 22px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .result-card h2 { font-size: 1.5rem; font-weight: 900; margin-bottom: 8px; }
+    .result-card p { color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+    .summary-list {
+      text-align: left;
+      max-height: 260px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      padding: 14px 16px;
+      background: rgba(237, 125, 0, 0.08);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+    .summary-list p { margin: 10px 0; font-size: 0.92rem; color: var(--text); }
+    .summary-list strong { color: var(--primary); }
+
+    .cat-label {
+      display: inline-block;
+      background: rgba(237, 125, 0, 0.15);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      letter-spacing: 0.03em;
+    }
+
+    /* Score popup */
+    .score-pop {
+      position: fixed;
+      left: 50%;
+      top: 42%;
+      transform: translate(-50%, -50%) scale(0.6);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--ok);
+      pointer-events: none;
+      opacity: 0;
+      z-index: 50;
+      text-shadow: 0 2px 8px rgba(5,150,105,0.3);
+      transition: opacity 0.15s ease, transform 0.35s ease;
+    }
+    .score-pop.show {
+      opacity: 1;
+      transform: translate(-50%, -80%) scale(1.15);
+    }
+
+    /* Results extras */
+    .score-big {
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: var(--primary);
+      line-height: 1;
+      margin: 8px 0 4px;
+    }
+    .score-max {
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .stars-row {
+      font-size: 1.8rem;
+      letter-spacing: 6px;
+      margin: 10px 0 16px;
+    }
+    .stars-row .on { color: #f59e0b; }
+    .stars-row .off { color: #cbd5e1; }
+    html[data-theme="dark"] .stars-row .off { color: #475569; }
+    .accuracy-pill {
+      display: inline-block;
+      background: rgba(237, 125, 0, 0.12);
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- MENU: Categories -->
+    <div id="screen-menu" class="screen active">
+      <div class="topbar">
+        <a class="back-pill" href="../">← Writing</a>
+        <span class="badge-pill">WRITING</span>
+      </div>
+      <h1>Conversation Questions</h1>
+      <p class="lead">Choose a topic. First unscramble the questions, then answer them.</p>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+
+    <!-- MODE CHOICE -->
+    <div id="screen-modes" class="screen">
+      <div class="topbar">
+        <button type="button" class="back-pill" id="btnBackCats">← Topics</button>
+        <span class="badge-pill" id="catBadge">TOPIC</span>
+      </div>
+      <h1 id="modeTitle">Topic</h1>
+      <p class="lead">Two steps for this topic</p>
+      <div class="mode-list">
+        <button type="button" class="mode-card" data-mode="questions">
+          <div class="mode-stripe"></div>
+          <div class="mode-ico">🔤</div>
+          <div class="mode-body">
+            <div class="mode-num">STEP 1</div>
+            <div class="mode-title">Unscramble the questions</div>
+            <div class="mode-desc">Put the words in the correct order</div>
+          </div>
+        </button>
+        <button type="button" class="mode-card" data-mode="answer">
+          <div class="mode-stripe"></div>
+          <div class="mode-ico">✍️</div>
+          <div class="mode-body">
+            <div class="mode-num">STEP 2</div>
+            <div class="mode-title">Answer the questions</div>
+            <div class="mode-desc">Write your own answers</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- PLAY -->
+    <div id="screen-play" class="screen">
+      <div class="topbar">
+        <button type="button" class="back-pill" id="btnModes">← Modes</button>
+        <span class="badge-pill" id="modeBadge">STEP 1 · QUESTIONS</span>
+      </div>
+
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-bar" id="progress"></div>
+      </div>
+      <div class="status">
+        <span class="pill">Q <strong id="qNum">1</strong> / <span id="qTotal">6</span></span>
+        <span class="pill">Score <strong id="score">0</strong></span>
+      </div>
+
+      <div id="ui-questions" class="panel" hidden>
+        <div class="cat-label" id="playCatLabel"></div>
+        <p class="prompt">Build the question</p>
+        <p class="hint">Tap the words in the correct order</p>
+        <div class="built" id="built"></div>
+        <div class="bank-label">WORD BANK</div>
+        <div class="bank" id="bank"></div>
+        <div class="feedback" id="qFeedback"></div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-ghost" id="btnClear">Clear</button>
+          <button type="button" class="btn" id="btnCheckQ">Check</button>
+        </div>
+      </div>
+
+      <div id="ui-answer" class="panel" hidden>
+        <div class="cat-label" id="playCatLabel2"></div>
+        <p class="answer-prompt" id="answerPrompt"></p>
+        <textarea class="answer-input" id="answerInput" placeholder="Write your answer here..." rows="3"></textarea>
+        <div class="feedback" id="aFeedback"></div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-ok" id="btnNextA">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="screen-results" class="screen">
+      <div class="topbar">
+        <button type="button" class="back-pill" id="btnResMenu">← Topics</button>
+        <span class="badge-pill">DONE</span>
+      </div>
+      <div class="result-card">
+        <h2 id="resultTitle">Well done!</h2>
+        <div class="score-big" id="resultScore">0</div>
+        <div class="score-max" id="resultMax"></div>
+        <div class="stars-row" id="resultStars"></div>
+        <div class="accuracy-pill" id="resultAcc"></div>
+        <p id="resultSummary"></p>
+        <div class="summary-list" id="summaryOut"></div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-ghost" id="btnToMenu">All topics</button>
+          <button type="button" class="btn" id="btnAgain">Try again</button>
+        </div>
+      </div>
+      <div class="score-pop" id="scorePop">+15</div>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  var CATEGORIES = [
+    {
+      id: "personal",
+      num: "1",
+      title: "Personal information",
+      questions: [
+        { words: ["What's", "your", "last", "name?"], answer: "What's your last name?" },
+        { words: ["How", "do", "you", "spell", "it?"], answer: "How do you spell it?" },
+        { words: ["What's", "your", "email", "address?"], answer: "What's your email address?" },
+        { words: ["What's", "your", "cell", "phone", "number?"], answer: "What's your cell phone number?" },
+        { words: ["What's", "your", "address?"], answer: "What's your address?" },
+        { words: ["What's", "your", "zip", "code?"], answer: "What's your zip code?" }
+      ]
+    },
+    {
+      id: "friend",
+      num: "2",
+      title: "Talk about a friend",
+      questions: [
+        { words: ["What's", "his", "or", "her", "name?"], answer: "What's his or her name?" },
+        { words: ["What", "does", "he", "or", "she", "do?"], answer: "What does he or she do?" },
+        { words: ["Where", "does", "he", "or", "she", "live?"], answer: "Where does he or she live?" },
+        { words: ["How", "old", "is", "he", "or", "she?"], answer: "How old is he or she?" },
+        { words: ["Is", "he", "or", "she", "married?"], answer: "Is he or she married?" },
+        { words: ["Does", "he", "or", "she", "have", "children?"], answer: "Does he or she have children?" }
+      ]
+    },
+    {
+      id: "food",
+      num: "3",
+      title: "Food and drink",
+      questions: [
+        { words: ["What's", "your", "favorite", "food", "and", "drink?"], answer: "What's your favorite food and drink?" },
+        { words: ["Is", "there", "any", "food", "or", "drink", "you", "don't", "like?"], answer: "Is there any food or drink you don't like?" },
+        { words: ["Which", "do", "you", "prefer", "–", "breakfast,", "lunch,", "or", "dinner?"], answer: "Which do you prefer – breakfast, lunch, or dinner?" },
+        { words: ["What", "do", "you", "usually", "have", "for", "breakfast?"], answer: "What do you usually have for breakfast?" },
+        { words: ["What", "do", "you", "eat", "when", "you", "go", "out", "at", "night?"], answer: "What do you eat when you go out at night?" },
+        { words: ["Do", "you", "cook?", "Do", "you", "like", "it?"], answer: "Do you cook? Do you like it?" }
+      ]
+    },
+    {
+      id: "freetime",
+      num: "4",
+      title: "Free time",
+      questions: [
+        { words: ["How", "do", "you", "relax?"], answer: "How do you relax?" },
+        { words: ["What", "do", "you", "do", "when", "you", "aren't", "at", "work", "or", "in", "class?"], answer: "What do you do when you aren't at work or in class?" },
+        { words: ["What", "do", "you", "like", "doing", "with", "your", "friends?"], answer: "What do you like doing with your friends?" },
+        { words: ["What", "sports", "or", "exercise", "do", "you", "do?"], answer: "What sports or exercise do you do?" },
+        { words: ["When", "do", "you", "have", "free", "time?"], answer: "When do you have free time?" },
+        { words: ["What", "do", "you", "usually", "do", "on", "a", "Saturday", "night?"], answer: "What do you usually do on a Saturday night?" },
+        { words: ["What", "do", "you", "like", "doing", "on", "your", "vacation?"], answer: "What do you like doing on your vacation?" }
+      ]
+    },
+    {
+      id: "typicalday",
+      num: "5",
+      title: "Your typical day",
+      questions: [
+        { words: ["What", "time", "do", "you", "usually", "get", "up?"], answer: "What time do you usually get up?" },
+        { words: ["How", "do", "you", "go", "to", "work", "or", "school?"], answer: "How do you go to work or school?" },
+        { words: ["Where", "do", "you", "usually", "have", "lunch?"], answer: "Where do you usually have lunch?" },
+        { words: ["What", "time", "do", "you", "get", "home", "in", "the", "evening?"], answer: "What time do you get home in the evening?" },
+        { words: ["What", "do", "you", "do", "after", "dinner?"], answer: "What do you do after dinner?" },
+        { words: ["What", "time", "do", "you", "go", "to", "bed?"], answer: "What time do you go to bed?" }
+      ]
+    },
+    {
+      id: "cancant",
+      num: "6",
+      title: "What can / can't you do?",
+      questions: [
+        { words: ["Say", "three", "things", "you", "can", "do", "in", "English."], answer: "Say three things you can do in English." },
+        { words: ["Say", "three", "things", "you", "can", "see", "in", "this", "class."], answer: "Say three things you can see in this class." },
+        { words: ["Say", "three", "things", "you", "can", "do", "with", "a", "smartphone."], answer: "Say three things you can do with a smartphone." },
+        { words: ["Say", "two", "things", "you", "can't", "do", "in", "English", "class."], answer: "Say two things you can't do in English class." },
+        { words: ["Say", "two", "things", "you", "can't", "do", "on", "a", "plane."], answer: "Say two things you can't do on a plane." }
+      ]
+    },
+    {
+      id: "past",
+      num: "7",
+      title: "Talking about the past",
+      questions: [
+        { words: ["Were", "you", "at", "home", "last", "night?"], answer: "Were you at home last night?" },
+        { words: ["Were", "you", "in", "bed", "at", "8:00", "this", "morning?"], answer: "Were you in bed at 8:00 this morning?" },
+        { words: ["Did", "you", "go", "out", "last", "Saturday", "night?"], answer: "Did you go out last Saturday night?" },
+        { words: ["Where", "did", "you", "have", "lunch", "yesterday?"], answer: "Where did you have lunch yesterday?" },
+        { words: ["Where", "were", "you", "at", "4:00", "yesterday", "afternoon?"], answer: "Where were you at 4:00 yesterday afternoon?" },
+        { words: ["When", "did", "you", "do", "your", "English", "homework?"], answer: "When did you do your English homework?" },
+        { words: ["Where", "did", "you", "go", "on", "your", "last", "vacation?"], answer: "Where did you go on your last vacation?" }
+      ]
+    },
+    {
+      id: "times",
+      num: "8",
+      title: "Times and dates",
+      questions: [
+        { words: ["What", "time", "is", "it", "now?"], answer: "What time is it now?" },
+        { words: ["What", "time", "does", "this", "class", "finish?"], answer: "What time does this class finish?" },
+        { words: ["What", "days", "do", "you", "have", "English", "class?"], answer: "What days do you have English class?" },
+        { words: ["When's", "your", "birthday?"], answer: "When's your birthday?" },
+        { words: ["What's", "your", "favorite", "day", "of", "the", "week?"], answer: "What's your favorite day of the week?" },
+        { words: ["When", "does", "this", "course", "finish?"], answer: "When does this course finish?" }
+      ]
+    },
+    {
+      id: "live",
+      num: "9",
+      title: "Where do you live?",
+      questions: [
+        { words: ["Do", "you", "live", "near", "here?"], answer: "Do you live near here?" },
+        { words: ["Do", "you", "live", "in", "a", "house", "or", "an", "apartment?"], answer: "Do you live in a house or an apartment?" },
+        { words: ["Is", "it", "big", "or", "small?"], answer: "Is it big or small?" },
+        { words: ["Do", "you", "like", "it?", "Why", "or", "why", "not?"], answer: "Do you like it? Why or why not?" },
+        { words: ["How", "many", "bedrooms", "are", "there?"], answer: "How many bedrooms are there?" },
+        { words: ["Describe", "your", "bedroom."], answer: "Describe your bedroom." }
+      ]
+    },
+    {
+      id: "future",
+      num: "10",
+      title: "Talking about the future",
+      questions: [
+        { words: ["What", "would", "you", "like", "to", "do", "after", "class", "today?"], answer: "What would you like to do after class today?" },
+        { words: ["Who", "would", "you", "like", "to", "meet", "for", "coffee", "on", "Saturday?"], answer: "Who would you like to meet for coffee on Saturday?" },
+        { words: ["Where", "would", "you", "like", "to", "have", "dinner", "tonight?"], answer: "Where would you like to have dinner tonight?" },
+        { words: ["Where", "would", "you", "like", "to", "go", "on", "vacation", "this", "summer?"], answer: "Where would you like to go on vacation this summer?" },
+        { words: ["What", "would", "you", "like", "to", "do", "this", "weekend?"], answer: "What would you like to do this weekend?" }
+      ]
+    }
+  ];
+
+  var state = {
+    cat: null,
+    mode: null,
+    index: 0,
+    built: [],
+    bank: [],
+    attempts: 0,
+    score: 0,
+    answers: {}
+  };
+
+  function $(id) { return document.getElementById(id); }
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(function (s) {
+      s.classList.toggle("active", s.id === id);
+    });
+  }
+
+  function currentQuestions() {
+    return state.cat ? state.cat.questions : [];
+  }
+
+  function updateProgress() {
+    var total = currentQuestions().length || 1;
+    var done = state.index;
+    if ($("screen-results").classList.contains("active")) done = total;
+    $("progress").style.width = Math.round((done / total) * 100) + "%";
+    $("qNum").textContent = String(Math.min(state.index + 1, total));
+    $("qTotal").textContent = String(total);
+    $("score").textContent = String(state.score);
+  }
+
+  function showScorePop(pts) {
+    var el = $("scorePop");
+    if (!el) return;
+    el.textContent = "+" + pts;
+    el.classList.remove("show");
+    // force reflow
+    void el.offsetWidth;
+    el.classList.add("show");
+    setTimeout(function () { el.classList.remove("show"); }, 700);
+  }
+
+  function maxScoreForMode() {
+    var n = currentQuestions().length || 0;
+    return n * (state.mode === "questions" ? 15 : 10);
+  }
+
+  function starsFromAccuracy(pct) {
+    if (pct >= 90) return 3;
+    if (pct >= 70) return 2;
+    if (pct >= 40) return 1;
+    return 0;
+  }
+
+  function renderCategories() {
+    var grid = $("catGrid");
+    grid.innerHTML = "";
+    CATEGORIES.forEach(function (cat) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "cat-card";
+      btn.innerHTML =
+        '<span class="cat-num">TOPIC ' + cat.num + '</span>' +
+        '<span class="cat-title">' + cat.title + '</span>' +
+        '<span class="cat-count">' + cat.questions.length + ' questions</span>';
+      btn.addEventListener("click", function () {
+        state.cat = cat;
+        $("catBadge").textContent = "TOPIC " + cat.num;
+        $("modeTitle").textContent = cat.title;
+        showScreen("screen-modes");
+      });
+      grid.appendChild(btn);
+    });
+  }
+
+  function startMode(mode) {
+    state.mode = mode;
+    state.index = 0;
+    state.built = [];
+    state.bank = [];
+    state.attempts = 0;
+    state.score = 0;
+    state.answers = {};
+    $("modeBadge").textContent = mode === "questions" ? "STEP 1 · QUESTIONS" : "STEP 2 · ANSWER";
+    $("modeBadge").className = "badge-pill" + (mode === "answer" ? " m2" : "");
+    $("progressWrap").className = "progress-wrap" + (mode === "answer" ? " m2" : "");
+    $("playCatLabel").textContent = state.cat.title;
+    $("playCatLabel2").textContent = state.cat.title;
+    showScreen("screen-play");
+    if (mode === "questions") {
+      $("ui-questions").hidden = false;
+      $("ui-answer").hidden = true;
+      renderUnscramble();
+    } else {
+      $("ui-questions").hidden = true;
+      $("ui-answer").hidden = false;
+      renderAnswer();
+    }
+    updateProgress();
+  }
+
+  function renderUnscramble() {
+    var qs = currentQuestions();
+    if (state.index >= qs.length) {
+      finishMode();
+      return;
+    }
+    var q = qs[state.index];
+    state.built = [];
+    state.attempts = 0;
+    state.bank = shuffle(q.words.map(function (w, i) { return { id: i + "-" + w, word: w }; }));
+    $("qFeedback").textContent = "";
+    $("qFeedback").className = "feedback";
+    $("built").className = "built";
+    renderBuilt();
+    renderBank();
+    updateProgress();
+  }
+
+  function renderBuilt() {
+    var box = $("built");
+    box.innerHTML = "";
+    state.built.forEach(function (item, idx) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip built-chip";
+      b.textContent = item.word;
+      b.addEventListener("click", function () {
+        state.built.splice(idx, 1);
+        state.bank.push(item);
+        renderBuilt();
+        renderBank();
+      });
+      box.appendChild(b);
+    });
+  }
+
+  function renderBank() {
+    var box = $("bank");
+    box.innerHTML = "";
+    state.bank.forEach(function (item) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip";
+      b.textContent = item.word;
+      b.addEventListener("click", function () {
+        state.bank = state.bank.filter(function (x) { return x.id !== item.id; });
+        state.built.push(item);
+        renderBuilt();
+        renderBank();
+      });
+      box.appendChild(b);
+    });
+  }
+
+  function checkQuestion() {
+    var qs = currentQuestions();
+    var q = qs[state.index];
+    var user = state.built.map(function (x) { return x.word; }).join(" ");
+    if (!state.built.length) {
+      $("qFeedback").textContent = "Build the question first.";
+      $("qFeedback").className = "feedback bad";
+      return;
+    }
+    var normalize = function (s) {
+      return String(s || "").toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ").replace(/\s+\?/g, "?").replace(/–/g, "-").trim();
+    };
+    if (normalize(user) === normalize(q.answer)) {
+      $("built").className = "built is-ok";
+      $("qFeedback").textContent = "Correct! ✓  +15";
+      $("qFeedback").className = "feedback ok";
+      state.score += 15;
+      showScorePop(15);
+      updateProgress();
+      state.index += 1;
+      setTimeout(function () {
+        if (state.index >= qs.length) finishMode();
+        else renderUnscramble();
+      }, 750);
+    } else {
+      state.attempts += 1;
+      $("built").className = "built is-bad";
+      if (state.attempts >= 3) {
+        $("qFeedback").textContent = "Try: " + q.answer;
+      } else {
+        $("qFeedback").textContent = "Not quite. Try again!";
+      }
+      $("qFeedback").className = "feedback bad";
+    }
+  }
+
+  function renderAnswer() {
+    var qs = currentQuestions();
+    if (state.index >= qs.length) {
+      finishMode();
+      return;
+    }
+    var q = qs[state.index];
+    $("answerPrompt").textContent = q.answer;
+    $("answerInput").value = "";
+    $("aFeedback").textContent = "";
+    $("aFeedback").className = "feedback";
+    updateProgress();
+    setTimeout(function () { $("answerInput").focus(); }, 100);
+  }
+
+  function isValidAnswer(text) {
+    var s = String(text || "").trim();
+    if (!s) return { ok: false, hint: "Please write an answer." };
+    if (s.length < 2) return { ok: false, hint: "Write a bit more." };
+
+    // Pure numbers only
+    if (/^\d+([.,]\d+)?$/.test(s)) {
+      return { ok: false, hint: "Don't write only numbers. Use a full answer." };
+    }
+
+    var lowerNoSpace = s.toLowerCase().replace(/[^a-z0-9]/g, "");
+    var letters = s.replace(/[^a-zA-Z]/g, "");
+    var vowels = (letters.match(/[aeiouAEIOUyY]/g) || []).length;
+    var spaces = (s.match(/\s/g) || []).length;
+    var vowelRatio = letters.length ? vowels / letters.length : 0;
+
+    // Same character repeated 4+ (aaaa, ssss)
+    if (/(.)\1{3,}/i.test(lowerNoSpace)) {
+      return { ok: false, hint: "That doesn't look like a real answer." };
+    }
+
+    // Alternating 2-char pattern (sdsdsd, ababab)
+    if (/^(..)\1{2,}$/i.test(lowerNoSpace)) {
+      return { ok: false, hint: "That doesn't look like a real answer." };
+    }
+
+    // Keyboard rows only
+    if (/^[asdfghjkl]{4,}$/i.test(lowerNoSpace) ||
+        /^[qwertyuiop]{4,}$/i.test(lowerNoSpace) ||
+        /^[zxcvbnm]{4,}$/i.test(lowerNoSpace)) {
+      return { ok: false, hint: "Please write a real answer in English." };
+    }
+
+    // Explicit mash / placeholder denylist
+    if (/^(asdf|qwer|zxcv|hjkl|uiop|sadsa|sadas|dasda|asdas|dsad|adsa|sasa|dada|test|abcde|abcd|xyz|xxx|zzz|lol|lolol|haha|hahaha|hehe|asdfg|qwert|zxcvb)+$/i.test(lowerNoSpace)) {
+      return { ok: false, hint: "Please write a real answer in English." };
+    }
+
+    // Very low vowel content on longer letter runs
+    if (letters.length >= 6 && vowelRatio < 0.18) {
+      return { ok: false, hint: "That doesn't look like English. Write a real answer." };
+    }
+
+    // No spaces + medium length + almost no vowels
+    if (spaces === 0 && letters.length >= 6 && vowels <= 1) {
+      return { ok: false, hint: "Please write a real answer in English." };
+    }
+
+    // Extremely long with zero spaces
+    if (s.length > 20 && spaces === 0) {
+      return { ok: false, hint: "Try writing a short sentence or phrase." };
+    }
+
+    return { ok: true };
+  }
+
+  function nextAnswer() {
+    var qs = currentQuestions();
+    var val = ($("answerInput").value || "").trim();
+    var check = isValidAnswer(val);
+    if (!check.ok) {
+      $("aFeedback").textContent = check.hint;
+      $("aFeedback").className = "feedback bad";
+      return;
+    }
+    state.answers[state.index] = val;
+    state.score += 10;
+    showScorePop(10);
+    updateProgress();
+    state.index += 1;
+    if (state.index >= qs.length) finishMode();
+    else renderAnswer();
+  }
+
+  function finishMode() {
+    showScreen("screen-results");
+    var qs = currentQuestions();
+    var title = state.cat.title;
+    var maxPts = maxScoreForMode();
+    var pct = maxPts > 0 ? Math.round((state.score / maxPts) * 100) : 0;
+    var stars = starsFromAccuracy(pct);
+
+    $("resultScore").textContent = state.score;
+    $("resultMax").textContent = "out of " + maxPts + " points";
+    $("resultAcc").textContent = pct + "% accuracy";
+
+    var starHtml = "";
+    for (var s = 1; s <= 3; s++) {
+      starHtml += s <= stars ? '<span class="on">★</span>' : '<span class="off">☆</span>';
+    }
+    $("resultStars").innerHTML = starHtml;
+
+    if (state.mode === "questions") {
+      $("resultTitle").textContent = title + " — questions done!";
+      $("resultSummary").textContent = "You built " + qs.length + " questions.";
+      $("summaryOut").innerHTML = "<ol style='margin:0;padding-left:18px;font-weight:700;'>" +
+        qs.map(function (q) { return "<li style='margin:4px 0'>" + q.answer + "</li>"; }).join("") + "</ol>";
+    } else {
+      $("resultTitle").textContent = title + " — answers done!";
+      $("resultSummary").textContent = "You answered " + qs.length + " questions.";
+      $("summaryOut").innerHTML = qs.map(function (q, i) {
+        return "<p><strong>" + q.answer + "</strong><br>" + (state.answers[i] || "—") + "</p>";
+      }).join("");
+    }
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay("writing-conversation-questions");
+        LAStars.saveFromAccuracy("writing-conversation-questions", Math.min(100, pct));
+      }
+    } catch (e) {}
+    updateProgress();
+  }
+
+  document.querySelectorAll(".mode-card").forEach(function (card) {
+    card.addEventListener("click", function () {
+      startMode(card.getAttribute("data-mode"));
+    });
+  });
+  $("btnBackCats").addEventListener("click", function () { showScreen("screen-menu"); });
+  $("btnModes").addEventListener("click", function () { showScreen("screen-modes"); });
+  $("btnToMenu").addEventListener("click", function () { showScreen("screen-menu"); });
+  $("btnResMenu").addEventListener("click", function () { showScreen("screen-menu"); });
+  $("btnAgain").addEventListener("click", function () {
+    if (state.mode) startMode(state.mode);
+    else showScreen("screen-modes");
+  });
+  $("btnClear").addEventListener("click", function () {
+    var qs = currentQuestions();
+    var q = qs[state.index];
+    state.built = [];
+    state.bank = shuffle(q.words.map(function (w, i) { return { id: i + "-" + w, word: w }; }));
+    $("built").className = "built";
+    $("qFeedback").textContent = "";
+    renderBuilt();
+    renderBank();
+  });
+  $("btnCheckQ").addEventListener("click", checkQuestion);
+  $("btnNextA").addEventListener("click", nextAnswer);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !$("ui-answer").hidden && !e.shiftKey) {
+      e.preventDefault();
+      nextAnswer();
+    }
+  });
+
+  renderCategories();
+})();
+  </script>
+  <script src="../../la-stars.js"></script>
+  <script src="../../theme.js"></script>
+</body>
+</html>
