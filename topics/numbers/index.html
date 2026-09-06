@@ -16,30 +16,52 @@
   <link rel="stylesheet" href="../../learningarcade/style.css" />
   <style>
     :root {
-      --bg: #eef2ff;
+      /* Numbers section — blue theme (#3B82F6) */
+      --bg: #eff6ff;
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
-      --line: rgba(99, 102, 241, 0.28);
-      --accent: #818cf8;
-      --accent-2: #6366f1;
-      --accent-deep: #4338ca;
-      --accent-soft: rgba(129, 140, 248, 0.14);
+      --line: rgba(59, 130, 246, 0.28);
+      --accent: #3b82f6;
+      --accent-2: #2563eb;
+      --accent-deep: #1d4ed8;
+      --accent-soft: rgba(59, 130, 246, 0.14);
       --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
     }
     html[data-theme="dark"] {
-      --bg: #0b1020;
+      --bg: #0b1220;
       --card: #121826;
       --text: #f1f5f9;
       --muted: #94a3b8;
-      --line: rgba(129, 140, 248, 0.35);
-      --shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+      --line: rgba(59, 130, 246, 0.4);
+      --accent: #60a5fa;
+      --accent-2: #3b82f6;
+      --accent-deep: #1e40af;
+      --accent-soft: rgba(59, 130, 246, 0.22);
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    }
+    /* Dark-mode card polish */
+    html[data-theme="dark"] .game-card {
+      background: #151b2b;
+      border-color: rgba(59, 130, 246, 0.35);
+    }
+    html[data-theme="dark"] .game-card:hover {
+      border-color: rgba(96, 165, 250, 0.55);
+      box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(59, 130, 246, 0.25),
+        0 0 28px rgba(59, 130, 246, 0.2);
+    }
+    html[data-theme="dark"] .game-stars .star { color: #475569; }
+    html[data-theme="dark"] .back {
+      background: #151b2b;
+      border-color: rgba(59, 130, 246, 0.35);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: system-ui, -apple-system, sans-serif;
       background:
-        radial-gradient(900px 420px at 100% 0%, rgba(99, 102, 241, 0.16), transparent 55%),
+        radial-gradient(900px 420px at 100% 0%, rgba(59, 130, 246, 0.16), transparent 55%),
         var(--bg);
       color: var(--text);
       min-height: 100dvh;
@@ -65,7 +87,7 @@
       display: inline-flex; align-items: center; justify-content: center;
       background: linear-gradient(180deg, var(--accent), var(--accent-2));
       font-size: 1.2rem;
-      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
     }
     .lead {
       color: var(--muted); font-weight: 600; max-width: 56ch;
@@ -113,12 +135,12 @@
       right: -28px; top: -28px;
       width: 110px; height: 110px;
       border-radius: 50%;
-      background: rgba(129, 140, 248, 0.12);
+      background: rgba(59, 130, 246, 0.12);
       pointer-events: none;
     }
     .game-card:hover {
       transform: translateY(-4px);
-      border-color: rgba(165, 180, 252, 0.55);
+      border-color: rgba(147, 197, 253, 0.55);
       box-shadow: 0 22px 48px rgba(0,0,0,0.35), 0 0 28px rgba(99,102,241,0.2);
     }
 
@@ -138,7 +160,7 @@
       flex-shrink: 0;
       background: linear-gradient(180deg, var(--accent), var(--accent-2));
       color: #fff;
-      box-shadow: 0 6px 14px rgba(99, 102, 241, 0.35);
+      box-shadow: 0 6px 14px rgba(59, 130, 246, 0.35);
     }
     .card-head h3 {
       font-size: 1.12rem;
@@ -153,16 +175,16 @@
       font-weight: 900;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      color: #c7d2fe;
+      color: #bfdbfe;
       background: var(--accent-soft);
-      border: 1px solid rgba(129, 140, 248, 0.28);
+      border: 1px solid rgba(59, 130, 246, 0.28);
       padding: 5px 10px;
       border-radius: 999px;
       margin-bottom: 10px;
       position: relative;
       z-index: 1;
     }
-    html[data-theme="dark"] .game-tag { color: #c7d2fe; }
+    html[data-theme="dark"] .game-tag { color: #bfdbfe; }
     html[data-theme="light"] .game-tag { color: var(--accent-2); }
     .game-card > p {
       color: var(--muted);
@@ -190,41 +212,78 @@
       position: relative;
       z-index: 1;
     }
-    /* Circular button like Grammar cards */
+    /* EXPLORE buttons — force blue #3B82F6 (overrides theme.css purple arcade) */
+    body {
+      --arcade-top: #60a5fa;
+      --arcade-mid: #3b82f6;
+      --arcade-bot: #2563eb;
+      --arcade-shadow: #1d4ed8;
+    }
+    html[data-theme="dark"] body {
+      --arcade-top: #93c5fd;
+      --arcade-mid: #60a5fa;
+      --arcade-bot: #3b82f6;
+      --arcade-shadow: #1e40af;
+    }
+    a.game-launch,
     .game-launch {
-      width: 52px;
-      height: 52px;
-      min-width: 52px;
-      min-height: 52px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      width: 52px !important;
+      height: 52px !important;
+      min-width: 52px !important;
+      min-height: 52px !important;
+      max-width: 72px !important;
+      max-height: 72px !important;
+      border-radius: 50% !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
       text-align: center;
-      text-decoration: none;
-      font-weight: 900;
-      font-size: 0.58rem;
+      text-decoration: none !important;
+      font-weight: 900 !important;
+      font-size: 0.58rem !important;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       line-height: 1.1;
       color: #fff !important;
-      background: radial-gradient(circle at 35% 30%, #a5b4fc, var(--accent) 40%, var(--accent-2) 75%);
+      border: 3px solid rgba(255, 255, 255, 0.35) !important;
+      background:
+        radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.45) 0%, transparent 42%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, transparent 45%),
+        linear-gradient(180deg, #60a5fa 0%, #3b82f6 48%, #2563eb 100%) !important;
       box-shadow:
-        0 4px 0 var(--accent-deep),
-        0 8px 16px rgba(67, 56, 202, 0.4),
-        inset 0 2px 0 rgba(255,255,255,0.25);
-      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+        0 5px 0 #1d4ed8,
+        0 10px 18px rgba(37, 99, 235, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.4),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.15) !important;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease !important;
     }
+    a.game-launch:hover,
     .game-launch:hover {
       filter: brightness(1.06);
-      transform: translateY(-1px);
-    }
-    .game-launch:active {
-      transform: translateY(3px);
+      transform: translateY(-2px) !important;
       box-shadow:
-        0 3px 0 var(--accent-deep),
-        0 6px 14px rgba(67, 56, 202, 0.35),
-        inset 0 2px 0 rgba(255,255,255,0.2);
+        0 7px 0 #1d4ed8,
+        0 14px 24px rgba(37, 99, 235, 0.45),
+        inset 0 2px 0 rgba(255, 255, 255, 0.45),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.15) !important;
+    }
+    a.game-launch:active,
+    .game-launch:active {
+      transform: translateY(3px) !important;
+      box-shadow:
+        0 2px 0 #1d4ed8,
+        0 5px 12px rgba(37, 99, 235, 0.35),
+        inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    }
+    html[data-theme="dark"] a.game-launch,
+    html[data-theme="dark"] .game-launch {
+      background:
+        radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.35) 0%, transparent 42%),
+        linear-gradient(180deg, #93c5fd 0%, #60a5fa 48%, #3b82f6 100%) !important;
+      box-shadow:
+        0 5px 0 #1e40af,
+        0 10px 18px rgba(59, 130, 246, 0.45),
+        inset 0 2px 0 rgba(255, 255, 255, 0.35) !important;
     }
     .game-stars {
       display: inline-flex;
@@ -286,11 +345,11 @@
     }
     .game-card:hover {
       transform: translateY(-5px) scale(1.015);
-      border-color: rgba(165, 180, 252, 0.65);
+      border-color: rgba(147, 197, 253, 0.65);
       box-shadow:
         0 20px 40px rgba(0, 0, 0, 0.35),
-        0 0 0 1px rgba(165, 180, 252, 0.2),
-        0 0 28px rgba(99, 102, 241, 0.22);
+        0 0 0 1px rgba(147, 197, 253, 0.2),
+        0 0 28px rgba(59, 130, 246, 0.22);
       filter: brightness(1.05);
     }
     .game-card:hover::before {
@@ -333,8 +392,8 @@
     html[data-theme="light"] .game-card:hover {
       box-shadow:
         0 18px 36px rgba(15, 23, 42, 0.12),
-        0 0 0 1px rgba(99, 102, 241, 0.15),
-        0 0 24px rgba(99, 102, 241, 0.12);
+        0 0 0 1px rgba(59, 130, 246, 0.15),
+        0 0 24px rgba(59, 130, 246, 0.12);
     }
 
   
@@ -371,12 +430,11 @@
         display: none; /* hide long descriptions on phone like Vocabulary */
       }
       .game-meta { font-size: 0.65rem; margin-bottom: 6px; padding-top: 4px; }
-      .game-launch {
-        width: 56px; height: 56px;
-        min-width: 56px; min-height: 56px;
-        max-width: 56px; max-height: 56px;
-        font-size: 0.55rem;
-        box-shadow: 0 3px 0 var(--accent-deep), 0 6px 12px rgba(67, 56, 202, 0.35);
+      a.game-launch, .game-launch {
+        width: 56px !important; height: 56px !important;
+        min-width: 56px !important; min-height: 56px !important;
+        max-width: 56px !important; max-height: 56px !important;
+        font-size: 0.55rem !important;
       }
       .game-stars { font-size: 0.9rem; gap: 2px; }
       .game-card-actions { gap: 8px; margin-top: auto; }
@@ -393,11 +451,11 @@
       }
       .card-head h3 { font-size: clamp(0.85rem, 4vw, 1rem); }
       .game-card-icon { width: 36px; height: 36px; font-size: 1rem; }
-      .game-launch {
-        width: 52px; height: 52px;
-        min-width: 52px; min-height: 52px;
-        max-width: 52px; max-height: 52px;
-        font-size: 0.5rem;
+      a.game-launch, .game-launch {
+        width: 52px !important; height: 52px !important;
+        min-width: 52px !important; min-height: 52px !important;
+        max-width: 52px !important; max-height: 52px !important;
+        font-size: 0.5rem !important;
       }
     }
     /* Very narrow */
@@ -407,11 +465,11 @@
       .game-card-icon { width: 34px; height: 34px; }
       .card-head h3 { font-size: 0.85rem; }
       .game-tag { display: none; }
-      .game-launch {
-        width: 48px; height: 48px;
-        min-width: 48px; min-height: 48px;
-        max-width: 48px; max-height: 48px;
-        font-size: 0.48rem;
+      a.game-launch, .game-launch {
+        width: 48px !important; height: 48px !important;
+        min-width: 48px !important; min-height: 48px !important;
+        max-width: 48px !important; max-height: 48px !important;
+        font-size: 0.48rem !important;
       }
     }
 

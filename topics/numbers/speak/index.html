@@ -16,8 +16,8 @@
   <style>
     :root {
       --bg: #eff6ff; --card: #fff; --text: #0f172a; --muted: #64748b;
-      --line: #dbeafe; --blue: #2563eb; --blue-deep: #1d4ed8;
-      --purple: #7c3aed; --ok: #059669; --bad: #e11d48;
+      --line: #dbeafe; --blue: #3b82f6; --blue-deep: #1d4ed8;
+      --purple: #3b82f6; --ok: #2563eb; --bad: #e11d48;
       --shadow: 0 14px 36px rgba(15,23,42,.08);
     }
     html[data-theme="dark"] {
@@ -27,7 +27,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: system-ui, -apple-system, sans-serif;
-      background: radial-gradient(700px 360px at 0% 0%, rgba(37,99,235,.14), transparent 55%), var(--bg);
+      background: radial-gradient(700px 360px at 0% 0%, rgba(59,130,246,.14), transparent 55%), var(--bg);
       color: var(--text); min-height: 100dvh; padding: 14px 14px 28px;
     }
     .wrap { max-width: 520px; margin: 0 auto; }
@@ -43,7 +43,7 @@
     .badge {
       font-size: 0.75rem; font-weight: 900; letter-spacing: 0.06em;
       text-transform: uppercase; color: #fff;
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      background: linear-gradient(135deg, #3b82f6, #3b82f6);
       padding: 8px 12px; border-radius: 999px;
     }
     h1 { font-size: clamp(1.3rem, 3.5vw, 1.65rem); font-weight: 900; margin-bottom: 4px; }
@@ -59,8 +59,8 @@
       color: inherit; font: inherit; box-shadow: var(--shadow);
     }
     .level-card[data-level="easy"] {
-      border-color: rgba(16,185,129,.45);
-      background: linear-gradient(180deg, rgba(16,185,129,.07), var(--card) 45%);
+      border-color: rgba(59,130,246,.45);
+      background: linear-gradient(180deg, rgba(59,130,246,.07), var(--card) 45%);
     }
     .level-card[data-level="medium"] {
       border-color: rgba(245,158,11,.5);
@@ -73,7 +73,7 @@
       font-size: 0.75rem; font-weight: 900; text-transform: uppercase;
       padding: 6px 12px; border-radius: 999px;
     }
-    .diff-badge.easy { background: rgba(16,185,129,.15); color: #059669; }
+    .diff-badge.easy { background: rgba(59,130,246,.15); color: #2563eb; }
     .diff-badge.medium { background: rgba(245,158,11,.15); color: #d97706; }
 
     .hud {
@@ -84,12 +84,12 @@
       font-weight: 800; font-size: 0.85rem; padding: 8px 12px; border-radius: 999px;
       background: var(--card); border: 1px solid var(--line); color: var(--muted);
     }
-    .pill.diff-easy { color: #059669; border-color: rgba(16,185,129,.35); background: rgba(16,185,129,.1); }
+    .pill.diff-easy { color: #2563eb; border-color: rgba(59,130,246,.35); background: rgba(59,130,246,.1); }
     .pill.diff-medium { color: #d97706; border-color: rgba(245,158,11,.4); background: rgba(245,158,11,.12); }
     .progress { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
     .progress > span {
       display: block; height: 100%; width: 0%;
-      background: linear-gradient(90deg, #60a5fa, #2563eb); transition: width .3s ease;
+      background: linear-gradient(90deg, #60a5fa, #3b82f6); transition: width .3s ease;
     }
 
     .stage {
@@ -118,16 +118,16 @@
     .mic-btn {
       appearance: none; border: none; cursor: pointer;
       width: 100px; height: 100px; border-radius: 50%;
-      background: linear-gradient(180deg, #60a5fa, #2563eb);
+      background: linear-gradient(180deg, #60a5fa, #3b82f6);
       color: #fff; font-size: 2.4rem;
-      box-shadow: 0 8px 0 var(--blue-deep), 0 14px 28px rgba(37,99,235,.35);
+      box-shadow: 0 8px 0 var(--blue-deep), 0 14px 28px rgba(59,130,246,.35);
       display: flex; align-items: center; justify-content: center;
       transition: transform 0.12s ease, box-shadow 0.12s ease;
       position: relative;
     }
     .mic-btn:active, .mic-btn.listening {
       transform: translateY(4px);
-      box-shadow: 0 4px 0 var(--blue-deep), 0 8px 18px rgba(37,99,235,.3);
+      box-shadow: 0 4px 0 var(--blue-deep), 0 8px 18px rgba(59,130,246,.3);
     }
     .mic-btn.listening {
       background: linear-gradient(180deg, #f87171, #dc2626);
@@ -162,7 +162,7 @@
       min-height: 48px; padding: 12px 18px; border-radius: 999px;
     }
     .btn-primary {
-      background: linear-gradient(180deg, #60a5fa, #2563eb); color: #fff;
+      background: linear-gradient(180deg, #60a5fa, #3b82f6); color: #fff;
       box-shadow: 0 5px 0 var(--blue-deep);
     }
     .btn-ghost { background: var(--bg); color: var(--text); border: 2px solid var(--line); }
@@ -308,6 +308,11 @@
         .trim();
     }
 
+    // Collapse digit groups: "100 000" / "1 0 0 0 0 0" → "100000"
+    function digitsOnly(s) {
+      return String(s || "").replace(/\D/g, "");
+    }
+
     // digit words → allow saying "20" or "twenty"
     var DIGIT_WORDS = {
       "0": "zero", "1": "one", "2": "two", "3": "three", "4": "four",
@@ -320,34 +325,39 @@
     // Common ASR mishearings / alternate spellings for 0–20
     var WORD_ALIASES = {
       0: ["zero", "0", "oh", "o", "nought", "naught", "nil"],
-      1: ["one", "1", "won", "wan"],
+      1: ["one", "1", "won", "wan", "wun"],
       2: ["two", "2", "to", "too", "tu"],
       3: ["three", "3", "tree", "free"],
       4: ["four", "4", "for", "fore", "fur"],
       5: ["five", "5", "fife"],
       6: ["six", "6", "sics", "sex"],
-      7: ["seven", "7"],
+      7: ["seven", "7", "7th", "sevn", "sevan"],
       8: ["eight", "8", "ate", "ait"],
-      9: ["nine", "9", "niner"],
-      10: ["ten", "10"],
+      9: ["nine", "9", "niner", "nein", "nien"],
+      10: ["ten", "10", "tin", "ton", "tenth"],
       11: ["eleven", "11", "eleventh"],
       12: ["twelve", "12", "twelfth"],
-      13: ["thirteen", "13", "thirtin", "thirty three", "30 3"], // ASR sometimes splits
-      14: ["fourteen", "14", "fourtin", "forteen", "forty four"],
-      15: ["fifteen", "15", "fiftin", "fifty five"],
-      16: ["sixteen", "16", "sixtin", "sixty six"],
-      17: ["seventeen", "17", "seventin", "seventy seven"],
-      18: ["eighteen", "18", "eightin", "eigtin", "eighty eight"],
-      19: ["nineteen", "19", "ninetin", "nintin", "ninety nine"],
+      13: ["thirteen", "13", "thirtin", "thirty three"],
+      14: ["fourteen", "14", "fourtin", "forteen"],
+      15: ["fifteen", "15", "fiftin"],
+      16: ["sixteen", "16", "sixtin"],
+      17: ["seventeen", "17", "seventin"],
+      18: ["eighteen", "18", "eightin", "eigtin"],
+      19: ["nineteen", "19", "ninetin", "nintin"],
       20: ["twenty", "20", "tweny", "twenti"]
     };
 
     function expandSpoken(text) {
       var v = norm(text);
-      // pure digits → word if known
-      if (/^\d+$/.test(v) && DIGIT_WORDS[v]) return DIGIT_WORDS[v];
       // strip leading "number " / "the number "
-      v = v.replace(/^(the\s+)?(number\s+)?/, "");
+      v = v.replace(/^(the\s+)?(number\s+)?/, "").trim();
+      // pure digits (or digits with spaces/commas already stripped by norm) → word if 0–20
+      var dig = digitsOnly(v);
+      if (dig && /^\d+$/.test(dig) && DIGIT_WORDS[dig] && dig === v.replace(/\s/g, "")) {
+        // only map when the whole utterance is digits
+        return DIGIT_WORDS[dig];
+      }
+      if (/^\d+$/.test(v) && DIGIT_WORDS[v]) return DIGIT_WORDS[v];
       return v;
     }
 
@@ -355,20 +365,24 @@
       var list = [norm(item.word)];
       list.push(String(item.n));
       list.push(formatNum(item.n).replace(/,/g, ""));
+      list.push(digitsOnly(formatNum(item.n)));
 
-      // 0–20 aliases (ASR often returns for/four, to/two, ate/eight, oh/zero…)
+      // 0–20 aliases
       if (WORD_ALIASES[item.n]) {
         WORD_ALIASES[item.n].forEach(function (x) { list.push(norm(x)); });
       }
 
-      // medium / big-number variants
+      // medium / big-number variants (include digit forms ASR often returns)
       var extra = {
         100: ["a hundred", "one hundred", "100", "hundred", "a 100", "one 100"],
         105: [
           "one hundred five", "a hundred and five", "one hundred and five", "105",
           "one hundred n five", "a hundred five", "one oh five", "1 0 5"
         ],
-        200: ["two hundred", "200", "to hundred", "too hundred"],
+        200: [
+          "two hundred", "200", "to hundred", "too hundred", "two hundreds",
+          "2 hundred", "2 00", "two 100"
+        ],
         875: [
           "eight hundred seventy five", "eight hundred and seventy five",
           "eight hundred and seventy-five", "875",
@@ -380,8 +394,11 @@
           "one thousand and five hundred", "15 hundred"
         ],
         5420: [
-          "five thousand four hundred twenty", "five thousand four hundred and twenty", "5420",
-          "five thousand for hundred twenty", "five thousand four hundred 20"
+          "five thousand four hundred twenty",
+          "five thousand four hundred and twenty",
+          "5420", "5 420", "five thousand for hundred twenty",
+          "five thousand four hundred 20", "five 4 20",
+          "five thousand four hundreds twenty"
         ],
         25000: [
           "twenty five thousand", "twenty-five thousand", "25000",
@@ -389,13 +406,14 @@
         ],
         100000: [
           "a hundred thousand", "one hundred thousand", "100000",
-          "a hundred 1000", "100 thousand"
+          "100 000", "100,000", "a hundred 1000", "100 thousand",
+          "one hundred 1000", "a 100 thousand", "hundred thousand"
         ],
         1000000: ["a million", "one million", "1000000", "million", "1 million"]
       };
       (extra[item.n] || []).forEach(function (x) { list.push(norm(x)); });
 
-      // unique list
+      // unique
       var seen = {};
       var out = [];
       list.forEach(function (x) {
@@ -405,19 +423,36 @@
     }
 
     function isMatch(item, spoken) {
-      var v = expandSpoken(spoken);
+      var raw = String(spoken || "");
+      var v = expandSpoken(raw);
       if (!v) return false;
       var ok = acceptedList(item);
+      var targetDigits = String(item.n);
+
+      // 1) exact string match
       for (var i = 0; i < ok.length; i++) {
         if (v === ok[i]) return true;
-        // loose contains for longer phrases (medium numbers)
-        if (ok[i].length > 4 && (v.indexOf(ok[i]) !== -1 || ok[i].indexOf(v) !== -1)) return true;
       }
-      // also try without spaces (e.g. "onehundred")
+
+      // 2) digit-only match (handles "100,000", "100 000", "1 0 0 0 0 0", "5420")
+      var spokenDigits = digitsOnly(v);
+      if (spokenDigits && spokenDigits === targetDigits) return true;
+      // also from original (in case norm changed things)
+      if (digitsOnly(raw) === targetDigits) return true;
+
+      // 3) compact no-space match ("onehundred" ≈ "one hundred")
       var compact = v.replace(/\s+/g, "");
       for (var j = 0; j < ok.length; j++) {
         if (compact === ok[j].replace(/\s+/g, "")) return true;
       }
+
+      // 4) loose contains only for longer phrases (avoid short false positives)
+      for (var k = 0; k < ok.length; k++) {
+        if (ok[k].length >= 6 && v.length >= 4) {
+          if (v.indexOf(ok[k]) !== -1 || ok[k].indexOf(v) !== -1) return true;
+        }
+      }
+
       return false;
     }
 

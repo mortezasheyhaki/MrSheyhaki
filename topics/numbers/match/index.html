@@ -15,19 +15,19 @@
   <link rel="stylesheet" href="../../../learningarcade/theme.css" />
   <style>
     :root {
-      --bg: #ecfdf5;
+      --bg: #eff6ff;
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
-      --line: #d1fae5;
-      --purple: #7c3aed;
-      --green: #059669;
-      --green-deep: #047857;
+      --line: #bfdbfe;
+      --purple: #3b82f6;
+      --green: #2563eb;
+      --green-deep: #1d4ed8;
       --bad: #e11d48;
       --shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
     }
     html[data-theme="dark"] {
-      --bg: #0f1220;
+      --bg: #0b1220;
       --card: #1a1f2e;
       --text: #f1f5f9;
       --muted: #94a3b8;
@@ -37,7 +37,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: system-ui, -apple-system, sans-serif;
-      background: radial-gradient(700px 360px at 0% 0%, rgba(16,185,129,.15), transparent 55%), var(--bg);
+      background: radial-gradient(700px 360px at 0% 0%, rgba(59,130,246,.15), transparent 55%), var(--bg);
       color: var(--text);
       min-height: 100dvh;
       padding: 14px 14px 28px;
@@ -55,7 +55,7 @@
     .badge {
       font-size: 0.75rem; font-weight: 900; letter-spacing: 0.06em;
       text-transform: uppercase; color: #fff;
-      background: linear-gradient(135deg, #10b981, #059669);
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
       padding: 8px 12px; border-radius: 999px;
     }
     h1 { font-size: clamp(1.35rem, 3.5vw, 1.7rem); font-weight: 900; margin-bottom: 4px; }
@@ -93,7 +93,7 @@
     }
     .progress > span {
       display: block; height: 100%; width: 0%;
-      background: linear-gradient(90deg, #34d399, #059669);
+      background: linear-gradient(90deg, #60a5fa, #2563eb);
       transition: width 0.3s ease;
     }
 
@@ -120,35 +120,80 @@
       display: flex; flex-direction: column; gap: 10px;
     }
     .tile {
-      appearance: none; border: 2px solid var(--line); background: var(--bg);
-      color: var(--text); font: inherit; font-weight: 900;
-      min-height: 56px; border-radius: 14px; cursor: pointer;
-      padding: 12px 14px; text-align: center;
-      transition: border-color 0.15s, background 0.15s, transform 0.12s, opacity 0.2s;
+      appearance: none;
+      border: 2px solid #93c5fd;
+      background: #dbeafe; /* soft indigo — clearer than mint */
+      color: var(--text);
+      font: inherit;
+      font-weight: 800;
+      min-height: 56px;
+      border-radius: 14px;
+      cursor: pointer;
+      padding: 12px 14px;
+      text-align: center;
+      transition:
+        border-color 0.15s,
+        background 0.15s,
+        color 0.15s,
+        transform 0.12s,
+        box-shadow 0.15s,
+        opacity 0.2s;
     }
-    .tile:hover:not(:disabled) { border-color: var(--purple); }
-    .tile.selected {
+    html[data-theme="dark"] .tile {
+      background: #1e293b;
+      border-color: #334155;
+      color: #f1f5f9;
+    }
+    .tile:hover:not(:disabled) {
       border-color: var(--purple);
-      background: rgba(124, 58, 237, 0.12);
-      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+      background: #bfdbfe;
     }
+    html[data-theme="dark"] .tile:hover:not(:disabled) {
+      background: #312e81;
+      border-color: #818cf8;
+    }
+    /* Selected: bold purple */
+    .tile.selected {
+      border-color: #2563eb;
+      background: linear-gradient(180deg, #60a5fa, #3b82f6);
+      color: #fff;
+      font-weight: 900;
+      box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.35),
+        0 6px 16px rgba(59, 130, 246, 0.35);
+      transform: scale(1.02);
+    }
+    /* Matched: bold green on both tiles */
     .tile.matched {
-      background: rgba(5, 150, 105, 0.15);
-      border-color: var(--green);
-      color: var(--green);
-      opacity: 0.55;
+      background: linear-gradient(180deg, #60a5fa, #2563eb);
+      border-color: #1d4ed8;
+      color: #fff;
+      font-weight: 900;
+      opacity: 1;
       cursor: default;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
     }
     .tile.wrong {
       border-color: var(--bad);
+      background: #fff1f2;
+      color: var(--bad);
       animation: shake 0.35s ease;
+    }
+    html[data-theme="dark"] .tile.wrong {
+      background: #3f1d24;
     }
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       25% { transform: translateX(-4px); }
       75% { transform: translateX(4px); }
     }
-    .tile.word { font-size: 0.95rem; font-weight: 800; }
+    .tile.word {
+      font-size: 0.95rem;
+      font-weight: 800;
+      line-height: 1.25;
+      word-break: break-word;
+      hyphens: auto;
+    }
 
     .feedback {
       min-height: 1.4em; margin-top: 12px; font-weight: 800; text-align: center;
@@ -169,16 +214,45 @@
       min-height: 48px; padding: 12px 18px; border-radius: 999px;
     }
     .btn-primary {
-      background: linear-gradient(180deg, #34d399, #059669); color: #fff;
+      background: linear-gradient(180deg, #60a5fa, #2563eb); color: #fff;
       box-shadow: 0 5px 0 var(--green-deep);
     }
     .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--green-deep); }
     .btn-ghost { background: var(--bg); color: var(--text); border: 2px solid var(--line); }
 
+    /* Keep Numbers | Words side-by-side on phone */
     @media (max-width: 560px) {
-      .board { grid-template-columns: 1fr; gap: 10px; }
-      .col-title.right { text-align: left; }
-      .tile { min-height: 52px; }
+      body { padding: 10px 10px 24px; }
+      .board {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 10px;
+        padding: 12px 10px;
+        border-radius: 16px;
+      }
+      .col-title {
+        font-size: 0.65rem;
+        margin-bottom: 2px;
+      }
+      .col-title.right { text-align: right; }
+      .left-col, .right-col {
+        gap: 8px;
+      }
+      .tile {
+        min-height: 48px;
+        padding: 10px 8px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+      }
+      .tile.word {
+        font-size: 0.82rem;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+    }
+    @media (max-width: 380px) {
+      .board { gap: 6px 8px; padding: 10px 8px; }
+      .tile { min-height: 44px; padding: 8px 6px; font-size: 0.9rem; }
+      .tile.word { font-size: 0.75rem; }
     }
   
     /* Difficulty indicators */
@@ -191,12 +265,12 @@
       text-transform: uppercase; padding: 6px 12px; border-radius: 999px;
     }
     .diff-badge.easy {
-      background: rgba(16, 185, 129, 0.15); color: #059669;
-      border: 1px solid rgba(16, 185, 129, 0.35);
+      background: rgba(59, 130, 246, 0.15); color: #2563eb;
+      border: 1px solid rgba(59, 130, 246, 0.35);
     }
     .diff-badge.medium {
-      background: rgba(245, 158, 11, 0.15); color: #d97706;
-      border: 1px solid rgba(245, 158, 11, 0.4);
+      background: rgba(59, 130, 246, 0.15); color: #3b82f6;
+      border: 1px solid rgba(59, 130, 246, 0.4);
     }
     .diff-badge.hard {
       background: rgba(239, 68, 68, 0.12); color: #dc2626;
@@ -209,21 +283,21 @@
       width: 8px; height: 8px; border-radius: 50%;
       background: var(--line); display: block;
     }
-    .diff-badge.easy .diff-dots i:nth-child(1) { background: #10b981; }
+    .diff-badge.easy .diff-dots i:nth-child(1) { background: #3b82f6; }
     .diff-badge.medium .diff-dots i:nth-child(1),
-    .diff-badge.medium .diff-dots i:nth-child(2) { background: #f59e0b; }
+    .diff-badge.medium .diff-dots i:nth-child(2) { background: #60a5fa; }
     .diff-badge.hard .diff-dots i { background: #ef4444; }
 
     .level-card[data-level="easy"] {
-      border-color: rgba(16, 185, 129, 0.45);
+      border-color: rgba(59, 130, 246, 0.45);
       background: linear-gradient(180deg, rgba(16,185,129,0.06), var(--card) 40%);
     }
     .level-card[data-level="medium"] {
-      border-color: rgba(245, 158, 11, 0.5);
+      border-color: rgba(59, 130, 246, 0.5);
       background: linear-gradient(180deg, rgba(245,158,11,0.08), var(--card) 40%);
     }
-    .level-card[data-level="easy"]:hover { border-color: #059669; }
-    .level-card[data-level="medium"]:hover { border-color: #d97706; }
+    .level-card[data-level="easy"]:hover { border-color: #2563eb; }
+    .level-card[data-level="medium"]:hover { border-color: #3b82f6; }
 
     .level-card .level-icon {
       width: 44px; height: 44px; border-radius: 12px;
@@ -231,21 +305,21 @@
       font-size: 1.35rem; margin-bottom: 10px;
     }
     .level-card[data-level="easy"] .level-icon {
-      background: rgba(16, 185, 129, 0.15);
+      background: rgba(59, 130, 246, 0.15);
     }
     .level-card[data-level="medium"] .level-icon {
-      background: rgba(245, 158, 11, 0.18);
+      background: rgba(59, 130, 246, 0.18);
     }
 
     .pill.diff-easy {
-      color: #059669;
-      background: rgba(16, 185, 129, 0.12);
-      border-color: rgba(16, 185, 129, 0.3);
+      color: #2563eb;
+      background: rgba(59, 130, 246, 0.12);
+      border-color: rgba(59, 130, 246, 0.3);
     }
     .pill.diff-medium {
-      color: #d97706;
-      background: rgba(245, 158, 11, 0.14);
-      border-color: rgba(245, 158, 11, 0.35);
+      color: #3b82f6;
+      background: rgba(59, 130, 246, 0.14);
+      border-color: rgba(59, 130, 246, 0.35);
     }
     .hud .diff-meter {
       display: inline-flex; align-items: center; gap: 6px;
@@ -267,7 +341,7 @@
     <!-- MENU -->
     <section id="menu" class="screen active">
       <h1>Number match</h1>
-      <p class="lead">Match the number with its word. Easy: 0–20 in two rounds. Medium: big numbers.</p>
+      <p class="lead">Match the number with its word. Easy and Medium: two rounds of 5 pairs each.</p>
       <div class="level-grid">
         <button type="button" class="level-card" data-level="easy">
           <div class="level-icon" aria-hidden="true">🌱</div>
@@ -284,13 +358,13 @@
         <button type="button" class="level-card" data-level="medium">
           <div class="level-icon" aria-hidden="true">🔥</div>
           <h2>Medium</h2>
-          <p>Numbers above one hundred — 105 up to 2,300,000.</p>
+          <p>Round 1 &amp; 2: big numbers (105–2,300,000)<br/>5 numbers + 5 words each set.</p>
           <div class="diff-row">
             <span class="diff-badge medium" title="Medium difficulty">
               <span class="diff-dots" aria-hidden="true"><i></i><i></i><i></i></span>
               Medium
             </span>
-            <span class="tag">10 pairs</span>
+            <span class="tag">2 rounds · 10 pairs</span>
           </div>
         </button>
       </div>
@@ -356,12 +430,14 @@
       { n: 19, word: "nineteen" },
       { n: 20, word: "twenty" }
     ];
-    var MEDIUM = [
+    var MEDIUM_A = [
       { n: 105, word: "one hundred and five" },
       { n: 200, word: "two hundred" },
       { n: 875, word: "eight hundred and seventy-five" },
       { n: 1000, word: "one thousand" },
-      { n: 2012, word: "two thousand and twelve" },
+      { n: 2012, word: "two thousand and twelve" }
+    ];
+    var MEDIUM_B = [
       { n: 5420, word: "five thousand four hundred and twenty" },
       { n: 25000, word: "twenty-five thousand" },
       { n: 100000, word: "one hundred thousand" },
@@ -370,7 +446,7 @@
     ];
 
     var level = "easy";
-    var roundIndex = 0; // easy: 0 then 1
+    var roundIndex = 0; // both levels: 0 then 1 (two rounds of 5)
     var pairs = [];
     var matched = 0;
     var totalInSet = 0;
@@ -457,9 +533,16 @@
       var pill = $("roundPill");
       pill.classList.remove("diff-easy", "diff-medium");
       if (level === "medium") {
-        pairs = MEDIUM.slice();
-        totalInSet = pairs.length;
-        pill.textContent = "●●○ Medium · Big numbers";
+        // Two rounds of 5 (same structure as Easy)
+        if (roundIndex === 0) {
+          pairs = shuffle(MEDIUM_A.slice());
+          totalInSet = 5;
+          pill.textContent = "●●○ Medium · Round 1";
+        } else {
+          pairs = shuffle(MEDIUM_B.slice());
+          totalInSet = 5;
+          pill.textContent = "●●○ Medium · Round 2";
+        }
         pill.classList.add("diff-medium");
       } else if (roundIndex === 0) {
         pairs = pickFive(EASY_A);
@@ -592,17 +675,20 @@
     }
 
     function onSetComplete() {
-      if (level === "easy" && roundIndex === 0) {
+      // Both Easy and Medium: two rounds of 5
+      if (roundIndex === 0) {
         roundIndex = 1;
         setPairsForRound();
-        $("feedback").textContent = "Round 2 — numbers 11 to 20!";
+        $("feedback").textContent = level === "easy"
+          ? "Round 2 — numbers 11 to 20!"
+          : "Round 2 — more big numbers!";
         $("feedback").className = "feedback ok";
         return;
       }
       $("finishTitle").textContent = "Well done!";
       $("finishMsg").textContent = level === "easy"
         ? "You finished Easy (0–20) in two rounds."
-        : "You matched all the big numbers.";
+        : "You finished Medium (big numbers) in two rounds.";
       show("finish");
       try {
         if (window.LAStars) {
