@@ -20,8 +20,17 @@
       --ok: #2563eb; --bad: #e11d48; --shadow: 0 14px 36px rgba(15,23,42,.08);
     }
     html[data-theme="dark"] {
-      --bg: #0f1220; --card: #1a1f2e; --text: #f1f5f9; --muted: #94a3b8;
-      --line: #2d3548; --shadow: 0 14px 36px rgba(0,0,0,.4);
+      --bg: #0b1220;
+      --card: #151b2b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --line: #1e3a5f;
+      --blue: #60a5fa;
+      --blue-deep: #1d4ed8;
+      --purple: #60a5fa;
+      --ok: #3b82f6;
+      --accent: #60a5fa;
+      --shadow: 0 14px 36px rgba(0,0,0,0.45);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
@@ -111,16 +120,61 @@
     input.is-ok { border-color: var(--ok); }
     input.is-bad { border-color: var(--bad); }
 
-    .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; }
     .btn {
       appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 800;
       min-height: 48px; padding: 12px 20px; border-radius: 999px;
     }
     .btn-primary {
-      background: linear-gradient(180deg, #60a5fa, #3b82f6); color: #fff;
-      box-shadow: 0 5px 0 var(--blue-deep);
+      background: linear-gradient(180deg, #60a5fa, #3b82f6) !important;
+      color: #fff !important;
+      box-shadow: 0 5px 0 #1d4ed8 !important;
+      border: none !important;
     }
+    .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 #1d4ed8 !important; }
     .btn-ghost { background: var(--bg); color: var(--text); border: 2px solid var(--line); }
+
+    /* Icon action buttons */
+    .icon-btn {
+      width: 56px;
+      height: 56px;
+      min-width: 56px;
+      min-height: 56px;
+      padding: 0 !important;
+      border-radius: 50% !important;
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+    .icon-btn.btn-ghost {
+      background: #fff;
+      border: 2px solid var(--line);
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+    html[data-theme="dark"] .icon-btn.btn-ghost {
+      background: #0b1220;
+      border-color: #1e3a5f;
+      color: #f1f5f9;
+    }
+    .icon-btn.btn-check {
+      background: linear-gradient(180deg, #60a5fa, #3b82f6) !important;
+      color: #fff !important;
+      border: 3px solid rgba(255,255,255,0.35) !important;
+      box-shadow:
+        0 5px 0 #1d4ed8,
+        0 10px 18px rgba(37, 99, 235, 0.35) !important;
+    }
+    .icon-btn.btn-check:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #1d4ed8, 0 6px 12px rgba(37, 99, 235, 0.3) !important;
+    }
+    .icon-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
 
     .feedback { min-height: 1.4em; margin-top: 12px; font-weight: 800; text-align: center; }
     .feedback.ok { color: var(--ok); }
@@ -136,6 +190,44 @@
       color: var(--muted); line-height: 1.5;
     }
     .overview strong { color: var(--text); }
+  
+    /* —— Dark mode polish (Numbers blue theme) —— */
+    html[data-theme="dark"] body {
+      background:
+        radial-gradient(700px 360px at 0% 0%, rgba(59,130,246,.12), transparent 55%),
+        var(--bg);
+    }
+    html[data-theme="dark"] .stage,
+    html[data-theme="dark"] .card,
+    html[data-theme="dark"] .panel,
+    html[data-theme="dark"] .box,
+    html[data-theme="dark"] .finish-box,
+    html[data-theme="dark"] .level-card,
+    html[data-theme="dark"] .menu-card,
+    html[data-theme="dark"] .hud .pill,
+    html[data-theme="dark"] .pill,
+    html[data-theme="dark"] .back {
+      background: #151b2b;
+      border-color: #1e3a5f;
+      color: #f1f5f9;
+    }
+    html[data-theme="dark"] input,
+    html[data-theme="dark"] textarea,
+    html[data-theme="dark"] select {
+      background: #0b1220;
+      border-color: #1e3a5f;
+      color: #f1f5f9;
+    }
+    html[data-theme="dark"] .btn-ghost,
+    html[data-theme="dark"] .btn-secondary {
+      background: #0b1220;
+      border-color: #1e3a5f;
+      color: #f1f5f9;
+    }
+    html[data-theme="dark"] .progress {
+      background: #1e3a5f;
+    }
+
   </style>
 </head>
 <body class="no-profile-fab">
@@ -166,8 +258,8 @@
         <p class="hint" id="hint">Write the number you hear.</p>
         <div class="form-line" id="formLine"></div>
         <div class="actions">
-          <button type="button" class="btn btn-ghost" id="btnReplay">Play again</button>
-          <button type="button" class="btn btn-primary" id="btnCheck">Check</button>
+          <button type="button" class="btn btn-ghost icon-btn" id="btnReplay" aria-label="Play again" title="Play again">🔊</button>
+          <button type="button" class="btn icon-btn btn-check" id="btnCheck" aria-label="Check answer" title="Check">✓</button>
         </div>
         <p class="feedback" id="feedback"></p>
       </div>
@@ -197,19 +289,17 @@
         id: 1,
         title: "1 · Phone number",
         hint: "Write the cell phone number.",
-        start: 6.5,
-        end: 22.0,
-        // 303-555-04152 from audio (3 0 3 5 5 5 0 4 1 5 2)
-        answers: ["30355504152", "3035550415"],
-        display: "303-555-04152",
+        src: "audio/01.mp3",
+        // From audio: 3 0 3 5 5 5 0 4 1 5
+        answers: ["3035550415", "30355504152"],
+        display: "303-555-0415",
         render: "phone"
       },
       {
         id: 2,
         title: "2 · Address",
         hint: "Write the house number for Oak Street.",
-        start: 23.5,
-        end: 30.5,
+        src: "audio/02.mp3",
         answers: ["57"],
         display: "57 Oak Street",
         render: "address"
@@ -218,8 +308,7 @@
         id: 3,
         title: "3 · Age",
         hint: "How old is he?",
-        start: 31.0,
-        end: 42.5,
+        src: "audio/03.mp3",
         answers: ["39"],
         display: "39",
         render: "age"
@@ -228,10 +317,9 @@
         id: 4,
         title: "4 · Email",
         hint: "Write the numbers in the email address.",
-        start: 43.0,
-        end: 58.5,
+        src: "audio/04.mp3",
         answers: ["85"],
-        display: "james85@geemail.com",
+        display: "james85@gmail.com",
         render: "email"
       }
     ];
@@ -239,7 +327,7 @@
     var index = 0;
     var score = 0;
     var audio = null;
-    var stopTimer = null;
+    var audioCache = {};
 
     function $(id) { return document.getElementById(id); }
 
@@ -254,8 +342,12 @@
     }
 
     function stopClip() {
-      if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
-      if (audio) { try { audio.pause(); } catch (e) {} }
+      if (audio) {
+        try {
+          audio.pause();
+          audio.currentTime = 0;
+        } catch (e) {}
+      }
       $("btnListen").classList.remove("playing");
     }
 
@@ -263,28 +355,35 @@
       var item = ITEMS[index];
       if (!item) return;
       stopClip();
-      if (!audio) {
-        audio = new Audio("audio/personal-info.mp3");
-        audio.preload = "auto";
+
+      var src = item.src;
+      var a = audioCache[src];
+      if (!a) {
+        a = new Audio(src);
+        a.preload = "auto";
+        audioCache[src] = a;
       }
+      audio = a;
+
       var run = function () {
-        try { audio.currentTime = item.start; } catch (e) {}
+        try { audio.currentTime = 0; } catch (e) {}
         var p = audio.play();
         $("btnListen").classList.add("playing");
-        if (p && p.catch) p.catch(function () { $("btnListen").classList.remove("playing"); });
-        var ms = Math.max(400, (item.end - item.start) * 1000);
-        stopTimer = setTimeout(function () {
-          try { audio.pause(); } catch (e) {}
+        if (p && p.catch) {
+          p.catch(function () { $("btnListen").classList.remove("playing"); });
+        }
+        audio.onended = function () {
           $("btnListen").classList.remove("playing");
-        }, ms);
+        };
       };
+
       if (audio.readyState >= 2) run();
       else {
         audio.addEventListener("canplay", function once() {
           audio.removeEventListener("canplay", once);
           run();
         });
-        audio.load();
+        try { audio.load(); } catch (e) {}
       }
     }
 
@@ -342,7 +441,7 @@
         line.appendChild(inp);
         var post = document.createElement("span");
         post.className = "fixed";
-        post.textContent = "@geemail.com";
+        post.textContent = "@gmail.com";
         line.appendChild(post);
       }
       var a = $("answer");
