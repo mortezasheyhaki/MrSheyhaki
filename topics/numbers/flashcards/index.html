@@ -15,23 +15,28 @@
   <link rel="stylesheet" href="../../../learningarcade/theme.css" />
   <style>
     :root {
-      --bg: #eef2ff;
+      --bg: #eff6ff;
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
-      --line: #e0e7ff;
+      --line: #bfdbfe;
       --purple: #3b82f6;
-      --purple-deep: #5b21b6;
+      --purple-deep: #1d4ed8;
       --ok: #2563eb;
       --shadow: 0 16px 40px rgba(15, 23, 42, 0.1);
     }
     html[data-theme="dark"] {
-      --bg: #0f1220;
-      --card: #1a1f2e;
+      --bg: #0b1220;
+      --card: #151b2b;
       --text: #f1f5f9;
       --muted: #94a3b8;
-      --line: #2d3548;
-      --shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+      --line: #1e3a5f;
+      --blue: #60a5fa;
+      --blue-deep: #1d4ed8;
+      --purple: #60a5fa;
+      --ok: #3b82f6;
+      --accent: #60a5fa;
+      --shadow: 0 14px 36px rgba(0,0,0,0.45);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { min-height: 100%; min-height: 100dvh; }
@@ -57,7 +62,7 @@
     .badge {
       font-size: 0.75rem; font-weight: 900; letter-spacing: 0.06em;
       text-transform: uppercase; color: #fff;
-      background: linear-gradient(135deg, #60a5fa, #6d28d9);
+      background: linear-gradient(135deg, #60a5fa, #2563eb);
       padding: 8px 12px; border-radius: 999px;
     }
     h1 {
@@ -98,33 +103,61 @@
       border-radius: 22px;
       border: none;
       cursor: pointer;
-      background: linear-gradient(160deg, #60a5fa 0%, #6d28d9 55%, #4c1d95 100%);
+      background: linear-gradient(160deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
       color: #fff;
-      box-shadow: 0 12px 0 #3b0764, 0 18px 32px rgba(109, 40, 217, 0.35);
+      box-shadow: 0 12px 0 #1d4ed8, 0 18px 32px rgba(37, 99, 235, 0.35);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       gap: 8px;
       padding: 24px 16px;
-      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      transition: transform 0.18s ease, box-shadow 0.12s ease, opacity 0.18s ease;
       -webkit-user-select: none; user-select: none;
+      touch-action: pan-y; /* allow vertical scroll, handle horizontal swipe ourselves */
+      will-change: transform;
+    }
+    .flashcard.is-swiping {
+      transition: none;
+    }
+    .flashcard.swipe-out-left {
+      transform: translateX(-110%) rotate(-6deg);
+      opacity: 0;
+    }
+    .flashcard.swipe-out-right {
+      transform: translateX(110%) rotate(6deg);
+      opacity: 0;
+    }
+    .flashcard.swipe-in {
+      animation: flashIn 0.22s ease;
+    }
+    @keyframes flashIn {
+      from { transform: scale(0.94); opacity: 0.4; }
+      to { transform: scale(1); opacity: 1; }
     }
     .flashcard:active {
       transform: translateY(6px);
-      box-shadow: 0 6px 0 #3b0764, 0 10px 20px rgba(109, 40, 217, 0.3);
+      box-shadow: 0 6px 0 #1d4ed8, 0 10px 20px rgba(37, 99, 235, 0.3);
     }
     .flashcard.is-playing {
       outline: 3px solid #fde68a;
     }
     .flash-num {
-      font-size: clamp(3.2rem, 12vw, 4.5rem);
+      font-size: clamp(2.6rem, 11vw, 4.5rem);
       font-weight: 900;
       line-height: 1;
       letter-spacing: -0.03em;
+      word-break: break-all;
+      text-align: center;
     }
     .flash-word {
-      font-size: clamp(1.25rem, 4vw, 1.6rem);
+      font-size: clamp(1.05rem, 3.8vw, 1.6rem);
       font-weight: 800;
       opacity: 0.95;
       text-transform: lowercase;
+      text-align: center;
+      line-height: 1.25;
+      max-width: 100%;
+      padding: 0 4px;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
     }
     .flash-hint {
       font-size: 0.8rem;
@@ -201,11 +234,130 @@
       line-height: 1.4;
     }
 
+    /* —— Phone layout —— */
     @media (max-width: 700px) {
-      .flashcard { min-height: 200px; }
-      .num-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-      .num-tile { min-height: 58px; font-size: 0.95rem; }
+      body {
+        padding: 10px 10px max(20px, env(safe-area-inset-bottom));
+      }
+      .wrap { max-width: 100%; }
+      .top { margin-bottom: 10px; gap: 8px; }
+      .back { padding: 8px 12px; min-height: 42px; font-size: 0.9rem; }
+      .badge { padding: 6px 10px; font-size: 0.7rem; }
+      h1 { font-size: 1.35rem; margin-bottom: 2px; }
+      .lead { font-size: 0.88rem; margin-bottom: 12px; }
+      .filters {
+        gap: 6px;
+        margin-bottom: 12px;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+      }
+      .filter-btn {
+        flex: 0 0 auto;
+        padding: 8px 12px;
+        min-height: 40px;
+        font-size: 0.8rem;
+      }
+      .stage {
+        padding: 14px 12px 14px;
+        border-radius: 18px;
+        margin-bottom: 12px;
+      }
+      .flashcard {
+        max-width: 100%;
+        min-height: 180px;
+        padding: 18px 12px;
+        border-radius: 18px;
+        box-shadow: 0 8px 0 #1d4ed8, 0 14px 24px rgba(37, 99, 235, 0.3);
+      }
+      .flashcard:active {
+        box-shadow: 0 4px 0 #1d4ed8, 0 8px 16px rgba(37, 99, 235, 0.28);
+      }
+      .speaker { width: 44px; height: 44px; font-size: 1.2rem; }
+      .flash-num { font-size: clamp(2.4rem, 12vw, 3.4rem); }
+      .flash-word { font-size: clamp(0.95rem, 4vw, 1.25rem); }
+      .nav-row {
+        gap: 8px;
+        flex-wrap: nowrap;
+      }
+      .nav-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 10px 14px;
+        font-size: 0.88rem;
+      }
+      .nav-btn.primary {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 10px 12px;
+      }
+      .counter { font-size: 0.85rem; min-width: 4.5ch; }
+      .grid-label { margin-bottom: 8px; }
+      .num-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .num-tile {
+        min-height: 56px;
+        font-size: 0.95rem;
+        border-radius: 12px;
+        padding: 6px 4px;
+      }
+      .num-tile small {
+        font-size: 0.58rem;
+        line-height: 1.15;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .audio-note { font-size: 0.8rem; margin-top: 12px; }
     }
+    @media (max-width: 380px) {
+      .num-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+      .flashcard { min-height: 160px; padding: 14px 10px; }
+      .nav-btn { padding: 8px 10px; min-width: 40px; }
+      .filter-btn { padding: 8px 10px; font-size: 0.75rem; }
+    }
+  
+    /* —— Dark mode polish (Numbers blue theme) —— */
+    html[data-theme="dark"] body {
+      background:
+        radial-gradient(700px 360px at 0% 0%, rgba(59,130,246,.12), transparent 55%),
+        var(--bg);
+    }
+    html[data-theme="dark"] .stage,
+    html[data-theme="dark"] .card,
+    html[data-theme="dark"] .panel,
+    html[data-theme="dark"] .box,
+    html[data-theme="dark"] .finish-box,
+    html[data-theme="dark"] .level-card,
+    html[data-theme="dark"] .menu-card,
+    html[data-theme="dark"] .hud .pill,
+    html[data-theme="dark"] .pill,
+    html[data-theme="dark"] .back {
+      background: #151b2b;
+      border-color: #1e3a5f;
+      color: #f1f5f9;
+    }
+    html[data-theme="dark"] input,
+    html[data-theme="dark"] textarea,
+    html[data-theme="dark"] select {
+      background: #0b1220;
+      border-color: #1e3a5f;
+      color: #f1f5f9;
+    }
+    html[data-theme="dark"] .btn-ghost,
+    html[data-theme="dark"] .btn-secondary {
+      background: #0b1220;
+      border-color: #1e3a5f;
+      color: #f1f5f9;
+    }
+    html[data-theme="dark"] .progress {
+      background: #1e3a5f;
+    }
+
   </style>
 
   <style>
@@ -232,7 +384,7 @@
         <span class="speaker" aria-hidden="true">🔊</span>
         <span class="flash-num" id="flashNum">0</span>
         <span class="flash-word" id="flashWord">zero</span>
-        <span class="flash-hint">Tap to hear</span>
+        <span class="flash-hint">Swipe ← → or tap to hear</span>
       </button>
       <div class="nav-row">
         <button type="button" class="nav-btn" id="btnPrev" aria-label="Previous">←</button>
@@ -423,19 +575,14 @@
       show(0);
     }
 
-    $("flashcard").addEventListener("click", function () {
-      playSound(list[index]);
-    });
     $("btnPlay").addEventListener("click", function () {
       playSound(list[index]);
     });
     $("btnPrev").addEventListener("click", function () {
-      show(index - 1);
-      playSound(list[index]);
+      goPrev();
     });
     $("btnNext").addEventListener("click", function () {
-      show(index + 1);
-      playSound(list[index]);
+      goNext();
     });
     document.querySelectorAll(".filter-btn").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -444,14 +591,168 @@
     });
 
     document.addEventListener("keydown", function (e) {
-      if (e.key === "ArrowRight") { e.preventDefault(); $("btnNext").click(); }
-      if (e.key === "ArrowLeft") { e.preventDefault(); $("btnPrev").click(); }
+      if (e.key === "ArrowRight") { e.preventDefault(); goNext(); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); goPrev(); }
       if (e.key === " " || e.key === "Enter") {
         if (e.target && (e.target.tagName === "BUTTON" || e.target.tagName === "A")) return;
         e.preventDefault();
         playSound(list[index]);
       }
     });
+
+    function goNext() {
+      show(index + 1);
+      playSound(list[index]);
+    }
+    function goPrev() {
+      show(index - 1);
+      playSound(list[index]);
+    }
+
+    /* —— Touch Event Listeners (swipe + tap on flashcard) —— */
+    (function setupTouchListeners() {
+      var card = $("flashcard");
+      if (!card) return;
+
+      var startX = 0, startY = 0, dx = 0, dy = 0;
+      var tracking = false;
+      var touchId = null;
+      var ignoreClick = false;
+      var THRESHOLD = 50;
+      var MAX_VERTICAL = 70;
+      var TAP_SLOP = 14;
+
+      function resetVisual() {
+        card.classList.remove("is-swiping");
+        card.style.transform = "";
+        card.style.opacity = "";
+      }
+
+      function onStart(x, y, id) {
+        tracking = true;
+        touchId = id != null ? id : null;
+        startX = x;
+        startY = y;
+        dx = 0;
+        dy = 0;
+        card.classList.add("is-swiping");
+        card.classList.remove("swipe-in", "swipe-out-left", "swipe-out-right");
+      }
+
+      function onMove(x, y) {
+        if (!tracking) return;
+        dx = x - startX;
+        dy = y - startY;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6) {
+          var rot = dx * 0.05;
+          card.style.transform = "translateX(" + dx + "px) rotate(" + rot + "deg)";
+          card.style.opacity = String(Math.max(0.4, 1 - Math.abs(dx) / 260));
+        }
+      }
+
+      function finishSwipe(dir) {
+        tracking = false;
+        ignoreClick = true;
+        resetVisual();
+        card.classList.add(dir === "left" ? "swipe-out-left" : "swipe-out-right");
+        setTimeout(function () {
+          card.classList.remove("swipe-out-left", "swipe-out-right");
+          if (dir === "left") goNext();
+          else goPrev();
+          card.classList.add("swipe-in");
+          setTimeout(function () {
+            card.classList.remove("swipe-in");
+            ignoreClick = false;
+          }, 220);
+        }, 150);
+      }
+
+      function onEnd() {
+        if (!tracking) return;
+        tracking = false;
+        touchId = null;
+        var absX = Math.abs(dx);
+        var absY = Math.abs(dy);
+        if (absX >= THRESHOLD && absX > absY && absY < MAX_VERTICAL) {
+          finishSwipe(dx < 0 ? "left" : "right");
+          return "swipe";
+        }
+        resetVisual();
+        if (absX < TAP_SLOP && absY < TAP_SLOP) return "tap";
+        return "cancel";
+      }
+
+      /* Primary: Touch Events (best for phones) */
+      card.addEventListener("touchstart", function (e) {
+        if (!e.changedTouches || !e.changedTouches[0]) return;
+        var t = e.changedTouches[0];
+        onStart(t.clientX, t.clientY, t.identifier);
+      }, { passive: true });
+
+      card.addEventListener("touchmove", function (e) {
+        if (!tracking || !e.touches || !e.touches.length) return;
+        var t = null;
+        for (var i = 0; i < e.touches.length; i++) {
+          if (touchId == null || e.touches[i].identifier === touchId) {
+            t = e.touches[i];
+            break;
+          }
+        }
+        if (!t) t = e.touches[0];
+        onMove(t.clientX, t.clientY);
+        // Lock horizontal swipe — prevent page scroll
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+
+      card.addEventListener("touchend", function (e) {
+        if (!tracking) return;
+        if (e.changedTouches && e.changedTouches[0] && touchId != null) {
+          var match = false;
+          for (var i = 0; i < e.changedTouches.length; i++) {
+            if (e.changedTouches[i].identifier === touchId) { match = true; break; }
+          }
+          if (!match) return;
+        }
+        var result = onEnd();
+        if (result === "tap") {
+          playSound(list[index]);
+        }
+      }, { passive: true });
+
+      card.addEventListener("touchcancel", function () {
+        tracking = false;
+        touchId = null;
+        resetVisual();
+      }, { passive: true });
+
+      /* Desktop: mouse listeners */
+      card.addEventListener("mousedown", function (e) {
+        if (e.button !== 0) return;
+        onStart(e.clientX, e.clientY, null);
+      });
+      window.addEventListener("mousemove", function (e) {
+        if (!tracking || touchId != null) return; // only mouse path
+        onMove(e.clientX, e.clientY);
+      });
+      window.addEventListener("mouseup", function () {
+        if (!tracking || touchId != null) return;
+        var result = onEnd();
+        if (result === "tap") playSound(list[index]);
+      });
+
+      /* Click fallback (accessibility / older browsers) */
+      card.addEventListener("click", function (e) {
+        if (ignoreClick) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        // If a touch just handled tap, ignore synthetic click
+        if (e.detail === 0) return;
+      });
+    })();
 
     applyFilter("easy");
   })();
