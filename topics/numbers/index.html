@@ -84,9 +84,7 @@
     @media (max-width: 800px) {
       .game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
-    @media (max-width: 520px) {
-      .game-grid { grid-template-columns: 1fr; }
-    }
+    /* Keep 2 columns on phone (matches Vocabulary arcade) */
 
     /* Same proportions as Grammar arcade cards */
     .game-card {
@@ -340,7 +338,7 @@
     }
 
   
-    /* —— Phone / small tablet layout —— */
+    /* —— Phone / small tablet layout (match Vocabulary arcade sizing) —— */
     @media (max-width: 800px) {
       body { padding: 12px 12px 36px; padding-bottom: max(36px, env(safe-area-inset-bottom)); }
       .wrap { padding: 0; max-width: 100%; }
@@ -355,57 +353,66 @@
       .game-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
+        grid-auto-rows: minmax(140px, auto);
       }
       .game-card {
-        min-height: 180px;
+        min-height: 140px;
         max-height: none;
+        height: auto;
         aspect-ratio: auto;
-        padding: 12px 12px 10px;
+        padding: 12px;
         border-radius: 16px;
       }
       .card-head { gap: 8px; margin-bottom: 4px; }
-      .card-head h3 { font-size: 0.92rem; }
-      .game-card-icon { width: 34px; height: 34px; border-radius: 10px; font-size: 1rem; }
-      .game-tag { font-size: 0.6rem; padding: 3px 7px; margin-bottom: 4px; }
+      .card-head h3 { font-size: clamp(0.9rem, 4.2vw, 1.05rem); line-height: 1.15; }
+      .game-card-icon { width: 40px; height: 40px; border-radius: 12px; font-size: 1.1rem; }
+      .game-tag { font-size: 0.5rem; padding: 3px 7px; margin-bottom: 4px; margin-top: 4px; }
       .game-card > p {
-        font-size: 0.75rem;
-        -webkit-line-clamp: 2;
-        margin-bottom: 4px;
+        display: none; /* hide long descriptions on phone like Vocabulary */
       }
-      .game-meta { font-size: 0.68rem; margin-bottom: 8px; }
+      .game-meta { font-size: 0.65rem; margin-bottom: 6px; padding-top: 4px; }
       .game-launch {
-        width: 44px; height: 44px;
-        min-width: 44px; min-height: 44px;
-        font-size: 0.52rem;
+        width: 56px; height: 56px;
+        min-width: 56px; min-height: 56px;
+        max-width: 56px; max-height: 56px;
+        font-size: 0.55rem;
         box-shadow: 0 3px 0 var(--accent-deep), 0 6px 12px rgba(67, 56, 202, 0.35);
       }
       .game-stars { font-size: 0.9rem; gap: 2px; }
-      .game-card-actions { gap: 8px; }
+      .game-card-actions { gap: 8px; margin-top: auto; }
     }
     @media (max-width: 520px) {
+      /* Keep 2-column grid on phone (same as Vocabulary) */
       .game-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
       }
       .game-card {
         min-height: 140px;
-        padding: 14px 14px 12px;
+        padding: 12px;
       }
-      .card-head h3 { font-size: 1.05rem; }
-      .game-card > p {
-        font-size: 0.84rem;
-        -webkit-line-clamp: 3;
-      }
+      .card-head h3 { font-size: clamp(0.85rem, 4vw, 1rem); }
+      .game-card-icon { width: 36px; height: 36px; font-size: 1rem; }
       .game-launch {
-        width: 46px; height: 46px;
-        min-width: 46px; min-height: 46px;
-        font-size: 0.55rem;
+        width: 52px; height: 52px;
+        min-width: 52px; min-height: 52px;
+        max-width: 52px; max-height: 52px;
+        font-size: 0.5rem;
       }
     }
     /* Very narrow */
-    @media (max-width: 360px) {
-      .game-card > p { -webkit-line-clamp: 2; font-size: 0.8rem; }
+    @media (max-width: 380px) {
+      .game-grid { gap: 6px; }
+      .game-card { padding: 10px; }
+      .game-card-icon { width: 34px; height: 34px; }
+      .card-head h3 { font-size: 0.85rem; }
       .game-tag { display: none; }
+      .game-launch {
+        width: 48px; height: 48px;
+        min-width: 48px; min-height: 48px;
+        max-width: 48px; max-height: 48px;
+        font-size: 0.48rem;
+      }
     }
 
   </style>

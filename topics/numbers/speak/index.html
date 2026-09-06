@@ -317,10 +317,37 @@
       "19": "nineteen", "20": "twenty"
     };
 
+    // Common ASR mishearings / alternate spellings for 0–20
+    var WORD_ALIASES = {
+      0: ["zero", "0", "oh", "o", "nought", "naught", "nil"],
+      1: ["one", "1", "won", "wan"],
+      2: ["two", "2", "to", "too", "tu"],
+      3: ["three", "3", "tree", "free"],
+      4: ["four", "4", "for", "fore", "fur"],
+      5: ["five", "5", "fife"],
+      6: ["six", "6", "sics", "sex"],
+      7: ["seven", "7"],
+      8: ["eight", "8", "ate", "ait"],
+      9: ["nine", "9", "niner"],
+      10: ["ten", "10"],
+      11: ["eleven", "11", "eleventh"],
+      12: ["twelve", "12", "twelfth"],
+      13: ["thirteen", "13", "thirtin", "thirty three", "30 3"], // ASR sometimes splits
+      14: ["fourteen", "14", "fourtin", "forteen", "forty four"],
+      15: ["fifteen", "15", "fiftin", "fifty five"],
+      16: ["sixteen", "16", "sixtin", "sixty six"],
+      17: ["seventeen", "17", "seventin", "seventy seven"],
+      18: ["eighteen", "18", "eightin", "eigtin", "eighty eight"],
+      19: ["nineteen", "19", "ninetin", "nintin", "ninety nine"],
+      20: ["twenty", "20", "tweny", "twenti"]
+    };
+
     function expandSpoken(text) {
       var v = norm(text);
-      // if pure digits, map small ones
+      // pure digits → word if known
       if (/^\d+$/.test(v) && DIGIT_WORDS[v]) return DIGIT_WORDS[v];
+      // strip leading "number " / "the number "
+      v = v.replace(/^(the\s+)?(number\s+)?/, "");
       return v;
     }
 
@@ -328,21 +355,53 @@
       var list = [norm(item.word)];
       list.push(String(item.n));
       list.push(formatNum(item.n).replace(/,/g, ""));
-      // variants
+
+      // 0–20 aliases (ASR often returns for/four, to/two, ate/eight, oh/zero…)
+      if (WORD_ALIASES[item.n]) {
+        WORD_ALIASES[item.n].forEach(function (x) { list.push(norm(x)); });
+      }
+
+      // medium / big-number variants
       var extra = {
-        100: ["a hundred", "one hundred", "100", "hundred"],
-        105: ["one hundred five", "a hundred and five", "one hundred and five", "105"],
-        200: ["two hundred", "200"],
-        875: ["eight hundred seventy five", "eight hundred and seventy five", "eight hundred and seventy-five", "875"],
-        1000: ["a thousand", "one thousand", "1000", "thousand"],
-        1500: ["fifteen hundred", "one thousand five hundred", "1500"],
-        5420: ["five thousand four hundred twenty", "five thousand four hundred and twenty", "5420"],
-        25000: ["twenty five thousand", "twenty-five thousand", "25000"],
-        100000: ["a hundred thousand", "one hundred thousand", "100000"],
-        1000000: ["a million", "one million", "1000000", "million"]
+        100: ["a hundred", "one hundred", "100", "hundred", "a 100", "one 100"],
+        105: [
+          "one hundred five", "a hundred and five", "one hundred and five", "105",
+          "one hundred n five", "a hundred five", "one oh five", "1 0 5"
+        ],
+        200: ["two hundred", "200", "to hundred", "too hundred"],
+        875: [
+          "eight hundred seventy five", "eight hundred and seventy five",
+          "eight hundred and seventy-five", "875",
+          "ate hundred seventy five", "eight hundred 75"
+        ],
+        1000: ["a thousand", "one thousand", "1000", "thousand", "a 1000"],
+        1500: [
+          "fifteen hundred", "one thousand five hundred", "1500",
+          "one thousand and five hundred", "15 hundred"
+        ],
+        5420: [
+          "five thousand four hundred twenty", "five thousand four hundred and twenty", "5420",
+          "five thousand for hundred twenty", "five thousand four hundred 20"
+        ],
+        25000: [
+          "twenty five thousand", "twenty-five thousand", "25000",
+          "twenty five 1000", "25 thousand"
+        ],
+        100000: [
+          "a hundred thousand", "one hundred thousand", "100000",
+          "a hundred 1000", "100 thousand"
+        ],
+        1000000: ["a million", "one million", "1000000", "million", "1 million"]
       };
       (extra[item.n] || []).forEach(function (x) { list.push(norm(x)); });
-      return list;
+
+      // unique list
+      var seen = {};
+      var out = [];
+      list.forEach(function (x) {
+        if (x && !seen[x]) { seen[x] = true; out.push(x); }
+      });
+      return out;
     }
 
     function isMatch(item, spoken) {
@@ -351,8 +410,13 @@
       var ok = acceptedList(item);
       for (var i = 0; i < ok.length; i++) {
         if (v === ok[i]) return true;
-        // loose contains for longer phrases
+        // loose contains for longer phrases (medium numbers)
         if (ok[i].length > 4 && (v.indexOf(ok[i]) !== -1 || ok[i].indexOf(v) !== -1)) return true;
+      }
+      // also try without spaces (e.g. "onehundred")
+      var compact = v.replace(/\s+/g, "");
+      for (var j = 0; j < ok.length; j++) {
+        if (compact === ok[j].replace(/\s+/g, "")) return true;
       }
       return false;
     }
@@ -440,12 +504,20 @@
 
       recognition.onresult = function (event) {
         var said = "";
+        var alternatives = [];
         try {
-          said = event.results[0][0].transcript;
+          var res = event.results[0];
+          // collect all alternatives (maxAlternatives = 3)
+          for (var i = 0; i < res.length; i++) {
+            var t = res[i].transcript;
+            if (t) alternatives.push(t);
+          }
+          said = alternatives[0] || "";
         } catch (e) {}
         stopListening();
         $("heard").textContent = said ? ('You said: "' + said + '"') : "";
-        evaluate(said);
+        // pass every alternative so common mishearings still match
+        evaluate(alternatives.length ? alternatives : [said]);
       };
       recognition.onerror = function (event) {
         stopListening();
@@ -468,11 +540,19 @@
       }
     }
 
-    function evaluate(said) {
+    function evaluate(saidOrList) {
       if (locked) return;
       var item = queue[index];
       if (!item) return;
-      if (isMatch(item, said)) {
+      var candidates = Array.isArray(saidOrList) ? saidOrList : [saidOrList];
+      var matched = false;
+      for (var i = 0; i < candidates.length; i++) {
+        if (isMatch(item, candidates[i])) {
+          matched = true;
+          break;
+        }
+      }
+      if (matched) {
         locked = true;
         score += 1;
         $("feedback").textContent = "Correct! " + item.word;
