@@ -1,0 +1,276 @@
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --accent: #38bdf8;
+  --accent-2: #a78bfa;
+  --success: #34d399;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --radius: 20px;
+  --shadow: 0 16px 40px rgba(0,0,0,.45);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', system-ui, sans-serif;
+  background: radial-gradient(ellipse at top, #1e293b 0%, var(--bg) 70%);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  overflow-x: hidden;
+  touch-action: pan-y;
+}
+
+.game-wrap {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Header */
+.game-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+.back-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--text);
+  display: grid; place-items: center;
+  text-decoration: none;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.back-btn:hover { background: #334155; }
+
+.header-text { flex: 1; }
+.eyebrow {
+  display: block;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.header-text h1 {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.counter {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--muted);
+  background: var(--card);
+  padding: .35rem .7rem;
+  border-radius: 999px;
+}
+#current { color: var(--accent); font-weight: 800; }
+
+.progress-bar {
+  width: 100%;
+  height: 5px;
+  background: var(--card);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius: 99px;
+  transition: width .3s ease;
+}
+
+/* Deck */
+.deck-area {
+  width: 100%;
+  perspective: 1200px;
+  display: flex;
+  justify-content: center;
+  padding: .5rem 0 1rem;
+  min-height: 380px;
+}
+
+.card {
+  width: 100%;
+  max-width: 340px;
+  height: 380px;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform .55s cubic-bezier(.4,.2,.2,1);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+}
+
+.card-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.swipe-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15,23,42,.75);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 600;
+  padding: .3rem .7rem;
+  border-radius: 999px;
+  opacity: .85;
+  pointer-events: none;
+  transition: opacity .3s;
+}
+.card.flipped .swipe-hint,
+.card.swiping .swipe-hint { opacity: 0; }
+
+.card-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
+  gap: 1.25rem;
+  padding: 1.5rem;
+}
+
+.phrase-text {
+  font-size: 1.55rem;
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.3;
+  color: var(--text);
+  max-width: 90%;
+}
+
+.audio-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #0f172a;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(56,189,248,.4);
+  transition: transform .15s;
+}
+.audio-btn:hover { transform: scale(1.08); }
+.audio-btn:active { transform: scale(.95); }
+.audio-btn.playing {
+  box-shadow: 0 0 0 5px rgba(56,189,248,.3);
+}
+
+/* Swipe visual feedback */
+.card.swiping .card-inner {
+  transition: none;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+}
+.ctrl-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: var(--card);
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background .2s, transform .15s;
+}
+.ctrl-btn:hover { background: #334155; }
+.ctrl-btn:active { transform: scale(.94); }
+.ctrl-btn.primary {
+  width: 70px;
+  height: 52px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #0f172a;
+  font-size: .95rem;
+  font-weight: 800;
+}
+.ctrl-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.footer-actions {
+  display: flex;
+  gap: .6rem;
+  margin-top: .25rem;
+}
+.btn {
+  border: none;
+  border-radius: 999px;
+  padding: .55rem 1.2rem;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: .88rem;
+  cursor: pointer;
+  background: var(--card);
+  color: var(--text);
+  transition: background .2s;
+}
+.btn:hover { background: #334155; }
+
+.tip {
+  font-size: .78rem;
+  color: var(--muted);
+  text-align: center;
+  margin-top: .25rem;
+}
+kbd {
+  background: #334155;
+  padding: .1rem .35rem;
+  border-radius: 4px;
+  font-size: .72rem;
+}

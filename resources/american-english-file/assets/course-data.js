@@ -20,7 +20,7 @@
  *
  * HOW TO ADD A NEW UNIT
  *   Copy one of the existing unit blocks (e.g. unit 12) and change the
- *   number. Give lessons "a" and "b" a name and empty resource arrays.
+ *   number. Give lessons "a" and "b" a name and empty resource arrays. (Level 1 also has "c".)
  *
  * After editing this file, run:
  *   node tools/generate-resources.js
@@ -161,7 +161,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.games = [
   { title: "Match Adjectives", url: "match-adjectives/" },
   { title: "Sound Match Picture", url: "sound-match-picture/" },
   { title: "Listen and Write", url: "listen-and-write/" },
-  { title: "Adjective-Sentences", url: "adjective-sentences/" },
+  { title: "Adjective Sentences", url: "adjective-sentences/" },
 ];
 
 // Level 1 – Unit 9A – Food games (from Vocabulary Arcade)
@@ -173,6 +173,30 @@ COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.a.games = [
   { title: "A · An · Some",     url: "/learningarcade/vocabulary/food/a-an-some/" },
   { title: "Food Flashcards",   url: "/learningarcade/vocabulary/food/flashcards/" },
   { title: "Food Memory Match", url: "/learningarcade/vocabulary/food/memory/" },
+];
+
+
+// Ensure Level 1 units have lesson C
+(function () {
+  const units = COURSE_DATA["american-english-file"].levels["1"].units;
+  for (const k of Object.keys(units)) {
+    if (!units[k].lessons.c) units[k].lessons.c = emptyLesson("");
+  }
+})();
+
+
+// Level 1 – Unit 3A – Match the Sounds (verb phrases)
+COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.a.name = "America: the good and the bad";
+COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.a.games = [
+  { title: "Match the Sounds", url: "match-sounds/" },
+  { title: "Match Rush", url: "match-rush/" },
+  { title: "Listen & Write", url: "listen-and-write/" },
+  { title: "Flashcards", url: "flashcards/" },
+  { title: "Listen and Complete", url: "listen-and-complete/" },
+  { title: "Complete the Article", url: "complete-the-article/" },
+  { title: "Change the Sentences", url: "change-the-sentences/" },
+  { title: "Listen & Change", url: "listen-and-change/" },
+  { title: "Who Said It?", url: "who-said-it/" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.
