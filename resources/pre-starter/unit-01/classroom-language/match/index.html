@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Match · Classroom Language · Unit 1</title>
+<link rel="stylesheet" href="../../../../../style.css">
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../../theme.css">
+<style>
+  :root {
+    --bg: #eff6ff; --card: #fff; --text: #0f172a; --muted: #64748b;
+    --line: #bfdbfe; --blue: #3b82f6; --blue-deep: #1d4ed8;
+  }
+  html[data-theme="dark"] {
+    --bg: #0b1220; --card: #151b2b; --text: #f1f5f9; --muted: #94a3b8; --line: #1e3a5f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: radial-gradient(700px 360px at 0% 0%, rgba(59,130,246,.14), transparent 55%), var(--bg);
+    color: var(--text); min-height: 100dvh; padding: 14px 14px 28px;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  .back {
+    display: inline-flex; text-decoration: none; font-weight: 800; color: var(--text);
+    background: var(--card); border: 1px solid var(--line); padding: 8px 14px; border-radius: 999px; margin-bottom: 12px; font-size: .9rem;
+  }
+  h1 { font-size: 1.35rem; font-weight: 900; margin-bottom: 4px; }
+  .lead { color: var(--muted); font-weight: 600; font-size: .9rem; margin-bottom: 12px; }
+  .hud { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
+  .pill {
+    background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+    padding: 6px 12px; font-weight: 800; font-size: .82rem;
+  }
+  .progress { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
+  .progress > span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, #60a5fa, #3b82f6); transition: width .3s ease; }
+
+  /* Two columns: 4 pictures | 4 phrases */
+  .board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 18px;
+    margin-bottom: 16px;
+    align-items: start;
+  }
+  .col-label {
+    font-size: .7rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted); text-align: center; margin-bottom: 4px;
+  }
+  .col-label.left { grid-column: 1; grid-row: 1; }
+  .col-label.right { grid-column: 2; grid-row: 1; }
+  .tiles-left, .tiles-right {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .tiles-left { grid-column: 1; grid-row: 2; }
+  .tiles-right { grid-column: 2; grid-row: 2; }
+
+  .tile {
+    appearance: none; border: 2px solid #93c5fd; background: #dbeafe; color: var(--text);
+    border-radius: 14px; cursor: pointer;
+    font: inherit; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .12s, background .15s, border-color .15s, box-shadow .15s;
+    width: 100%;
+    height: 100px;          /* same size for picture + phrase tiles */
+    min-height: 100px;
+    max-height: 100px;
+    padding: 10px 12px;
+    box-sizing: border-box;
+  }
+  .tile.pic img {
+    width: auto; max-width: 100%;
+    height: 76px;
+    object-fit: contain; border-radius: 10px; background: #fff;
+  }
+  .tile.word {
+    font-size: 1rem; text-align: center; line-height: 1.25;
+  }
+  html[data-theme="dark"] .tile { background: #1e293b; border-color: #334155; color: #f1f5f9; }
+  .tile.selected {
+    background: linear-gradient(180deg, #60a5fa, #3b82f6); color: #fff; border-color: #2563eb;
+    font-weight: 900; box-shadow: 0 0 0 3px rgba(59,130,246,.3); transform: scale(1.03);
+  }
+  .tile.matched {
+    background: linear-gradient(180deg, #34d399, #10b981); color: #fff; border-color: #059669;
+    font-weight: 900; pointer-events: none; opacity: .95;
+  }
+  .tile.wrong {
+    background: #fecaca; border-color: #ef4444; animation: shake .35s ease;
+  }
+  html[data-theme="dark"] .tile.wrong { background: #3f1d24; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  .finish-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 16px;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .finish-overlay.show {
+    display: flex;
+    animation: overlayIn 0.25s ease both;
+  }
+  @keyframes overlayIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .finish {
+    position: relative;
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 36px 24px 28px;
+    width: min(100%, 360px);
+    max-width: 100%;
+    box-shadow: 0 24px 48px rgba(15, 23, 42, 0.2);
+    overflow: hidden;
+    animation: finishPop 0.55s cubic-bezier(0.22, 1.2, 0.36, 1) both;
+  }
+  @keyframes finishPop {
+    0% { opacity: 0; transform: scale(0.7) translateY(16px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .finish-burst {
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+  }
+  .finish-burst i {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    opacity: 0;
+    animation: confetti 1.1s ease-out forwards;
+  }
+  @keyframes confetti {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.4) rotate(0deg); }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--rot)); }
+  }
+  .finish-emoji {
+    font-size: 3.2rem;
+    line-height: 1;
+    margin-bottom: 10px;
+    display: inline-block;
+    animation: trophyBounce 0.9s ease both;
+  }
+  @keyframes trophyBounce {
+    0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+    50% { transform: scale(1.25) rotate(8deg); opacity: 1; }
+    70% { transform: scale(0.92) rotate(-4deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+  .finish h2 {
+    font-size: 1.5rem; font-weight: 900; margin-bottom: 8px;
+    animation: fadeUp 0.5s ease 0.25s both;
+  }
+  .finish p {
+    color: var(--muted); font-weight: 600; margin-bottom: 18px;
+    animation: fadeUp 0.5s ease 0.4s both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .stars-row {
+    display: flex; justify-content: center; gap: 8px; margin-bottom: 16px;
+    animation: fadeUp 0.5s ease 0.15s both;
+  }
+  .stars-row span {
+    font-size: 1.6rem;
+    animation: starPop 0.5s ease both;
+  }
+  .stars-row span:nth-child(1) { animation-delay: 0.3s; }
+  .stars-row span:nth-child(2) { animation-delay: 0.45s; }
+  .stars-row span:nth-child(3) { animation-delay: 0.6s; }
+  @keyframes starPop {
+    0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+    70% { transform: scale(1.3) rotate(10deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+  .finish-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    margin-top: 8px;
+    animation: fadeUp 0.5s ease 0.55s both;
+  }
+  .icon-btn {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    padding: 0;
+    text-decoration: none;
+    color: #fff;
+    position: relative;
+    transition: transform 0.12s ease, filter 0.12s ease;
+    flex-shrink: 0;
+  }
+  .icon-btn svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+    pointer-events: none;
+  }
+  .icon-btn:active {
+    transform: translateY(3px);
+  }
+  .icon-btn:active .icon-btn-face {
+    box-shadow: 0 1px 0 rgba(0,0,0,.2) inset;
+  }
+  .icon-btn-face {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .icon-btn.back .icon-btn-face {
+    background: linear-gradient(180deg, #c5cdd8 0%, #8b96a8 45%, #6b7689 100%);
+    box-shadow:
+      0 5px 0 #4b5563,
+      0 8px 14px rgba(15, 23, 42, 0.22),
+      inset 0 2px 0 rgba(255,255,255,.45),
+      inset 0 -2px 0 rgba(0,0,0,.12);
+  }
+  .icon-btn.again .icon-btn-face {
+    background: linear-gradient(180deg, #6ee7a0 0%, #22c55e 45%, #16a34a 100%);
+    box-shadow:
+      0 5px 0 #15803d,
+      0 8px 14px rgba(22, 163, 74, 0.35),
+      inset 0 2px 0 rgba(255,255,255,.4),
+      inset 0 -2px 0 rgba(0,0,0,.12);
+  }
+  .icon-btn.back:active .icon-btn-face {
+    box-shadow:
+      0 2px 0 #4b5563,
+      0 4px 8px rgba(15, 23, 42, 0.2),
+      inset 0 2px 3px rgba(0,0,0,.15);
+  }
+  .icon-btn.again:active .icon-btn-face {
+    box-shadow:
+      0 2px 0 #15803d,
+      0 4px 8px rgba(22, 163, 74, 0.3),
+      inset 0 2px 3px rgba(0,0,0,.15);
+  }
+
+
+  @media (max-width: 480px) {
+    body { padding: 12px 10px 24px; }
+    .wrap { max-width: 100%; }
+    .board { gap: 8px 10px; }
+    .tiles-left, .tiles-right { gap: 8px; }
+    .tile {
+      height: 78px;
+      min-height: 78px;
+      max-height: 78px;
+      padding: 6px 8px;
+      border-radius: 12px;
+    }
+    .tile.pic img { height: 58px; max-width: 100%; }
+    .tile.word { font-size: .82rem; padding: 8px 6px; }
+    .finish {
+      width: min(100%, 320px);
+      padding: 28px 18px 24px;
+      border-radius: 20px;
+    }
+    .finish-emoji { font-size: 2.6rem; }
+    .stars-row span { font-size: 1.35rem; }
+    .finish h2 { font-size: 1.3rem; }
+    .finish p { font-size: 0.9rem; }
+    .icon-btn { width: 52px; height: 52px; }
+    .icon-btn svg { width: 22px; height: 22px; }
+    .finish-actions { gap: 16px; }
+    .hud { gap: 6px; }
+    .pill { font-size: .75rem; padding: 5px 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">← Classroom Language</a>
+  <h1>🔗 Match</h1>
+  <p class="lead">Match each picture with the correct phrase.</p>
+
+  <div class="hud">
+    <span class="pill" id="roundPill">Round 1 / 2</span>
+    <span class="pill" id="scorePill">0 / 4 matches</span>
+    <span class="pill" id="movesPill">0 moves</span>
+  </div>
+  <div class="progress"><span id="bar"></span></div>
+
+  <div class="board" id="board">
+    <div class="col-label left">Pictures</div>
+    <div class="col-label right">Phrases</div>
+    <div class="tiles-left" id="left"></div>
+    <div class="tiles-right" id="right"></div>
+  </div>
+
+  <div class="finish-overlay" id="finish" role="dialog" aria-modal="true" aria-labelledby="finishTitle">
+    <div class="finish">
+      <div class="finish-burst" id="burst" aria-hidden="true"></div>
+      <div class="finish-emoji" aria-hidden="true">🏆</div>
+      <div class="stars-row" aria-hidden="true"><span>⭐</span><span>⭐</span><span>⭐</span></div>
+      <h2 id="finishTitle">Well done!</h2>
+      <p id="finishMsg">You matched all the phrases.</p>
+      <div class="finish-actions">
+        <a class="icon-btn back" href="../" aria-label="Back" title="Back">
+          <span class="icon-btn-face">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </span>
+        </a>
+        <button type="button" class="icon-btn again" id="again" aria-label="Try again" title="Try again">
+          <span class="icon-btn-face">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12a9 9 0 1 1-2.6-6.2"/>
+              <path d="M21 3v6h-6"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../../../../theme.js"></script>
+<script>
+(function () {
+  var ALL = [
+    { id: 1, src: "../images/stand-up.png", phrase: "Stand up" },
+    { id: 2, src: "../images/sit-down.png", phrase: "Sit down" },
+    { id: 3, src: "../images/open-your-book.png", phrase: "Open your book" },
+    { id: 4, src: "../images/close-your-book.png", phrase: "Close your book" },
+    { id: 5, src: "../images/listen.png", phrase: "Listen" },
+    { id: 6, src: "../images/read.png", phrase: "Read" },
+    { id: 7, src: "../images/look.png", phrase: "Look" },
+    { id: 8, src: "../images/repeat.png", phrase: "Repeat" }
+  ];
+
+  // Two rounds of 4 pairs
+  var ROUND_A = ALL.slice(0, 4);
+  var ROUND_B = ALL.slice(4, 8);
+  var rounds = [ROUND_A, ROUND_B];
+  var roundIndex = 0;
+
+  var selected = null;
+  var matched = 0;
+  var moves = 0;
+  var locked = false;
+  var totalMatched = 0;
+
+  function $(id) { return document.getElementById(id); }
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function speak(text) {
+    try {
+      if (!window.speechSynthesis) return;
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = "en-US"; u.rate = 0.9;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+
+  function spawnBurst() {
+    var box = $("burst");
+    if (!box) return;
+    box.innerHTML = "";
+    var colors = ["#3b82f6", "#60a5fa", "#fbbf24", "#34d399", "#f472b6", "#a78bfa", "#fb923c"];
+    for (var n = 0; n < 28; n++) {
+      var el = document.createElement("i");
+      var angle = (Math.PI * 2 * n) / 28 + (Math.random() * 0.4);
+      var dist = 60 + Math.random() * 120;
+      var tx = Math.cos(angle) * dist + "px";
+      var ty = Math.sin(angle) * dist - 20 + "px";
+      el.style.setProperty("--tx", tx);
+      el.style.setProperty("--ty", ty);
+      el.style.setProperty("--rot", (Math.random() * 360) + "deg");
+      el.style.background = colors[n % colors.length];
+      el.style.animationDelay = (Math.random() * 0.15) + "s";
+      el.style.width = (6 + Math.random() * 8) + "px";
+      el.style.height = (6 + Math.random() * 8) + "px";
+      box.appendChild(el);
+    }
+  }
+
+    function updateHud() {
+    var pairs = rounds[roundIndex].length;
+    $("roundPill").textContent = "Round " + (roundIndex + 1) + " / " + rounds.length;
+    $("scorePill").textContent = matched + " / " + pairs + " matches";
+    $("movesPill").textContent = moves + " moves";
+    var overall = (totalMatched + matched) / ALL.length * 100;
+    $("bar").style.width = overall + "%";
+  }
+
+  function onTileClick(side, id, el) {
+    if (locked || el.classList.contains("matched")) return;
+    if (selected && selected.el === el) {
+      el.classList.remove("selected");
+      selected = null;
+      return;
+    }
+    if (selected && selected.side === side) {
+      selected.el.classList.remove("selected");
+      selected = null;
+    }
+
+    el.classList.add("selected");
+    if (!selected) {
+      selected = { side: side, id: id, el: el };
+      return;
+    }
+
+    moves += 1;
+    locked = true;
+    var a = selected, b = { side: side, id: id, el: el };
+
+    if (a.id === b.id) {
+      a.el.classList.remove("selected");
+      b.el.classList.remove("selected");
+      a.el.classList.add("matched");
+      b.el.classList.add("matched");
+      matched += 1;
+      var pair = ALL.find(function (p) { return p.id === a.id; });
+      if (pair) speak(pair.phrase);
+      selected = null;
+      locked = false;
+      updateHud();
+
+      if (matched >= rounds[roundIndex].length) {
+        totalMatched += matched;
+        setTimeout(function () {
+          if (roundIndex < rounds.length - 1) {
+            // Auto-advance to next round
+            roundIndex += 1;
+            matched = 0;
+            selected = null;
+            locked = false;
+            buildRound();
+          } else {
+            $("finishMsg").textContent = "You matched all " + ALL.length + " phrases in " + moves + " moves.";
+            $("board").style.opacity = "1";
+            spawnBurst();
+            $("finish").classList.add("show");
+          }
+        }, 700);
+      }
+    } else {
+      a.el.classList.add("wrong");
+      b.el.classList.add("wrong");
+      setTimeout(function () {
+        a.el.classList.remove("selected", "wrong");
+        b.el.classList.remove("selected", "wrong");
+        selected = null;
+        locked = false;
+        updateHud();
+      }, 500);
+    }
+  }
+
+  function buildRound() {
+    matched = 0;
+    selected = null;
+    locked = false;
+        $("finish").classList.remove("show");
+    updateHud();
+
+    var pairs = rounds[roundIndex];
+    var left = $("left");
+    var right = $("right");
+    left.innerHTML = "";
+    right.innerHTML = "";
+
+    var pics = shuffle(pairs);
+    var words = shuffle(pairs);
+
+    pics.forEach(function (p) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "tile pic";
+      btn.innerHTML = '<img src="' + p.src + '" alt="' + p.phrase + '">';
+      btn.addEventListener("click", function () { onTileClick("pic", p.id, btn); });
+      left.appendChild(btn);
+    });
+
+    words.forEach(function (p) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "tile word";
+      btn.textContent = p.phrase;
+      btn.addEventListener("click", function () { onTileClick("word", p.id, btn); });
+      right.appendChild(btn);
+    });
+  }
+
+  function startGame() {
+    roundIndex = 0;
+    moves = 0;
+    totalMatched = 0;
+    // shuffle which 4 go first optionally - keep fixed groups for clarity
+    buildRound();
+  }
+
+$("again").addEventListener("click", startGame);
+
+  startGame();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flashcards · Classroom Language · Unit 1</title>
+<link rel="stylesheet" href="../../../../../style.css">
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../../theme.css">
+<style>
+  :root {
+    --bg: #eff6ff; --card: #fff; --text: #0f172a; --muted: #64748b;
+    --line: #bfdbfe; --blue: #3b82f6; --blue-deep: #1d4ed8;
+  }
+  html[data-theme="dark"] {
+    --bg: #0b1220; --card: #151b2b; --text: #f1f5f9; --muted: #94a3b8; --line: #1e3a5f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: radial-gradient(700px 360px at 100% 0%, rgba(59,130,246,.15), transparent 55%), var(--bg);
+    color: var(--text); min-height: 100dvh; padding: 14px 14px 28px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  .back {
+    display: inline-flex; text-decoration: none; font-weight: 800; color: var(--text);
+    background: var(--card); border: 1px solid var(--line); padding: 8px 14px; border-radius: 999px; margin-bottom: 12px; font-size: .9rem;
+  }
+  h1 { font-size: 1.35rem; font-weight: 900; margin-bottom: 4px; }
+  .lead { color: var(--muted); font-weight: 600; font-size: .9rem; margin-bottom: 16px; }
+  .stage {
+    background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+    padding: 18px 14px; box-shadow: 0 12px 28px rgba(15,23,42,.06); margin-bottom: 14px;
+  }
+  .flashcard {
+    width: 100%; max-width: 360px; margin: 0 auto 14px; min-height: 280px;
+    border: none; border-radius: 20px; cursor: pointer;
+    background: linear-gradient(160deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+    color: #fff; box-shadow: 0 10px 0 #1d4ed8, 0 16px 28px rgba(37,99,235,.3);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+    padding: 18px 16px; transition: transform .12s, box-shadow .12s;
+    touch-action: pan-y; user-select: none;
+    will-change: transform;
+  }
+  .flashcard.is-swiping { transition: none; }
+  .flashcard.swipe-out-left {
+    transform: translateX(-110%) rotate(-6deg); opacity: 0;
+  }
+  .flashcard.swipe-out-right {
+    transform: translateX(110%) rotate(6deg); opacity: 0;
+  }
+  .flashcard.swipe-in { animation: flashIn 0.22s ease; }
+  @keyframes flashIn {
+    from { transform: scale(0.94); opacity: 0.4; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .flashcard:active { transform: translateY(5px); box-shadow: 0 5px 0 #1d4ed8, 0 10px 18px rgba(37,99,235,.28); }
+  .flash-img {
+    width: 100%; max-width: 220px; height: 160px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  }
+  .flash-phrase { font-size: clamp(1.25rem, 4.5vw, 1.6rem); font-weight: 900; text-align: center; line-height: 1.2; }
+  .flash-hint { font-size: .8rem; font-weight: 700; opacity: .85; }
+  .nav-row { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  .nav-btn {
+    appearance: none; border: 2px solid var(--line); background: var(--bg); color: var(--text);
+    font: inherit; font-weight: 800; min-height: 44px; min-width: 44px; padding: 10px 16px; border-radius: 999px; cursor: pointer;
+  }
+  .nav-btn.primary {
+    background: linear-gradient(180deg, #60a5fa, #3b82f6); color: #fff; border-color: transparent;
+    box-shadow: 0 4px 0 var(--blue-deep);
+  }
+  .counter { font-weight: 800; color: var(--muted); min-width: 5ch; text-align: center; }
+  .grid-label { font-size: .72rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 12px 0 8px; }
+  .thumb-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .thumb {
+    appearance: none; border: 2px solid var(--line); background: var(--card); border-radius: 12px;
+    min-height: 78px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; font-weight: 800; font-size: .68rem; color: var(--text); padding: 6px 4px;
+  }
+  .thumb img {
+    width: 48px; height: 40px; object-fit: contain; border-radius: 6px; background: #fff;
+  }
+  .thumb.active { background: linear-gradient(180deg, #60a5fa, #3b82f6); color: #fff; border-color: transparent; }
+  @media (max-width: 420px) {
+    .thumb-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .flashcard { min-height: 240px; }
+    .flash-img { height: 130px; max-width: 180px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">← Classroom Language</a>
+  <h1>🃏 Flashcards</h1>
+  <p class="lead">Tap the card to hear the phrase. Swipe or use arrows to change.</p>
+
+  <section class="stage">
+    <button type="button" class="flashcard" id="card" aria-label="Play phrase">
+      <img class="flash-img" id="img" src="../images/stand-up.png" alt="">
+      <span class="flash-phrase" id="phrase">Stand up</span>
+      <span class="flash-hint">Swipe ← → or tap to hear</span>
+    </button>
+    <div class="nav-row">
+      <button type="button" class="nav-btn" id="prev" aria-label="Previous">←</button>
+      <span class="counter"><span id="idx">1</span> / <span id="total">8</span></span>
+      <button type="button" class="nav-btn primary" id="play">Hear again</button>
+      <button type="button" class="nav-btn" id="next" aria-label="Next">→</button>
+    </div>
+  </section>
+
+  <p class="grid-label">Pick a phrase</p>
+  <div class="thumb-grid" id="thumbs"></div>
+</div>
+
+<script src="../../../../../theme.js"></script>
+<script>
+(function () {
+  var ITEMS = [
+    { phrase: "Stand up", src: "../images/stand-up.png", speak: "Stand up" },
+    { phrase: "Sit down", src: "../images/sit-down.png", speak: "Sit down" },
+    { phrase: "Open your book", src: "../images/open-your-book.png", speak: "Open your book" },
+    { phrase: "Close your book", src: "../images/close-your-book.png", speak: "Close your book" },
+    { phrase: "Listen", src: "../images/listen.png", speak: "Listen" },
+    { phrase: "Read", src: "../images/read.png", speak: "Read" },
+    { phrase: "Look", src: "../images/look.png", speak: "Look" },
+    { phrase: "Repeat", src: "../images/repeat.png", speak: "Repeat" }
+  ];
+  var i = 0;
+
+  function $(id) { return document.getElementById(id); }
+
+  function speak(text) {
+    try {
+      if (!window.speechSynthesis) return;
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = "en-US";
+      u.rate = 0.85;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+
+  function show(n) {
+    i = (n + ITEMS.length) % ITEMS.length;
+    var item = ITEMS[i];
+    $("img").src = item.src;
+    $("img").alt = item.phrase;
+    $("phrase").textContent = item.phrase;
+    $("idx").textContent = String(i + 1);
+    $("total").textContent = String(ITEMS.length);
+    document.querySelectorAll(".thumb").forEach(function (btn, idx) {
+      btn.classList.toggle("active", idx === i);
+    });
+  }
+
+  function renderThumbs() {
+    var g = $("thumbs");
+    g.innerHTML = "";
+    ITEMS.forEach(function (item, idx) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "thumb" + (idx === 0 ? " active" : "");
+      b.innerHTML = '<img src="' + item.src + '" alt="">' + item.phrase.split(" ")[0];
+      b.addEventListener("click", function () {
+        show(idx);
+        speak(ITEMS[i].speak);
+      });
+      g.appendChild(b);
+    });
+  }
+
+  $("card").addEventListener("click", function () { speak(ITEMS[i].speak); });
+  $("play").addEventListener("click", function () { speak(ITEMS[i].speak); });
+  $("prev").addEventListener("click", function () { show(i - 1); speak(ITEMS[i].speak); });
+  $("next").addEventListener("click", function () { show(i + 1); speak(ITEMS[i].speak); });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowLeft") { e.preventDefault(); $("prev").click(); }
+    if (e.key === "ArrowRight") { e.preventDefault(); $("next").click(); }
+    if (e.key === " ") { e.preventDefault(); speak(ITEMS[i].speak); }
+  });
+
+  /* Swipe gestures (same style as Numbers flashcards) */
+  (function setupSwipe() {
+    var card = $("card");
+    if (!card) return;
+    var startX = 0, startY = 0, dx = 0, dy = 0;
+    var tracking = false, touchId = null;
+    var THRESHOLD = 50, MAX_VERTICAL = 70, TAP_SLOP = 14;
+
+    function resetVisual() {
+      card.classList.remove("is-swiping");
+      card.style.transform = "";
+      card.style.opacity = "";
+    }
+
+    function onStart(x, y, id) {
+      tracking = true;
+      touchId = id != null ? id : null;
+      startX = x; startY = y; dx = 0; dy = 0;
+      card.classList.add("is-swiping");
+      card.classList.remove("swipe-in", "swipe-out-left", "swipe-out-right");
+    }
+
+    function onMove(x, y) {
+      if (!tracking) return;
+      dx = x - startX; dy = y - startY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6) {
+        var rot = dx * 0.05;
+        card.style.transform = "translateX(" + dx + "px) rotate(" + rot + "deg)";
+        card.style.opacity = String(Math.max(0.4, 1 - Math.abs(dx) / 260));
+      }
+    }
+
+    function go(dir) {
+      tracking = false;
+      resetVisual();
+      card.classList.add(dir === "left" ? "swipe-out-left" : "swipe-out-right");
+      setTimeout(function () {
+        card.classList.remove("swipe-out-left", "swipe-out-right");
+        if (dir === "left") {
+          show(i + 1);
+          speak(ITEMS[i].speak);
+        } else {
+          show(i - 1);
+          speak(ITEMS[i].speak);
+        }
+        card.classList.add("swipe-in");
+        setTimeout(function () { card.classList.remove("swipe-in"); }, 220);
+      }, 150);
+    }
+
+    function onEnd() {
+      if (!tracking) return;
+      tracking = false;
+      touchId = null;
+      var absX = Math.abs(dx), absY = Math.abs(dy);
+      if (absX >= THRESHOLD && absX > absY && absY < MAX_VERTICAL) {
+        go(dx < 0 ? "left" : "right");
+        return "swipe";
+      }
+      resetVisual();
+      if (absX < TAP_SLOP && absY < TAP_SLOP) return "tap";
+      return "cancel";
+    }
+
+    card.addEventListener("touchstart", function (e) {
+      if (!e.changedTouches || !e.changedTouches[0]) return;
+      var t = e.changedTouches[0];
+      onStart(t.clientX, t.clientY, t.identifier);
+    }, { passive: true });
+
+    card.addEventListener("touchmove", function (e) {
+      if (!tracking || !e.touches || !e.touches.length) return;
+      var t = e.touches[0];
+      for (var i = 0; i < e.touches.length; i++) {
+        if (touchId == null || e.touches[i].identifier === touchId) { t = e.touches[i]; break; }
+      }
+      onMove(t.clientX, t.clientY);
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) e.preventDefault();
+    }, { passive: false });
+
+    card.addEventListener("touchend", function (e) {
+      if (!tracking) return;
+      var result = onEnd();
+      if (result === "tap") speak(ITEMS[i].speak);
+    }, { passive: true });
+
+    card.addEventListener("touchcancel", function () {
+      tracking = false; touchId = null; resetVisual();
+    }, { passive: true });
+
+    // Desktop mouse drag
+    card.addEventListener("mousedown", function (e) {
+      if (e.button !== 0) return;
+      onStart(e.clientX, e.clientY, null);
+    });
+    window.addEventListener("mousemove", function (e) {
+      if (!tracking || touchId != null) return;
+      onMove(e.clientX, e.clientY);
+    });
+    window.addEventListener("mouseup", function () {
+      if (!tracking || touchId != null) return;
+      var result = onEnd();
+      if (result === "tap") speak(ITEMS[i].speak);
+    });
+  })();
+
+  renderThumbs();
+  show(0);
+})();
+</script>
+</body>
+</html>
