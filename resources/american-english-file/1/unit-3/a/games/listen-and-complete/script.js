@@ -1,13 +1,17 @@
 (function () {
-  const GAME_ID = "aef1-u3a-listen-and-complete";
+  const GAME_ID = "1-3a-listen-and-complete";
 
+  function starsFromPct(pct) {
+    return pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
+  }
   function awardStars(gameId, correct, total) {
     const pct = total ? Math.round((correct / total) * 100) : 0;
+    const stars = starsFromPct(pct);
     if (window.LAStars) {
-      LAStars.recordPlay(gameId);
-      LAStars.saveFromAccuracy(gameId, pct);
+      LAStars.recordPlay(gameId || GAME_ID);
+      LAStars.saveFromAccuracy(gameId || GAME_ID, pct);
     }
-    return pct;
+    return stars;
   }
 
   const ITEMS = [
@@ -38,104 +42,78 @@
   let queue = [];
   let currentIndex = 0;
   let score = 0;
-  let currentAudio = null;
   let answered = false;
+  let currentAudio = null;
+  let audioUnlocked = false;
+  let pendingPlay = null; // { src, isShort } waiting for gesture
 
   function shuffle(arr) {
-    const a = [...arr];
+    const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+      const t = a[i]; a[i] = a[j]; a[j] = t;
     }
     return a;
   }
 
-  function normalize(str) {
-    return str
+  function normalize(s) {
+    return String(s || "")
       .toLowerCase()
       .trim()
-      .replace(/[?.!]/g, "")
+      .replace(/[?.!,]+$/g, "")
       .replace(/\s+/g, " ");
-  }
-
-  
-  // ---- Sound wave visualizer ----
-  let audioCtx = null, analyser = null, vizRaf = null, vizBars = null, mediaSource = null, lastAudioEl = null;
-
-  
-
-  function
-{
-    ensureAudioCtx();
-    if (lastAudioEl !== audioEl) {
-      try { if (mediaSource) mediaSource.disconnect(); } catch (e) {}
-      try {
-        mediaSource = audioCtx.createMediaElementSource(audioEl);
-        mediaSource.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        lastAudioEl = audioEl;
-      } catch (e) {}
-    }
-  }
-
-  function
-{
-if (!container) return;
-    vizBars = container.querySelectorAll("span");
-    if (!vizBars.length) return;
-    container.classList.add("active");
-    const data = new Uint8Array(analyser ? analyser.frequencyBinCount : 16);
-    function draw() {
-      vizRaf = requestAnimationFrame(draw);
-      if (analyser) {
-        analyser.getByteFrequencyData(data);
-        const step = Math.max(1, Math.floor(data.length / vizBars.length));
-        vizBars.forEach((bar, i) => {
-          const v = data[i * step] || 0;
-          bar.style.height = Math.max(4, Math.round((v / 255) * 26)) + "px";
-        });
-      } else {
-        vizBars.forEach(bar => { bar.style.height = (4 + Math.round(Math.random() * 20)) + "px"; });
-      }
-    }
-    draw();
-  }
-
-  function
-{
-    if (vizRaf) cancelAnimationFrame(vizRaf);
-    vizRaf = null;
-    if (vizBars) {
-      vizBars.forEach(b => { b.style.height = "6px"; });
-      const p = vizBars[0] && vizBars[0].parentElement;
-      if (p) p.classList.remove("active");
-    }
-    vizBars = null;
   }
 
   function stopAudio() {
     if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.currentTime = 0;
+      try {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      } catch (e) {}
       currentAudio = null;
     }
     playBtn.classList.remove("playing");
-}
+  }
+
+  /** Preload an Audio element so play is faster after unlock */
+  function makeAudio(src) {
+    const a = new Audio();
+    a.preload = "auto";
+    a.src = src;
+    try { a.load(); } catch (e) {}
+    return a;
+  }
 
   function playSrc(src, isShort) {
     stopAudio();
-    const a = new Audio(src);
+    const a = makeAudio(src);
     currentAudio = a;
     if (isShort) playBtn.classList.add("playing");
-    try {
-const vizEl = document.getElementById("waveViz");
-      if (vizEl && isShort)
-} catch (e) {}
-    a.play().catch(() => {});
-    a.onended = () => {
+
+    const onEnd = function () {
       playBtn.classList.remove("playing");
+      playBtn.classList.remove("needs-gesture");
       if (currentAudio === a) currentAudio = null;
-};
+    };
+    a.addEventListener("ended", onEnd);
+    a.addEventListener("error", function () {
+      playBtn.classList.remove("playing");
+      console.warn("Audio failed to load:", src);
+    });
+
+    const p = a.play();
+    if (p && typeof p.then === "function") {
+      p.then(function () {
+        audioUnlocked = true;
+        pendingPlay = null;
+        playBtn.classList.remove("needs-gesture");
+      }).catch(function () {
+        // Autoplay blocked — queue this clip and wait for any user gesture
+        pendingPlay = { src: src, isShort: isShort };
+        playBtn.classList.add("needs-gesture");
+        playBtn.classList.remove("playing");
+      });
+    }
   }
 
   function playShort() {
@@ -148,16 +126,30 @@ const vizEl = document.getElementById("waveViz");
     playSrc(queue[currentIndex].fullAudio, false);
   }
 
+  /** Called on first user gesture anywhere — unlocks audio and plays pending clip */
+  function unlockAndPlay() {
+    if (audioUnlocked && !pendingPlay) return;
+    audioUnlocked = true;
+    if (pendingPlay) {
+      const job = pendingPlay;
+      pendingPlay = null;
+      playSrc(job.src, job.isShort);
+    } else if (queue[currentIndex] && !answered) {
+      // First gesture with nothing pending — still play current short if silent
+      playShort();
+    }
+  }
+
   function updateUI() {
     progressEl.textContent = currentIndex;
     scoreEl.textContent = score;
-    progressFill.style.width = (currentIndex / ITEMS.length * 100) + "%";
+    progressFill.style.width = ((currentIndex / ITEMS.length) * 100) + "%";
   }
 
   function showFeedback(type, message, correctText) {
     feedbackEl.className = "feedback " + type;
     if (correctText) {
-      feedbackEl.innerHTML = message + '<span class="correct-answer">Answer: ' + correctText + '</span>';
+      feedbackEl.innerHTML = message + '<span class="correct-answer">Answer: ' + correctText + "</span>";
     } else {
       feedbackEl.textContent = message;
     }
@@ -174,8 +166,9 @@ const vizEl = document.getElementById("waveViz");
     feedbackEl.textContent = "";
     feedbackEl.className = "feedback";
     updateUI();
-    setTimeout(playShort, 350);
     answerInput.focus();
+    // Always attempt play immediately
+    playShort();
   }
 
   function nextItem() {
@@ -190,7 +183,6 @@ const vizEl = document.getElementById("waveViz");
       showFeedback("success", "Finished! You got " + score + " out of " + queue.length);
       restartBtn.classList.remove("hidden");
       awardStars(GAME_ID, score, queue.length);
-      if (score === queue.length) launchConfetti();
       return;
     }
     loadCurrent();
@@ -216,13 +208,13 @@ const vizEl = document.getElementById("waveViz");
       scoreEl.textContent = score;
       answerInput.classList.add("correct");
       showFeedback("success", "Correct! ✓");
-      playFull();                       // play the complete phrase
+      playFull();
       setTimeout(nextItem, 1600);
     } else {
       answerInput.classList.add("wrong");
       showFeedback("error", "Not quite", queue[currentIndex].full);
-      playFull();                       // still let them hear the correct full phrase
-      setTimeout(() => {
+      playFull();
+      setTimeout(function () {
         skipBtn.textContent = "Next →";
         skipBtn.disabled = false;
       }, 400);
@@ -244,38 +236,51 @@ const vizEl = document.getElementById("waveViz");
     }
   }
 
-  function launchConfetti() {
-    const colors = ["#38bdf8", "#a78bfa", "#34d399", "#fbbf24", "#f472b6"];
-    for (let i = 0; i < 50; i++) {
-      const span = document.createElement("span");
-      span.style.left = Math.random() * 100 + "%";
-      span.style.background = colors[i % colors.length];
-      span.style.animationDuration = (1.3 + Math.random() * 1.5) + "s";
-      span.style.animationDelay = (Math.random() * 0.4) + "s";
-      confettiEl.appendChild(span);
-      setTimeout(() => span.remove(), 3400);
-    }
-  }
-
   function start() {
-    queue = shuffle(ITEMS);
+    queue = shuffle(ITEMS.slice());
     currentIndex = 0;
     score = 0;
     restartBtn.classList.add("hidden");
+    // Preload first few clips
+    queue.slice(0, 3).forEach(function (item) {
+      makeAudio(item.short);
+    });
     loadCurrent();
   }
 
-  playBtn.addEventListener("click", playShort);
-  answerForm.addEventListener("submit", (e) => {
+  // Unlock audio on the first real gesture (no visible "tap to start")
+  ["pointerdown", "touchstart", "keydown"].forEach(function (evt) {
+    document.addEventListener(
+      evt,
+      function () {
+        unlockAndPlay();
+      },
+      { capture: true, passive: true }
+    );
+  });
+
+  playBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    audioUnlocked = true;
+    pendingPlay = null;
+    playShort();
+  });
+
+  answerForm.addEventListener("submit", function (e) {
     e.preventDefault();
     checkAnswer();
   });
   skipBtn.addEventListener("click", skip);
   restartBtn.addEventListener("click", start);
 
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") playShort();
   });
 
-  start();
+  // Start game (and attempt autoplay)
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
 })();

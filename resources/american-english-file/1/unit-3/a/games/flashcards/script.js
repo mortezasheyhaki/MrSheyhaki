@@ -1,5 +1,28 @@
 (function () {
-  const GAME_ID = "aef1-u3a-flashcards";
+
+  function showStarBurst(n) {
+    n = Math.max(0, Math.min(3, Number(n) || 0));
+    if (n <= 0) return;
+    var existing = document.getElementById("starBurst");
+    if (existing) existing.remove();
+    var wrap = document.createElement("div");
+    wrap.id = "starBurst";
+    wrap.className = "star-burst stars celebrate";
+    for (var i = 1; i <= 3; i++) {
+      var s = document.createElement("span");
+      s.className = "star" + (i <= n ? " filled pop" : "");
+      s.textContent = i <= n ? "★" : "☆";
+      s.style.animationDelay = ((i - 1) * 0.18) + "s";
+      wrap.appendChild(s);
+    }
+    document.body.appendChild(wrap);
+    setTimeout(function () {
+      wrap.classList.add("star-burst-out");
+      setTimeout(function () { wrap.remove(); }, 500);
+    }, 2200);
+  }
+
+  const GAME_ID = "1-3a-flashcards";
 
   const CARDS = [
     { phrase: "cook dinner",          image: "images/cook-dinner.png",          audio: "audio/cook-dinner.mp3" },
@@ -142,7 +165,7 @@
   }
 
   function start(shuffled) {
-    if (window.LAStars) LAStars.recordPlay(GAME_ID);
+    if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.saveFromAccuracy(GAME_ID, 100); showStarBurst(3); }
 
     deck = shuffled ? shuffle(CARDS) : [...CARDS];
     index = 0;

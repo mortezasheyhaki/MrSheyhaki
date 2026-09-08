@@ -1,5 +1,5 @@
 (function () {
-  const GAME_ID = "aef1-u3a-who-said-it";
+  const GAME_ID = "1-3a-who-said-it";
 
   const PEOPLE = [
     {
@@ -287,13 +287,18 @@
         LAStars.saveFromAccuracy(GAME_ID, pct);
       }
       const stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
+      starsEl.classList.remove("celebrate");
       starsEl.innerHTML = "";
       for (let i = 1; i <= 3; i++) {
         const el = document.createElement("span");
         el.className = "star" + (i <= stars ? " filled pop" : "");
         el.textContent = i <= stars ? "★" : "☆";
-        el.style.animationDelay = i * 0.12 + "s";
+        el.style.animationDelay = (i <= stars ? (i - 1) * 0.18 : 0) + "s";
         starsEl.appendChild(el);
+      }
+      if (stars > 0) {
+        void starsEl.offsetWidth;
+        starsEl.classList.add("celebrate");
       }
     }
   }

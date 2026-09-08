@@ -135,7 +135,7 @@ body {
 .person-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 28px rgba(0,0,0,.4);
-  background: #243044;
+  background: var(--card-hover);
 }
 .person-card[data-name="Sarah"] { border-left-color: var(--sarah); }
 .person-card[data-name="Amy"] { border-left-color: var(--amy); }
@@ -236,8 +236,8 @@ body {
   font-size: 15px;
   font-weight: 700;
   border-radius: 8px;
-  border: 2px solid transparent;
-  background: #0f172a;
+  border: 2px solid var(--input-border, transparent);
+  background: var(--input-bg);
   color: var(--text);
   outline: none;
   text-align: center;
@@ -284,11 +284,15 @@ body {
 }
 .btn.primary:hover { transform: translateY(-1px); }
 .btn.secondary {
-  background: #0f172a;
+  background: var(--input-bg, var(--card));
   color: var(--text);
-  border: 1px solid var(--card-hover);
+  border: 1px solid var(--input-border, var(--card-hover));
+  box-shadow: var(--shadow);
 }
-.btn.secondary:hover { background: var(--card-hover); }
+.btn.secondary:hover {
+  background: var(--card-hover);
+  border-color: var(--accent);
+}
 
 .feedback {
   text-align: center;
@@ -381,7 +385,7 @@ body {
   height: 36px;
   border: none;
   border-radius: 50%;
-  background: #0f172a;
+  background: var(--input-bg);
   color: var(--text);
   font-size: 1.3rem;
   cursor: pointer;
@@ -409,21 +413,56 @@ body {
 }
 
 
-/* Theme toggle (uses site data-theme-toggle) */
-.theme-toggle-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  background: var(--card);
-  color: var(--text);
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  transition: background .2s, transform .15s;
-  box-shadow: var(--shadow);
+
+
+
+/* ===== Site main theme FAB (from theme.js) ===== */
+.site-theme-fab,
+button.site-theme-fab,
+[data-theme-toggle].site-theme-fab {
+  position: fixed !important;
+  top: max(14px, env(safe-area-inset-top, 0px)) !important;
+  right: max(14px, env(safe-area-inset-right, 0px)) !important;
+  bottom: auto !important;
+  left: auto !important;
+  z-index: 10060 !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--line) !important;
+  background: var(--card) !important;
+  color: var(--text) !important;
+  font-size: 22px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: var(--shadow) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.15s ease, background 0.2s ease !important;
 }
-.theme-toggle-btn:hover { background: var(--card-hover); }
-.theme-toggle-btn:active { transform: scale(.94); }
+.site-theme-fab:hover {
+  transform: translateY(-2px) scale(1.04) !important;
+  background: var(--card-hover) !important;
+}
+/* Hide any in-header theme buttons — FAB only */
+.theme-toggle-btn,
+.game-header [data-theme-toggle]:not(.site-theme-fab),
+header [data-theme-toggle]:not(.site-theme-fab) {
+  display: none !important;
+}
+
+/* Keep score/header clear of fixed theme FAB */
+@media (min-width: 701px) {
+  .game-header { padding-right: 56px; }
+}
+
+html[data-theme="light"] .btn.primary {
+  color: #fff;
+}

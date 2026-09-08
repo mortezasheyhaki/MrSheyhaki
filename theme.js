@@ -1,6 +1,7 @@
 /* =========================================================
    MR. SHEYHAKI — GLOBAL THEME TOGGLE (JS)
-   Persists light/dark across every page.
+   Wall light-switch UI + LED edges. Persists light/dark
+   across every page and game (localStorage: mrsheyhaki-theme).
 ========================================================= */
 (function () {
   "use strict";
@@ -19,53 +20,102 @@
     return "light";
   }
 
+  function currentTheme() {
+    return root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  }
+
   function applyTheme(theme) {
+    if (theme !== "dark" && theme !== "light") theme = "light";
     root.setAttribute("data-theme", theme);
     try {
       localStorage.setItem(STORAGE_KEY, theme);
     } catch (e) {}
 
+    // Sync wall-switch handle + ARIA
     document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+      btn.setAttribute(
+        "aria-label",
+        theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+      );
+      // Legacy emoji FABs (if any remain)
       var iconOnly =
         btn.classList.contains("icon-btn") ||
         btn.classList.contains("theme-icon-only") ||
         btn.getAttribute("data-icon-only") === "true";
-
-      if (theme === "dark") {
-        btn.innerHTML = iconOnly ? "☀️" : '☀️<span>Light Mode</span>';
-        btn.setAttribute("aria-label", "Switch to light mode");
-      } else {
-        btn.innerHTML = iconOnly ? "🌙" : '🌙<span>Dark Mode</span>';
-        btn.setAttribute("aria-label", "Switch to dark mode");
+      if (!btn.classList.contains("wall-switch") && iconOnly && !btn.querySelector(".switch-handle")) {
+        btn.innerHTML = theme === "dark" ? "☀️" : "🌙";
       }
     });
+
+    // Ensure LED strips exist and reflect theme
+    ensureLedStrips();
   }
 
-  applyTheme(getPreferred());
+  function toggleTheme() {
+    applyTheme(currentTheme() === "dark" ? "light" : "dark");
+  }
+
+  function ensureLedStrips() {
+    if (!document.body) return;
+    document.body.classList.add("site-led-ambient");
+    if (!document.getElementById("site-led-left")) {
+      var left = document.createElement("div");
+      left.id = "site-led-left";
+      left.className = "site-led-strip left";
+      left.setAttribute("aria-hidden", "true");
+      document.body.appendChild(left);
+    }
+    if (!document.getElementById("site-led-right")) {
+      var right = document.createElement("div");
+      right.id = "site-led-right";
+      right.className = "site-led-strip right";
+      right.setAttribute("aria-hidden", "true");
+      document.body.appendChild(right);
+    }
+  }
+
+  function buildWallSwitch() {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "site-theme-fab wall-switch";
+    btn.setAttribute("data-theme-toggle", "true");
+    btn.setAttribute("aria-label", "Toggle color theme");
+    btn.setAttribute("aria-pressed", "false");
+    btn.innerHTML =
+      '<span class="switch-plate" aria-hidden="true">' +
+        '<span class="screw top"></span>' +
+        '<span class="switch-track">' +
+          '<span class="switch-handle"></span>' +
+        '</span>' +
+        '<span class="screw bottom"></span>' +
+      '</span>';
+    return btn;
+  }
 
   function ensureThemeFab() {
     var nav = document.querySelector(".arcade-nav");
 
-    // Fixed top-right theme toggle (always site-theme-fab — never inside nav)
     var existing = document.querySelector("[data-theme-toggle]");
     if (existing) {
-      // Move out of nav/header if it was placed there and force FAB class
       if (existing.closest(".arcade-nav") || existing.closest("header")) {
         document.body.appendChild(existing);
       }
-      existing.className = "site-theme-fab theme-icon-only";
-      existing.setAttribute("data-icon-only", "true");
-      existing.setAttribute("data-theme-toggle", "true");
-      existing.type = existing.tagName === "BUTTON" ? "button" : existing.type;
+      // Upgrade plain FAB into wall switch if needed
+      if (!existing.classList.contains("wall-switch") || !existing.querySelector(".switch-handle")) {
+        var neu = buildWallSwitch();
+        existing.parentNode.replaceChild(neu, existing);
+        existing = neu;
+      } else {
+        existing.className = "site-theme-fab wall-switch";
+        existing.setAttribute("data-theme-toggle", "true");
+        if (existing.tagName === "BUTTON") existing.type = "button";
+      }
     } else {
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "site-theme-fab theme-icon-only";
-      btn.setAttribute("data-theme-toggle", "true");
-      btn.setAttribute("data-icon-only", "true");
-      btn.setAttribute("aria-label", "Toggle color theme");
-      document.body.appendChild(btn);
+      document.body.appendChild(buildWallSwitch());
     }
+
+    ensureLedStrips();
 
     // Profile icon — always last item in the header
     if (!document.querySelector(".arcade-nav .nav-profile, a.nav-profile")) {
@@ -74,26 +124,23 @@
       profile.className = "nav-link nav-profile";
       profile.setAttribute("aria-label", "My Profile");
       profile.title = "My Profile";
-      profile.innerHTML = '<span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span>';
+      profile.innerHTML =
+        '<span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span>';
       if (nav) nav.appendChild(profile);
       else {
-        // fallback: keep off the back-button corner
         profile.className = "profile-fab profile-fab--header";
         profile.textContent = "👤";
         document.body.appendChild(profile);
       }
     } else if (nav) {
-      // Ensure profile is the last child
-      var existing = nav.querySelector(".nav-profile");
-      if (existing) nav.appendChild(existing);
+      var existingProfile = nav.querySelector(".nav-profile");
+      if (existingProfile) nav.appendChild(existingProfile);
     }
 
-    // Hide legacy floating profile FAB (overlaps back button)
     document.querySelectorAll("a.profile-fab").forEach(function (el) {
       if (!el.classList.contains("profile-fab--header")) el.style.display = "none";
     });
 
-    // Refresh icon for current theme
     applyTheme(root.getAttribute("data-theme") || getPreferred());
   }
 
@@ -103,12 +150,15 @@
     document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
       if (btn.dataset.themeBound === "1") return;
       btn.dataset.themeBound = "1";
-      btn.addEventListener("click", function () {
-        var current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
-        applyTheme(current === "dark" ? "light" : "dark");
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        toggleTheme();
       });
     });
   }
+
+  // Apply preferred theme ASAP (before paint if script is early)
+  applyTheme(getPreferred());
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", bindToggles);
@@ -116,8 +166,12 @@
     bindToggles();
   }
 
-  /* data-back-one links use their href (one logical parent page).
-     Handled by normal navigation + page transitions. */
+  // Expose for debugging / other scripts
+  window.MrSheyhakiTheme = {
+    apply: applyTheme,
+    toggle: toggleTheme,
+    current: currentTheme,
+  };
 })();
 
 /* =========================================================

@@ -253,7 +253,7 @@ body {
 
 .card-back {
   transform: rotateY(180deg);
-  background: linear-gradient(165deg, #1e293b 0%, #0f172a 100%);
+  background: var(--card);
   gap: 1.4rem;
   padding: 1.5rem 1.25rem;
 }
@@ -472,21 +472,147 @@ kbd {
 }
 
 
-/* Theme toggle (uses site data-theme-toggle) */
-.theme-toggle-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  background: var(--card);
-  color: var(--text);
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  transition: background .2s, transform .15s;
-  box-shadow: var(--shadow);
+
+
+
+/* ===== Site main theme FAB (from theme.js) ===== */
+.site-theme-fab,
+button.site-theme-fab,
+[data-theme-toggle].site-theme-fab {
+  position: fixed !important;
+  top: max(14px, env(safe-area-inset-top, 0px)) !important;
+  right: max(14px, env(safe-area-inset-right, 0px)) !important;
+  bottom: auto !important;
+  left: auto !important;
+  z-index: 10060 !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--line) !important;
+  background: var(--card) !important;
+  color: var(--text) !important;
+  font-size: 22px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: var(--shadow) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.15s ease, background 0.2s ease !important;
 }
-.theme-toggle-btn:hover { background: var(--card-hover); }
-.theme-toggle-btn:active { transform: scale(.94); }
+.site-theme-fab:hover {
+  transform: translateY(-2px) scale(1.04) !important;
+  background: var(--card-hover) !important;
+}
+/* Hide any in-header theme buttons — FAB only */
+.theme-toggle-btn,
+.game-header [data-theme-toggle]:not(.site-theme-fab),
+header [data-theme-toggle]:not(.site-theme-fab) {
+  display: none !important;
+}
+
+/* Keep score/header clear of fixed theme FAB */
+@media (min-width: 701px) {
+  .game-header { padding-right: 56px; }
+}
+
+
+/* ===== Shared audio play animation (ripple + equalizer) ===== */
+.play-btn,
+.audio-btn,
+.big-play {
+  position: relative;
+  overflow: visible;
+}
+.play-btn svg,
+.audio-btn svg,
+.big-play svg {
+  position: relative;
+  z-index: 2;
+  transition: opacity .2s, transform .2s;
+}
+.play-btn .eq,
+.audio-btn .eq,
+.big-play .eq {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity .2s;
+}
+.play-btn .eq span,
+.audio-btn .eq span,
+.big-play .eq span {
+  width: 4px;
+  height: 14px;
+  background: var(--on-accent, #0f172a);
+  border-radius: 2px;
+  transform-origin: center;
+}
+.play-btn.playing svg,
+.audio-btn.playing svg,
+.big-play.playing svg {
+  opacity: 0;
+  transform: scale(.5);
+}
+.play-btn.playing .eq,
+.audio-btn.playing .eq,
+.big-play.playing .eq {
+  opacity: 1;
+}
+.play-btn.playing .eq span:nth-child(1),
+.audio-btn.playing .eq span:nth-child(1),
+.big-play.playing .eq span:nth-child(1) { animation: eq 0.5s ease-in-out infinite; }
+.play-btn.playing .eq span:nth-child(2),
+.audio-btn.playing .eq span:nth-child(2),
+.big-play.playing .eq span:nth-child(2) { animation: eq 0.5s ease-in-out infinite .1s; }
+.play-btn.playing .eq span:nth-child(3),
+.audio-btn.playing .eq span:nth-child(3),
+.big-play.playing .eq span:nth-child(3) { animation: eq 0.5s ease-in-out infinite .2s; }
+.play-btn.playing .eq span:nth-child(4),
+.audio-btn.playing .eq span:nth-child(4),
+.big-play.playing .eq span:nth-child(4) { animation: eq 0.5s ease-in-out infinite .15s; }
+
+@keyframes eq {
+  0%, 100% { transform: scaleY(.3); }
+  50% { transform: scaleY(1.35); }
+}
+
+.play-btn .wave,
+.audio-btn .wave,
+.big-play .wave {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.play-btn.playing .wave,
+.audio-btn.playing .wave,
+.big-play.playing .wave {
+  animation: ripple 1.2s ease-out infinite;
+}
+.play-btn.playing .wave:nth-child(2),
+.audio-btn.playing .wave:nth-child(2),
+.big-play.playing .wave:nth-child(2) { animation-delay: .3s; }
+.play-btn.playing .wave:nth-child(3),
+.audio-btn.playing .wave:nth-child(3),
+.big-play.playing .wave:nth-child(3) { animation-delay: .6s; }
+
+@keyframes ripple {
+  0% { transform: scale(.85); opacity: .7; }
+  100% { transform: scale(1.75); opacity: 0; }
+}

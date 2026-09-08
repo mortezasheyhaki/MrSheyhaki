@@ -89,14 +89,14 @@
 
   // Part B
   const PART_B = [
-    { sign: "−", before: "Pedro", after: "in an office.", accept: ["doesn't work", "does not work"], reveal: "doesn't work" },
-    { sign: "+", before: "Eva", after: "books in English.", accept: ["reads"], reveal: "reads" },
-    { sign: "+", before: "You", after: "Arabic very well.", accept: ["speak"], reveal: "speak" },
-    { sign: "−", before: "I", after: "games on my phone.", accept: ["don't play", "do not play"], reveal: "don't play" },
-    { sign: "+", before: "Paolo", after: "glasses.", accept: ["wears"], reveal: "wears" },
-    { sign: "+", before: "We", after: "to music in the car.", accept: ["listen"], reveal: "listen" },
-    { sign: "−", before: "They", after: "fast food.", accept: ["don't eat", "do not eat"], reveal: "don't eat" },
-    { sign: "+", before: "Julia", after: "three children.", accept: ["has"], reveal: "has" },
+    { sign: "−", before: "Pedro", after: "in an office.", hint: "work", accept: ["doesn't work", "does not work"], reveal: "doesn't work" },
+    { sign: "+", before: "Eva", after: "books in English.", hint: "read", accept: ["reads"], reveal: "reads" },
+    { sign: "+", before: "You", after: "Arabic very well.", hint: "speak", accept: ["speak"], reveal: "speak" },
+    { sign: "−", before: "I", after: "games on my phone.", hint: "play", accept: ["don't play", "do not play"], reveal: "don't play" },
+    { sign: "+", before: "Paolo", after: "glasses.", hint: "wear", accept: ["wears"], reveal: "wears" },
+    { sign: "+", before: "We", after: "to music in the car.", hint: "listen", accept: ["listen"], reveal: "listen" },
+    { sign: "−", before: "They", after: "fast food.", hint: "eat", accept: ["don't eat", "do not eat"], reveal: "don't eat" },
+    { sign: "+", before: "Julia", after: "three children.", hint: "have", accept: ["has"], reveal: "has" },
   ];
 
   // DOM
@@ -107,6 +107,7 @@
   const aPrompt = document.getElementById("aPrompt");
   const aSubject = document.getElementById("aSubject");
   const aInput = document.getElementById("aInput");
+  const aAnswerField = document.getElementById("aAnswerField");
   const aCheck = document.getElementById("aCheck");
   const aSkip = document.getElementById("aSkip");
   const aFeedback = document.getElementById("aFeedback");
@@ -122,8 +123,11 @@
 
   const bList = document.getElementById("bList");
   const bCheck = document.getElementById("bCheck");
-  const bReset = document.getElementById("bReset");
+  const bSkip = document.getElementById("bSkip");
   const bFeedback = document.getElementById("bFeedback");
+  const bCounter = document.getElementById("bCounter");
+  const bBar = document.getElementById("bBar");
+  const bScoreEl = document.getElementById("bScoreEl");
 
   let aIndex = 0;
   let aScore = 0;
@@ -133,6 +137,20 @@
   function normalize(s) {
     return s.toLowerCase().trim().replace(/[?.!]+$/g, "").replace(/\s+/g, " ");
   }
+
+  function setAnswerState(state) {
+    // state: null | "correct" | "wrong"
+    aInput.classList.remove("correct", "wrong");
+    if (aAnswerField) aAnswerField.classList.remove("is-correct", "is-wrong");
+    if (state === "correct") {
+      aInput.classList.add("correct");
+      if (aAnswerField) aAnswerField.classList.add("is-correct");
+    } else if (state === "wrong") {
+      aInput.classList.add("wrong");
+      if (aAnswerField) aAnswerField.classList.add("is-wrong");
+    }
+  }
+
 
   // ----- Tabs -----
   tabs.forEach(tab => {
@@ -151,7 +169,7 @@
     aPrompt.textContent = item.original;
     aSubject.textContent = item.subject;
     aInput.value = "";
-    aInput.classList.remove("correct", "wrong");
+    setAnswerState(null);
     aInput.disabled = false;
     // Placeholder: "goes to the movies..." only on first question as a gentle hint
     aInput.placeholder = aIndex === 0 ? "goes to the movies..." : "";
@@ -173,7 +191,7 @@
       const rest = item.reveal.slice(item.subject.length).trim();
       aInput.value = rest;
       aInput.placeholder = "";
-      aInput.classList.add(aAnswered[aIndex] ? "correct" : "wrong");
+      setAnswerState(aAnswered[aIndex] ? "correct" : "wrong");
       aInput.disabled = true;
       aLocked = true;
       aCheck.disabled = true;
@@ -205,7 +223,7 @@
     aInput.disabled = true;
 
     if (ok) {
-      aInput.classList.add("correct");
+      setAnswerState("correct");
       aFeedback.className = "feedback success";
       aFeedback.textContent = "Correct ✓";
       if (aAnswered[aIndex] === null) {
@@ -214,7 +232,7 @@
       }
       aAnswered[aIndex] = true;
     } else {
-      aInput.classList.add("wrong");
+      setAnswerState("wrong");
       aFeedback.className = "feedback error";
       aFeedback.innerHTML = 'Not quite.<span class="correct-reveal">Answer: ' + item.reveal + "</span>";
       aAnswered[aIndex] = false;
@@ -304,89 +322,186 @@
     partB.classList.remove("hidden");
   });
 
-  // ----- Part B -----
+  // ----- Part B (one sentence at a time) -----
+  let bIndex = 0;
+  let bScore = 0;
+  let bAnswered = new Array(PART_B.length).fill(null);
+  let bLocked = false;
+
   function buildB() {
+    // Render only the current item
     bList.innerHTML = "";
-    PART_B.forEach((item, i) => {
-      const div = document.createElement("div");
-      div.className = "b-item";
-      div.innerHTML = `
-        <span class="b-sign ${item.sign === "+" ? "plus" : "minus"}">${item.sign}</span>
-        <span style="font-weight:700;color:var(--muted);font-size:.8rem">Sentence ${i + 1}</span>
-        <div class="b-sentence">
-          <span>${item.before}</span>
-          <input type="text" data-index="${i}" placeholder="verb…" autocomplete="off" spellcheck="false" autocapitalize="off">
-          <span>${item.after}</span>
-        </div>
-      `;
-      bList.appendChild(div);
-    });
+    const item = PART_B[bIndex];
+    if (!item) return;
+    const isPlus = item.sign === "+";
+    const div = document.createElement("div");
+    div.className = "b-item" + (isPlus ? " is-plus" : " is-minus");
+    div.innerHTML = `
+      <div class="b-sentence">
+        <span class="b-sign ${isPlus ? "plus" : "minus"}" title="${isPlus ? "Positive" : "Negative"}">${item.sign}</span>
+        <span class="b-subj">${item.before}</span>
+        <input type="text" id="bInput" data-index="${bIndex}" placeholder="____" autocomplete="off" spellcheck="false" autocapitalize="off" aria-label="Verb">
+        <span class="b-rest">${item.after}</span>
+        <span class="b-hint">(${item.hint})</span>
+      </div>
+    `;
+    bList.appendChild(div);
+
+    const inp = document.getElementById("bInput");
+    if (bAnswered[bIndex] !== null) {
+      inp.value = PART_B[bIndex].reveal;
+      inp.classList.add(bAnswered[bIndex] ? "correct" : "wrong");
+      inp.disabled = true;
+      bLocked = true;
+      bCheck.disabled = true;
+    } else {
+      bLocked = false;
+      bCheck.disabled = false;
+      setTimeout(function () { inp && inp.focus(); }, 50);
+    }
+
+    if (bCounter) bCounter.textContent = (bIndex + 1) + " / " + PART_B.length;
+    if (bBar) bBar.style.width = ((bIndex + 1) / PART_B.length * 100) + "%";
+    if (bScoreEl) bScoreEl.textContent = bScore + " correct";
+  }
+
+  function finishB() {
+    const stars = awardStars(bScore, PART_B.length);
+    const bDone = document.getElementById("bDone");
+    const bFinal = document.getElementById("bFinalScore");
+    if (bDone) {
+      bDone.classList.remove("hidden");
+      if (bFinal) bFinal.textContent = bScore + " / " + PART_B.length + " correct";
+      renderStars(document.getElementById("bStars"), stars);
+    }
+    bCheck.disabled = true;
+    if (bSkip) bSkip.disabled = true;
+  }
+
+  function goNextB() {
+    if (bIndex < PART_B.length - 1) {
+      bIndex++;
+      bFeedback.textContent = "";
+      bFeedback.className = "feedback";
+      bCheck.disabled = false;
+      if (bSkip) {
+        bSkip.disabled = false;
+        bSkip.textContent = "Skip";
+      }
+      buildB();
+    } else {
+      finishB();
+    }
   }
 
   function checkB() {
-    const inputs = bList.querySelectorAll("input");
-    let correct = 0;
-    let filled = 0;
-
-    inputs.forEach((inp, i) => {
-      const val = normalize(inp.value);
-      inp.classList.remove("correct", "wrong");
-      if (!val) return;
-      filled++;
-      const ok = PART_B[i].accept.some(a => normalize(a) === val);
-      if (ok) {
-        inp.classList.add("correct");
-        correct++;
-      } else {
-        inp.classList.add("wrong");
-      }
-    });
-
-    if (filled < PART_B.length) {
+    if (bLocked) return;
+    const inp = document.getElementById("bInput");
+    if (!inp) return;
+    const val = normalize(inp.value);
+    if (!val) {
       bFeedback.className = "feedback info";
-      bFeedback.textContent = "Fill in all the blanks first.";
+      bFeedback.textContent = "Type the verb first.";
+      inp.focus();
       return;
     }
 
-    if (correct === PART_B.length) {
+    const item = PART_B[bIndex];
+    const ok = item.accept.some(a => normalize(a) === val);
+    inp.classList.remove("correct", "wrong");
+
+    if (ok) {
+      inp.classList.add("correct");
       bFeedback.className = "feedback success";
-      bFeedback.textContent = "Perfect! All 8 correct ✓";
-      const stars = awardStars(correct, PART_B.length);
-      const bDone = document.getElementById("bDone");
-      const bFinal = document.getElementById("bFinalScore");
-      if (bDone) {
-        bDone.classList.remove("hidden");
-        if (bFinal) bFinal.textContent = correct + " / " + PART_B.length + " correct";
-        renderStars(document.getElementById("bStars"), stars);
+      bFeedback.textContent = "Correct! ✓";
+      if (bAnswered[bIndex] !== true) {
+        bScore++;
+        bAnswered[bIndex] = true;
       }
+      if (bScoreEl) bScoreEl.textContent = bScore + " correct";
+      bLocked = true;
+      bCheck.disabled = true;
+      inp.disabled = true;
+      setTimeout(goNextB, 900);
     } else {
+      inp.classList.add("wrong");
       bFeedback.className = "feedback error";
-      bFeedback.textContent = correct + " / 8 correct — try fixing the red ones";
-      // partial progress still saves best stars
-      awardStars(correct, PART_B.length);
-      // show answers for wrong ones after a moment? keep simple
+      bFeedback.innerHTML = 'Not quite.<span class="correct-reveal">Answer: ' + item.reveal + "</span>";
+      bAnswered[bIndex] = false;
+      bLocked = true;
+      bCheck.disabled = true;
+      inp.disabled = true;
+      if (bSkip) {
+        bSkip.textContent = "Next →";
+        bSkip.disabled = false;
+      }
+    }
+  }
+
+  function skipB() {
+    if (!bLocked) {
+      // skip without answering
+      const item = PART_B[bIndex];
+      bAnswered[bIndex] = false;
+      const inp = document.getElementById("bInput");
+      if (inp) {
+        inp.value = item.reveal;
+        inp.classList.add("wrong");
+        inp.disabled = true;
+      }
+      bFeedback.className = "feedback info";
+      bFeedback.innerHTML = 'Skipped.<span class="correct-reveal">Answer: ' + item.reveal + "</span>";
+      bLocked = true;
+      bCheck.disabled = true;
+      setTimeout(goNextB, 1000);
+    } else {
+      // already checked wrong — go next
+      goNextB();
     }
   }
 
   function resetB() {
-    bList.querySelectorAll("input").forEach(inp => {
-      inp.value = "";
-      inp.classList.remove("correct", "wrong");
-    });
+    bIndex = 0;
+    bScore = 0;
+    bAnswered = new Array(PART_B.length).fill(null);
+    bLocked = false;
     bFeedback.textContent = "";
     bFeedback.className = "feedback";
+    bCheck.disabled = false;
+    if (bSkip) {
+      bSkip.disabled = false;
+      bSkip.textContent = "Skip";
+    }
+    const bDone = document.getElementById("bDone");
+    if (bDone) bDone.classList.add("hidden");
+    buildB();
   }
 
   bCheck.addEventListener("click", checkB);
-  bReset.addEventListener("click", resetB);
+  if (bSkip) bSkip.addEventListener("click", skipB);
+
+  // Enter key checks when on Part B
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter") return;
+    if (partB.classList.contains("hidden")) return;
+    if (bLocked) return;
+    e.preventDefault();
+    checkB();
+  });
+
   const bRestartBtn = document.getElementById("bRestart");
   if (bRestartBtn) {
-    bRestartBtn.addEventListener("click", () => {
-      resetB();
-      const bDone = document.getElementById("bDone");
-      if (bDone) bDone.classList.add("hidden");
-    });
+    bRestartBtn.addEventListener("click", resetB);
   }
+
+  // When switching to tab B, ensure UI is ready
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      if (tab.dataset.tab === "b") {
+        buildB();
+      }
+    });
+  });
 
   // init
   loadA();

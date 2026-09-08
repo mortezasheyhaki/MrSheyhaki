@@ -1,13 +1,39 @@
 (function () {
-  const GAME_ID = "aef1-u3a-match-rush";
+  const GAME_ID = "1-3a-match-rush";
+
+
+  function showStarBurst(n) {
+    n = Math.max(0, Math.min(3, Number(n) || 0));
+    if (n <= 0) return;
+    var existing = document.getElementById("starBurst");
+    if (existing) existing.remove();
+    var wrap = document.createElement("div");
+    wrap.id = "starBurst";
+    wrap.className = "star-burst stars celebrate";
+    wrap.setAttribute("aria-hidden", "true");
+    for (var i = 1; i <= 3; i++) {
+      var s = document.createElement("span");
+      s.className = "star" + (i <= n ? " filled pop" : "");
+      s.textContent = i <= n ? "★" : "☆";
+      s.style.animationDelay = ((i - 1) * 0.18) + "s";
+      wrap.appendChild(s);
+    }
+    document.body.appendChild(wrap);
+    setTimeout(function () {
+      wrap.classList.add("star-burst-out");
+      setTimeout(function () { wrap.remove(); }, 500);
+    }, 2200);
+  }
 
   function awardStars(gameId, correct, total) {
     const pct = total ? Math.round((correct / total) * 100) : 0;
+    const stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
     if (window.LAStars) {
-      LAStars.recordPlay(gameId);
-      LAStars.saveFromAccuracy(gameId, pct);
+      LAStars.recordPlay(gameId || GAME_ID);
+      LAStars.saveFromAccuracy(gameId || GAME_ID, pct);
     }
-    return pct;
+    showStarBurst(stars);
+    return stars;
   }
 
   // All 24 items
@@ -38,8 +64,8 @@
     { id: "work-in-an-office",    verb: "work",   phrase: "in an office",    full: "work in an office",    audio: "audio/work-in-an-office.mp3",    image: "images/work-in-an-office.png" },
   ];
 
-  // Mode 1: 5 rounds of ~5 (verb → phrase) — phone-friendly 5 vs 5
-  // Round 1 keeps the three "do" pairs together
+  // Mode 1: 4 rounds × 6 pairs (6 verbs left, 6 phrases right)
+  // Round 1 includes all three "do" pairs: housework, homework, yoga
   const VERB_ROUNDS = [
     [
       ALL.find(x => x.id === "cook-dinner"),
@@ -47,29 +73,27 @@
       ALL.find(x => x.id === "drive-a-car"),
       ALL.find(x => x.id === "do-housework"),
       ALL.find(x => x.id === "do-homework"),
+      ALL.find(x => x.id === "do-yoga"),
     ],
     [
-      ALL.find(x => x.id === "do-yoga"),
       ALL.find(x => x.id === "eat-vegetables"),
       ALL.find(x => x.id === "go-to-the-movies"),
       ALL.find(x => x.id === "have-a-garden"),
       ALL.find(x => x.id === "like-animals"),
-    ],
-    [
       ALL.find(x => x.id === "listen-to-music"),
       ALL.find(x => x.id === "live-in-an-apartment"),
+    ],
+    [
       ALL.find(x => x.id === "need-a-new-phone"),
       ALL.find(x => x.id === "read-a-book"),
       ALL.find(x => x.id === "say-sorry"),
-    ],
-    [
       ALL.find(x => x.id === "speak-german"),
       ALL.find(x => x.id === "study-history"),
       ALL.find(x => x.id === "take-an-umbrella"),
-      ALL.find(x => x.id === "want-a-coffee"),
-      ALL.find(x => x.id === "watch-tv"),
     ],
     [
+      ALL.find(x => x.id === "want-a-coffee"),
+      ALL.find(x => x.id === "watch-tv"),
       ALL.find(x => x.id === "wear-glasses"),
       ALL.find(x => x.id === "work-in-an-office"),
       ALL.find(x => x.id === "play-the-guitar"),
@@ -141,14 +165,16 @@
   }
 
   function totalPairsInMode() {
-    return 24; // 5 rounds (5+5+5+5+4)
+    return 24; // 4 rounds × 6
   }
 
   function updateProgress() {
     const total = 72; // 3 modes × 24
     const inRound = (mode === 0) ? matchCount : matched.size;
     const done = mode * 24 + inRound;
-    progressFill.style.width = (done / total * 100) + "%";
+    const pct = (done / total * 100);
+    progressFill.style.width = pct + "%";
+    progressFill.classList.toggle("has-progress", pct > 0);
     scoreEl.textContent = score;
     modeLabel.textContent = (mode + 1) + "/3";
   }
@@ -273,7 +299,7 @@
       updateProgress();
       const full = L.item.verb + " " + R.item.phrase;
       showFeedback("success", full);
-      playSrc(R.item.audio);
+      // no auto-play on match
       selectedLeft = selectedRight = null;
       checkRoundComplete();
     } else {
@@ -313,6 +339,7 @@
           <button class="big-play" id="bigPlay" aria-label="Play">
             <span class="wave"></span><span class="wave"></span><span class="wave"></span>
             <svg viewBox="0 0 24 24" width="36" height="36"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+            <div class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
           </button>
           <p class="audio-label" id="audioHint">Tap to listen</p>
         </div>
@@ -372,7 +399,7 @@
           score++;
           updateProgress();
           showFeedback("success", currentAudioItem.full);
-          playSrc(currentAudioItem.audio, bigPlay);
+          stopAudio(); // do not replay on match — only play on button tap
           // disable others temporarily then next
           optionsGrid.querySelectorAll(".pic-option, .phrase-option").forEach(o => {
             if (!o.classList.contains("matched")) o.classList.add("disabled");

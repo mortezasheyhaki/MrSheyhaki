@@ -1,13 +1,39 @@
 (function () {
-  const GAME_ID = "aef1-u3a-match-sounds";
+  const GAME_ID = "1-3a-match-sounds";
+
+
+  function showStarBurst(n) {
+    n = Math.max(0, Math.min(3, Number(n) || 0));
+    if (n <= 0) return;
+    var existing = document.getElementById("starBurst");
+    if (existing) existing.remove();
+    var wrap = document.createElement("div");
+    wrap.id = "starBurst";
+    wrap.className = "star-burst stars celebrate";
+    wrap.setAttribute("aria-hidden", "true");
+    for (var i = 1; i <= 3; i++) {
+      var s = document.createElement("span");
+      s.className = "star" + (i <= n ? " filled pop" : "");
+      s.textContent = i <= n ? "★" : "☆";
+      s.style.animationDelay = ((i - 1) * 0.18) + "s";
+      wrap.appendChild(s);
+    }
+    document.body.appendChild(wrap);
+    setTimeout(function () {
+      wrap.classList.add("star-burst-out");
+      setTimeout(function () { wrap.remove(); }, 500);
+    }, 2200);
+  }
 
   function awardStars(gameId, correct, total) {
     const pct = total ? Math.round((correct / total) * 100) : 0;
+    const stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
     if (window.LAStars) {
-      LAStars.recordPlay(gameId);
-      LAStars.saveFromAccuracy(gameId, pct);
+      LAStars.recordPlay(gameId || GAME_ID);
+      LAStars.saveFromAccuracy(gameId || GAME_ID, pct);
     }
-    return pct;
+    showStarBurst(stars);
+    return stars;
   }
 
   const ITEMS = [

@@ -1,5 +1,5 @@
 (function () {
-  const GAME_ID = "aef1-u3a-listen-and-change";
+  const GAME_ID = "1-3a-listen-and-change";
 
   // subject is shown fixed; student types the FULL sentence including the subject
   const ITEMS = [
@@ -149,75 +149,16 @@
       audio = null;
     }
     playBtn.classList.remove("playing");
-}
-
-  
-  // ---- Sound wave visualizer ----
-  let audioCtx = null, analyser = null, vizRaf = null, vizBars = null, mediaSource = null, lastAudioEl = null;
-
-  
-
-  function
-{
-    ensureAudioCtx();
-    if (lastAudioEl !== audioEl) {
-      try { if (mediaSource) mediaSource.disconnect(); } catch (e) {}
-      try {
-        mediaSource = audioCtx.createMediaElementSource(audioEl);
-        mediaSource.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        lastAudioEl = audioEl;
-      } catch (e) {}
-    }
-  }
-
-  function
-{
-if (!container) return;
-    vizBars = container.querySelectorAll("span");
-    if (!vizBars.length) return;
-    container.classList.add("active");
-    const data = new Uint8Array(analyser ? analyser.frequencyBinCount : 16);
-    function draw() {
-      vizRaf = requestAnimationFrame(draw);
-      if (analyser) {
-        analyser.getByteFrequencyData(data);
-        const step = Math.max(1, Math.floor(data.length / vizBars.length));
-        vizBars.forEach((bar, i) => {
-          const v = data[i * step] || 0;
-          bar.style.height = Math.max(3, Math.round((v / 255) * 20)) + "px";
-        });
-      } else {
-        vizBars.forEach(bar => { bar.style.height = (3 + Math.round(Math.random() * 16)) + "px"; });
-      }
-    }
-    draw();
-  }
-
-  function
-{
-    if (vizRaf) cancelAnimationFrame(vizRaf);
-    vizRaf = null;
-    if (vizBars) {
-      vizBars.forEach(b => { b.style.height = "4px"; });
-      const p = vizBars[0] && vizBars[0].parentElement;
-      if (p) p.classList.remove("active");
-    }
-    vizBars = null;
   }
 
   function playSrc(src, onEnded) {
     stopAudio();
     audio = new Audio(src);
     playBtn.classList.add("playing");
-    try {
-var vizEl = document.getElementById("waveViz");
-      if (vizEl)
-} catch (e) {}
     audio.play().catch(function () {});
     audio.onended = function () {
       playBtn.classList.remove("playing");
-if (onEnded) onEnded();
+      if (onEnded) onEnded();
     };
   }
 
@@ -234,15 +175,23 @@ if (onEnded) onEnded();
     return pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
   }
 
-  function renderStars(n) {
-    if (!starsEl) return;
-    starsEl.innerHTML = "";
+  function renderStars(el, n) {
+    if (!el) return;
+    el.classList.remove("celebrate");
+    el.innerHTML = "";
+    const count = Math.max(0, Math.min(3, Number(n) || 0));
     for (let i = 1; i <= 3; i++) {
       const s = document.createElement("span");
-      s.className = "star" + (i <= n ? " filled pop" : "");
-      s.textContent = i <= n ? "★" : "☆";
-      s.style.animationDelay = i * 0.12 + "s";
-      starsEl.appendChild(s);
+      const filled = i <= count;
+      s.className = "star" + (filled ? " filled pop" : "");
+      s.textContent = filled ? "★" : "☆";
+      s.style.animationDelay = (filled ? (i - 1) * 0.18 : 0) + "s";
+      el.appendChild(s);
+    }
+    if (count > 0) {
+      // reflow then celebrate
+      void el.offsetWidth;
+      el.classList.add("celebrate");
     }
   }
 

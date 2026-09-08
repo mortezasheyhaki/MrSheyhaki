@@ -1,13 +1,39 @@
 (function () {
-  const GAME_ID = "aef1-u3a-listen-and-write";
+  const GAME_ID = "1-3a-listen-and-write";
+
+
+  function showStarBurst(n) {
+    n = Math.max(0, Math.min(3, Number(n) || 0));
+    if (n <= 0) return;
+    var existing = document.getElementById("starBurst");
+    if (existing) existing.remove();
+    var wrap = document.createElement("div");
+    wrap.id = "starBurst";
+    wrap.className = "star-burst stars celebrate";
+    wrap.setAttribute("aria-hidden", "true");
+    for (var i = 1; i <= 3; i++) {
+      var s = document.createElement("span");
+      s.className = "star" + (i <= n ? " filled pop" : "");
+      s.textContent = i <= n ? "★" : "☆";
+      s.style.animationDelay = ((i - 1) * 0.18) + "s";
+      wrap.appendChild(s);
+    }
+    document.body.appendChild(wrap);
+    setTimeout(function () {
+      wrap.classList.add("star-burst-out");
+      setTimeout(function () { wrap.remove(); }, 500);
+    }, 2200);
+  }
 
   function awardStars(gameId, correct, total) {
     const pct = total ? Math.round((correct / total) * 100) : 0;
+    const stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
     if (window.LAStars) {
-      LAStars.recordPlay(gameId);
-      LAStars.saveFromAccuracy(gameId, pct);
+      LAStars.recordPlay(gameId || GAME_ID);
+      LAStars.saveFromAccuracy(gameId || GAME_ID, pct);
     }
-    return pct;
+    showStarBurst(stars);
+    return stars;
   }
 
   const PHRASES = [
@@ -72,61 +98,6 @@
       .replace(/\s+/g, " ");
   }
 
-  
-  // ---- Sound wave visualizer ----
-  let audioCtx = null, analyser = null, vizRaf = null, vizBars = null, mediaSource = null, lastAudioEl = null;
-
-  
-
-  function
-{
-    ensureAudioCtx();
-    if (lastAudioEl !== audioEl) {
-      try { if (mediaSource) mediaSource.disconnect(); } catch (e) {}
-      try {
-        mediaSource = audioCtx.createMediaElementSource(audioEl);
-        mediaSource.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        lastAudioEl = audioEl;
-      } catch (e) {}
-    }
-  }
-
-  function
-{
-if (!container) return;
-    vizBars = container.querySelectorAll("span");
-    if (!vizBars.length) return;
-    container.classList.add("active");
-    const data = new Uint8Array(analyser ? analyser.frequencyBinCount : 16);
-    function draw() {
-      vizRaf = requestAnimationFrame(draw);
-      if (analyser) {
-        analyser.getByteFrequencyData(data);
-        const step = Math.max(1, Math.floor(data.length / vizBars.length));
-        vizBars.forEach((bar, i) => {
-          const v = data[i * step] || 0;
-          bar.style.height = Math.max(4, Math.round((v / 255) * 26)) + "px";
-        });
-      } else {
-        vizBars.forEach(bar => { bar.style.height = (4 + Math.round(Math.random() * 20)) + "px"; });
-      }
-    }
-    draw();
-  }
-
-  function
-{
-    if (vizRaf) cancelAnimationFrame(vizRaf);
-    vizRaf = null;
-    if (vizBars) {
-      vizBars.forEach(b => { b.style.height = "6px"; });
-      const p = vizBars[0] && vizBars[0].parentElement;
-      if (p) p.classList.remove("active");
-    }
-    vizBars = null;
-  }
-
   function stopAudio() {
     if (currentAudio) {
       currentAudio.pause();
@@ -134,7 +105,7 @@ if (!container) return;
       currentAudio = null;
     }
     playBtn.classList.remove("playing");
-}
+  }
 
   function playCurrent() {
     if (!queue[currentIndex]) return;
@@ -142,15 +113,11 @@ if (!container) return;
     const a = new Audio(queue[currentIndex].audio);
     currentAudio = a;
     playBtn.classList.add("playing");
-    try {
-const vizEl = document.getElementById("waveViz");
-      if (vizEl)
-} catch (e) {}
     a.play().catch(() => {});
     a.onended = () => {
       playBtn.classList.remove("playing");
       if (currentAudio === a) currentAudio = null;
-};
+    };
   }
 
   function updateUI() {
