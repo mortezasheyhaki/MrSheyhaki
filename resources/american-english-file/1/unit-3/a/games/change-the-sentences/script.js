@@ -305,11 +305,21 @@
   });
 
   // ----- Part B -----
+  let bIndex = 0;
+  let bScore = 0;
+  let bAnswered = new Array(PART_B.length).fill(null); // true / false / null
+  let bLocked = false;
+
+  function isMobileB() {
+    return window.matchMedia("(max-width: 520px)").matches;
+  }
+
   function buildB() {
     bList.innerHTML = "";
     PART_B.forEach((item, i) => {
       const div = document.createElement("div");
-      div.className = "b-item";
+      div.className = "b-item" + (i === 0 ? " b-active" : "");
+      div.dataset.index = i;
       div.innerHTML = `
         <span class="b-sign ${item.sign === "+" ? "plus" : "minus"}">${item.sign}</span>
         <span style="font-weight:700;color:var(--muted);font-size:.8rem">Sentence ${i + 1}</span>
@@ -321,9 +331,30 @@
       `;
       bList.appendChild(div);
     });
+    updateBMobileUI();
+  }
+
+  function updateBMobileUI() {
+    if (!isMobileB()) return;
+    const items = bList.querySelectorAll(".b-item");
+    items.forEach((el, i) => {
+      el.classList.toggle("b-active", i === bIndex);
+    });
+    const counter = document.getElementById("bCounter");
+    const bar = document.getElementById("bBar");
+    const scoreEl = document.getElementById("bScoreEl");
+    if (counter) counter.textContent = (bIndex + 1) + " / " + PART_B.length;
+    if (bar) bar.style.width = ((bIndex + 1) / PART_B.length * 100) + "%";
+    if (scoreEl) scoreEl.textContent = bScore + " correct";
+    const prev = document.getElementById("bPrev");
+    const next = document.getElementById("bNext");
+    if (prev) prev.disabled = bIndex === 0;
+    if (next) next.disabled = bIndex >= PART_B.length - 1;
+    bLocked = bAnswered[bIndex] !== null;
   }
 
   function checkB() {
+    // Desktop: check all
     const inputs = bList.querySelectorAll("input");
     let correct = 0;
     let filled = 0;
@@ -362,9 +393,79 @@
     } else {
       bFeedback.className = "feedback error";
       bFeedback.textContent = correct + " / 8 correct — try fixing the red ones";
-      // partial progress still saves best stars
       awardStars(correct, PART_B.length);
-      // show answers for wrong ones after a moment? keep simple
+    }
+  }
+
+  function checkBOne() {
+    if (bLocked) return;
+    const inp = bList.querySelector('.b-item.b-active input');
+    if (!inp) return;
+    const val = normalize(inp.value);
+    inp.classList.remove("correct", "wrong");
+    if (!val) {
+      bFeedback.className = "feedback info";
+      bFeedback.textContent = "Type a verb first.";
+      return;
+    }
+    const ok = PART_B[bIndex].accept.some(a => normalize(a) === val);
+    if (ok) {
+      inp.classList.add("correct");
+      bFeedback.className = "feedback success";
+      bFeedback.textContent = "Correct! ✓";
+      if (bAnswered[bIndex] !== true) {
+        bScore++;
+        bAnswered[bIndex] = true;
+      }
+    } else {
+      inp.classList.add("wrong");
+      bFeedback.className = "feedback error";
+      bFeedback.textContent = "Try again — " + PART_B[bIndex].reveal;
+      bAnswered[bIndex] = false;
+    }
+    bLocked = true;
+    updateBMobileUI();
+    // Auto-advance after short delay if correct
+    if (ok && bIndex < PART_B.length - 1) {
+      setTimeout(() => {
+        bIndex++;
+        bLocked = bAnswered[bIndex] !== null;
+        updateBMobileUI();
+        bFeedback.textContent = "";
+        bFeedback.className = "feedback";
+        const nextInp = bList.querySelector('.b-item.b-active input');
+        if (nextInp) nextInp.focus();
+      }, 700);
+    } else if (ok && bIndex === PART_B.length - 1) {
+      finishBMobile();
+    }
+  }
+
+  function skipBOne() {
+    bAnswered[bIndex] = false;
+    bLocked = true;
+    if (bIndex < PART_B.length - 1) {
+      bIndex++;
+      bLocked = bAnswered[bIndex] !== null;
+      updateBMobileUI();
+      bFeedback.textContent = "";
+      bFeedback.className = "feedback";
+    } else {
+      finishBMobile();
+    }
+  }
+
+  function finishBMobile() {
+    const correct = bAnswered.filter(v => v === true).length;
+    bFeedback.className = "feedback success";
+    bFeedback.textContent = correct + " / " + PART_B.length + " correct";
+    const stars = awardStars(correct, PART_B.length);
+    const bDone = document.getElementById("bDone");
+    const bFinal = document.getElementById("bFinalScore");
+    if (bDone) {
+      bDone.classList.remove("hidden");
+      if (bFinal) bFinal.textContent = correct + " / " + PART_B.length + " correct";
+      renderStars(document.getElementById("bStars"), stars);
     }
   }
 
@@ -375,18 +476,49 @@
     });
     bFeedback.textContent = "";
     bFeedback.className = "feedback";
+    bIndex = 0;
+    bScore = 0;
+    bAnswered = new Array(PART_B.length).fill(null);
+    bLocked = false;
+    updateBMobileUI();
+    const bDone = document.getElementById("bDone");
+    if (bDone) bDone.classList.add("hidden");
   }
 
   bCheck.addEventListener("click", checkB);
   bReset.addEventListener("click", resetB);
+
+  const bCheckOne = document.getElementById("bCheckOne");
+  const bSkipOne = document.getElementById("bSkipOne");
+  const bPrev = document.getElementById("bPrev");
+  const bNext = document.getElementById("bNext");
+  if (bCheckOne) bCheckOne.addEventListener("click", checkBOne);
+  if (bSkipOne) bSkipOne.addEventListener("click", skipBOne);
+  if (bPrev) bPrev.addEventListener("click", () => {
+    if (bIndex > 0) {
+      bIndex--;
+      bLocked = bAnswered[bIndex] !== null;
+      updateBMobileUI();
+      bFeedback.textContent = "";
+    }
+  });
+  if (bNext) bNext.addEventListener("click", () => {
+    if (bIndex < PART_B.length - 1) {
+      bIndex++;
+      bLocked = bAnswered[bIndex] !== null;
+      updateBMobileUI();
+      bFeedback.textContent = "";
+    }
+  });
+
   const bRestartBtn = document.getElementById("bRestart");
   if (bRestartBtn) {
     bRestartBtn.addEventListener("click", () => {
       resetB();
-      const bDone = document.getElementById("bDone");
-      if (bDone) bDone.classList.add("hidden");
     });
   }
+
+  window.addEventListener("resize", updateBMobileUI);
 
   // init
   loadA();
