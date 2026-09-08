@@ -1,11 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+(function () {
+  try {
+    var t = localStorage.getItem("mrsheyhaki-theme");
+    if (t !== "light" && t !== "dark") {
+      t = (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+})();
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Complete the Article · Unit 3A | Mr. Sheyhaki</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="../../../../../../theme.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -25,6 +37,7 @@
         <span class="step-line"></span>
         <span class="step" data-step="3">3</span>
       </div>
+          <button type="button" class="theme-toggle-btn" data-theme-toggle aria-label="Toggle light/dark mode" title="Theme">🌙</button>
     </header>
 
     <!-- ========== PART 1: Topic words ========== -->
@@ -184,7 +197,7 @@
   </div>
 
   <script src="/learningarcade/la-stars.js"></script>
-  <script src="../../../../../../theme.js"></script>
   <script src="script.js"></script>
+  <script src="../../../../../../theme.js"></script>
 </body>
 </html>

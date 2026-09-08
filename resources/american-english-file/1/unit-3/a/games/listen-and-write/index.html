@@ -1,11 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+(function () {
+  try {
+    var t = localStorage.getItem("mrsheyhaki-theme");
+    if (t !== "light" && t !== "dark") {
+      t = (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+})();
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Listen & Write · Unit 3A | Mr. Sheyhaki</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="../../../../../../theme.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -24,6 +36,7 @@
           <span class="stat-label">Progress</span>
           <span id="progress">0</span><span class="stat-total">/24</span>
         </div>
+      <button type="button" class="theme-toggle-btn" data-theme-toggle aria-label="Toggle light/dark mode" title="Theme">🌙</button>
         <div class="stat">
           <span class="stat-label">Score</span>
           <span id="score">0</span>
@@ -44,8 +57,9 @@
           <svg id="playIcon" viewBox="0 0 24 24" width="36" height="36">
             <path d="M8 5v14l11-7z" fill="currentColor"/>
           </svg>
+          <div class="eq"><span></span><span></span><span></span><span></span></div>
         </button>
-        <p class="hint">Tap to listen · you can replay as many times as you like</p>
+<p class="hint">Tap to listen · you can replay as many times as you like</p>
       </div>
 
       <form id="answerForm" class="answer-form" autocomplete="off">
@@ -75,7 +89,7 @@
 
   <div id="confetti" class="confetti" aria-hidden="true"></div>
   <script src="/learningarcade/la-stars.js"></script>
-  <script src="../../../../../../theme.js"></script>
   <script src="script.js"></script>
+  <script src="../../../../../../theme.js"></script>
 </body>
 </html>

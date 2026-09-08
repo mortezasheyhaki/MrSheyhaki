@@ -72,6 +72,61 @@
       .replace(/\s+/g, " ");
   }
 
+  
+  // ---- Sound wave visualizer ----
+  let audioCtx = null, analyser = null, vizRaf = null, vizBars = null, mediaSource = null, lastAudioEl = null;
+
+  
+
+  function
+{
+    ensureAudioCtx();
+    if (lastAudioEl !== audioEl) {
+      try { if (mediaSource) mediaSource.disconnect(); } catch (e) {}
+      try {
+        mediaSource = audioCtx.createMediaElementSource(audioEl);
+        mediaSource.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        lastAudioEl = audioEl;
+      } catch (e) {}
+    }
+  }
+
+  function
+{
+if (!container) return;
+    vizBars = container.querySelectorAll("span");
+    if (!vizBars.length) return;
+    container.classList.add("active");
+    const data = new Uint8Array(analyser ? analyser.frequencyBinCount : 16);
+    function draw() {
+      vizRaf = requestAnimationFrame(draw);
+      if (analyser) {
+        analyser.getByteFrequencyData(data);
+        const step = Math.max(1, Math.floor(data.length / vizBars.length));
+        vizBars.forEach((bar, i) => {
+          const v = data[i * step] || 0;
+          bar.style.height = Math.max(4, Math.round((v / 255) * 26)) + "px";
+        });
+      } else {
+        vizBars.forEach(bar => { bar.style.height = (4 + Math.round(Math.random() * 20)) + "px"; });
+      }
+    }
+    draw();
+  }
+
+  function
+{
+    if (vizRaf) cancelAnimationFrame(vizRaf);
+    vizRaf = null;
+    if (vizBars) {
+      vizBars.forEach(b => { b.style.height = "6px"; });
+      const p = vizBars[0] && vizBars[0].parentElement;
+      if (p) p.classList.remove("active");
+    }
+    vizBars = null;
+  }
+
   function stopAudio() {
     if (currentAudio) {
       currentAudio.pause();
@@ -79,7 +134,7 @@
       currentAudio = null;
     }
     playBtn.classList.remove("playing");
-  }
+}
 
   function playCurrent() {
     if (!queue[currentIndex]) return;
@@ -87,11 +142,15 @@
     const a = new Audio(queue[currentIndex].audio);
     currentAudio = a;
     playBtn.classList.add("playing");
+    try {
+const vizEl = document.getElementById("waveViz");
+      if (vizEl)
+} catch (e) {}
     a.play().catch(() => {});
     a.onended = () => {
       playBtn.classList.remove("playing");
       if (currentAudio === a) currentAudio = null;
-    };
+};
   }
 
   function updateUI() {

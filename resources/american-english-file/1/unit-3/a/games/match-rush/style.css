@@ -1,5 +1,9 @@
-:root {
+
+/* ========== Theme tokens (site toggle: html[data-theme]) ========== */
+:root,
+html[data-theme="dark"] {
   --bg: #0f172a;
+  --bg-mid: #1e293b;
   --card: #1e293b;
   --card-hover: #334155;
   --accent: #38bdf8;
@@ -8,29 +12,48 @@
   --danger: #f87171;
   --text: #f1f5f9;
   --muted: #94a3b8;
-  --radius: 14px;
-  --shadow: 0 8px 24px rgba(0,0,0,.35);
-  --gradient-top: #1e293b;
+  --line: rgba(148, 163, 184, 0.18);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --on-accent: #0f172a;
+  --input-bg: #0f172a;
+  --input-border: #334155;
+  --overlay: rgba(15, 23, 42, 0.75);
+  --success-bg: rgba(52, 211, 153, 0.12);
+  --danger-bg: rgba(248, 113, 113, 0.12);
+  --accent-glow: rgba(56, 189, 248, 0.28);
+  --accent-2-glow: rgba(167, 139, 250, 0.28);
+  color-scheme: dark;
 }
+
 html[data-theme="light"] {
-  --bg: #f0f4f8;
+  --bg: #f1f5f9;
+  --bg-mid: #e2e8f0;
   --card: #ffffff;
-  --card-hover: #e8eef5;
-  --accent: #0ea5e9;
-  --accent-2: #8b5cf6;
-  --success: #10b981;
-  --danger: #ef4444;
+  --card-hover: #f1f5f9;
+  --accent: #0284c7;
+  --accent-2: #7c3aed;
+  --success: #059669;
+  --danger: #dc2626;
   --text: #0f172a;
   --muted: #64748b;
-  --shadow: 0 8px 24px rgba(15,23,42,.08);
-  --gradient-top: #e2e8f0;
+  --line: rgba(15, 23, 42, 0.1);
+  --shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+  --on-accent: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --overlay: rgba(15, 23, 42, 0.55);
+  --success-bg: rgba(5, 150, 105, 0.12);
+  --danger-bg: rgba(220, 38, 38, 0.1);
+  --accent-glow: rgba(2, 132, 199, 0.22);
+  --accent-2-glow: rgba(124, 58, 237, 0.2);
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   font-family: 'Nunito', system-ui, sans-serif;
-  background: radial-gradient(ellipse at top, var(--gradient-top) 0%, var(--bg) 65%);
+  background: radial-gradient(ellipse at top, var(--bg-mid) 0%, var(--bg) 65%);
   color: var(--text);
   min-height: 100vh;
   display: flex;
@@ -126,7 +149,7 @@ body {
 .mode-tab:hover { color: var(--text); }
 .mode-tab.active {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #0f172a;
+  color: var(--on-accent);
 }
 
 .progress-bar {
@@ -158,8 +181,31 @@ body {
   align-items: start;
 }
 @media (max-width: 640px) {
-  .match-grid { grid-template-columns: 1fr; }
+  /* Keep 2 columns on phone: 5 verbs left | 5 phrases right */
+  .match-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: .45rem;
+  }
   .divider { display: none !important; }
+  .col-title {
+    font-size: .65rem;
+    margin-bottom: .35rem;
+  }
+  .cards {
+    gap: .4rem;
+  }
+  .verb-card, .phrase-card {
+    min-height: 48px;
+    height: 48px;
+    font-size: .88rem;
+    padding: 0 .5rem;
+    border-radius: 12px;
+  }
+  .verb-card.matched::after,
+  .phrase-card.matched::after {
+    right: 6px;
+    font-size: .9rem;
+  }
 }
 
 .col-title {
@@ -197,11 +243,11 @@ body {
   background: var(--card-hover);
   transform: translateY(-1px);
 }
-.verb-card.selected { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,.25); }
-.phrase-card.selected { border-color: var(--accent-2); box-shadow: 0 0 0 3px rgba(167,139,250,.25); }
+.verb-card.selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.phrase-card.selected { border-color: var(--accent-2); box-shadow: 0 0 0 3px var(--accent-2-glow); }
 .verb-card.matched, .phrase-card.matched {
   border-color: var(--success);
-  background: rgba(52,211,153,.12);
+  background: var(--success-bg);
   color: var(--success);
   pointer-events: none;
 }
@@ -258,7 +304,7 @@ body {
   border-radius: 50%;
   border: none;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #0f172a;
+  color: var(--on-accent);
   display: grid; place-items: center;
   cursor: pointer;
   position: relative;
@@ -266,7 +312,7 @@ body {
   transition: transform .15s;
 }
 .big-play:hover { transform: scale(1.05); }
-.big-play.playing { box-shadow: 0 0 0 6px rgba(56,189,248,.25); }
+.big-play.playing { box-shadow: 0 0 0 6px var(--accent-glow); }
 
 .wave {
   position: absolute;
@@ -348,7 +394,7 @@ body {
   transform: translateY(-2px);
   border-color: var(--accent);
 }
-.pic-option.selected { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,.3); }
+.pic-option.selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 .pic-option.matched {
   border-color: var(--success);
   pointer-events: none;
@@ -396,7 +442,7 @@ body {
 .phrase-option.selected { border-color: var(--accent-2); }
 .phrase-option.matched {
   border-color: var(--success);
-  background: rgba(52,211,153,.12);
+  background: var(--success-bg);
   color: var(--success);
   pointer-events: none;
 }
@@ -445,7 +491,7 @@ body {
 }
 .btn.primary {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #0f172a;
+  color: var(--on-accent);
 }
 .btn.primary:hover { transform: translateY(-1px); }
 .btn.secondary {
@@ -487,3 +533,35 @@ body {
   .phrase-option { min-height: 48px; font-size: .9rem; padding: .75rem .6rem; }
   .audio-side { position: static; }
 }
+
+/* Extra phone polish for Match Rush */
+@media (max-width: 640px) {
+  body { padding: .65rem; }
+  .game-header { gap: .5rem; }
+  .header-text h1 { font-size: 1.2rem; }
+  .mode-tabs { gap: .3rem; padding: .3rem; }
+  .mode-tab { font-size: .72rem; padding: .45rem .35rem; min-width: 0; }
+  .mode-desc { font-size: .8rem; }
+  .stat { min-width: 54px; padding: .3rem .55rem; }
+  #modeLabel, #score { font-size: 1.1rem; }
+}
+
+
+/* Theme toggle (uses site data-theme-toggle) */
+.theme-toggle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: background .2s, transform .15s;
+  box-shadow: var(--shadow);
+}
+.theme-toggle-btn:hover { background: var(--card-hover); }
+.theme-toggle-btn:active { transform: scale(.94); }

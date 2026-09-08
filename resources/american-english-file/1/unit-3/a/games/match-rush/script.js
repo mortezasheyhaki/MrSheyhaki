@@ -38,8 +38,8 @@
     { id: "work-in-an-office",    verb: "work",   phrase: "in an office",    full: "work in an office",    audio: "audio/work-in-an-office.mp3",    image: "images/work-in-an-office.png" },
   ];
 
-  // Mode 1: 4 rounds of 6 (verb → phrase)
-  // Round 1 includes all three "do" pairs: housework, homework, yoga
+  // Mode 1: 5 rounds of ~5 (verb → phrase) — phone-friendly 5 vs 5
+  // Round 1 keeps the three "do" pairs together
   const VERB_ROUNDS = [
     [
       ALL.find(x => x.id === "cook-dinner"),
@@ -47,27 +47,29 @@
       ALL.find(x => x.id === "drive-a-car"),
       ALL.find(x => x.id === "do-housework"),
       ALL.find(x => x.id === "do-homework"),
-      ALL.find(x => x.id === "do-yoga"),
     ],
     [
+      ALL.find(x => x.id === "do-yoga"),
       ALL.find(x => x.id === "eat-vegetables"),
       ALL.find(x => x.id === "go-to-the-movies"),
       ALL.find(x => x.id === "have-a-garden"),
       ALL.find(x => x.id === "like-animals"),
-      ALL.find(x => x.id === "listen-to-music"),
-      ALL.find(x => x.id === "live-in-an-apartment"),
     ],
     [
+      ALL.find(x => x.id === "listen-to-music"),
+      ALL.find(x => x.id === "live-in-an-apartment"),
       ALL.find(x => x.id === "need-a-new-phone"),
       ALL.find(x => x.id === "read-a-book"),
       ALL.find(x => x.id === "say-sorry"),
+    ],
+    [
       ALL.find(x => x.id === "speak-german"),
       ALL.find(x => x.id === "study-history"),
       ALL.find(x => x.id === "take-an-umbrella"),
-    ],
-    [
       ALL.find(x => x.id === "want-a-coffee"),
       ALL.find(x => x.id === "watch-tv"),
+    ],
+    [
       ALL.find(x => x.id === "wear-glasses"),
       ALL.find(x => x.id === "work-in-an-office"),
       ALL.find(x => x.id === "play-the-guitar"),
@@ -139,7 +141,7 @@
   }
 
   function totalPairsInMode() {
-    return 24; // always 4×6
+    return 24; // 5 rounds (5+5+5+5+4)
   }
 
   function updateProgress() {
@@ -180,7 +182,7 @@
     clearFeedback();
     updateProgress();
 
-    modeDesc.textContent = MODES[0].desc + "  ·  Round " + (round + 1) + "/4";
+    modeDesc.textContent = MODES[0].desc + "  ·  Round " + (round + 1) + "/" + VERB_ROUNDS.length;
 
     const verbOrder = shuffle(pairs);
     const phraseOrder = shuffle(pairs);
@@ -298,7 +300,7 @@
     clearFeedback();
     updateProgress();
 
-    modeDesc.textContent = MODES[mode].desc + "  ·  Round " + (round + 1) + "/4";
+    modeDesc.textContent = MODES[mode].desc + "  ·  Round " + (round + 1) + "/" + AUDIO_ROUNDS.length;
 
     // Pick one random remaining item as the current audio target
     // Actually for this mode we present one audio at a time and 6 options
@@ -334,7 +336,7 @@
         return;
       }
       currentAudioItem = queue[qIndex];
-      document.getElementById("audioHint").textContent = "Item " + (qIndex + 1) + " of 6";
+      document.getElementById("audioHint").textContent = "Item " + (qIndex + 1) + " of " + pairs.length;
       // re-enable all non-matched options
       optionsGrid.querySelectorAll(".pic-option, .phrase-option").forEach(el => {
         if (!el.classList.contains("matched")) {
@@ -401,11 +403,13 @@
 
   function checkRoundComplete() {
     // Mode 0 counts pairs via matchCount; modes 1–2 add one id per item
-    const done = (mode === 0) ? (matchCount >= 6) : (matched.size >= 6);
+    const pairsInRound = (mode === 0 ? VERB_ROUNDS : AUDIO_ROUNDS)[round].length;
+    const done = (mode === 0) ? (matchCount >= pairsInRound) : (matched.size >= pairsInRound);
     if (!done) return;
     roundDone = true;
 
-    if (round < 3) {
+    const maxRound = (mode === 0 ? VERB_ROUNDS : AUDIO_ROUNDS).length - 1;
+    if (round < maxRound) {
       showFeedback("success", "Round complete! ✨");
       // Auto-advance to next round
       setTimeout(() => {
