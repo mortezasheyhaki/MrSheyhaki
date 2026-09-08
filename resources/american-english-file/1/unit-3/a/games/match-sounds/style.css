@@ -10,35 +10,19 @@
   --muted: #94a3b8;
   --radius: 16px;
   --shadow: 0 10px 30px rgba(0,0,0,.35);
-  --gradient-top: #1e293b;
-}
-
-html[data-theme="light"] {
-  --bg: #f0f4f8;
-  --card: #ffffff;
-  --card-hover: #e8eef5;
-  --accent: #0ea5e9;
-  --accent-2: #8b5cf6;
-  --success: #10b981;
-  --danger: #ef4444;
-  --text: #0f172a;
-  --muted: #64748b;
-  --shadow: 0 8px 24px rgba(15,23,42,.08);
-  --gradient-top: #e2e8f0;
+  --btn-h: 72px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   font-family: 'Nunito', system-ui, sans-serif;
-  background: radial-gradient(ellipse at top, var(--gradient-top) 0%, var(--bg) 60%);
+  background: radial-gradient(ellipse at top, #1e293b 0%, var(--bg) 60%);
   color: var(--text);
   min-height: 100vh;
-  min-height: 100dvh;
   display: flex;
   justify-content: center;
   padding: 1.25rem;
-  transition: background .25s ease, color .25s ease;
 }
 
 .game-wrap {
@@ -126,7 +110,6 @@ body {
 .match-area .column {
   display: flex;
   flex-direction: column;
-  min-height: 0;
 }
 
 .col-title {
@@ -137,25 +120,23 @@ body {
   color: var(--muted);
   margin-bottom: .75rem;
   text-align: center;
-  flex-shrink: 0;
 }
 
 .cards {
   display: flex;
   flex-direction: column;
   gap: .75rem;
-  min-height: 0;
 }
 
 /* Shared card size so both columns align */
 .sound-card,
 .phrase-card {
-  min-height: 72px;
-  height: 72px;
+  min-height: var(--btn-h);
+  height: var(--btn-h);
   box-sizing: border-box;
 }
 
-/* Sound cards */
+/* Sound cards – desktop: icon + label */
 .sound-card {
   background: var(--card);
   border-radius: var(--radius);
@@ -190,8 +171,8 @@ body {
 }
 
 .play-btn {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   display: grid;
@@ -199,14 +180,52 @@ body {
   flex-shrink: 0;
   position: relative;
   box-shadow: 0 4px 14px rgba(56,189,248,.4);
+  z-index: 1;
 }
 .play-btn svg {
   width: 22px;
   height: 22px;
   fill: #0f172a;
+  transition: transform .2s, opacity .2s;
 }
 
-/* Nice sound wave animation */
+/* Equalizer bars that appear while playing */
+.eq {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+.eq span {
+  width: 3px;
+  height: 10px;
+  background: #0f172a;
+  border-radius: 2px;
+  transform-origin: center;
+}
+.sound-card.playing .play-btn svg {
+  opacity: 0;
+  transform: scale(.6);
+}
+.sound-card.playing .eq {
+  opacity: 1;
+}
+.sound-card.playing .eq span:nth-child(1) { animation: eq 0.55s ease-in-out infinite; }
+.sound-card.playing .eq span:nth-child(2) { animation: eq 0.55s ease-in-out infinite .1s; }
+.sound-card.playing .eq span:nth-child(3) { animation: eq 0.55s ease-in-out infinite .2s; }
+.sound-card.playing .eq span:nth-child(4) { animation: eq 0.55s ease-in-out infinite .15s; }
+
+@keyframes eq {
+  0%, 100% { transform: scaleY(.35); }
+  50% { transform: scaleY(1.35); }
+}
+
+/* Nice sound wave / ripple animation */
 .wave {
   position: absolute;
   inset: -6px;
@@ -214,6 +233,7 @@ body {
   border: 2px solid var(--accent);
   opacity: 0;
   pointer-events: none;
+  z-index: 0;
 }
 .sound-card.playing .wave {
   animation: ripple 1.2s ease-out infinite;
@@ -223,7 +243,7 @@ body {
 
 @keyframes ripple {
   0%   { transform: scale(.85); opacity: .7; }
-  100% { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.7); opacity: 0; }
 }
 
 .sound-label {
@@ -251,6 +271,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 .phrase-card:hover:not(.matched):not(.selected) {
   background: var(--card-hover);
@@ -364,80 +385,108 @@ body {
   font-weight: 800;
   font-size: 1.1rem;
 }
-.phrase-card { position: relative; }
 
-
-/* mobile: one fixed page, no scrolling */
+/* ========== PHONE / MOBILE layout ========== */
 @media (max-width: 700px) {
-  body {
-    padding: .5rem;
-    height: 100dvh;
-    max-height: 100dvh;
-    overflow: hidden;
-  }
-  .game-wrap {
-    height: 100%;
-    max-height: 100dvh;
-    gap: .55rem;
-    overflow: hidden;
-  }
-  .game-header {
-    gap: .45rem;
-    flex-shrink: 0;
-  }
-  .header-text h1 { font-size: 1.15rem; }
-  .header-text p {
-    font-size: .75rem;
-    line-height: 1.25;
-    margin-top: .15rem;
-  }
-  .score-box {
-    min-width: 58px;
-    padding: .35rem .55rem;
-  }
-  .score-label { font-size: .65rem; }
-  #score { font-size: 1.1rem; }
+  body { padding: .75rem; }
+  .game-header { gap: .6rem; }
+  .header-text h1 { font-size: 1.35rem; }
+  .header-text p { font-size: .85rem; }
 
   .match-area {
-    flex: 1;
-    min-height: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: .5rem;
-    overflow: hidden;
+    grid-template-columns: auto 1fr;
+    gap: .85rem;
+    align-items: start;
   }
   .divider { display: none; }
-  .match-area .column {
-    min-height: 0;
-    overflow: hidden;
+
+  /* Sounds column becomes a tight vertical stack of pure icons */
+  .sounds-col {
+    width: auto;
   }
-  .col-title {
+  .sounds-col .col-title {
     font-size: .7rem;
-    margin-bottom: .35rem;
+    margin-bottom: .5rem;
   }
-  .cards {
-    gap: .35rem;
-    flex: 1;
-    min-height: 0;
+  .sounds-col .cards {
+    gap: .65rem;
   }
-  .sound-card, .phrase-card {
-    min-height: 0;
-    height: auto;
-    flex: 1;
-    padding: 0 .5rem;
-    font-size: .78rem;
+
+  /* Sound buttons = pure circular audio icons only */
+  .sound-card {
+    width: 64px;
+    height: 64px;
+    min-height: 64px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+    gap: 0;
+    background: transparent;
+    box-shadow: none;
+    border: 2px solid transparent;
   }
+  .sound-card:hover:not(.matched):not(.selected) {
+    background: transparent;
+    transform: scale(1.06);
+  }
+  .sound-card.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(56,189,248,.3);
+  }
+  .sound-card.matched {
+    opacity: .55;
+    border-color: var(--success);
+  }
+  .sound-card.wrong {
+    border-color: var(--danger);
+  }
+
+  /* Hide text labels on phone */
+  .sound-label,
+  .sound-hint {
+    display: none !important;
+  }
+
+  /* Bigger, more prominent play button */
   .play-btn {
-    width: 36px;
-    height: 36px;
-    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    box-shadow: 0 6px 18px rgba(56,189,248,.45);
   }
-  .game-footer {
-    flex-shrink: 0;
-    padding-top: .25rem;
+  .play-btn svg {
+    width: 24px;
+    height: 24px;
   }
-  .btn {
-    padding: .45rem 1rem;
-    font-size: .85rem;
+
+  /* Stronger ripple on mobile */
+  .wave {
+    inset: -8px;
   }
+  @keyframes ripple {
+    0%   { transform: scale(.9); opacity: .75; }
+    100% { transform: scale(1.85); opacity: 0; }
+  }
+
+  /* Phrases column fills remaining space, same height buttons */
+  .phrases-col .cards {
+    gap: .65rem;
+  }
+  .phrase-card {
+    min-height: 64px;
+    height: 64px;
+    font-size: .95rem;
+    padding: 0 .9rem;
+    border-radius: 14px;
+  }
+
+  /* Hide the check mark on the tiny sound circle so it doesn't look cramped */
+  .sound-card.matched::after {
+    display: none;
+  }
+  .phrase-card.matched::after {
+    right: 10px;
+    font-size: 1rem;
+  }
+
+  .score-box { min-width: 70px; padding: .5rem .8rem; }
 }

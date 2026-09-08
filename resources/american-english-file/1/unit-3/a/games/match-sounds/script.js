@@ -80,14 +80,19 @@
       const card = document.createElement("div");
       card.className = "sound-card";
       card.dataset.id = item.id;
+      card.setAttribute("role", "button");
+      card.setAttribute("aria-label", `Play sound ${idx + 1}`);
       card.innerHTML = `
         <div class="play-btn" aria-hidden="true">
           <span class="wave"></span>
           <span class="wave"></span>
           <span class="wave"></span>
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <div class="eq">
+            <span></span><span></span><span></span><span></span>
+          </div>
         </div>
-        <div>
+        <div class="sound-text">
           <div class="sound-label">Sound ${idx + 1}</div>
           <div class="sound-hint">Tap to listen</div>
         </div>
