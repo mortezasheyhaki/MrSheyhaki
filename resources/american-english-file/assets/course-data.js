@@ -223,6 +223,24 @@ COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.b.games = [
   { title: "His Job, Her Job", url: "his-job-her-job/" },
 ];
 
+COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.b.audio = [
+  { track: "3.08", url: "3.08.mp3", title: "Jess & her husband · jobs and hours" },
+  { track: "3.09", url: "3.09.mp3", title: "Do / Does questions" },
+  { track: "3.10", url: "3.10.mp3", title: "Jobs vocabulary" },
+  { track: "3.11", url: "3.11.mp3", title: "What do you do?" },
+  { track: "3.12", url: "3.12.mp3", title: "Pronunciation · /ɜː/" },
+  { track: "3.13", url: "3.13.mp3", title: "Jobs sentences" },
+  { track: "3.14", url: "3.14.mp3", title: "His Job, Her Job · Part 1" },
+  { track: "3.15", url: "3.15.mp3", title: "His Job, Her Job · Part 2" },
+  { track: "3.16", url: "3.16.mp3", title: "His Job, Her Job · Answers" },
+];
+
+COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.b.worksheets = [
+  { title: "Grammar · Simple Present +, −, and ?", url: "3b-grammar-simple-present.pdf" },
+  { title: "Vocabulary · Jobs", url: "3b-vocabulary-jobs.pdf" },
+  { title: "Communicative · Simple Present Questionnaire", url: "3b-communicative-questionnaire.pdf" },
+];
+
 // Node (generator script) and browser (rendered pages) both need this object.
 if (typeof module !== "undefined" && module.exports) {
   module.exports = COURSE_DATA;
