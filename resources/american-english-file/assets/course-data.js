@@ -93,8 +93,10 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.audio = [
 
 // Unit 1A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.games = [
-  { title: "Food Verb Match", url: "food-verb-match/" },
-  { title: "Food & Drinks Sort", url: "food-drinks-sort/" },
+  { title: "I am / You are", url: "be-i-you/" },
+  { title: "Make Questions", url: "make-questions/" },
+  { title: "Complete the Dialogues", url: "complete-dialogues/" },
+  { title: "Listen and Choose", url: "listen-choose/" },
 ];
 
 // Unit 3A – Games
@@ -122,10 +124,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.games = [
 ];
 
 // Unit 5A – Games
-COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.games = [
-  { title: "Food Verb Match", url: "food-verb-match/" },
-  { title: "Food & Drinks Sort", url: "food-drinks-sort/" },
-];
+COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.games = [];
 
 // Unit 6A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.games = [
@@ -150,7 +149,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
 ];
 
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)
-COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.name = "Adjectives";
 COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.games = [
   { title: "Opposite Snap", url: "opposite-snap/" },
   { title: "Match Adjectives", url: "match-adjectives/" },
@@ -160,7 +158,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.games = [
 ];
 
 // Level 1 – Unit 9A – Food games (from Vocabulary Arcade)
-COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.a.name = "What I ate yesterday";
 COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.a.games = [
   { title: "Listen & Write",    url: "listen-and-write/" },
   { title: "Listen & Match",    url: "listen-match/" },
@@ -178,8 +175,58 @@ COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.a.games = [
   }
 })();
 
-// Level 1 – Unit 3A – Match the Sounds (verb phrases)
+// Level 1 – Unit & lesson titles (from Student's Book TOC)
+COURSE_DATA["american-english-file"].levels["1"].units[1].name = "Welcome & introductions";
+COURSE_DATA["american-english-file"].levels["1"].units[1].lessons.a.name = "Welcome to the class";
+COURSE_DATA["american-english-file"].levels["1"].units[1].lessons.b.name = "One world";
+COURSE_DATA["american-english-file"].levels["1"].units[1].lessons.c.name = "What's your email?";
+COURSE_DATA["american-english-file"].levels["1"].units[2].name = "Personality & routines";
+COURSE_DATA["american-english-file"].levels["1"].units[2].lessons.a.name = "Are you neat or messy?";
+COURSE_DATA["american-english-file"].levels["1"].units[2].lessons.b.name = "Made in America";
+COURSE_DATA["american-english-file"].levels["1"].units[2].lessons.c.name = "Slow down!";
+COURSE_DATA["american-english-file"].levels["1"].units[3].name = "America & work routines";
 COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.a.name = "America: the good and the bad";
+COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.b.name = "9 to 5";
+COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.c.name = "Love me, love my dog";
+COURSE_DATA["american-english-file"].levels["1"].units[4].name = "Family & daily life";
+COURSE_DATA["american-english-file"].levels["1"].units[4].lessons.a.name = "Family photos";
+COURSE_DATA["american-english-file"].levels["1"].units[4].lessons.b.name = "From morning to night";
+COURSE_DATA["american-english-file"].levels["1"].units[4].lessons.c.name = "Blue Zones";
+COURSE_DATA["american-english-file"].levels["1"].units[5].name = "Opinions & lifestyle";
+COURSE_DATA["american-english-file"].levels["1"].units[5].lessons.a.name = "Vote for me!";
+COURSE_DATA["american-english-file"].levels["1"].units[5].lessons.b.name = "A quiet life?";
+COURSE_DATA["american-english-file"].levels["1"].units[5].lessons.c.name = "A city for all seasons";
+COURSE_DATA["american-english-file"].levels["1"].units[6].name = "Stories & celebrations";
+COURSE_DATA["american-english-file"].levels["1"].units[6].lessons.a.name = "A North African story";
+COURSE_DATA["american-english-file"].levels["1"].units[6].lessons.b.name = "The second Friday in July";
+COURSE_DATA["american-english-file"].levels["1"].units[6].lessons.c.name = "Making music";
+COURSE_DATA["american-english-file"].levels["1"].units[7].name = "Selfies & travel";
+COURSE_DATA["american-english-file"].levels["1"].units[7].lessons.a.name = "Selfies";
+COURSE_DATA["american-english-file"].levels["1"].units[7].lessons.b.name = "Wrong name, wrong place";
+COURSE_DATA["american-english-file"].levels["1"].units[7].lessons.c.name = "Happy New Year?";
+COURSE_DATA["american-english-file"].levels["1"].units[8].name = "Mysteries & places";
+COURSE_DATA["american-english-file"].levels["1"].units[8].lessons.a.name = "A murder mystery";
+COURSE_DATA["american-english-file"].levels["1"].units[8].lessons.b.name = "A house with a history";
+COURSE_DATA["american-english-file"].levels["1"].units[8].lessons.c.name = "Haunted rooms";
+COURSE_DATA["american-english-file"].levels["1"].units[9].name = "Food & facts";
+COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.a.name = "#mydinnerlastnight";
+COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.b.name = "White gold";
+COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.c.name = "Facts and figures";
+COURSE_DATA["american-english-file"].levels["1"].units[10].name = "Travel & fortune";
+COURSE_DATA["american-english-file"].levels["1"].units[10].lessons.a.name = "The most dangerous place...";
+COURSE_DATA["american-english-file"].levels["1"].units[10].lessons.b.name = "Five continents in a day";
+COURSE_DATA["american-english-file"].levels["1"].units[10].lessons.c.name = "The fortune-teller";
+COURSE_DATA["american-english-file"].levels["1"].units[11].name = "Culture & experiences";
+COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.name = "Culture shock";
+COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.b.name = "Experiences or things?";
+COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.c.name = "How smart is your phone?";
+COURSE_DATA["american-english-file"].levels["1"].units[12].name = "Entertainment & interview";
+COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.a.name = "I've seen it ten times!";
+COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.b.name = "He's been everywhere!";
+COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.c.name = "The American English File interview";
+
+
+// Level 1 – Unit 3A – Match the Sounds (verb phrases)
 COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.a.games = [
   { title: "Match the Sounds", url: "match-sounds/" },
   { title: "Match Rush", url: "match-rush/" },
@@ -209,8 +256,6 @@ COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.a.worksheets =
   { title: "Communicative · I work… He works…", url: "3a-communicative-i-work-he-works.pdf" },
 ];
 
-COURSE_DATA["american-english-file"].levels["1"].units[3].name = "America & work routines";
-COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.b.name = "Work and free time";
 COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.b.games = [
   { title: "Match the Questions", url: "match-the-questions/" },
   { title: "Do or Does?", url: "do-or-does/" },
@@ -240,6 +285,45 @@ COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.b.worksheets =
   { title: "Vocabulary · Jobs", url: "3b-vocabulary-jobs.pdf" },
   { title: "Communicative · Simple Present Questionnaire", url: "3b-communicative-questionnaire.pdf" },
 ];
+
+
+// Starter – Unit & lesson titles (from Student's Book TOC)
+COURSE_DATA["american-english-file"].levels.starter.units[1].name = "Introductions & music";
+COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.name = "A cappuccino, please";
+COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.name = "World music";
+COURSE_DATA["american-english-file"].levels.starter.units[2].name = "Vacations & transport";
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.name = "Are you on vacation?";
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.name = "That's my bus!";
+COURSE_DATA["american-english-file"].levels.starter.units[3].name = "Possessions & souvenirs";
+COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.name = "Where are my keys?";
+COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.name = "Souvenirs";
+COURSE_DATA["american-english-file"].levels.starter.units[4].name = "Family & cars";
+COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.name = "Meet the family";
+COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.name = "The perfect car";
+COURSE_DATA["american-english-file"].levels.starter.units[5].name = "Food & travel";
+COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.name = "A big breakfast?";
+COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.b.name = "A very long flight";
+COURSE_DATA["american-english-file"].levels.starter.units[6].name = "Reunions & daily routines";
+COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.name = "A school reunion";
+COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.b.name = "Good morning, goodnight";
+COURSE_DATA["american-english-file"].levels.starter.units[7].name = "Weekends & film";
+COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.name = "Have a nice weekend!";
+COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.name = "Lights, camera, action!";
+COURSE_DATA["american-english-file"].levels.starter.units[8].name = "Parking & cooking";
+COURSE_DATA["american-english-file"].levels.starter.units[8].lessons.a.name = "Can I park here?";
+COURSE_DATA["american-english-file"].levels.starter.units[8].lessons.b.name = "I ❤️ cooking";
+COURSE_DATA["american-english-file"].levels.starter.units[9].name = "Problems & work";
+COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.name = "Everything's fine!";
+COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.b.name = "Working undercover";
+COURSE_DATA["american-english-file"].levels.starter.units[10].name = "Hotels & the past";
+COURSE_DATA["american-english-file"].levels.starter.units[10].lessons.a.name = "A room with a view";
+COURSE_DATA["american-english-file"].levels.starter.units[10].lessons.b.name = "Where were you?";
+COURSE_DATA["american-english-file"].levels.starter.units[11].name = "Life in the US & daily life";
+COURSE_DATA["american-english-file"].levels.starter.units[11].lessons.a.name = "A new life in the US";
+COURSE_DATA["american-english-file"].levels.starter.units[11].lessons.b.name = "How was your day?";
+COURSE_DATA["american-english-file"].levels.starter.units[12].name = "Travel & the past";
+COURSE_DATA["american-english-file"].levels.starter.units[12].lessons.a.name = "Strangers on a train";
+COURSE_DATA["american-english-file"].levels.starter.units[12].lessons.b.name = "Review the past";
 
 // Node (generator script) and browser (rendered pages) both need this object.
 if (typeof module !== "undefined" && module.exports) {

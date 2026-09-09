@@ -199,6 +199,7 @@
     const level = course.levels[body.dataset.level];
     const unitNum = body.dataset.unit;
     const unit = level.units[unitNum];
+    const hasC = !!(unit && unit.lessons && unit.lessons.c);
     main.appendChild(
       el("section", { class: "arcade-intro" }, [
         backLink("../", "Back to " + level.label),
@@ -206,8 +207,10 @@
           class: "eyebrow",
           text: (course.label + " · " + level.label).toUpperCase(),
         }),
-        el("h1", { text: "Unit " + unitNum }),
-        el("p", { text: "Choose lesson A or B to open games, worksheets, and audio." }),
+        el("h1", { text: unit && unit.name ? ("Unit " + unitNum + " · " + unit.name) : ("Unit " + unitNum) }),
+        el("p", { text: hasC
+          ? "Choose lesson A, B, or C to open games, worksheets, and audio."
+          : "Choose lesson A or B to open games, worksheets, and audio." }),
       ])
     );
     const grid = el("section", {
@@ -215,11 +218,15 @@
       "aria-label": "Unit " + unitNum + " lessons",
     });
     const lessonMeta = {
-      a: { color: "blue", label: "Lesson A", blurb: "First half of the unit" },
-      b: { color: "green", label: "Lesson B", blurb: "Second half of the unit" },
+      a: { color: "blue", fallback: "First half of the unit" },
+      b: { color: "green", fallback: "Second half of the unit" },
+      c: { color: "purple", fallback: "Extra practice & review" },
     };
-    ["a", "b"].forEach((letter) => {
+    const letters = hasC ? ["a", "b", "c"] : ["a", "b"];
+    letters.forEach((letter) => {
       const meta = lessonMeta[letter];
+      const lessonData = unit && unit.lessons && unit.lessons[letter];
+      const lessonName = (lessonData && lessonData.name) ? lessonData.name : meta.fallback;
       grid.appendChild(
         el("a", {
           class: "ab-card ab-card--arcade ab-card--" + meta.color,
@@ -230,7 +237,7 @@
             el("span", { class: "ab-card-tag", text: "UNIT " + unitNum }),
           ]),
           el("h2", { class: "ab-card-title", text: "Unit " + unitNum + letter.toUpperCase() }),
-          el("p", { class: "ab-card-blurb", text: meta.blurb }),
+          el("p", { class: "ab-card-blurb", text: lessonName }),
           el("span", { class: "ab-card-btn", text: "OPEN" }),
         ])
       );

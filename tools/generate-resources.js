@@ -124,14 +124,15 @@ function generate() {
         page({
           pageDepth: 2,
           title: `Unit ${u}`,
-          description: `Unit ${u} of American English File — ${level.label} — choose lesson A or B.`,
+          description: `Unit ${u} of American English File — ${level.label} — choose lesson A, B${levelKey === "1" ? ", or C" : ""}.`,
           type: "unit",
           dataAttrs: { level: levelKey, unit: u },
         })
       );
 
-      // --- lesson pages a/b (pageDepth 3) ---
-      ["a", "b"].forEach((letter) => {
+      // --- lesson pages a/b (and c for Level 1) (pageDepth 3) ---
+      const lessonLetters = levelKey === "1" ? ["a", "b", "c"] : ["a", "b"];
+      lessonLetters.forEach((letter) => {
         const lessonDir = path.join(unitDir, letter);
         write(
           path.join(lessonDir, "index.html"),
