@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+(function () {
+  try {
+    var t = localStorage.getItem("mrsheyhaki-theme");
+    if (t !== "light" && t !== "dark") {
+      t = (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+})();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Jobs Match · Unit 3B | Mr. Sheyhaki</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="game-wrap">
+    <!-- Mode select -->
+    <section id="modeScreen" class="screen">
+      <header class="game-header">
+        <a href="../" class="back-btn" aria-label="Back">←</a>
+        <div class="header-text">
+          <span class="eyebrow">Unit 3B · Vocabulary</span>
+          <h1>Jobs Match</h1>
+          <p>Choose a match type · 5 rounds · 6 pairs each</p>
+        </div>
+      </header>
+      <div class="mode-grid">
+        <button type="button" class="mode-card" data-mode="word-pic">
+          <span class="mode-icon">🖼️</span>
+          <span class="mode-title">Words ↔ Pictures</span>
+          <span class="mode-desc">Match job names to photos. Audio plays on a correct match.</span>
+        </button>
+        <button type="button" class="mode-card" data-mode="word-audio">
+          <span class="mode-icon">🔊</span>
+          <span class="mode-title">Words ↔ Audio</span>
+          <span class="mode-desc">Match job names to the spoken word.</span>
+        </button>
+        <button type="button" class="mode-card" data-mode="audio-pic">
+          <span class="mode-icon">🎧</span>
+          <span class="mode-title">Audio ↔ Pictures</span>
+          <span class="mode-desc">Listen and match to the correct photo.</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Play screen -->
+    <section id="playScreen" class="screen hidden">
+      <header class="game-header compact">
+        <button type="button" class="back-btn" id="backToModes" aria-label="Modes">←</button>
+        <div class="header-text">
+          <span class="eyebrow" id="modeLabel">Words ↔ Pictures</span>
+          <h1>Round <span id="roundNum">1</span> / 5</h1>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">Matched</span>
+            <span id="matchedCount">0</span><span class="stat-total">/6</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Score</span>
+            <span id="score">0</span>
+          </div>
+        </div>
+      </header>
+      <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+
+      <div class="board" id="board">
+        <div class="col" id="colLeft"></div>
+        <div class="col" id="colRight"></div>
+      </div>
+
+      <p class="hint" id="hint">Tap a card on each side to match.</p>
+      <div id="feedback" class="feedback" role="status"></div>
+    </section>
+
+    <!-- Round / game complete -->
+    <section id="doneScreen" class="screen hidden">
+      <div class="done-box">
+        <div class="stars" id="stars"></div>
+        <h2 id="doneTitle">Round complete!</h2>
+        <p id="finalScore"></p>
+        <button type="button" class="btn primary" id="nextRoundBtn">Next round</button>
+        <button type="button" class="btn secondary" id="replayModeBtn">Play this mode again</button>
+        <button type="button" class="btn secondary" id="changeModeBtn">Change mode</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="/learningarcade/la-stars.js"></script>
+  <script src="script.js"></script>
+  <script src="../../../../../../theme.js"></script>
+</body>
+</html>

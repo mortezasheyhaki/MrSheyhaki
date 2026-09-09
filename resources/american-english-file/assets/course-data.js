@@ -112,8 +112,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.games = [
   { title: "This / That Sentences", url: "this-that-sentences/" },
 ];
 
-
-
 // Unit 4A – People & Family / Possessives
 COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.games = [
   { title: "Possessives 1", url: "possessives-1/" },
@@ -128,8 +126,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.games = [
   { title: "Food Verb Match", url: "food-verb-match/" },
   { title: "Food & Drinks Sort", url: "food-drinks-sort/" },
 ];
-
-
 
 // Unit 6A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.games = [
@@ -153,7 +149,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
   { title: "Listen & Write", url: "listen-and-write/" },
 ];
 
-
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)
 COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.name = "Adjectives";
 COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.games = [
@@ -175,7 +170,6 @@ COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.a.games = [
   { title: "Food Memory Match", url: "/learningarcade/vocabulary/food/memory/" },
 ];
 
-
 // Ensure Level 1 units have lesson C
 (function () {
   const units = COURSE_DATA["american-english-file"].levels["1"].units;
@@ -183,7 +177,6 @@ COURSE_DATA["american-english-file"].levels["1"].units[9].lessons.a.games = [
     if (!units[k].lessons.c) units[k].lessons.c = emptyLesson("");
   }
 })();
-
 
 // Level 1 – Unit 3A – Match the Sounds (verb phrases)
 COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.a.name = "America: the good and the bad";
@@ -197,6 +190,37 @@ COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.a.games = [
   { title: "Change the Sentences", url: "change-the-sentences/" },
   { title: "Listen & Change", url: "listen-and-change/" },
   { title: "Who Said It?", url: "who-said-it/" },
+  { title: "Write Their Routine", url: "write-their-routine/" },
+];
+
+COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.a.audio = [
+  { track: "3.01", url: "3.01.mp3", title: "Sounds / listening warm-up" },
+  { track: "3.02", url: "3.02.mp3", title: "Verb phrases" },
+  { track: "3.03", url: "3.03.mp3", title: "Verb phrases · endings" },
+  { track: "3.04", url: "3.04.mp3", title: "My name's Keela" },
+  { track: "3.05", url: "3.05.mp3", title: "Simple present · examples" },
+  { track: "3.06", url: "3.06.mp3", title: "He / she / it forms" },
+  { track: "3.07", url: "3.07.mp3", title: "Change the subject" },
+];
+
+COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.a.worksheets = [
+  { title: "Grammar · Simple Present + and −", url: "3a-grammar-simple-present.pdf" },
+  { title: "Vocabulary · Verb Phrases", url: "3a-vocabulary-verb-phrases.pdf" },
+  { title: "Communicative · I work… He works…", url: "3a-communicative-i-work-he-works.pdf" },
+];
+
+COURSE_DATA["american-english-file"].levels["1"].units[3].name = "America & work routines";
+COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.b.name = "Work and free time";
+COURSE_DATA["american-english-file"].levels["1"].units[3].lessons.b.games = [
+  { title: "Match the Questions", url: "match-the-questions/" },
+  { title: "Do or Does?", url: "do-or-does/" },
+  { title: "Make Questions", url: "make-questions/" },
+  { title: "Jobs Match", url: "jobs-match/" },
+  { title: "Jobs Flashcards", url: "jobs-flashcards/" },
+  { title: "Listen & Write · Jobs", url: "jobs-listen-write/" },
+  { title: "Look & Write · Jobs", url: "jobs-look-write/" },
+  { title: "Jobs Crossword", url: "jobs-crossword/" },
+  { title: "His Job, Her Job", url: "his-job-her-job/" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.

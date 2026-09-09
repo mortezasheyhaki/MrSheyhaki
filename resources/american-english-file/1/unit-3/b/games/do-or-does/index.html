@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+(function () {
+  try {
+    var t = localStorage.getItem("mrsheyhaki-theme");
+    if (t !== "light" && t !== "dark") {
+      t = (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+})();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Do or Does? · Unit 3B | Mr. Sheyhaki</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="game-wrap">
+    <header class="game-header">
+      <a href="../" class="back-btn" aria-label="Back">←</a>
+      <div class="header-text">
+        <span class="eyebrow">Unit 3B · Grammar</span>
+        <h1>Do or Does?</h1>
+        <p>Complete each question with <strong>do</strong> or <strong>does</strong>.</p>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Progress</span>
+          <span id="progress">0</span><span class="stat-total">/10</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Score</span>
+          <span id="score">0</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+
+    <section class="play-area" id="playArea">
+      <div class="question-card" id="questionCard">
+        <div class="q-num" id="qNum">1 of 10</div>
+        <p class="sentence" id="sentence"></p>
+      </div>
+
+      <div class="options" id="options">
+        <button type="button" class="opt-btn" data-choice="Do" id="btnDo">Do</button>
+        <button type="button" class="opt-btn" data-choice="Does" id="btnDoes">Does</button>
+      </div>
+
+      <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+    </section>
+
+    <div id="done" class="done-box hidden">
+      <div class="stars" id="stars" aria-label="Star rating"></div>
+      <h2>Complete!</h2>
+      <p id="finalScore"></p>
+      <button type="button" class="btn secondary" id="restartBtn">Play again</button>
+      <a class="btn primary" href="../">Back to games</a>
+    </div>
+  </div>
+
+  <script src="/learningarcade/la-stars.js"></script>
+  <script src="script.js"></script>
+  <script src="../../../../../../theme.js"></script>
+</body>
+</html>

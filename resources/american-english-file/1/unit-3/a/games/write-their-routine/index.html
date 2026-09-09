@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+(function () {
+  try {
+    var t = localStorage.getItem("mrsheyhaki-theme");
+    if (t !== "light" && t !== "dark") {
+      t = (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+})();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Write Their Routine · Unit 3A | Mr. Sheyhaki</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="game-wrap">
+    <header class="game-header">
+      <a href="../" class="back-btn" aria-label="Back">←</a>
+      <div class="header-text">
+        <span class="eyebrow">Unit 3A · Writing</span>
+        <h1>Write Their Routine</h1>
+        <p>Read each text. Then rewrite it using <strong>he</strong> or <strong>she</strong>.</p>
+      </div>
+    </header>
+
+    <nav class="steps" aria-label="Progress">
+      <button type="button" class="step active" data-step="0"><span>1</span> Read Adam</button>
+      <button type="button" class="step" data-step="1"><span>2</span> Write · He</button>
+      <button type="button" class="step" data-step="2"><span>3</span> Read Sara</button>
+      <button type="button" class="step" data-step="3"><span>4</span> Write · She</button>
+    </nav>
+
+    <!-- STEP 0: Read Adam -->
+    <section id="step0" class="panel">
+      <div class="text-card">
+        <div class="text-badge adam">Part A · Adam’s Day</div>
+        <h2>Adam’s Day</h2>
+        <div class="reading" id="adamText"></div>
+      </div>
+      <div class="panel-actions">
+        <button type="button" class="btn primary" id="toWriteAdam">Continue → Write about Adam</button>
+      </div>
+    </section>
+
+    <!-- STEP 1: Write He -->
+    <section id="step1" class="panel hidden">
+      <div class="write-card">
+        <div class="write-head">
+          <h2>Rewrite Adam’s day</h2>
+          <p class="hint">Change <strong>I</strong> → <strong>he</strong>. Make the verbs agree (gets, drinks, goes…).</p>
+        </div>
+        <button type="button" class="linkish" id="toggleAdamRef">Show / hide Adam’s text</button>
+        <div class="ref-box hidden" id="adamRef"></div>
+        <label class="sr-only" for="adamInput">Your writing about Adam</label>
+        <textarea id="adamInput" class="write-area" rows="12" placeholder="He usually gets up at 7:00. He drinks coffee…" spellcheck="true"></textarea>
+        <div class="panel-actions">
+          <button type="button" class="btn secondary" id="backToAdam">← Back</button>
+          <button type="button" class="btn primary" id="checkAdam">Check</button>
+          <button type="button" class="btn secondary" id="toSaraRead">Next →</button>
+        </div>
+        <div id="adamFeedback" class="feedback" role="status"></div>
+        <div id="adamModel" class="model-box hidden">
+          <div class="model-label">Model answer</div>
+          <div class="model-text" id="adamModelText"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2: Read Sara -->
+    <section id="step2" class="panel hidden">
+      <div class="text-card">
+        <div class="text-badge sara">Part B · Sara’s Day</div>
+        <h2>Sara’s Day</h2>
+        <div class="reading" id="saraText"></div>
+      </div>
+      <div class="panel-actions">
+        <button type="button" class="btn secondary" id="backToWriteAdam">← Back</button>
+        <button type="button" class="btn primary" id="toWriteSara">Continue → Write about Sara</button>
+      </div>
+    </section>
+
+    <!-- STEP 3: Write She -->
+    <section id="step3" class="panel hidden">
+      <div class="write-card">
+        <div class="write-head">
+          <h2>Rewrite Sara’s day</h2>
+          <p class="hint">Change <strong>I</strong> → <strong>she</strong>. Make the verbs agree.</p>
+        </div>
+        <button type="button" class="linkish" id="toggleSaraRef">Show / hide Sara’s text</button>
+        <div class="ref-box hidden" id="saraRef"></div>
+        <label class="sr-only" for="saraInput">Your writing about Sara</label>
+        <textarea id="saraInput" class="write-area" rows="12" placeholder="She gets up at 7:30. She has breakfast…" spellcheck="true"></textarea>
+        <div class="panel-actions">
+          <button type="button" class="btn secondary" id="backToSara">← Back</button>
+          <button type="button" class="btn primary" id="checkSara">Check</button>
+          <button type="button" class="btn primary" id="finishBtn">Finish</button>
+        </div>
+        <div id="saraFeedback" class="feedback" role="status"></div>
+        <div id="saraModel" class="model-box hidden">
+          <div class="model-label">Model answer</div>
+          <div class="model-text" id="saraModelText"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Done -->
+    <section id="done" class="panel done-box hidden">
+      <div class="stars" id="stars" aria-label="Star rating"></div>
+      <h2>Great work!</h2>
+      <p id="finalScore"></p>
+      <p class="muted">You practiced changing routines from <strong>I</strong> to <strong>he / she</strong>.</p>
+      <button type="button" class="btn secondary" id="restartBtn">Play again</button>
+      <a class="btn primary" href="../">Back to games</a>
+    </section>
+  </div>
+
+  <script src="/learningarcade/la-stars.js"></script>
+  <script src="script.js"></script>
+  <script src="../../../../../../theme.js"></script>
+</body>
+</html>
