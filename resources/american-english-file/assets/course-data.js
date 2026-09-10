@@ -106,6 +106,13 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.games = [
   { title: "Complete the Conversations", url: "complete-conversations/" },
 ];
 
+// Unit 1A – Worksheets
+COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.worksheets = [
+  { title: "Grammar · verb be (I and you)", url: "1a-grammar-verb-be.pdf" },
+  { title: "Vocabulary · Numbers 0–10 and days", url: "1a-vocabulary-numbers-days.pdf" },
+  { title: "Communicative · Are you…?", url: "1a-communicative-are-you.pdf" },
+];
+
 // Unit 3A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "Pictures + Words Match", url: "pictures-words-match/" },

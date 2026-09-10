@@ -245,14 +245,17 @@ html[data-theme="dark"] .od-instruction { color: #94a3b8; }
 .od-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: #fff;
   border: 2px solid #e2e8f0;
   border-radius: 14px;
-  padding: 4px 6px 4px 10px;
+  padding: 4px 6px 4px 6px;
   transition: border-color 0.15s, background 0.15s, transform 0.15s, box-shadow 0.15s;
-  touch-action: manipulation;
+  /* allow vertical pan on list, but touch-drag handler will preventDefault once dragging */
+  touch-action: pan-y;
   user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
 }
 html[data-theme="dark"] .od-item {
   background: rgba(255,255,255,0.04);
@@ -264,12 +267,68 @@ html[data-theme="dark"] .od-item {
   box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.15);
 }
 .od-item.od-dragging {
-  opacity: 0.55;
-  transform: scale(0.98);
+  opacity: 0.4;
+  transform: scale(0.97);
+  border-style: dashed;
 }
 .od-item.od-drag-over {
   border-color: #6366f1;
-  background: rgba(99,102,241,0.08);
+  background: rgba(99,102,241,0.12);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+  transform: scale(1.02);
+}
+
+/* Drag handle – easier target on phones */
+.od-handle {
+  flex-shrink: 0;
+  width: 28px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 12px;
+  letter-spacing: -2px;
+  font-weight: 900;
+  line-height: 1;
+  border-radius: 8px;
+  cursor: grab;
+}
+html[data-theme="dark"] .od-handle { color: #64748b; }
+
+/* Floating ghost while finger-dragging */
+.od-ghost {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(1.05);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: #fff;
+  border: 2px solid #6366f1;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(99, 102, 241, 0.35), 0 4px 12px rgba(0,0,0,0.12);
+  font-weight: 800;
+  font-size: 1rem;
+  color: #1e293b;
+  white-space: nowrap;
+}
+html[data-theme="dark"] .od-ghost {
+  background: #1e293b;
+  color: #f1f5f9;
+  border-color: #818cf8;
+}
+.od-ghost .od-emoji { font-size: 1.2rem; }
+
+/* Lock body scroll while dragging on phone */
+body.od-touch-dragging {
+  overflow: hidden !important;
+  touch-action: none;
+}
+body.od-touch-dragging .od-list {
+  overflow: hidden;
 }
 .od-item.od-ok {
   border-color: #10b981;

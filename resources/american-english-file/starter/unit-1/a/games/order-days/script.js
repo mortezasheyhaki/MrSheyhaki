@@ -100,15 +100,46 @@
     }, ok ? 900 : 1400);
   }
 
+  function clearDragOver() {
+    const list = document.getElementById("od-list");
+    if (!list) return;
+    list.querySelectorAll(".od-item").forEach((el) => el.classList.remove("od-drag-over"));
+  }
+
+  function itemIndexFromPoint(x, y) {
+    const list = document.getElementById("od-list");
+    if (!list) return -1;
+    const els = list.querySelectorAll(".od-item");
+    for (let i = 0; i < els.length; i++) {
+      const r = els[i].getBoundingClientRect();
+      if (y >= r.top && y <= r.bottom) return i;
+    }
+    // Before first / after last
+    if (els.length) {
+      const first = els[0].getBoundingClientRect();
+      const last = els[els.length - 1].getBoundingClientRect();
+      if (y < first.top) return 0;
+      if (y > last.bottom) return els.length - 1;
+    }
+    return -1;
+  }
+
+  function removeGhost() {
+    const g = document.getElementById("od-ghost");
+    if (g) g.remove();
+  }
+
   function renderList() {
     const list = document.getElementById("od-list");
     if (!list) return;
+    removeGhost();
     list.innerHTML = order
       .map((id, i) => {
         const d = dayById(id);
         const sel = selectedIndex === i ? " od-selected" : "";
         return `
           <li class="od-item${sel}" data-index="${i}" draggable="true">
+            <span class="od-handle" aria-hidden="true" title="Drag">⋮⋮</span>
             <span class="od-num" aria-hidden="true">${i + 1}</span>
             <button type="button" class="od-day" data-index="${i}">
               <span class="od-emoji" aria-hidden="true">${d.emoji}</span>
@@ -150,10 +181,15 @@
       };
     });
 
-    // Drag & drop
+    // Desktop HTML5 drag & drop
     list.querySelectorAll(".od-item").forEach((li) => {
       li.addEventListener("dragstart", (e) => {
         if (locked) {
+          e.preventDefault();
+          return;
+        }
+        // Don't start HTML5 drag from buttons
+        if (e.target.closest(".od-move, .od-day")) {
           e.preventDefault();
           return;
         }
@@ -166,14 +202,14 @@
       });
       li.addEventListener("dragend", () => {
         li.classList.remove("od-dragging");
-        list.querySelectorAll(".od-item").forEach((el) => el.classList.remove("od-drag-over"));
+        clearDragOver();
         dragIndex = null;
       });
       li.addEventListener("dragover", (e) => {
         e.preventDefault();
         if (locked || dragIndex === null) return;
         e.dataTransfer.dropEffect = "move";
-        list.querySelectorAll(".od-item").forEach((el) => el.classList.remove("od-drag-over"));
+        clearDragOver();
         li.classList.add("od-drag-over");
       });
       li.addEventListener("dragleave", () => li.classList.remove("od-drag-over"));
@@ -186,6 +222,132 @@
         dragIndex = null;
       });
     });
+
+    // Touch drag & drop (phones / tablets)
+    bindTouchDrag(list);
+  }
+
+  function bindTouchDrag(list) {
+    let touchFrom = null;
+    let ghost = null;
+    let activeLi = null;
+    let startY = 0;
+    let startX = 0;
+    let moved = false;
+    let suppressClick = false;
+
+    function onTouchStart(e) {
+      if (locked) return;
+      const touch = e.touches[0];
+      if (!touch) return;
+      const li = e.target.closest(".od-item");
+      if (!li || !list.contains(li)) return;
+      // Allow up/down buttons to work normally
+      if (e.target.closest(".od-move")) return;
+
+      touchFrom = +li.dataset.index;
+      activeLi = li;
+      startY = touch.clientY;
+      startX = touch.clientX;
+      moved = false;
+      suppressClick = false;
+    }
+
+    function onTouchMove(e) {
+      if (touchFrom === null || !activeLi) return;
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      const dy = touch.clientY - startY;
+      const dx = touch.clientX - startX;
+
+      // Require a little movement before treating as drag
+      if (!moved && Math.abs(dy) < 8 && Math.abs(dx) < 8) return;
+
+      if (!moved) {
+        moved = true;
+        suppressClick = true;
+        selectedIndex = null;
+        activeLi.classList.add("od-dragging");
+        document.body.classList.add("od-touch-dragging");
+
+        // Floating ghost that follows the finger
+        ghost = document.createElement("div");
+        ghost.id = "od-ghost";
+        ghost.className = "od-ghost";
+        const d = dayById(order[touchFrom]);
+        ghost.innerHTML = `<span class="od-emoji">${d.emoji}</span><span class="od-label">${d.label}</span>`;
+        document.body.appendChild(ghost);
+      }
+
+      e.preventDefault(); // stop page scroll while dragging
+
+      ghost.style.left = touch.clientX + "px";
+      ghost.style.top = touch.clientY + "px";
+
+      clearDragOver();
+      const over = itemIndexFromPoint(touch.clientX, touch.clientY);
+      if (over >= 0 && over !== touchFrom) {
+        const el = list.querySelector(`.od-item[data-index="${over}"]`);
+        if (el) el.classList.add("od-drag-over");
+      }
+    }
+
+    function onTouchEnd(e) {
+      if (touchFrom === null) return;
+      const touch = (e.changedTouches && e.changedTouches[0]) || null;
+
+      if (moved && touch) {
+        const to = itemIndexFromPoint(touch.clientX, touch.clientY);
+        if (to >= 0 && to !== touchFrom) {
+          move(touchFrom, to);
+        } else {
+          // No reorder — just refresh classes
+          if (activeLi) activeLi.classList.remove("od-dragging");
+          clearDragOver();
+          renderList();
+        }
+      } else if (!moved && activeLi) {
+        // Treated as tap on the row (not the day button) — optional select via handle
+        activeLi.classList.remove("od-dragging");
+      }
+
+      removeGhost();
+      document.body.classList.remove("od-touch-dragging");
+      clearDragOver();
+      touchFrom = null;
+      activeLi = null;
+      ghost = null;
+      moved = false;
+
+      // Block the synthetic click that would fire after a drag
+      if (suppressClick) {
+        const block = (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          document.removeEventListener("click", block, true);
+        };
+        document.addEventListener("click", block, true);
+        setTimeout(() => document.removeEventListener("click", block, true), 400);
+      }
+    }
+
+    function onTouchCancel() {
+      if (activeLi) activeLi.classList.remove("od-dragging");
+      removeGhost();
+      document.body.classList.remove("od-touch-dragging");
+      clearDragOver();
+      touchFrom = null;
+      activeLi = null;
+      ghost = null;
+      moved = false;
+    }
+
+    // Use passive:false on move so we can preventDefault (stop scroll)
+    list.addEventListener("touchstart", onTouchStart, { passive: true });
+    list.addEventListener("touchmove", onTouchMove, { passive: false });
+    list.addEventListener("touchend", onTouchEnd, { passive: true });
+    list.addEventListener("touchcancel", onTouchCancel, { passive: true });
   }
 
   function render() {
@@ -204,8 +366,8 @@
           <h1>Order the Days</h1>
           <p class="od-desc">Put the days of the week in order<br>from <strong>Monday</strong> to <strong>Sunday</strong>.</p>
           <ul class="od-tips">
-            <li>Use ↑ ↓ or drag to move</li>
-            <li>Tap two days to swap them</li>
+            <li>Drag days up or down (works on phone)</li>
+            <li>Or use ↑ ↓ / tap two days to swap</li>
           </ul>
           <button type="button" class="od-btn" id="od-start">Start</button>
         </section>`;
