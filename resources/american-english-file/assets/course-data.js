@@ -102,6 +102,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.games = [
   { title: "Listen and Choose", url: "listen-choose/" },
   { title: "Order the Days", url: "order-days/" },
   { title: "Listen & Repeat", url: "listen-repeat-days/" },
+  { title: "Word Search · Numbers & Days", url: "wordsearch-days-numbers/" },
 ];
 
 // Unit 3A – Games
