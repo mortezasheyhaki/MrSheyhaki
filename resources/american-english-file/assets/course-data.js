@@ -104,6 +104,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.games = [
   { title: "Listen & Repeat", url: "listen-repeat-days/" },
   { title: "Word Search · Numbers & Days", url: "wordsearch-days-numbers/" },
   { title: "Complete the Conversations", url: "complete-conversations/" },
+  { title: "Are you…?", url: "are-you/" },
 ];
 
 // Unit 1A – Worksheets
