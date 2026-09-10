@@ -11,8 +11,10 @@ body > header,
 
 html, body {
   height: 100%;
+  height: 100dvh;
   margin: 0;
   padding: 0 !important;
+  overflow: hidden !important;
 }
 
 body {
@@ -25,20 +27,23 @@ html[data-theme="dark"] body {
 }
 
 .mq-game {
-  max-width: 520px;
+  max-width: 480px;
   margin: 0 auto;
-  padding: 16px 16px 40px;
-  min-height: 100vh;
+  padding: 10px 14px 12px;
+  height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .mq-topbar {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   flex-shrink: 0;
 }
 
@@ -544,3 +549,20 @@ html[data-theme="dark"] .mq-done-score { color: #a78bfa; }
     transform: translateY(-10px) scale(0.98);
   }
 }
+
+
+/* auto no-scroll media for mq */
+@media (max-height: 700px) {
+  .mq-game { padding: 8px 12px 8px; }
+  .mq-topbar { margin-bottom: 6px; }
+  .mq-start,
+  .mq-done { padding: 8px 4px 12px !important; }
+  .mq-card { padding: 12px !important; }
+}
+@media (max-height: 600px) {
+  .mq-game { padding: 6px 10px 6px; }
+}
+
+.mq-card, .mq-play, .mq-main { flex: 1; min-height: 0; overflow: auto; }
+.mq-start, .mq-done { overflow: hidden; }
+

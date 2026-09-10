@@ -2,25 +2,34 @@
 .arcade-header-bar, .arcade-nav, .nav-profile, [data-theme-toggle], .theme-toggle, body > header, .site-footer {
   display: none !important;
 }
-html, body { height: 100%; margin: 0; padding: 0 !important; }
+html, body {
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
 body { background: #f4f6fb !important; color: #1e293b !important; }
 html[data-theme="dark"] body { background: #0f1117 !important; color: #f1f5f9 !important; }
 
 .dg-game {
-  max-width: 540px;
+  max-width: 480px;
   margin: 0 auto;
-  padding: 16px 16px 40px;
-  min-height: 100vh;
+  padding: 10px 14px 12px;
+  height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .dg-topbar {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   animation: dg-fade-in 0.35s ease both;
 }
 .dg-back-btn {
@@ -340,3 +349,20 @@ html[data-theme="dark"] .dg-done-score { color: #a78bfa; }
   .dg-line-text { font-size: 16px; }
   .dg-input { font-size: 15px; }
 }
+
+
+/* auto no-scroll media for dg */
+@media (max-height: 700px) {
+  .dg-game { padding: 8px 12px 8px; }
+  .dg-topbar { margin-bottom: 6px; }
+  .dg-start,
+  .dg-done { padding: 8px 4px 12px !important; }
+  .dg-card { padding: 12px !important; }
+}
+@media (max-height: 600px) {
+  .dg-game { padding: 6px 10px 6px; }
+}
+
+.dg-card, .dg-play { flex: 1; min-height: 0; overflow: auto; }
+.dg-start, .dg-done { overflow: hidden; }
+

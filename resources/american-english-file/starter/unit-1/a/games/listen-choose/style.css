@@ -2,25 +2,34 @@
 .arcade-header-bar, .arcade-nav, .nav-profile, [data-theme-toggle], .theme-toggle, body > header, .site-footer {
   display: none !important;
 }
-html, body { height: 100%; margin: 0; padding: 0 !important; }
+html, body {
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
 body { background: #f4f6fb !important; color: #1e293b !important; }
 html[data-theme="dark"] body { background: #0f1117 !important; color: #f1f5f9 !important; }
 
 .lc-game {
   max-width: 960px;
   margin: 0 auto;
-  padding: 16px 16px 40px;
-  min-height: 100vh;
+  padding: 10px 14px 12px;
+  height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .lc-topbar {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
   animation: lc-fade 0.35s ease both;
 }
 .lc-back-btn {
@@ -510,3 +519,32 @@ html[data-theme="dark"] .lc-progress-track { background: #2b3040; }
 .lc-play-btn:active {
   animation: none;
 }
+
+
+/* auto no-scroll media for lc */
+@media (max-height: 700px) {
+  .lc-game { padding: 8px 12px 8px; }
+  .lc-topbar { margin-bottom: 6px; }
+  .lc-start,
+  .lc-done { padding: 8px 4px 12px !important; }
+  .lc-card { padding: 12px !important; }
+}
+@media (max-height: 600px) {
+  .lc-game { padding: 6px 10px 6px; }
+}
+
+.lc-play, .lc-main {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.lc-start, .lc-done { overflow: hidden; padding: 8px 4px 12px !important; }
+.lc-photo, .lc-image-wrap, .lc-img-wrap {
+  max-height: min(32vh, 220px) !important;
+}
+.lc-photo img, .lc-image-wrap img, .lc-img-wrap img {
+  max-height: min(32vh, 220px) !important;
+  object-fit: contain !important;
+}
+
