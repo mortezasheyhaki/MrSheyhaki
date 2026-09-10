@@ -114,6 +114,14 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.worksheet
   { title: "Communicative · Are you…?", url: "1a-communicative-are-you.pdf" },
 ];
 
+// Unit 1B – Games (World music)
+COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.games = [
+  { title: "Match the Songs", url: "match-songs-countries/", label: "Vocabulary" },
+  { title: "Match Countries", url: "match-countries/", label: "Vocabulary" },
+  { title: "Listen & Write (Countries)", url: "listen-write/", label: "Vocabulary" },
+  { title: "Listen & Find (Countries)", url: "listen-find-countries/", label: "Vocabulary" },
+];
+
 // Unit 3A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "Pictures + Words Match", url: "pictures-words-match/" },
