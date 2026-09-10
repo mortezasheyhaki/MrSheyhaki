@@ -1,5 +1,6 @@
 /* Make Questions – Starter Unit 1A (strict + celebration) */
 (function () {
+  const GAME_ID = "starter-1a-make-questions";
   const ITEMS = [
   {
     "id": 1,
@@ -38,6 +39,8 @@
 
   let index = 0;
   let locked = false;
+  let correctAttempts = 0;
+  let totalAttempts = 0;
 
   function clean(s) {
     return (s || "")
@@ -80,6 +83,8 @@
     document.getElementById("mq-start-btn").addEventListener("click", () => {
       index = 0;
       locked = false;
+      correctAttempts = 0;
+      totalAttempts = 0;
       renderItem();
     });
   }
@@ -129,7 +134,9 @@
       const feedback = document.getElementById("mq-feedback");
       const hint = document.getElementById("mq-hint");
 
+      totalAttempts++;
       if (isCorrect(val, item.answer)) {
+        correctAttempts++;
         input.classList.add("correct");
         feedback.className = "mq-feedback ok";
         feedback.textContent = "✓ " + item.answer;
@@ -181,7 +188,17 @@
     }
   }
 
+  function calcStars(correct, total) {
+    if (total <= 0) return 0;
+    if (correct >= total) return 3;
+    if (correct >= total - 1 || correct / total >= 0.8) return 2;
+    if (correct >= Math.ceil(total / 2)) return 1;
+    return 0;
+  }
+
   function showDone() {
+    const stars = calcStars(correctAttempts, Math.max(totalAttempts, 1));
+    if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
     app.innerHTML = `
       <div class="mq-topbar">
         <a class="mq-back-btn" href="../" title="Back to Unit 1A Games" aria-label="Back">←</a>
@@ -193,26 +210,28 @@
           <div class="mq-ring"></div>
         </div>
         <div class="mq-done-inner">
-          <div class="mq-trophy" aria-hidden="true">🏆</div>
+          <div class="mq-trophy" aria-hidden="true">${stars === 3 ? "🏆" : "🌟"}</div>
           <div class="mq-stars" aria-hidden="true">
-            <span class="mq-star">⭐</span>
-            <span class="mq-star">⭐</span>
-            <span class="mq-star">⭐</span>
+            <span class="mq-star">${stars >= 1 ? "⭐" : "☆"}</span>
+            <span class="mq-star">${stars >= 2 ? "⭐" : "☆"}</span>
+            <span class="mq-star">${stars >= 3 ? "⭐" : "☆"}</span>
           </div>
-          <h1>Well done!</h1>
+          <h1>${stars === 3 ? "Perfect!" : "Well done!"}</h1>
           <p>You made all the questions.</p>
-          <div class="mq-done-score">${ITEMS.length} / ${ITEMS.length} complete</div>
+          <div class="mq-done-score">${ITEMS.length} / ${ITEMS.length} complete · ${correctAttempts}/${totalAttempts} correct tries</div>
           <button class="mq-btn" id="mq-again">Practice again</button>
           <button class="mq-btn secondary" id="mq-home">Back to games</button>
         </div>
       </div>
     `;
 
-    spawnConfetti(document.getElementById("mq-burst"));
+    if (stars >= 2) spawnConfetti(document.getElementById("mq-burst"));
 
     document.getElementById("mq-again").addEventListener("click", () => {
       index = 0;
       locked = false;
+      correctAttempts = 0;
+      totalAttempts = 0;
       renderItem();
     });
     document.getElementById("mq-home").addEventListener("click", () => {

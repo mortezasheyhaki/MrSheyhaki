@@ -1,5 +1,6 @@
 /* 1.9 Listen and write the numbers – AEF Starter Unit 1A */
 (function () {
+  const GAME_ID = "starter-1a-listen-write-numbers";
   // Book answer key for 1.9 (10 boxes; example 7 is first)
   const ANSWERS = [7, 3, 0, 8, 9, 1, 4, 5, 6, 2];
   const AUDIO_SRC = "audio/1.9.mp3";
@@ -46,6 +47,8 @@
       audio.currentTime = 0;
       playing = false;
     }
+    const _stars = perfect ? 3 : correct >= total - 1 || correct / total >= 0.8 ? 2 : correct >= Math.ceil(total / 2) ? 1 : 0;
+    if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, _stars); }
     app.innerHTML = `
       <div class="ln-topbar">
         <a class="ln-back" href="../" title="Back to Unit 1A Games" aria-label="Back">←</a>
@@ -263,13 +266,13 @@
           <div class="ln-ring"></div>
         </div>
         <div class="ln-done-inner">
-          <div class="ln-trophy" aria-hidden="true">${perfect ? "🏆" : "✨"}</div>
+          <div class="ln-trophy" aria-hidden="true">${perfect ? "🏆" : correct >= Math.ceil(total / 2) ? "🌟" : "💪"}</div>
           <div class="ln-stars" aria-hidden="true">
-            <span class="ln-star">⭐</span>
-            <span class="ln-star">⭐</span>
-            <span class="ln-star">⭐</span>
+            <span class="ln-star">${(function(){const s=perfect?3:correct>=total-1||correct/total>=0.8?2:correct>=Math.ceil(total/2)?1:0;return s>=1?"⭐":"☆";})()}</span>
+            <span class="ln-star">${(function(){const s=perfect?3:correct>=total-1||correct/total>=0.8?2:correct>=Math.ceil(total/2)?1:0;return s>=2?"⭐":"☆";})()}</span>
+            <span class="ln-star">${(function(){const s=perfect?3:correct>=total-1||correct/total>=0.8?2:correct>=Math.ceil(total/2)?1:0;return s>=3?"⭐":"☆";})()}</span>
           </div>
-          <h1>${perfect ? "Perfect!" : "Nice try!"}</h1>
+          <h1>${perfect ? "Perfect!" : correct >= Math.ceil(total / 2) ? "Nice try!" : "Keep practicing!"}</h1>
           <p>You wrote <strong>${correct} / ${total}</strong> numbers correctly.</p>
           <div class="ln-answer-key">
             <span class="ln-answer-label">Answer key</span>

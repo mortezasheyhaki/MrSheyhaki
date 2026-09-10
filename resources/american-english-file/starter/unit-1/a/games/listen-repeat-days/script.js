@@ -1,5 +1,6 @@
 /* Listen & Repeat – days of the week (speech recognition) */
 (function () {
+  const GAME_ID = "starter-1a-listen-repeat-days";
   const DAYS = [
     { id: "monday", label: "Monday", answers: ["monday"], file: "audio/Monday.mp3" },
     { id: "tuesday", label: "Tuesday", answers: ["tuesday"], file: "audio/Tuesday.mp3" },
@@ -380,6 +381,7 @@
 
     if (mode === "result") {
       const stars = score === TOTAL ? 3 : score >= 5 ? 2 : score >= 3 ? 1 : 0;
+      if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
       app.innerHTML = `
         <header class="lr-topbar">
           <a class="lr-back" href="../" aria-label="Back">←</a>

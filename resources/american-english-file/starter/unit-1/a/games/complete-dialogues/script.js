@@ -1,5 +1,6 @@
 /* Dialogue Practice – Starter Unit 1A */
 (function () {
+  const GAME_ID = "starter-1a-complete-dialogues";
   const ITEMS = [
   {
     "id": 1,
@@ -127,6 +128,9 @@
 
   let index = 0;
   let locked = false;
+  let firstTryCorrect = 0;
+  let totalBlanksChecked = 0;
+  let correctBlanks = 0;
 
   function clean(s) {
     return (s || "")
@@ -160,6 +164,9 @@
     document.getElementById("dg-start-btn").addEventListener("click", () => {
       index = 0;
       locked = false;
+      firstTryCorrect = 0;
+      totalBlanksChecked = 0;
+      correctBlanks = 0;
       renderItem();
     });
   }
@@ -268,7 +275,9 @@
       inputs.forEach((inp) => {
         const gi = +inp.dataset.gi;
         const ok = matchBlank(inp.value, acceptList[gi]);
+        totalBlanksChecked++;
         if (ok) {
+          correctBlanks++;
           inp.classList.add("correct");
           inp.classList.remove("wrong");
           filled[gi] = displayAnswer(acceptList[gi]);
@@ -278,6 +287,7 @@
           inp.classList.remove("correct");
         }
       });
+      if (allOk) firstTryCorrect++;
 
       // Update visual blanks
       let offset = 0;
@@ -341,7 +351,17 @@
     }
   }
 
+  function calcStars(correct, total) {
+    if (total <= 0) return 0;
+    if (correct >= total) return 3;
+    if (correct >= total - 1 || correct / total >= 0.8) return 2;
+    if (correct >= Math.ceil(total / 2)) return 1;
+    return 0;
+  }
+
   function showDone() {
+    const stars = calcStars(correctBlanks, Math.max(totalBlanksChecked, 1));
+    if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
     app.innerHTML = `
       <div class="dg-topbar">
         <a class="dg-back-btn" href="../" title="Back" aria-label="Back">←</a>
@@ -353,23 +373,23 @@
           <div class="dg-ring"></div>
         </div>
         <div class="dg-done-inner">
-          <div class="dg-trophy" aria-hidden="true">🏆</div>
+          <div class="dg-trophy" aria-hidden="true">${stars === 3 ? "🏆" : "🌟"}</div>
           <div class="dg-stars" aria-hidden="true">
-            <span class="dg-star">⭐</span>
-            <span class="dg-star">⭐</span>
-            <span class="dg-star">⭐</span>
+            <span class="dg-star">${stars >= 1 ? "⭐" : "☆"}</span>
+            <span class="dg-star">${stars >= 2 ? "⭐" : "☆"}</span>
+            <span class="dg-star">${stars >= 3 ? "⭐" : "☆"}</span>
           </div>
-          <h1>Well done!</h1>
+          <h1>${stars === 3 ? "Perfect!" : "Well done!"}</h1>
           <p>You completed all the dialogues.</p>
-          <div class="dg-done-score">${ITEMS.length} / ${ITEMS.length} complete</div>
+          <div class="dg-done-score">${ITEMS.length} / ${ITEMS.length} complete · ${correctBlanks}/${totalBlanksChecked} blanks right</div>
           <button class="dg-btn" id="dg-again">Practice again</button>
           <button class="dg-btn secondary" id="dg-home">Back to games</button>
         </div>
       </div>
     `;
-    spawnConfetti(document.getElementById("dg-burst"));
+    if (stars >= 2) spawnConfetti(document.getElementById("dg-burst"));
     document.getElementById("dg-again").addEventListener("click", () => {
-      index = 0; locked = false; renderItem();
+      index = 0; locked = false; firstTryCorrect = 0; totalBlanksChecked = 0; correctBlanks = 0; renderItem();
     });
     document.getElementById("dg-home").addEventListener("click", () => {
       window.location.href = "../";

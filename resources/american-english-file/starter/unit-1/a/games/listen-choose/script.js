@@ -1,5 +1,6 @@
 /* Listen and Choose – Starter Unit 1A · 1.7 */
 (function () {
+  const GAME_ID = "starter-1a-listen-choose";
   // Correct photo = 2 (two teas + one cappuccino)
   const CORRECT = 2;
   const PHOTOS = [
@@ -199,6 +200,7 @@
 
   function showDone() {
     const a = document.getElementById("lc-audio");
+    if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, 3); }
     if (a) a.pause();
     app.innerHTML = `
       <div class="lc-topbar">

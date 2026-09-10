@@ -1,5 +1,6 @@
 /* Word Search – numbers 0–10 & days of the week */
 (function () {
+  const GAME_ID = "starter-1a-wordsearch-days-numbers";
   const GRID = [
     ["T","H","R","E","E","S","Y","T","S","I","X","T"],
     ["R","H","J","L","E","A","U","U","G","F","F","W"],
@@ -291,6 +292,7 @@
     }
 
     if (mode === "result") {
+      if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, 3); }
       app.innerHTML = `
         <header class="ws-topbar">
           <a class="ws-back" href="../" aria-label="Back">←</a>

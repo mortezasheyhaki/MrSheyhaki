@@ -1,5 +1,6 @@
 /* I am / I'm · You are / You're – American English File Starter Unit 1A */
 (function () {
+  const GAME_ID = "starter-1a-be-i-you";
   // ========== DATA ==========
   const FORMS = [
     { full: "I am", short: "I'm", emoji: "🙋", tip: "I + am → I'm" },
@@ -97,6 +98,9 @@
   let blankIndex = 0;
   let formsScore = 0;
   let formsTotal = 0;
+  let formsMistakes = 0;
+  let partScore = 0;
+  let partAttempts = 0;
   let matchedPairs = new Set();
   let selectedFull = null;
   let selectedShort = null;
@@ -194,6 +198,7 @@
   function startForms() {
     part = "forms";
     formsScore = 0;
+    formsMistakes = 0;
     formsTotal = FORMS.length;
     matchedPairs = new Set();
     selectedFull = null;
@@ -304,6 +309,7 @@
           }
         }, 900);
       } else {
+        formsMistakes++;
         fullBtn.classList.add("wrong");
         shortBtn.classList.add("wrong");
         feedback.className = "be-feedback bad";
@@ -322,7 +328,19 @@
     }
   }
 
+  function calcStars(correct, total) {
+    if (total <= 0) return 0;
+    if (correct >= total) return 3;
+    if (correct >= total - 1 || correct / total >= 0.8) return 2;
+    if (correct >= Math.ceil(total / 2)) return 1;
+    return 0;
+  }
+
   function showFormsDone() {
+    // Stars reflect accuracy: fewer mistakes → more stars
+    const accuracy = Math.max(0, formsTotal - formsMistakes);
+    const stars = calcStars(accuracy, formsTotal);
+    if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
     app.innerHTML = `
       <div class="be-topbar">
         <a class="be-back-btn" href="../" title="Back to Unit 1A Games" aria-label="Back">←</a>
@@ -334,22 +352,22 @@
           <div class="be-ring"></div>
         </div>
         <div class="be-done-inner">
-          <div class="be-trophy" aria-hidden="true">🏆</div>
+          <div class="be-trophy" aria-hidden="true">${stars === 3 ? "🏆" : "🌟"}</div>
           <div class="be-stars" aria-hidden="true">
-            <span class="be-star">⭐</span>
-            <span class="be-star">⭐</span>
-            <span class="be-star">⭐</span>
+            <span class="be-star">${stars >= 1 ? "⭐" : "☆"}</span>
+            <span class="be-star">${stars >= 2 ? "⭐" : "☆"}</span>
+            <span class="be-star">${stars >= 3 ? "⭐" : "☆"}</span>
           </div>
-          <h1>Forms matched!</h1>
+          <h1>${stars === 3 ? "Forms matched!" : "Forms complete!"}</h1>
           <p>You know <strong>I am → I'm</strong> and <strong>You are → You're</strong>.</p>
-          <div class="be-done-score">${formsScore} / ${formsTotal} pairs</div>
+          <div class="be-done-score">${formsScore} / ${formsTotal} pairs${formsMistakes ? ` · ${formsMistakes} mistake${formsMistakes === 1 ? "" : "s"}` : ""}</div>
           <button class="be-btn" id="be-again">Practice again</button>
           <button class="be-btn secondary" id="be-next">Go to Positive →</button>
           <button class="be-btn secondary" id="be-home">Back to games</button>
         </div>
       </div>
     `;
-    spawnConfetti(document.getElementById("be-burst"));
+    if (stars >= 2) spawnConfetti(document.getElementById("be-burst"));
     document.getElementById("be-again").addEventListener("click", () => startForms());
     document.getElementById("be-next").addEventListener("click", () => startPart("positive"));
     document.getElementById("be-home").addEventListener("click", () => { window.location.href = "../"; });
@@ -362,6 +380,8 @@
     index = 0;
     blankIndex = 0;
     locked = false;
+    partScore = 0;
+    partAttempts = 0;
     renderItem();
   }
 
@@ -439,7 +459,9 @@
 
     const expected = item.blanks[blankIndex];
 
+    partAttempts++;
     if (choice === expected) {
+      partScore++;
       btn.classList.add("correct");
       document.getElementById("be-sentence").innerHTML = buildSentenceHtml(item, blankIndex + 1);
 
@@ -480,6 +502,8 @@
   function showDone() {
     const title = part === "positive" ? "Positive complete!" : "Negative complete!";
     const total = items.length;
+    const stars = calcStars(partScore, Math.max(partAttempts, 1));
+    if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
     app.innerHTML = `
       <div class="be-topbar">
         <a class="be-back-btn" href="../" title="Back to Unit 1A Games" aria-label="Back">←</a>
@@ -491,15 +515,15 @@
           <div class="be-ring"></div>
         </div>
         <div class="be-done-inner">
-          <div class="be-trophy" aria-hidden="true">🏆</div>
+          <div class="be-trophy" aria-hidden="true">${stars === 3 ? "🏆" : "🌟"}</div>
           <div class="be-stars" aria-hidden="true">
-            <span class="be-star">⭐</span>
-            <span class="be-star">⭐</span>
-            <span class="be-star">⭐</span>
+            <span class="be-star">${stars >= 1 ? "⭐" : "☆"}</span>
+            <span class="be-star">${stars >= 2 ? "⭐" : "☆"}</span>
+            <span class="be-star">${stars >= 3 ? "⭐" : "☆"}</span>
           </div>
           <h1>${title}</h1>
           <p>Great work with <strong>I am</strong> and <strong>You are</strong>.</p>
-          <div class="be-done-score">${total} / ${total} complete</div>
+          <div class="be-done-score">${total} / ${total} complete · ${partScore}/${partAttempts} correct picks</div>
           <button class="be-btn" id="be-again">Practice again</button>
           <button class="be-btn secondary" id="be-other">${
             part === "positive" ? "Go to Negative →" : "Go to Positive →"

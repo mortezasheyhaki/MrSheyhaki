@@ -1,0 +1,500 @@
+/* Complete the Conversations – Textbook-style layout */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #e8eef5;
+  --card: #ffffff;
+  --text: #1a1a1a;
+  --muted: #555555;
+  --border: #b0b8c4;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --ok: #15803d;
+  --ok-bg: #dcfce7;
+  --bad: #b91c1c;
+  --bad-bg: #fee2e2;
+  --chip-bg: #ffffff;
+  --chip-border: #c5cdd8;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --font: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* App shell */
+.cc-app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px 16px 32px;
+  min-height: 100vh;
+}
+
+/* Top bar (app chrome – kept subtle) */
+.cc-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 2px 0;
+}
+
+.cc-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.cc-back:hover {
+  background: #f1f5f9;
+}
+
+.cc-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.cc-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #334155;
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Workbook block */
+.cc-workbook {
+  background: var(--card);
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+  padding: 22px 24px 28px;
+  margin-bottom: 18px;
+}
+
+/* Instruction with letter badge – matches textbook */
+.cc-instruction {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+  font-size: 1.08rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.cc-instruction p {
+  margin: 0;
+  padding-top: 2px;
+}
+
+.cc-letter {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #6b7280;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Outer thin border card (image + dialogue) */
+.cc-card {
+  border: 1.5px solid #9ca3af;
+  border-radius: 2px;
+  padding: 20px;
+  background: #fff;
+}
+
+.cc-scene-row {
+  display: grid;
+  grid-template-columns: minmax(240px, 42%) 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.cc-photo-wrap {
+  overflow: hidden;
+  border-radius: 1px;
+  background: #e5e7eb;
+}
+
+.cc-photo {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  aspect-ratio: 4 / 3;
+}
+
+/* Dialogue – textbook style */
+.cc-dialogue {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  padding-top: 2px;
+}
+
+.cc-line {
+  display: grid;
+  grid-template-columns: 118px 1fr;
+  gap: 8px 14px;
+  align-items: baseline;
+}
+
+.cc-speaker {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #111;
+}
+
+.cc-text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #1a1a1a;
+  word-break: break-word;
+}
+
+/* Superscript numbers */
+.cc-num {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #333;
+  vertical-align: super;
+  margin-right: 1px;
+  line-height: 0;
+}
+
+/* Given example answer */
+.cc-given {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: #111;
+}
+
+/* Blank inputs – underline style */
+.cc-input {
+  display: inline-block;
+  width: 70px;
+  max-width: 28%;
+  border: none;
+  border-bottom: 1.5px solid #333;
+  background: transparent;
+  text-align: center;
+  font-size: 1.05rem;
+  font-family: inherit;
+  font-weight: 500;
+  padding: 0 2px 1px;
+  margin: 0 1px;
+  color: var(--text);
+  outline: none;
+  vertical-align: baseline;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.cc-input:focus {
+  border-bottom-color: var(--accent);
+  background: #f0f7ff;
+}
+
+/* Answer states after check */
+.cc-blank,
+.cc-answer {
+  display: inline-block;
+  min-width: 52px;
+  padding: 0 4px 1px;
+  margin: 0 1px;
+  border-bottom: 1.5px solid transparent;
+  font-weight: 600;
+  text-align: center;
+  vertical-align: baseline;
+}
+
+.cc-blank.ok,
+.cc-answer.ok {
+  background: var(--ok-bg);
+  color: var(--ok);
+  border-bottom-color: var(--ok);
+}
+
+.cc-blank.bad,
+.cc-answer.bad {
+  background: var(--bad-bg);
+  color: var(--bad);
+  border-bottom-color: var(--bad);
+}
+
+/* Word bank chips */
+.cc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--chip-border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.cc-chip {
+  appearance: none;
+  border: 1.5px solid #a5b4fc;
+  background: #eef2ff;
+  color: #3730a3;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.cc-chip:hover {
+  background: #e0e7ff;
+  border-color: #818cf8;
+}
+
+.cc-chip:active {
+  transform: scale(0.97);
+}
+
+/* Feedback */
+.cc-fb {
+  min-height: 1.3em;
+  font-size: 0.92rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.cc-fb.bad {
+  color: var(--bad);
+  font-weight: 500;
+}
+
+.cc-fb.ok {
+  color: var(--ok);
+  font-weight: 500;
+}
+
+/* Actions */
+.cc-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.cc-btn {
+  appearance: none;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 11px 26px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.28);
+}
+
+.cc-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.cc-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.cc-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Start / result screens */
+.cc-start,
+.cc-done {
+  background: var(--card);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  padding: 40px 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.cc-hero,
+.cc-trophy {
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.cc-start h1,
+.cc-done h1 {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.cc-desc {
+  color: var(--muted);
+  max-width: 380px;
+  font-size: 0.98rem;
+  margin-bottom: 8px;
+}
+
+.cc-stars {
+  display: flex;
+  gap: 6px;
+  font-size: 1.7rem;
+  margin: 4px 0 8px;
+}
+
+.cc-score-list {
+  list-style: none;
+  width: 100%;
+  max-width: 360px;
+  margin: 12px 0 8px;
+  text-align: left;
+}
+
+.cc-score-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  background: #f9fafb;
+}
+
+.cc-score-list li strong {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Review dialogue on part-result */
+.cc-done .cc-dialogue {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 16px 18px;
+  background: #fafbfc;
+  width: 100%;
+  max-width: 560px;
+  margin: 0.5rem auto;
+  text-align: left;
+}
+
+/* Responsive */
+@media (max-width: 760px) {
+  .cc-app {
+    padding: 12px 12px 28px;
+  }
+
+  .cc-workbook {
+    padding: 16px 14px 20px;
+  }
+
+  .cc-card {
+    padding: 14px;
+  }
+
+  .cc-scene-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .cc-photo-wrap {
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  .cc-line {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .cc-speaker {
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+
+  .cc-text {
+    font-size: 1rem;
+  }
+
+  .cc-instruction {
+    font-size: 1rem;
+    gap: 10px;
+  }
+
+  .cc-start,
+  .cc-done {
+    padding: 28px 16px;
+  }
+}
+
+@media (max-width: 400px) {
+  .cc-title {
+    font-size: 0.95rem;
+  }
+
+  .cc-input {
+    width: 58px;
+  }
+
+  .cc-chips {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .cc-chip {
+    padding: 6px 12px;
+    font-size: 0.88rem;
+  }
+}

@@ -1,5 +1,6 @@
 /* Order the Days – put weekdays in correct order */
 (function () {
+  const GAME_ID = "starter-1a-order-days";
   const DAYS = [
     { id: "monday", label: "Monday", emoji: "📘" },
     { id: "tuesday", label: "Tuesday", emoji: "📗" },
@@ -214,7 +215,9 @@
 
     if (mode === "result") {
       const ok = isCorrect();
-      const stars = ok ? 3 : 0;
+      const correctCount = order.filter((id, i) => id === CORRECT[i]).length;
+      const stars = ok ? 3 : correctCount >= 6 ? 2 : correctCount >= 4 ? 1 : 0;
+      if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
       app.innerHTML = `
         <header class="od-topbar">
           <a class="od-back" href="../" aria-label="Back">←</a>
@@ -222,14 +225,14 @@
           <span class="od-badge">Done</span>
         </header>
         <section class="od-done">
-          <div class="od-trophy" aria-hidden="true">${ok ? "🏆" : "💪"}</div>
+          <div class="od-trophy" aria-hidden="true">${ok ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
           <div class="od-stars" aria-hidden="true">
             <span class="od-star">${stars >= 1 ? "⭐" : "☆"}</span>
             <span class="od-star">${stars >= 2 ? "⭐" : "☆"}</span>
             <span class="od-star">${stars >= 3 ? "⭐" : "☆"}</span>
           </div>
-          <h1>${ok ? "Perfect!" : "Keep practicing!"}</h1>
-          <p>${ok ? "You put all the days in the right order." : "Try again — Monday comes first, then Tuesday…"}</p>
+          <h1>${ok ? "Perfect!" : stars >= 1 ? "Almost!" : "Keep practicing!"}</h1>
+          <p>${ok ? "You put all the days in the right order." : correctCount + " of 7 in the right place — try again."}</p>
           <div class="od-answer">
             ${DAYS.map((d) => `<span class="od-chip">${d.emoji} ${d.label}</span>`).join("")}
           </div>

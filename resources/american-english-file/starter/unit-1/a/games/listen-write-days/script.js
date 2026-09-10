@@ -1,5 +1,6 @@
 /* Listen & Write – days of the week */
 (function () {
+  const GAME_ID = "starter-1a-listen-write-days";
   const DAYS = [
     { id: "monday", label: "Monday", answers: ["monday"], file: "audio/Monday.mp3" },
     { id: "tuesday", label: "Tuesday", answers: ["tuesday"], file: "audio/Tuesday.mp3" },
@@ -292,6 +293,7 @@
       stopAudio();
       clearNextTimer();
       const stars = score >= 6 ? 3 : score >= 4 ? 2 : score >= 2 ? 1 : 0;
+      if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
       app.innerHTML = `
         <header class="lw-topbar">
           <a class="lw-back" href="../" aria-label="Back">←</a>
