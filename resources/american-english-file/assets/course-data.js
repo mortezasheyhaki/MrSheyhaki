@@ -95,9 +95,13 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.audio = [
 COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.games = [
   { title: "I am / I'm · You are / You're", url: "be-i-you/" },
   { title: "Listen & Write the Numbers", url: "listen-write-numbers/" },
+  { title: "Select the Day You Hear", url: "listen-select-day/" },
+  { title: "Listen & Write", url: "listen-write-days/" },
   { title: "Make Questions", url: "make-questions/" },
   { title: "Complete the Dialogues", url: "complete-dialogues/" },
   { title: "Listen and Choose", url: "listen-choose/" },
+  { title: "Order the Days", url: "order-days/" },
+  { title: "Listen & Repeat", url: "listen-repeat-days/" },
 ];
 
 // Unit 3A – Games
