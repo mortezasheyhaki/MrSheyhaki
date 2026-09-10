@@ -93,18 +93,18 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.audio = [
 
 // Unit 1A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.games = [
-  { title: "I am / I'm · You are / You're", url: "be-i-you/" },
-  { title: "Listen & Write the Numbers", url: "listen-write-numbers/" },
-  { title: "Select the Day You Hear", url: "listen-select-day/" },
-  { title: "Listen & Write", url: "listen-write-days/" },
-  { title: "Make Questions", url: "make-questions/" },
-  { title: "Complete the Dialogues", url: "complete-dialogues/" },
-  { title: "Listen and Choose", url: "listen-choose/" },
-  { title: "Order the Days", url: "order-days/" },
-  { title: "Listen & Repeat", url: "listen-repeat-days/" },
-  { title: "Word Search · Numbers & Days", url: "wordsearch-days-numbers/" },
-  { title: "Complete the Conversations", url: "complete-conversations/" },
-  { title: "Are you…?", url: "are-you/" },
+  { title: "I am / I'm · You are / You're", url: "be-i-you/", label: "Grammar" },
+  { title: "Listen & Write the Numbers", url: "listen-write-numbers/", label: "Vocabulary" },
+  { title: "Select the Day You Hear", url: "listen-select-day/", label: "Vocabulary" },
+  { title: "Listen & Write (Days)", url: "listen-write-days/", label: "Vocabulary" },
+  { title: "Make Questions", url: "make-questions/", label: "Grammar" },
+  { title: "Complete the Dialogues", url: "complete-dialogues/", label: "Grammar" },
+  { title: "Listen and Choose", url: "listen-choose/", label: "Vocabulary" },
+  { title: "Order the Days", url: "order-days/", label: "Vocabulary" },
+  { title: "Listen & Repeat (Days)", url: "listen-repeat-days/", label: "Pronunciation" },
+  { title: "Word Search · Numbers & Days", url: "wordsearch-days-numbers/", label: "Vocabulary" },
+  { title: "Complete the Conversations", url: "complete-conversations/", label: "Grammar" },
+  { title: "Are you…?", url: "are-you/", label: "Grammar" },
 ];
 
 // Unit 1A – Worksheets

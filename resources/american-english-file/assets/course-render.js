@@ -8,6 +8,133 @@
  * edit assets/course-data.js instead.
  */
 (function () {
+
+  // Skill badge styles for game cards (Grammar / Vocabulary / Pronunciation)
+  (function injectSkillBadgeStyles() {
+    if (document.getElementById("aef-skill-badge-css")) return;
+    const css = `
+/* Game cards: title → skill tag → play + stars (one vertical stack) */
+.resource-card--game {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 0 !important;
+  min-height: 168px !important;
+  position: relative;
+}
+.resource-card--game .resource-card-main {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  flex: 1;
+  min-width: 0;
+}
+.resource-card--game .resource-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+.resource-card--game .resource-card-body > h3 {
+  margin: 0 0 8px !important;
+  font-size: 16px !important;
+  line-height: 1.3 !important;
+  min-height: 0 !important;
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+  overflow: visible !important;
+}
+.resource-card--game .skill-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 12px 0;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1.2;
+  flex: 0 0 auto;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.resource-card--game .resource-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 4px;
+}
+.resource-card--game .resource-card-footer .resource-button {
+  position: static !important;
+  margin: 0 !important;
+  flex: 0 0 auto;
+}
+.resource-card--game .game-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: 0 0 auto;
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.9;
+}
+/* Hide the old top-right play slot on game cards (footer owns it) */
+.resource-card--game > .resource-button {
+  display: none !important;
+}
+.skill-badge--grammar {
+  background: rgba(124, 58, 237, 0.12);
+  color: #6d28d9;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+}
+.skill-badge--vocabulary {
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+}
+.skill-badge--pronunciation {
+  background: rgba(219, 39, 119, 0.12);
+  color: #be185d;
+  border: 1px solid rgba(219, 39, 119, 0.2);
+}
+html[data-theme="dark"] .skill-badge--grammar {
+  background: rgba(167, 139, 250, 0.18);
+  color: #c4b5fd;
+  border-color: rgba(167, 139, 250, 0.3);
+}
+html[data-theme="dark"] .skill-badge--vocabulary {
+  background: rgba(96, 165, 250, 0.18);
+  color: #93c5fd;
+  border-color: rgba(96, 165, 250, 0.3);
+}
+html[data-theme="dark"] .skill-badge--pronunciation {
+  background: rgba(244, 114, 182, 0.18);
+  color: #f9a8d4;
+  border-color: rgba(244, 114, 182, 0.3);
+}
+@media (max-width: 640px) {
+  .resource-card--game {
+    min-height: 150px !important;
+  }
+  .resource-card--game .resource-card-body > h3 {
+    font-size: 15px !important;
+  }
+}
+`;
+    const style = document.createElement("style");
+    style.id = "aef-skill-badge-css";
+    style.textContent = css;
+    document.head.appendChild(style);
+  })();
+
   function el(tag, attrs, children) {
     const node = document.createElement(tag);
     if (attrs) {
@@ -329,33 +456,73 @@
         .filter(Boolean)
         .pop() || "game";
       const gameId = [levelKey, unitKey + lessonKey, slug].filter(Boolean).join("-");
-      const bodyKids = [el("h3", { text: item.title })];
+      // Prefer explicit label; fall back to title prefix (Grammar · / Vocabulary · / Pronunciation ·)
+      let skillLabel = item.label || "";
+      let displayTitle = item.title || "";
+      if (!skillLabel) {
+        const m = String(displayTitle).match(/^(Grammar|Vocabulary|Pronunciation)\s*[·•\-]\s*(.+)$/i);
+        if (m) {
+          skillLabel = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
+          if (skillLabel === "Pronunciation") skillLabel = "Pronunciation";
+          displayTitle = m[2];
+        }
+      } else {
+        // Strip duplicate prefix from title when label is set
+        displayTitle = String(displayTitle).replace(
+          /^(Grammar|Vocabulary|Pronunciation)\s*[·•\-]\s*/i,
+          ""
+        );
+      }
+      const bodyKids = [el("h3", { text: displayTitle })];
       if (section === "games") {
+        if (skillLabel) {
+          const skillSlug = skillLabel.toLowerCase().replace(/[^a-z]/g, "");
+          bodyKids.push(
+            el("span", {
+              class: "skill-badge skill-badge--" + skillSlug,
+              text: skillLabel,
+            })
+          );
+        }
         bodyKids.push(
-          el("div", {
-            class: "game-stars",
-            "data-game": gameId,
-            "aria-label": "Progress stars",
+          el("div", { class: "resource-card-footer" }, [
+            el("span", { class: "resource-button", text: meta.verb + " →" }),
+            el("div", {
+              class: "game-stars",
+              "data-game": gameId,
+              "aria-label": "Progress stars",
+            }, [
+              el("span", { class: "star", "data-n": "1", text: "☆" }),
+              el("span", { class: "star", "data-n": "2", text: "☆" }),
+              el("span", { class: "star", "data-n": "3", text: "☆" }),
+            ]),
+          ])
+        );
+        grid.appendChild(
+          el("a", {
+            class: "content-card resource-card resource-card--game",
+            href: item.url,
           }, [
-            el("span", { class: "star", "data-n": "1", text: "☆" }),
-            el("span", { class: "star", "data-n": "2", text: "☆" }),
-            el("span", { class: "star", "data-n": "3", text: "☆" }),
+            el("div", { class: "resource-card-main" }, [
+              el("div", { class: "resource-icon", "aria-hidden": "true", text: meta.icon }),
+              el("div", { class: "resource-card-body" }, bodyKids),
+            ]),
+          ])
+        );
+      } else {
+        grid.appendChild(
+          el("a", {
+            class: "content-card resource-card",
+            href: item.url,
+          }, [
+            el("div", { class: "resource-card-main" }, [
+              el("div", { class: "resource-icon", "aria-hidden": "true", text: meta.icon }),
+              el("div", { class: "resource-card-body" }, bodyKids),
+            ]),
+            el("span", { class: "resource-button", text: meta.verb + " →" }),
           ])
         );
       }
-      const children = [
-        el("div", { class: "resource-card-main" }, [
-          el("div", { class: "resource-icon", "aria-hidden": "true", text: meta.icon }),
-          el("div", { class: "resource-card-body" }, bodyKids),
-        ]),
-        el("span", { class: "resource-button", text: meta.verb + " →" }),
-      ];
-      grid.appendChild(
-        el("a", {
-          class: "content-card resource-card" + (section === "games" ? " resource-card--game" : ""),
-          href: item.url,
-        }, children)
-      );
     });
     main.appendChild(grid);
     if (section === "games") {
