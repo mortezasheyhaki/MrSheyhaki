@@ -122,10 +122,9 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.games = [
   { title: "Listen & Find (Countries)", url: "listen-find-countries/", label: "Vocabulary" },
   { title: "He is / She is / It is", url: "he-she-it-forms/", label: "Grammar" },
   { title: "Complete with be", url: "complete-be-forms/", label: "Grammar" },
-  { title: "Listen & Choose · He / She", url: "listen-choose-he-she/", label: "Vocabulary" },
-  { title: "Listen & Write · He / She", url: "listen-write-he-she/", label: "Vocabulary" },
-  { title: "Where from? · Dialogues", url: "where-from-dialogues/", label: "Grammar" },
-  { title: "Is he/she…?", url: "is-he-she/", label: "Grammar" },
+{ title: "Listen & Choose · He / She", url: "listen-choose-he-she/", label: "Vocabulary" },
+{ title: "Listen & Write · He / She", url: "listen-write-he-she/", label: "Vocabulary" },
+{ title: "Where from? · Dialogues", url: "where-from-dialogues/", label: "Grammar" },
 ];
 
 // Unit 3A – Games
@@ -353,6 +352,13 @@ COURSE_DATA["american-english-file"].levels.starter.units[11].lessons.b.name = "
 COURSE_DATA["american-english-file"].levels.starter.units[12].name = "Travel & the past";
 COURSE_DATA["american-english-file"].levels.starter.units[12].lessons.a.name = "Strangers on a train";
 COURSE_DATA["american-english-file"].levels.starter.units[12].lessons.b.name = "Review the past";
+
+// Practical English 1 – Starter
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].name = "How do you spell it?";
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].games = [
+  { title: "Alphabet Flashcards", url: "alphabet-flashcards/", label: "Vocabulary" },
+  { title: "Listen & Choose", url: "listen-choose/", label: "Vocabulary" },
+];
 
 // Node (generator script) and browser (rendered pages) both need this object.
 if (typeof module !== "undefined" && module.exports) {
