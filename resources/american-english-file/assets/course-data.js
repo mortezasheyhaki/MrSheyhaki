@@ -122,6 +122,8 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.games = [
   { title: "Listen & Find (Countries)", url: "listen-find-countries/", label: "Vocabulary" },
   { title: "He is / She is / It is", url: "he-she-it-forms/", label: "Grammar" },
   { title: "Complete with be", url: "complete-be-forms/", label: "Grammar" },
+{ title: "Listen & Choose · He / She", url: "listen-choose-he-she/", label: "Vocabulary" },
+{ title: "Listen & Write · He / She", url: "listen-write-he-she/", label: "Vocabulary" },
 ];
 
 // Unit 3A – Games
