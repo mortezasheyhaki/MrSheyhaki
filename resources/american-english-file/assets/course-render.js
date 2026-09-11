@@ -448,14 +448,16 @@ html[data-theme="dark"] .skill-badge--pronunciation {
     const levelKey = body.dataset.level || "";
     const unitKey = body.dataset.unit || "";
     const lessonKey = body.dataset.lesson || "";
+    const peKey = body.dataset.pe ? ("pe" + body.dataset.pe) : "";
     items.forEach((item) => {
-      // Stable id for stars: e.g. starter-3a-a-an-swipe
+      // Stable id for stars: e.g. starter-3a-a-an-swipe or starter-pe1-alphabet-flashcards
       const slug = String(item.url || "")
         .replace(/\/+$/, "")
         .split("/")
         .filter(Boolean)
         .pop() || "game";
-      const gameId = [levelKey, unitKey + lessonKey, slug].filter(Boolean).join("-");
+      const mid = (unitKey + lessonKey) || peKey;
+      const gameId = [levelKey, mid, slug].filter(Boolean).join("-");
       // Prefer explicit label; fall back to title prefix (Grammar · / Vocabulary · / Pronunciation ·)
       let skillLabel = item.label || "";
       let displayTitle = item.title || "";

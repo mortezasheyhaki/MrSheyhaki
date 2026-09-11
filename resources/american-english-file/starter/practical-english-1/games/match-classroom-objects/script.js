@@ -1,6 +1,6 @@
 /* Match Classroom Objects – 3 modes × 2 sets of 5 – AEF Starter Practical English 1 */
 (function () {
-  const GAME_ID = "starter-pe1-match-classroom";
+  const GAME_ID = "starter-pe1-match-classroom-objects";
 
   const ITEMS = [
     { id: "bag",            label: "a bag",             audio: "audio/a-bag.mp3",            image: "images/a-bag.png" },

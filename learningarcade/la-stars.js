@@ -83,7 +83,25 @@
     "sound-match-picture": "sound-match-picture",
     "match-adjectives-4b": "match-adjectives-4b",
     "listen-and-write-4b": "listen-and-write-4b",
-    "opposite-snap": "opposite-snap"
+    "opposite-snap": "opposite-snap",
+
+    // Starter · Practical English 1
+    "starter-alphabet-flashcards": "starter-pe1-alphabet-flashcards",
+    "starter-listen-choose": "starter-pe1-listen-choose",
+    "starter-match-classroom-objects": "starter-pe1-match-classroom-objects",
+    "starter-classroom-flashcards": "starter-pe1-classroom-flashcards",
+    "starter-classroom-write": "starter-pe1-classroom-write",
+    "starter-classroom-whats-this": "starter-pe1-classroom-whats-this",
+    "starter-classroom-language-flashcards": "starter-pe1-classroom-language-flashcards",
+    "starter-classroom-language-write": "starter-pe1-classroom-language-write",
+    "starter-pe1-alphabet-flashcards": "starter-pe1-alphabet-flashcards",
+    "starter-pe1-listen-choose": "starter-pe1-listen-choose",
+    "starter-pe1-match-classroom-objects": "starter-pe1-match-classroom-objects",
+    "starter-pe1-classroom-flashcards": "starter-pe1-classroom-flashcards",
+    "starter-pe1-classroom-write": "starter-pe1-classroom-write",
+    "starter-pe1-classroom-whats-this": "starter-pe1-classroom-whats-this",
+    "starter-pe1-classroom-language-flashcards": "starter-pe1-classroom-language-flashcards",
+    "starter-pe1-classroom-language-write": "starter-pe1-classroom-language-write"
   };
 
   function loadJSON(key) {
