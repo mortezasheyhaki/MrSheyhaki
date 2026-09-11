@@ -376,8 +376,9 @@
         e.stopPropagation();
         const i = +btn.dataset.i;
         if (locked[i]) return;
+        // selectLeft already calls playAudioFor for audio modes.
+        // Calling playAudioFor again here immediately stopped the sound.
         selectLeft(i);
-        playAudioFor(i);
       };
     });
     app.querySelectorAll(".mc-right-item").forEach((btn) => {
