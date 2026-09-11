@@ -359,8 +359,6 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].games = 
   { title: "Alphabet Flashcards", url: "alphabet-flashcards/", label: "Vocabulary" },
   { title: "Listen & Choose", url: "listen-choose/", label: "Vocabulary" },
   { title: "Match Classroom Objects", url: "match-classroom-objects/", label: "Vocabulary" },
-  { title: "Classroom Flashcards", url: "classroom-flashcards/", label: "Vocabulary" },
-  { title: "Classroom Write", url: "classroom-write/", label: "Vocabulary" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.
