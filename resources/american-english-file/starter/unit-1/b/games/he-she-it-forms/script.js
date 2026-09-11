@@ -1,6 +1,6 @@
 /* He / She / It – +  −  ? forms (full + short) – beginner friendly */
 (function () {
-  const GAME_ID = "starter-1a-he-she-it-forms";
+  const GAME_ID = "starter-1b-he-she-it-forms";
 
   function saveProgress(stars) {
     function doSave() {
