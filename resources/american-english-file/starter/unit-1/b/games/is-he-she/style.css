@@ -1,0 +1,651 @@
+/* Full-viewport game – no page scroll */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important;
+  -webkit-text-size-adjust: 100%;
+}
+
+.ish-game {
+  height: 100dvh;
+  max-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #e8f0fe 0%, #f5f8ff 100%);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #1a1a2e;
+  overflow: hidden;
+}
+
+/* Hide platform chrome */
+.profile-btn, .profile-button, .user-profile, .user-menu,
+.avatar-btn, .avatar-button, #profile-btn, #profileButton,
+.header-profile, .topbar-profile, [data-profile],
+[aria-label="Profile"], [aria-label="profile"], [aria-label="Account"],
+button.profile, a.profile, .la-profile, .nav-profile,
+.sidebar, .side-nav, .left-rail, .nav-rail, .bottom-nav,
+.site-footer, .app-sidebar, .layout-sidebar, #sidebar,
+.fixed-profile, body > aside, body > nav.sidebar,
+.la-user, .user-avatar, .avatar-link {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* ---------- Top bar ---------- */
+.ish-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+.ish-back {
+  font-size: 1.25rem;
+  text-decoration: none;
+  color: #4a6cf7;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ish-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  flex: 1;
+  padding: 0 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ish-badge {
+  background: #4a6cf7;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+/* ---------- Play stage (char + card) ---------- */
+.ish-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 3vw, 28px);
+  padding: 10px 12px 6px;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+.ish-char-side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: min(200px, 42vw);
+}
+.ish-char-img {
+  width: min(180px, 38vw);
+  height: auto;
+  max-height: min(40dvh, 280px);
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.14));
+}
+.ish-bubble {
+  position: absolute;
+  /* Sit above the head, slightly to the right – no body overlap */
+  bottom: 72%;
+  left: 58%;
+  transform: none;
+  background: #3b82f6;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: clamp(0.85rem, 2.4vw, 1.05rem);
+  font-weight: 600;
+  line-height: 1.3;
+  max-width: min(160px, 40vw);
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(59,130,246,0.35);
+  z-index: 2;
+  pointer-events: none;
+  white-space: normal;
+}
+.ish-bubble::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 28px;
+  border: 8px solid transparent;
+  border-top-color: #3b82f6;
+  border-bottom: 0;
+}
+
+.ish-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  width: min(170px, 40vw);
+  border: 3px solid #fff;
+  position: relative;
+  flex-shrink: 0;
+}
+.ish-card-num {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 1;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  display: grid;
+  place-items: center;
+}
+.ish-card-photo {
+  width: 100%;
+  aspect-ratio: 350/302;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  background: #e2e8f0;
+}
+.ish-card-name {
+  text-align: center;
+  padding: 7px 5px;
+  font-weight: 700;
+  font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ---------- Bottom input area ---------- */
+.ish-bottom {
+  flex-shrink: 0;
+  padding: 4px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.ish-chips {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 8.5dvh;
+  overflow: hidden;
+  padding: 0 2px;
+}
+.ish-chip {
+  background: #fff;
+  border: 1.5px solid #c7d2fe;
+  color: #4338ca;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-weight: 600;
+  font-size: clamp(0.72rem, 2vw, 0.85rem);
+  cursor: pointer;
+  line-height: 1.2;
+}
+.ish-chip:hover { background: #eef2ff; border-color: #6366f1; }
+.ish-chip:disabled { opacity: 0.4; cursor: default; }
+.ish-form {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  border-radius: 999px;
+  padding: 4px 4px 4px 14px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb;
+}
+.ish-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px; /* prevents iOS zoom on focus */
+  background: transparent;
+  min-width: 0;
+}
+.ish-send {
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ish-send:disabled { opacity: 0.5; cursor: not-allowed; }
+.ish-hint {
+  font-size: 0.8rem;
+  color: #64748b;
+  text-align: center;
+  margin: 0;
+}
+
+/* ---------- Start / Win ---------- */
+.ish-start, .ish-win {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 14px;
+  text-align: center;
+  gap: 10px;
+  overflow: hidden;
+}
+.ish-start h1, .ish-win h1 {
+  font-size: clamp(1.3rem, 5vw, 1.55rem);
+  margin: 0;
+}
+.ish-desc {
+  color: #64748b;
+  max-width: 300px;
+  line-height: 1.4;
+  font-size: 0.9rem;
+}
+.ish-parts {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.ish-part-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+  max-width: 220px;
+  text-align: left;
+}
+.ish-part-num {
+  background: #6366f1;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+}
+.ish-btn {
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 11px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 2px;
+}
+.ish-btn.secondary { background: #e0e7ff; color: #4338ca; }
+.ish-stars { font-size: 1.5rem; letter-spacing: 3px; }
+
+/* ---------- Part 2 pick grid ---------- */
+.ish-pick-screen {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 10px 10px;
+  overflow: hidden;
+}
+.ish-pick-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+  justify-content: center;
+}
+.ish-pick-header .ish-char-img {
+  width: clamp(70px, 18vw, 90px);
+  max-height: 14dvh;
+}
+.ish-pick-header .ish-bubble {
+  position: static;
+  transform: none;
+  left: auto;
+  top: auto;
+  max-width: min(170px, 50vw);
+  font-size: 0.85rem;
+  padding: 8px 12px;
+}
+.ish-pick-header .ish-bubble::after { display: none; }
+
+.ish-pick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+  max-width: 680px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  align-content: start;
+}
+.ish-pick {
+  background: #fff;
+  border: 2px solid #e8ecf4;
+  border-radius: 10px;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.ish-pick:hover,
+.ish-pick:active {
+  border-color: #6366f1;
+  box-shadow: 0 4px 14px rgba(99,102,241,0.16);
+}
+.ish-pick-photo-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.ish-pick-photo-wrap .ish-card-num {
+  top: 4px;
+  left: 4px;
+  width: 18px;
+  height: 18px;
+  font-size: 0.6rem;
+}
+.ish-pick img {
+  width: 100%;
+  height: 100%;
+  max-height: 12dvh;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+.ish-pick-info {
+  padding: 5px 3px 6px;
+  flex-shrink: 0;
+}
+.ish-pick-info strong {
+  display: block;
+  font-size: clamp(0.65rem, 1.8vw, 0.78rem);
+  font-weight: 700;
+  color: #1a1a2e;
+  line-height: 1.15;
+}
+.ish-pick-info span {
+  display: block;
+  font-size: clamp(0.6rem, 1.6vw, 0.7rem);
+  color: #64748b;
+  margin-top: 1px;
+}
+
+/* ========== Mobile breakpoints ========== */
+
+/* Phones in portrait */
+@media (max-width: 600px) {
+  .ish-stage {
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 10px 4px;
+  }
+  .ish-char-side {
+    max-width: none;
+  }
+  .ish-char-img {
+    width: min(130px, 36vw);
+    max-height: 28dvh;
+  }
+  .ish-bubble {
+    bottom: 70%;
+    left: 52%;
+    max-width: 120px;
+    font-size: 0.82rem;
+    padding: 7px 10px;
+  }
+  .ish-card {
+    width: min(140px, 42vw);
+  }
+  .ish-chips {
+    max-height: 11dvh;
+    gap: 4px;
+  }
+  .ish-chip {
+    padding: 4px 9px;
+    font-size: 0.75rem;
+  }
+  .ish-bottom {
+    padding: 4px 10px 10px;
+    gap: 5px;
+  }
+  .ish-form {
+    max-width: 100%;
+  }
+  .ish-pick-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .ish-pick img {
+    max-height: 11dvh;
+  }
+  .ish-pick-info {
+    padding: 4px 2px 5px;
+  }
+  .ish-parts {
+    flex-direction: column;
+    align-items: center;
+  }
+  .ish-part-card {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+  .ish-char-img {
+    width: min(110px, 34vw);
+    max-height: 24dvh;
+  }
+  .ish-card {
+    width: min(120px, 40vw);
+  }
+  .ish-pick-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+  }
+  .ish-pick img {
+    max-height: 10dvh;
+  }
+  .ish-title {
+    font-size: 0.85rem;
+  }
+}
+
+/* Short viewports (landscape phones / small height) */
+@media (max-height: 520px) {
+  .ish-topbar { padding: 4px 10px; }
+  .ish-stage {
+    flex-direction: row;
+    gap: 10px;
+    padding: 4px 8px;
+  }
+  .ish-char-img {
+    width: min(100px, 28vw);
+    max-height: 50dvh;
+  }
+  .ish-card {
+    width: min(110px, 28vw);
+  }
+  .ish-chips {
+    max-height: 14dvh;
+  }
+  .ish-chip {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+  }
+  .ish-bottom {
+    padding: 2px 8px 6px;
+    gap: 4px;
+  }
+  .ish-hint { display: none; }
+  .ish-pick-header .ish-char-img {
+    width: 55px;
+    max-height: 20dvh;
+  }
+  .ish-pick img {
+    max-height: 18dvh;
+  }
+  .ish-pick-info strong { font-size: 0.65rem; }
+  .ish-pick-info span { font-size: 0.58rem; }
+}
+
+/* Tablets / larger phones */
+@media (min-width: 601px) and (max-width: 900px) {
+  .ish-pick-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 640px;
+  }
+  .ish-char-img {
+    width: min(170px, 32vw);
+  }
+  .ish-card {
+    width: min(160px, 30vw);
+  }
+}
+
+/* ========== Desktop only (≥901px) ========== */
+@media (min-width: 901px) {
+  .ish-topbar {
+    padding: 14px 24px;
+  }
+  .ish-title { font-size: 1.1rem; }
+  .ish-badge { font-size: 0.8rem; padding: 4px 12px; }
+
+  .ish-stage {
+    gap: 48px;
+    padding: 28px 32px 16px;
+  }
+  .ish-char-img {
+    width: min(240px, 22vw);
+    max-height: 48dvh;
+  }
+  .ish-bubble {
+    font-size: 1.1rem;
+    max-width: 200px;
+    padding: 14px 18px;
+  }
+  .ish-card {
+    width: min(230px, 20vw);
+    border-radius: 16px;
+  }
+  .ish-card-name { font-size: 1.05rem; padding: 12px 10px; }
+
+  .ish-bottom {
+    padding: 12px 24px 28px;
+    gap: 12px;
+  }
+  .ish-chips {
+    max-height: none;
+    max-width: 640px;
+    gap: 8px;
+  }
+  .ish-chip {
+    font-size: 0.95rem;
+    padding: 8px 16px;
+  }
+  .ish-form {
+    max-width: 460px;
+  }
+  .ish-input { font-size: 1.05rem; }
+  .ish-send { padding: 12px 24px; font-size: 1rem; }
+  .ish-hint { font-size: 0.95rem; }
+
+  .ish-start, .ish-win {
+    padding: 40px 32px;
+    gap: 18px;
+  }
+  .ish-start h1, .ish-win h1 { font-size: 2rem; }
+  .ish-desc { font-size: 1.05rem; max-width: 380px; }
+  .ish-start .ish-char-img,
+  .ish-win .ish-char-img {
+    width: 220px;
+    max-height: 42dvh;
+  }
+  .ish-part-card {
+    max-width: 280px;
+    padding: 16px 18px;
+  }
+  .ish-btn {
+    padding: 14px 36px;
+    font-size: 1.1rem;
+  }
+  .ish-stars { font-size: 2rem; letter-spacing: 6px; }
+
+  .ish-pick-screen {
+    padding: 20px 28px 28px;
+  }
+  .ish-pick-header {
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .ish-pick-header .ish-char-img {
+    width: 120px;
+    max-height: 20dvh;
+  }
+  .ish-pick-header .ish-bubble {
+    font-size: 1.05rem;
+    max-width: 220px;
+    padding: 12px 16px;
+  }
+  .ish-pick-grid {
+    gap: 16px;
+    max-width: 780px;
+  }
+  .ish-pick {
+    border-radius: 14px;
+  }
+  .ish-pick img {
+    max-height: 16dvh;
+  }
+  .ish-pick-info {
+    padding: 10px 6px 12px;
+  }
+  .ish-pick-info strong { font-size: 0.95rem; }
+  .ish-pick-info span { font-size: 0.85rem; }
+}
