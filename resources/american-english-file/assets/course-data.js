@@ -361,6 +361,9 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].games = 
   { title: "Match Classroom Objects", url: "match-classroom-objects/", label: "Vocabulary" },
   { title: "Classroom Flashcards", url: "classroom-flashcards/", label: "Vocabulary" },
   { title: "Classroom Write", url: "classroom-write/", label: "Vocabulary" },
+  { title: "What's this?", url: "classroom-whats-this/", label: "Vocabulary" },
+  { title: "Classroom Language", url: "classroom-language-flashcards/", label: "Vocabulary" },
+  { title: "Classroom Language Write", url: "classroom-language-write/", label: "Vocabulary" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.

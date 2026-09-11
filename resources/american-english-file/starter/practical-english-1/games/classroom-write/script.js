@@ -321,6 +321,7 @@
           <span class="cw-title">${part.title}</span>
           <span class="cw-progress">${progress}</span>
         </header>
+        <div class="cw-bar"><div class="cw-bar-fill" style="width:${((index) / order.length) * 100}%"></div></div>
         <p class="cw-instruction">${part.tip}</p>
         <section class="cw-play-area">
           ${isListen ? `
@@ -374,6 +375,7 @@
         <span class="cw-title">${part.title}</span>
         <span class="cw-progress">${progress}</span>
       </header>
+      <div class="cw-bar"><div class="cw-bar-fill" style="width:${((index + 1) / order.length) * 100}%"></div></div>
       <section class="cw-feedback ${lastCorrect ? "is-correct" : lastSkipped ? "is-skip" : "is-wrong"}">
         <div class="cw-result-icon">${lastCorrect ? "✅" : lastSkipped ? "⏭️" : "❌"}</div>
         <h2>${lastCorrect ? "Correct!" : lastSkipped ? "Skipped" : "Not quite"}</h2>
@@ -390,10 +392,18 @@
       phase = "menu";
       render();
     };
-    document.getElementById("cw-next").onclick = nextItem;
+    const nextBtn = document.getElementById("cw-next");
+    nextBtn.onclick = nextItem;
     if (lastCorrect) {
       const card = app.querySelector(".cw-answer-card");
       setTimeout(() => spawnSparks(card), 80);
+      // Auto-advance after a short celebration
+      nextBtn.textContent = "Next →";
+      nextBtn.disabled = true;
+      nextBtn.style.opacity = "0.6";
+      setTimeout(() => {
+        nextItem();
+      }, 1100);
     }
   }
 
