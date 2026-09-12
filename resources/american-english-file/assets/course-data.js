@@ -370,6 +370,7 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].games = 
   { title: "Order the Dialogue", url: "order-the-dialogue/", label: "Listening" },
   { title: "Restaurant Booking", url: "restaurant-booking/", label: "Listening" },
   { title: "Hotel Role-Play", url: "hotel-roleplay/", label: "Speaking" },
+  { title: "Restaurant Role-Play", url: "restaurant-roleplay/", label: "Speaking" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.
