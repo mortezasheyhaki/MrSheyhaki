@@ -312,6 +312,8 @@ body > button[style*="fixed"], body > div[style*="position: fixed"] {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  flex: 1;
+  min-height: 0;
 }
 
 .mr-qblock {
@@ -500,48 +502,89 @@ body > button[style*="fixed"], body > div[style*="position: fixed"] {
   .mr-controls { padding: 12px 24px 24px; }
 }
 
-/* Mobile */
+
+/* Mobile — no-scroll, fit all 3 questions */
 @media (max-width: 480px) {
-  .mr-topbar { padding: 8px 12px; }
-  .mr-title { font-size: 0.88rem; }
+  .mr-topbar { padding: 6px 10px; }
+  .mr-title { font-size: 0.85rem; }
+  .mr-badge { font-size: 0.7rem; padding: 3px 8px; }
   .mr-start, .mr-done {
-    padding: 16px 14px 20px;
-    gap: 12px;
+    padding: 12px 12px 16px;
+    gap: 10px;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .mr-icon { font-size: 2rem; }
+  .mr-start h1, .mr-done h1 { font-size: 1.3rem; }
+  .mr-start p, .mr-done p { font-size: 0.88rem; }
+  .mr-preview { max-width: 100%; }
+  .mr-preview li { padding: 8px 12px; font-size: 0.85rem; margin-bottom: 6px; }
+  .mr-stage {
+    padding: 6px 10px 4px;
+    gap: 6px;
+    overflow: hidden !important;
     justify-content: flex-start;
   }
-  .mr-icon { font-size: 2.2rem; }
-  .mr-start h1, .mr-done h1 { font-size: 1.4rem; }
-  .mr-start p, .mr-done p { font-size: 0.92rem; }
-  .mr-preview li { padding: 10px 14px; font-size: 0.9rem; }
-  .mr-stage {
-    padding: 10px 12px 6px;
-    gap: 10px;
+  .mr-speaker-wrap { gap: 2px; }
+  .mr-play { width: 48px; height: 48px; }
+  .mr-play svg { width: 22px; height: 22px; }
+  .mr-listen-hint { font-size: 0.72rem; }
+  .mr-quiz {
+    gap: 6px;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
   }
-  .mr-play { width: 64px; height: 64px; }
-  .mr-play svg { width: 26px; height: 26px; }
   .mr-qblock {
-    padding: 10px 12px;
-    border-radius: 14px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
-  .mr-q { font-size: 0.95rem; margin-bottom: 8px; }
-  .mr-qnum { width: 22px; height: 22px; font-size: 0.75rem; }
-  .mr-choice { padding: 10px 12px; gap: 8px; }
-  .mr-choice-letter { width: 26px; height: 26px; font-size: 0.82rem; }
-  .mr-choice-text { font-size: 0.92rem; }
-  .mr-controls { padding: 8px 12px 14px; }
-  .mr-controls .mr-btn { min-width: 0; width: 100%; max-width: 280px; }
+  .mr-q { font-size: 0.88rem; margin-bottom: 4px; gap: 6px; }
+  .mr-qnum { width: 20px; height: 20px; font-size: 0.7rem; }
+  .mr-choices { gap: 4px; }
+  .mr-choice { padding: 6px 8px; gap: 6px; border-radius: 10px; }
+  .mr-choice-letter { width: 22px; height: 22px; font-size: 0.75rem; }
+  .mr-choice-text { font-size: 0.85rem; }
+  .mr-feedback { font-size: 0.85rem; padding: 6px 10px; }
+  .mr-controls { padding: 6px 10px 10px; }
+  .mr-controls .mr-btn {
+    min-width: 0;
+    width: 100%;
+    max-width: 280px;
+    padding: 11px 20px;
+    font-size: 0.95rem;
+  }
 }
 
-@media (max-height: 640px) {
-  .mr-start, .mr-done { padding: 12px; gap: 10px; }
-  .mr-icon { font-size: 1.8rem; }
-  .mr-stage { gap: 8px; padding: 8px 10px; }
-  .mr-play { width: 56px; height: 56px; }
-  .mr-listen-hint { font-size: 0.78rem; }
-  .mr-qblock { padding: 8px 10px; }
-  .mr-q { font-size: 0.9rem; margin-bottom: 6px; }
-  .mr-choice { padding: 8px 10px; }
-  .mr-quiz { gap: 8px; }
+/* Short phones — extra tight, no scroll */
+@media (max-height: 700px) {
+  .mr-stage { gap: 4px; padding: 4px 8px 2px; overflow: hidden !important; }
+  .mr-play { width: 42px; height: 42px; }
+  .mr-play svg { width: 20px; height: 20px; }
+  .mr-listen-hint { display: none; }
+  .mr-quiz { gap: 4px; }
+  .mr-qblock { padding: 6px 8px; }
+  .mr-q { font-size: 0.82rem; margin-bottom: 3px; }
+  .mr-choice { padding: 5px 8px; }
+  .mr-choice-letter { width: 20px; height: 20px; font-size: 0.7rem; }
+  .mr-choice-text { font-size: 0.8rem; }
+  .mr-controls { padding: 4px 8px 8px; }
+  .mr-controls .mr-btn { padding: 10px 18px; font-size: 0.9rem; }
+}
+
+@media (max-height: 560px) {
+  .mr-play { width: 36px; height: 36px; }
+  .mr-qblock { padding: 4px 6px; }
+  .mr-q { font-size: 0.78rem; margin-bottom: 2px; }
+  .mr-choice { padding: 4px 6px; }
+  .mr-choice-text { font-size: 0.75rem; }
+  .mr-topbar { padding: 4px 8px; }
 }
 
 /* Dark mode */
