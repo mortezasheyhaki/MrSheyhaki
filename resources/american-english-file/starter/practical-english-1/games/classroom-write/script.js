@@ -158,6 +158,12 @@
     }
     const checkBtn = document.getElementById("cw-check");
     if (checkBtn) checkBtn.disabled = true;
+
+    // Play the word audio after a correct answer (Listen & Write + Look & Write)
+    if (lastCorrect) {
+      setTimeout(playAudio, 120);
+    }
+
     setTimeout(() => {
       phase = "feedback";
       render();
