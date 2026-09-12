@@ -9,12 +9,17 @@ html, body {
 .afc-game {
   height: 100dvh;
   max-height: 100dvh;
+  height: 100svh; /* stable mobile viewport */
+  max-height: 100svh;
   display: flex;
   flex-direction: column;
   background: linear-gradient(160deg, #eef2ff 0%, #f8fafc 45%, #e0e7ff 100%);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   color: #1e293b;
   overflow: hidden;
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  box-sizing: border-box;
 }
 
 .profile-btn, .profile-button, .user-profile, .avatar-btn, .sidebar,
@@ -62,6 +67,7 @@ body > button[style*="fixed"], body > div[style*="position: fixed"] {
   text-align: center;
   gap: 20px;
   overflow: hidden;
+  box-sizing: border-box;
 }
 .afc-hero {
   display: flex;
@@ -371,24 +377,101 @@ body > button[style*="fixed"], body > div[style*="position: fixed"] {
 .afc-done h1 { font-size: 1.85rem; margin: 0; }
 .afc-stars { font-size: 1.9rem; letter-spacing: 5px; }
 
+/* Mobile layout fixes (Starter PE1 Alphabet Flashcards) */
 @media (max-width: 480px) {
+  .afc-topbar {
+    padding: 8px 12px;
+  }
+  .afc-title { font-size: 0.95rem; }
+  .afc-badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+  }
+
+  .afc-start {
+    padding: 12px 14px 18px;
+    gap: 14px;
+    justify-content: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .afc-hero {
+    gap: 8px;
+  }
+  .afc-start h1 {
+    font-size: clamp(1.45rem, 5vw, 1.75rem);
+  }
+  .afc-start p {
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+
+  .afc-alpha-row {
+    gap: 4px;
+    max-width: 100%;
+    padding: 0 2px;
+  }
+  .afc-alpha-chip {
+    width: 26px;
+    height: 26px;
+    font-size: 0.78rem;
+    border-radius: 7px;
+    box-shadow: 0 2px 6px rgba(99,102,241,0.1);
+  }
+
+  .afc-parts {
+    flex-direction: column;
+    align-items: stretch;
+    max-width: 100%;
+    gap: 12px;
+  }
+  .afc-part-card {
+    max-width: none;
+    min-width: 0;
+    width: 100%;
+    padding: 14px 16px 12px;
+    border-radius: 14px;
+  }
+  .afc-part-num {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .afc-part-card strong {
+    font-size: 1.05rem;
+    margin-bottom: 3px;
+  }
+  .afc-part-card span {
+    font-size: 0.84rem;
+    line-height: 1.35;
+  }
+  .afc-part-card::after {
+    width: 70px;
+    height: 70px;
+    right: -16px;
+    bottom: -16px;
+  }
+
   .afc-track {
     width: min(270px, 86vw);
     height: min(380px, 54dvh);
   }
   .afc-letter { font-size: clamp(4.2rem, 22vw, 6.5rem); }
-  .afc-parts {
-    flex-direction: column;
-    align-items: stretch;
-    max-width: 300px;
+  .afc-dots {
+    gap: 4px;
+    max-width: min(280px, 90vw);
   }
-  .afc-part-card { max-width: none; min-width: 0; width: 100%; }
-  .afc-alpha-chip { width: 28px; height: 28px; font-size: 0.85rem; border-radius: 8px; gap: 5px; }
-  .afc-alpha-row { gap: 5px; max-width: 300px; }
-  .afc-controls { gap: 10px; padding-bottom: 16px; }
+  .afc-dot {
+    width: 6px;
+    height: 6px;
+  }
+  .afc-controls { gap: 10px; padding: 10px 12px 16px; }
   .afc-nav-btn { min-width: 80px; padding: 11px 16px; font-size: 0.9rem; }
   .afc-speaker { width: 50px; height: 50px; }
 }
+
 @media (min-width: 900px) {
   .afc-track { width: 320px; height: min(460px, 60dvh); }
   .afc-letter { font-size: 8.5rem; }
@@ -396,12 +479,44 @@ body > button[style*="fixed"], body > div[style*="position: fixed"] {
   .afc-alpha-chip { width: 42px; height: 42px; font-size: 1.15rem; }
   .afc-part-card { padding: 28px 26px; }
 }
+
+/* Short mobile screens / landscape phones */
+@media (max-height: 640px) {
+  .afc-start {
+    padding: 8px 12px 12px;
+    gap: 10px;
+  }
+  .afc-hero { gap: 6px; }
+  .afc-start h1 { font-size: 1.35rem; }
+  .afc-start p { font-size: 0.85rem; }
+  .afc-alpha-chip {
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
+    border-radius: 6px;
+  }
+  .afc-alpha-row { gap: 3px; }
+  .afc-part-card {
+    padding: 12px 14px 12px;
+  }
+  .afc-part-num {
+    width: 30px;
+    height: 30px;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+  .afc-part-card strong { font-size: 1rem; }
+  .afc-part-card span { font-size: 0.8rem; }
+}
+
 @media (max-height: 560px) {
   .afc-track { height: min(320px, 48dvh); }
   .afc-letter { font-size: clamp(3.5rem, 16vw, 5.5rem); }
   .afc-example { font-size: 0.95rem; min-height: 2em; }
   .afc-hint { display: none; }
   .afc-alpha-row { display: none; }
+  .afc-start { gap: 8px; }
+  .afc-parts { gap: 8px; }
 }
 
 .afc-part-icon { display: none !important; }
