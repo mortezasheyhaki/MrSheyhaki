@@ -358,12 +358,18 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].name = "
 COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].games = [
   { title: "Alphabet Flashcards", url: "alphabet-flashcards/", label: "Vocabulary" },
   { title: "Listen & Choose", url: "listen-choose/", label: "Vocabulary" },
+  { title: "Complete the Conversation", url: "complete-conversation/", label: "Vocabulary" },
   { title: "Match Classroom Objects", url: "match-classroom-objects/", label: "Vocabulary" },
   { title: "Classroom Flashcards", url: "classroom-flashcards/", label: "Vocabulary" },
   { title: "Classroom Write", url: "classroom-write/", label: "Vocabulary" },
   { title: "What's this?", url: "classroom-whats-this/", label: "Vocabulary" },
   { title: "Classroom Language", url: "classroom-language-flashcards/", label: "Vocabulary" },
   { title: "Classroom Language Write", url: "classroom-language-write/", label: "Vocabulary" },
+  { title: "Meet Rob", url: "meet-rob/", label: "Listening" },
+  { title: "Meet Jenny", url: "meet-jenny/", label: "Listening" },
+  { title: "Order the Dialogue", url: "order-the-dialogue/", label: "Listening" },
+  { title: "Restaurant Booking", url: "restaurant-booking/", label: "Listening" },
+  { title: "Hotel Role-Play", url: "hotel-roleplay/", label: "Speaking" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.

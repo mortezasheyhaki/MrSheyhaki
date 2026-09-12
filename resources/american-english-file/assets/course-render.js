@@ -9,7 +9,7 @@
  */
 (function () {
 
-  // Skill badge styles for game cards (Grammar / Vocabulary / Pronunciation)
+  // Skill badge styles for game cards (Grammar / Vocabulary / Pronunciation / Listening / Speaking)
   (function injectSkillBadgeStyles() {
     if (document.getElementById("aef-skill-badge-css")) return;
     const css = `
@@ -105,6 +105,16 @@
   color: #be185d;
   border: 1px solid rgba(219, 39, 119, 0.2);
 }
+.skill-badge--listening {
+  background: rgba(13, 148, 136, 0.12);
+  color: #0f766e;
+  border: 1px solid rgba(13, 148, 136, 0.22);
+}
+.skill-badge--speaking {
+  background: rgba(234, 88, 12, 0.12);
+  color: #c2410c;
+  border: 1px solid rgba(234, 88, 12, 0.22);
+}
 html[data-theme="dark"] .skill-badge--grammar {
   background: rgba(167, 139, 250, 0.18);
   color: #c4b5fd;
@@ -119,6 +129,16 @@ html[data-theme="dark"] .skill-badge--pronunciation {
   background: rgba(244, 114, 182, 0.18);
   color: #f9a8d4;
   border-color: rgba(244, 114, 182, 0.3);
+}
+html[data-theme="dark"] .skill-badge--listening {
+  background: rgba(45, 212, 191, 0.16);
+  color: #5eead4;
+  border-color: rgba(45, 212, 191, 0.28);
+}
+html[data-theme="dark"] .skill-badge--speaking {
+  background: rgba(251, 146, 60, 0.16);
+  color: #fdba74;
+  border-color: rgba(251, 146, 60, 0.28);
 }
 @media (max-width: 640px) {
   .resource-card--game {

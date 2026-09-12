@@ -1,0 +1,500 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important;
+  touch-action: pan-y;
+  -webkit-text-size-adjust: 100%;
+}
+.rb-game {
+  height: 100dvh;
+  max-height: 100dvh;
+  height: 100svh;
+  max-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(34,197,94,0.12), transparent 55%),
+    linear-gradient(165deg, #f0fdf4 0%, #f8fafc 42%, #ecfdf5 100%);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #1e293b;
+  overflow: hidden;
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  box-sizing: border-box;
+}
+
+.profile-btn, .profile-button, .user-profile, .avatar-btn, .sidebar,
+.left-rail, .nav-rail, [aria-label="Profile"], .la-profile,
+.fixed-profile, body > aside, .theme-toggle,
+body > button[style*="fixed"], body > div[style*="position: fixed"] {
+  display: none !important;
+}
+
+@keyframes rbFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes rbFbIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes rbFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.rb-enter {
+  animation: rbFadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 0.06s);
+}
+.rb-fb-in { animation: rbFbIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+.rb-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.94);
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+  z-index: 5;
+}
+.rb-back {
+  font-size: 1.3rem;
+  text-decoration: none;
+  color: #16a34a;
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+}
+.rb-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  flex: 1;
+  padding: 0 6px;
+}
+.rb-badge {
+  background: #16a34a;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+/* Start / Done */
+.rb-start, .rb-done {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+  padding: 24px 18px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+.rb-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  animation: rbFloat 2.8s ease-in-out infinite;
+}
+.rb-start h1, .rb-done h1 {
+  font-size: clamp(1.45rem, 5vw, 1.9rem);
+  margin: 0;
+  color: #14532d;
+}
+.rb-start p, .rb-done p {
+  color: #64748b;
+  max-width: 340px;
+  line-height: 1.5;
+  margin: 0;
+  font-size: 1rem;
+}
+.rb-preview {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 280px;
+  text-align: left;
+}
+.rb-preview li {
+  background: rgba(255,255,255,0.92);
+  border: 1.5px solid rgba(134,239,172,0.7);
+  border-radius: 12px;
+  padding: 11px 16px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #166534;
+  font-size: 0.92rem;
+  box-shadow: 0 4px 14px rgba(22,163,74,0.08);
+}
+.rb-stars { font-size: 1.9rem; letter-spacing: 5px; }
+.rb-btn {
+  background: linear-gradient(145deg, #4ade80 0%, #16a34a 100%);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 13px 26px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(22,163,74,0.35);
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
+.rb-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(22,163,74,0.4);
+}
+.rb-btn:active:not(:disabled) { transform: scale(0.97); }
+.rb-btn:disabled { opacity: 0.4; cursor: default; }
+.rb-btn.secondary {
+  background: #dcfce7;
+  color: #166534;
+  box-shadow: 0 4px 12px rgba(22,163,74,0.12);
+}
+.rb-done .rb-btn { min-width: 170px; }
+
+/* Stage */
+.rb-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px 8px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.rb-speaker-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* PE1 play button */
+.rb-play {
+  position: relative;
+  overflow: visible;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: none;
+  background: #7c3aed;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  margin: 0 auto;
+  box-shadow: 0 6px 18px rgba(124, 58, 237, 0.4);
+  transition: transform 0.18s, box-shadow 0.2s;
+}
+.rb-play:hover { transform: scale(1.06); }
+.rb-play:active { transform: scale(0.95); }
+.rb-play.playing {
+  box-shadow: 0 8px 22px rgba(124, 92, 255, 0.4), 0 0 0 6px rgba(124, 92, 255, 0.2);
+}
+.rb-play svg {
+  position: relative;
+  z-index: 2;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.rb-play .wave {
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 2.5px solid #7c5cff;
+  opacity: 0;
+  pointer-events: none;
+}
+.rb-play.playing .wave { animation: rb-ripple 1.25s ease-out infinite; }
+.rb-play.playing .wave:nth-child(2) { animation-delay: 0.3s; }
+.rb-play.playing .wave:nth-child(3) { animation-delay: 0.6s; }
+@keyframes rb-ripple {
+  0%   { transform: scale(0.85); opacity: 0.65; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+.rb-play .eq {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.rb-play .eq span {
+  width: 3.5px;
+  height: 14px;
+  background: #fff;
+  border-radius: 2px;
+}
+.rb-play.playing svg { opacity: 0; transform: scale(0.45); }
+.rb-play.playing .eq { opacity: 1; }
+.rb-play.playing .eq span:nth-child(1) { animation: rb-eq 0.55s ease-in-out infinite; }
+.rb-play.playing .eq span:nth-child(2) { animation: rb-eq 0.55s ease-in-out infinite 0.1s; }
+.rb-play.playing .eq span:nth-child(3) { animation: rb-eq 0.55s ease-in-out infinite 0.2s; }
+.rb-play.playing .eq span:nth-child(4) { animation: rb-eq 0.55s ease-in-out infinite 0.15s; }
+@keyframes rb-eq {
+  0%, 100% { transform: scaleY(0.4); }
+  50%      { transform: scaleY(1.2); }
+}
+.rb-listen-hint {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Booking card */
+.rb-card {
+  width: 100%;
+  max-width: 400px;
+  background: #f7fee7;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 4px 6px rgba(22,163,74,0.06),
+    0 14px 32px rgba(22,163,74,0.12);
+  border: 1px solid rgba(134,239,172,0.5);
+}
+.rb-card-header {
+  background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%);
+  color: #fff;
+  text-align: center;
+  padding: 14px 16px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: Georgia, "Times New Roman", serif;
+}
+.rb-card-body {
+  padding: 18px 18px 20px;
+}
+.rb-card-title {
+  margin: 0 0 16px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #14532d;
+}
+
+.rb-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.rb-row:last-child { margin-bottom: 0; }
+.rb-label {
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: #1e293b;
+  min-width: 72px;
+  flex-shrink: 0;
+}
+.rb-field-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.rb-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  border-bottom: 2px solid #86efac;
+  background: transparent;
+  padding: 6px 4px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #14532d;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  border-radius: 0;
+}
+.rb-input:focus {
+  border-bottom-color: #16a34a;
+  background: rgba(220,252,231,0.5);
+}
+.rb-input.ok {
+  border-bottom-color: #22c55e;
+  color: #166534;
+  background: rgba(220,252,231,0.6);
+}
+.rb-input.bad {
+  border-bottom-color: #ef4444;
+  color: #991b1b;
+  background: rgba(254,226,226,0.5);
+}
+.rb-input:disabled { opacity: 1; }
+.rb-suffix {
+  font-size: 0.92rem;
+  color: #64748b;
+  font-weight: 500;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.rb-name-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 0;
+}
+.rb-prefix {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+}
+.rb-input-name {
+  flex: 1;
+  min-width: 60px;
+  max-width: 120px;
+}
+
+.rb-feedback {
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 10px 16px;
+  border-radius: 14px;
+  max-width: 400px;
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.rb-feedback.ok {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  color: #166534;
+}
+.rb-feedback.warn {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+}
+.rb-hints {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.rb-controls {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 10px 16px 18px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.rb-controls .rb-btn {
+  min-width: 160px;
+}
+
+/* Desktop */
+@media (min-width: 700px) {
+  .rb-topbar { padding: 12px 24px; }
+  .rb-title { font-size: 1.05rem; }
+  .rb-stage { padding: 16px 24px 10px; gap: 16px; }
+  .rb-play { width: 76px; height: 76px; }
+  .rb-card { max-width: 440px; }
+  .rb-card-body { padding: 22px 24px 24px; }
+  .rb-input { font-size: 1.1rem; }
+  .rb-controls { padding: 12px 24px 24px; }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .rb-topbar { padding: 8px 12px; }
+  .rb-title { font-size: 0.88rem; }
+  .rb-start, .rb-done {
+    padding: 16px 14px 20px;
+    gap: 12px;
+    justify-content: flex-start;
+  }
+  .rb-stage { padding: 10px 12px 6px; gap: 10px; }
+  .rb-play { width: 60px; height: 60px; }
+  .rb-play svg { width: 24px; height: 24px; }
+  .rb-card-header { padding: 12px; font-size: 1.05rem; }
+  .rb-card-body { padding: 14px 14px 16px; }
+  .rb-card-title { font-size: 1.1rem; margin-bottom: 12px; }
+  .rb-label { min-width: 64px; font-size: 0.92rem; }
+  .rb-input { font-size: 0.98rem; padding: 5px 2px; }
+  .rb-row { margin-bottom: 12px; gap: 8px; }
+  .rb-controls { padding: 8px 12px 14px; }
+  .rb-controls .rb-btn { width: 100%; max-width: 280px; }
+}
+
+@media (max-height: 640px) {
+  .rb-play { width: 52px; height: 52px; }
+  .rb-listen-hint { font-size: 0.78rem; }
+  .rb-card-header { padding: 10px; font-size: 0.98rem; }
+  .rb-card-body { padding: 12px; }
+  .rb-row { margin-bottom: 10px; }
+}
+
+/* Dark */
+html[data-theme="dark"] .rb-game {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(34,197,94,0.15), transparent 55%),
+    linear-gradient(165deg, #0f172a 0%, #14532d 50%, #0f172a 100%);
+  color: #e2e8f0;
+}
+html[data-theme="dark"] .rb-topbar {
+  background: rgba(15, 23, 42, 0.94);
+  border-bottom-color: #334155;
+}
+html[data-theme="dark"] .rb-title { color: #f1f5f9; }
+html[data-theme="dark"] .rb-back { color: #4ade80; }
+html[data-theme="dark"] .rb-start h1,
+html[data-theme="dark"] .rb-done h1 { color: #bbf7d0; }
+html[data-theme="dark"] .rb-start p,
+html[data-theme="dark"] .rb-done p,
+html[data-theme="dark"] .rb-listen-hint { color: #94a3b8; }
+html[data-theme="dark"] .rb-preview li {
+  background: #1e293b;
+  border-color: #166534;
+  color: #bbf7d0;
+}
+html[data-theme="dark"] .rb-card {
+  background: #1a2e1a;
+  border-color: #166534;
+}
+html[data-theme="dark"] .rb-card-title { color: #bbf7d0; }
+html[data-theme="dark"] .rb-label { color: #e2e8f0; }
+html[data-theme="dark"] .rb-prefix { color: #e2e8f0; }
+html[data-theme="dark"] .rb-input {
+  border-bottom-color: #4ade80;
+  color: #bbf7d0;
+}
+html[data-theme="dark"] .rb-input:focus {
+  background: rgba(22,163,74,0.15);
+}
+html[data-theme="dark"] .rb-suffix { color: #94a3b8; }
+html[data-theme="dark"] .rb-btn.secondary {
+  background: #14532d;
+  color: #bbf7d0;
+}
+html[data-theme="dark"] .rb-play {
+  background: #7c3aed;
+  box-shadow: 0 6px 18px rgba(124, 58, 237, 0.55);
+}
