@@ -1,6 +1,6 @@
 /* You / We / They – positive, negative, question forms · AEF Starter */
 (function () {
-  const GAME_ID = "starter-you-we-they-forms";
+  const GAME_ID = "starter-2a-you-we-they-forms";
 
   const PRONOUNS = [
     {
@@ -235,12 +235,7 @@
           <span class="mc-badge">Done</span>
         </header>
         <section class="mc-done">
-          <div class="mc-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="mc-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
+          <div class="trophy-scene${stars === 3 ? " perfect" : ""}" aria-hidden="true"><div class="orbit-system"><div class="trophy-float">🏆</div><div class="star-orbit"><span class="star${stars >= 1 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 2 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 3 ? " filled" : ""}">★</span></div></div></div>
           <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
           <p><strong>${m.title}</strong><br>You matched <strong>${correctCount} / 3</strong>.</p>
           <button type="button" class="mc-btn" id="mc-again">Play again</button>

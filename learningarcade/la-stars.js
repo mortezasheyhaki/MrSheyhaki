@@ -101,7 +101,21 @@
     "starter-pe1-classroom-write": "starter-pe1-classroom-write",
     "starter-pe1-classroom-whats-this": "starter-pe1-classroom-whats-this",
     "starter-pe1-classroom-language-flashcards": "starter-pe1-classroom-language-flashcards",
-    "starter-pe1-classroom-language-write": "starter-pe1-classroom-language-write"
+    "starter-pe1-classroom-language-write": "starter-pe1-classroom-language-write",
+
+    // Starter · Unit 2A games (old short ids → canonical course-render ids)
+    "starter-pronouns-be-practice": "starter-2a-pronouns-be-practice",
+    "starter-sentence-builder": "starter-2a-sentence-builder",
+    "starter-statement-to-question": "starter-2a-statement-to-question",
+    "starter-you-we-they-forms": "starter-2a-you-we-they-forms",
+    "starter-2a-from-nationality": "starter-2a-from-nationality",
+    "starter-2a-listen-nationalities": "starter-2a-listen-nationalities",
+    "starter-2a-match-nationalities": "starter-2a-match-nationalities",
+    "starter-2a-pronouns-be-practice": "starter-2a-pronouns-be-practice",
+    "starter-2a-sentence-builder": "starter-2a-sentence-builder",
+    "starter-2a-statement-to-question": "starter-2a-statement-to-question",
+    "starter-2a-you-we-they-forms": "starter-2a-you-we-they-forms",
+    "starter-2a-conversation-reading": "starter-2a-conversation-reading"
   };
 
   function loadJSON(key) {
@@ -156,6 +170,13 @@
         ids.push(parent);
       }
     }
+    // Reverse lookup: any key that aliases *to* this gameId
+    Object.keys(ALIASES).forEach(function (key) {
+      var val = ALIASES[key];
+      if (val === gameId || (Array.isArray(val) && val.indexOf(gameId) !== -1)) {
+        if (ids.indexOf(key) === -1) ids.push(key);
+      }
+    });
     return ids;
   }
 
@@ -224,6 +245,22 @@
     return "Played " + n + " times";
   }
 
+  function bestStarsFor(gameId, starsData) {
+    var best = 0;
+    relatedIds(gameId).forEach(function (id) {
+      best = Math.max(best, Number(starsData[id] || 0));
+    });
+    return Math.max(0, Math.min(3, best));
+  }
+
+  function bestPlaysFor(gameId, playsData) {
+    var best = 0;
+    relatedIds(gameId).forEach(function (id) {
+      best = Math.max(best, Number(playsData[id] || 0));
+    });
+    return best;
+  }
+
   function apply(root) {
     var scope = root || document;
     var starsData = loadStars();
@@ -231,7 +268,7 @@
 
     scope.querySelectorAll(".game-stars[data-game]").forEach(function (el) {
       var id = el.getAttribute("data-game");
-      var n = Math.max(0, Math.min(3, Number(starsData[id] || 0)));
+      var n = bestStarsFor(id, starsData);
       el.querySelectorAll(".star").forEach(function (star) {
         var need = Number(star.getAttribute("data-n") || 0);
         if (need <= n) {
@@ -247,7 +284,7 @@
 
     scope.querySelectorAll(".game-plays[data-game]").forEach(function (el) {
       var id = el.getAttribute("data-game");
-      var n = Number(playsData[id] || 0);
+      var n = bestPlaysFor(id, playsData);
       el.textContent = playLabel(n);
       el.setAttribute("data-count", String(n));
       el.setAttribute("aria-label", playLabel(n));

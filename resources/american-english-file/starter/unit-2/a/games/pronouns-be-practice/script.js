@@ -1,6 +1,6 @@
 /* Pronouns + be – 3 parts (a, b, c) · AEF Starter */
 (function () {
-  const GAME_ID = "starter-pronouns-be-practice";
+  const GAME_ID = "starter-2a-pronouns-be-practice";
 
   // —— Part A: Change bold words to a pronoun ——
   const PART_A = [
@@ -490,12 +490,7 @@
           <span class="lw-badge">Done</span>
         </header>
         <section class="lw-done">
-          <div class="lw-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="lw-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
+          <div class="trophy-scene${stars === 3 ? " perfect" : ""}" aria-hidden="true"><div class="orbit-system"><div class="trophy-float">🏆</div><div class="star-orbit"><span class="star${stars >= 1 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 2 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 3 ? " filled" : ""}">★</span></div></div></div>
           <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
           <p>Total: <strong>${total} / ${max}</strong></p>
           <p class="lw-desc">A ${partScores[0]}/${PART_A.length} · B ${partScores[1]}/${PART_B.length} · C ${partScores[2]}/${PART_C_ITEMS.length}</p>

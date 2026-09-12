@@ -1,6 +1,6 @@
 /* Statement → Question · listen & write · AEF Starter */
 (function () {
-  const GAME_ID = "starter-statement-to-question";
+  const GAME_ID = "starter-2a-statement-to-question";
 
   const ITEMS = [
     {
@@ -246,12 +246,7 @@
           <span class="lw-badge">Done</span>
         </header>
         <section class="lw-done">
-          <div class="lw-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="lw-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
+          <div class="trophy-scene${stars === 3 ? " perfect" : ""}" aria-hidden="true"><div class="orbit-system"><div class="trophy-float">🏆</div><div class="star-orbit"><span class="star${stars >= 1 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 2 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 3 ? " filled" : ""}">★</span></div></div></div>
           <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
           <p>You got <strong>${correctCount} / 7</strong> correct.</p>
           <button type="button" class="lw-btn" id="lw-again">Play again</button>

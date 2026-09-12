@@ -356,3 +356,120 @@ html[data-theme="dark"] .sb-fb-answer {
     animation: none !important;
   }
 }
+
+/* ── Trophy win animation: stars orbit around the cup (behind → front) ── */
+.trophy-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0 16px;
+  position: relative;
+  width: 100%;
+  min-height: 160px;
+  perspective: 600px;
+  perspective-origin: 50% 45%;
+}
+
+.orbit-system {
+  position: relative;
+  width: 200px;
+  height: 150px;
+  transform-style: preserve-3d;
+}
+
+/* Cup fixed in the center plane (translateZ 0) */
+.trophy-float {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  font-size: 64px;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+  transform: translate(-50%, -50%) translateZ(0);
+  filter: drop-shadow(0 8px 18px rgba(251, 191, 36, 0.4));
+  animation: trophy-float 3s ease-in-out infinite;
+  will-change: transform;
+  /* solid-ish backdrop so stars disappear when behind */
+  background: radial-gradient(circle at 50% 55%, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 55%, transparent 72%);
+  border-radius: 50%;
+  padding: 8px 10px;
+}
+
+html:not([data-theme="dark"]) .trophy-float {
+  background: radial-gradient(circle at 50% 55%, rgba(244, 246, 251, 0.95) 0%, rgba(244, 246, 251, 0.65) 55%, transparent 72%);
+}
+
+.trophy-scene.perfect .trophy-float {
+  filter: drop-shadow(0 10px 24px rgba(251, 191, 36, 0.6));
+  animation: trophy-float 2.6s ease-in-out infinite;
+}
+
+/* Orbital arms — 3 stars evenly spaced */
+.star-orbit {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  animation: orbit-around 10s linear infinite;
+}
+
+.star-orbit:nth-child(2) { animation-delay: 0s; }
+.star-orbit:nth-child(3) { animation-delay: -3.33s; }
+.star-orbit:nth-child(4) { animation-delay: -6.66s; }
+
+.star {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  font-size: 26px;
+  line-height: 28px;
+  text-align: center;
+  color: rgba(148, 163, 184, 0.35);
+  /* radius of the orbit */
+  transform: translateZ(70px);
+  transform-origin: center center;
+  pointer-events: none;
+  backface-visibility: visible;
+}
+
+.star.filled {
+  color: #fbbf24;
+  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.85));
+  animation: star-self-spin 5.5s linear infinite;
+}
+
+/* Tilted Y-orbit so path is elliptical and clearly goes behind/front */
+@keyframes orbit-around {
+  from { transform: rotateX(22deg) rotateY(0deg); }
+  to   { transform: rotateX(22deg) rotateY(360deg); }
+}
+
+/* Self-spin while keeping the orbital radius (translateZ) */
+@keyframes star-self-spin {
+  from { transform: translateZ(70px) rotate(0deg); }
+  to   { transform: translateZ(70px) rotate(360deg); }
+}
+
+@keyframes trophy-float {
+  0%, 100% { transform: translate(-50%, -50%) translateZ(0) translateY(0) rotate(-2deg); }
+  50%      { transform: translate(-50%, -50%) translateZ(0) translateY(-10px) rotate(2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trophy-float,
+  .star-orbit,
+  .star.filled {
+    animation: none !important;
+  }
+  .star-orbit:nth-child(2) { transform: rotateX(22deg) rotateY(0deg); }
+  .star-orbit:nth-child(3) { transform: rotateX(22deg) rotateY(120deg); }
+  .star-orbit:nth-child(4) { transform: rotateX(22deg) rotateY(240deg); }
+  .star { transform: translateZ(70px); }
+}

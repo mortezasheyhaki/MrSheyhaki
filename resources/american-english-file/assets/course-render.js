@@ -115,6 +115,11 @@
   color: #c2410c;
   border: 1px solid rgba(234, 88, 12, 0.22);
 }
+.skill-badge--reading {
+  background: rgba(5, 150, 105, 0.12);
+  color: #047857;
+  border: 1px solid rgba(5, 150, 105, 0.22);
+}
 html[data-theme="dark"] .skill-badge--grammar {
   background: rgba(167, 139, 250, 0.18);
   color: #c4b5fd;
@@ -139,6 +144,11 @@ html[data-theme="dark"] .skill-badge--speaking {
   background: rgba(251, 146, 60, 0.16);
   color: #fdba74;
   border-color: rgba(251, 146, 60, 0.28);
+}
+html[data-theme="dark"] .skill-badge--reading {
+  background: rgba(52, 211, 153, 0.16);
+  color: #6ee7b7;
+  border-color: rgba(52, 211, 153, 0.28);
 }
 @media (max-width: 640px) {
   .resource-card--game {

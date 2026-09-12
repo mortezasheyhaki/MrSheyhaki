@@ -136,6 +136,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.games = [
   { title: "Pronouns & be Practice", url: "pronouns-be-practice/", label: "Grammar" },
   { title: "Sentence Builder", url: "sentence-builder/", label: "Grammar" },
   { title: "Statement → Question", url: "statement-to-question/", label: "Grammar" },
+  { title: "Are you on vacation?", url: "conversation-reading/", label: "Reading" },
 ];
 
 // Unit 3A – Games
