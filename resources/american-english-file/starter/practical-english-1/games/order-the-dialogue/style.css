@@ -27,8 +27,12 @@ html, body {
 .profile-btn, .profile-button, .user-profile, .avatar-btn, .sidebar,
 .left-rail, .nav-rail, [aria-label="Profile"], .la-profile,
 .fixed-profile, body > aside, .theme-toggle,
-body > button[style*="fixed"], body > div[style*="position: fixed"] {
+body > button[style*="fixed"], body > div[style*="position: fixed"],
+[class*="profile"], [class*="avatar-fixed"], [id*="profile"],
+.floating-toggle, .theme-switch, .la-fab, .fab {
   display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 @keyframes odFadeUp {
@@ -169,10 +173,9 @@ body > button[style*="fixed"], body > div[style*="position: fixed"] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px 6px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  gap: 8px;
+  padding: 8px 12px 4px;
+  overflow: hidden;
   box-sizing: border-box;
   width: 100%;
 }
@@ -265,12 +268,17 @@ body > button[style*="fixed"], body > div[style*="position: fixed"] {
 .od-list {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 2px 4px;
   width: 100%;
   max-width: 520px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 .od-item {
   display: flex;
@@ -373,9 +381,11 @@ body > button[style*="fixed"], body > div[style*="position: fixed"] {
   justify-content: center;
   gap: 12px;
   flex-shrink: 0;
-  padding: 10px 16px 18px;
+  padding: 8px 14px calc(12px + env(safe-area-inset-bottom, 0px));
   width: 100%;
   box-sizing: border-box;
+  background: linear-gradient(180deg, transparent, rgba(238,242,255,0.95) 30%);
+  z-index: 4;
 }
 .od-controls .od-btn {
   min-width: 120px;
@@ -383,55 +393,135 @@ body > button[style*="fixed"], body > div[style*="position: fixed"] {
   max-width: 180px;
 }
 
-/* Desktop */
+/* Desktop — centered column, compact list, controls always visible */
 @media (min-width: 700px) {
-  .od-topbar { padding: 12px 24px; }
+  .od-topbar { padding: 12px 28px; }
   .od-title { font-size: 1.05rem; }
-  .od-stage { padding: 16px 24px 10px; gap: 14px; }
-  .od-play { width: 76px; height: 76px; }
-  .od-list { max-width: 560px; gap: 10px; }
-  .od-item { padding: 13px 16px; }
-  .od-text { font-size: 1.02rem; }
-  .od-controls { padding: 12px 24px 24px; gap: 16px; }
-}
-
-/* Mobile */
-@media (max-width: 480px) {
-  .od-topbar { padding: 8px 12px; }
-  .od-title { font-size: 0.88rem; }
-  .od-start, .od-done {
-    padding: 16px 14px 20px;
-    gap: 12px;
-    justify-content: flex-start;
+  .od-stage {
+    padding: 12px 24px 8px;
+    gap: 10px;
+    max-width: 640px;
+    margin: 0 auto;
+    width: 100%;
+    overflow: hidden;
   }
-  .od-stage { padding: 8px 10px 4px; gap: 8px; }
-  .od-play { width: 60px; height: 60px; }
-  .od-play svg { width: 24px; height: 24px; }
+  .od-play { width: 64px; height: 64px; }
+  .od-play svg { width: 26px; height: 26px; }
+  .od-listen-hint { font-size: 0.88rem; }
+  .od-list {
+    max-width: 560px;
+    gap: 6px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+    /* subtle scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #c7d2fe transparent;
+  }
+  .od-list::-webkit-scrollbar { width: 6px; }
+  .od-list::-webkit-scrollbar-thumb {
+    background: #c7d2fe;
+    border-radius: 999px;
+  }
   .od-item {
-    padding: 10px 10px;
-    gap: 8px;
+    padding: 9px 14px;
+    gap: 10px;
     border-radius: 12px;
   }
-  .od-num { width: 24px; height: 24px; font-size: 0.72rem; }
-  .od-text { font-size: 0.88rem; }
-  .od-handle { font-size: 0.75rem; }
+  .od-num { width: 26px; height: 26px; font-size: 0.78rem; }
+  .od-text { font-size: 0.95rem; line-height: 1.3; }
+  .od-controls {
+    padding: 10px 24px 20px;
+    gap: 14px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .od-controls .od-btn {
+    max-width: 200px;
+  }
+  .od-feedback {
+    max-width: 560px;
+  }
+}
+
+/* Wide desktop */
+@media (min-width: 1100px) {
+  .od-stage { max-width: 680px; }
+  .od-list { max-width: 600px; }
+  .od-controls { max-width: 680px; }
+}
+
+/* Mobile — compact list, fixed controls */
+@media (max-width: 480px) {
+  .od-topbar { padding: 6px 10px; }
+  .od-title { font-size: 0.85rem; }
+  .od-badge { font-size: 0.7rem; padding: 3px 8px; }
+  .od-start, .od-done {
+    padding: 14px 12px 16px;
+    gap: 10px;
+    justify-content: center;
+  }
+  .od-stage {
+    padding: 4px 8px 2px;
+    gap: 4px;
+    overflow: hidden;
+  }
+  .od-speaker-wrap { gap: 2px; }
+  .od-play { width: 44px; height: 44px; }
+  .od-play svg { width: 20px; height: 20px; }
+  .od-listen-hint { font-size: 0.72rem; }
+  .od-list {
+    gap: 4px;
+    padding: 0 0 2px;
+  }
+  .od-item {
+    padding: 7px 8px;
+    gap: 6px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(99,102,241,0.06);
+  }
+  .od-num {
+    width: 22px;
+    height: 22px;
+    font-size: 0.68rem;
+    border-radius: 6px;
+  }
+  .od-text { font-size: 0.8rem; line-height: 1.25; }
+  .od-handle { font-size: 0.7rem; padding: 0; }
+  .od-feedback {
+    font-size: 0.82rem;
+    padding: 6px 10px;
+    border-radius: 10px;
+  }
   .od-controls {
     gap: 8px;
-    padding: 8px 12px 14px;
+    padding: 6px 10px calc(10px + env(safe-area-inset-bottom, 0px));
   }
   .od-controls .od-btn {
     min-width: 0;
-    padding: 12px 16px;
-    font-size: 0.92rem;
+    padding: 11px 14px;
+    font-size: 0.9rem;
   }
 }
 
-@media (max-height: 700px) {
-  .od-play { width: 52px; height: 52px; }
-  .od-listen-hint { font-size: 0.78rem; }
-  .od-item { padding: 8px 10px; }
-  .od-text { font-size: 0.85rem; }
-  .od-list { gap: 6px; }
+/* Short phones */
+@media (max-height: 740px) {
+  .od-play { width: 40px; height: 40px; }
+  .od-listen-hint { font-size: 0.7rem; }
+  .od-list { gap: 3px; }
+  .od-item { padding: 6px 8px; }
+  .od-text { font-size: 0.78rem; }
+  .od-num { width: 20px; height: 20px; font-size: 0.65rem; }
+}
+
+@media (max-height: 640px) {
+  .od-listen-hint { display: none; }
+  .od-play { width: 36px; height: 36px; }
+  .od-item { padding: 5px 7px; border-radius: 8px; }
+  .od-text { font-size: 0.74rem; }
+  .od-controls { padding: 4px 8px calc(8px + env(safe-area-inset-bottom, 0px)); }
+  .od-controls .od-btn { padding: 10px 12px; font-size: 0.85rem; }
 }
 
 /* Dark */
