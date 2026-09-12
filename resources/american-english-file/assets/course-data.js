@@ -127,6 +127,17 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.games = [
 { title: "Where from? · Dialogues", url: "where-from-dialogues/", label: "Grammar" },
 ];
 
+// Unit 2A – Games
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.games = [
+  { title: "Match Nationalities", url: "match-nationalities/", label: "Vocabulary" },
+  { title: "Listen Nationalities", url: "listen-nationalities/", label: "Vocabulary" },
+  { title: "I'm from…", url: "from-nationality/", label: "Vocabulary" },
+  { title: "You / We / They Forms", url: "you-we-they-forms/", label: "Grammar" },
+  { title: "Pronouns & be Practice", url: "pronouns-be-practice/", label: "Grammar" },
+  { title: "Sentence Builder", url: "sentence-builder/", label: "Grammar" },
+  { title: "Statement → Question", url: "statement-to-question/", label: "Grammar" },
+];
+
 // Unit 3A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "Pictures + Words Match", url: "pictures-words-match/" },
