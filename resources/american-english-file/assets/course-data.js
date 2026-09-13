@@ -137,6 +137,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.games = [
   { title: "Sentence Builder", url: "sentence-builder/", label: "Grammar" },
   { title: "Statement → Question", url: "statement-to-question/", label: "Grammar" },
   { title: "Are you on vacation?", url: "conversation-reading/", label: "Reading" },
+  { title: "Sentence Match", url: "sentence-match/", label: "Grammar" },
 ];
 
 // Unit 3A – Games

@@ -115,7 +115,8 @@
     "starter-2a-sentence-builder": "starter-2a-sentence-builder",
     "starter-2a-statement-to-question": "starter-2a-statement-to-question",
     "starter-2a-you-we-they-forms": "starter-2a-you-we-they-forms",
-    "starter-2a-conversation-reading": "starter-2a-conversation-reading"
+    "starter-2a-conversation-reading": "starter-2a-conversation-reading",
+    "starter-2a-sentence-match": "starter-2a-sentence-match"
   };
 
   function loadJSON(key) {
