@@ -142,6 +142,14 @@ COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.games = [
   { title: "Nationalities · be", url: "nationality-be/", label: "Grammar" },
 ];
 
+// Unit 2B – Games
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.games = [
+  { title: "Student Card", url: "student-card/", label: "Listening" },
+  { title: "Question Words", url: "question-words/", label: "Grammar" },
+  { title: "Listen & Repeat (Question Words)", url: "listen-repeat-qw/", label: "Pronunciation" },
+  { title: "Complete the Questions", url: "complete-questions/", label: "Grammar" },
+];
+
 // Unit 3A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "Pictures + Words Match", url: "pictures-words-match/" },

@@ -118,7 +118,11 @@
     "starter-2a-conversation-reading": "starter-2a-conversation-reading",
     "starter-2a-sentence-match": "starter-2a-sentence-match",
     "starter-2a-complete-be": "starter-2a-complete-be",
-    "starter-2a-nationality-be": "starter-2a-nationality-be"
+    "starter-2a-nationality-be": "starter-2a-nationality-be",
+    "starter-2b-student-card": "starter-2b-student-card",
+    "starter-2b-question-words": "starter-2b-question-words",
+    "starter-2b-listen-repeat-qw": "starter-2b-listen-repeat-qw",
+    "starter-2b-complete-questions": "starter-2b-complete-questions"
   };
 
   function loadJSON(key) {
