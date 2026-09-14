@@ -37,37 +37,140 @@
   ];
 
   function questionsFor(pronoun) {
+    // type drives soft validation (name, place, age, address, phone, email, yesno)
     if (pronoun === "you") {
       return [
-        "What's your name?",
-        "Where are you from?",
-        "How old are you?",
-        "What's your address?",
-        "What's your phone number?",
-        "What's your email address?",
-        "Are you married?",
+        { text: "What's your name?", type: "name" },
+        { text: "Where are you from?", type: "place" },
+        { text: "How old are you?", type: "age" },
+        { text: "What's your address?", type: "address" },
+        { text: "What's your phone number?", type: "phone" },
+        { text: "What's your email address?", type: "email" },
+        { text: "Are you married?", type: "yesno" },
       ];
     }
     if (pronoun === "he") {
       return [
-        "What's his name?",
-        "Where is he from?",
-        "How old is he?",
-        "What's his address?",
-        "What's his phone number?",
-        "What's his email address?",
-        "Is he married?",
+        { text: "What's his name?", type: "name" },
+        { text: "Where is he from?", type: "place" },
+        { text: "How old is he?", type: "age" },
+        { text: "What's his address?", type: "address" },
+        { text: "What's his phone number?", type: "phone" },
+        { text: "What's his email address?", type: "email" },
+        { text: "Is he married?", type: "yesno" },
       ];
     }
     return [
-      "What's her name?",
-      "Where is she from?",
-      "How old is she?",
-      "What's her address?",
-      "What's her phone number?",
-      "What's her email address?",
-      "Is she married?",
+      { text: "What's her name?", type: "name" },
+      { text: "Where is she from?", type: "place" },
+      { text: "How old is she?", type: "age" },
+      { text: "What's her address?", type: "address" },
+      { text: "What's her phone number?", type: "phone" },
+      { text: "What's her email address?", type: "email" },
+      { text: "Is she married?", type: "yesno" },
     ];
+  }
+
+  function hasLetter(s) { return /[a-zA-Z\u00C0-\u024F]/.test(s); }
+  function mostlyDigits(s) {
+    var digits = (s.match(/\d/g) || []).length;
+    var letters = (s.match(/[a-zA-Z]/g) || []).length;
+    return digits >= 1 && digits > letters;
+  }
+  function digitCount(s) { return (s.match(/\d/g) || []).length; }
+
+  /** Soft check — returns { ok, tip } */
+  function validateAnswer(type, raw) {
+    var v = String(raw || "").trim();
+    if (!v) return { ok: false, tip: "Please type or say an answer." };
+
+    if (type === "name") {
+      if (!hasLetter(v) || mostlyDigits(v))
+        return { ok: false, tip: "That looks like a number. Please give a name." };
+      if (digitCount(v) >= 3)
+        return { ok: false, tip: "A name shouldn't be mostly numbers." };
+      if (v.length < 2)
+        return { ok: false, tip: "Please give a full name." };
+      return { ok: true };
+    }
+
+    if (type === "place") {
+      if (!hasLetter(v) || mostlyDigits(v))
+        return { ok: false, tip: "Please say a place or country (not a number)." };
+      if (digitCount(v) > 4)
+        return { ok: false, tip: "That looks like a number, not a place." };
+      return { ok: true };
+    }
+
+    if (type === "age") {
+      var m = v.match(/\d{1,3}/);
+      if (!m) return { ok: false, tip: "Please give an age (a number)." };
+      var age = parseInt(m[0], 10);
+      if (age < 1 || age > 120)
+        return { ok: false, tip: "Please give a real age (1–120)." };
+      return { ok: true };
+    }
+
+    if (type === "address") {
+      // need some letters (street/city) — pure number alone is weak
+      if (!hasLetter(v))
+        return { ok: false, tip: "Please include a street or city name." };
+      if (v.length < 4)
+        return { ok: false, tip: "Please give a fuller address." };
+      return { ok: true };
+    }
+
+    if (type === "phone") {
+      var d = digitCount(v);
+      if (d < 7)
+        return { ok: false, tip: "A phone number needs at least 7 digits." };
+      if (d > 15)
+        return { ok: false, tip: "That has too many digits for a phone number." };
+      // reject pure words with almost no digits
+      if (!/\d/.test(v))
+        return { ok: false, tip: "Please give a phone number with digits." };
+      return { ok: true };
+    }
+
+    if (type === "email") {
+      // soft: must look like local@domain
+      if (!/@/.test(v))
+        return { ok: false, tip: "An email needs @ (for example name@email.com)." };
+      if (!/\./.test(v.split("@").pop() || ""))
+        return { ok: false, tip: "Please use a full email (name@email.com)." };
+      if (!hasLetter(v) && !/\d/.test(v))
+        return { ok: false, tip: "That doesn't look like an email." };
+      return { ok: true };
+    }
+
+    if (type === "yesno") {
+      var low = v.toLowerCase().replace(/[!.?]/g, "").trim();
+      var yes = /^(yes|yeah|yep|yup|yes i am|yes he is|yes she is|yes,? i am|i am|he's married|she's married|married)$/.test(low)
+        || /\byes\b/.test(low);
+      var no = /^(no|nope|nah|no i'?m not|no he isn'?t|no she isn'?t|i'?m not|he isn'?t|she isn'?t|single|not married)$/.test(low)
+        || /\bno\b/.test(low) || /\bsingle\b/.test(low);
+      if (!yes && !no)
+        return { ok: false, tip: "Please answer Yes or No." };
+      return { ok: true };
+    }
+
+    return { ok: true };
+  }
+
+  function showTip(msg) {
+    var box = app.querySelector(".pi-chat");
+    if (!box) return;
+    var old = box.querySelector(".pi-tip");
+    if (old) old.remove();
+    var tip = document.createElement("p");
+    tip.className = "pi-tip";
+    tip.textContent = msg;
+    box.appendChild(tip);
+    var input = document.getElementById("pi-answer");
+    if (input) {
+      input.classList.add("is-bad");
+      setTimeout(function () { input.classList.remove("is-bad"); }, 450);
+    }
   }
 
   const app = document.getElementById("game-app");
@@ -222,7 +325,7 @@
     );
   }
 
-  function bindAnswer(onSubmit) {
+  function bindAnswer(onSubmit, answerType) {
     const input = document.getElementById("pi-answer");
     const send = document.getElementById("pi-send");
     const mic = document.getElementById("pi-mic");
@@ -232,11 +335,15 @@
       stopListening();
       val = String(val || "").trim();
       if (!val) {
-        if (input) {
-          input.classList.add("is-bad");
-          setTimeout(function () { input.classList.remove("is-bad"); }, 400);
-        }
+        showTip("Please type or say an answer.");
         return;
+      }
+      if (answerType) {
+        var check = validateAnswer(answerType, val);
+        if (!check.ok) {
+          showTip(check.tip);
+          return;
+        }
       }
       onSubmit(val);
     }
@@ -375,7 +482,7 @@
     if (phase === "done") {
       const stars = saveStars(calcStars());
       const list = answers.map(function (a, i) {
-        return "<li><strong>" + qs()[i] + "</strong><br/>" + (a || "—") + "</li>";
+        return "<li><strong>" + qs()[i].text + "</strong><br/>" + (a || "—") + "</li>";
       }).join("");
       app.innerHTML = renderShell(
         '<section class="pi-done">' +
@@ -428,11 +535,11 @@
       chat = "";
     } else if (phase === "ask") {
       pose = IMAGES.asking;
-      chat = bubble(qs()[qIndex], "char") + answerBoxHtml("Type or speak your answer…");
+      chat = bubble(qs()[qIndex].text, "char") + answerBoxHtml("Type or speak your answer…");
     } else if (phase === "write") {
       pose = IMAGES.writing;
       chat =
-        bubble(qs()[qIndex], "char") +
+        bubble(qs()[qIndex].text, "char") +
         bubble(answers[qIndex] || "", "user") +
         bubble("Got it!", "char");
     } else if (phase === "thanks") {
@@ -500,7 +607,7 @@
             renderPlay();
           }
         }, 1100);
-      });
+      }, qs()[qIndex].type);
     }
   }
 
