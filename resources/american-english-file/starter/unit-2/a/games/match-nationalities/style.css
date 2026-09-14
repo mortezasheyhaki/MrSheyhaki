@@ -597,8 +597,11 @@ html[data-theme="dark"] .mc-word-left {
 /* Staggered entrance when a set loads */
 .mc-board .mc-left-item,
 .mc-board .mc-right-item {
-  opacity: 0;
-  animation: mc-card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 1;
+}
+.mc-board.is-entering .mc-left-item,
+.mc-board.is-entering .mc-right-item {
+  animation: mc-card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .mc-board .mc-left-item:nth-child(1),
 .mc-board .mc-right-item:nth-child(1) { animation-delay: 0.04s; }
@@ -625,12 +628,10 @@ html[data-theme="dark"] .mc-word-left {
 /* Smoother base transitions on all cards */
 .mc-left-item,
 .mc-right-item {
-  transition:
-    border-color 0.22s ease,
+  transition: border-color 0.22s ease,
     background 0.22s ease,
     box-shadow 0.22s ease,
-    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.25s ease;
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Soft lift on hover / selected */
@@ -652,12 +653,10 @@ html[data-theme="dark"] .mc-right-item:not(.is-correct):not(.is-used):hover {
 /* Correct match – gentle settle */
 .mc-left-item.is-correct,
 .mc-right-item.is-correct {
-  transition:
-    border-color 0.3s ease,
+  transition: border-color 0.3s ease,
     background 0.3s ease,
     box-shadow 0.3s ease,
-    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.35s ease;
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Wrong – smoother shake */
@@ -755,7 +754,7 @@ html[data-theme="dark"] .mc-right-item:not(.is-correct):not(.is-used):hover {
 /* Instruction / progress – subtle fade */
 .mc-instruction,
 .mc-progress {
-  transition: color 0.2s ease, background 0.2s ease, opacity 0.25s ease;
+  transition: color 0.2s ease, background 0.2s ease;
 }
 .mc-instruction.mc-hint-warn {
   animation: mc-hint-pulse 0.9s ease;
@@ -917,4 +916,37 @@ html:not([data-theme="dark"]) .trophy-float {
   .star-orbit:nth-child(3) { transform: rotateX(22deg) rotateY(120deg); }
   .star-orbit:nth-child(4) { transform: rotateX(22deg) rotateY(240deg); }
   .star { transform: translateZ(70px); }
+}
+
+
+/* === Shared mismatch style (Units 1–2 match games) === */
+.mc-left-item.is-wrong,
+.mc-right-item.is-wrong,
+.mc-card.is-wrong,
+.sm-card.is-wrong,
+.ms-item.is-wrong,
+[class*="is-wrong"] {
+  border-color: #ef4444 !important;
+  background: #fee2e2 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.4) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  animation: mc-mismatch-shake 0.48s cubic-bezier(0.36, 0.07, 0.19, 0.97) !important;
+}
+html[data-theme="dark"] .mc-left-item.is-wrong,
+html[data-theme="dark"] .mc-right-item.is-wrong,
+html[data-theme="dark"] .mc-card.is-wrong,
+html[data-theme="dark"] .sm-card.is-wrong,
+html[data-theme="dark"] .ms-item.is-wrong,
+html[data-theme="dark"] [class*="is-wrong"] {
+  background: rgba(239, 68, 68, 0.22) !important;
+  border-color: #f87171 !important;
+}
+@keyframes mc-mismatch-shake {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  15% { transform: translate3d(-5px, 0, 0); }
+  30% { transform: translate3d(5px, 0, 0); }
+  45% { transform: translate3d(-4px, 0, 0); }
+  60% { transform: translate3d(3px, 0, 0); }
+  75% { transform: translate3d(-2px, 0, 0); }
 }

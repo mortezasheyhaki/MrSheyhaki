@@ -1,39 +1,13 @@
 (function () {
-  const GAME_ID = "1-3a-match-rush";
-
-
-  function showStarBurst(n) {
-    n = Math.max(0, Math.min(3, Number(n) || 0));
-    if (n <= 0) return;
-    var existing = document.getElementById("starBurst");
-    if (existing) existing.remove();
-    var wrap = document.createElement("div");
-    wrap.id = "starBurst";
-    wrap.className = "star-burst stars celebrate";
-    wrap.setAttribute("aria-hidden", "true");
-    for (var i = 1; i <= 3; i++) {
-      var s = document.createElement("span");
-      s.className = "star" + (i <= n ? " filled pop" : "");
-      s.textContent = i <= n ? "★" : "☆";
-      s.style.animationDelay = ((i - 1) * 0.18) + "s";
-      wrap.appendChild(s);
-    }
-    document.body.appendChild(wrap);
-    setTimeout(function () {
-      wrap.classList.add("star-burst-out");
-      setTimeout(function () { wrap.remove(); }, 500);
-    }, 2200);
-  }
+  const GAME_ID = "aef1-u3a-match-rush";
 
   function awardStars(gameId, correct, total) {
     const pct = total ? Math.round((correct / total) * 100) : 0;
-    const stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
     if (window.LAStars) {
-      LAStars.recordPlay(gameId || GAME_ID);
-      LAStars.saveFromAccuracy(gameId || GAME_ID, pct);
+      LAStars.recordPlay(gameId);
+      LAStars.saveFromAccuracy(gameId, pct);
     }
-    showStarBurst(stars);
-    return stars;
+    return pct;
   }
 
   // All 24 items
@@ -64,7 +38,7 @@
     { id: "work-in-an-office",    verb: "work",   phrase: "in an office",    full: "work in an office",    audio: "audio/work-in-an-office.mp3",    image: "images/work-in-an-office.png" },
   ];
 
-  // Mode 1: 4 rounds × 6 pairs (6 verbs left, 6 phrases right)
+  // Mode 1: 4 rounds of 6 (verb → phrase)
   // Round 1 includes all three "do" pairs: housework, homework, yoga
   const VERB_ROUNDS = [
     [
@@ -165,16 +139,14 @@
   }
 
   function totalPairsInMode() {
-    return 24; // 4 rounds × 6
+    return 24; // always 4×6
   }
 
   function updateProgress() {
     const total = 72; // 3 modes × 24
     const inRound = (mode === 0) ? matchCount : matched.size;
     const done = mode * 24 + inRound;
-    const pct = (done / total * 100);
-    progressFill.style.width = pct + "%";
-    progressFill.classList.toggle("has-progress", pct > 0);
+    progressFill.style.width = (done / total * 100) + "%";
     scoreEl.textContent = score;
     modeLabel.textContent = (mode + 1) + "/3";
   }
@@ -208,7 +180,7 @@
     clearFeedback();
     updateProgress();
 
-    modeDesc.textContent = MODES[0].desc + "  ·  Round " + (round + 1) + "/" + VERB_ROUNDS.length;
+    modeDesc.textContent = MODES[0].desc + "  ·  Round " + (round + 1) + "/4";
 
     const verbOrder = shuffle(pairs);
     const phraseOrder = shuffle(pairs);
@@ -299,7 +271,7 @@
       updateProgress();
       const full = L.item.verb + " " + R.item.phrase;
       showFeedback("success", full);
-      // no auto-play on match
+      playSrc(R.item.audio);
       selectedLeft = selectedRight = null;
       checkRoundComplete();
     } else {
@@ -326,7 +298,7 @@
     clearFeedback();
     updateProgress();
 
-    modeDesc.textContent = MODES[mode].desc + "  ·  Round " + (round + 1) + "/" + AUDIO_ROUNDS.length;
+    modeDesc.textContent = MODES[mode].desc + "  ·  Round " + (round + 1) + "/4";
 
     // Pick one random remaining item as the current audio target
     // Actually for this mode we present one audio at a time and 6 options
@@ -339,7 +311,6 @@
           <button class="big-play" id="bigPlay" aria-label="Play">
             <span class="wave"></span><span class="wave"></span><span class="wave"></span>
             <svg viewBox="0 0 24 24" width="36" height="36"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
-            <div class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
           </button>
           <p class="audio-label" id="audioHint">Tap to listen</p>
         </div>
@@ -363,7 +334,7 @@
         return;
       }
       currentAudioItem = queue[qIndex];
-      document.getElementById("audioHint").textContent = "Item " + (qIndex + 1) + " of " + pairs.length;
+      document.getElementById("audioHint").textContent = "Item " + (qIndex + 1) + " of 6";
       // re-enable all non-matched options
       optionsGrid.querySelectorAll(".pic-option, .phrase-option").forEach(el => {
         if (!el.classList.contains("matched")) {
@@ -399,7 +370,7 @@
           score++;
           updateProgress();
           showFeedback("success", currentAudioItem.full);
-          stopAudio(); // do not replay on match — only play on button tap
+          playSrc(currentAudioItem.audio, bigPlay);
           // disable others temporarily then next
           optionsGrid.querySelectorAll(".pic-option, .phrase-option").forEach(o => {
             if (!o.classList.contains("matched")) o.classList.add("disabled");
@@ -430,13 +401,11 @@
 
   function checkRoundComplete() {
     // Mode 0 counts pairs via matchCount; modes 1–2 add one id per item
-    const pairsInRound = (mode === 0 ? VERB_ROUNDS : AUDIO_ROUNDS)[round].length;
-    const done = (mode === 0) ? (matchCount >= pairsInRound) : (matched.size >= pairsInRound);
+    const done = (mode === 0) ? (matchCount >= 6) : (matched.size >= 6);
     if (!done) return;
     roundDone = true;
 
-    const maxRound = (mode === 0 ? VERB_ROUNDS : AUDIO_ROUNDS).length - 1;
-    if (round < maxRound) {
+    if (round < 3) {
       showFeedback("success", "Round complete! ✨");
       // Auto-advance to next round
       setTimeout(() => {

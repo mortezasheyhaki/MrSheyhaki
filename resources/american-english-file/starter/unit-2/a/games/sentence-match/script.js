@@ -122,7 +122,7 @@
         if (rightEl) rightEl.classList.remove("is-wrong");
         selectedLeft = null;
         busy = false;
-      }, 400);
+      }, 650);;
     }
   }
 

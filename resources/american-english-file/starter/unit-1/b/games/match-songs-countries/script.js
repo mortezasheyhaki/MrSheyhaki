@@ -155,7 +155,7 @@
       setTimeout(() => {
         if (songEl) songEl.classList.remove("is-wrong");
         if (countryEl) countryEl.classList.remove("is-wrong");
-      }, 500);
+      }, 650);;
     }
   }
 

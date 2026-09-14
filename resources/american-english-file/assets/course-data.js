@@ -148,6 +148,13 @@ COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.games = [
   { title: "Question Words", url: "question-words/", label: "Grammar" },
   { title: "Listen & Repeat (Question Words)", url: "listen-repeat-qw/", label: "Pronunciation" },
   { title: "Complete the Questions", url: "complete-questions/", label: "Grammar" },
+  { title: "Phone Number", url: "phone-number/", label: "Listening" },
+  { title: "Phone Numbers (3 parts)", url: "phone-3parts/", label: "Speaking" },
+  { title: "Match Number 1", url: "match-number-1/", label: "Vocabulary" },
+  { title: "Match Number 2", url: "match-number-2/", label: "Vocabulary" },
+  { title: "Number Flashcards", url: "number-flashcards/", label: "Vocabulary" },
+  { title: "Numbers Practice", url: "numbers-practice/", label: "Listening" },
+  { title: "Listen & Write Numbers", url: "listen-write-numbers/", label: "Listening" },
 ];
 
 // Unit 3A – Games

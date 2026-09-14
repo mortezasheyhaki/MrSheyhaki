@@ -1,17 +1,13 @@
 (function () {
-  const GAME_ID = "1-3a-listen-and-complete";
+  const GAME_ID = "aef1-u3a-listen-and-complete";
 
-  function starsFromPct(pct) {
-    return pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
-  }
   function awardStars(gameId, correct, total) {
     const pct = total ? Math.round((correct / total) * 100) : 0;
-    const stars = starsFromPct(pct);
     if (window.LAStars) {
-      LAStars.recordPlay(gameId || GAME_ID);
-      LAStars.saveFromAccuracy(gameId || GAME_ID, pct);
+      LAStars.recordPlay(gameId);
+      LAStars.saveFromAccuracy(gameId, pct);
     }
-    return stars;
+    return pct;
   }
 
   const ITEMS = [
@@ -42,78 +38,45 @@
   let queue = [];
   let currentIndex = 0;
   let score = 0;
-  let answered = false;
   let currentAudio = null;
-  let audioUnlocked = false;
-  let pendingPlay = null; // { src, isShort } waiting for gesture
+  let answered = false;
 
   function shuffle(arr) {
-    const a = arr.slice();
+    const a = [...arr];
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      const t = a[i]; a[i] = a[j]; a[j] = t;
+      [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
   }
 
-  function normalize(s) {
-    return String(s || "")
+  function normalize(str) {
+    return str
       .toLowerCase()
       .trim()
-      .replace(/[?.!,]+$/g, "")
+      .replace(/[?.!]/g, "")
       .replace(/\s+/g, " ");
   }
 
   function stopAudio() {
     if (currentAudio) {
-      try {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-      } catch (e) {}
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
       currentAudio = null;
     }
     playBtn.classList.remove("playing");
   }
 
-  /** Preload an Audio element so play is faster after unlock */
-  function makeAudio(src) {
-    const a = new Audio();
-    a.preload = "auto";
-    a.src = src;
-    try { a.load(); } catch (e) {}
-    return a;
-  }
-
   function playSrc(src, isShort) {
     stopAudio();
-    const a = makeAudio(src);
+    const a = new Audio(src);
     currentAudio = a;
     if (isShort) playBtn.classList.add("playing");
-
-    const onEnd = function () {
+    a.play().catch(() => {});
+    a.onended = () => {
       playBtn.classList.remove("playing");
-      playBtn.classList.remove("needs-gesture");
       if (currentAudio === a) currentAudio = null;
     };
-    a.addEventListener("ended", onEnd);
-    a.addEventListener("error", function () {
-      playBtn.classList.remove("playing");
-      console.warn("Audio failed to load:", src);
-    });
-
-    const p = a.play();
-    if (p && typeof p.then === "function") {
-      p.then(function () {
-        audioUnlocked = true;
-        pendingPlay = null;
-        playBtn.classList.remove("needs-gesture");
-      }).catch(function () {
-        // Autoplay blocked — queue this clip and wait for any user gesture
-        pendingPlay = { src: src, isShort: isShort };
-        playBtn.classList.add("needs-gesture");
-        playBtn.classList.remove("playing");
-      });
-    }
   }
 
   function playShort() {
@@ -126,30 +89,16 @@
     playSrc(queue[currentIndex].fullAudio, false);
   }
 
-  /** Called on first user gesture anywhere — unlocks audio and plays pending clip */
-  function unlockAndPlay() {
-    if (audioUnlocked && !pendingPlay) return;
-    audioUnlocked = true;
-    if (pendingPlay) {
-      const job = pendingPlay;
-      pendingPlay = null;
-      playSrc(job.src, job.isShort);
-    } else if (queue[currentIndex] && !answered) {
-      // First gesture with nothing pending — still play current short if silent
-      playShort();
-    }
-  }
-
   function updateUI() {
     progressEl.textContent = currentIndex;
     scoreEl.textContent = score;
-    progressFill.style.width = ((currentIndex / ITEMS.length) * 100) + "%";
+    progressFill.style.width = (currentIndex / ITEMS.length * 100) + "%";
   }
 
   function showFeedback(type, message, correctText) {
     feedbackEl.className = "feedback " + type;
     if (correctText) {
-      feedbackEl.innerHTML = message + '<span class="correct-answer">Answer: ' + correctText + "</span>";
+      feedbackEl.innerHTML = message + '<span class="correct-answer">Answer: ' + correctText + '</span>';
     } else {
       feedbackEl.textContent = message;
     }
@@ -166,9 +115,8 @@
     feedbackEl.textContent = "";
     feedbackEl.className = "feedback";
     updateUI();
+    setTimeout(playShort, 350);
     answerInput.focus();
-    // Always attempt play immediately
-    playShort();
   }
 
   function nextItem() {
@@ -183,6 +131,7 @@
       showFeedback("success", "Finished! You got " + score + " out of " + queue.length);
       restartBtn.classList.remove("hidden");
       awardStars(GAME_ID, score, queue.length);
+      if (score === queue.length) launchConfetti();
       return;
     }
     loadCurrent();
@@ -208,13 +157,13 @@
       scoreEl.textContent = score;
       answerInput.classList.add("correct");
       showFeedback("success", "Correct! ✓");
-      playFull();
+      playFull();                       // play the complete phrase
       setTimeout(nextItem, 1600);
     } else {
       answerInput.classList.add("wrong");
       showFeedback("error", "Not quite", queue[currentIndex].full);
-      playFull();
-      setTimeout(function () {
+      playFull();                       // still let them hear the correct full phrase
+      setTimeout(() => {
         skipBtn.textContent = "Next →";
         skipBtn.disabled = false;
       }, 400);
@@ -236,51 +185,38 @@
     }
   }
 
+  function launchConfetti() {
+    const colors = ["#38bdf8", "#a78bfa", "#34d399", "#fbbf24", "#f472b6"];
+    for (let i = 0; i < 50; i++) {
+      const span = document.createElement("span");
+      span.style.left = Math.random() * 100 + "%";
+      span.style.background = colors[i % colors.length];
+      span.style.animationDuration = (1.3 + Math.random() * 1.5) + "s";
+      span.style.animationDelay = (Math.random() * 0.4) + "s";
+      confettiEl.appendChild(span);
+      setTimeout(() => span.remove(), 3400);
+    }
+  }
+
   function start() {
-    queue = shuffle(ITEMS.slice());
+    queue = shuffle(ITEMS);
     currentIndex = 0;
     score = 0;
     restartBtn.classList.add("hidden");
-    // Preload first few clips
-    queue.slice(0, 3).forEach(function (item) {
-      makeAudio(item.short);
-    });
     loadCurrent();
   }
 
-  // Unlock audio on the first real gesture (no visible "tap to start")
-  ["pointerdown", "touchstart", "keydown"].forEach(function (evt) {
-    document.addEventListener(
-      evt,
-      function () {
-        unlockAndPlay();
-      },
-      { capture: true, passive: true }
-    );
-  });
-
-  playBtn.addEventListener("click", function (e) {
-    e.preventDefault();
-    audioUnlocked = true;
-    pendingPlay = null;
-    playShort();
-  });
-
-  answerForm.addEventListener("submit", function (e) {
+  playBtn.addEventListener("click", playShort);
+  answerForm.addEventListener("submit", (e) => {
     e.preventDefault();
     checkAnswer();
   });
   skipBtn.addEventListener("click", skip);
   restartBtn.addEventListener("click", start);
 
-  document.addEventListener("keydown", function (e) {
+  document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") playShort();
   });
 
-  // Start game (and attempt autoplay)
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", start);
-  } else {
-    start();
-  }
+  start();
 })();

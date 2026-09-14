@@ -1,17 +1,13 @@
-Mr. Sheyhaki Learning Arcade — updated package
+Listen & Write Numbers – American English File Starter Unit 2B
+=============================================================
 
-1) learningarcade/style.css
-   - Character images brightened for dark theme (brightness 1.38 + stronger colored soft-shapes)
+Book activity: "Listen and write the numbers."
 
-2) learningarcade/food-verb-match/
-   - Full arcade redesign of Food Verb Match
-   - Visual joystick that tilts with swipe (right = EAT)
-   - Back button (← only) styled like skill EXPLORE buttons
-   - Dark neon cabinet look matching Match Rush
+12 items from the audio track:
+  1. 15   2. 97   3. 11   4. 100
+  5. 40   6. 29   7. 16   8. 62
+  9. 56  10. 78  11. 34  12. 81
 
-How to use:
-- Replace your existing learningarcade/style.css with the one in this zip
-- Upload the food-verb-match/ folder contents to:
-  resources/american-english-file/starter/unit-5/a/games/food-verb-match/
+Play the track, type each number, then Check.
 
-No new character PNGs were available; brightness is handled in CSS.
+Install: merge the resources folder into your project.

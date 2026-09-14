@@ -222,7 +222,7 @@
       setTimeout(() => {
         if (leftEl) leftEl.classList.remove("is-wrong");
         if (rightEl) rightEl.classList.remove("is-wrong");
-      }, 450);
+      }, 650);;
     }
   }
 
