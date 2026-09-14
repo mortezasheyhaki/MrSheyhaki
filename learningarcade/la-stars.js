@@ -24,6 +24,9 @@
  *     writing-sara-daily
  *   Speaking
  *     speaking-supermarket, speaking-how-much-how-many
+ *   AEF Starter resources (examples)
+ *     starter-2a-match-nationalities, starter-3a-pictures-words-match,
+ *     starter-3a-a-an-swipe, starter-3a-plural-s-sound-match, starter-3a-whats-in-your-bag, starter-3a-unscramble, starter-3a-look-listen-write, starter-3a-listen-number
  */
 (function (global) {
   "use strict";
@@ -122,7 +125,17 @@
     "starter-2b-student-card": "starter-2b-student-card",
     "starter-2b-question-words": "starter-2b-question-words",
     "starter-2b-listen-repeat-qw": "starter-2b-listen-repeat-qw",
-    "starter-2b-complete-questions": "starter-2b-complete-questions"
+    "starter-2b-complete-questions": "starter-2b-complete-questions",
+
+    // Unit 3A – Small Things & related
+    "starter-3a-pictures-words-match": "starter-3a-pictures-words-match",
+    "starter-3a-small-things": "starter-3a-pictures-words-match",
+    "starter-3a-a-an-swipe": "starter-3a-a-an-swipe",
+    "starter-3a-plural-s-sound-match": "starter-3a-plural-s-sound-match",
+    "starter-3a-whats-in-your-bag": "starter-3a-whats-in-your-bag",
+    "starter-3a-unscramble": "starter-3a-unscramble",
+    "starter-3a-look-listen-write": "starter-3a-look-listen-write",
+    "starter-3a-listen-number": "starter-3a-listen-number"
   };
 
   function loadJSON(key) {
