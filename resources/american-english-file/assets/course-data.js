@@ -127,6 +127,35 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.games = [
 { title: "Where from? · Dialogues", url: "where-from-dialogues/", label: "Grammar" },
 ];
 
+
+// Unit 1B – Audio (World music)
+COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.audio = [
+  { track: "1.16", url: "AEF3e_Starter_SB_1.16.mp3" },
+  { track: "1.17", url: "AEF3e_Starter_SB_1.17.mp3" },
+  { track: "1.18", url: "AEF3e_Starter_SB_1.18.mp3" },
+  { track: "1.19", url: "AEF3e_Starter_SB_1.19.mp3" },
+  { track: "1.20", url: "AEF3e_Starter_SB_1.20.mp3" },
+  { track: "1.21", url: "AEF3e_Starter_SB_1.21.mp3" },
+  { track: "1.22", url: "AEF3e_Starter_SB_1.22.mp3" },
+  { track: "1.23", url: "AEF3e_Starter_SB_1.23.mp3" },
+  { track: "1.24", url: "AEF3e_Starter_SB_1.24.mp3" },
+  { track: "1.25", url: "AEF3e_Starter_SB_1.25.mp3" },
+  { track: "1.26", url: "AEF3e_Starter_SB_1.26.mp3" },
+  { track: "1.27", url: "AEF3e_Starter_SB_1.27.mp3" },
+  { track: "1.28", url: "AEF3e_Starter_SB_1.28.mp3" },
+  { track: "1.29", url: "AEF3e_Starter_SB_1.29.mp3" },
+  { track: "1.30", url: "AEF3e_Starter_SB_1.30.mp3" },
+  { track: "1.31", url: "AEF3e_Starter_SB_1.31.mp3" },
+];
+
+// Unit 1B – Worksheets
+COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.worksheets = [
+  { title: "Grammar · verb be (singular): he, she, it", url: "1b-grammar-verb-be-he-she-it.pdf" },
+  { title: "Communicative · 1B", url: "1b-communicative.pdf" },
+  { title: "Countries Bingo", url: "1b-countries-bingo.pdf" },
+  { title: "Where are you from? · Cards", url: "1b-where-are-you-from-cards.pdf" },
+];
+
 // Unit 2A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.games = [
   { title: "Match Nationalities", url: "match-nationalities/", label: "Vocabulary" },
@@ -140,6 +169,31 @@ COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.games = [
   { title: "Sentence Match", url: "sentence-match/", label: "Grammar" },
   { title: "Complete with be", url: "complete-be/", label: "Grammar" },
   { title: "Nationalities · be", url: "nationality-be/", label: "Grammar" },
+];
+
+
+// Unit 2A – Audio
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.audio = [
+  { track: "2.01", url: "AEF3e_Starter_SB_2.01.mp3" },
+  { track: "2.02", url: "AEF3e_Starter_SB_2.02.mp3" },
+  { track: "2.03", url: "AEF3e_Starter_SB_2.03.mp3" },
+  { track: "2.04", url: "AEF3e_Starter_SB_2.04.mp3" },
+  { track: "2.05", url: "AEF3e_Starter_SB_2.05.mp3" },
+  { track: "2.06", url: "AEF3e_Starter_SB_2.06.mp3" },
+  { track: "2.07", url: "AEF3e_Starter_SB_2.07.mp3" },
+  { track: "2.08", url: "AEF3e_Starter_SB_2.08.mp3" },
+  { track: "2.09", url: "AEF3e_Starter_SB_2.09.mp3" },
+  { track: "2.10", url: "AEF3e_Starter_SB_2.10.mp3" },
+  { track: "2.11", url: "AEF3e_Starter_SB_2.11.mp3" },
+  { track: "2.12", url: "AEF3e_Starter_SB_2.12.mp3" },
+];
+
+// Unit 2A – Worksheets
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.worksheets = [
+  { title: "Grammar · verb be (plural): we, you, they", url: "2a-grammar-verb-be-plural.pdf" },
+  { title: "Vocabulary · Nationalities and languages", url: "2a-vocabulary-nationalities-languages.pdf" },
+  { title: "Communicative · Match the sentences", url: "2a-communicative-match-sentences.pdf" },
+  { title: "Reading & Listening", url: "2a-reading-listening.pdf" },
 ];
 
 // Unit 2B – Games
@@ -161,6 +215,34 @@ COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.games = [
   { title: "Match Conversations", url: "match-conversations/", label: "Vocabulary" },
   { title: "Word Order Questions", url: "word-order-questions/", label: "Grammar" },
   { title: "Personal Interview", url: "personal-interview/", label: "Speaking" },
+];
+
+
+// Unit 2B – Audio
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.audio = [
+  { track: "2.13", url: "AEF3e_Starter_SB_2.13.mp3" },
+  { track: "2.14", url: "AEF3e_Starter_SB_2.14.mp3" },
+  { track: "2.15", url: "AEF3e_Starter_SB_2.15.mp3" },
+  { track: "2.16", url: "AEF3e_Starter_SB_2.16.mp3" },
+  { track: "2.17", url: "AEF3e_Starter_SB_2.17.mp3" },
+  { track: "2.18", url: "AEF3e_Starter_SB_2.18.mp3" },
+  { track: "2.19", url: "AEF3e_Starter_SB_2.19.mp3" },
+  { track: "2.20", url: "AEF3e_Starter_SB_2.20.mp3" },
+  { track: "2.21", url: "AEF3e_Starter_SB_2.21.mp3" },
+  { track: "2.22", url: "AEF3e_Starter_SB_2.22.mp3" },
+  { track: "2.23", url: "AEF3e_Starter_SB_2.23.mp3" },
+  { track: "2.24", url: "AEF3e_Starter_SB_2.24.mp3" },
+  { track: "2.25", url: "AEF3e_Starter_SB_2.25.mp3" },
+  { track: "2.26", url: "AEF3e_Starter_SB_2.26.mp3" },
+  { track: "2.27", url: "AEF3e_Starter_SB_2.27.mp3" },
+  { track: "2.28", url: "AEF3e_Starter_SB_2.28.mp3" },
+];
+
+// Unit 2B – Worksheets
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.worksheets = [
+  { title: "Grammar · Wh- and How questions with be", url: "2b-grammar-wh-how-questions.pdf" },
+  { title: "Vocabulary · Numbers dictation", url: "2b-vocabulary-numbers-dictation.pdf" },
+  { title: "Communicative · Remember the sentences", url: "2b-communicative-remember-sentences.pdf" },
 ];
 
 // Unit 3A – Games
