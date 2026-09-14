@@ -155,6 +155,12 @@ COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.games = [
   { title: "Number Flashcards", url: "number-flashcards/", label: "Vocabulary" },
   { title: "Numbers Practice", url: "numbers-practice/", label: "Listening" },
   { title: "Listen & Write Numbers", url: "listen-write-numbers/", label: "Listening" },
+  { title: "Listen & Choose", url: "listen-choose/", label: "Listening" },
+  { title: "Personal Info", url: "personal-info/", label: "Listening" },
+  { title: "Credit Card Form", url: "credit-card-form/", label: "Speaking" },
+  { title: "Match Conversations", url: "match-conversations/", label: "Vocabulary" },
+  { title: "Word Order Questions", url: "word-order-questions/", label: "Grammar" },
+  { title: "Personal Interview", url: "personal-interview/", label: "Speaking" },
 ];
 
 // Unit 3A – Games
