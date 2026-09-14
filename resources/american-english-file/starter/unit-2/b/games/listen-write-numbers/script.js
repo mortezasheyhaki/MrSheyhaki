@@ -134,6 +134,16 @@
     );
   }
 
+  function rowHtml(i) {
+    return (
+      '<div class="lw-row">' +
+      playBtnHtml(i) +
+      '<input type="text" class="lw-input" id="lw-in-' + i + '" ' +
+      'placeholder="' + (i + 1) + '" inputmode="numeric" autocomplete="off" spellcheck="false" maxlength="4" />' +
+      "</div>"
+    );
+  }
+
   function render() {
     stopAudio();
 
@@ -160,15 +170,13 @@
       return;
     }
 
-    const rows = ITEMS.map(function (item, i) {
-      return (
-        '<div class="lw-row">' +
-        playBtnHtml(i) +
-        '<input type="text" class="lw-input" id="lw-in-' + i + '" ' +
-        'placeholder="' + (i + 1) + '" inputmode="numeric" autocomplete="off" spellcheck="false" />' +
-        "</div>"
-      );
-    }).join("");
+    // Two columns: 0–5 left, 6–11 right
+    const leftRows = [];
+    const rightRows = [];
+    for (let i = 0; i < 6; i++) {
+      leftRows.push(rowHtml(i));
+      rightRows.push(rowHtml(i + 6));
+    }
 
     app.innerHTML =
       '<header class="lw-topbar">' +
@@ -177,7 +185,10 @@
       '<span class="lw-badge">2B</span>' +
       "</header>" +
       '<p class="lw-instruction">Listen and write the numbers.</p>' +
-      '<div class="lw-list">' + rows + "</div>" +
+      '<div class="lw-list">' +
+      '<div class="lw-col">' + leftRows.join("") + "</div>" +
+      '<div class="lw-col">' + rightRows.join("") + "</div>" +
+      "</div>" +
       '<div class="lw-actions">' +
       '<button type="button" class="lw-btn secondary" id="lw-reset">Reset</button>' +
       '<button type="button" class="lw-btn" id="lw-check">Check</button>' +
