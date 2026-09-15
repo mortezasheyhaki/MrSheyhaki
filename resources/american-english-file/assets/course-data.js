@@ -150,9 +150,13 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.games = [
   { title: "Listen & Match", url: "listen-match/", label: "Listening" },
   { title: "Dialogue Completer", url: "dialogue-completer/", label: "Grammar" },
+  { title: "Sentence Unscramble", url: "sentence-unscramble/", label: "Grammar" },
+  { title: "Question Builder", url: "question-builder/", label: "Grammar" },
+  { title: "This / That Mix", url: "this-that-mix/", label: "Grammar" },
   { title: "This / That Sentences", url: "this-that-sentences/", label: "Grammar" },
   { title: "Souvenirs Match", url: "souvenirs-match/", label: "Vocabulary" },
   { title: "Listen & Choose", url: "souvenirs-listen-choose/", label: "Listening" },
+  { title: "Listen & Complete", url: "listen-complete/", label: "Listening" },
   { title: "Unscramble", url: "souvenirs-unscramble/", label: "Vocabulary" },
   { title: "Listen & Write", url: "souvenirs-listen-write/", label: "Listening" },
   { title: "Souvenirs Shop", url: "souvenirs-shop/", label: "Speaking" },
