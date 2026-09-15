@@ -386,6 +386,13 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].name = "
 COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].games = [
   { title: "Money Flashcards", url: "money-flashcards/", label: "Vocabulary" },
   { title: "Match the Prices", url: "price-match/", label: "Vocabulary" },
+  { title: "How Much Is It", url: "how-much-is-it/", label: "Vocabulary" },
+  { title: "What does Rob order?", url: "rob-orders/", label: "Listening" },
+  { title: "Listen & Complete", url: "listen-complete/", label: "Listening" },
+  { title: "Be Rob", url: "be-rob/", label: "Speaking" },
+  { title: "Jenny's Lunch", url: "jennys-lunch/", label: "Listening" },
+  { title: "What do they buy?", url: "jenny-amy-buy/", label: "Listening" },
+  { title: "Three Sounds Match", url: "three-sounds-match/", label: "Pronunciation" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.

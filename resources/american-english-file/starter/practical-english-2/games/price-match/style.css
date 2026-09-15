@@ -1,4 +1,4 @@
-/* Match Nationalities – 3 modes · Unit 2B */
+/* Price Match – 3 modes × 2 sets · AEF Starter Practical English 2 */
 
 .arcade-header-bar, .arcade-nav, .site-footer, body > header {
   display: none !important;
@@ -36,6 +36,7 @@ html[data-theme="dark"] body {
   overflow: hidden;
 }
 
+/* ── Top bar ── */
 .mc-topbar {
   display: flex;
   align-items: center;
@@ -88,6 +89,7 @@ html[data-theme="dark"] .mc-progress {
   background: rgba(167, 139, 250, 0.18);
 }
 
+/* ── Start / Done screens ── */
 .mc-start, .mc-done {
   flex: 1;
   display: flex;
@@ -177,6 +179,7 @@ html[data-theme="dark"] .mc-mode-card p { color: #94a3b8; }
 .mc-stars { display: flex; gap: 6px; font-size: 1.5rem; margin-bottom: 8px; }
 .mc-trophy { font-size: 2.4rem; margin-bottom: 6px; }
 
+/* ── Instruction ── */
 .mc-instruction {
   margin: 0 0 8px;
   text-align: center;
@@ -188,6 +191,7 @@ html[data-theme="dark"] .mc-mode-card p { color: #94a3b8; }
 html[data-theme="dark"] .mc-instruction { color: #94a3b8; }
 .mc-hint-warn { color: #dc2626 !important; }
 
+/* ── Board ── */
 .mc-board {
   flex: 1;
   min-height: 0;
@@ -195,6 +199,10 @@ html[data-theme="dark"] .mc-instruction { color: #94a3b8; }
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   overflow: hidden;
+}
+/* Audio modes: narrow left column for play buttons only */
+.mc-board.is-audio {
+  grid-template-columns: 92px 1fr;
 }
 .mc-col {
   display: flex;
@@ -215,7 +223,10 @@ html[data-theme="dark"] .mc-instruction { color: #94a3b8; }
   border: 2px solid #e2e8f0;
   border-radius: 14px;
   background: #fff;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  transition: border-color 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
   user-select: none;
   -webkit-user-select: none;
 }
@@ -229,7 +240,6 @@ html[data-theme="dark"] .mc-right-item {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   overflow: hidden;
   padding: 4px;
 }
@@ -268,44 +278,7 @@ html[data-theme="dark"] .mc-right-item.is-correct {
   75% { transform: translateX(4px); }
 }
 
-/* Pictures */
-.mc-thumb {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 10px;
-  display: block;
-  pointer-events: none;
-}
-.mc-pic-flag {
-  position: absolute;
-  right: 6px;
-  bottom: 6px;
-  font-size: 1.15rem;
-  line-height: 1;
-  background: rgba(15, 23, 42, 0.55);
-  border-radius: 8px;
-  padding: 3px 5px;
-  backdrop-filter: blur(4px);
-  z-index: 2;
-}
-.mc-pic-cell, .mc-pic-btn {
-  position: relative;
-  padding: 4px;
-}
-.mc-pic-btn {
-  appearance: none;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  font: inherit;
-  color: inherit;
-  display: flex;
-  align-items: stretch;
-  overflow: hidden;
-}
-
-/* Words */
+/* Price / word labels */
 .mc-word {
   appearance: none;
   width: 100%;
@@ -317,7 +290,7 @@ html[data-theme="dark"] .mc-right-item.is-correct {
   padding: 10px 14px;
   font: inherit;
   font-weight: 800;
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   color: #1e293b;
   cursor: pointer;
   text-align: center;
@@ -326,11 +299,43 @@ html[data-theme="dark"] .mc-word { color: #f1f5f9; }
 .mc-word-label {
   min-width: 0;
   line-height: 1.25;
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
-/* Play button – AEF 1 U3A style */
+/* Left number (Numbers → Words mode) */
+.mc-word-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #1e293b;
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+}
+html[data-theme="dark"] .mc-word-left {
+  color: #f1f5f9;
+}
+.mc-word-left .mc-word-label {
+  min-width: 0;
+  line-height: 1.25;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: inherit;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+.mc-word-left.is-selected {
+  border-color: #7c5cff;
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.25);
+}
+
+/* ── Play button ── */
 .mc-play {
   position: relative;
   overflow: visible;
@@ -397,6 +402,35 @@ html[data-theme="dark"] .mc-word { color: #f1f5f9; }
   50% { transform: scaleY(1.15); }
 }
 
+/* Audio cell – transparent shell, just the circular play button */
+.mc-audio-cell {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 8px !important;
+  background: transparent !important;
+  border: 2px solid transparent !important;
+  box-shadow: none !important;
+  overflow: visible;
+}
+.mc-audio-cell.is-selected {
+  border-color: #6366f1 !important;
+  border-width: 3px !important;
+  background: rgba(99, 102, 241, 0.08) !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2) !important;
+}
+html[data-theme="dark"] .mc-audio-cell.is-selected {
+  background: rgba(99, 102, 241, 0.15) !important;
+}
+.mc-audio-cell.is-correct {
+  border-color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+}
+.mc-audio-cell.is-correct .mc-play {
+  opacity: 0.7;
+}
+
+/* ── Actions ── */
 .mc-actions {
   display: flex;
   gap: 8px;
@@ -440,34 +474,11 @@ html[data-theme="dark"] .mc-btn.secondary {
 .mc-btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 .mc-done .mc-btn { margin-top: 8px; width: min(220px, 100%); flex: none; }
 
-@media (max-width: 400px) {
-  .mc-word, .mc-word-label, .mc-word-left, .mc-word-left .mc-word-label { font-size: 1.05rem; }
-  .mc-word { padding: 8px 10px; }
-  .mc-play { width: 50px; height: 50px; }
-  .mc-pic-flag { font-size: 1rem; }
-}
-@media (max-height: 680px) {
-  .mc-col > * { min-height: 48px; }
-  .mc-play { width: 46px; height: 46px; }
-}
-
-/* ===== Match visual effects ===== */
+/* ── Match visual effects ── */
 .mc-left-item,
 .mc-right-item {
   position: relative;
   overflow: visible;
-}
-.mc-pic-cell,
-.mc-pic-btn {
-  overflow: hidden; /* keep image clipped; sparks on outer item */
-}
-.mc-left-item.mc-pic-cell,
-.mc-right-item.mc-pic-btn {
-  overflow: visible;
-}
-.mc-left-item.mc-pic-cell .mc-thumb,
-.mc-right-item.mc-pic-btn .mc-thumb {
-  border-radius: 10px;
 }
 
 .mc-match-pop {
@@ -562,40 +573,7 @@ html[data-theme="dark"] .mc-match-pop {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.35);
 }
 
-/* Country name on left – same font/size as nationality words on right */
-.mc-word-left {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  padding: 10px 14px;
-  font: inherit;
-  font-weight: 800;
-  font-size: 1.15rem;
-  color: #1e293b;
-  cursor: pointer;
-  text-align: center;
-  position: relative;
-}
-html[data-theme="dark"] .mc-word-left {
-  color: #f1f5f9;
-}
-.mc-word-left .mc-word-label {
-  min-width: 0;
-  line-height: 1.25;
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: inherit;
-  text-align: center;
-}
-.mc-word-left.is-selected {
-  border-color: #7c5cff;
-  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.25);
-}
-
-/* ========== Smooth animations (all modes) ========== */
-
-/* Staggered entrance when a set loads */
+/* ── Smooth animations ── */
 .mc-board .mc-left-item,
 .mc-board .mc-right-item {
   opacity: 1;
@@ -624,15 +602,6 @@ html[data-theme="dark"] .mc-word-left {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-}
-
-/* Smoother base transitions on all cards */
-.mc-left-item,
-.mc-right-item {
-  transition: border-color 0.22s ease,
-    background 0.22s ease,
-    box-shadow 0.22s ease,
-    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Soft lift on hover / selected */
@@ -700,208 +669,86 @@ html[data-theme="dark"] .mc-right-item:not(.is-correct):not(.is-used):hover {
   }
 }
 
-/* Flash ring – softer */
-.mc-match-flash {
-  animation: mc-flash-smooth 0.55s ease-out forwards;
+/* Shared mismatch style */
+.mc-left-item.is-wrong,
+.mc-right-item.is-wrong {
+  border-color: #ef4444 !important;
+  background: #fee2e2 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.4) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  animation: mc-mismatch-shake 0.48s cubic-bezier(0.36, 0.07, 0.19, 0.97) !important;
 }
-@keyframes mc-flash-smooth {
-  0% { opacity: 0.55; transform: scale(0.92); }
-  100% { opacity: 0; transform: scale(1.08); }
+html[data-theme="dark"] .mc-left-item.is-wrong,
+html[data-theme="dark"] .mc-right-item.is-wrong {
+  background: rgba(239, 68, 68, 0.22) !important;
+  border-color: #f87171 !important;
 }
-
-/* Check mark – smoother bounce in */
-.mc-left-item.is-correct::after,
-.mc-right-item.is-correct::after {
-  animation: mc-check-smooth 0.45s cubic-bezier(0.22, 1.3, 0.36, 1);
-}
-@keyframes mc-check-smooth {
-  0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.15); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* Menu mode cards – smooth entrance */
-.mc-mode-list .mc-mode-card {
-  opacity: 0;
-  animation: mc-card-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-.mc-mode-list .mc-mode-card:nth-child(1) { animation-delay: 0.06s; }
-.mc-mode-list .mc-mode-card:nth-child(2) { animation-delay: 0.12s; }
-.mc-mode-list .mc-mode-card:nth-child(3) { animation-delay: 0.18s; }
-
-.mc-mode-card {
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.mc-mode-card:hover {
-  transform: translateY(-3px);
+@keyframes mc-mismatch-shake {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  15% { transform: translate3d(-5px, 0, 0); }
+  30% { transform: translate3d(5px, 0, 0); }
+  45% { transform: translate3d(-4px, 0, 0); }
+  60% { transform: translate3d(3px, 0, 0); }
+  75% { transform: translate3d(-2px, 0, 0); }
 }
 
-/* Done screen – soft fade up */
-.mc-done {
-  animation: mc-card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.mc-done .mc-trophy {
-  animation: mc-check-smooth 0.55s cubic-bezier(0.22, 1.3, 0.36, 1) 0.1s both;
-}
-.mc-done .mc-stars span {
-  display: inline-block;
-  opacity: 0;
-  animation: mc-card-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-.mc-done .mc-stars span:nth-child(1) { animation-delay: 0.2s; }
-.mc-done .mc-stars span:nth-child(2) { animation-delay: 0.3s; }
-.mc-done .mc-stars span:nth-child(3) { animation-delay: 0.4s; }
-
-/* Instruction / progress – subtle fade */
-.mc-instruction,
-.mc-progress {
-  transition: color 0.2s ease, background 0.2s ease;
-}
-.mc-instruction.mc-hint-warn {
-  animation: mc-hint-pulse 0.9s ease;
-}
-@keyframes mc-hint-pulse {
-  0%, 100% { opacity: 1; }
-  30% { opacity: 0.55; }
-  60% { opacity: 1; }
-}
-
-/* Buttons */
-.mc-btn {
-  transition: background 0.2s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
-}
-.mc-btn:hover {
-  transform: translateY(-1px);
-}
-.mc-btn:active {
-  transform: scale(0.97);
-}
-
-/* Prefer reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .mc-board .mc-left-item,
-  .mc-board .mc-right-item,
-  .mc-mode-list .mc-mode-card,
-  .mc-done,
-  .mc-done .mc-trophy,
-  .mc-done .mc-stars span,
-  .mc-match-pop,
-  .mc-spark,
-  .mc-match-flash,
-  .mc-left-item.is-wrong,
-  .mc-right-item.is-wrong {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-  .mc-left-item,
-  .mc-right-item,
-  .mc-mode-card,
-  .mc-btn {
-    transition: none !important;
-  }
-}
-
-/* ── Trophy win animation: stars orbit around the cup (behind → front) ── */
+/* ── Trophy / stars (done screen) ── */
 .trophy-scene {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 8px 0 16px;
   position: relative;
-  width: 100%;
-  min-height: 160px;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 12px;
   perspective: 600px;
-  perspective-origin: 50% 45%;
 }
-
 .orbit-system {
-  position: relative;
-  width: 200px;
-  height: 150px;
+  position: absolute;
+  inset: 0;
   transform-style: preserve-3d;
 }
-
-/* Cup fixed in the center plane (translateZ 0) */
 .trophy-float {
   position: absolute;
   left: 50%;
-  top: 44%;
-  font-size: 64px;
-  line-height: 1;
-  user-select: none;
-  pointer-events: none;
-  transform: translate(-50%, -50%) translateZ(0);
-  filter: drop-shadow(0 8px 18px rgba(251, 191, 36, 0.4));
+  top: 50%;
+  font-size: 3.2rem;
+  transform: translate(-50%, -50%);
   animation: trophy-float 3s ease-in-out infinite;
-  will-change: transform;
-  /* solid-ish backdrop so stars disappear when behind */
-  background: radial-gradient(circle at 50% 55%, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 55%, transparent 72%);
-  border-radius: 50%;
-  padding: 8px 10px;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.25));
 }
-
-html:not([data-theme="dark"]) .trophy-float {
-  background: radial-gradient(circle at 50% 55%, rgba(244, 246, 251, 0.95) 0%, rgba(244, 246, 251, 0.65) 55%, transparent 72%);
-}
-
-.trophy-scene.perfect .trophy-float {
-  filter: drop-shadow(0 10px 24px rgba(251, 191, 36, 0.6));
-  animation: trophy-float 2.6s ease-in-out infinite;
-}
-
-/* Orbital arms — 3 stars evenly spaced */
 .star-orbit {
   position: absolute;
-  left: 50%;
-  top: 48%;
-  width: 0;
-  height: 0;
+  inset: 0;
   transform-style: preserve-3d;
-  animation: orbit-around 10s linear infinite;
+  animation: orbit-spin 8s linear infinite;
 }
-
-.star-orbit:nth-child(2) { animation-delay: 0s; }
-.star-orbit:nth-child(3) { animation-delay: -3.33s; }
-.star-orbit:nth-child(4) { animation-delay: -6.66s; }
-
+.star-orbit:nth-child(2) { animation-duration: 7s; }
+.star-orbit:nth-child(3) { animation-duration: 9s; animation-direction: reverse; }
+.star-orbit:nth-child(4) { animation-duration: 6.5s; }
 .star {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 28px;
-  height: 28px;
-  margin: -14px 0 0 -14px;
-  font-size: 26px;
-  line-height: 28px;
-  text-align: center;
-  color: rgba(148, 163, 184, 0.35);
-  /* radius of the orbit */
+  left: 50%;
+  top: 50%;
+  font-size: 1.35rem;
+  color: #cbd5e1;
   transform: translateZ(70px);
-  transform-origin: center center;
-  pointer-events: none;
-  backface-visibility: visible;
+  animation: star-self-spin 4s linear infinite;
 }
-
 .star.filled {
   color: #fbbf24;
-  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.85));
-  animation: star-self-spin 5.5s linear infinite;
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.7);
+}
+.trophy-scene.perfect .trophy-float {
+  filter: drop-shadow(0 0 18px rgba(251, 191, 36, 0.55));
 }
 
-/* Tilted Y-orbit so path is elliptical and clearly goes behind/front */
-@keyframes orbit-around {
+@keyframes orbit-spin {
   from { transform: rotateX(22deg) rotateY(0deg); }
   to   { transform: rotateX(22deg) rotateY(360deg); }
 }
-
-/* Self-spin while keeping the orbital radius (translateZ) */
 @keyframes star-self-spin {
   from { transform: translateZ(70px) rotate(0deg); }
   to   { transform: translateZ(70px) rotate(360deg); }
 }
-
 @keyframes trophy-float {
   0%, 100% { transform: translate(-50%, -50%) translateZ(0) translateY(0) rotate(-2deg); }
   50%      { transform: translate(-50%, -50%) translateZ(0) translateY(-10px) rotate(2deg); }
@@ -919,63 +766,14 @@ html:not([data-theme="dark"]) .trophy-float {
   .star { transform: translateZ(70px); }
 }
 
-
-/* === Shared mismatch style (Units 1–2 match games) === */
-.mc-left-item.is-wrong,
-.mc-right-item.is-wrong,
-.mc-card.is-wrong,
-.sm-card.is-wrong,
-.ms-item.is-wrong,
-[class*="is-wrong"] {
-  border-color: #ef4444 !important;
-  background: #fee2e2 !important;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.4) !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  animation: mc-mismatch-shake 0.48s cubic-bezier(0.36, 0.07, 0.19, 0.97) !important;
+/* ── Responsive ── */
+@media (max-width: 400px) {
+  .mc-word, .mc-word-label, .mc-word-left, .mc-word-left .mc-word-label { font-size: 1.05rem; }
+  .mc-word { padding: 8px 10px; }
+  .mc-play { width: 50px; height: 50px; }
+  .mc-board.is-audio { grid-template-columns: 78px 1fr; }
 }
-html[data-theme="dark"] .mc-left-item.is-wrong,
-html[data-theme="dark"] .mc-right-item.is-wrong,
-html[data-theme="dark"] .mc-card.is-wrong,
-html[data-theme="dark"] .sm-card.is-wrong,
-html[data-theme="dark"] .ms-item.is-wrong,
-html[data-theme="dark"] [class*="is-wrong"] {
-  background: rgba(239, 68, 68, 0.22) !important;
-  border-color: #f87171 !important;
-}
-@keyframes mc-mismatch-shake {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  15% { transform: translate3d(-5px, 0, 0); }
-  30% { transform: translate3d(5px, 0, 0); }
-  45% { transform: translate3d(-4px, 0, 0); }
-  60% { transform: translate3d(3px, 0, 0); }
-  75% { transform: translate3d(-2px, 0, 0); }
-}
-
-.mc-cell-text { font-size: 14px; font-weight: 700; line-height: 1.3; text-align: center; }
-.mc-cell-hint { font-size: 11px; color: #94a3b8; margin-top: 4px; }
-
-
-/* Audio cell – circular play only, centered */
-.mc-audio-cell {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  padding: 8px !important;
-  background: transparent !important;
-  border: 2px solid transparent !important;
-  box-shadow: none !important;
-}
-.mc-audio-cell.is-selected {
-  border-color: #6366f1 !important;
-  border-width: 3px !important;
-  background: rgba(99, 102, 241, 0.08) !important;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2) !important;
-}
-.mc-audio-cell.is-correct {
-  border-color: #10b981 !important;
-  background: rgba(16, 185, 129, 0.1) !important;
-}
-.mc-audio-cell.is-correct .mc-play {
-  opacity: 0.7;
+@media (max-height: 680px) {
+  .mc-col > * { min-height: 48px; }
+  .mc-play { width: 46px; height: 46px; }
 }

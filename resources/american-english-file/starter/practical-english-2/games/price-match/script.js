@@ -369,6 +369,7 @@
     const left = leftOrder.map((id, i) => leftCell(id, i, mode.left)).join("");
     const right = rightOrder.map((id) => rightCell(id)).join("");
 
+    const isAudio = mode.left === "audio" || mode.left === "audio-words";
     app.innerHTML = `
       <header class="mc-topbar">
         <a class="mc-back" href="../" aria-label="Back">←</a>
@@ -376,7 +377,7 @@
         <span class="mc-progress" id="mc-progress">Set ${setIndex + 1}/2 · ${correctCount()}/5</span>
       </header>
       <p class="mc-instruction" id="mc-hint">${mode.tip}</p>
-      <div class="mc-board">
+      <div class="mc-board${isAudio ? " is-audio" : ""}">
         <div class="mc-col mc-col-left">${left}</div>
         <div class="mc-col mc-col-right">${right}</div>
       </div>

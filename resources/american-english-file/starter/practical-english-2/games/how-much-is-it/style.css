@@ -1,0 +1,361 @@
+/* How much is it? · AEF Starter Practical English 2 */
+
+.arcade-header-bar, .arcade-nav, .site-footer, body > header {
+  display: none !important;
+}
+
+html, body {
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0 !important;
+  overflow: hidden !important;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+body {
+  background: #f4f6fb !important;
+  color: #1e293b !important;
+}
+html[data-theme="dark"] body {
+  background: #0f1117 !important;
+  color: #f1f5f9 !important;
+}
+
+.hm-game {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 10px 14px 12px;
+  height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ── Top bar ── */
+.hm-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.hm-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  border: 1px solid #d0d5dd;
+  background: #fff;
+  color: #334155;
+  font-size: 16px;
+  text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+html[data-theme="dark"] .hm-back {
+  border-color: rgba(148,163,184,0.25);
+  background: rgba(255,255,255,0.06);
+  color: #e2e8f0;
+}
+.hm-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html[data-theme="dark"] .hm-title { color: #94a3b8; }
+.hm-badge, .hm-progress {
+  font-size: 12px;
+  font-weight: 800;
+  color: #6d28d9;
+  background: rgba(124, 92, 255, 0.12);
+  padding: 5px 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+html[data-theme="dark"] .hm-badge,
+html[data-theme="dark"] .hm-progress {
+  color: #c4b5fd;
+  background: rgba(167, 139, 250, 0.18);
+}
+
+/* ── Start / Done ── */
+.hm-start, .hm-done {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px 4px;
+}
+.hm-hero {
+  width: 72px; height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #34d399, #6366f1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px;
+  margin-bottom: 12px;
+  box-shadow: 0 10px 28px rgba(99,102,241,0.3);
+}
+.hm-start h1, .hm-done h1 {
+  margin: 0 0 6px;
+  font-size: 1.45rem;
+  font-weight: 900;
+}
+.hm-desc {
+  margin: 0 0 18px;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.95rem;
+  max-width: 280px;
+}
+html[data-theme="dark"] .hm-desc { color: #94a3b8; }
+
+.hm-stars {
+  font-size: 2rem;
+  letter-spacing: 4px;
+  margin-bottom: 10px;
+  color: #fbbf24;
+}
+
+/* ── Main card ── */
+.hm-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 8px 4px 12px;
+  overflow: auto;
+}
+
+.hm-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 12px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+html[data-theme="dark"] .hm-item {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(148,163,184,0.2);
+}
+.hm-emoji {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+.hm-label {
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+/* Play button */
+.hm-play {
+  position: relative;
+  overflow: visible;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.hm-play:hover { transform: scale(1.06); }
+.hm-play.playing { box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.28); }
+.hm-play svg {
+  position: relative;
+  z-index: 2;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.hm-play .wave {
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 2px solid #6366f1;
+  opacity: 0;
+  pointer-events: none;
+}
+.hm-play.playing .wave { animation: hm-ripple 1.25s ease-out infinite; }
+.hm-play.playing .wave:nth-child(2) { animation-delay: 0.3s; }
+.hm-play.playing .wave:nth-child(3) { animation-delay: 0.6s; }
+@keyframes hm-ripple {
+  0% { transform: scale(0.85); opacity: 0.65; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+.hm-play .eq {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.hm-play .eq span {
+  width: 3px;
+  height: 14px;
+  background: #fff;
+  border-radius: 2px;
+}
+.hm-play.playing svg { opacity: 0; transform: scale(0.5); }
+.hm-play.playing .eq { opacity: 1; }
+.hm-play.playing .eq span:nth-child(1) { animation: hm-eq 0.55s ease-in-out infinite; }
+.hm-play.playing .eq span:nth-child(2) { animation: hm-eq 0.55s ease-in-out infinite 0.1s; }
+.hm-play.playing .eq span:nth-child(3) { animation: hm-eq 0.55s ease-in-out infinite 0.2s; }
+.hm-play.playing .eq span:nth-child(4) { animation: hm-eq 0.55s ease-in-out infinite 0.15s; }
+@keyframes hm-eq {
+  0%,100% { transform: scaleY(0.45); }
+  50% { transform: scaleY(1.15); }
+}
+
+.hm-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+}
+html[data-theme="dark"] .hm-hint { color: #94a3b8; }
+
+/* Options */
+.hm-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 280px;
+}
+.hm-option {
+  appearance: none;
+  width: 100%;
+  padding: 16px 20px;
+  font: inherit;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #1e293b;
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s, transform 0.12s, box-shadow 0.15s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+html[data-theme="dark"] .hm-option {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(148,163,184,0.22);
+  color: #f1f5f9;
+}
+.hm-option:hover:not(:disabled) {
+  border-color: #6366f1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.18);
+}
+.hm-option:active:not(:disabled) { transform: scale(0.98); }
+.hm-option:disabled { cursor: default; }
+
+.hm-option.is-correct {
+  border-color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #059669;
+}
+html[data-theme="dark"] .hm-option.is-correct {
+  background: rgba(52, 211, 153, 0.15) !important;
+  color: #34d399;
+}
+.hm-option.is-wrong {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #dc2626;
+  animation: hm-shake 0.4s ease;
+}
+html[data-theme="dark"] .hm-option.is-wrong {
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #f87171;
+}
+@keyframes hm-shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.hm-feedback {
+  margin: 4px 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  min-height: 1.4em;
+  text-align: center;
+}
+.hm-feedback.ok { color: #059669; }
+.hm-feedback.bad { color: #dc2626; }
+html[data-theme="dark"] .hm-feedback.ok { color: #34d399; }
+html[data-theme="dark"] .hm-feedback.bad { color: #f87171; }
+
+/* Buttons */
+.hm-btn {
+  appearance: none;
+  border: none;
+  background: linear-gradient(145deg, #818cf8, #6366f1);
+  color: #fff;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 13px 32px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  text-align: center;
+  min-width: 160px;
+  transition: transform 0.12s, box-shadow 0.15s;
+}
+.hm-btn:hover { transform: translateY(-1px); }
+.hm-btn:active { transform: scale(0.98); }
+.hm-btn.secondary {
+  background: #fff;
+  color: #4338ca;
+  border: 2px solid #c7d2fe;
+  box-shadow: none;
+  margin-top: 8px;
+}
+html[data-theme="dark"] .hm-btn.secondary {
+  background: rgba(255,255,255,0.06);
+  color: #c4b5fd;
+  border-color: rgba(167, 139, 250, 0.35);
+}
+
+#hm-next {
+  margin-top: 6px;
+  width: min(220px, 100%);
+}
+
+@media (max-height: 640px) {
+  .hm-play { width: 60px; height: 60px; }
+  .hm-option { padding: 12px 16px; font-size: 1.2rem; }
+  .hm-item { padding: 10px 16px; }
+}
