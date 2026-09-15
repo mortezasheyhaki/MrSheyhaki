@@ -26,7 +26,9 @@
  *     speaking-supermarket, speaking-how-much-how-many
  *   AEF Starter resources (examples)
  *     starter-2a-match-nationalities, starter-3a-pictures-words-match,
- *     starter-3a-a-an-swipe, starter-3a-plural-s-sound-match, starter-3a-whats-in-your-bag, starter-3a-unscramble, starter-3a-look-listen-write, starter-3a-listen-number
+ *     starter-3a-a-an-swipe, starter-3a-plural-s-sound-match, starter-3a-whats-in-your-bag, starter-3a-unscramble, starter-3a-look-listen-write, starter-3a-listen-number,
+ *     starter-3a-plural-match, starter-3a-sing-plur-match, starter-3a-sing-plur-sentences, starter-3a-make-plurals,
+ *     starter-3a-listen-say-plural, starter-3a-listen-and-write, starter-3a-what-is-it, starter-3a-q-and-a
  */
 (function (global) {
   "use strict";
@@ -135,7 +137,18 @@
     "starter-3a-whats-in-your-bag": "starter-3a-whats-in-your-bag",
     "starter-3a-unscramble": "starter-3a-unscramble",
     "starter-3a-look-listen-write": "starter-3a-look-listen-write",
-    "starter-3a-listen-number": "starter-3a-listen-number"
+    "starter-3a-listen-number": "starter-3a-listen-number",
+    "starter-3a-plural-match": "starter-3a-plural-match",
+    "starter-3a-plurals-match": "starter-3a-plural-match",
+    "starter-3a-sing-plur-match": "starter-3a-sing-plur-match",
+    "starter-3a-singular-plural-match": "starter-3a-sing-plur-match",
+    "starter-3a-sing-plur-sentences": "starter-3a-sing-plur-sentences",
+    "starter-3a-make-plurals": "starter-3a-make-plurals",
+    "starter-3a-listen-say-plural": "starter-3a-listen-say-plural",
+    "starter-3a-listen-and-write": "starter-3a-listen-and-write",
+    "starter-3a-what-is-it": "starter-3a-what-is-it",
+    "starter-3a-q-and-a": "starter-3a-q-and-a",
+    "starter-3a-ask-answer": "starter-3a-q-and-a"
   };
 
   function loadJSON(key) {
