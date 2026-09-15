@@ -148,9 +148,9 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
 
 // Unit 3B – Games
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.games = [
-  { title: "Listen & Match", url: "listen-match/" },
-  { title: "Dialogue Completer", url: "dialogue-completer/" },
-  { title: "This / That Sentences", url: "this-that-sentences/" },
+  { title: "Listen & Match", url: "listen-match/", label: "Listening" },
+  { title: "Dialogue Completer", url: "dialogue-completer/", label: "Grammar" },
+  { title: "This / That Sentences", url: "this-that-sentences/", label: "Grammar" },
   { title: "Souvenirs Match", url: "souvenirs-match/", label: "Vocabulary" },
   { title: "Listen & Choose", url: "souvenirs-listen-choose/", label: "Listening" },
   { title: "Unscramble", url: "souvenirs-unscramble/", label: "Vocabulary" },

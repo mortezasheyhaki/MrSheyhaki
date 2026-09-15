@@ -8,7 +8,7 @@
     lookA: "images/girl4.png", // caps, toys, maps, pens
     lookB: "images/girl5.png", // t-shirt, mugs, notebooks
     phone: "images/girl6.png", // keychains
-    phoneStart: "images/girl7.png",
+    phoneStart: "images/girl2.png", // after pressing Speak / listening
     bag: "images/girl8.png",
     money: "images/girl9.png",
   };
@@ -37,7 +37,7 @@
   let isBusy = false;
   let idleTimer = null;
   let idleIndex = 0;
-  const idleKeys = ["idle", "phoneStart", "help"];
+  const idleKeys = ["idle"];
   const idleTexts = {
     idle: "…",
     phoneStart: "Just a second…",
@@ -199,19 +199,25 @@
     textBtn.disabled = true;
     statusEl.textContent = "";
 
-    // brief notice pose
-    setImage("phoneStart");
-    await wait(400);
-
-    // first interaction → help
+    // first interaction: if greeting (hi/hello) or any first speak → girl 3 replies
     if (!greeted) {
       greeted = true;
-      setImage("help");
-      setText("How can I help you?");
+      // brief girl 2 then switch to girl 3
+      setImage("phoneStart");
+      await wait(400);
+      setImage("help");  // girl 3
+      if (isGreeting(text)) {
+        setText("Hi! How can I help you?");
+      } else {
+        setText("How can I help you?");
+      }
       updateStars();
       await wait(1800);
       isBusy = false;
       resetButtons();
+      // now allow fuller idle poses after greeting
+      idleKeys.length = 0;
+      idleKeys.push("idle", "phoneStart", "help");
       startIdleCycle();
       return;
     }
@@ -321,6 +327,7 @@
       speakBtn.classList.add("listening");
       speakBtn.textContent = "Listening…";
       statusEl.textContent = "Speak now…";
+      // Only show girl 2 the first time the player presses Speak
       if (!greeted) setImage("phoneStart");
     };
 
