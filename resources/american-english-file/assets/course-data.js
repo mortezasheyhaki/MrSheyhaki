@@ -150,16 +150,16 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.games = [
   { title: "Listen & Match", url: "listen-match/", label: "Listening" },
   { title: "Dialogue Completer", url: "dialogue-completer/", label: "Grammar" },
-  { title: "Sentence Unscramble", url: "sentence-unscramble/", label: "Grammar" },
-  { title: "Question Builder", url: "question-builder/", label: "Grammar" },
-  { title: "This / That Mix", url: "this-that-mix/", label: "Grammar" },
   { title: "This / That Sentences", url: "this-that-sentences/", label: "Grammar" },
   { title: "Souvenirs Match", url: "souvenirs-match/", label: "Vocabulary" },
   { title: "Listen & Choose", url: "souvenirs-listen-choose/", label: "Listening" },
-  { title: "Listen & Complete", url: "listen-complete/", label: "Listening" },
   { title: "Unscramble", url: "souvenirs-unscramble/", label: "Vocabulary" },
   { title: "Listen & Write", url: "souvenirs-listen-write/", label: "Listening" },
+  { title: "Listen & Complete", url: "listen-complete/", label: "Listening" },
   { title: "Souvenirs Shop", url: "souvenirs-shop/", label: "Speaking" },
+  { title: "Sentence Unscramble", url: "sentence-unscramble/", label: "Grammar" },
+  { title: "Question Builder", url: "question-builder/", label: "Grammar" },
+  { title: "This / That Mix", url: "this-that-mix/", label: "Grammar" },
 ];
 
 // Unit 4A – People & Family / Possessives
@@ -379,6 +379,13 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].games = 
   { title: "Alphabet Flashcards", url: "alphabet-flashcards/", label: "Vocabulary" },
   { title: "Listen & Choose", url: "listen-choose/", label: "Vocabulary" },
   { title: "Match Classroom Objects", url: "match-classroom-objects/", label: "Vocabulary" },
+];
+
+// Practical English 2 – Starter (Buying lunch / Understanding prices)
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].name = "Understanding prices";
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].games = [
+  { title: "Money Flashcards", url: "money-flashcards/", label: "Vocabulary" },
+  { title: "Match the Prices", url: "price-match/", label: "Vocabulary" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.
