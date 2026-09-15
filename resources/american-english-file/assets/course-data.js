@@ -133,15 +133,17 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "Unscramble", url: "unscramble/", label: "Vocabulary" },
   { title: "Look & Listen Write", url: "look-listen-write/", label: "Vocabulary" },
   { title: "Listen & Number", url: "listen-number/", label: "Listening" },
+  { title: "Plural -s Sound Match", url: "plural-s-sound-match/", label: "Pronunciation" },
   { title: "Plural Match", url: "plural-match/", label: "Vocabulary" },
   { title: "Singular Plural Match", url: "sing-plur-match/", label: "Vocabulary" },
   { title: "Make Plurals", url: "make-plurals/", label: "Grammar" },
+  { title: "A or An Swipe", url: "a-an-swipe/", label: "Grammar" },
   { title: "What is it", url: "what-is-it/", label: "Grammar" },
   { title: "Singular & Plural Sentences", url: "sing-plur-sentences/", label: "Grammar" },
   { title: "Question & Answer", url: "q-and-a/", label: "Grammar" },
   { title: "Listen & Say/Write", url: "listen-say-plural/", label: "Grammar" },
-  { title: "A or An Swipe", url: "a-an-swipe/", label: "Grammar" },
-  { title: "Plural -s Sound Match", url: "plural-s-sound-match/", label: "Pronunciation" },
+  { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
+  
   { title: "What's in Your Bag?", url: "whats-in-your-bag/", label: "Vocabulary" },
 ];
 
