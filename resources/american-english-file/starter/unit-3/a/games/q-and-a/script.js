@@ -1,6 +1,6 @@
 /* Ask & Answer – write question + answer · AEF Starter Unit 3A */
 (function () {
-  const GAME_ID = "starter-3a-ask-answer";
+  const GAME_ID = "starter-3a-q-and-a";
 
   const ITEMS = [
     {

@@ -143,7 +143,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "Question & Answer", url: "q-and-a/", label: "Grammar" },
   { title: "Listen & Say/Write", url: "listen-say-plural/", label: "Grammar" },
   { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
-  
   { title: "What's in Your Bag?", url: "whats-in-your-bag/", label: "Vocabulary" },
 ];
 
@@ -152,6 +151,11 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.games = [
   { title: "Listen & Match", url: "listen-match/" },
   { title: "Dialogue Completer", url: "dialogue-completer/" },
   { title: "This / That Sentences", url: "this-that-sentences/" },
+  { title: "Souvenirs Match", url: "souvenirs-match/", label: "Vocabulary" },
+  { title: "Listen & Choose", url: "souvenirs-listen-choose/", label: "Listening" },
+  { title: "Unscramble", url: "souvenirs-unscramble/", label: "Vocabulary" },
+  { title: "Listen & Write", url: "souvenirs-listen-write/", label: "Listening" },
+  { title: "Souvenirs Shop", url: "souvenirs-shop/", label: "Speaking" },
 ];
 
 // Unit 4A – People & Family / Possessives

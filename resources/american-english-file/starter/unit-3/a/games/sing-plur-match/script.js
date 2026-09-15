@@ -1,6 +1,6 @@
 /* Singular ↔ Plural – same layout as Small Things · AEF Starter Unit 3A */
 (function () {
-  const GAME_ID = "starter-3a-singular-plural-match";
+  const GAME_ID = "starter-3a-sing-plur-match";
 
   const ITEMS = [
     { id: "bag",          singular: "a bag",          plural: "bags", },

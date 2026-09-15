@@ -148,7 +148,11 @@
     "starter-3a-listen-and-write": "starter-3a-listen-and-write",
     "starter-3a-what-is-it": "starter-3a-what-is-it",
     "starter-3a-q-and-a": "starter-3a-q-and-a",
-    "starter-3a-ask-answer": "starter-3a-q-and-a"
+    "starter-3a-ask-answer": "starter-3a-q-and-a",
+    "starter-3b-souvenirs-match": "starter-3b-souvenirs-match",
+    "starter-3b-souvenirs-listen-choose": "starter-3b-souvenirs-listen-choose",
+    "starter-3b-souvenirs-unscramble": "starter-3b-souvenirs-unscramble",
+    "starter-3b-souvenirs-listen-write": "starter-3b-souvenirs-listen-write"
   };
 
   function loadJSON(key) {
