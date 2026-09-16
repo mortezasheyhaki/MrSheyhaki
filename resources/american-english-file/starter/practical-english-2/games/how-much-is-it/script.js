@@ -150,8 +150,7 @@
     if (phase === "menu") {
       app.innerHTML = `
         <header class="hm-topbar">
-          <a class="hm-back" href="../" aria-label="Back">←</a>
-          <span class="hm-title">How much is it?</span>
+          <a class="hm-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="hm-back-label">How much is it?</span></a>
           <span class="hm-badge">PE2</span>
         </header>
         <section class="hm-start">
@@ -168,8 +167,7 @@
       const stars = saveStars();
       app.innerHTML = `
         <header class="hm-topbar">
-          <a class="hm-back" href="../" aria-label="Back">←</a>
-          <span class="hm-title">How much is it?</span>
+          <a class="hm-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="hm-back-label">How much is it?</span></a>
           <span class="hm-badge">Done</span>
         </header>
         <section class="hm-done">
@@ -190,10 +188,9 @@
 
     app.innerHTML = `
       <header class="hm-topbar">
-        <a class="hm-back" href="../" aria-label="Back">←</a>
-        <span class="hm-title">How much is it?</span>
-        <span class="hm-progress">${progress}</span>
-      </header>
+        <a class="hm-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="hm-back-label">How much is it?</span></a>
+          <span class="hm-progress">${progress}</span>
+        </header>
 
       <div class="hm-card">
         <div class="hm-item">

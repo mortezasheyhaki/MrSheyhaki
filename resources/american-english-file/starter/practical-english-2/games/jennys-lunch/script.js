@@ -108,8 +108,7 @@
     if (phase === "menu") {
       app.innerHTML = `
         <header class="jl-topbar">
-          <a class="jl-back" href="../" aria-label="Back">←</a>
-          <span class="jl-title">Jenny's Lunch</span>
+          <a class="jl-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="jl-back-label">Jenny's Lunch</span></a>
           <span class="jl-badge">PE2</span>
         </header>
         <section class="jl-start">
@@ -126,8 +125,7 @@
       const stars = saveStars();
       app.innerHTML = `
         <header class="jl-topbar">
-          <a class="jl-back" href="../" aria-label="Back">←</a>
-          <span class="jl-title">Jenny's Lunch</span>
+          <a class="jl-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="jl-back-label">Jenny's Lunch</span></a>
           <span class="jl-badge">Done</span>
         </header>
         <section class="jl-done">
@@ -149,10 +147,9 @@
 
     app.innerHTML = `
       <header class="jl-topbar">
-        <a class="jl-back" href="../" aria-label="Back">←</a>
-        <span class="jl-title">Jenny's Lunch</span>
-        <span class="jl-progress">Listen & choose</span>
-      </header>
+        <a class="jl-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="jl-back-label">Jenny's Lunch</span></a>
+          <span class="jl-progress">Listen & choose</span>
+        </header>
 
       <div class="jl-content">
         <div class="jl-card">

@@ -133,8 +133,7 @@
     if (phase === "done") {
       app.innerHTML = `
         <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back">←</a>
-          <span class="mc-title">Money Flashcards</span>
+          <a class="mc-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="mc-back-label">Money Flashcards</span></a>
           <span class="mc-progress">PE2</span>
         </header>
         <section class="mc-done">
@@ -167,10 +166,9 @@
 
     app.innerHTML = `
       <header class="mc-topbar">
-        <a class="mc-back" href="../" aria-label="Back">←</a>
-        <span class="mc-title">Money Flashcards</span>
-        <span class="mc-progress">${progress}</span>
-      </header>
+        <a class="mc-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="mc-back-label">Money Flashcards</span></a>
+          <span class="mc-progress">${progress}</span>
+        </header>
 
       <div class="fc-stage">
         <p class="fc-hint">Tap the card to flip</p>

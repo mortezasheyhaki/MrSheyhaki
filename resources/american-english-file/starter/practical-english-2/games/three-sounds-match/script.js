@@ -319,10 +319,9 @@
   function renderMenu() {
     app.innerHTML = `
       <header class="ts-topbar">
-        <a class="ts-back" href="../" aria-label="Back">←</a>
-        <span class="ts-title">Three Sounds Match</span>
-        <span class="ts-badge">PE2</span>
-      </header>
+        <a class="ts-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ts-back-label">Three Sounds Match</span></a>
+          <span class="ts-badge">PE2</span>
+        </header>
       <section class="ts-start">
         <div class="ts-hero" aria-hidden="true">🔊</div>
         <h1>Three Sounds Match</h1>
@@ -342,10 +341,9 @@
 
     app.innerHTML = `
       <header class="ts-topbar">
-        <a class="ts-back" href="../" aria-label="Back">←</a>
-        <span class="ts-title">Three Sounds Match</span>
-        <span class="ts-progress">${index + 1}/${queue.length} · ${score}✓</span>
-      </header>
+        <a class="ts-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ts-back-label">Three Sounds Match</span></a>
+          <span class="ts-progress">${index + 1}/${queue.length} · ${score}✓</span>
+        </header>
 
       <div class="ts-stage">
         <div class="ts-pads-top">
@@ -391,10 +389,9 @@
     const stars = saveStars();
     app.innerHTML = `
       <header class="ts-topbar">
-        <a class="ts-back" href="../" aria-label="Back">←</a>
-        <span class="ts-title">Three Sounds Match</span>
-        <span class="ts-badge">Done</span>
-      </header>
+        <a class="ts-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ts-back-label">Three Sounds Match</span></a>
+          <span class="ts-badge">Done</span>
+        </header>
       <section class="ts-done">
         <div class="ts-stars">${"★".repeat(stars)}${"☆".repeat(3 - stars)}</div>
         <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Well done!" : "Keep practicing!"}</h1>

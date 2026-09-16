@@ -111,10 +111,9 @@
   function renderMenu() {
     app.innerHTML = `
       <header class="ro-topbar">
-        <a class="ro-back" href="../" aria-label="Back">←</a>
-        <span class="ro-title">What does Rob order?</span>
-        <span class="ro-badge">PE2</span>
-      </header>
+        <a class="ro-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ro-back-label">What does Rob order?</span></a>
+          <span class="ro-badge">PE2</span>
+        </header>
       <section class="ro-start">
         <div class="ro-hero" aria-hidden="true">🍔</div>
         <h1>What does Rob order?</h1>
@@ -147,10 +146,9 @@
 
     app.innerHTML = `
       <header class="ro-topbar">
-        <a class="ro-back" href="../" aria-label="Back">←</a>
-        <span class="ro-title">What does Rob order?</span>
-        <span class="ro-progress">Listen & tick</span>
-      </header>
+        <a class="ro-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ro-back-label">What does Rob order?</span></a>
+          <span class="ro-progress">Listen & tick</span>
+        </header>
 
       <div class="ro-content">
         <div class="ro-audio-row">
@@ -193,10 +191,9 @@
 
     app.innerHTML = `
       <header class="ro-topbar">
-        <a class="ro-back" href="../" aria-label="Back">←</a>
-        <span class="ro-title">What does Rob order?</span>
-        <span class="ro-badge">Done</span>
-      </header>
+        <a class="ro-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ro-back-label">What does Rob order?</span></a>
+          <span class="ro-badge">Done</span>
+        </header>
       <section class="ro-done">
         <div class="ro-stars" aria-hidden="true">${"★".repeat(stars)}${"☆".repeat(3 - stars)}</div>
         <h1>${allCorrect ? "Perfect!" : stars >= 1 ? "Good try!" : "Keep listening!"}</h1>

@@ -316,10 +316,9 @@
   function renderMenu() {
     app.innerHTML = `
       <header class="br-topbar">
-        <a class="br-back" href="../" aria-label="Back">←</a>
-        <span class="br-title">Be Rob</span>
-        <span class="br-badge">PE2</span>
-      </header>
+        <a class="br-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="br-back-label">Be Rob</span></a>
+          <span class="br-badge">PE2</span>
+        </header>
       <section class="br-start">
         <div class="br-hero" aria-hidden="true">🗣️</div>
         <h1>Be Rob</h1>
@@ -341,8 +340,7 @@
     if (step.type === "server") {
       app.innerHTML = `
         <header class="br-topbar">
-          <a class="br-back" href="../" aria-label="Back">←</a>
-          <span class="br-title">Be Rob</span>
+          <a class="br-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="br-back-label">Be Rob</span></a>
           <span class="br-progress">${progress}</span>
         </header>
         <div class="br-content">
@@ -374,10 +372,9 @@
     // Rob turn
     app.innerHTML = `
       <header class="br-topbar">
-        <a class="br-back" href="../" aria-label="Back">←</a>
-        <span class="br-title">Be Rob</span>
-        <span class="br-progress">${progress}</span>
-      </header>
+        <a class="br-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="br-back-label">Be Rob</span></a>
+          <span class="br-progress">${progress}</span>
+        </header>
       <div class="br-content">
         <div class="br-bubble rob">
           <span class="br-role">You (Rob)</span>
@@ -422,10 +419,9 @@
     const stars = saveStars();
     app.innerHTML = `
       <header class="br-topbar">
-        <a class="br-back" href="../" aria-label="Back">←</a>
-        <span class="br-title">Be Rob</span>
-        <span class="br-badge">Done</span>
-      </header>
+        <a class="br-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="br-back-label">Be Rob</span></a>
+          <span class="br-badge">Done</span>
+        </header>
       <section class="br-done">
         <div class="br-stars" aria-hidden="true">${"★".repeat(stars)}${"☆".repeat(3 - stars)}</div>
         <h1>${stars === 3 ? "Perfect order!" : stars >= 1 ? "Nice job!" : "Keep practicing!"}</h1>

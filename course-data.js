@@ -127,6 +127,43 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.games = [
 { title: "Where from? · Dialogues", url: "where-from-dialogues/", label: "Grammar" },
 ];
 
+// Unit 2A – Games (Are you on vacation?)
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.games = [
+  { title: "Complete with be", url: "complete-be/", label: "Grammar" },
+  { title: "Are you on vacation? · Reading", url: "conversation-reading/", label: "Reading" },
+  { title: "I'm from…", url: "from-nationality/", label: "Vocabulary" },
+  { title: "Listen Nationalities", url: "listen-nationalities/", label: "Listening" },
+  { title: "Match Nationalities", url: "match-nationalities/", label: "Vocabulary" },
+  { title: "Nationalities · be", url: "nationality-be/", label: "Grammar" },
+  { title: "Pronouns & be · Practice", url: "pronouns-be-practice/", label: "Grammar" },
+  { title: "Sentence Builder · be + −", url: "sentence-builder/", label: "Grammar" },
+  { title: "Sentence Match", url: "sentence-match/", label: "Grammar" },
+  { title: "Statement → Question", url: "statement-to-question/", label: "Grammar" },
+  { title: "You / We / They · Forms", url: "you-we-they-forms/", label: "Grammar" },
+];
+
+// Unit 2B – Games (That's my bus!)
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.games = [
+  { title: "Complete the Questions", url: "complete-questions/", label: "Grammar" },
+  { title: "Credit Card Form", url: "credit-card-form/", label: "Vocabulary" },
+  { title: "Listen & Choose", url: "listen-choose/", label: "Listening" },
+  { title: "Listen & Repeat · Question Words", url: "listen-repeat-qw/", label: "Pronunciation" },
+  { title: "Listen & Write Numbers", url: "listen-write-numbers/", label: "Vocabulary" },
+  { title: "Match Conversations", url: "match-conversations/", label: "Listening" },
+  { title: "Match Number 1", url: "match-number-1/", label: "Vocabulary" },
+  { title: "Match Number 2", url: "match-number-2/", label: "Vocabulary" },
+  { title: "Match Numbers", url: "match-numbers/", label: "Vocabulary" },
+  { title: "Number Flashcards", url: "number-flashcards/", label: "Vocabulary" },
+  { title: "Numbers Practice", url: "numbers-practice/", label: "Vocabulary" },
+  { title: "Personal Info", url: "personal-info/", label: "Speaking" },
+  { title: "Personal Interview", url: "personal-interview/", label: "Speaking" },
+  { title: "Phone Numbers · 3 Parts", url: "phone-3parts/", label: "Vocabulary" },
+  { title: "Phone Number", url: "phone-number/", label: "Vocabulary" },
+  { title: "Question Words", url: "question-words/", label: "Grammar" },
+  { title: "Student Card", url: "student-card/", label: "Vocabulary" },
+  { title: "Word Order Questions", url: "word-order-questions/", label: "Grammar" },
+];
+
 // Unit 3A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "Pictures + Words Match", url: "pictures-words-match/" },
