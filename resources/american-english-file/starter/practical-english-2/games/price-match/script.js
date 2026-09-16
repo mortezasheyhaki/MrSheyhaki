@@ -312,7 +312,8 @@
     if (phase === "menu") {
       app.innerHTML = `
         <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="mc-back-label">Price Match</span></a>
+          <a class="mc-back" href="../" aria-label="Back">←</a>
+          <span class="mc-title">Price Match</span>
           <span class="mc-badge">PE2</span>
         </header>
         <section class="mc-start">
@@ -341,7 +342,8 @@
       const m = MODES[modeIndex];
       app.innerHTML = `
         <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="mc-back-label">Price Match</span></a>
+          <a class="mc-back" href="../" aria-label="Back">←</a>
+          <span class="mc-title">Price Match</span>
           <span class="mc-badge">Done</span>
         </header>
         <section class="mc-done">
@@ -370,7 +372,8 @@
     const isAudio = mode.left === "audio" || mode.left === "audio-words";
     app.innerHTML = `
       <header class="mc-topbar">
-        <a class="mc-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="mc-back-label">Price Match</span></a>
+          <a class="mc-back" href="../" aria-label="Back">←</a>
+          <span class="mc-title">Price Match</span>
           <span class="mc-progress" id="mc-progress">Set ${setIndex + 1}/2 · ${correctCount()}/5</span>
         </header>
       <p class="mc-instruction" id="mc-hint">${mode.tip}</p>

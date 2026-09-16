@@ -319,7 +319,8 @@
   function renderMenu() {
     app.innerHTML = `
       <header class="ts-topbar">
-        <a class="ts-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ts-back-label">Three Sounds Match</span></a>
+          <a class="ts-back" href="../" aria-label="Back">←</a>
+          <span class="ts-title">Three Sounds Match</span>
           <span class="ts-badge">PE2</span>
         </header>
       <section class="ts-start">
@@ -341,7 +342,8 @@
 
     app.innerHTML = `
       <header class="ts-topbar">
-        <a class="ts-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ts-back-label">Three Sounds Match</span></a>
+          <a class="ts-back" href="../" aria-label="Back">←</a>
+          <span class="ts-title">Three Sounds Match</span>
           <span class="ts-progress">${index + 1}/${queue.length} · ${score}✓</span>
         </header>
 
@@ -389,7 +391,8 @@
     const stars = saveStars();
     app.innerHTML = `
       <header class="ts-topbar">
-        <a class="ts-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ts-back-label">Three Sounds Match</span></a>
+          <a class="ts-back" href="../" aria-label="Back">←</a>
+          <span class="ts-title">Three Sounds Match</span>
           <span class="ts-badge">Done</span>
         </header>
       <section class="ts-done">

@@ -167,7 +167,8 @@
     if (phase === "menu") {
       app.innerHTML = `
         <header class="lc-topbar">
-          <a class="lc-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="lc-back-label">Listen & Complete</span></a>
+          <a class="lc-back" href="../" aria-label="Back">←</a>
+          <span class="lc-title">Listen & Complete</span>
           <span class="lc-badge">PE2</span>
         </header>
         <section class="lc-start">
@@ -184,7 +185,8 @@
       const stars = calcStars();
       app.innerHTML = `
         <header class="lc-topbar">
-          <a class="lc-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="lc-back-label">Listen & Complete</span></a>
+          <a class="lc-back" href="../" aria-label="Back">←</a>
+          <span class="lc-title">Listen & Complete</span>
           <span class="lc-badge">Done</span>
         </header>
         <section class="lc-done">
@@ -235,7 +237,8 @@
 
     app.innerHTML = `
       <header class="lc-topbar">
-        <a class="lc-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="lc-back-label">Listen & Complete</span></a>
+          <a class="lc-back" href="../" aria-label="Back">←</a>
+          <span class="lc-title">Listen & Complete</span>
           <span class="lc-progress">5 blanks</span>
         </header>
 

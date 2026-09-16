@@ -111,7 +111,8 @@
   function renderMenu() {
     app.innerHTML = `
       <header class="ro-topbar">
-        <a class="ro-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ro-back-label">What does Rob order?</span></a>
+          <a class="ro-back" href="../" aria-label="Back">←</a>
+          <span class="ro-title">What does Rob order?</span>
           <span class="ro-badge">PE2</span>
         </header>
       <section class="ro-start">
@@ -146,7 +147,8 @@
 
     app.innerHTML = `
       <header class="ro-topbar">
-        <a class="ro-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ro-back-label">What does Rob order?</span></a>
+          <a class="ro-back" href="../" aria-label="Back">←</a>
+          <span class="ro-title">What does Rob order?</span>
           <span class="ro-progress">Listen & tick</span>
         </header>
 
@@ -193,7 +195,8 @@
 
     app.innerHTML = `
       <header class="ro-topbar">
-        <a class="ro-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ro-back-label">What does Rob order?</span></a>
+          <a class="ro-back" href="../" aria-label="Back">←</a>
+          <span class="ro-title">What does Rob order?</span>
           <span class="ro-badge">Done</span>
         </header>
       <section class="ro-done">

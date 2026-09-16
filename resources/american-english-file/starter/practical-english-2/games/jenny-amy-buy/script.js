@@ -151,7 +151,8 @@
     if (phase === "menu") {
       app.innerHTML = `
         <header class="ja-topbar">
-          <a class="ja-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ja-back-label">What do they buy?</span></a>
+          <a class="ja-back" href="../" aria-label="Back">←</a>
+          <span class="ja-title">What do they buy?</span>
           <span class="ja-badge">PE2</span>
         </header>
         <section class="ja-start">
@@ -168,7 +169,8 @@
       const stars = saveStars();
       app.innerHTML = `
         <header class="ja-topbar">
-          <a class="ja-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ja-back-label">What do they buy?</span></a>
+          <a class="ja-back" href="../" aria-label="Back">←</a>
+          <span class="ja-title">What do they buy?</span>
           <span class="ja-badge">Done</span>
         </header>
         <section class="ja-done">
@@ -190,7 +192,8 @@
     // play
     app.innerHTML = `
       <header class="ja-topbar">
-        <a class="ja-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="ja-back-label">What do they buy?</span></a>
+          <a class="ja-back" href="../" aria-label="Back">←</a>
+          <span class="ja-title">What do they buy?</span>
           <span class="ja-progress">Listen & write</span>
         </header>
 

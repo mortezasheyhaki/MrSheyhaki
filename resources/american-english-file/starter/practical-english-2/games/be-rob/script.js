@@ -316,7 +316,8 @@
   function renderMenu() {
     app.innerHTML = `
       <header class="br-topbar">
-        <a class="br-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="br-back-label">Be Rob</span></a>
+          <a class="br-back" href="../" aria-label="Back">←</a>
+          <span class="br-title">Be Rob</span>
           <span class="br-badge">PE2</span>
         </header>
       <section class="br-start">
@@ -340,7 +341,8 @@
     if (step.type === "server") {
       app.innerHTML = `
         <header class="br-topbar">
-          <a class="br-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="br-back-label">Be Rob</span></a>
+          <a class="br-back" href="../" aria-label="Back">←</a>
+          <span class="br-title">Be Rob</span>
           <span class="br-progress">${progress}</span>
         </header>
         <div class="br-content">
@@ -372,7 +374,8 @@
     // Rob turn
     app.innerHTML = `
       <header class="br-topbar">
-        <a class="br-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="br-back-label">Be Rob</span></a>
+          <a class="br-back" href="../" aria-label="Back">←</a>
+          <span class="br-title">Be Rob</span>
           <span class="br-progress">${progress}</span>
         </header>
       <div class="br-content">
@@ -419,7 +422,8 @@
     const stars = saveStars();
     app.innerHTML = `
       <header class="br-topbar">
-        <a class="br-back" href="../" aria-label="Back"><span aria-hidden="true">←</span><span class="br-back-label">Be Rob</span></a>
+          <a class="br-back" href="../" aria-label="Back">←</a>
+          <span class="br-title">Be Rob</span>
           <span class="br-badge">Done</span>
         </header>
       <section class="br-done">
