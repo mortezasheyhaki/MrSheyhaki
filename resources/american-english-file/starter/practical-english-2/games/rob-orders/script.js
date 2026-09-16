@@ -175,7 +175,7 @@
 
         <div class="ro-footer">
           <button type="button" class="ro-btn" id="ro-check" ${selected.size === 0 ? "disabled" : ""}>
-            Check answer
+            ${selected.size === 0 ? "Tick the items first" : "Check answer"}
           </button>
         </div>
       </div>`;

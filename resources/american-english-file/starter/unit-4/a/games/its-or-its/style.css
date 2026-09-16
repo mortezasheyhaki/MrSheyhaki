@@ -1,0 +1,369 @@
+/* Possessive Sentences · Unit 4A · polished glass design */
+
+.arcade-header-bar, .arcade-nav, .site-footer, body > header {
+  display: none !important;
+}
+
+html, body {
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0 !important;
+  overflow: hidden !important;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+body {
+  background: #f0f2f8 !important;
+  color: #1e293b !important;
+}
+html[data-theme="dark"] body {
+  background: #0c0e16 !important;
+  color: #f1f5f9 !important;
+}
+
+.ps-game {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 8px 14px 12px;
+  padding-top: max(8px, env(safe-area-inset-top));
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Top bar */
+.ps-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.ps-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #334155;
+  font-size: 16px;
+  text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  flex-shrink: 0;
+}
+html[data-theme="dark"] .ps-back {
+  border-color: rgba(148,163,184,0.2);
+  background: rgba(255,255,255,0.07);
+  color: #e2e8f0;
+}
+.ps-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html[data-theme="dark"] .ps-title { color: #f1f5f9; }
+.ps-badge, .ps-progress {
+  font-size: 12px;
+  font-weight: 800;
+  color: #6d28d9;
+  background: rgba(124, 92, 255, 0.14);
+  padding: 5px 11px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+html[data-theme="dark"] .ps-badge,
+html[data-theme="dark"] .ps-progress {
+  color: #c4b5fd;
+  background: rgba(167, 139, 250, 0.2);
+}
+
+/* Start / Done */
+.ps-start, .ps-done {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px 4px;
+}
+.ps-hero {
+  width: 76px;
+  height: 76px;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #818cf8, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin-bottom: 14px;
+  box-shadow: 0 12px 32px rgba(99, 102, 241, 0.4);
+}
+.ps-start h1, .ps-done h1 {
+  margin: 0 0 6px;
+  font-size: 1.45rem;
+  font-weight: 900;
+}
+.ps-desc {
+  margin: 0 0 18px;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.95rem;
+  max-width: 300px;
+  line-height: 1.45;
+}
+html[data-theme="dark"] .ps-desc { color: #94a3b8; }
+
+.ps-btn {
+  appearance: none;
+  border: none;
+  background: linear-gradient(145deg, #818cf8, #6366f1);
+  color: #fff;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 800;
+  padding: 12px 28px;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
+  transition: transform 0.12s, opacity 0.15s;
+}
+.ps-btn:active { transform: scale(0.97); }
+.ps-btn.secondary {
+  background: #fff;
+  color: #4338ca;
+  border: 2px solid #c7d2fe;
+  box-shadow: none;
+  margin-top: 10px;
+}
+html[data-theme="dark"] .ps-btn.secondary {
+  background: rgba(255,255,255,0.07);
+  color: #c4b5fd;
+  border-color: rgba(167, 139, 250, 0.35);
+}
+
+.ps-stars {
+  font-size: 2.1rem;
+  letter-spacing: 5px;
+  margin-bottom: 12px;
+  color: #fbbf24;
+}
+
+/* ── Play area ── */
+.ps-play {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 6px 2px 10px;
+  gap: 22px;
+}
+
+/* Glass sentence card */
+.ps-sentence {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1.55;
+  text-align: center;
+  color: #1e293b;
+  max-width: 440px;
+  width: 100%;
+  padding: 22px 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 8px 32px rgba(99, 102, 241, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-sizing: border-box;
+}
+html[data-theme="dark"] .ps-sentence {
+  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Blank underline – clear & roomy */
+.ps-blank {
+  display: inline-block;
+  min-width: 3.6em;
+  padding: 0 4px 2px;
+  border-bottom: 3.5px solid #6366f1;
+  color: transparent;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin: 0 3px;
+  vertical-align: baseline;
+  border-radius: 2px;
+}
+html[data-theme="dark"] .ps-blank {
+  border-bottom-color: #a5b4fc;
+}
+
+/* Filled blank after answer */
+.ps-blank.is-filled-ok {
+  color: #059669;
+  border-bottom-color: #10b981;
+  animation: ps-fill-pop 0.35s ease;
+}
+.ps-blank.is-filled-bad {
+  color: #dc2626;
+  border-bottom-color: #ef4444;
+  animation: ps-fill-pop 0.35s ease;
+}
+html[data-theme="dark"] .ps-blank.is-filled-ok {
+  color: #34d399;
+  border-bottom-color: #34d399;
+}
+html[data-theme="dark"] .ps-blank.is-filled-bad {
+  color: #f87171;
+  border-bottom-color: #f87171;
+}
+@keyframes ps-fill-pop {
+  0% { transform: scale(0.7); opacity: 0.4; }
+  60% { transform: scale(1.12); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Options – smaller than sentence, glass chips */
+.ps-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.ps-opt {
+  appearance: none;
+  border: 1.5px solid rgba(226, 232, 240, 0.9);
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 14px;
+  padding: 11px 18px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #1e293b;
+  cursor: pointer;
+  min-width: 70px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color 0.15s, box-shadow 0.2s, transform 0.12s, background 0.15s;
+}
+.ps-opt:hover {
+  border-color: #a5b4fc;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.18);
+  transform: translateY(-1px);
+}
+.ps-opt:active { transform: scale(0.96); }
+.ps-opt:disabled { cursor: default; }
+
+.ps-opt.is-correct {
+  border-color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #047857;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+}
+.ps-opt.is-wrong {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.14) !important;
+  color: #b91c1c;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.28);
+  animation: ps-shake 0.42s ease;
+}
+html[data-theme="dark"] .ps-opt {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(148,163,184,0.22);
+  color: #f1f5f9;
+}
+html[data-theme="dark"] .ps-opt:hover {
+  border-color: #a5b4fc;
+  background: rgba(255,255,255,0.12);
+}
+html[data-theme="dark"] .ps-opt.is-correct {
+  color: #6ee7b7;
+  background: rgba(16, 185, 129, 0.2) !important;
+}
+html[data-theme="dark"] .ps-opt.is-wrong {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.18) !important;
+}
+
+@keyframes ps-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+.ps-feedback {
+  margin: 0;
+  min-height: 1.4em;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-align: center;
+}
+.ps-feedback.ok { color: #059669; }
+.ps-feedback.bad { color: #dc2626; }
+html[data-theme="dark"] .ps-feedback.ok { color: #34d399; }
+html[data-theme="dark"] .ps-feedback.bad { color: #f87171; }
+
+/* Responsive */
+@media (max-height: 640px) {
+  .ps-sentence { font-size: 1.15rem; padding: 16px 14px; }
+  .ps-opt { padding: 9px 14px; font-size: 0.85rem; min-width: 62px; }
+  .ps-play { gap: 14px; }
+}
+@media (min-width: 400px) {
+  .ps-sentence { font-size: 1.5rem; padding: 24px 22px; }
+  .ps-opt { font-size: 0.98rem; padding: 12px 20px; }
+}
+
+/* It's or Its – two larger choice buttons */
+.ps-options-two {
+  max-width: 320px;
+  gap: 14px;
+}
+.ps-opt-big {
+  flex: 1 1 120px;
+  min-width: 120px;
+  padding: 16px 24px;
+  font-size: 1.15rem;
+  border-radius: 16px;
+}
+@media (max-height: 640px) {
+  .ps-opt-big { padding: 12px 18px; font-size: 1.05rem; min-width: 100px; }
+}
