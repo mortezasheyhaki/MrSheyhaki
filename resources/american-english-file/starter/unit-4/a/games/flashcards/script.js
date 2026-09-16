@@ -288,7 +288,7 @@
     const familyDisabled = FAMILY.length === 0;
     app.innerHTML = `
       <header class="fc-topbar">
-        <a class="fc-back" href="../" aria-label="Back">←</a>
+        <a class="fc-back-btn" href="../" aria-label="Back">←</a>
         <span class="fc-title">Flashcards</span>
         <span class="fc-badge">4A</span>
       </header>
@@ -337,7 +337,7 @@
 
     app.innerHTML = `
       <header class="fc-topbar">
-        <button type="button" class="fc-back" id="fc-menu" aria-label="Modes">←</button>
+        <button type="button" class="fc-back-btn" id="fc-menu" aria-label="Modes">←</button>
         <span class="fc-title">${mode === "people" ? "People" : mode === "family" ? "Family" : "Flashcards"}</span>
         <span class="fc-progress">${index + 1} / ${deck.length}</span>
       </header>
@@ -380,7 +380,7 @@
     else if (deck.length === 0) {
       app.innerHTML = `
         <header class="fc-topbar">
-          <button type="button" class="fc-back" id="fc-menu" aria-label="Modes">←</button>
+          <button type="button" class="fc-back-btn" id="fc-menu" aria-label="Modes">←</button>
           <span class="fc-title">Family</span>
           <span class="fc-badge">4A</span>
         </header>

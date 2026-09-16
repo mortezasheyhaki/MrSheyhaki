@@ -165,6 +165,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.games = [
 // Unit 4A – People & Family / Possessives
 COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.games = [
   { title: "Flashcards", url: "flashcards/", label: "Vocabulary" },
+  { title: "Unscramble", url: "unscramble/", label: "Vocabulary" },
   { title: "Possessives 1", url: "possessives-1/" },
   { title: "Possessives 2", url: "possessives-2/" },
   { title: "Family Tree", url: "family-tree/" },
