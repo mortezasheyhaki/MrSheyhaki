@@ -171,9 +171,11 @@
           </div>
         </div>
 
-        <button type="button" class="ro-btn" id="ro-check" ${selected.size === 0 ? "disabled" : ""}>
-          Check answer
-        </button>
+        <div class="ro-footer">
+          <button type="button" class="ro-btn" id="ro-check" ${selected.size === 0 ? "disabled" : ""}>
+            Check answer
+          </button>
+        </div>
       </div>`;
 
     app.querySelector(".ro-play").onclick = playAudio;
