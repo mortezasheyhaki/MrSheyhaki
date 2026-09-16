@@ -21,12 +21,14 @@ html[data-theme="dark"] body {
   color: #f1f5f9 !important;
 }
 
+/* Mobile-first base (smallest phones ~360px) */
 .mc-game {
   position: relative;
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
-  padding: 12px 16px 16px;
+  padding: 6px 10px 8px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
   height: 100%;
   height: 100dvh;
   max-height: 100dvh;
@@ -40,21 +42,21 @@ html[data-theme="dark"] body {
 .mc-topbar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 6px;
   flex-shrink: 0;
 }
 .mc-back {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   background: #fff;
   color: #334155;
-  font-size: 16px;
+  font-size: 15px;
   text-decoration: none;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   flex-shrink: 0;
@@ -66,7 +68,7 @@ html[data-theme="dark"] .mc-back {
 }
 .mc-title {
   flex: 1;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #1e293b;
   white-space: nowrap;
@@ -75,11 +77,11 @@ html[data-theme="dark"] .mc-back {
 }
 html[data-theme="dark"] .mc-title { color: #f1f5f9; }
 .mc-progress {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   color: #6d28d9;
   background: rgba(124, 92, 255, 0.12);
-  padding: 5px 11px;
+  padding: 4px 8px;
   border-radius: 999px;
   flex-shrink: 0;
 }
@@ -100,11 +102,11 @@ html[data-theme="dark"] .mc-progress {
 
 .fc-card {
   width: 100%;
-  max-width: 340px;
+  max-width: 260px;
   aspect-ratio: 4 / 3;
   perspective: 1000px;
   cursor: pointer;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 .fc-inner {
   position: relative;
@@ -140,26 +142,26 @@ html[data-theme="dark"] .fc-front {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 12px;
+  padding: 6px;
 }
 .fc-back {
   background: linear-gradient(145deg, #818cf8, #6366f1);
   color: #fff;
   transform: rotateY(180deg);
-  padding: 20px;
+  padding: 14px;
   text-align: center;
 }
 .fc-back .fc-label {
-  font-size: 26px;
+  font-size: 18px;
   font-weight: 800;
   line-height: 1.25;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
-/* 3B-style circular play button */
+/* 3B-style circular play button – mobile-first */
 .lw-play {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: none;
   background: rgba(255,255,255,0.28);
@@ -216,18 +218,18 @@ html[data-theme="dark"] .fc-front {
 }
 
 .fc-hint {
-  font-size: 13px;
+  font-size: 12px;
   color: #94a3b8;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 }
 
-/* Controls */
+/* Controls – mobile-first */
 .fc-controls {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
   flex-shrink: 0;
-  padding-top: 4px;
+  padding-top: 2px;
 }
 .fc-nav {
   appearance: none;
@@ -235,11 +237,11 @@ html[data-theme="dark"] .fc-front {
   background: #fff;
   color: #334155;
   font: inherit;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -259,10 +261,10 @@ html[data-theme="dark"] .fc-nav {
   background: linear-gradient(145deg, #818cf8, #6366f1);
   color: #fff;
   font: inherit;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
-  padding: 12px 18px;
-  border-radius: 14px;
+  padding: 10px 14px;
+  border-radius: 12px;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
@@ -338,125 +340,47 @@ html[data-theme="dark"] .mc-done h1 { color: #f1f5f9; }
 .mc-done .mc-btn { min-width: 160px; }
 .mc-done .mc-btn.secondary { margin-top: 8px; }
 
-/* Phone / short viewport optimizations – keep controls visible */
-@media (max-width: 480px) {
+/* ── Mobile-first scale-up ── */
+@media (min-width: 400px) {
   .mc-game {
     padding: 8px 12px 12px;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
-  .mc-topbar {
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  .mc-back {
-    width: 34px;
-    height: 34px;
-    font-size: 15px;
-  }
-  .mc-title {
-    font-size: 14px;
-  }
-  .mc-progress {
-    font-size: 11px;
-    padding: 3px 8px;
-  }
-  .fc-card {
-    max-width: 300px;
-    margin-bottom: 12px;
-  }
-  .fc-front img {
-    padding: 8px;
-  }
-  .fc-back {
-    padding: 16px;
-  }
-  .fc-back .fc-label {
-    font-size: 22px;
-    margin-bottom: 10px;
-  }
-  .lw-play {
-    width: 50px;
-    height: 50px;
-  }
-  .fc-hint {
-    font-size: 12px;
-    margin-bottom: 8px;
-  }
-  .fc-controls {
-    gap: 8px;
-    padding-top: 2px;
-  }
-  .fc-nav {
-    width: 44px;
-    height: 44px;
-    font-size: 14px;
-    border-radius: 12px;
-  }
-  .mc-btn {
-    padding: 10px 14px;
-    font-size: 13px;
-    border-radius: 12px;
-  }
+  .mc-topbar { gap: 10px; margin-bottom: 8px; }
+  .mc-back { width: 36px; height: 36px; font-size: 16px; }
+  .mc-title { font-size: 15px; }
+  .mc-progress { font-size: 12px; padding: 5px 11px; }
+  .fc-card { max-width: 300px; margin-bottom: 14px; }
+  .fc-front img { padding: 8px; }
+  .fc-back { padding: 16px; }
+  .fc-back .fc-label { font-size: 22px; margin-bottom: 10px; }
+  .lw-play { width: 50px; height: 50px; }
+  .fc-hint { font-size: 13px; margin-bottom: 8px; }
+  .fc-controls { gap: 10px; }
+  .fc-nav { width: 46px; height: 46px; font-size: 15px; border-radius: 14px; }
+  .mc-btn { padding: 11px 16px; font-size: 14px; border-radius: 14px; }
 }
 
-@media (max-height: 700px) {
+@media (min-width: 480px) {
+  .mc-game { padding: 12px 16px 16px; }
+  .mc-topbar { margin-bottom: 10px; }
+  .fc-card { max-width: 340px; margin-bottom: 18px; }
+  .fc-front img { padding: 12px; }
+  .fc-back { padding: 20px; }
+  .fc-back .fc-label { font-size: 26px; margin-bottom: 14px; }
+  .lw-play { width: 56px; height: 56px; }
+  .fc-hint { margin-bottom: 12px; }
+  .fc-nav { width: 48px; height: 48px; }
+  .mc-btn { padding: 12px 18px; }
+}
+
+@media (min-height: 700px) {
   .mc-game {
-    padding-top: 6px;
-    padding-bottom: max(10px, env(safe-area-inset-bottom));
+    padding-top: 12px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
-  .mc-topbar {
-    margin-bottom: 6px;
-  }
-  .fc-card {
-    max-width: 280px;
-    margin-bottom: 10px;
-  }
-  .fc-front img {
-    padding: 6px;
-  }
-  .fc-back .fc-label {
-    font-size: 20px;
-    margin-bottom: 8px;
-  }
-  .lw-play {
-    width: 46px;
-    height: 46px;
-  }
-  .fc-hint {
-    margin-bottom: 6px;
-  }
-  .fc-nav {
-    width: 42px;
-    height: 42px;
-  }
-  .mc-btn {
-    padding: 9px 12px;
-    font-size: 12px;
-  }
-}
-
-@media (max-height: 600px) {
-  .fc-card {
-    max-width: 240px;
-    margin-bottom: 8px;
-  }
-  .fc-back .fc-label {
-    font-size: 18px;
-  }
-  .lw-play {
-    width: 42px;
-    height: 42px;
-  }
-  .fc-hint {
-    font-size: 11px;
-    margin-bottom: 4px;
-  }
-  .fc-controls {
-    gap: 6px;
-  }
-  .fc-nav {
-    width: 38px;
-    height: 38px;
-    font-size: 13px;
-  }
+  .mc-topbar { margin-bottom: 10px; }
+  .fc-card { max-width: 340px; margin-bottom: 18px; }
+  .lw-play { width: 56px; height: 56px; }
+  .fc-nav { width: 48px; height: 48px; }
 }
