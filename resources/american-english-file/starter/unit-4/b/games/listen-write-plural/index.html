@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+  (function () {
+    try {
+      var t = localStorage.getItem("mrsheyhaki-theme");
+      if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+      else if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches)
+        document.documentElement.setAttribute("data-theme", "dark");
+      else document.documentElement.setAttribute("data-theme", "light");
+    } catch (e) {}
+  })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Listen & Write the Plural | Starter Unit 4B | Mr. Sheyhaki</title>
+  <meta name="description" content="Listen to the singular phrase and write the plural form.">
+  <link rel="stylesheet" href="../../../../../../../theme.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game" id="app">
+    <!-- START -->
+    <div class="screen" id="startScreen">
+      <header class="top-bar">
+        <a href="../" class="back-btn" aria-label="Back">←</a>
+        <div class="top-center">
+          <span class="unit-label">Starter · Unit 4B</span>
+          <span class="game-title">Listen & Write the Plural</span>
+        </div>
+        <div class="top-spacer"></div>
+      </header>
+      <div class="start-body">
+        <div class="start-hero">
+          <span class="start-emoji">👂✍️</span>
+          <p class="start-lead">Listen to the singular phrase.<br>Type the <strong>plural</strong> form.</p>
+        </div>
+        <button type="button" class="primary-btn start-btn" id="startBtn">Start</button>
+        <p class="start-hint">9 phrases · irregular plurals included</p>
+      </div>
+    </div>
+
+    <!-- GAME -->
+    <div class="screen hidden" id="gameScreen">
+      <header class="top-bar">
+        <button type="button" class="back-btn" id="backBtn" aria-label="Back">←</button>
+        <div class="top-center">
+          <span class="unit-label">Starter · Unit 4B</span>
+          <span class="game-title">Write the Plural</span>
+        </div>
+        <div class="top-stats">
+          <div class="stat"><span class="stat-label">Q</span><strong id="qProgress">1/9</strong></div>
+          <div class="stat"><span class="stat-label">Score</span><strong id="scoreText">0</strong></div>
+        </div>
+      </header>
+
+      <main class="main">
+        <div class="stage">
+          <div class="listen-area">
+            <button type="button" class="play-audio-btn" id="playBtn" aria-label="Play singular">
+              <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              <div class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            </button>
+            <p class="listen-hint" id="listenHint">Tap to listen (singular)</p>
+          </div>
+
+          <div class="write-panel">
+            <label class="input-label" for="answerInput">Write the plural</label>
+            <input type="text" id="answerInput" class="answer-input"
+                   placeholder="e.g. big houses"
+                   autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+            <div class="feedback" id="feedback" hidden></div>
+            <div class="action-row" id="actionRow">
+              <button type="button" class="primary-btn" id="checkBtn" disabled>Check</button>
+            </div>
+            <div class="action-row hidden" id="nextRow">
+              <button type="button" class="primary-btn continue-btn" id="nextBtn">Next →</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- END -->
+    <div class="overlay" id="endOverlay" hidden>
+      <div class="overlay-card">
+        <div class="overlay-emoji" id="endEmoji">🎉</div>
+        <h2 id="endTitle">Well done!</h2>
+        <p id="endMsg"></p>
+        <div class="end-stars" id="endStars" aria-hidden="true"></div>
+        <div class="end-actions">
+          <button type="button" class="end-icon-btn" id="againBtn">
+            <span class="end-ico">↻</span><span class="end-ico-label">Again</span>
+          </button>
+          <a class="end-icon-btn" href="../">
+            <span class="end-ico">←</span><span class="end-ico-label">Unit 4B</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../../../../../../theme.js"></script>
+  <script src="../../../../../../learningarcade/la-stars.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

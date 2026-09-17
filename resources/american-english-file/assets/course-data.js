@@ -258,8 +258,11 @@ COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.games = [
   { title: "Unscramble Adjectives", url: "unscramble-adjectives/" , label: "Vocabulary" },
   { title: "Listen & Write the Adjectives", url: "listen-write-adjectives/" , label: "Vocabulary" },
   { title: "Sentence Builder", url: "sentence-builder/" , label: "Grammar" },
-  { title: "Listen and Write", url: "listen-and-write/" },
-  { title: "Adjective Sentences", url: "adjective-sentences/" },
+  { title: "Adjective Sentences", url: "adjective-sentences/" , label: "Grammar" },
+  { title: "Listen and Write the plural", url: "listen-write-plural/" , label: "Listening" },
+  { title: "Two Sounds Match", url: "two-sounds-match/" , label: "Pronunciation" },
+  { title: "Listen & Say", url: "listen-and-say/" , label: "Pronunciation" },
+  { title: "Listen and Write", url: "listen-and-write/" , label: "Listening" },
 ];
 
 // Level 1 – Unit 9A – Food games (from Vocabulary Arcade)

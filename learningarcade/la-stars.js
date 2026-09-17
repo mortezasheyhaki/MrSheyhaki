@@ -29,6 +29,11 @@
  *     starter-3a-a-an-swipe, starter-3a-plural-s-sound-match, starter-3a-whats-in-your-bag, starter-3a-unscramble, starter-3a-look-listen-write, starter-3a-listen-number,
  *     starter-3a-plural-match, starter-3a-sing-plur-match, starter-3a-sing-plur-sentences, starter-3a-make-plurals,
  *     starter-3a-listen-say-plural, starter-3a-listen-and-write, starter-3a-what-is-it, starter-3a-q-and-a
+ *   AEF Starter Unit 4B (Adjectives / The perfect car)
+ *     starter-4b-where-is-it-from, starter-4b-perfect-car, starter-4b-car-adjectives,
+ *     starter-4b-opposite-snap, starter-4b-match-adjectives, starter-4b-sound-match-picture,
+ *     starter-4b-unscramble-adjectives, starter-4b-listen-write-adjectives, starter-4b-sentence-builder,
+ *     starter-4b-listen-and-write, starter-4b-adjective-sentences
  */
 (function (global) {
   "use strict";
@@ -68,7 +73,9 @@
     "vocab-clothes-dictation": "vocab-clothes-match",
     // School subjects
     "vocab-school-subjects": "vocab-school-subjects",
-    // Unit 4B – hub ids used by course-render (starter-4b-*)
+
+    // Unit 4B – Adjectives / The perfect car (hub ids used by course-render: starter-4b-*)
+    // Short / legacy ids → canonical
     "adj-sentences": "starter-4b-adjective-sentences",
     "adj-sentences-a": "starter-4b-adjective-sentences",
     "adj-sentences-b": "starter-4b-adjective-sentences",
@@ -76,19 +83,31 @@
     "match-adjectives-4b": "starter-4b-match-adjectives",
     "listen-and-write-4b": "starter-4b-listen-and-write",
     "opposite-snap": "starter-4b-opposite-snap",
-    "starter-4b-adjective-sentences": "starter-4b-adjective-sentences",
-    "starter-4b-sound-match-picture": "starter-4b-sound-match-picture",
+    "where-is-it-from": "starter-4b-where-is-it-from",
+    "perfect-car": "starter-4b-perfect-car",
+    "car-adjectives": "starter-4b-car-adjectives",
+    "unscramble-adjectives": "starter-4b-unscramble-adjectives",
+    "listen-write-adjectives": "starter-4b-listen-write-adjectives",
+    "sentence-builder-4b": "starter-4b-sentence-builder",
+    // Mode variants (some games save as id-mode) → parent card
+    "starter-4b-adjective-sentences-write": "starter-4b-adjective-sentences",
+    "starter-4b-adjective-sentences-order": "starter-4b-adjective-sentences",
+    "starter-4b-adjective-sentences-chips": "starter-4b-adjective-sentences",
+    "starter-4b-sentence-builder-write": "starter-4b-sentence-builder",
+    "starter-4b-sentence-builder-chips": "starter-4b-sentence-builder",
+    "starter-4b-sentence-builder-order": "starter-4b-sentence-builder",
+    // Canonical self-maps (so reverse lookup & apply work consistently)
+    "starter-4b-where-is-it-from": "starter-4b-where-is-it-from",
+    "starter-4b-perfect-car": "starter-4b-perfect-car",
+    "starter-4b-car-adjectives": "starter-4b-car-adjectives",
+    "starter-4b-opposite-snap": "starter-4b-opposite-snap",
     "starter-4b-match-adjectives": "starter-4b-match-adjectives",
+    "starter-4b-sound-match-picture": "starter-4b-sound-match-picture",
+    "starter-4b-unscramble-adjectives": "starter-4b-unscramble-adjectives",
+    "starter-4b-listen-write-adjectives": "starter-4b-listen-write-adjectives",
+    "starter-4b-sentence-builder": "starter-4b-sentence-builder",
     "starter-4b-listen-and-write": "starter-4b-listen-and-write",
-    "starter-4b-opposite-snap": "starter-4b-opposite-snap"
-,
-    // Unit 4B resources
-    "adj-sentences-a": "adj-sentences",
-    "adj-sentences-b": "adj-sentences",
-    "sound-match-picture": "sound-match-picture",
-    "match-adjectives-4b": "match-adjectives-4b",
-    "listen-and-write-4b": "listen-and-write-4b",
-    "opposite-snap": "opposite-snap",
+    "starter-4b-adjective-sentences": "starter-4b-adjective-sentences",
 
     // Starter · Practical English 1
     "starter-alphabet-flashcards": "starter-pe1-alphabet-flashcards",
@@ -298,16 +317,32 @@
     return best;
   }
 
+  /** Fire level from play count: >3 → 1, >6 → 2, ≥10 → 3 */
+  function fireLevelFromPlays(plays) {
+    plays = Number(plays) || 0;
+    if (plays >= 10) return 3;
+    if (plays > 6) return 2;
+    if (plays > 3) return 1;
+    return 0;
+  }
+
   function apply(root) {
     var scope = root || document;
     var starsData = loadStars();
     var playsData = loadPlays();
 
+    // Ensure fire/star CSS is present
+    ensureStarStyles();
+
     scope.querySelectorAll(".game-stars[data-game]").forEach(function (el) {
       var id = el.getAttribute("data-game");
       var n = bestStarsFor(id, starsData);
+      var plays = bestPlaysFor(id, playsData);
+      var fire = fireLevelFromPlays(plays);
+
       el.querySelectorAll(".star").forEach(function (star) {
         var need = Number(star.getAttribute("data-n") || 0);
+        // Performance stars
         if (need <= n) {
           star.classList.add("is-filled");
           star.textContent = "★";
@@ -315,8 +350,20 @@
           star.classList.remove("is-filled");
           star.textContent = "☆";
         }
+        // Fire layer (based on play count)
+        if (need <= fire) {
+          star.classList.add("on-fire");
+          ensureParticles(star);
+        } else {
+          star.classList.remove("on-fire");
+          removeParticles(star);
+        }
       });
-      el.setAttribute("aria-label", n + " of 3 stars");
+
+      var label = n + " of 3 stars";
+      if (fire > 0) label += ", " + fire + " on fire";
+      el.setAttribute("aria-label", label);
+      el.setAttribute("data-fire", String(fire));
     });
 
     scope.querySelectorAll(".game-plays[data-game]").forEach(function (el) {
@@ -326,6 +373,79 @@
       el.setAttribute("data-count", String(n));
       el.setAttribute("aria-label", playLabel(n));
     });
+  }
+
+  function ensureParticles(star) {
+    if (star.querySelector(".la-particles")) return;
+    var wrap = document.createElement("span");
+    wrap.className = "la-particles";
+    wrap.setAttribute("aria-hidden", "true");
+
+    // Shared wind direction for this star (particles feel like the same breeze)
+    // Positive = right, negative = left. Mild random bias.
+    var wind = (Math.random() * 2 - 1) * 12; // -12px … +12px base drift
+    wrap.style.setProperty("--wind", wind.toFixed(1) + "px");
+
+    // Bright fire particles (fast, small, orange/yellow) – less affected by wind
+    for (var i = 0; i < 6; i++) {
+      var p = document.createElement("span");
+      p.className = "la-particle la-particle--fire";
+      p.style.setProperty("--d", (i * 0.18) + "s");
+      p.style.setProperty("--x", (Math.random() * 10 - 5).toFixed(1) + "px");
+      p.style.setProperty("--w", (wind * (0.35 + Math.random() * 0.3)).toFixed(1) + "px");
+      wrap.appendChild(p);
+    }
+
+    // Soft smoke particles (slower, larger) – more strongly pushed by wind
+    for (var j = 0; j < 5; j++) {
+      var s = document.createElement("span");
+      s.className = "la-particle la-particle--smoke";
+      s.style.setProperty("--d", (j * 0.35 + 0.2) + "s");
+      s.style.setProperty("--x", (Math.random() * 12 - 6).toFixed(1) + "px");
+      s.style.setProperty("--s", (0.7 + Math.random() * 0.8).toFixed(2));
+      s.style.setProperty("--w", (wind * (0.9 + Math.random() * 0.5)).toFixed(1) + "px");
+      wrap.appendChild(s);
+    }
+
+    star.appendChild(wrap);
+  }
+
+  function removeParticles(star) {
+    var wrap = star.querySelector(".la-particles");
+    if (wrap) wrap.remove();
+  }
+
+  function ensureStarStyles() {
+    if (document.getElementById("la-stars-css")) return;
+    var style = document.createElement("style");
+    style.id = "la-stars-css";
+    style.textContent =
+      ".game-stars{display:flex;gap:4px;margin:8px 0 4px;font-size:1.15rem;line-height:1}" +
+      ".game-stars .star{opacity:.35;filter:grayscale(1);position:relative;display:inline-block;transition:color .25s,filter .25s,transform .25s}" +
+      ".game-stars .star.is-filled,.game-stars .star.filled,.game-stars .star[data-filled=\"1\"]{opacity:1;filter:none;color:#fbbf24}" +
+      ".game-stars .star.on-fire{opacity:1;filter:none;color:#ff6b1a;text-shadow:0 0 6px #ff3d00,0 0 12px #ff8c00}" +
+      ".game-stars .star.on-fire::after{content:\"🔥\";position:absolute;left:50%;bottom:70%;transform:translateX(-50%) scale(.55);font-size:1em;pointer-events:none;animation:la-flame 0.7s ease-in-out infinite alternate;z-index:2}" +
+      "@keyframes la-flame{0%{transform:translateX(-50%) scale(.5) translateY(0);opacity:.85}100%{transform:translateX(-50%) scale(.65) translateY(-3px);opacity:1}}" +
+      /* Shared particle container */
+      ".game-stars .star .la-particles{position:absolute;left:50%;bottom:50%;width:0;height:0;pointer-events:none;z-index:1}" +
+      /* Fire particles – small, bright, mild wind drift */
+      ".game-stars .star .la-particle--fire{position:absolute;width:3px;height:3px;border-radius:50%;background:radial-gradient(circle,#ffeb3b 0%,#ff6b1a 60%,transparent 100%);opacity:0;animation:la-particle-fire 1.4s ease-out infinite;animation-delay:var(--d,0s)}" +
+      "@keyframes la-particle-fire{" +
+        "0%{opacity:0;transform:translate(var(--x,0),0) scale(.4)}" +
+        "15%{opacity:.95;transform:translate(calc(var(--x,0) + var(--w,0px)*0.25),-5px) scale(.9)}" +
+        "55%{opacity:.6;transform:translate(calc(var(--x,0) + var(--w,0px)*0.7),-12px) scale(.5)}" +
+        "100%{opacity:0;transform:translate(calc(var(--x,0) + var(--w,0px)),-20px) scale(.15)}" +
+      "}" +
+      /* Smoke particles – larger, softer, stronger wind curve */
+      ".game-stars .star .la-particle--smoke{position:absolute;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle,rgba(220,220,220,.7) 0%,rgba(160,160,160,.35) 50%,transparent 100%);opacity:0;filter:blur(1px);animation:la-particle-smoke 2.8s ease-out infinite;animation-delay:var(--d,0s)}" +
+      "@keyframes la-particle-smoke{" +
+        "0%{opacity:0;transform:translate(var(--x,0),2px) scale(calc(var(--s,1)*0.45))}" +
+        "18%{opacity:.55;transform:translate(calc(var(--x,0) + var(--w,0px)*0.3),-6px) scale(calc(var(--s,1)*0.75))}" +
+        "50%{opacity:.35;transform:translate(calc(var(--x,0) + var(--w,0px)*0.75),-16px) scale(calc(var(--s,1)*1.05))}" +
+        "100%{opacity:0;transform:translate(calc(var(--x,0) + var(--w,0px)*1.35),-32px) scale(calc(var(--s,1)*1.4))}" +
+      "}" +
+      ".resource-card .game-stars{justify-content:flex-start}";
+    document.head.appendChild(style);
   }
 
   global.LAStars = {
@@ -345,6 +465,21 @@
     identitySuffix: identitySuffix,
     starsKey: starsKey,
     playsKey: playsKey,
+  };
+
+  /**
+   * Compatibility helper used by several Unit 4B games (and possibly others).
+   * Signature: laStars(gameId, score, total)
+   * Converts score/total → accuracy, records a play, and saves best stars.
+   * Mode-suffixed IDs (e.g. "...-write") are aliased to the parent card.
+   */
+  global.laStars = function (gameId, score, total) {
+    if (!gameId) return;
+    var s = Number(score) || 0;
+    var t = Number(total) || 0;
+    var acc = t > 0 ? (s / t) * 100 : 0;
+    recordPlay(gameId);
+    saveFromAccuracy(gameId, acc);
   };
 
   function boot() {

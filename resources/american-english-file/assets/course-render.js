@@ -735,8 +735,16 @@ html[data-theme="dark"] .skill-badge--communication {
       style.id = "la-stars-css";
       style.textContent =
         ".game-stars{display:flex;gap:4px;margin:8px 0 4px;font-size:1.15rem;line-height:1}" +
-        ".game-stars .star{opacity:.35;filter:grayscale(1)}" +
+        ".game-stars .star{opacity:.35;filter:grayscale(1);position:relative;display:inline-block;transition:color .25s,filter .25s,transform .25s}" +
         ".game-stars .star.filled,.game-stars .star.is-filled,.game-stars .star[data-filled=\"1\"]{opacity:1;filter:none;color:#fbbf24}" +
+        ".game-stars .star.on-fire{opacity:1;filter:none;color:#ff6b1a;text-shadow:0 0 6px #ff3d00,0 0 12px #ff8c00}" +
+        ".game-stars .star.on-fire::after{content:\"🔥\";position:absolute;left:50%;bottom:70%;transform:translateX(-50%) scale(.55);font-size:1em;pointer-events:none;animation:la-flame 0.7s ease-in-out infinite alternate;z-index:2}" +
+        "@keyframes la-flame{0%{transform:translateX(-50%) scale(.5) translateY(0);opacity:.85}100%{transform:translateX(-50%) scale(.65) translateY(-3px);opacity:1}}" +
+        ".game-stars .star .la-particles{position:absolute;left:50%;bottom:50%;width:0;height:0;pointer-events:none;z-index:1}" +
+        ".game-stars .star .la-particle--fire{position:absolute;width:3px;height:3px;border-radius:50%;background:radial-gradient(circle,#ffeb3b 0%,#ff6b1a 60%,transparent 100%);opacity:0;animation:la-particle-fire 1.4s ease-out infinite;animation-delay:var(--d,0s)}" +
+        "@keyframes la-particle-fire{0%{opacity:0;transform:translate(var(--x,0),0) scale(.4)}15%{opacity:.95;transform:translate(calc(var(--x,0) + var(--w,0px)*0.25),-5px) scale(.9)}55%{opacity:.6;transform:translate(calc(var(--x,0) + var(--w,0px)*0.7),-12px) scale(.5)}100%{opacity:0;transform:translate(calc(var(--x,0) + var(--w,0px)),-20px) scale(.15)}}" +
+        ".game-stars .star .la-particle--smoke{position:absolute;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle,rgba(220,220,220,.7) 0%,rgba(160,160,160,.35) 50%,transparent 100%);opacity:0;filter:blur(1px);animation:la-particle-smoke 2.8s ease-out infinite;animation-delay:var(--d,0s)}" +
+        "@keyframes la-particle-smoke{0%{opacity:0;transform:translate(var(--x,0),2px) scale(calc(var(--s,1)*0.45))}18%{opacity:.55;transform:translate(calc(var(--x,0) + var(--w,0px)*0.3),-6px) scale(calc(var(--s,1)*0.75))}50%{opacity:.35;transform:translate(calc(var(--x,0) + var(--w,0px)*0.75),-16px) scale(calc(var(--s,1)*1.05))}100%{opacity:0;transform:translate(calc(var(--x,0) + var(--w,0px)*1.35),-32px) scale(calc(var(--s,1)*1.4))}}" +
         ".resource-card .game-stars{justify-content:flex-start}";
       document.head.appendChild(style);
     }
