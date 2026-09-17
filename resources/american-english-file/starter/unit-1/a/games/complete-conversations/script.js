@@ -244,6 +244,8 @@
   }
 
   function bindInputs() {
+    const inputs = () => Array.from(document.querySelectorAll(".cc-input"));
+
     document.querySelectorAll(".cc-input").forEach((input) => {
       input.addEventListener("input", () => {
         answers[input.dataset.key] = input.value;
@@ -254,31 +256,68 @@
           checkPart();
         }
       });
+      // Tap a blank to select it (mobile-friendly)
+      input.addEventListener("focus", () => {
+        input.select();
+      });
     });
 
+    function fillBlank(input, val) {
+      if (!input || checked) return;
+      input.value = val;
+      answers[input.dataset.key] = val;
+      input.dispatchEvent(new Event("input"));
+    }
+
+    function nextEmptyAfter(from) {
+      const list = inputs();
+      const start = from ? list.indexOf(from) + 1 : 0;
+      for (let i = start; i < list.length; i++) {
+        if (!list[i].value.trim()) return list[i];
+      }
+      // wrap: any empty before
+      for (let i = 0; i < start && i < list.length; i++) {
+        if (!list[i].value.trim()) return list[i];
+      }
+      return null;
+    }
+
+    function firstEmpty() {
+      return inputs().find((el) => !el.value.trim()) || null;
+    }
+
     document.querySelectorAll(".cc-chip").forEach((chip) => {
-      chip.addEventListener("click", () => {
+      chip.addEventListener("click", (e) => {
+        e.preventDefault();
         if (checked) return;
+        const val = chip.dataset.val;
         const focused = document.activeElement;
-        if (focused && focused.classList.contains("cc-input")) {
-          focused.value = chip.dataset.val;
-          answers[focused.dataset.key] = chip.dataset.val;
-          focused.dispatchEvent(new Event("input"));
-          const inputs = Array.from(document.querySelectorAll(".cc-input"));
-          const idx = inputs.indexOf(focused);
-          for (let i = idx + 1; i < inputs.length; i++) {
-            if (!inputs[i].value.trim()) {
-              inputs[i].focus();
-              return;
-            }
-          }
+        let target = null;
+
+        if (focused && focused.classList && focused.classList.contains("cc-input")) {
+          // Always fill the focused blank (replace if already filled)
+          target = focused;
         } else {
-          const empty = document.querySelector(".cc-input");
-          if (empty && !empty.value.trim()) {
-            empty.value = chip.dataset.val;
-            answers[empty.dataset.key] = chip.dataset.val;
-            empty.focus();
-          }
+          // No focus → fill first empty blank
+          target = firstEmpty();
+        }
+
+        if (!target) {
+          // All filled: replace the last input so chips still do something
+          const list = inputs();
+          target = list[list.length - 1] || null;
+        }
+
+        if (!target) return;
+
+        fillBlank(target, val);
+
+        // Move focus to next empty blank (or stay if none left)
+        const next = nextEmptyAfter(target);
+        if (next) {
+          next.focus();
+        } else {
+          target.blur();
         }
       });
     });
@@ -295,7 +334,7 @@
         <section class="cc-start">
           <div class="cc-hero">💬</div>
           <h1>Complete the Conversations</h1>
-          <p class="cc-desc">Practice basic introductions and verb standard forms.<br>Fill in missing responses using the options provided.</p>
+          <p class="cc-desc">Practice introductions with <strong>I</strong>, <strong>you</strong>, and the verb <strong>be</strong>.<br>Fill in the blanks using the word bank.</p>
           <button type="button" class="cc-btn" id="cc-start">Start Activity</button>
         </section>`;
       document.getElementById("cc-start").onclick = () => {
@@ -371,37 +410,42 @@
       .map((o) => `<button type="button" class="cc-chip" data-val="${escapeAttr(o)}">${escapeHtml(o)}</button>`)
       .join("");
 
+    const photoCard = part.image
+      ? `<div class="cc-card cc-card-photo" id="cc-photo-card">
+           <span class="cc-card-num">${escapeHtml(part.id)}</span>
+           <img class="cc-photo" src="${part.image}" alt="${escapeAttr(part.scene)}"
+                onerror="document.getElementById('cc-photo-card')?.remove();" />
+         </div>`
+      : "";
+
     app.innerHTML = `
       <header class="cc-topbar">
         <a class="cc-back" href="../" aria-label="Back">←</a>
-        <span class="cc-title">${part.title}</span>
-        <span class="cc-badge">Part ${partIndex + 1} of ${PARTS.length}</span>
+        <div class="cc-topbar-center">
+          <span class="cc-kicker">STARTER · UNIT 1A</span>
+          <span class="cc-title">${escapeHtml(part.title)}</span>
+        </div>
+        <span class="cc-badge">${partIndex + 1}/${PARTS.length}</span>
       </header>
 
-      <div class="cc-workbook">
-        <div class="cc-instruction">
-          <span class="cc-letter">${escapeHtml(part.id)}</span>
-          <p>${escapeHtml(part.instruction)}</p>
-        </div>
+      <p class="cc-instruction-bar">${escapeHtml(part.instruction)}</p>
 
-        <div class="cc-card">
-          <div class="cc-scene-row">
-            ${part.image ? `<div class="cc-photo-wrap"><img class="cc-photo" src="${part.image}" alt="${escapeAttr(part.scene)}" onerror="this.parentElement.style.display='none'" /></div>` : ""}
-            <div class="cc-dialogue" id="cc-dialogue">
-              ${renderDialogue(part, true)}
-            </div>
+      <div class="cc-scroll">
+        ${photoCard}
+
+        <div class="cc-card cc-card-dialogue">
+          <div class="cc-dialogue" id="cc-dialogue">
+            ${renderDialogue(part, true)}
           </div>
         </div>
-      </div>
 
-      <div class="cc-chips" aria-label="Word selection bank">
-        ${chips}
-      </div>
-
-      <div class="cc-fb" id="cc-fb" aria-live="polite"></div>
-
-      <div class="cc-actions">
-        <button type="button" class="cc-btn" id="cc-check" ${checked ? "disabled" : ""}>Check Answers</button>
+        <div class="cc-card cc-card-chips">
+          <div class="cc-chips" aria-label="Word selection bank">
+            ${chips}
+          </div>
+          <div class="cc-fb" id="cc-fb" aria-live="polite"></div>
+          <button type="button" class="cc-btn cc-btn-check" id="cc-check" ${checked ? "disabled" : ""}>Check</button>
+        </div>
       </div>
     `;
 
