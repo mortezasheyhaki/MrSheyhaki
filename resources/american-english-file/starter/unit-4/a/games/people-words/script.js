@@ -9,57 +9,56 @@
   const ITEMS = [
     {
       n: 1,
-      img: "images/p1.jpg",
+      img: "https://cdn.imgurl.ir/uploads/q385676_Fabio_and_Anna.png",
       before: "Fabio and Anna are ",
       after: ".",
-      answer: "friends",
-      given: true // example already filled in book — still practice
+      answer: "friends"
     },
     {
       n: 2,
-      img: "images/p2.jpg",
+      img: "https://cdn.imgurl.ir/uploads/x90947_Mrs_DeSouza.png",
       before: "Mrs. DeSouza is a ",
       after: ".",
       answer: "woman"
     },
     {
       n: 3,
-      img: "images/p3.jpg",
+      img: "https://cdn.imgurl.ir/uploads/k66783_Kim.png",
       before: "Kim is a ",
       after: ".",
       answer: "girl"
     },
     {
       n: 4,
-      img: "images/p4.jpg",
+      img: "https://cdn.imgurl.ir/uploads/n16198_George_and_Michael.png",
       before: "George and Michael are ",
       after: ".",
       answer: "men"
     },
     {
       n: 5,
-      img: "images/p5.jpg",
+      img: "https://cdn.imgurl.ir/uploads/a3765_Alex.png",
       before: "Alex is a ",
       after: ".",
       answer: "boy"
     },
     {
       n: 6,
-      img: "images/p6.jpg",
+      img: "https://cdn.imgurl.ir/uploads/m899048_Mr_Husson.png",
       before: "Mr. Husson is a ",
       after: ".",
       answer: "man"
     },
     {
       n: 7,
-      img: "images/p7.jpg",
+      img: "https://cdn.imgurl.ir/uploads/j173778_Megan_and_Dan.png",
       before: "Megan and Dan are ",
       after: ".",
       answer: "children"
     },
     {
       n: 8,
-      img: "images/p8.jpg",
+      img: "https://cdn.imgurl.ir/uploads/v798959_Jessica_and_Helena.png",
       before: "Jessica and Helena are ",
       after: ".",
       answer: "women"
@@ -87,7 +86,7 @@
 
   function renderBank() {
     wordBank.innerHTML = "";
-    WORD_LIST.forEach((w) => {
+    WORD_LIST.forEach(function (w) {
       const chip = document.createElement("span");
       chip.className = "bank-chip" + (usedWords.has(w) ? " used" : "");
       chip.textContent = w;
@@ -107,39 +106,41 @@
     sceneImg.src = item.img;
     sceneImg.alt = "Photo " + item.n;
     qNum.textContent = String(item.n);
-    qProgress.textContent = (index + 1) + "/" + ITEMS.length;
+    qProgress.textContent = item.n + "/" + ITEMS.length;
     scoreText.textContent = String(score);
-    renderBank();
 
     sentence.innerHTML =
-      item.before + '<span class="blank" id="blank">______</span>' + item.after;
+      item.before +
+      '<span class="blank" id="blank">&nbsp;</span>' +
+      item.after;
 
-    // options: remaining words + always include correct if not used
-    const available = WORD_LIST.filter((w) => !usedWords.has(w) || w === item.answer);
-    // show all list words as options for clarity (like book word bank)
+    // Options = remaining unused words (or all if none left)
+    const available = WORD_LIST.filter(function (w) {
+      return !usedWords.has(w);
+    });
+    const pool = available.length > 0 ? available : WORD_LIST.slice();
+
     optionsEl.innerHTML = "";
-    WORD_LIST.forEach((opt) => {
+    pool.forEach(function (opt) {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "opt";
-      btn.textContent = opt;
+      btn.className = "opt-btn";
       btn.dataset.val = opt;
-      if (usedWords.has(opt) && opt !== item.answer) {
-        btn.disabled = true;
-      }
-      btn.addEventListener("click", () => {
-        if (locked || btn.disabled) return;
-        optionsEl.querySelectorAll(".opt").forEach((b) => b.classList.remove("selected"));
-        btn.classList.add("selected");
+      btn.textContent = opt;
+      btn.addEventListener("click", function () {
+        if (locked) return;
         selected = opt;
-        const blank = $("blank");
-        blank.textContent = opt;
-        blank.classList.add("filled");
-        blank.classList.remove("wrong");
+        optionsEl.querySelectorAll(".opt-btn").forEach(function (b) {
+          b.classList.toggle("selected", b.dataset.val === selected);
+        });
         checkBtn.disabled = false;
+        const blank = $("blank");
+        if (blank) blank.textContent = opt;
       });
       optionsEl.appendChild(btn);
     });
+
+    renderBank();
   }
 
   function check() {
@@ -149,7 +150,7 @@
     const ok = selected === item.answer;
     const blank = $("blank");
 
-    optionsEl.querySelectorAll(".opt").forEach((b) => {
+    optionsEl.querySelectorAll(".opt-btn").forEach(function (b) {
       b.disabled = true;
       if (b.dataset.val === item.answer) b.classList.add("correct");
       else if (b.dataset.val === selected && !ok) b.classList.add("wrong");
@@ -174,11 +175,11 @@
       blank.textContent = item.answer;
       blank.classList.remove("filled");
       blank.classList.add("wrong");
-      setTimeout(() => {
+      setTimeout(function () {
         blank.classList.remove("wrong");
         blank.classList.add("filled");
       }, 400);
-      usedWords.add(item.answer); // remove from bank after reveal so each word once
+      usedWords.add(item.answer);
       feedback.hidden = false;
       feedback.className = "feedback error";
       feedback.textContent = "Answer: " + item.answer;
@@ -223,7 +224,7 @@
   continueBtn.addEventListener("click", next);
   $("againBtn").addEventListener("click", reset);
 
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keydown", function (e) {
     if (e.key !== "Enter") return;
     if (endOverlay && !endOverlay.hidden) return;
     e.preventDefault();
@@ -233,7 +234,7 @@
 
   const backBtn = $("backBtn");
   if (backBtn) {
-    backBtn.addEventListener("click", (e) => {
+    backBtn.addEventListener("click", function (e) {
       if (history.length > 1) {
         e.preventDefault();
         history.back();

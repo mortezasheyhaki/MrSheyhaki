@@ -8,7 +8,7 @@
   const TREES = {
     joe: {
       name: "Joe's family",
-      img: "images/joe-tree.png",
+      img: "https://cdn.imgurl.ir/uploads/q591708_Joe39s_Family_Tree.png",
       items: [
         {
           q: "Who's Will?",
@@ -54,7 +54,7 @@
     },
     angela: {
       name: "Angela's family",
-      img: "images/angela-tree.png",
+      img: "https://cdn.imgurl.ir/uploads/y855366_Angela39s_Family_Tree.png",
       items: [
         {
           q: "Who's Dan?",

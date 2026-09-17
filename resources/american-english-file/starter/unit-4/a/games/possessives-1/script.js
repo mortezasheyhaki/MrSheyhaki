@@ -1,19 +1,17 @@
-/* Possessives — AEF Starter Unit 4A
+/* Possessives 1 — AEF Starter Unit 4A
    my / your / his / her / its / our / their
 */
-
 (function () {
   "use strict";
 
-  const GAME_ID = "starter-4a-possessives";
+  const GAME_ID = "starter-4a-possessives-1";
 
   const OPTIONS = ["my", "your", "his", "her", "its", "our", "their"];
 
-  // Item 1 is already complete in the book (my) — still include as practice
   const ITEMS = [
     {
       n: 1,
-      img: "images/q1.jpg",
+      img: "https://cdn.imgurl.ir/uploads/k61616_where39s_my_umbrella.png",
       before: "Where's ",
       after: " umbrella?",
       answer: "my",
@@ -21,7 +19,7 @@
     },
     {
       n: 2,
-      img: "images/q2.jpg",
+      img: "https://cdn.imgurl.ir/uploads/o645567_is_this_your_bag.png",
       before: "Is this ",
       after: " bag?",
       answer: "your",
@@ -29,7 +27,7 @@
     },
     {
       n: 3,
-      img: "images/q3.jpg",
+      img: "https://cdn.imgurl.ir/uploads/g708_this_is_josh_and_his_wife.png",
       before: "That's Josh and ",
       after: " wife.",
       answer: "his",
@@ -37,7 +35,7 @@
     },
     {
       n: 4,
-      img: "images/q4.jpg",
+      img: "https://cdn.imgurl.ir/uploads/e926475_where_are_our_coats.png",
       before: "Where are ",
       after: " coats?",
       answer: "our",
@@ -45,7 +43,7 @@
     },
     {
       n: 5,
-      img: "images/q5.jpg",
+      img: "https://cdn.imgurl.ir/uploads/x050923_where_are_my_sungles.png",
       before: "Where are ",
       after: " sunglasses?",
       answer: "my",
@@ -53,7 +51,7 @@
     },
     {
       n: 6,
-      img: "images/q6.jpg",
+      img: "https://cdn.imgurl.ir/uploads/z533408_these_are_they_keys.png",
       before: "Look, I think these are ",
       after: " keys.",
       answer: "their",
@@ -61,7 +59,7 @@
     },
     {
       n: 7,
-      img: "images/q7.jpg",
+      img: "https://cdn.imgurl.ir/uploads/w06504_what39s_its_name.png",
       before: "It's a great book. Now what's ",
       after: " name?",
       answer: "its",
@@ -69,11 +67,11 @@
     },
     {
       n: 8,
-      img: "images/q8.jpg",
-      before: "That's Mr. Green. He's ",
+      img: "https://cdn.imgurl.ir/uploads/t506320_She39s_my_French_teacher.png",
+      before: "That's Ms. Green. She's ",
       after: " French teacher.",
-      answer: "our",
-      note: "The family is talking about their teacher → our."
+      answer: "my",
+      note: "The speaker is talking about their own teacher → my."
     }
   ];
 
@@ -103,32 +101,34 @@
     continueBtn.hidden = true;
 
     const item = ITEMS[index];
-    sceneImg.src = item.img;
-    sceneImg.alt = "Scene " + item.n;
-    qNum.textContent = String(item.n);
-    qProgress.textContent = (index + 1) + "/" + ITEMS.length;
+    qProgress.textContent = item.n + "/" + ITEMS.length;
+    qNum.textContent = item.n;
     scoreText.textContent = String(score);
 
+    sceneImg.src = item.img;
+    sceneImg.alt = "Scene " + item.n;
+
     sentence.innerHTML =
-      item.before + '<span class="blank" id="blank">______</span>' + item.after;
+      item.before +
+      '<span class="blank" id="blank">&nbsp;</span>' +
+      item.after;
 
     optionsEl.innerHTML = "";
-    OPTIONS.forEach((opt) => {
+    OPTIONS.forEach(function (opt) {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "opt";
-      btn.textContent = opt;
+      btn.className = "opt-btn";
       btn.dataset.val = opt;
-      btn.addEventListener("click", () => {
+      btn.textContent = opt;
+      btn.addEventListener("click", function () {
         if (locked) return;
-        optionsEl.querySelectorAll(".opt").forEach((b) => b.classList.remove("selected"));
-        btn.classList.add("selected");
         selected = opt;
-        const blank = $("blank");
-        blank.textContent = opt;
-        blank.classList.add("filled");
-        blank.classList.remove("wrong");
+        optionsEl.querySelectorAll(".opt-btn").forEach(function (b) {
+          b.classList.toggle("selected", b.dataset.val === selected);
+        });
         checkBtn.disabled = false;
+        const blank = $("blank");
+        if (blank) blank.textContent = opt;
       });
       optionsEl.appendChild(btn);
     });
@@ -141,7 +141,7 @@
     const ok = selected === item.answer;
     const blank = $("blank");
 
-    optionsEl.querySelectorAll(".opt").forEach((b) => {
+    optionsEl.querySelectorAll(".opt-btn").forEach(function (b) {
       b.disabled = true;
       if (b.dataset.val === item.answer) b.classList.add("correct");
       else if (b.dataset.val === selected && !ok) b.classList.add("wrong");
@@ -164,8 +164,7 @@
       blank.textContent = item.answer;
       blank.classList.remove("filled");
       blank.classList.add("wrong");
-      // show correct in green after brief moment
-      setTimeout(() => {
+      setTimeout(function () {
         blank.classList.remove("wrong");
         blank.classList.add("filled");
       }, 400);
@@ -211,7 +210,7 @@
   continueBtn.addEventListener("click", next);
   $("againBtn").addEventListener("click", reset);
 
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keydown", function (e) {
     if (e.key !== "Enter") return;
     if (endOverlay && !endOverlay.hidden) return;
     e.preventDefault();
@@ -221,7 +220,7 @@
 
   const backBtn = $("backBtn");
   if (backBtn) {
-    backBtn.addEventListener("click", (e) => {
+    backBtn.addEventListener("click", function (e) {
       if (history.length > 1) {
         e.preventDefault();
         history.back();
