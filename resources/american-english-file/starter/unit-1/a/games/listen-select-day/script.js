@@ -177,57 +177,61 @@
 
   function choose(id) {
     if (locked || mode !== "play") return;
-    // Already-muted days can't be picked
+    // Already-muted (correctly answered) days can't be picked
     if (muted.includes(id)) return;
 
     locked = true;
     stopAudio();
 
     const correct = id === target.id;
-    if (correct) score += 1;
+    const tapped = app.querySelector('.ld-day[data-id="' + id + '"]');
+    const correctEl = app.querySelector('.ld-day[data-id="' + target.id + '"]');
+    const fb = document.getElementById("ld-fb");
 
-    // Mute the button they answered with (stays muted for the rest of the game)
+    if (!correct) {
+      // Match-making style: flash wrong, then unlock and try again
+      if (tapped) {
+        tapped.classList.add("selected", "wrong");
+      }
+      if (fb) {
+        fb.innerHTML = '<span class="ld-fb-ico">✗</span> Try again';
+        fb.className = "ld-fb bad";
+      }
+      clearNextTimer();
+      nextTimer = setTimeout(() => {
+        nextTimer = null;
+        if (tapped) tapped.classList.remove("selected", "wrong");
+        if (fb) {
+          fb.innerHTML = "";
+          fb.className = "ld-fb";
+        }
+        locked = false;
+      }, 700);
+      return;
+    }
+
+    // Correct answer
+    score += 1;
     if (!muted.includes(id)) muted.push(id);
-    // Also mute the correct day if they got it wrong (that audio won't repeat)
-    if (!correct && !muted.includes(target.id)) muted.push(target.id);
-
-    let correctEl = null;
-    const newlyMuted = [id];
-    if (!correct) newlyMuted.push(target.id);
 
     document.querySelectorAll(".ld-day").forEach((el) => {
       const dayId = el.getAttribute("data-id");
-      el.classList.remove("selected", "just-muted");
-
-      if (dayId === id) el.classList.add("selected");
-      if (dayId === target.id) {
-        el.classList.add("correct");
-        correctEl = el;
-      }
-      if (dayId === id && !correct) el.classList.add("wrong");
-      if (dayId === id && correct) el.classList.add("picked-ok");
-
-      if (muted.includes(dayId)) {
+      el.classList.remove("selected", "just-muted", "wrong");
+      if (dayId === id) {
+        el.classList.add("selected", "correct", "picked-ok", "muted", "disabled", "just-muted");
+      } else if (muted.includes(dayId)) {
         el.classList.add("muted", "disabled");
-        if (newlyMuted.includes(dayId)) el.classList.add("just-muted");
       } else {
-        el.classList.add("disabled"); // lock all until next round
+        el.classList.add("disabled"); // lock others until next round
       }
     });
 
-    const fb = document.getElementById("ld-fb");
     if (fb) {
-      if (correct) {
-        fb.innerHTML =
-          '<span class="ld-fb-ico">✓</span> Correct! <strong>' + target.label + "</strong>";
-        fb.className = "ld-fb ok";
-        burstAt(correctEl);
-      } else {
-        fb.innerHTML =
-          '<span class="ld-fb-ico">✗</span> It was <strong>' + target.label + "</strong>";
-        fb.className = "ld-fb bad";
-      }
+      fb.innerHTML =
+        '<span class="ld-fb-ico">✓</span> Correct! <strong>' + target.label + "</strong>";
+      fb.className = "ld-fb ok";
     }
+    if (correctEl) burstAt(correctEl);
 
     clearNextTimer();
     nextTimer = setTimeout(() => {
@@ -238,7 +242,7 @@
       } else {
         startRound();
       }
-    }, correct ? 900 : 1000);
+    }, 900);
   }
 
   function render() {

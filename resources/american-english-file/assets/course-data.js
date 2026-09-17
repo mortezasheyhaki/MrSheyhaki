@@ -93,7 +93,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.audio = [
 
 // Unit 1A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.games = [
-  { title: "I am / I'm · You are / You're", url: "be-i-you/", label: "Grammar" },
+  { title: "I'm / You're", url: "be-i-you/", label: "Grammar" },
   { title: "Listen & Write the Numbers", url: "listen-write-numbers/", label: "Vocabulary" },
   { title: "Select the Day You Hear", url: "listen-select-day/", label: "Vocabulary" },
   { title: "Listen & Write (Days)", url: "listen-write-days/", label: "Vocabulary" },

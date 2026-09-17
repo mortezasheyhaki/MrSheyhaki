@@ -1,4 +1,4 @@
-/* I am / I'm · You are / You're – American English File Starter Unit 1A */
+/* I'm / You're – American English File Starter Unit 1A */
 (function () {
   const GAME_ID = "starter-1a-be-i-you";
   // ========== DATA ==========
@@ -16,7 +16,7 @@
       blanks: ["I'm"],
       options: ["I'm", "You're"],
       full: "Hi. I'm Tony.",
-      image: "im-tony.png"
+      image: "https://cdn.imgurl.ir/uploads/68507_im-tony.png"
     },
     {
       id: 2,
@@ -24,7 +24,7 @@
       blanks: ["I'm", "You're"],
       options: ["I'm", "You're"],
       full: "Hello. I'm your teacher. You're in my class.",
-      image: "im-your-teacher.png"
+      image: "https://cdn.imgurl.ir/uploads/f809778_im-your-teacher.png"
     },
     {
       id: 3,
@@ -32,7 +32,7 @@
       blanks: ["I'm"],
       options: ["I'm", "You're"],
       full: "I'm in room 4.",
-      image: "im-in-room-4.png"
+      image: "https://cdn.imgurl.ir/uploads/c4650_im-in-room-4.png"
     },
     {
       id: 4,
@@ -40,7 +40,7 @@
       blanks: ["You're"],
       options: ["I'm", "You're"],
       full: "You're in room 3.",
-      image: "youre-in-room-3.png"
+      image: "https://cdn.imgurl.ir/uploads/y44117_youre-in-room-3.png"
     },
     {
       id: 5,
@@ -48,7 +48,7 @@
       blanks: ["I'm"],
       options: ["I'm", "You're"],
       full: "Hello. I'm Maria. What's your name?",
-      image: "im-maria.png"
+      image: "https://cdn.imgurl.ir/uploads/208376_im-maria.png"
     }
   ];
 
@@ -59,7 +59,7 @@
       blanks: ["I'm not"],
       options: ["I'm not", "You're not"],
       full: "I'm not Tom. I'm Tony.",
-      image: "im-not-tom.png"
+      image: "https://cdn.imgurl.ir/uploads/079970_im-not-tom.png"
     },
     {
       id: 2,
@@ -67,7 +67,7 @@
       blanks: ["I'm not"],
       options: ["I'm not", "You're not"],
       full: "I'm not Marisa. I'm Maria.",
-      image: "im-not-marisa.png"
+      image: "https://cdn.imgurl.ir/uploads/k168927_im-not-marisa.png"
     },
     {
       id: 3,
@@ -75,7 +75,7 @@
       blanks: ["You're not"],
       options: ["I'm not", "You're not"],
       full: "You're not in room 6. You're in room 7.",
-      image: "you-arent-in-room-6.png"
+      image: "https://cdn.imgurl.ir/uploads/c18441_you-arent-in-room-6.png"
     },
     {
       id: 4,
@@ -83,7 +83,7 @@
       blanks: ["You're not"],
       options: ["I'm not", "You're not"],
       full: "You're not in room 5.",
-      image: "you-arent-in-room-5.png"
+      image: "https://cdn.imgurl.ir/uploads/q45570_you-arent-in-room-5.png"
     }
   ];
 
@@ -146,10 +146,9 @@
             <span class="be-start-icon">💬</span>
           </div>
           <h1>
-            <span class="be-title-line">I am / I'm</span>
-            <span class="be-title-line">You are / You're</span>
+            <span class="be-title-line">I'm / You're</span>
           </h1>
-          <p class="be-sub">Practice the full forms and contractions<br>of <strong>be</strong> with I and you.</p>
+          <p class="be-sub">Match full forms and contractions · I and you</p>
         </div>
 
         <div class="be-part-pills">
@@ -216,7 +215,7 @@
     app.innerHTML = `
       <div class="be-topbar">
         <a class="be-back-btn" href="#" id="be-back-start" title="Back" aria-label="Back">←</a>
-        <span class="be-topbar-title">Match full ↔ short</span>
+        <span class="be-topbar-title">I'm / You're</span>
         <span class="be-progress">${matchedPairs.size} / ${FORMS.length}</span>
       </div>
       <div class="be-forms-intro">
@@ -293,10 +292,19 @@
       if (selectedFull === selectedShort) {
         matchedPairs.add(selectedFull);
         formsScore++;
-        fullBtn.classList.add("correct");
-        shortBtn.classList.add("correct");
+        fullBtn.classList.remove("selected");
+        shortBtn.classList.remove("selected");
+        fullBtn.classList.add("correct", "matched");
+        shortBtn.classList.add("correct", "matched");
+        // Disable further clicks without re-rendering
+        fullBtn.disabled = true;
+        shortBtn.disabled = true;
         feedback.className = "be-feedback ok";
         feedback.textContent = "✓ " + FORMS[selectedFull].tip;
+
+        // Update progress in place (no full board re-render → no flicker)
+        const prog = app.querySelector(".be-progress");
+        if (prog) prog.textContent = matchedPairs.size + " / " + FORMS.length;
 
         setTimeout(() => {
           selectedFull = null;
@@ -304,10 +312,9 @@
           locked = false;
           if (matchedPairs.size >= FORMS.length) {
             showFormsDone();
-          } else {
-            renderForms();
           }
-        }, 900);
+          // else: keep board as-is — matched cards stay green, no flicker
+        }, 700);
       } else {
         formsMistakes++;
         fullBtn.classList.add("wrong");
@@ -414,9 +421,10 @@
         : "Negative · I'm not / You're not";
     blankIndex = Math.min(blankIndex, item.blanks.length - 1);
 
+    const imgSrc = item.image && (item.image.startsWith("http") ? item.image : ("images/" + item.image));
     const imgHtml = item.image
       ? `<div class="be-image-wrap has-image" id="be-img">
-           <img alt="" src="images/${item.image}" onerror="this.parentElement.classList.remove('has-image'); this.style.display='none';">
+           <img alt="" src="${imgSrc}" onerror="this.parentElement.classList.remove('has-image'); this.style.display='none';">
          </div>`
       : "";
 
