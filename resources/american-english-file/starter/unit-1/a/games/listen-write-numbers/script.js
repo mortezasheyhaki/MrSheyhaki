@@ -1,9 +1,9 @@
 /* 1.9 Listen and write the numbers – AEF Starter Unit 1A */
 (function () {
   const GAME_ID = "starter-1a-listen-write-numbers";
-  // Book answer key for 1.9 (10 boxes; example 7 is first)
-  const ANSWERS = [7, 3, 0, 8, 9, 1, 4, 5, 6, 2];
-  const AUDIO_SRC = "audio/1.9.mp3";
+  // Book answer key for 1.9 (11 boxes; example 7 is first)
+  const ANSWERS = [7, 3, 0, 8, 9, 1, 4, 5, 6, 2, 10];
+  const AUDIO_SRC = "https://cdn.imgurl.ir/uploads/n167749_1.9.mp3";
 
   const app = document.getElementById("game-app");
   if (!app) return;
@@ -63,7 +63,7 @@
           <p class="ln-sub">Numbers <strong>0–10</strong>. Listen carefully<br>and fill in each box.</p>
         </div>
         <button class="ln-btn" id="ln-go">Start</button>
-        <p class="ln-hint">10 numbers · example starts with <strong>7</strong></p>
+        <p class="ln-hint">11 numbers · example starts with <strong>7</strong></p>
       </div>
     `;
     document.getElementById("ln-go").addEventListener("click", showPlay);
@@ -212,7 +212,7 @@
   function checkAnswers() {
     const inputs = [...app.querySelectorAll(".ln-input")];
     let correct = 0;
-    let total = inputs.length; // 9 (example is fixed)
+    let total = inputs.length; // scorable inputs (example box is fixed)
 
     inputs.forEach((inp) => {
       const i = Number(inp.dataset.i);
