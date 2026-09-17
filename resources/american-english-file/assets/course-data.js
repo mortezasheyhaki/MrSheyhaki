@@ -434,6 +434,7 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].games = 
   { title: "Unscramble Classroom Objects", url: "unscramble-classroom-objects/", label: "Vocabulary" },
   { title: "Classroom Write", url: "classroom-write/", label: "Vocabulary" },
   { title: "What's this?", url: "classroom-whats-this/", label: "Vocabulary" },
+  { title: "Classroom Bingo", url: "classroom-bingo/", label: "Vocabulary" },
   { title: "Classroom Language Flashcards", url: "classroom-language-flashcards/", label: "Vocabulary" },
   { title: "Classroom Language Write", url: "classroom-language-write/", label: "Vocabulary" },
   { title: "Complete the Conversation", url: "complete-conversation/", label: "Speaking" },
