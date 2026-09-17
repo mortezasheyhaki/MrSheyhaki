@@ -10,83 +10,131 @@
     {
       adj: "old",
       img: "images/01.png",
-      hint: "Hint: old car",
       model: "It's an old car.",
       answers: ["it's an old car", "it is an old car"],
+      audio: "audio/01-old-car.mp3",
     },
     {
       adj: "black",
       img: "images/02.png",
-      hint: "Hint: black jackets / coats",
-      model: "They're black jackets.",
+      model: "They're black coats.",
       answers: [
-        "they're black jackets", "they are black jackets",
         "they're black coats", "they are black coats",
+        "they're black jackets", "they are black jackets",
         "they're black blazers", "they are black blazers",
       ],
+      audio: "audio/02-black-coats.mp3",
     },
     {
       adj: "new",
       img: "images/03.png",
-      hint: "Hint: new phone",
       model: "It's a new phone.",
       answers: [
         "it's a new phone", "it is a new phone",
         "it's a new mobile", "it is a new mobile",
       ],
+      audio: "audio/03-new-phone.mp3",
     },
     {
       adj: "big",
       img: "images/04.png",
-      hint: "Hint: big houses",
       model: "They're big houses.",
       answers: [
         "they're big houses", "they are big houses",
         "they're big homes", "they are big homes",
       ],
+      audio: "audio/04-big-houses.mp3",
     },
     {
       adj: "expensive",
       img: "images/05.png",
-      hint: "Hint: expensive glasses",
-      model: "They're expensive glasses.",
+      model: "They're expensive sunglasses.",
       answers: [
-        "they're expensive glasses", "they are expensive glasses",
         "they're expensive sunglasses", "they are expensive sunglasses",
+        "they're expensive glasses", "they are expensive glasses",
       ],
+      audio: "audio/05-expensive-sunglasses.mp3",
     },
     {
       adj: "good",
       img: "images/06.png",
-      hint: "Hint: good book",
       model: "It's a good book.",
       answers: ["it's a good book", "it is a good book"],
+      audio: "audio/06-good-book.mp3",
     },
     {
       adj: "great",
       img: "images/07-great.png",
-      hint: "Hint: great restaurant",
       model: "It's a great restaurant.",
       answers: [
         "it's a great restaurant", "it is a great restaurant",
       ],
+      audio: "audio/07-great-restaurant.mp3",
     },
   ];
 
-  // AEF Starter 4B — order the words (12 sentences)
+  // AEF Starter 4B — order the words (12 sentences) + audio after check
   const ORDER_ITEMS = [
-    { words: ["It's", "a", "beautiful", "day"], answer: "It's a beautiful day." },
-    { words: ["Amy's", "husband", "is", "very", "nice"], answer: "Amy's husband is very nice." },
-    { words: ["They're", "very", "difficult", "questions"], answer: "They're very difficult questions." },
-    { words: ["This", "is", "a", "cheap", "phone"], answer: "This is a cheap phone." },
-    { words: ["It's", "a", "terrible", "photo"], answer: "It's a terrible photo." },
-    { words: ["Natsuko", "is", "a", "fantastic", "teacher"], answer: "Natsuko is a fantastic teacher." },
-    { words: ["Our", "cat", "is", "very", "old"], answer: "Our cat is very old." },
-    { words: ["This", "isn't", "a", "very", "good", "restaurant"], answer: "This isn't a very good restaurant." },
-    { words: ["It's", "a", "very", "long", "exercise"], answer: "It's a very long exercise." },
-    { words: ["Their", "dog", "is", "very", "ugly"], answer: "Their dog is very ugly." },
-    { words: ["Japanese", "movie", "tickets", "are", "very", "expensive"], answer: "Japanese movie tickets are very expensive." },
-    { words: ["This", "is", "a", "very", "small", "room"], answer: "This is a very small room." },
+    {
+      words: ["It's", "a", "beautiful", "day"],
+      answer: "It's a beautiful day.",
+      audio: "https://cdn.imgurl.ir/uploads/y679307_1_It39s_a_beautiful_day.mp3",
+    },
+    {
+      words: ["Amy's", "husband", "is", "very", "nice"],
+      answer: "Amy's husband is very nice.",
+      audio: "https://cdn.imgurl.ir/uploads/a72343_2_Amys_husb.mp3",
+    },
+    {
+      words: ["They're", "very", "difficult", "questions"],
+      answer: "They're very difficult questions.",
+      audio: "https://cdn.imgurl.ir/uploads/l704536_3_Theyre_ve.mp3",
+    },
+    {
+      words: ["This", "is", "a", "cheap", "phone"],
+      answer: "This is a cheap phone.",
+      audio: "https://cdn.imgurl.ir/uploads/c79783_4_This_is_a_cheap_phone..mp3",
+    },
+    {
+      words: ["It's", "a", "terrible", "photo"],
+      answer: "It's a terrible photo.",
+      audio: "https://cdn.imgurl.ir/uploads/g68354_5_Its_a_ter.mp3",
+    },
+    {
+      words: ["Natsuko", "is", "a", "fantastic", "teacher"],
+      answer: "Natsuko is a fantastic teacher.",
+      audio: "https://cdn.imgurl.ir/uploads/g02459_6_Natsuko_is.mp3",
+    },
+    {
+      words: ["Our", "cat", "is", "very", "old"],
+      answer: "Our cat is very old.",
+      audio: "https://cdn.imgurl.ir/uploads/201526_7_Our_cat_is_very_old..mp3",
+    },
+    {
+      words: ["This", "restaurant", "isn't", "very", "good"],
+      answer: "This restaurant isn't very good.",
+      audio: "https://cdn.imgurl.ir/uploads/h664798_8_This_restaurant_isnt_very_good..mp3",
+    },
+    {
+      words: ["It's", "a", "very", "long", "exercise"],
+      answer: "It's a very long exercise.",
+      audio: "https://cdn.imgurl.ir/uploads/o6823_9_Its_a_ver.mp3",
+    },
+    {
+      words: ["Their", "dog", "is", "very", "ugly"],
+      answer: "Their dog is very ugly.",
+      audio: "https://cdn.imgurl.ir/uploads/219109_10_Their_dog.mp3",
+    },
+    {
+      words: ["Japanese", "movie", "tickets", "are", "very", "expensive"],
+      answer: "Japanese movie tickets are very expensive.",
+      audio: "https://cdn.imgurl.ir/uploads/t0319_11_Japanese_m.mp3",
+    },
+    {
+      words: ["This", "is", "a", "very", "small", "room"],
+      answer: "This is a very small room.",
+      audio: "https://cdn.imgurl.ir/uploads/j281887_12_This_is_a-2.mp3",
+    },
   ];
 
   let mode = "write";
@@ -95,6 +143,7 @@
   let score = 0;
   let locked = false;
   let placed = [];
+  let currentSentenceAudio = null;
 
   const $ = (id) => document.getElementById(id);
   const startScreen = $("startScreen");
@@ -104,6 +153,8 @@
   const scoreText = $("scoreText");
   const sceneImg = $("sceneImg");
   const adjBadge = $("adjBadge");
+  const adjPill = $("adjPill");
+  const adjBar = $("adjBar");
   const writePanel = $("writePanel");
   const orderPanel = $("orderPanel");
   const answerInput = $("answerInput");
@@ -257,6 +308,7 @@
     writePanel.classList.toggle("hidden", m !== "write");
     orderPanel.classList.toggle("hidden", m !== "order");
     if (picWrap) picWrap.style.display = m === "write" ? "" : "none";
+    if (adjBar) adjBar.classList.toggle("hidden", m !== "write");
 
     startScreen.classList.add("hidden");
     gameScreen.classList.remove("hidden");
@@ -280,6 +332,7 @@
       sceneImg.src = item.img;
       sceneImg.alt = item.adj;
       adjBadge.textContent = item.adj;
+      if (adjPill) adjPill.textContent = item.adj;
       answerInput.value = "";
       answerInput.disabled = false;
       answerInput.classList.remove("correct", "wrong");
@@ -333,7 +386,8 @@
       playError();
       shakeScreen();
     }
-    setTimeout(advance, 1300);
+    playSentenceAudio(item);
+    setTimeout(advance, 2200);
   }
 
   function pickChip(btn) {
@@ -378,6 +432,26 @@
     checkOrderBtn.disabled = true;
   }
 
+
+  function stopSentenceAudio() {
+    if (currentSentenceAudio) {
+      try {
+        currentSentenceAudio.pause();
+        currentSentenceAudio.currentTime = 0;
+      } catch (e) {}
+      currentSentenceAudio = null;
+    }
+  }
+
+  function playSentenceAudio(item) {
+    stopSentenceAudio();
+    if (!item || !item.audio) return;
+    try {
+      currentSentenceAudio = new Audio(item.audio);
+      currentSentenceAudio.play().catch(function () {});
+    } catch (e) {}
+  }
+
   function checkOrder() {
     if (locked || mode !== "order") return;
     locked = true;
@@ -406,7 +480,10 @@
       playError();
       shakeScreen();
     }
-    setTimeout(advance, 1300);
+    // Play the model sentence after feedback
+    playSentenceAudio(item);
+    // Longer delay so audio can play before next item
+    setTimeout(advance, 2200);
   }
 
   function advance() {
