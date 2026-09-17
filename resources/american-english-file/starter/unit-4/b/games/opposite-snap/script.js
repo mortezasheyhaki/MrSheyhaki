@@ -2,14 +2,14 @@
 (() => {
   'use strict';
   const ROUNDS = [
-    { word: 'big', opposite: 'small', photo: '01-big.jpg', clue: 'Look at the photo. Tap the opposite adjective.' },
-    { word: 'old', opposite: 'new', photo: '03-old.jpg', clue: 'Look at the photo. Tap the opposite adjective.' },
-    { word: 'fast', opposite: 'slow', photo: '05-fast.jpg', clue: 'Look at the photo. Tap the opposite adjective.' },
-    { word: 'beautiful', opposite: 'ugly', photo: '07-beautiful.jpg', clue: 'Look at the photo. Tap the opposite adjective.' },
-    { word: 'cheap', opposite: 'expensive', photo: '09-cheap.jpg', clue: 'Look at the photo. Tap the opposite adjective.' },
-    { word: 'long', opposite: 'short', photo: '11-long.jpg', clue: 'Look at the photo. Tap the opposite adjective.' },
-    { word: 'clean', opposite: 'dirty', photo: '13-clean.jpg', clue: 'Look at the photo. Tap the opposite adjective.' },
-    { word: 'easy', opposite: 'difficult', photo: '15-easy.jpg', clue: 'Look at the photo. Tap the opposite adjective.' }
+    { word: 'big', opposite: 'small', photo: 'https://cdn.imgurl.ir/uploads/g670659_01-big.png', clue: 'Look at the photo. Tap the opposite adjective.' },
+    { word: 'old', opposite: 'new', photo: 'https://cdn.imgurl.ir/uploads/g107492_03-old.png', clue: 'Look at the photo. Tap the opposite adjective.' },
+    { word: 'fast', opposite: 'slow', photo: 'https://cdn.imgurl.ir/uploads/c385481_05-fast.png', clue: 'Look at the photo. Tap the opposite adjective.' },
+    { word: 'beautiful', opposite: 'ugly', photo: 'https://cdn.imgurl.ir/uploads/z59390_07-beautiful.png', clue: 'Look at the photo. Tap the opposite adjective.' },
+    { word: 'cheap', opposite: 'expensive', photo: 'https://cdn.imgurl.ir/uploads/d311862_09-cheap.png', clue: 'Look at the photo. Tap the opposite adjective.' },
+    { word: 'long', opposite: 'short', photo: 'https://cdn.imgurl.ir/uploads/e872442_11-long.png', clue: 'Look at the photo. Tap the opposite adjective.' },
+    { word: 'clean', opposite: 'dirty', photo: 'https://cdn.imgurl.ir/uploads/p70660_13-clean.png', clue: 'Look at the photo. Tap the opposite adjective.' },
+    { word: 'easy', opposite: 'difficult', photo: 'https://cdn.imgurl.ir/uploads/r836255_15-easy.png', clue: 'Look at the photo. Tap the opposite adjective.' }
   ];
   const DISTRACTORS = ['beautiful', 'cheap', 'clean', 'difficult', 'easy', 'expensive', 'fast', 'slow', 'long', 'short', 'new', 'old', 'small', 'ugly'];
   const state = { order: [], index: 0, score: 0, streak: 0, locked: false };
@@ -38,7 +38,7 @@
     $('clueText').textContent = round.clue;
     const scene = $('visualScene');
     scene.className = 'visual-scene';
-    scene.innerHTML = `<img src="images/${round.photo}" alt="Photo showing ${round.word}" />`;
+    scene.innerHTML = `<img src="${round.photo}" alt="Photo showing ${round.word}" />`;
     const choices = $('choices');
     choices.textContent = '';
     options(round).forEach((word) => {

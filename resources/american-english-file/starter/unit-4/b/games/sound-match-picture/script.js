@@ -1,21 +1,21 @@
 /* Learning Arcade style: the sound is the prompt; sixteen soft-square photo cards are the choices. */
 const prompts = [
-  { word: 'big', image: '01-big.png', audio: '01-big.mp3' },
-  { word: 'small', image: '02-small.png', audio: '02-small.mp3' },
-  { word: 'old', image: '03-old.png', audio: '03-old.mp3' },
-  { word: 'new', image: '04-new.png', audio: '04-new.mp3' },
-  { word: 'fast', image: '05-fast.png', audio: '05-fast.mp3' },
-  { word: 'slow', image: '06-slow.png', audio: '06-slow.mp3' },
-  { word: 'beautiful', image: '07-beautiful.png', audio: '07-beautiful.mp3' },
-  { word: 'ugly', image: '08-ugly.png', audio: '08-ugly.mp3' },
-  { word: 'cheap', image: '09-cheap.png', audio: '09-cheap.mp3' },
-  { word: 'expensive', image: '10-expensive.png', audio: '10-expensive.mp3' },
-  { word: 'long', image: '11-long.png', audio: '11-long.mp3' },
-  { word: 'short', image: '12-short.png', audio: '12-short.mp3' },
-  { word: 'clean', image: '13-clean.png', audio: '13-clean.mp3' },
-  { word: 'dirty', image: '14-dirty.png', audio: '14-dirty.mp3' },
-  { word: 'easy', image: '15-easy.png', audio: '15-easy.mp3' },
-  { word: 'difficult', image: '16-difficult.png', audio: '16-difficult.mp3' }
+  { word: 'big', image: 'https://cdn.imgurl.ir/uploads/g670659_01-big.png', audio: 'https://cdn.imgurl.ir/uploads/s4775_01-big.mp3' },
+  { word: 'small', image: 'https://cdn.imgurl.ir/uploads/t1519_02-small.png', audio: 'https://cdn.imgurl.ir/uploads/m45482_02-small.mp3' },
+  { word: 'old', image: 'https://cdn.imgurl.ir/uploads/g107492_03-old.png', audio: 'https://cdn.imgurl.ir/uploads/r37117_03-old.mp3' },
+  { word: 'new', image: 'https://cdn.imgurl.ir/uploads/a435649_04-new.png', audio: 'https://cdn.imgurl.ir/uploads/v83131_04-new.mp3' },
+  { word: 'fast', image: 'https://cdn.imgurl.ir/uploads/c385481_05-fast.png', audio: 'https://cdn.imgurl.ir/uploads/l3102_05-fast.mp3' },
+  { word: 'slow', image: 'https://cdn.imgurl.ir/uploads/l571094_06-slow.png', audio: 'https://cdn.imgurl.ir/uploads/m184684_06-slow.mp3' },
+  { word: 'beautiful', image: 'https://cdn.imgurl.ir/uploads/z59390_07-beautiful.png', audio: 'https://cdn.imgurl.ir/uploads/c52036_07-beautiful.mp3' },
+  { word: 'ugly', image: 'https://cdn.imgurl.ir/uploads/116527_08-ugly.png', audio: 'https://cdn.imgurl.ir/uploads/h06593_08-ugly.mp3' },
+  { word: 'cheap', image: 'https://cdn.imgurl.ir/uploads/d311862_09-cheap.png', audio: 'https://cdn.imgurl.ir/uploads/l078276_09-cheap.mp3' },
+  { word: 'expensive', image: 'https://cdn.imgurl.ir/uploads/u546865_10-expensive.png', audio: 'https://cdn.imgurl.ir/uploads/o094312_10-expensive.mp3' },
+  { word: 'long', image: 'https://cdn.imgurl.ir/uploads/e872442_11-long.png', audio: 'https://cdn.imgurl.ir/uploads/c497284_11-long.mp3' },
+  { word: 'short', image: 'https://cdn.imgurl.ir/uploads/p742576_12-short.png', audio: 'https://cdn.imgurl.ir/uploads/y898374_12-short.mp3' },
+  { word: 'clean', image: 'https://cdn.imgurl.ir/uploads/p70660_13-clean.png', audio: 'https://cdn.imgurl.ir/uploads/c30302_13-clean.mp3' },
+  { word: 'dirty', image: 'https://cdn.imgurl.ir/uploads/g324672_14-dirty.png', audio: 'https://cdn.imgurl.ir/uploads/n496258_14-dirty.mp3' },
+  { word: 'easy', image: 'https://cdn.imgurl.ir/uploads/r836255_15-easy.png', audio: 'https://cdn.imgurl.ir/uploads/k669792_15-easy.mp3' },
+  { word: 'difficult', image: 'https://cdn.imgurl.ir/uploads/h54048_16-difficult.png', audio: 'https://cdn.imgurl.ir/uploads/b3587_16-difficult.mp3' }
 ];
 
 const startScreen = document.querySelector('#startScreen');
@@ -59,7 +59,7 @@ function playCurrentSound() {
   const prompt = currentPrompt();
   if (!prompt) return;
   stopCurrentAudio();
-  currentAudio = new Audio(`audio/clips/${prompt.audio}`);
+  currentAudio = new Audio(prompt.audio);
   currentAudio.preload = 'auto';
   currentAudio.play().catch(() => {
     feedback.textContent = 'Tap “Listen again” to play the sound.';
@@ -75,7 +75,7 @@ function renderTiles() {
     button.dataset.word = prompt.word;
     button.dataset.choice = String(index + 1);
     button.setAttribute('aria-label', `Picture ${index + 1}`);
-    button.innerHTML = `<img src="images/${prompt.image}" alt="" draggable="false" />`;
+    button.innerHTML = `<img src="${prompt.image}" alt="" draggable="false" />`;
     button.addEventListener('click', () => selectPicture(prompt, button));
     pictureGrid.append(button);
   });

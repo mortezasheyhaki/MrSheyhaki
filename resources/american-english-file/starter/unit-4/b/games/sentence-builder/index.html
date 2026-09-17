@@ -3,46 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Adjective Sentences | Starter Unit 4B | Mr. Sheyhaki</title>
-  <meta name="description" content="Look at the picture and write a sentence with the adjective.">
+  <title>Sentence Builder | Starter Unit 4B | Mr. Sheyhaki</title>
+  <meta name="description" content="Build sentences with adjectives: chips, first letters, then write the full sentence.">
   <link rel="stylesheet" href="../../../../../../theme.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="game" id="app">
+    <!-- START -->
     <div class="screen" id="startScreen">
       <header class="top-bar">
         <a href="../" class="back-btn" aria-label="Back">←</a>
         <div class="top-center">
           <span class="unit-label">Starter · Unit 4B</span>
-          <span class="game-title">Adjective Sentences</span>
+          <span class="game-title">Sentence Builder</span>
         </div>
         <div class="top-spacer"></div>
       </header>
       <div class="start-body">
         <p class="start-lead">Choose a mode</p>
-        <button type="button" class="mode-card" id="modeWrite" data-mode="write">
-          <span class="mode-ico">🖼️</span>
-          <span class="mode-title">1 · Picture → Sentence</span>
-          <span class="mode-desc">Look at the picture and write a sentence with the adjective.</span>
-        </button>
-        <button type="button" class="mode-card" id="modeOrder" data-mode="order">
+        <button type="button" class="mode-card" data-mode="chips">
           <span class="mode-ico">🧩</span>
-          <span class="mode-title">2 · Word order</span>
-          <span class="mode-desc">Put the words in the correct order to make a sentence.</span>
+          <span class="mode-title">1 · Word chips</span>
+          <span class="mode-desc">Tap the chips in order to build the sentence.</span>
+        </button>
+        <button type="button" class="mode-card" data-mode="write">
+          <span class="mode-ico">✍️</span>
+          <span class="mode-title">2 · Full sentence</span>
+          <span class="mode-desc">Look at the picture and write the whole sentence.</span>
         </button>
       </div>
     </div>
 
+    <!-- GAME -->
     <div class="screen hidden" id="gameScreen">
       <header class="top-bar">
-        <button type="button" class="back-btn" id="backHome" aria-label="Back">←</button>
+        <button type="button" class="back-btn" id="backToModes" aria-label="Back">←</button>
         <div class="top-center">
-          <span class="unit-label" id="modeLabel">Write the sentence</span>
-          <span class="game-title">Adjectives</span>
+          <span class="unit-label" id="modeLabel">Word chips</span>
+          <span class="game-title">Sentences</span>
         </div>
         <div class="top-stats">
-          <div class="stat"><span class="stat-label">Q</span><strong id="qProgress">1/7</strong></div>
+          <div class="stat"><span class="stat-label">Q</span><strong id="qProgress">1/16</strong></div>
           <div class="stat"><span class="stat-label">Score</span><strong id="scoreText">0</strong></div>
         </div>
       </header>
@@ -51,32 +53,38 @@
         <div class="stage">
           <div class="pic-wrap">
             <img id="sceneImg" src="" alt="">
-            <span class="adj-badge" id="adjBadge"></span>
           </div>
-          <div class="q-panel" id="writePanel">
-            <input type="text" id="answerInput" class="answer-input"
-                   placeholder="Write a sentence…"
-                   autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false">
-            <div class="feedback" id="feedback" hidden></div>
-            <div class="action-row" id="actionRow">
-              <button type="button" class="primary-btn" id="checkBtn" disabled>Check</button>
+
+          <div class="prompt-row">
+            <p class="sentence-hint" id="sentenceHint"></p>
+          </div>
+
+          <!-- Chips mode -->
+          <div class="chips-panel" id="chipsPanel">
+            <div class="answer-slots" id="answerSlots"></div>
+            <div class="chip-bank" id="chipBank"></div>
+            <div class="feedback" id="chipsFeedback" hidden></div>
+            <div class="action-row" id="chipsActions">
+              <button type="button" class="secondary-btn" id="clearChipsBtn">Clear</button>
+              <button type="button" class="primary-btn" id="checkChipsBtn" disabled>Check</button>
             </div>
           </div>
 
-          <div class="q-panel hidden" id="orderPanel">
-            <p class="hint">Put the words in order</p>
-            <div class="answer-slots" id="answerSlots"></div>
-            <div class="chip-bank" id="chipBank"></div>
-            <div class="feedback" id="orderFeedback" hidden></div>
-            <div class="action-row" id="orderActions">
-              <button type="button" class="secondary-btn" id="clearChipsBtn">Clear</button>
-              <button type="button" class="primary-btn" id="checkOrderBtn" disabled>Check</button>
+          <!-- Letters / Write mode -->
+          <div class="write-panel hidden" id="writePanel">
+            <input type="text" id="answerInput" class="answer-input"
+                   placeholder="type the sentence…"
+                   autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false">
+            <div class="feedback" id="writeFeedback" hidden></div>
+            <div class="action-row" id="writeActions">
+              <button type="button" class="primary-btn" id="checkWriteBtn" disabled>Check</button>
             </div>
           </div>
         </div>
       </main>
     </div>
 
+    <!-- END -->
     <div class="overlay" id="endOverlay" hidden>
       <div class="overlay-card">
         <div class="overlay-emoji" id="endEmoji">🎉</div>

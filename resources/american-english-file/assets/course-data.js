@@ -250,9 +250,14 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)
 COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.games = [
   { title: "Where is it from?", url: "where-is-it-from/" , label: "Vocabulary" },
-  { title: "Opposite Snap", url: "opposite-snap/" },
-  { title: "Match Adjectives", url: "match-adjectives/" },
-  { title: "Sound Match Picture", url: "sound-match-picture/" },
+  { title: "The Perfect Car", url: "perfect-car/" , label: "Listening" },
+  { title: "Car Adjectives", url: "car-adjectives/" , label: "Listening" },
+  { title: "Opposite Snap", url: "opposite-snap/" , label: "Vocabulary" },
+  { title: "Match Adjectives", url: "match-adjectives/" , label: "Vocabulary" },
+  { title: "Sound Match Picture", url: "sound-match-picture/" , label: "Vocabulary" },
+  { title: "Unscramble Adjectives", url: "unscramble-adjectives/" , label: "Vocabulary" },
+  { title: "Listen & Write the Adjectives", url: "listen-write-adjectives/" , label: "Vocabulary" },
+  { title: "Sentence Builder", url: "sentence-builder/" , label: "Grammar" },
   { title: "Listen and Write", url: "listen-and-write/" },
   { title: "Adjective Sentences", url: "adjective-sentences/" },
 ];
