@@ -56,6 +56,70 @@
   let currentAudio = null;
   let playing = false;
 
+  /* —— Lightweight SFX via Web Audio API —— */
+  let audioCtx = null;
+  function getCtx() {
+    if (!audioCtx) {
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (_) {
+        return null;
+      }
+    }
+    if (audioCtx.state === "suspended") {
+      audioCtx.resume().catch(function () {});
+    }
+    return audioCtx;
+  }
+
+  function tone(freq, duration, type, gain, delay) {
+    const ctx = getCtx();
+    if (!ctx) return;
+    const t0 = ctx.currentTime + (delay || 0);
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(gain || 0.18, t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + duration + 0.02);
+  }
+
+  function playSfx(name) {
+    try {
+      if (name === "select") {
+        // Quick soft tap when choosing a cell
+        tone(420, 0.04, "triangle", 0.08);
+      } else if (name === "correct") {
+        // Satisfying stamp / pop when correct picture is chosen
+        tone(480, 0.07, "triangle", 0.14);
+        tone(720, 0.11, "sine", 0.12, 0.035);
+        tone(960, 0.14, "sine", 0.07, 0.07);
+      } else if (name === "wrong") {
+        // Clear but soft error when wrong picture is chosen
+        tone(220, 0.1, "square", 0.08);
+        tone(165, 0.16, "square", 0.06, 0.05);
+      } else if (name === "bingo") {
+        // Celebratory arpeggio + sparkle
+        tone(523.25, 0.14, "triangle", 0.14);       // C5
+        tone(659.25, 0.14, "triangle", 0.13, 0.09);  // E5
+        tone(783.99, 0.16, "triangle", 0.14, 0.18);  // G5
+        tone(1046.5, 0.28, "sine", 0.12, 0.28);      // C6
+        // Extra sparkle
+        tone(1318.5, 0.18, "sine", 0.07, 0.38);
+        tone(1568, 0.22, "sine", 0.05, 0.48);
+      } else if (name === "listen") {
+        // Soft UI click on Listen / Replay
+        tone(640, 0.05, "sine", 0.07);
+        tone(880, 0.06, "sine", 0.04, 0.03);
+      }
+    } catch (_) {}
+  }
+
   function shuffle(arr) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
@@ -146,7 +210,12 @@
     if (!current) return;
     if (marked[index]) return;
     const cell = card[index];
+
+    // Always play a soft select sound when choosing a picture while listening
+    playSfx("select");
+
     if (!cell || cell.id !== current.id) {
+      playSfx("wrong");
       shakeId = cell ? cell.id : null;
       misses += 1;
       if (misses >= 2) hint = true;
@@ -166,11 +235,14 @@
     if (hasBingo()) {
       phase = "bingo";
       stopAudio();
+      playSfx("bingo");
       if (window.LAStars) {
         const stars = isBlackout() ? 3 : 2;
         LAStars.recordPlay(GAME_ID);
         LAStars.save(GAME_ID, stars);
       }
+    } else {
+      playSfx("correct");
     }
     render();
   }
@@ -266,13 +338,31 @@
     if (phase === "bingo") {
       const blackout = isBlackout();
       panelInner =
-        '<div class="cb-bingo-msg">' +
-        '<div class="cb-confetti" aria-hidden="true">🎉 ✨ 🎊</div>' +
+        '<div class="cb-bingo-msg" role="status">' +
+        '<div class="cb-confetti-burst" aria-hidden="true">' +
+        '<span class="cb-particle" style="--i:0"></span>' +
+        '<span class="cb-particle" style="--i:1"></span>' +
+        '<span class="cb-particle" style="--i:2"></span>' +
+        '<span class="cb-particle" style="--i:3"></span>' +
+        '<span class="cb-particle" style="--i:4"></span>' +
+        '<span class="cb-particle" style="--i:5"></span>' +
+        '<span class="cb-particle" style="--i:6"></span>' +
+        '<span class="cb-particle" style="--i:7"></span>' +
+        '<span class="cb-particle" style="--i:8"></span>' +
+        '<span class="cb-particle" style="--i:9"></span>' +
+        '<span class="cb-particle" style="--i:10"></span>' +
+        '<span class="cb-particle" style="--i:11"></span>' +
+        "</div>" +
+        '<div class="cb-bingo-icons" aria-hidden="true">' +
+        '<span class="cb-ico-pop">🎉</span>' +
+        '<span class="cb-ico-pop">✨</span>' +
+        '<span class="cb-ico-pop">🏆</span>' +
+        "</div>" +
         '<p class="big">Bingo!</p>' +
-        "<p>" +
+        '<p class="cb-bingo-sub">' +
         (blackout ? "Full card — amazing!" : "Three in a row. Well done!") +
         "</p>" +
-        '<button type="button" class="cb-btn cb-btn-full" id="cb-again">Play again</button>' +
+        '<button type="button" class="cb-btn cb-btn-full cb-btn-again" id="cb-again">Play again</button>' +
         "</div>";
     } else {
       panelInner =
@@ -301,11 +391,11 @@
       '<button type="button" class="cb-btn-ghost" id="cb-new">New card</button>' +
       "</header>" +
       '<div class="cb-scroll">' +
-      '<div class="cb-board-wrap">' +
-      '<div class="cb-grid">' +
+      '<div class="cb-board-wrap' + (phase === "bingo" ? " is-bingo" : "") + '">' +
+      '<div class="cb-grid' + (phase === "bingo" ? " is-bingo" : "") + '">' +
       cells +
       "</div></div>" +
-      '<div class="cb-panel">' +
+      '<div class="cb-panel' + (phase === "bingo" ? " is-bingo" : "") + '">' +
       panelInner +
       "</div>" +
       "</div>";
@@ -316,6 +406,7 @@
     const listen = document.getElementById("cb-listen");
     if (listen) {
       listen.onclick = function () {
+        playSfx("listen");
         if (current) playClip(current);
         else callNext();
       };
