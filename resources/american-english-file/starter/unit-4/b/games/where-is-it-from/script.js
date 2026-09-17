@@ -250,7 +250,9 @@
       "Score: " + score + " / " + total + " (" + acc + "%)";
     $("endEmoji").textContent = acc === 100 ? "🏆" : acc >= 70 ? "🎉" : "💪";
     try {
-      if (window.LAStars) {
+      if (typeof window.laStars === "function") {
+        window.laStars(GAME_ID, score, total);
+      } else if (window.LAStars) {
         LAStars.recordPlay(GAME_ID);
         LAStars.saveFromAccuracy(GAME_ID, acc);
       }

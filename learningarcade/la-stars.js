@@ -32,7 +32,8 @@
  *   AEF Starter Unit 4B (Adjectives / The perfect car)
  *     starter-4b-where-is-it-from, starter-4b-perfect-car, starter-4b-car-adjectives,
  *     starter-4b-opposite-snap, starter-4b-match-adjectives, starter-4b-sound-match-picture,
- *     starter-4b-unscramble-adjectives, starter-4b-listen-write-adjectives, starter-4b-sentence-builder,
+ *     starter-4b-unscramble-adjectives, starter-4b-listen-write-adjectives, starter-4b-listen-write-plural,
+ *     starter-4b-two-sounds-match, starter-4b-listen-and-say, starter-4b-sentence-builder,
  *     starter-4b-listen-and-write, starter-4b-adjective-sentences
  */
 (function (global) {
@@ -88,6 +89,9 @@
     "car-adjectives": "starter-4b-car-adjectives",
     "unscramble-adjectives": "starter-4b-unscramble-adjectives",
     "listen-write-adjectives": "starter-4b-listen-write-adjectives",
+    "listen-write-plural": "starter-4b-listen-write-plural",
+    "two-sounds-match": "starter-4b-two-sounds-match",
+    "listen-and-say": "starter-4b-listen-and-say",
     "sentence-builder-4b": "starter-4b-sentence-builder",
     // Mode variants (some games save as id-mode) → parent card
     "starter-4b-adjective-sentences-write": "starter-4b-adjective-sentences",
@@ -105,6 +109,9 @@
     "starter-4b-sound-match-picture": "starter-4b-sound-match-picture",
     "starter-4b-unscramble-adjectives": "starter-4b-unscramble-adjectives",
     "starter-4b-listen-write-adjectives": "starter-4b-listen-write-adjectives",
+    "starter-4b-listen-write-plural": "starter-4b-listen-write-plural",
+    "starter-4b-two-sounds-match": "starter-4b-two-sounds-match",
+    "starter-4b-listen-and-say": "starter-4b-listen-and-say",
     "starter-4b-sentence-builder": "starter-4b-sentence-builder",
     "starter-4b-listen-and-write": "starter-4b-listen-and-write",
     "starter-4b-adjective-sentences": "starter-4b-adjective-sentences",

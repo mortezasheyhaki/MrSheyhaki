@@ -171,9 +171,14 @@
     else playError();
 
     // stars / end screen
-    if (typeof window.laStars === "function") {
-      try { window.laStars(GAME_ID, score, 2); } catch (e) {}
-    }
+    try {
+      if (typeof window.laStars === "function") {
+        window.laStars(GAME_ID, score, 2);
+      } else if (window.LAStars) {
+        LAStars.recordPlay(GAME_ID);
+        LAStars.saveFromAccuracy(GAME_ID, (score / 2) * 100);
+      }
+    } catch (e) {}
 
     if (score === 2) {
       setTimeout(() => {
