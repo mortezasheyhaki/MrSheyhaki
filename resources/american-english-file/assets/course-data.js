@@ -429,8 +429,22 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].name = "
 COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].games = [
   { title: "Alphabet Flashcards", url: "alphabet-flashcards/", label: "Vocabulary" },
   { title: "Listen & Choose", url: "listen-choose/", label: "Vocabulary" },
+  { title: "Classroom Flashcards", url: "classroom-flashcards/", label: "Vocabulary" },
   { title: "Match Classroom Objects", url: "match-classroom-objects/", label: "Vocabulary" },
+  { title: "Unscramble Classroom Objects", url: "unscramble-classroom-objects/", label: "Vocabulary" },
+  { title: "Classroom Write", url: "classroom-write/", label: "Vocabulary" },
+  { title: "What's this?", url: "classroom-whats-this/", label: "Vocabulary" },
+  { title: "Classroom Language Flashcards", url: "classroom-language-flashcards/", label: "Vocabulary" },
+  { title: "Classroom Language Write", url: "classroom-language-write/", label: "Vocabulary" },
+  { title: "Complete the Conversation", url: "complete-conversation/", label: "Speaking" },
+  { title: "Order the Dialogue", url: "order-the-dialogue/", label: "Listening" },
+  { title: "Meet Jenny", url: "meet-jenny/", label: "Listening" },
+  { title: "Meet Rob", url: "meet-rob/", label: "Listening" },
+  { title: "Hotel Roleplay", url: "hotel-roleplay/", label: "Speaking" },
+  { title: "Restaurant Booking", url: "restaurant-booking/", label: "Listening" },
+  { title: "Restaurant Roleplay", url: "restaurant-roleplay/", label: "Speaking" },
 ];
+
 
 // Practical English 2 – Starter (Buying lunch / Understanding prices)
 COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].name = "Understanding prices";

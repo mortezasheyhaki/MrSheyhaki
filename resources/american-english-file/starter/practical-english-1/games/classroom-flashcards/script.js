@@ -3,16 +3,16 @@
   const GAME_ID = "starter-pe1-classroom-flashcards";
 
   const CARDS = [
-    { id: "bag",        label: "a bag",            image: "images/a-bag.png",            audio: "audio/a-bag.mp3" },
-    { id: "pen",        label: "a pen",            image: "images/a-pen.png",            audio: "audio/a-pen.mp3" },
-    { id: "paper",      label: "a piece of paper", image: "images/a-piece-of-paper.png", audio: "audio/a-piece-of-paper.mp3" },
-    { id: "dictionary", label: "a dictionary",     image: "images/a-dictionary.png",     audio: "audio/a-dictionary.mp3" },
-    { id: "laptop",     label: "a laptop",         image: "images/a-laptop.png",         audio: "audio/a-laptop.mp3" },
-    { id: "table",      label: "a table",          image: "images/a-table.png",          audio: "audio/a-table.mp3" },
-    { id: "chair",      label: "a chair",          image: "images/a-chair.png",          audio: "audio/a-chair.mp3" },
-    { id: "window",     label: "a window",         image: "images/a-window.png",         audio: "audio/a-window.mp3" },
-    { id: "door",       label: "the door",         image: "images/the-door.png",         audio: "audio/the-door.mp3" },
-    { id: "board",      label: "the board",        image: "images/the-board.png",        audio: "audio/the-board.mp3" },
+    { id: "bag",        label: "a bag",            image: "https://cdn.imgurl.ir/uploads/q131373_a-bag.png",            audio: "https://cdn.imgurl.ir/uploads/k337766_a-bag.mp3" },
+    { id: "pen",        label: "a pen",            image: "https://cdn.imgurl.ir/uploads/t81465_a-pen.png",            audio: "https://cdn.imgurl.ir/uploads/d36470_a-pen.mp3" },
+    { id: "paper",      label: "a piece of paper", image: "https://cdn.imgurl.ir/uploads/l77286_a-piece-of-paper.png", audio: "https://cdn.imgurl.ir/uploads/762189_a-piece-of-paper.mp3" },
+    { id: "dictionary", label: "a dictionary",     image: "https://cdn.imgurl.ir/uploads/p440509_a-dictionary.png",     audio: "https://cdn.imgurl.ir/uploads/i77815_a-dictionary.mp3" },
+    { id: "laptop",     label: "a laptop",         image: "https://cdn.imgurl.ir/uploads/w410273_a-laptop.png",         audio: "https://cdn.imgurl.ir/uploads/r021_a-laptop.mp3" },
+    { id: "table",      label: "a table",          image: "https://cdn.imgurl.ir/uploads/a696837_a-table.png",          audio: "https://cdn.imgurl.ir/uploads/d742794_a-table.mp3" },
+    { id: "chair",      label: "a chair",          image: "https://cdn.imgurl.ir/uploads/t901556_a-chair.png",          audio: "https://cdn.imgurl.ir/uploads/b877018_a-chair.mp3" },
+    { id: "window",     label: "a window",         image: "https://cdn.imgurl.ir/uploads/c480039_a-window.png",         audio: "https://cdn.imgurl.ir/uploads/l543208_a-window.mp3" },
+    { id: "door",       label: "the door",         image: "https://cdn.imgurl.ir/uploads/o763819_the-door.png",         audio: "https://cdn.imgurl.ir/uploads/g92275_the-door.mp3" },
+    { id: "board",      label: "the board",        image: "https://cdn.imgurl.ir/uploads/v58413_the-board.png",        audio: "https://cdn.imgurl.ir/uploads/i034259_the-board.mp3" },
   ];
 
   const app = document.getElementById("game-app");

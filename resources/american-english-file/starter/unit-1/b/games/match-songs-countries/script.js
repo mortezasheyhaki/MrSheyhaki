@@ -3,11 +3,11 @@
   const GAME_ID = "starter-1b-match-songs-countries";
 
   const TRACKS = [
-    { id: "mexico", label: "Mexico", file: "audio/mexico.mp3", flag: "🇲🇽" },
-    { id: "brazil", label: "Brazil", file: "audio/brazil.mp3", flag: "🇧🇷" },
-    { id: "turkey", label: "Turkey", file: "audio/turkey.mp3", flag: "🇹🇷" },
-    { id: "china", label: "China", file: "audio/china.mp3", flag: "🇨🇳" },
-    { id: "usa", label: "the USA", file: "audio/usa.mp3", flag: "🇺🇸" },
+    { id: "mexico", label: "Mexico", file: "audio/mexico.mp3", flag: "🇲🇽", image: "https://cdn.imgurl.ir/uploads/i551631_mexico.png" },
+    { id: "brazil", label: "Brazil", file: "audio/brazil.mp3", flag: "🇧🇷", image: "https://cdn.imgurl.ir/uploads/g4042_brazil.png" },
+    { id: "turkey", label: "Turkey", file: "audio/turkey.mp3", flag: "🇹🇷", image: "https://cdn.imgurl.ir/uploads/u314547_turkey.png" },
+    { id: "china", label: "China", file: "audio/china.mp3", flag: "🇨🇳", image: "https://cdn.imgurl.ir/uploads/n904682_china.png" },
+    { id: "usa", label: "the USA", file: "audio/usa.mp3", flag: "🇺🇸", image: "https://cdn.imgurl.ir/uploads/r43930_usa.png" },
   ];
 
   const app = document.getElementById("game-app");
@@ -254,8 +254,11 @@
         const used = Object.keys(lockedSongs).some((si) => matches[si] === id);
         return `
           <button type="button" class="ms-country${used ? " is-correct is-used" : ""}" data-id="${id}" ${used ? "disabled" : ""}>
-            <span class="ms-flag" aria-hidden="true">${t.flag}</span>
-            <span class="ms-country-name">${t.label}</span>
+            <img class="ms-country-img" src="${t.image}" alt="" draggable="false" />
+            <span class="ms-country-meta">
+              <span class="ms-flag" aria-hidden="true">${t.flag}</span>
+              <span class="ms-country-name">${t.label}</span>
+            </span>
           </button>`;
       })
       .join("");

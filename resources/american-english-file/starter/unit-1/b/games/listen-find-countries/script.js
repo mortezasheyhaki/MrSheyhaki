@@ -3,21 +3,21 @@
   const GAME_ID = "starter-1b-listen-find-countries";
 
   const COUNTRIES = [
-    { id: "argentina", label: "Argentina", flag: "🇦🇷", audio: "audio/argentina.mp3", image: "images/argentina.png" },
-    { id: "brazil", label: "Brazil", flag: "🇧🇷", audio: "audio/brazil.mp3", image: "images/brazil.png" },
-    { id: "canada", label: "Canada", flag: "🇨🇦", audio: "audio/canada.mp3", image: "images/canada.png" },
-    { id: "chile", label: "Chile", flag: "🇨🇱", audio: "audio/chile.mp3", image: "images/chile.png" },
-    { id: "china", label: "China", flag: "🇨🇳", audio: "audio/china.mp3", image: "images/china.png" },
-    { id: "england", label: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", audio: "audio/england.mp3", image: "images/england.png" },
-    { id: "japan", label: "Japan", flag: "🇯🇵", audio: "audio/japan.mp3", image: "images/japan.png" },
-    { id: "korea", label: "Korea", flag: "🇰🇷", audio: "audio/korea.mp3", image: "images/korea.png" },
-    { id: "mexico", label: "Mexico", flag: "🇲🇽", audio: "audio/mexico.mp3", image: "images/mexico.png" },
-    { id: "peru", label: "Peru", flag: "🇵🇪", audio: "audio/peru.mp3", image: "images/peru.png" },
-    { id: "saudi-arabia", label: "Saudi Arabia", flag: "🇸🇦", audio: "audio/saudi-arabia.mp3", image: "images/saudi-arabia.png" },
-    { id: "spain", label: "Spain", flag: "🇪🇸", audio: "audio/spain.mp3", image: "images/spain.png" },
-    { id: "turkey", label: "Turkey", flag: "🇹🇷", audio: "audio/turkey.mp3", image: "images/turkey.png" },
-    { id: "vietnam", label: "Vietnam", flag: "🇻🇳", audio: "audio/vietnam.mp3", image: "images/vietnam.png" },
-    { id: "usa", label: "the United States", flag: "🇺🇸", audio: "audio/usa.mp3", image: "images/usa.png" },
+    { id: "argentina", label: "Argentina", flag: "🇦🇷", audio: "audio/argentina.mp3", image: "https://cdn.imgurl.ir/uploads/g12204_argentina.png" },
+    { id: "brazil", label: "Brazil", flag: "🇧🇷", audio: "audio/brazil.mp3", image: "https://cdn.imgurl.ir/uploads/g4042_brazil.png" },
+    { id: "canada", label: "Canada", flag: "🇨🇦", audio: "audio/canada.mp3", image: "https://cdn.imgurl.ir/uploads/o728577_canada.png" },
+    { id: "chile", label: "Chile", flag: "🇨🇱", audio: "audio/chile.mp3", image: "https://cdn.imgurl.ir/uploads/l1448_chile.png" },
+    { id: "china", label: "China", flag: "🇨🇳", audio: "audio/china.mp3", image: "https://cdn.imgurl.ir/uploads/n904682_china.png" },
+    { id: "england", label: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", audio: "audio/england.mp3", image: "https://cdn.imgurl.ir/uploads/z55730_england.png" },
+    { id: "japan", label: "Japan", flag: "🇯🇵", audio: "audio/japan.mp3", image: "https://cdn.imgurl.ir/uploads/j223970_japan.png" },
+    { id: "korea", label: "Korea", flag: "🇰🇷", audio: "audio/korea.mp3", image: "https://cdn.imgurl.ir/uploads/k198270_korea.png" },
+    { id: "mexico", label: "Mexico", flag: "🇲🇽", audio: "audio/mexico.mp3", image: "https://cdn.imgurl.ir/uploads/i551631_mexico.png" },
+    { id: "peru", label: "Peru", flag: "🇵🇪", audio: "audio/peru.mp3", image: "https://cdn.imgurl.ir/uploads/d81228_peru.png" },
+    { id: "saudi-arabia", label: "Saudi Arabia", flag: "🇸🇦", audio: "audio/saudi-arabia.mp3", image: "https://cdn.imgurl.ir/uploads/k062762_saudi-arabia.png" },
+    { id: "spain", label: "Spain", flag: "🇪🇸", audio: "audio/spain.mp3", image: "https://cdn.imgurl.ir/uploads/g67497_spain.png" },
+    { id: "turkey", label: "Turkey", flag: "🇹🇷", audio: "audio/turkey.mp3", image: "https://cdn.imgurl.ir/uploads/u314547_turkey.png" },
+    { id: "vietnam", label: "Vietnam", flag: "🇻🇳", audio: "audio/vietnam.mp3", image: "https://cdn.imgurl.ir/uploads/x094160_vietnam.png" },
+    { id: "usa", label: "the United States", flag: "🇺🇸", audio: "audio/usa.mp3", image: "https://cdn.imgurl.ir/uploads/r43930_usa.png" },
   ];
 
   const app = document.getElementById("game-app");
