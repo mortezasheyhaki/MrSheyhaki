@@ -149,8 +149,13 @@
       <header class="ro-topbar">
           <a class="ro-back" href="../" aria-label="Back">←</a>
           <span class="ro-title">What does Rob order?</span>
-          <span class="ro-progress">Listen & tick</span>
         </header>
+      <div class="game-toolbar">
+        <div class="stats-bar">
+          <div class="stat"><span class="stat-label">TASK</span><strong>Tick</strong></div>
+          <div class="stat"><span class="stat-label">SELECTED</span><strong id="ro-selected-count">${selected.size}</strong></div>
+        </div>
+      </div>
 
       <div class="ro-content">
         <div class="ro-audio-row">

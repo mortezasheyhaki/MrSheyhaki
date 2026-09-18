@@ -91,6 +91,96 @@ html[data-theme="dark"] .lc-progress {
   background: rgba(167, 139, 250, 0.18);
 }
 
+/* Match Rush style stats bar */
+.game-toolbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.stats-bar {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  background: #f1f5f9;
+  border-radius: 18px;
+  padding: 6px;
+  border: 1px solid #e2e8f0;
+}
+.stat {
+  text-align: center;
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 6px;
+}
+.stat-label {
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+.stat strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+html[data-theme="dark"] .stats-bar {
+  background: #1a1d27;
+  border-color: #2b3040;
+}
+html[data-theme="dark"] .stat {
+  background: #181b24;
+}
+html[data-theme="dark"] .stat-label { color: #aeb6c8; }
+html[data-theme="dark"] .stat strong { color: #f1f5f9; }
+
+/* Stats bar animations */
+.game-toolbar {
+  animation: statsBarIn 0.35s ease-out both;
+}
+.stats-bar .stat {
+  animation: statPop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stats-bar .stat:nth-child(1) { animation-delay: 0.04s; }
+.stats-bar .stat:nth-child(2) { animation-delay: 0.09s; }
+.stats-bar .stat:nth-child(3) { animation-delay: 0.14s; }
+
+@keyframes statsBarIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes statPop {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.stat strong {
+  display: inline-block;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.stat strong.is-updating {
+  animation: statBump 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes statBump {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-toolbar,
+  .stats-bar .stat,
+  .stat strong.is-updating {
+    animation: none !important;
+  }
+}
+
+
 /* Start / Done */
 .lc-start, .lc-done {
   flex: 1;

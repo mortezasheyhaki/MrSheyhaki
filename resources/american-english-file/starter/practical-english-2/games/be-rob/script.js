@@ -336,15 +336,20 @@
   function renderPlay() {
     const step = STEPS[stepIndex];
     const robDone = STEPS.slice(0, stepIndex + 1).filter((s) => s.type === "rob").length;
-    const progress = `Line ${Math.min(robDone, totalRob)} / ${totalRob}`;
+    const lineText = Math.min(robDone, totalRob) + " / " + totalRob;
 
     if (step.type === "server") {
       app.innerHTML = `
         <header class="br-topbar">
           <a class="br-back" href="../" aria-label="Back">←</a>
           <span class="br-title">Be Rob</span>
-          <span class="br-progress">${progress}</span>
         </header>
+        <div class="game-toolbar">
+          <div class="stats-bar">
+            <div class="stat"><span class="stat-label">LINE</span><strong>${lineText}</strong></div>
+            <div class="stat"><span class="stat-label">SCORE</span><strong>${score}</strong></div>
+          </div>
+        </div>
         <div class="br-content">
           <div class="br-bubble server">
             <span class="br-role">Server</span>
@@ -376,8 +381,13 @@
       <header class="br-topbar">
           <a class="br-back" href="../" aria-label="Back">←</a>
           <span class="br-title">Be Rob</span>
-          <span class="br-progress">${progress}</span>
         </header>
+      <div class="game-toolbar">
+        <div class="stats-bar">
+          <div class="stat"><span class="stat-label">LINE</span><strong>${lineText}</strong></div>
+          <div class="stat"><span class="stat-label">SCORE</span><strong>${score}</strong></div>
+        </div>
+      </div>
       <div class="br-content">
         <div class="br-bubble rob">
           <span class="br-role">You (Rob)</span>

@@ -151,8 +151,13 @@
       <header class="jl-topbar">
           <a class="jl-back" href="../" aria-label="Back">←</a>
           <span class="jl-title">Jenny's Lunch</span>
-          <span class="jl-progress">Listen & choose</span>
         </header>
+      <div class="game-toolbar">
+        <div class="stats-bar">
+          <div class="stat"><span class="stat-label">TASK</span><strong>Choose</strong></div>
+          <div class="stat"><span class="stat-label">OPTIONS</span><strong>${OPTIONS.length}</strong></div>
+        </div>
+      </div>
 
       <div class="jl-content">
         <div class="jl-card">

@@ -163,14 +163,18 @@
     }
 
     const card = deck[index];
-    const progress = (index + 1) + " / " + deck.length;
 
     app.innerHTML = `
       <header class="mc-topbar">
           <a class="mc-back" href="../" aria-label="Back">←</a>
           <span class="mc-title">Money Flashcards</span>
-          <span class="mc-progress">${progress}</span>
         </header>
+      <div class="game-toolbar">
+        <div class="stats-bar">
+          <div class="stat"><span class="stat-label">CARD</span><strong>${index + 1} / ${deck.length}</strong></div>
+          <div class="stat"><span class="stat-label">LEFT</span><strong>${Math.max(0, deck.length - index - 1)}</strong></div>
+        </div>
+      </div>
 
       <div class="fc-stage">
         <p class="fc-hint">Tap the card to flip</p>

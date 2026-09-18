@@ -344,8 +344,14 @@
       <header class="ts-topbar">
           <a class="ts-back" href="../" aria-label="Back">←</a>
           <span class="ts-title">Three Sounds Match</span>
-          <span class="ts-progress">${index + 1}/${queue.length} · ${score}✓</span>
         </header>
+      <div class="game-toolbar">
+        <div class="stats-bar">
+          <div class="stat"><span class="stat-label">WORD</span><strong>${index + 1} / ${queue.length}</strong></div>
+          <div class="stat"><span class="stat-label">SCORE</span><strong>${score}</strong></div>
+          <div class="stat"><span class="stat-label">LEFT</span><strong>${Math.max(0, queue.length - index - 1)}</strong></div>
+        </div>
+      </div>
 
       <div class="ts-stage">
         <div class="ts-pads-top">

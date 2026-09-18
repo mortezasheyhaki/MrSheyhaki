@@ -239,8 +239,13 @@
       <header class="lc-topbar">
           <a class="lc-back" href="../" aria-label="Back">←</a>
           <span class="lc-title">Listen & Complete</span>
-          <span class="lc-progress">5 blanks</span>
         </header>
+      <div class="game-toolbar">
+        <div class="stats-bar">
+          <div class="stat"><span class="stat-label">TASK</span><strong>Complete</strong></div>
+          <div class="stat"><span class="stat-label">BLANKS</span><strong>5</strong></div>
+        </div>
+      </div>
 
       <div class="lc-content">
         <div class="lc-audio-row">

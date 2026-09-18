@@ -194,8 +194,13 @@
       <header class="ja-topbar">
           <a class="ja-back" href="../" aria-label="Back">←</a>
           <span class="ja-title">What do they buy?</span>
-          <span class="ja-progress">Listen & write</span>
         </header>
+      <div class="game-toolbar">
+        <div class="stats-bar">
+          <div class="stat"><span class="stat-label">TASK</span><strong>Write</strong></div>
+          <div class="stat"><span class="stat-label">ITEMS</span><strong>${totalSlots}</strong></div>
+        </div>
+      </div>
 
       <div class="ja-content">
         <div class="ja-audio-row">

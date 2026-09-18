@@ -186,14 +186,18 @@
 
     // play phase
     const item = ITEMS[qIndex];
-    const progress = `Question ${qIndex + 1} / 4`;
 
     app.innerHTML = `
       <header class="hm-topbar">
           <a class="hm-back" href="../" aria-label="Back">←</a>
           <span class="hm-title">How much is it?</span>
-          <span class="hm-progress">${progress}</span>
         </header>
+      <div class="game-toolbar">
+        <div class="stats-bar">
+          <div class="stat"><span class="stat-label">QUESTION</span><strong>${qIndex + 1} / 4</strong></div>
+          <div class="stat"><span class="stat-label">SCORE</span><strong>${score}</strong></div>
+        </div>
+      </div>
 
       <div class="hm-card">
         <div class="hm-item">

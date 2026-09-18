@@ -250,9 +250,24 @@
     }
   }
 
+  function bumpStat(el, next) {
+    if (!el) return;
+    const prev = el.textContent;
+    if (prev === next) return;
+    el.textContent = next;
+    el.classList.remove("is-updating");
+    // force reflow so the animation can replay
+    void el.offsetWidth;
+    el.classList.add("is-updating");
+  }
+
   function updateProgress() {
-    const el = document.getElementById("mc-progress");
-    if (el) el.textContent = "Set " + (setIndex + 1) + "/2 · " + correctCount() + "/5";
+    const s = document.getElementById("stat-set");
+    const m = document.getElementById("stat-matched");
+    const sc = document.getElementById("stat-score");
+    bumpStat(s, (setIndex + 1) + " / 2");
+    bumpStat(m, correctCount() + " / 5");
+    bumpStat(sc, String(modeCorrect));
   }
 
   function calcStars() {
@@ -374,8 +389,14 @@
       <header class="mc-topbar">
           <a class="mc-back" href="../" aria-label="Back">←</a>
           <span class="mc-title">Price Match</span>
-          <span class="mc-progress" id="mc-progress">Set ${setIndex + 1}/2 · ${correctCount()}/5</span>
         </header>
+      <div class="game-toolbar">
+        <div class="stats-bar">
+          <div class="stat"><span class="stat-label">SET</span><strong id="stat-set">${setIndex + 1} / 2</strong></div>
+          <div class="stat"><span class="stat-label">MATCHED</span><strong id="stat-matched">${correctCount()} / 5</strong></div>
+          <div class="stat"><span class="stat-label">SCORE</span><strong id="stat-score">${modeCorrect}</strong></div>
+        </div>
+      </div>
       <p class="mc-instruction" id="mc-hint">${mode.tip}</p>
       <div class="mc-board${isAudio ? " is-audio" : ""}">
         <div class="mc-col mc-col-left">${left}</div>
