@@ -498,22 +498,29 @@
           <span style="width:42px"></span>
         </header>
         <div class="twd-body twd-done">
-          <div class="trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="twd-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
+          <div class="twd-done-main">
+            <div class="trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
+            <div class="twd-stars" aria-hidden="true">
+              <span>${stars >= 1 ? "⭐" : "☆"}</span>
+              <span>${stars >= 2 ? "⭐" : "☆"}</span>
+              <span>${stars >= 3 ? "⭐" : "☆"}</span>
+            </div>
+            <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
+            <div class="twd-score-card">
+              <div class="twd-score-row"><span>Score</span><strong>${points}</strong></div>
+              <div class="twd-score-row"><span>Correct</span><strong>${score} / ${order.length}</strong></div>
+              <div class="twd-score-row"><span>Accuracy</span><strong>${acc}%</strong></div>
+              <div class="twd-score-row"><span>Best streak</span><strong>${bestStreak}×</strong></div>
+            </div>
           </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <div class="twd-score-card">
-            <div class="twd-score-row"><span>Score</span><strong>${points}</strong></div>
-            <div class="twd-score-row"><span>Correct</span><strong>${score} / ${order.length}</strong></div>
-            <div class="twd-score-row"><span>Accuracy</span><strong>${acc}%</strong></div>
-            <div class="twd-score-row"><span>Best streak</span><strong>${bestStreak}×</strong></div>
+          <div class="twd-done-actions">
+            <button type="button" class="twd-icon-btn" id="twd-again" aria-label="Play again" title="Play again">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            </button>
+            <button type="button" class="twd-icon-btn secondary" id="twd-menu" aria-label="Back to menu" title="Back to menu">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
+            </button>
           </div>
-          <button type="button" class="twd-btn" id="twd-again">Play again</button>
-          <br>
-          <button type="button" class="twd-btn secondary" id="twd-menu">Back to menu</button>
         </div>`;
       document.getElementById("twd-again").onclick = () => startGame(mode);
       document.getElementById("twd-menu").onclick = () => { phase = "menu"; render(); };

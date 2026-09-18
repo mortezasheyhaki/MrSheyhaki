@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const GAME_ID = "starter-9a-travel-phrase-chips";
+  const GAME_ID = "starter-9a-travel-phrase";
 
   const ITEMS = [
     {
@@ -399,22 +399,29 @@
           <span style="width:42px"></span>
         </header>
         <div class="tpc-body tpc-done">
-          <div class="trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="tpc-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
+          <div class="tpc-done-main">
+            <div class="trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
+            <div class="tpc-stars" aria-hidden="true">
+              <span>${stars >= 1 ? "⭐" : "☆"}</span>
+              <span>${stars >= 2 ? "⭐" : "☆"}</span>
+              <span>${stars >= 3 ? "⭐" : "☆"}</span>
+            </div>
+            <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
+            <div class="tpc-score-card">
+              <div class="tpc-score-row"><span>Score</span><strong>${points}</strong></div>
+              <div class="tpc-score-row"><span>Correct</span><strong>${score} / ${order.length}</strong></div>
+              <div class="tpc-score-row"><span>Accuracy</span><strong>${acc}%</strong></div>
+              <div class="tpc-score-row"><span>Best streak</span><strong>${bestStreak}×</strong></div>
+            </div>
           </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <div class="tpc-score-card">
-            <div class="tpc-score-row"><span>Score</span><strong>${points}</strong></div>
-            <div class="tpc-score-row"><span>Correct</span><strong>${score} / ${order.length}</strong></div>
-            <div class="tpc-score-row"><span>Accuracy</span><strong>${acc}%</strong></div>
-            <div class="tpc-score-row"><span>Best streak</span><strong>${bestStreak}×</strong></div>
+          <div class="tpc-done-actions">
+            <button type="button" class="tpc-icon-btn" id="tpc-again" aria-label="Play again" title="Play again">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            </button>
+            <button type="button" class="tpc-icon-btn secondary" id="tpc-menu" aria-label="Back to menu" title="Back to menu">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
+            </button>
           </div>
-          <button type="button" class="tpc-btn" id="tpc-again">Play again</button>
-          <br>
-          <button type="button" class="tpc-btn secondary" id="tpc-menu">Back to menu</button>
         </div>`;
       document.getElementById("tpc-again").onclick = startGame;
       document.getElementById("tpc-menu").onclick = () => {

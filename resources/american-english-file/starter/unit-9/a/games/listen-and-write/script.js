@@ -380,12 +380,22 @@
 // CONTINUE BUTTONS
 // -------------------------------------------------------
 continueBtn.addEventListener("click", () => {
-  window.location.href = "../../";   // → Unit 9A lesson page
+  window.location.href = "../";   // → Unit 9A games list
 });
 
 successContinue.addEventListener("click", () => {
-  window.location.href = "../../";   // → Unit 9A lesson page
+  window.location.href = "../";   // → Unit 9A games list
 });
+
+  // Stars
+  function __saveLAStarsFromLaw(acc) {
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay("starter-9a-listen-and-write");
+        LAStars.saveFromAccuracy("starter-9a-listen-and-write", acc);
+      }
+    } catch (e) {}
+  }
 
   // -------------------------------------------------------
   // INIT
@@ -397,14 +407,3 @@ successContinue.addEventListener("click", () => {
 
   init();
 })();
-
-
-  // Stars for Unit 9A Listen & Write
-  function __saveLAStarsFromLaw(acc) {
-    try {
-      if (window.LAStars) {
-        LAStars.recordPlay("starter-9a-listen-and-write");
-        LAStars.saveFromAccuracy("starter-9a-listen-and-write", acc);
-      }
-    } catch (e) {}
-  }

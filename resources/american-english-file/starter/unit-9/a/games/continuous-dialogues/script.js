@@ -21,7 +21,6 @@
   const ITEMS = [
     {
       n: 1,
-      audio: "audio/b1.mp3",
       verbs: ["(sit)"],
       lines: [
         { who: "A", text: "Excuse me! You ______ in my seat." },
@@ -39,7 +38,6 @@
     },
     {
       n: 2,
-      audio: "audio/b2.mp3",
       verbs: ["(not watch)", "(sleep)"],
       lines: [
         { who: "A", text: "Dad ______ this TV show. He ______." },
@@ -63,7 +61,6 @@
     },
     {
       n: 3,
-      audio: "audio/b3.mp3",
       verbs: ["(do)", "(shop)"],
       lines: [
         { who: "A", text: "Hello! What ______ you ______ here?" },
@@ -93,7 +90,6 @@
     },
     {
       n: 4,
-      audio: "audio/b4.mp3",
       verbs: ["(go)", "(not work)"],
       lines: [
         { who: "A", text: "I ______ to the gym now. Do you want to come with me?" },
@@ -117,7 +113,6 @@
     },
     {
       n: 5,
-      audio: "audio/b5.mp3",
       verbs: ["(do)", "(play)"],
       lines: [
         { who: "A", text: "______ Alice ______ her homework?" },
@@ -147,7 +142,6 @@
     },
     {
       n: 6,
-      audio: "audio/b6.mp3",
       verbs: ["(not read)", "(watch)"],
       lines: [
         { who: "A", text: "Do you want my newspaper? I ______ it." },
@@ -171,7 +165,6 @@
     },
     {
       n: 7,
-      audio: "audio/b7.mp3",
       verbs: ["(talk)"],
       lines: [
         { who: "A", text: "Is that your brother?" },
@@ -189,7 +182,6 @@
     },
     {
       n: 8,
-      audio: "audio/b8.mp3",
       verbs: ["(have)", "(have)"],
       lines: [
         { who: "A", text: "______ you ______ a good time in Rio?" },
@@ -219,7 +211,6 @@
     },
     {
       n: 9,
-      audio: "audio/b9.mp3",
       verbs: ["(talk)", "(call)"],
       lines: [
         { who: "A", text: "Hello, can I speak to Marisa?" },
@@ -254,7 +245,6 @@
     },
     {
       n: 10,
-      audio: "audio/b10.mp3",
       verbs: ["(get)"],
       lines: [
         { who: "A", text: "______ you ______ up now? You're late for school!" },
@@ -283,17 +273,6 @@
   let index = 0;
   let score = 0;
   let locked = false;
-  let lastAudio = null;
-
-  function playAudio(src) {
-    lastAudio = src || lastAudio;
-    if (!src) return;
-    try {
-      const a = new Audio(src);
-      a.play().catch(function () {});
-    } catch (e) {}
-  }
-
 
   const $ = (id) => document.getElementById(id);
   const startScreen = $("startScreen");
@@ -473,7 +452,6 @@
       feedback.className = "feedback ok";
       actions.classList.add("hidden");
       nextRow.classList.remove("hidden");
-      playAudio(item.audio);
     } else {
       feedback.textContent = "Check the blanks · use be + -ing";
       feedback.className = "feedback bad";
@@ -539,13 +517,6 @@
   });
   checkBtn.addEventListener("click", check);
   nextBtn.addEventListener("click", next);
-  var listenBtn = $("listenBtn");
-  if (listenBtn) {
-    listenBtn.addEventListener("click", function () {
-      var item = ITEMS[order[index]];
-      playAudio((item && item.audio) || lastAudio);
-    });
-  }
   $("playAgainBtn").addEventListener("click", start);
   $("homeBtn").addEventListener("click", function () {
     endOverlay.classList.add("hidden");
