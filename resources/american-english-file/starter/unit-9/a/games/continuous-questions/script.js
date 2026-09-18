@@ -2,6 +2,17 @@
 (function () {
   "use strict";
 
+  const GAME_ID = "starter-9a-continuous-questions";
+  function saveStars() {
+    try {
+      if (!window.LAStars || !order || !order.length) return;
+      var acc = Math.round((score / order.length) * 100);
+      LAStars.recordPlay(GAME_ID);
+      LAStars.saveFromAccuracy(GAME_ID, acc);
+    } catch (_) {}
+  }
+
+
   /* Each set: question + positive answer + negative answer (fully split words) */
   const SETS = [
     {
@@ -445,6 +456,7 @@
     }
     if (setIndex + 1 >= order.length) {
       endOverlay.classList.remove("hidden");
+      saveStars();
       $("endTitle").textContent = "Done!";
       $("endMsg").textContent = "You scored " + score + " correct steps";
       return;

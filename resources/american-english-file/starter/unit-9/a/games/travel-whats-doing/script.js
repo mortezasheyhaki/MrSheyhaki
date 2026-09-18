@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const GAME_ID = "starter-12a-travel-whats-doing";
+  const GAME_ID = "starter-9a-travel-whats-doing";
 
   const ITEMS = [
     {
@@ -459,7 +459,7 @@
         <header class="twd-top">
           <a class="twd-back" href="../" aria-label="Back">←</a>
           <div class="twd-top-center">
-            <span class="twd-eyebrow">Starter · Unit 12A</span>
+            <span class="twd-eyebrow">Starter · Unit 9A</span>
             <span class="twd-title">What's he/she doing?</span>
           </div>
           <span style="width:42px"></span>

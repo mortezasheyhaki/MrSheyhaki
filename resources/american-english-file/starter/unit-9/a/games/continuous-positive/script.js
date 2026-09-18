@@ -2,6 +2,17 @@
 (function () {
   "use strict";
 
+  const GAME_ID = "starter-9a-continuous-positive";
+  function saveStars() {
+    try {
+      if (!window.LAStars || !order || !order.length) return;
+      var acc = Math.round((score / order.length) * 100);
+      LAStars.recordPlay(GAME_ID);
+      LAStars.saveFromAccuracy(GAME_ID, acc);
+    } catch (_) {}
+  }
+
+
   const ITEMS = [
     {
       prompt: "I / work",
@@ -297,6 +308,7 @@
       endOverlay.classList.remove("hidden");
       $("endTitle").textContent = "Done!";
       $("endMsg").textContent = "You scored " + score + " of " + order.length;
+      saveStars();
       return;
     }
     index++;

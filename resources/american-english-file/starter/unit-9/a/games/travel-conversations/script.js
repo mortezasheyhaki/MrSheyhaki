@@ -2,21 +2,21 @@
 (function () {
   "use strict";
 
-  const GAME_ID = "starter-12a-travel-conversations";
+  const GAME_ID = "starter-9a-travel-conversations";
 
   const CONVS = [
     {
       id: 1,
       title: "Conversation 1",
-      audio: "https://cdn.imgurl.ir/uploads/v801486_conversation_1.mp3",
+      audio: "audio/conversation-1.mp3",
       lines: [
-        { who: "W", text: "Oh look! An LA Galaxy shirt. It's perfect for Henry!" },
-        { who: "M", text: "Yes, good idea. Oh… it's very expensive." },
-        { who: "W", text: "Soccer shirts are always expensive. OK. What can we get for Jessica?" },
-        { who: "M", text: "She likes soccer, too." },
+        { who: "W", text: "Oh, look! An L.A. Galaxy shirt. It's perfect for Henry." },
+        { who: "M", text: "Yes, good idea. Oh, it's very expensive." },
+        { who: "W", text: "Soccer shirts are always expensive. Okay. What can we get for Jessica?" },
+        { who: "M", text: "She likes soccer too." },
         { who: "W", text: "Yeah, but she never wears soccer shirts. What about this bag?" },
         { who: "M", text: "I don't know. Does she like bags?" },
-        { who: "W", text: "She loves bags…" },
+        { who: "W", text: "She loves bags!" },
       ],
       doing: {
         prompt: "The man and the woman are …",
@@ -40,13 +40,13 @@
     {
       id: 2,
       title: "Conversation 2",
-      audio: "https://cdn.imgurl.ir/uploads/b0219_conversation_2.mp3",
+      audio: "audio/conversation-2.mp3",
       lines: [
         { who: "W", text: "Emilio, do we need swimming things?" },
         { who: "M", text: "I can look at their website. Can you see my camera?" },
         { who: "W", text: "Yes, here it is. Do you want me to put the camera in the suitcase or in your bag?" },
-        { who: "M", text: "In the suitcase, please. OK, here's the page. Yes, it has a swimming pool." },
-        { who: "W", text: "Great." },
+        { who: "M", text: "In the suitcase, please. Okay, here's the page. Yes, it has a swimming pool." },
+        { who: "W", text: "Great!" },
       ],
       doing: {
         prompt: "The woman is …",
@@ -66,7 +66,7 @@
     {
       id: 3,
       title: "Conversation 3",
-      audio: "https://cdn.imgurl.ir/uploads/n458685_conversation_3.mp3",
+      audio: "audio/conversation-3.mp3",
       lines: [
         { who: "W", text: "Good morning. How can I help you?" },
         { who: "M", text: "I need a car for three days." },
@@ -99,13 +99,13 @@
     {
       id: 4,
       title: "Conversation 4",
-      audio: "https://cdn.imgurl.ir/uploads/f632670_conversation_4.mp3",
+      audio: "audio/conversation-4.mp3",
       lines: [
         { who: "M", text: "Is that a number 13?" },
-        { who: "W", text: "Yes. I think it is. No, it's a 23." },
-        { who: "M", text: "Another 23? I don't believe it! That's the third one. And no 13…" },
-        { who: "W", text: "Another one's coming now. Let's see. Yes. That's a 13." },
-        { who: "M", text: "At last." },
+        { who: "W", text: "Yes, I think it is. No, it's a 23." },
+        { who: "M", text: "Another 23? I don't believe it. That's the third one. And no 13." },
+        { who: "W", text: "Another one's coming now. Let's see. Yes, that's a thirteen." },
+        { who: "M", text: "At last!" },
       ],
       doing: {
         prompt: "The man and the woman are …",
@@ -130,8 +130,6 @@
   const app = document.getElementById("game-app");
   if (!app) return;
 
-  const canSpeak = !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
-
   // phase: menu | listen | doing | details | done
   let phase = "menu";
   let convIndex = 0;
@@ -140,9 +138,9 @@
   let totalDoing = CONVS.length;
   let totalDetails = CONVS.reduce((n, c) => n + c.details.blanks.length, 0);
   let detailPicks = []; // selected choice index per blank
-  let speaking = false;
-  let lineIndex = -1;
   let listenDone = false;
+  let advancing = false;
+  let advanceTimer = null;
 
   function shuffle(arr) {
     const a = arr.slice();
@@ -151,32 +149,6 @@
       [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
-  }
-
-  function stopSpeak() {
-    speaking = false;
-    try {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-    } catch (_) {}
-    lineIndex = -1;
-    const btn = document.getElementById("tc-play");
-    if (btn) btn.classList.remove("playing");
-    app.querySelectorAll(".tc-line").forEach((el) => el.classList.remove("active"));
-  }
-
-  function getVoice(preferFemale) {
-    const voices = window.speechSynthesis.getVoices() || [];
-    const en = voices.filter((v) => /en[-_]?US|en[-_]?GB|English/i.test(v.lang + v.name));
-    const pool = en.length ? en : voices;
-    if (!pool.length) return null;
-    if (preferFemale) {
-      const f = pool.find((v) => /female|samantha|victoria|zira|karen|moira/i.test(v.name));
-      if (f) return f;
-    } else {
-      const m = pool.find((v) => /male|david|daniel|alex|fred|tom/i.test(v.name));
-      if (m) return m;
-    }
-    return pool[preferFemale ? 0 : Math.min(1, pool.length - 1)];
   }
 
   let currentAudio = null;
@@ -188,156 +160,82 @@
     }
   }
 
+  function setAudioStatus(msg, kind) {
+    // Prefer status next to the play button (doing / details phases)
+    const status = document.getElementById("tc-audio-status");
+    if (status) {
+      status.textContent = msg || "";
+      status.className = "tc-audio-status" + (kind ? " " + kind : "");
+      return;
+    }
+    // Fallback: pure listen phase uses #tc-hint
+    const hint = document.getElementById("tc-hint");
+    if (hint) {
+      hint.textContent = msg || "";
+      hint.className = "tc-hint" + (kind ? " " + kind : "");
+    }
+  }
+
   function playConversation() {
     const conv = CONVS[convIndex];
     const btn = document.getElementById("tc-play");
     const cont = document.getElementById("tc-continue");
-    const hint = document.getElementById("tc-hint");
 
-    // Prefer real MP3 when available
-    if (conv.audio) {
-      stopSpeak();
-      // Toggle: if already playing this file, stop
-      if (currentAudio && !currentAudio.paused && currentAudio.dataset && currentAudio.dataset.conv === String(conv.id)) {
-        stopAudioFile();
-        if (btn) btn.classList.remove("playing");
-        if (hint) {
-          hint.textContent = "Paused. Tap to play again.";
-          hint.className = "tc-hint";
-        }
-        return;
-      }
+    // Toggle: if already playing this file, pause
+    if (currentAudio && !currentAudio.paused && currentAudio.dataset && currentAudio.dataset.conv === String(conv.id)) {
       stopAudioFile();
-      listenDone = false;
-      if (cont) cont.disabled = true;
-      if (btn) btn.classList.add("playing");
-      if (hint) {
-        hint.textContent = "Listening…";
-        hint.className = "tc-hint";
-      }
-      app.querySelectorAll(".tc-line").forEach((el) => el.classList.add("active"));
-
-      const url = conv.audio + (conv.audio.includes("?") ? "&" : "?") + "v=2";
-      const a = new Audio();
-      a.preload = "auto";
-      a.crossOrigin = "anonymous";
-      a.dataset.conv = String(conv.id);
-      currentAudio = a;
-      a.onended = () => {
-        currentAudio = null;
-        if (btn) btn.classList.remove("playing");
-        listenDone = true;
-        if (cont) cont.disabled = false;
-        if (hint) {
-          hint.textContent = "Done. Tap play to listen again.";
-          hint.className = "tc-hint ok";
-        }
-      };
-      a.onerror = () => {
-        currentAudio = null;
-        if (btn) btn.classList.remove("playing");
-        if (hint) {
-          hint.textContent = "Could not load audio. Trying voice…";
-          hint.className = "tc-hint bad";
-        }
-        playConversationTTS();
-      };
-      a.src = url;
-      const p = a.play();
-      if (p && p.catch) {
-        p.catch(() => {
-          if (btn) btn.classList.remove("playing");
-          if (hint) {
-            hint.textContent = "Tap again to play (browser blocked autoplay).";
-            hint.className = "tc-hint";
-          }
-        });
-      }
+      if (btn) btn.classList.remove("playing");
+      setAudioStatus("Paused — tap to play again");
       return;
     }
 
-    playConversationTTS();
-  }
-
-  function playConversationTTS() {
-    if (!canSpeak) {
-      listenDone = true;
-      const hint = document.getElementById("tc-hint");
-      if (hint) {
-        hint.textContent = "Audio not available — read the dialogue, then continue.";
-        hint.className = "tc-hint";
-      }
-      const cont = document.getElementById("tc-continue");
-      if (cont) cont.disabled = false;
-      app.querySelectorAll(".tc-line").forEach((el) => el.classList.add("active"));
-      return;
-    }
-
-    stopSpeak();
     stopAudioFile();
-    const conv = CONVS[convIndex];
-    const btn = document.getElementById("tc-play");
-    if (btn) btn.classList.add("playing");
-    speaking = true;
     listenDone = false;
-    const cont = document.getElementById("tc-continue");
     if (cont) cont.disabled = true;
+    if (btn) btn.classList.add("playing");
+    setAudioStatus("Listening…");
+    app.querySelectorAll(".tc-line").forEach((el) => el.classList.add("active"));
 
-    let i = 0;
-    function nextLine() {
-      if (!speaking || i >= conv.lines.length) {
-        speaking = false;
+    const a = new Audio();
+    a.preload = "auto";
+    a.dataset.conv = String(conv.id);
+    currentAudio = a;
+    a.onended = () => {
+      currentAudio = null;
+      if (btn) btn.classList.remove("playing");
+      listenDone = true;
+      if (cont) cont.disabled = false;
+      setAudioStatus("Done — tap to listen again", "ok");
+    };
+    a.onerror = () => {
+      currentAudio = null;
+      if (btn) btn.classList.remove("playing");
+      listenDone = true;
+      if (cont) cont.disabled = false;
+      setAudioStatus("Could not load audio. Try again.", "bad");
+    };
+    a.src = conv.audio;
+    const p = a.play();
+    if (p && p.catch) {
+      p.catch(() => {
         if (btn) btn.classList.remove("playing");
-        listenDone = true;
-        app.querySelectorAll(".tc-line").forEach((el) => el.classList.remove("active"));
-        if (cont) cont.disabled = false;
-        const hint = document.getElementById("tc-hint");
-        if (hint) {
-          hint.textContent = "Done. Continue to the questions.";
-          hint.className = "tc-hint ok";
-        }
-        return;
-      }
-      lineIndex = i;
-      app.querySelectorAll(".tc-line").forEach((el, idx) => {
-        el.classList.toggle("active", idx === i);
-        if (idx === i) el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        setAudioStatus("Tap again to play (autoplay blocked)");
       });
-      const line = conv.lines[i];
-      const u = new SpeechSynthesisUtterance(line.text);
-      u.rate = 0.95;
-      u.pitch = line.who === "W" ? 1.15 : 0.9;
-      const voice = getVoice(line.who === "W");
-      if (voice) u.voice = voice;
-      u.onend = () => {
-        i += 1;
-        setTimeout(nextLine, 280);
-      };
-      u.onerror = () => {
-        i += 1;
-        setTimeout(nextLine, 100);
-      };
-      window.speechSynthesis.speak(u);
-    }
-    if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.onvoiceschanged = null;
-        nextLine();
-      };
-      setTimeout(nextLine, 400);
-    } else {
-      nextLine();
     }
   }
 
   function startGame() {
-    stopSpeak();
     stopAudioFile();
+    if (advanceTimer) {
+      clearTimeout(advanceTimer);
+      advanceTimer = null;
+    }
     convIndex = 0;
     scoreDoing = 0;
     scoreDetails = 0;
     detailPicks = [];
     listenDone = true;
+    advancing = false;
     phase = "doing";
     render();
   }
@@ -352,7 +250,7 @@
         </button>
         <div class="tc-audio-meta">
           <strong>${conv.title}</strong>
-          <span>Tap to listen anytime</span>
+          <span id="tc-audio-status" class="tc-audio-status">Tap to listen anytime</span>
         </div>
       </div>`;
   }
@@ -363,7 +261,6 @@
   }
 
   function goDoing() {
-    stopSpeak();
     stopAudioFile();
     phase = "doing";
     render();
@@ -376,21 +273,29 @@
   }
 
   function nextConvOrDone() {
-    stopSpeak();
+    if (advancing) return;
+    advancing = true;
+    if (advanceTimer) {
+      clearTimeout(advanceTimer);
+      advanceTimer = null;
+    }
     stopAudioFile();
     convIndex += 1;
     if (convIndex >= CONVS.length) {
       phase = "done";
+      advancing = false;
       render();
       return;
     }
     listenDone = true;
     phase = "doing";
+    advancing = false;
     render();
   }
 
   function pickDoing(opt) {
-    if (phase !== "doing") return;
+    if (phase !== "doing" || advancing) return;
+    advancing = true;
     const conv = CONVS[convIndex];
     const ok = opt === conv.doing.correct;
     if (ok) scoreDoing += 1;
@@ -405,7 +310,12 @@
       hint.textContent = ok ? "Correct!" : "Answer: " + conv.doing.correct;
       hint.className = "tc-hint " + (ok ? "ok" : "bad");
     }
-    setTimeout(goDetails, ok ? 900 : 1400);
+    if (advanceTimer) clearTimeout(advanceTimer);
+    advanceTimer = setTimeout(() => {
+      advancing = false;
+      advanceTimer = null;
+      goDetails();
+    }, ok ? 900 : 1400);
   }
 
   function pickBlank(bi, ci) {
@@ -415,6 +325,7 @@
   }
 
   function checkDetails() {
+    if (advancing) return;
     const conv = CONVS[convIndex];
     if (detailPicks.some((p) => p === null)) return;
     let allOk = true;
@@ -431,6 +342,8 @@
       if (ci === conv.details.blanks[bi].correct) btn.classList.add("is-correct");
       else if (detailPicks[bi] === ci) btn.classList.add("is-wrong");
     });
+    const checkBtn = document.getElementById("tc-check-details");
+    if (checkBtn) checkBtn.disabled = true;
     const hint = document.getElementById("tc-hint");
     if (hint) {
       hint.textContent = allOk ? "Perfect!" : "Check the green answers.";
@@ -438,8 +351,6 @@
     }
     const nextBtn = document.getElementById("tc-next-conv");
     if (nextBtn) nextBtn.classList.remove("hidden");
-    // auto-advance to next conversation
-    setTimeout(() => nextConvOrDone(), allOk ? 1000 : 1600);
   }
 
   function renderDetailsOnly() {
@@ -534,7 +445,7 @@
         <header class="tc-top">
           <a class="tc-back" href="../" aria-label="Back">←</a>
           <div class="tc-top-center">
-            <span class="tc-eyebrow">Starter · Unit 12A</span>
+            <span class="tc-eyebrow">Starter · Unit 9A</span>
             <span class="tc-title">Travel Conversations</span>
           </div>
           <span style="width:42px"></span>
@@ -622,7 +533,7 @@
         </div>`;
       document.getElementById("tc-play").onclick = playConversation;
       document.getElementById("tc-continue").onclick = () => {
-        if (listenDone || !canSpeak) goDoing();
+        if (listenDone) goDoing();
       };
       return;
     }
@@ -708,13 +619,6 @@
       if (nextBtn) nextBtn.onclick = nextConvOrDone;
       return;
     }
-  }
-
-  // pre-load voices
-  if (canSpeak) {
-    try {
-      window.speechSynthesis.getVoices();
-    } catch (_) {}
   }
 
   render();

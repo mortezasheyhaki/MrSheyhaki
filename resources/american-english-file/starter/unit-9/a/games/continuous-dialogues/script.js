@@ -2,6 +2,17 @@
 (function () {
   "use strict";
 
+  const GAME_ID = "starter-9a-continuous-dialogues";
+  function saveStars() {
+    try {
+      if (!window.LAStars || !order || !order.length) return;
+      var acc = Math.round((score / order.length) * 100);
+      LAStars.recordPlay(GAME_ID);
+      LAStars.saveFromAccuracy(GAME_ID, acc);
+    } catch (_) {}
+  }
+
+
   /*
     Each item: lines (display), blanks (answers for each ______),
     verbs shown as hints, full = completed dialogue text after check.
@@ -471,6 +482,7 @@
 
   function showEnd() {
     endOverlay.classList.remove("hidden");
+      saveStars();
     var total = order.length;
     var pct = total ? Math.round((score / total) * 100) : 0;
     var emoji = score === total ? "🏆" : score >= total * 0.7 ? "🎉" : score >= total * 0.4 ? "👍" : "💪";

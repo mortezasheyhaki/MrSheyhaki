@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const GAME_ID = "starter-12a-travel-phrase-chips";
+  const GAME_ID = "starter-9a-travel-phrase-chips";
 
   const ITEMS = [
     {
@@ -371,7 +371,7 @@
         <header class="tpc-top">
           <a class="tpc-back" href="../" aria-label="Back">←</a>
           <div class="tpc-top-center">
-            <span class="tpc-eyebrow">Starter · Unit 12A</span>
+            <span class="tpc-eyebrow">Starter · Unit 9A</span>
             <span class="tpc-title">Travel Phrases</span>
           </div>
           <span style="width:42px"></span>

@@ -116,9 +116,9 @@
   border: 1px solid rgba(234, 88, 12, 0.22);
 }
 .skill-badge--reading {
-  background: rgba(5, 150, 105, 0.12);
-  color: #047857;
-  border: 1px solid rgba(5, 150, 105, 0.22);
+  background: rgba(217, 119, 6, 0.14);
+  color: #b45309;
+  border: 1px solid rgba(217, 119, 6, 0.28);
 }
 .skill-badge--communication {
   background: rgba(8, 145, 178, 0.12);
@@ -151,9 +151,9 @@ html[data-theme="dark"] .skill-badge--speaking {
   border-color: rgba(251, 146, 60, 0.28);
 }
 html[data-theme="dark"] .skill-badge--reading {
-  background: rgba(52, 211, 153, 0.16);
-  color: #6ee7b7;
-  border-color: rgba(52, 211, 153, 0.28);
+  background: rgba(251, 191, 36, 0.16);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
 }
 html[data-theme="dark"] .skill-badge--communication {
   background: rgba(34, 211, 238, 0.16);

@@ -1,6 +1,6 @@
-/* Travel Match – 3 modes × 2 sets of 6 – AEF Starter Unit 12A */
+/* Travel Match – 3 modes × 2 sets of 6 – AEF Starter Unit 9A */
 (function () {
-  const GAME_ID = "starter-12a-travel-match";
+  const GAME_ID = "starter-9a-travel-match";
 
   const ITEMS = [
     { id: "leave-house", label: "leave the house", audio: "audio/leave-the-house.mp3", image: "https://cdn.imgurl.ir/uploads/g04403_leave_the_house.png" },

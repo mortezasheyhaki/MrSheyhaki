@@ -2,6 +2,17 @@
 (function () {
   "use strict";
 
+  const GAME_ID = "starter-9a-continuous-pictures";
+  function saveStars() {
+    try {
+      if (!window.LAStars || !order || !order.length) return;
+      var acc = Math.round((score / order.length) * 100);
+      LAStars.recordPlay(GAME_ID);
+      LAStars.saveFromAccuracy(GAME_ID, acc);
+    } catch (_) {}
+  }
+
+
   const ITEMS = [
     {
       img: "https://cdn.imgurl.ir/uploads/b06384_he39s_taking_a_shower.png",
@@ -185,6 +196,7 @@
       endOverlay.classList.remove("hidden");
       $("endTitle").textContent = "Done!";
       $("endMsg").textContent = "You scored " + score + " of " + order.length;
+      saveStars();
       return;
     }
     index++;
