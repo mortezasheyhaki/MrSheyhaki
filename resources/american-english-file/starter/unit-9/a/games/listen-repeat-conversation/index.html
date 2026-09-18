@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+  (function () {
+    try {
+      var t = localStorage.getItem("mrsheyhaki-theme");
+      if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+      else if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches)
+        document.documentElement.setAttribute("data-theme", "dark");
+      else document.documentElement.setAttribute("data-theme", "light");
+    } catch (e) {}
+  })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Listen &amp; Repeat · Conversation | Starter Unit 9A | Mr. Sheyhaki</title>
+  <meta name="description" content="Listen to the conversation, repeat each line, then role-play as A and B.">
+  <link rel="stylesheet" href="../../../../../../../theme.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .dialogue-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 8px 24px var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .dialogue-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 1.05rem;
+      line-height: 1.55;
+      font-weight: 600;
+    }
+    .dialogue-line .who {
+      flex-shrink: 0;
+      width: 1.7em;
+      height: 1.7em;
+      border-radius: 999px;
+      background: var(--tone-soft);
+      color: var(--tone);
+      font-weight: 900;
+      font-size: .78rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dialogue-line.a .who { background: #dbeafe; color: #1d4ed8; }
+    .dialogue-line.b .who { background: #fce7f3; color: #be185d; }
+    html[data-theme="dark"] .dialogue-line.a .who { background: #1e3a5f; color: #93c5fd; }
+    html[data-theme="dark"] .dialogue-line.b .who { background: #4a1942; color: #f9a8d4; }
+    .dialogue-img {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto 8px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+    .your-line-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: 0 6px 18px var(--shadow);
+      text-align: center;
+    }
+    .your-line-label {
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .your-line-text {
+      font-size: 1.3rem;
+      font-weight: 800;
+      line-height: 1.4;
+      color: var(--text);
+      margin: 0;
+    }
+    .partner-line {
+      background: var(--bg-soft);
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .partner-label {
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .partner-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      opacity: .85;
+      margin: 0;
+    }
+    .btn-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin: 14px 0 8px;
+    }
+    /* 4A play button – same as listen-write-say (ripple + eq) */
+    .lw-audio-btn {
+      position: relative;
+      overflow: visible;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+      transition: transform 0.15s, box-shadow 0.2s;
+      flex-shrink: 0;
+    }
+    .lw-audio-btn:hover:not(:disabled) { transform: scale(1.05); }
+    .lw-audio-btn:active:not(:disabled) { transform: scale(0.96); }
+    .lw-audio-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+    }
+    .lw-audio-btn.playing { box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.28); }
+    .lw-audio-btn svg {
+      width: 30px;
+      height: 30px;
+      fill: currentColor;
+      position: relative;
+      z-index: 2;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .lw-audio-btn .wave {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px solid #6366f1;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .lw-audio-btn.playing .wave { animation: lw-ripple 1.25s ease-out infinite; }
+    .lw-audio-btn.playing .wave:nth-child(2) { animation-delay: 0.3s; }
+    .lw-audio-btn.playing .wave:nth-child(3) { animation-delay: 0.6s; }
+    @keyframes lw-ripple {
+      0% { transform: scale(0.85); opacity: 0.65; }
+      100% { transform: scale(1.55); opacity: 0; }
+    }
+    .lw-audio-btn .eq {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .lw-audio-btn .eq span {
+      width: 3px;
+      height: 16px;
+      background: #fff;
+      border-radius: 2px;
+    }
+    .lw-audio-btn.playing svg { opacity: 0; transform: scale(0.5); }
+    .lw-audio-btn.playing .eq { opacity: 1; }
+    .lw-audio-btn.playing .eq span:nth-child(1) { animation: lw-eq 0.55s ease-in-out infinite; }
+    .lw-audio-btn.playing .eq span:nth-child(2) { animation: lw-eq 0.55s ease-in-out infinite 0.1s; }
+    .lw-audio-btn.playing .eq span:nth-child(3) { animation: lw-eq 0.55s ease-in-out infinite 0.2s; }
+    .lw-audio-btn.playing .eq span:nth-child(4) { animation: lw-eq 0.55s ease-in-out infinite 0.15s; }
+    @keyframes lw-eq {
+      0%, 100% { transform: scaleY(0.45); }
+      50% { transform: scaleY(1.15); }
+    }
+    .mic-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(145deg, #2dd4bf, #0d9488);
+      color: #fff;
+      font-size: 1.7rem;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #0f766e, 0 10px 20px rgba(13, 148, 136, 0.35);
+      transition: transform .12s, box-shadow .12s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mic-btn:active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: 0 3px 0 #0f766e, 0 6px 12px rgba(13, 148, 136, 0.3);
+    }
+    .mic-btn.listening {
+      background: linear-gradient(145deg, #f59e0b, #d97706);
+      box-shadow: 0 6px 0 #b45309, 0 10px 20px rgba(217, 119, 6, 0.4);
+      animation: pulse 1.2s ease infinite;
+    }
+    .mic-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 4px 0 #0f766e;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    .mic-hint {
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: center;
+      margin: 0;
+    }
+    .feedback {
+      text-align: center;
+      font-weight: 800;
+      font-size: 1.05rem;
+      min-height: 1.4em;
+    }
+    .feedback.ok { color: var(--success); }
+    .feedback.bad { color: var(--danger); }
+    .play-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .play-btn:disabled { opacity: .6; cursor: not-allowed; }
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .primary-btn, .ghost-btn {
+      min-height: 48px;
+      padding: 12px 22px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+    }
+    .primary-btn {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 0 color-mix(in srgb, var(--accent) 70%, #000);
+    }
+    .primary-btn:active { transform: translateY(2px); }
+    .ghost-btn {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .phase-label {
+      text-align: center;
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .role-banner {
+      text-align: center;
+      background: var(--tone-soft);
+      color: var(--tone);
+      font-weight: 800;
+      padding: 10px 14px;
+      border-radius: 14px;
+      margin-bottom: 8px;
+    }
+
+    /* Start screen dialogue preview */
+    .start-dialogue {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 18px 16px 16px;
+      box-shadow: 0 8px 24px var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      margin: 4px 0 6px;
+    }
+    .sd-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 1.02rem;
+      line-height: 1.5;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .sd-who {
+      flex-shrink: 0;
+      width: 1.65em;
+      height: 1.65em;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: .72rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0;
+    }
+    .sd-line.a .sd-who {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+    .sd-line.b .sd-who {
+      background: #fce7f3;
+      color: #be185d;
+    }
+    html[data-theme="dark"] .sd-line.a .sd-who {
+      background: #1e3a5f;
+      color: #93c5fd;
+    }
+    html[data-theme="dark"] .sd-line.b .sd-who {
+      background: #4a1942;
+      color: #f9a8d4;
+    }
+    .sd-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .sd-text em {
+      font-style: normal;
+      font-weight: 800;
+      color: var(--accent);
+      border-bottom: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+      padding-bottom: 1px;
+    }
+  </style>
+</head>
+<body class="no-profile-fab">
+  <div class="game" id="app">
+    <!-- START -->
+    <div class="screen" id="startScreen">
+      <header class="top-bar">
+        <a href="../" class="back-btn" aria-label="Back">←</a>
+        <div class="top-center">
+          <span class="unit-label">Starter · Unit 9A</span>
+          <span class="game-title">Listen &amp; Repeat</span>
+        </div>
+        <div class="top-spacer"></div>
+      </header>
+      <div class="start-body">
+        <p class="start-lead">Present Continuous conversation. Listen, repeat every line, then role-play as A and B.</p>
+
+        <div class="start-dialogue" aria-label="Conversation preview">
+          <div class="sd-line a">
+            <span class="sd-who">A</span>
+            <span class="sd-text">What are you <em>doing</em>?</span>
+          </div>
+          <div class="sd-line b">
+            <span class="sd-who">B</span>
+            <span class="sd-text">I'm <em>making</em> dinner.</span>
+          </div>
+          <div class="sd-line a">
+            <span class="sd-who">A</span>
+            <span class="sd-text">Are the <em>children</em> <em>doing</em> their <em>homework</em>?</span>
+          </div>
+          <div class="sd-line b">
+            <span class="sd-who">B</span>
+            <span class="sd-text"><em>No</em>, they aren't. They're <em>watching</em> TV.</span>
+          </div>
+          <div class="sd-line a">
+            <span class="sd-who">A</span>
+            <span class="sd-text">What's your <em>mother</em> <em>doing</em>?</span>
+          </div>
+          <div class="sd-line b">
+            <span class="sd-who">B</span>
+            <span class="sd-text">She's <em>helping</em> me.</span>
+          </div>
+        </div>
+
+        <button type="button" class="mode-card" id="startBtn">
+          <span class="mode-ico">🎧</span>
+          <span class="mode-title">Start</span>
+          <span class="mode-desc">1) Full conversation → 2) Listen &amp; Repeat → 3) Role-play A then B</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- FULL CONVERSATION -->
+    <div class="screen hidden" id="fullScreen">
+      <header class="top-bar">
+        <button type="button" class="back-btn" id="fullBack" aria-label="Back">←</button>
+        <div class="top-center">
+          <span class="unit-label">Phase 1</span>
+          <span class="game-title">Full Conversation</span>
+        </div>
+        <div class="top-spacer"></div>
+      </header>
+      <div class="play-body">
+        <p class="phase-label">Listen carefully</p>
+        <div class="dialogue-card" id="fullDialogue"></div>
+        <div class="btn-stack" style="margin-top:16px">
+          <button type="button" class="lw-audio-btn" id="playFullBtn" aria-label="Play conversation">
+            <span class="wave"></span><span class="wave"></span><span class="wave"></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            <div class="eq"><span></span><span></span><span></span><span></span></div>
+          </button>
+          <p class="mic-hint" id="fullPlayHint">Play conversation</p>
+        </div>
+        <div class="action-row hidden" id="fullContinueRow">
+          <button type="button" class="primary-btn" id="fullContinueBtn">Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTEN & REPEAT -->
+    <div class="screen hidden" id="repeatScreen">
+      <header class="top-bar">
+        <button type="button" class="back-btn" id="repeatBack" aria-label="Back">←</button>
+        <div class="top-center">
+          <span class="unit-label">Phase 2 · <span id="repeatProgress">1/6</span></span>
+          <span class="game-title">Listen &amp; Repeat</span>
+        </div>
+        <div class="top-spacer"></div>
+      </header>
+      <div class="play-body">
+        <div class="your-line-card">
+          <div class="your-line-label">Your line · <span id="repeatBadgeWho">A</span></div>
+          <p class="your-line-text" id="repeatText">What are you doing?</p>
+        </div>
+        <div class="btn-stack">
+          <button type="button" class="lw-audio-btn" id="repeatPlayBtn" aria-label="Listen">
+            <span class="wave"></span><span class="wave"></span><span class="wave"></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            <div class="eq"><span></span><span></span><span></span><span></span></div>
+          </button>
+          <button type="button" class="mic-btn" id="repeatMicBtn" disabled aria-label="Speak">🎤</button>
+          <p class="mic-hint" id="repeatMicHint">Listen first, then press the mic</p>
+        </div>
+        <p class="feedback" id="repeatFeedback"></p>
+        <div class="action-row hidden" id="repeatNextRow">
+          <button type="button" class="primary-btn" id="repeatNextBtn">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROLE-PLAY -->
+    <div class="screen hidden" id="roleScreen">
+      <header class="top-bar">
+        <button type="button" class="back-btn" id="roleBack" aria-label="Back">←</button>
+        <div class="top-center">
+          <span class="unit-label">Phase 3 · <span id="roleProgress">1/3</span></span>
+          <span class="game-title">Role-Play</span>
+        </div>
+        <div class="top-spacer"></div>
+      </header>
+      <div class="play-body">
+        <div class="role-banner" id="roleBanner">You are Speaker A — say A's lines</div>
+
+        <div class="partner-line hidden" id="partnerLine">
+          <div class="partner-label" id="partnerLabel">B said</div>
+          <p class="partner-text" id="partnerText"></p>
+        </div>
+
+        <div class="your-line-card">
+          <div class="your-line-label">Your line · <span id="roleBadgeWho">A</span></div>
+          <p class="your-line-text" id="roleText">What are you doing?</p>
+        </div>
+
+        <div class="btn-stack">
+          <button type="button" class="lw-audio-btn" id="rolePlayBtn" aria-label="Listen">
+            <span class="wave"></span><span class="wave"></span><span class="wave"></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            <div class="eq"><span></span><span></span><span></span><span></span></div>
+          </button>
+          <button type="button" class="mic-btn" id="roleMicBtn" disabled aria-label="Speak">🎤</button>
+          <p class="mic-hint" id="roleMicHint">Listen first, then say the line</p>
+        </div>
+        <p class="feedback" id="roleFeedback"></p>
+        <div class="action-row hidden" id="roleNextRow">
+          <button type="button" class="primary-btn" id="roleNextBtn">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- END -->
+    <div class="overlay hidden" id="endOverlay">
+      <div class="overlay-card" id="endCard">
+        <span class="end-emoji">🎉</span>
+        <h2>Great job!</h2>
+        <p id="endMsg">You finished the conversation practice.</p>
+        <button type="button" class="primary-btn" id="playAgainBtn">Play again</button>
+        <button type="button" class="ghost-btn" id="homeBtn">Back to games</button>
+      </div>
+    </div>
+  </div>
+  <script src="../../../../../../../theme.js"></script>
+  <script src="/learningarcade/la-stars.js" data-la-stars></script>
+  <script src="script.js"></script>
+</body>
+</html>

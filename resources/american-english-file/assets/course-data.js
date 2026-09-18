@@ -250,6 +250,11 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
   { title: "Picture Sentences", url: "continuous-pictures/", label: "Grammar" },
   { title: "Dialogue Complete", url: "continuous-dialogues/", label: "Grammar" },
   { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
+  { title: "Listen & Repeat", url: "listen-repeat-conversation/", label: "Pronunciation" },
+  { title: "Travel Match", url: "travel-match/", label: "Vocabulary" },
+  { title: "Travel Phrases", url: "travel-phrase/", label: "Vocabulary" },
+  { title: "What are they doing?", url: "travel-whats-doing/", label: "Vocabulary" },
+  { title: "Listen & Answer", url: "travel-conversations/", label: "Listening" },
 ];
 
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)
