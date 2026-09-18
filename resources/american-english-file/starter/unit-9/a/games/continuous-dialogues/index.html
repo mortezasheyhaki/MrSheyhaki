@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+  (function () {
+    try {
+      var t = localStorage.getItem("mrsheyhaki-theme");
+      if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+      else if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches)
+        document.documentElement.setAttribute("data-theme", "dark");
+      else document.documentElement.setAttribute("data-theme", "light");
+    } catch (e) {}
+  })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Dialogue Complete | Starter Unit 9A | Mr. Sheyhaki</title>
+  <meta name="description" content="Complete present continuous dialogues with +, −, or ? forms.">
+  <link rel="stylesheet" href="../../../../../../../theme.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .dialogue {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px 16px 14px;
+      box-shadow: 0 8px 24px var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .line {
+      font-size: 1.02rem;
+      line-height: 1.65;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0 2px;
+    }
+    .line .who {
+      flex-shrink: 0;
+      width: 1.6em;
+      height: 1.6em;
+      margin-right: 8px;
+      border-radius: 999px;
+      background: var(--tone-soft);
+      color: var(--tone);
+      font-weight: 900;
+      font-size: .78rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0;
+    }
+    .line .words {
+      flex: 1;
+      min-width: 0;
+      line-height: 1.75;
+    }
+    .line input.inline-blank {
+      display: inline-block;
+      width: 8.2em;
+      min-width: 5em;
+      max-width: 100%;
+      margin: 2px 3px;
+      padding: 6px 10px;
+      border: 2px solid var(--accent);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--accent-soft) 55%, var(--bg-card));
+      color: var(--text);
+      font: inherit;
+      font-weight: 800;
+      font-size: .98rem;
+      text-align: center;
+      vertical-align: baseline;
+      outline: none;
+      transition: border-color .15s, background .15s, box-shadow .15s, width .2s;
+    }
+    .line input.inline-blank:focus {
+      border-color: var(--tone);
+      background: var(--bg-card);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--tone) 28%, transparent);
+    }
+    .line input.inline-blank.ok {
+      border-color: var(--success);
+      background: var(--success-soft);
+      color: var(--success);
+      width: auto;
+      min-width: 3.5em;
+      max-width: none;
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+    .line input.inline-blank.bad {
+      border-color: var(--danger);
+      background: var(--danger-soft);
+      animation: shake .28s ease;
+    }
+    .line input.inline-blank.wide {
+      width: 11em;
+      max-width: 100%;
+    }
+    .verb-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .verb-row .use-label {
+      font-size: .8rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .verb-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .verb-tags span {
+      background: linear-gradient(180deg, #d97706, #b45309);
+      color: #fff;
+      font-size: .95rem;
+      font-weight: 800;
+      padding: 8px 14px;
+      border-radius: 12px;
+      letter-spacing: 0.01em;
+      text-transform: none;
+      box-shadow: 0 3px 0 #92400e, 0 6px 14px rgba(180, 83, 9, 0.28);
+      border: none;
+    }
+    html[data-theme="dark"] .verb-tags span {
+      background: linear-gradient(180deg, #fbbf24, #f59e0b);
+      color: #1c1917;
+      box-shadow: 0 3px 0 #b45309, 0 6px 14px rgba(245, 158, 11, 0.3);
+    }
+    .feedback.ok {
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--success);
+      animation: popIn .35s ease;
+    }
+    .feedback.bad {
+      text-align: center;
+      font-weight: 700;
+      color: var(--danger);
+    }
+    .overlay { animation: fadeIn .35s ease; }
+    .overlay-card {
+      animation: cardRise .5s cubic-bezier(.2, .9, .3, 1.15);
+      text-align: center;
+      padding: 28px 22px 22px;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .overlay-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--tone), var(--accent), var(--success));
+    }
+    .end-emoji {
+      font-size: 3rem;
+      line-height: 1;
+      margin-bottom: 8px;
+      animation: bounceIn .7s cubic-bezier(.2, .9, .3, 1.4);
+      display: block;
+    }
+    .overlay-card h2 {
+      font-size: 1.75rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+    .score-ring {
+      width: 96px;
+      height: 96px;
+      margin: 14px auto 12px;
+      border-radius: 50%;
+      background: conic-gradient(var(--success) var(--p, 0%), var(--border) 0);
+      display: grid;
+      place-items: center;
+    }
+    .score-ring-inner {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 1.35rem;
+      color: var(--text);
+    }
+    .confetti {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .confetti i {
+      position: absolute;
+      top: -12px;
+      width: 8px;
+      height: 12px;
+      border-radius: 2px;
+      opacity: .9;
+      animation: fall 1.8s linear forwards;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes cardRise {
+      from { opacity: 0; transform: translateY(28px) scale(.94); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    @keyframes fall {
+      to { transform: translateY(320px) rotate(360deg); opacity: 0; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body class="no-profile-fab">
+  <div class="game" id="app">
+    <div class="screen" id="startScreen">
+      <header class="top-bar">
+        <a href="../" class="back-btn" aria-label="Back">←</a>
+        <div class="top-center">
+          <span class="unit-label">Starter · Unit 9A</span>
+          <span class="game-title">Dialogue Complete</span>
+        </div>
+        <div class="top-spacer"></div>
+      </header>
+      <div class="start-body">
+        <p class="start-lead">Complete each dialogue with present continuous <strong>+</strong>, <strong>−</strong>, or <strong>?</strong>. Use contractions where possible.</p>
+        <p class="start-lead" style="margin-top:-4px">Example: She <strong>'s eating</strong> pasta.</p>
+        <button type="button" class="mode-card" id="startBtn">
+          <span class="mode-ico">✍️</span>
+          <span class="mode-title">Start</span>
+          <span class="mode-desc">10 dialogues · type in the blanks · listen after each one</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="screen hidden" id="gameScreen">
+      <header class="top-bar">
+        <button type="button" class="back-btn" id="exitBtn" aria-label="Exit">←</button>
+        <div class="top-center">
+          <span class="unit-label">Write</span>
+          <span class="game-title">Dialogue Complete</span>
+        </div>
+        <div class="top-spacer"></div>
+      </header>
+      <div class="play-body">
+        <div class="stats-bar">
+          <div class="stat-pill"><span class="stat-label">Q</span><span class="stat-value" id="qProgress">1/10</span></div>
+          <div class="stat-pill"><span class="stat-label">Score</span><span class="stat-value" id="scoreText">0</span></div>
+          <div class="stat-pill"><span class="stat-label">Left</span><span class="stat-value" id="leftText">10</span></div>
+        </div>
+
+        <div class="prompt-card">
+          <p class="prompt-hint" id="itemLabel">Dialogue 1</p>
+          <div class="verb-row">
+            <span class="use-label">Use</span>
+            <div class="verb-tags" id="verbTags"></div>
+          </div>
+        </div>
+
+        <div class="dialogue" id="dialogueBox"></div>
+        <p class="feedback" id="feedback"></p>
+
+        <div class="action-row" id="actions">
+          <button type="button" class="primary-btn" id="checkBtn" disabled>Check</button>
+        </div>
+        <div class="action-row hidden" id="nextRow">
+          <button type="button" class="ghost-btn" id="listenBtn">Listen</button>
+          <button type="button" class="primary-btn" id="nextBtn">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="endOverlay">
+      <div class="overlay-card" id="endCard">
+        <div class="confetti" id="confetti" aria-hidden="true"></div>
+        <span class="end-emoji" id="endEmoji">🎉</span>
+        <h2 id="endTitle">Well done!</h2>
+        <div class="score-ring" id="scoreRing" style="--p: 0%">
+          <div class="score-ring-inner" id="scoreRingText">0/10</div>
+        </div>
+        <p id="endMsg">You scored 0 of 10</p>
+        <button type="button" class="primary-btn" id="playAgainBtn">Play again</button>
+        <button type="button" class="ghost-btn" id="homeBtn">Home</button>
+      </div>
+    </div>
+  </div>
+  <script src="../../../../../../../theme.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

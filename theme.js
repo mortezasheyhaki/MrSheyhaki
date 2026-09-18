@@ -117,8 +117,8 @@
 
     ensureLedStrips();
 
-    // Profile icon — always last item in the header
-    if (!document.querySelector(".arcade-nav .nav-profile, a.nav-profile")) {
+    // Profile icon — only inside arcade-nav (never as a floating FAB on game pages)
+    if (nav && !nav.querySelector(".nav-profile")) {
       var profile = document.createElement("a");
       profile.href = "learningarcade/profile/";
       profile.className = "nav-link nav-profile";
@@ -126,19 +126,15 @@
       profile.title = "My Profile";
       profile.innerHTML =
         '<span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span>';
-      if (nav) nav.appendChild(profile);
-      else {
-        profile.className = "profile-fab profile-fab--header";
-        profile.textContent = "👤";
-        document.body.appendChild(profile);
-      }
+      nav.appendChild(profile);
     } else if (nav) {
       var existingProfile = nav.querySelector(".nav-profile");
       if (existingProfile) nav.appendChild(existingProfile);
     }
 
-    document.querySelectorAll("a.profile-fab").forEach(function (el) {
-      if (!el.classList.contains("profile-fab--header")) el.style.display = "none";
+    // Remove any leftover floating profile FABs (legacy / game pages)
+    document.querySelectorAll("a.profile-fab, .profile-fab").forEach(function (el) {
+      el.remove();
     });
 
     applyTheme(root.getAttribute("data-theme") || getPreferred());

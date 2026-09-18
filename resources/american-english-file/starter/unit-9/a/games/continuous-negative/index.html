@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+  (function () {
+    try {
+      var t = localStorage.getItem("mrsheyhaki-theme");
+      if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+      else if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches)
+        document.documentElement.setAttribute("data-theme", "dark");
+      else document.documentElement.setAttribute("data-theme", "light");
+    } catch (e) {}
+  })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Present Continuous − | Starter Unit 9A | Mr. Sheyhaki</title>
+  <meta name="description" content="Build negative present continuous sentences with word chips or by writing.">
+  <link rel="stylesheet" href="../../../../../../../theme.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="no-profile-fab">
+  <div class="game" id="app">
+    <div class="screen" id="startScreen">
+      <header class="top-bar">
+        <a href="../" class="back-btn" aria-label="Back">←</a>
+        <div class="top-center">
+          <span class="unit-label">Starter · Unit 9A</span>
+          <span class="game-title">Present Continuous −</span>
+        </div>
+        <div class="top-spacer"></div>
+      </header>
+      <div class="start-body">
+        <p class="start-lead">Build negative sentences. Words are separate: <strong>I · am · not · working</strong></p>
+        <button type="button" class="mode-card" data-mode="chips">
+          <span class="mode-ico">🧩</span>
+          <span class="mode-title">1 · Word chips</span>
+          <span class="mode-desc">Tap chips in order. Hear the sentence when it’s right.</span>
+        </button>
+        <button type="button" class="mode-card" data-mode="write">
+          <span class="mode-ico">✍️</span>
+          <span class="mode-title">2 · Write it</span>
+          <span class="mode-desc">Type the full sentence (I am working / I’m working).</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="screen hidden" id="gameScreen">
+      <header class="top-bar">
+        <button type="button" class="back-btn" id="exitBtn" aria-label="Exit">←</button>
+        <div class="top-center">
+          <span class="unit-label" id="modeLabel">Chips</span>
+          <span class="game-title">Present Continuous −</span>
+        </div>
+        <div class="top-spacer"></div>
+      </header>
+      <div class="play-body">
+        <div class="stats-bar">
+          <div class="stat-pill"><span class="stat-label">Q</span><span class="stat-value" id="qProgress">1/7</span></div>
+          <div class="stat-pill"><span class="stat-label">Score</span><span class="stat-value" id="scoreText">0</span></div>
+          <div class="stat-pill"><span class="stat-label">Left</span><span class="stat-value" id="leftText">7</span></div>
+        </div>
+        <div class="prompt-card">
+          <p class="prompt-hint">Make a − sentence</p>
+          <p class="prompt-text" id="promptText">I / work</p>
+          <span class="form-badge">−</span>
+        </div>
+
+        <div id="chipsPanel">
+          <div class="tray" id="answerSlots"><p class="tray-empty">Tap chips to build the sentence</p></div>
+          <div class="chip-bank" id="chipBank"></div>
+          <p class="feedback" id="chipsFeedback"></p>
+          <div class="action-row" id="chipsActions">
+            <button type="button" class="ghost-btn" id="clearChipsBtn">Clear</button>
+            <button type="button" class="primary-btn" id="checkChipsBtn" disabled>Check</button>
+          </div>
+          <div class="action-row hidden" id="chipsNextRow">
+            <button type="button" class="ghost-btn" id="listenBtn">🔊 Listen</button>
+            <button type="button" class="primary-btn" id="nextChipsBtn">Next</button>
+          </div>
+        </div>
+
+        <div id="writePanel" class="hidden">
+          <input type="text" id="answerInput" class="answer-input" placeholder="type the sentence…" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false">
+          <p class="feedback" id="writeFeedback"></p>
+          <div class="action-row" id="writeActions">
+            <button type="button" class="primary-btn" id="checkWriteBtn" disabled>Check</button>
+          </div>
+          <div class="action-row hidden" id="writeNextRow">
+            <button type="button" class="ghost-btn" id="listenWriteBtn">🔊 Listen</button>
+            <button type="button" class="primary-btn" id="nextWriteBtn">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="endOverlay">
+      <div class="overlay-card">
+        <h2 id="endTitle">Done!</h2>
+        <p id="endMsg">You scored 0 of 7</p>
+        <button type="button" class="primary-btn" id="playAgainBtn">Play again</button>
+        <button type="button" class="ghost-btn" id="homeBtn">Choose mode</button>
+      </div>
+    </div>
+  </div>
+  <script src="../../../../../../../theme.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

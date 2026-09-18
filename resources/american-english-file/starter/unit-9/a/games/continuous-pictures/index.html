@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+  (function () {
+    try {
+      var t = localStorage.getItem("mrsheyhaki-theme");
+      if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+      else if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches)
+        document.documentElement.setAttribute("data-theme", "dark");
+      else document.documentElement.setAttribute("data-theme", "light");
+    } catch (e) {}
+  })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Picture Sentences | Starter Unit 9A | Mr. Sheyhaki</title>
+  <meta name="description" content="Look at the picture and write present continuous sentences with be + verb-ing.">
+  <link rel="stylesheet" href="../../../../../../../theme.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .scene-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 10px;
+      min-height: 140px;
+      box-shadow: 0 4px 14px var(--shadow);
+    }
+    .scene-img {
+      max-width: 100%;
+      max-height: 180px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+    .verb-hint {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .verb-hint strong {
+      color: var(--accent-text);
+      font-weight: 800;
+    }
+    .formula {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .formula span {
+      background: var(--accent-soft);
+      color: var(--accent-text);
+      font-size: .72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    @media (max-height: 720px) {
+      .scene-img { max-height: 130px; }
+      .scene-wrap { min-height: 110px; padding: 8px; }
+    }
+  </style>
+</head>
+<body class="no-profile-fab">
+  <div class="game" id="app">
+    <div class="screen" id="startScreen">
+      <header class="top-bar">
+        <a href="../" class="back-btn" aria-label="Back">←</a>
+        <div class="top-center">
+          <span class="unit-label">Starter · Unit 9A</span>
+          <span class="game-title">Picture Sentences</span>
+        </div>
+        <div class="top-spacer"></div>
+      </header>
+      <div class="start-body">
+        <p class="start-lead">Look at each picture. Write the sentence using a <strong>be</strong> verb and the <strong>-ing</strong> form.</p>
+        <p class="start-lead" style="margin-top:-4px">Example: He <strong>is taking</strong> a shower.</p>
+        <button type="button" class="mode-card" id="startBtn">
+          <span class="mode-ico">✍️</span>
+          <span class="mode-title">Start writing</span>
+          <span class="mode-desc">am / is / are + verb-ing · 6 pictures</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="screen hidden" id="gameScreen">
+      <header class="top-bar">
+        <button type="button" class="back-btn" id="exitBtn" aria-label="Exit">←</button>
+        <div class="top-center">
+          <span class="unit-label">Write</span>
+          <span class="game-title">Picture Sentences</span>
+        </div>
+        <div class="top-spacer"></div>
+      </header>
+      <div class="play-body">
+        <div class="stats-bar">
+          <div class="stat-pill"><span class="stat-label">Q</span><span class="stat-value" id="qProgress">1/6</span></div>
+          <div class="stat-pill"><span class="stat-label">Score</span><span class="stat-value" id="scoreText">0</span></div>
+          <div class="stat-pill"><span class="stat-label">Left</span><span class="stat-value" id="leftText">6</span></div>
+        </div>
+
+        <div class="scene-wrap">
+          <img class="scene-img" id="sceneImg" alt="Scene" src="" />
+        </div>
+
+        <div class="prompt-card">
+          <p class="prompt-hint" id="promptHint">Complete the sentence</p>
+          <p class="prompt-text" id="promptText">I can't talk now. I ______.</p>
+          <span class="verb-hint">Verb: <strong id="verbHint">(drive)</strong></span>
+          <div class="formula">
+            <span>am / is / are</span>
+            <span>+ verb-ing</span>
+          </div>
+        </div>
+
+        <input type="text" id="answerInput" class="answer-input"
+               placeholder="e.g. is working"
+               autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+
+        <p class="feedback" id="writeFeedback"></p>
+        <div class="action-row" id="writeActions">
+          <button type="button" class="primary-btn" id="checkWriteBtn" disabled>Check</button>
+        </div>
+        <div class="action-row hidden" id="writeNextRow">
+          <button type="button" class="primary-btn" id="nextWriteBtn">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="endOverlay">
+      <div class="overlay-card">
+        <h2 id="endTitle">Done!</h2>
+        <p id="endMsg">You scored 0 of 6</p>
+        <button type="button" class="primary-btn" id="playAgainBtn">Play again</button>
+        <button type="button" class="ghost-btn" id="homeBtn">Home</button>
+      </div>
+    </div>
+  </div>
+  <script src="../../../../../../../theme.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -242,9 +242,14 @@ COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.games = [
   { title: "Subject vs Object Pronouns", url: "subject-object-pronouns/" },
 ];
 
-// Unit 9A – Listen & Write game
+// Unit 9A – Present continuous builders + Listen & Write
 COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
-  { title: "Listen & Write", url: "listen-and-write/" },
+  { title: "Present Continuous +", url: "continuous-positive/", label: "Grammar" },
+  { title: "Present Continuous −", url: "continuous-negative/", label: "Grammar" },
+  { title: "Present Continuous ?", url: "continuous-questions/", label: "Grammar" },
+  { title: "Picture Sentences", url: "continuous-pictures/", label: "Grammar" },
+  { title: "Dialogue Complete", url: "continuous-dialogues/", label: "Grammar" },
+  { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
 ];
 
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)
