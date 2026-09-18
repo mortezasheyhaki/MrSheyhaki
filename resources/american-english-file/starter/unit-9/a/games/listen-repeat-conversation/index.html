@@ -362,6 +362,122 @@
       border-bottom: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
       padding-bottom: 1px;
     }
+  
+    /* ===== Role-Play layout fix (fit screen, no bottom gap) ===== */
+    #roleScreen {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      height: 100%;
+      max-height: 100dvh;
+      overflow: hidden;
+      width: 100%;
+    }
+    #roleScreen.hidden { display: none !important; }
+    #roleScreen .play-body {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 6px 14px max(10px, env(safe-area-inset-bottom));
+      justify-content: flex-start;
+    }
+    #roleScreen .role-banner {
+      flex-shrink: 0;
+      margin-bottom: 0;
+      padding: 8px 12px;
+      font-size: 0.92rem;
+    }
+    #roleScreen .partner-line {
+      flex-shrink: 0;
+      margin-bottom: 0;
+      padding: 8px 12px;
+    }
+    #roleScreen .partner-text {
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+    #roleScreen .your-line-card {
+      flex-shrink: 0;
+      padding: 12px 14px;
+    }
+    #roleScreen .your-line-text {
+      font-size: 1.15rem;
+      line-height: 1.35;
+    }
+    #roleScreen .btn-stack {
+      flex-shrink: 0;
+      gap: 10px;
+      margin: 6px 0 0;
+    }
+    #roleScreen .lw-audio-btn {
+      width: 64px;
+      height: 64px;
+    }
+    #roleScreen .mic-btn {
+      width: 64px;
+      height: 64px;
+      font-size: 1.5rem;
+    }
+    #roleScreen .mic-hint {
+      font-size: 0.8rem;
+    }
+    #roleScreen .feedback {
+      flex-shrink: 0;
+      font-size: 0.95rem;
+      min-height: 1.2em;
+      margin: 0;
+    }
+    #roleScreen .action-row {
+      flex-shrink: 0;
+      margin-top: auto;
+      padding-top: 8px;
+      width: 100%;
+    }
+    #roleScreen .action-row .primary-btn {
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+    #roleScreen .action-row.hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 480px) {
+      #roleScreen .play-body {
+        gap: 8px;
+        padding: 4px 12px max(8px, env(safe-area-inset-bottom));
+      }
+      #roleScreen .your-line-text {
+        font-size: 1.05rem;
+      }
+      #roleScreen .lw-audio-btn,
+      #roleScreen .mic-btn {
+        width: 56px;
+        height: 56px;
+      }
+      #roleScreen .btn-stack {
+        gap: 8px;
+      }
+    }
+
+    @media (max-height: 700px) {
+      #roleScreen .role-banner { padding: 6px 10px; font-size: 0.85rem; }
+      #roleScreen .your-line-card { padding: 10px 12px; }
+      #roleScreen .your-line-text { font-size: 1rem; }
+      #roleScreen .partner-line { padding: 6px 10px; }
+      #roleScreen .lw-audio-btn,
+      #roleScreen .mic-btn {
+        width: 52px;
+        height: 52px;
+        font-size: 1.35rem;
+      }
+      #roleScreen .btn-stack { gap: 6px; margin-top: 2px; }
+    }
+
   </style>
 </head>
 <body class="no-profile-fab">
