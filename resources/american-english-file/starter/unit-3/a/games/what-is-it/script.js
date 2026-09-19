@@ -2,6 +2,62 @@
 (function () {
   const GAME_ID = "starter-3a-what-is-it";
 
+
+  /* ---------- sound effects (Web Audio) ---------- */
+  var sfxCtx = null;
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try { sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    }
+    if (sfxCtx.state === "suspended") sfxCtx.resume().catch(function () {});
+    return sfxCtx;
+  }
+  function sfxTone(freq, start, dur, type, gain, slideTo) {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, start);
+    if (slideTo) osc.frequency.linearRampToValueAtTime(slideTo, start + dur * 0.85);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.1), start + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.02);
+  }
+  function sfxCorrect() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.1);
+    sfxTone(659.25, t + 0.08, 0.12, "triangle", 0.1);
+    sfxTone(783.99, t + 0.16, 0.16, "sine", 0.09);
+  }
+  function sfxWrong() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(220, t, 0.14, "sawtooth", 0.05, 140);
+    sfxTone(180, t + 0.05, 0.14, "triangle", 0.04, 120);
+  }
+  function sfxClick() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    sfxTone(720, ctx.currentTime, 0.045, "sine", 0.04);
+  }
+  function sfxComplete() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.09);
+    sfxTone(659.25, t + 0.1, 0.1, "triangle", 0.09);
+    sfxTone(783.99, t + 0.2, 0.12, "triangle", 0.1);
+    sfxTone(1046.5, t + 0.32, 0.22, "sine", 0.08);
+  }
+
   const SpeechRecognitionAPI =
     window.SpeechRecognition || window.webkitSpeechRecognition || null;
 
@@ -15,7 +71,7 @@
     },
     {
       id: "watch",
-      image: "images/watch.png",
+      image: "https://cdn.imgurl.ir/uploads/y08797_a_watch_1.png",
       answers: ["it's a watch", "it is a watch", "a watch", "watch"],
       label: "It's a watch.",
       answerAudio: "audio/its-a-watch.mp3",
@@ -29,7 +85,7 @@
     },
     {
       id: "key",
-      image: "images/key.png",
+      image: "https://cdn.imgurl.ir/uploads/r0663_a_key_1.png",
       answers: ["it's a key", "it is a key", "a key", "key"],
       label: "It's a key.",
       answerAudio: "audio/its-a-key.mp3",
@@ -46,7 +102,7 @@
     },
     {
       id: "watches",
-      image: "images/watches.png",
+      image: "https://cdn.imgurl.ir/uploads/y08797_a_watch_1.png",
       answers: ["they're watches", "they are watches", "watches"],
       label: "They're watches.",
       answerAudio: "audio/theyre-watches.mp3",
@@ -60,7 +116,7 @@
     },
     {
       id: "keys",
-      image: "images/keys.png",
+      image: "https://cdn.imgurl.ir/uploads/r0663_a_key_1.png",
       answers: ["they're keys", "they are keys", "keys"],
       label: "They're keys.",
       answerAudio: "audio/theyre-keys.mp3",
@@ -158,6 +214,7 @@
   }
 
   function startPart(pi) {
+    if (window.LAFinish) LAFinish.startTimer();
     partIndex = pi;
     order = shuffle(PARTS[partIndex].items.slice());
     idx = 0;
@@ -282,10 +339,12 @@
     const ok = isCorrect(user, item.answers);
 
     if (ok) {
+      sfxCorrect();
       score += 1;
       input.classList.add("is-correct");
       setFb("Correct! " + item.label, "ok");
     } else {
+      sfxWrong();
       input.classList.add("is-wrong");
       setFb(item.label, "bad");
     }
@@ -351,33 +410,24 @@
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      const part = PARTS[partIndex];
-      app.innerHTML = `
-        <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back">←</a>
-          <span class="mc-title">What is it?</span>
-          <span class="mc-badge">Done</span>
-        </header>
-        <section class="mc-done">
-          <div class="trophy-scene${stars === 3 ? " perfect" : ""}" aria-hidden="true">
-            <div class="orbit-system">
-              <div class="trophy-float">🏆</div>
-              <div class="star-orbit"><span class="star${stars >= 1 ? " filled" : ""}">★</span></div>
-              <div class="star-orbit"><span class="star${stars >= 2 ? " filled" : ""}">★</span></div>
-              <div class="star-orbit"><span class="star${stars >= 3 ? " filled" : ""}">★</span></div>
-            </div>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p><strong>${part.title}</strong><br>You got <strong>${score} / ${order.length}</strong> correct.</p>
-          <button type="button" class="mc-btn" id="wi-again">Play again</button>
-          <button type="button" class="mc-btn secondary" id="wi-menu">Both parts</button>
-        </section>`;
-      document.getElementById("wi-again").onclick = () => startPart(partIndex);
-      document.getElementById("wi-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      const stars = typeof saveStars === 'function' ? saveStars() : 0;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: order.length,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startPart(partIndex),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u3a-again">Again</button>`;
+      document.getElementById("u3a-again").onclick = () => startPart(partIndex);
       return;
     }
 

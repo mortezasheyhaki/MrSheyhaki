@@ -142,6 +142,7 @@
   }
 
   function startPart(pi) {
+    if (window.LAFinish) LAFinish.startTimer();
     partIndex = pi;
     blankIndex = 0;
     filled = [];
@@ -266,31 +267,23 @@
     if (phase === "done") {
       const stars = calcStars();
       saveProgress(stars);
-      const part = PARTS[partIndex];
-      app.innerHTML = `
-        <header class="wd-topbar">
-          <a class="wd-back" href="../" aria-label="Back">←</a>
-          <span class="wd-title">Where from?</span>
-          <span class="wd-badge">Done</span>
-        </header>
-        <section class="wd-done">
-          <div class="wd-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="wd-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p><strong>${part.title}</strong><br>
-          You got <strong>${correctCount} / ${totalBlanks}</strong> correct.</p>
-          <button type="button" class="wd-btn" id="wd-again">Play again</button>
-          <button type="button" class="wd-btn secondary" id="wd-menu">All parts</button>
-        </section>`;
-      document.getElementById("wd-again").onclick = () => startPart(partIndex);
-      document.getElementById("wd-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: Math.max(totalBlanks, 1),
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startPart(partIndex),
+          onModes: () => { phase = "menu"; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="fb-again">Again</button>`;
+      document.getElementById("fb-again").onclick = () => startPart(partIndex);
       return;
     }
 

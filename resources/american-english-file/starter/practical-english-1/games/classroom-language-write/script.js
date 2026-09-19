@@ -114,6 +114,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     clearAuto();
     order = shuffle(ITEMS);
     index = 0;
@@ -229,26 +230,22 @@
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      app.innerHTML = `
-        <header class="cw-topbar">
-          <a class="cw-back" href="../" aria-label="Back">←</a>
-          <span class="cw-title">Classroom Language Write</span>
-          <span class="cw-badge">Done</span>
-        </header>
-        <section class="cw-done">
-          <div class="cw-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="cw-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p>You got <strong>${correctCount} / ${ITEMS.length}</strong> correct.</p>
-          <button type="button" class="cw-btn" id="cw-again">Play again</button>
-          <a class="cw-btn secondary" href="../">Back to games</a>
-        </section>`;
-      document.getElementById("cw-again").onclick = startGame;
+      const stars = typeof saveStars === 'function' ? saveStars() : 0;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: ITEMS.length,
+          timeMs: timeMs,
+          onAgain: () => { phase = 'start'; render(); },
+          onModes: () => { phase = 'start'; render(); },
+          backHref: "../",
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="pe-again">Again</button>`;
+      document.getElementById("pe-again").onclick = () => { phase = 'start'; render(); };
       return;
     }
 

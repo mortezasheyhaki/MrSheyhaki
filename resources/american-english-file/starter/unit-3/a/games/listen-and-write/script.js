@@ -2,6 +2,62 @@
 (function () {
   const GAME_ID = "starter-3a-listen-and-write";
 
+
+  /* ---------- sound effects (Web Audio) ---------- */
+  var sfxCtx = null;
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try { sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    }
+    if (sfxCtx.state === "suspended") sfxCtx.resume().catch(function () {});
+    return sfxCtx;
+  }
+  function sfxTone(freq, start, dur, type, gain, slideTo) {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, start);
+    if (slideTo) osc.frequency.linearRampToValueAtTime(slideTo, start + dur * 0.85);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.1), start + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.02);
+  }
+  function sfxCorrect() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.1);
+    sfxTone(659.25, t + 0.08, 0.12, "triangle", 0.1);
+    sfxTone(783.99, t + 0.16, 0.16, "sine", 0.09);
+  }
+  function sfxWrong() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(220, t, 0.14, "sawtooth", 0.05, 140);
+    sfxTone(180, t + 0.05, 0.14, "triangle", 0.04, 120);
+  }
+  function sfxClick() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    sfxTone(720, ctx.currentTime, 0.045, "sine", 0.04);
+  }
+  function sfxComplete() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.09);
+    sfxTone(659.25, t + 0.1, 0.1, "triangle", 0.09);
+    sfxTone(783.99, t + 0.2, 0.12, "triangle", 0.1);
+    sfxTone(1046.5, t + 0.32, 0.22, "sine", 0.08);
+  }
+
   // The five short conversations in the audio. Players write the main "thing" heard.
   const ITEMS = [
     {
@@ -46,7 +102,7 @@
     }
   ];
 
-  const AUDIO = "audio/listening.mp3";
+  const AUDIO = "https://cdn.imgurl.ir/uploads/i5657_listening.mp3";
   const MAX_LISTENS = 3;
   const MAX_ATTEMPTS = 3;
 
@@ -154,6 +210,7 @@
       states[i].checked = true;
       states[i].correct = ok;
       if (ok) {
+      sfxCorrect();
         states[i].locked = true;
         correctCount += 1;
       }
@@ -301,32 +358,44 @@
   function renderDone() {
     const stars = saveStars();
     const correct = states.filter((s) => s.correct).length;
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: correct,
+        total: states.length,
+        stars: stars,
+        timeMs: timeMs,
+        onAgain: () => {
+          values = ITEMS.map(() => "");
+          states = ITEMS.map(() => ({ correct: false, locked: false, checked: false }));
+          checkedOnce = false;
+          listensLeft = MAX_LISTENS;
+          attemptsLeft = MAX_ATTEMPTS;
+          phase = "play";
+          if (window.LAFinish) LAFinish.startTimer();
+          render();
+        },
+        onModes: () => {
+          values = ITEMS.map(() => "");
+          states = ITEMS.map(() => ({ correct: false, locked: false, checked: false }));
+          checkedOnce = false;
+          listensLeft = MAX_LISTENS;
+          attemptsLeft = MAX_ATTEMPTS;
+          phase = "play";
+          render();
+        },
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+    // fallback uses original again button path
     const starHtml = [0, 1, 2].map((i) =>
       `<span class="star${i < stars ? " filled" : ""}">★</span>`
     ).join("");
-
-    app.innerHTML = `
-      <div class="mc-topbar">
-        <a href="../" class="mc-back" aria-label="Back">←</a>
-        <div class="mc-title-wrap">
-          <span class="mc-unit">Unit 3A</span>
-          <span class="mc-title">Listen &amp; Write</span>
-        </div>
-      </div>
-      <div class="mc-overlay" style="position:relative;background:transparent;padding-top:40px;">
-        <div class="mc-overlay-card">
-          <div class="mc-stars">${starHtml}</div>
-          <h2>${correct === 5 ? "Well done!" : "Good try!"}</h2>
-          <p>You got ${correct} out of 5 correct.</p>
-          <button type="button" class="mc-btn" id="lw-again">Play again</button>
-          <a href="../" class="mc-btn secondary" style="display:block;margin-top:10px;text-decoration:none;">Back to games</a>
-        </div>
-      </div>
-    `;
-    const again = app.querySelector("#lw-again");
-    if (again) again.onclick = () => {
-      listensLeft = MAX_LISTENS;
-      attemptsLeft = MAX_ATTEMPTS;
+    app.innerHTML = `<p>Done ${correct}/${states.length}</p><button type="button" id="lw-again">Again</button>`;
+    document.getElementById("lw-again").onclick = () => {
       values = ITEMS.map(() => "");
       states = ITEMS.map(() => ({ correct: false, locked: false, checked: false }));
       checkedOnce = false;

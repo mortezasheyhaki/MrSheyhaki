@@ -373,6 +373,7 @@
           score = 0;
           round = 0;
           used = [];
+          if (window.LAFinish) LAFinish.startTimer();
           startRound();
         };
       }
@@ -380,30 +381,35 @@
     }
 
     if (mode === "result") {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: TOTAL,
+          timeMs: timeMs,
+          onAgain: () => {
+            score = 0;
+            round = 0;
+            used = [];
+            mode = "play";
+            if (window.LAFinish) LAFinish.startTimer();
+            startRound();
+          },
+          onModes: () => {
+            mode = "start";
+            render();
+          },
+          backHref: "../",
+        });
+        return;
+      }
       const stars = score === TOTAL ? 3 : score >= 5 ? 2 : score >= 3 ? 1 : 0;
       if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
-      app.innerHTML = `
-        <header class="lr-topbar">
-          <a class="lr-back" href="../" aria-label="Back">←</a>
-          <span class="lr-title">Listen &amp; Repeat</span>
-          <span class="lr-badge">Done</span>
-        </header>
-        <section class="lr-done">
-          <div class="lr-trophy" aria-hidden="true">${stars ? "🏆" : "💪"}</div>
-          <div class="lr-stars" aria-hidden="true">
-            <span class="lr-star">${stars >= 1 ? "⭐" : "☆"}</span>
-            <span class="lr-star">${stars >= 2 ? "⭐" : "☆"}</span>
-            <span class="lr-star">${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${score === TOTAL ? "Perfect!" : score >= 5 ? "Great job!" : "Keep practicing!"}</h1>
-          <p>You said <strong>${score}</strong> of ${TOTAL} days correctly.</p>
-          <button type="button" class="lr-btn" id="lr-again">Play again</button>
-          <a class="lr-btn secondary" href="../">Back to games</a>
-        </section>`;
-      document.getElementById("lr-again").onclick = () => {
-        mode = "start";
-        render();
-      };
+      app.innerHTML = `<header class="lr-topbar"><a class="lr-back" href="../">←</a><span class="lr-title">Listen &amp; Repeat</span></header>
+        <section class="lr-done"><h1>Done!</h1><p>${score} of ${TOTAL}</p>
+        <button type="button" class="lr-btn" id="lr-again">Play again</button></section>`;
+      document.getElementById("lr-again").onclick = () => { mode = "start"; render(); };
       return;
     }
 

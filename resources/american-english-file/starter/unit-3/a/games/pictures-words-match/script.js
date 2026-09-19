@@ -2,22 +2,78 @@
 (function () {
   const GAME_ID = "starter-3a-pictures-words-match";
 
+
+  /* ---------- sound effects (Web Audio) ---------- */
+  var sfxCtx = null;
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try { sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    }
+    if (sfxCtx.state === "suspended") sfxCtx.resume().catch(function () {});
+    return sfxCtx;
+  }
+  function sfxTone(freq, start, dur, type, gain, slideTo) {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, start);
+    if (slideTo) osc.frequency.linearRampToValueAtTime(slideTo, start + dur * 0.85);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.1), start + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.02);
+  }
+  function sfxCorrect() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.1);
+    sfxTone(659.25, t + 0.08, 0.12, "triangle", 0.1);
+    sfxTone(783.99, t + 0.16, 0.16, "sine", 0.09);
+  }
+  function sfxWrong() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(220, t, 0.14, "sawtooth", 0.05, 140);
+    sfxTone(180, t + 0.05, 0.14, "triangle", 0.04, 120);
+  }
+  function sfxClick() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    sfxTone(720, ctx.currentTime, 0.045, "sine", 0.04);
+  }
+  function sfxComplete() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.09);
+    sfxTone(659.25, t + 0.1, 0.1, "triangle", 0.09);
+    sfxTone(783.99, t + 0.2, 0.12, "triangle", 0.1);
+    sfxTone(1046.5, t + 0.32, 0.22, "sine", 0.08);
+  }
+
   const ITEMS = [
-    { id: "cellphone",   label: "a cell phone",   audio: "audio/cellphone.mp3",   image: "images/cellphone.png" },
-    { id: "newspaper",   label: "a newspaper",    audio: "audio/newspaper.mp3",   image: "images/newspaper.png" },
-    { id: "key",         label: "a key",          audio: "audio/key.mp3",         image: "images/key.png" },
-    { id: "credit-card", label: "a credit card",  audio: "audio/credit-card.mp3", image: "images/credit-card.png" },
-    { id: "camera",      label: "a camera",       audio: "audio/camera.mp3",      image: "images/camera.png" },
-    { id: "umbrella",    label: "an umbrella",    audio: "audio/umbrella.mp3",    image: "images/umbrella.png" },
-    { id: "passport",     label: "a passport",     audio: "audio/passport.mp3",     image: "images/passport.png" },
-    { id: "charger",     label: "a charger",      audio: "audio/charger.mp3",     image: "images/charger.png" },
-    { id: "photo",       label: "a photo",        audio: "audio/photo.mp3",       image: "images/photo.png" },
-    { id: "glasses",     label: "glasses",        audio: "audio/glasses.mp3",     image: "images/glasses.png" },
-    { id: "notebook",    label: "a notebook",     audio: "audio/notebook.mp3",    image: "images/notebook.png" },
-    { id: "pencil",      label: "a pencil",       audio: "audio/pencil.mp3",      image: "images/pencil.png" },
-    { id: "wallet",      label: "a wallet",       audio: "audio/wallet.mp3",      image: "images/wallet.png" },
-    { id: "tablet",      label: "a tablet",       audio: "audio/tablet.mp3",      image: "images/tablet.png" },
-    { id: "watch",       label: "a watch",        audio: "audio/watch.mp3",       image: "images/watch.png" },
+    { id: "cellphone",   label: "a cell phone",   audio: "https://cdn.imgurl.ir/uploads/l582776_cellphone.mp3",   image: "https://cdn.imgurl.ir/uploads/y766894_a_cell_phone_1.png" },
+    { id: "newspaper",   label: "a newspaper",    audio: "https://cdn.imgurl.ir/uploads/t562234_newspaper.mp3",   image: "https://cdn.imgurl.ir/uploads/m25347_a_newspaper_1.png" },
+    { id: "key",         label: "a key",          audio: "https://cdn.imgurl.ir/uploads/b438206_key.mp3",         image: "https://cdn.imgurl.ir/uploads/r0663_a_key_1.png" },
+    { id: "credit-card", label: "a credit card",  audio: "https://cdn.imgurl.ir/uploads/e878515_credit-card.mp3", image: "https://cdn.imgurl.ir/uploads/c836363_a_credit_card_1.png" },
+    { id: "camera",      label: "a camera",       audio: "https://cdn.imgurl.ir/uploads/q357436_camera.mp3",      image: "https://cdn.imgurl.ir/uploads/22726_a_camera_1.png" },
+    { id: "umbrella",    label: "an umbrella",    audio: "https://cdn.imgurl.ir/uploads/p997348_umbrella.mp3",    image: "https://cdn.imgurl.ir/uploads/a45664_an_umbrella_1.png" },
+    { id: "passport",     label: "a passport",     audio: "https://cdn.imgurl.ir/uploads/t119646_pport.mp3",     image: "https://cdn.imgurl.ir/uploads/q11632_pport_1.png" },
+    { id: "charger",     label: "a charger",      audio: "https://cdn.imgurl.ir/uploads/w128819_charger.mp3",     image: "https://cdn.imgurl.ir/uploads/e590817_charger_1.png" },
+    { id: "photo",       label: "a photo",        audio: "https://cdn.imgurl.ir/uploads/s457565_photo.mp3",       image: "https://cdn.imgurl.ir/uploads/c513843_a_photo_1.png" },
+    { id: "glasses",     label: "glasses",        audio: "https://cdn.imgurl.ir/uploads/r73308_gles.mp3",     image: "https://cdn.imgurl.ir/uploads/t135626_sungles_1.png" },
+    { id: "notebook",    label: "a notebook",     audio: "https://cdn.imgurl.ir/uploads/u905875_notebook.mp3",    image: "https://cdn.imgurl.ir/uploads/c529991_a_notebook_1.png" },
+    { id: "pencil",      label: "a pencil",       audio: "https://cdn.imgurl.ir/uploads/l326640_pencil.mp3",      image: "https://cdn.imgurl.ir/uploads/h677030_a_pencil_1.png" },
+    { id: "wallet",      label: "a wallet",       audio: "https://cdn.imgurl.ir/uploads/v793231_wallet.mp3",      image: "https://cdn.imgurl.ir/uploads/z327768_a_wallet_1.png" },
+    { id: "tablet",      label: "a tablet",       audio: "https://cdn.imgurl.ir/uploads/g87260_tablet.mp3",      image: "https://cdn.imgurl.ir/uploads/c08067_a_tablet_1.png" },
+    { id: "watch",       label: "a watch",        audio: "https://cdn.imgurl.ir/uploads/y85649_watch.mp3",       image: "https://cdn.imgurl.ir/uploads/y08797_a_watch_1.png" },
   ];
 
   // 3 fixed sets of 5 (covers all 15)
@@ -108,6 +164,7 @@
   }
 
   function startMode(mi) {
+    if (window.LAFinish) LAFinish.startTimer();
     modeIndex = mi;
     modeCorrect = 0;
     startSet(0);
@@ -195,6 +252,7 @@
       modeCorrect += 1;
       if (leftEl) leftEl.classList.add("is-correct");
       if (rightEl) rightEl.classList.add("is-correct", "is-used");
+      sfxCorrect();
       spawnMatchFX(leftEl, rightEl);
       // Audio after a match only in Pictures → Words mode
       if (MODES[modeIndex].id === "pic-word") {
@@ -204,16 +262,34 @@
       app.querySelectorAll(".mc-left-item").forEach((el) => el.classList.remove("is-selected"));
       updateProgress();
       if (allMatched()) {
-        setTimeout(() => {
+        // Wait for word audio to finish before next set / finish (don't cut off last match sound)
+        const advance = () => {
           if (setIndex < SETS.length - 1) {
             startSet(setIndex + 1);
           } else {
+            if (typeof sfxComplete === "function") sfxComplete();
             phase = "done";
             render();
           }
-        }, 700);
+        };
+        const waitMs = 1600;
+        if (currentAudio && !currentAudio.paused) {
+          const a = currentAudio;
+          const prev = a.onended;
+          a.onended = function () {
+            if (typeof prev === "function") prev.call(a);
+            setTimeout(advance, 350);
+          };
+          // safety max wait
+          setTimeout(function () {
+            if (phase === "play" && allMatched()) advance();
+          }, 3500);
+        } else {
+          setTimeout(advance, waitMs);
+        }
       }
     } else {
+      sfxWrong();
       if (leftEl) leftEl.classList.add("is-wrong");
       if (rightEl) rightEl.classList.add("is-wrong");
       setTimeout(() => {
@@ -315,27 +391,24 @@
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      const m = MODES[modeIndex];
-      const totalPairs = SETS.reduce((sum, s) => sum + s.length, 0);
-      app.innerHTML = `
-        <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back">←</a>
-          <span class="mc-title">Small Things</span>
-          <span class="mc-badge">Done</span>
-        </header>
-        <section class="mc-done">
-          <div class="trophy-scene${stars === 3 ? " perfect" : ""}" aria-hidden="true"><div class="orbit-system"><div class="trophy-float">🏆</div><div class="star-orbit"><span class="star${stars >= 1 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 2 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 3 ? " filled" : ""}">★</span></div></div></div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p><strong>${m.title}</strong><br>You matched <strong>${modeCorrect} / ${totalPairs}</strong>.</p>
-          <button type="button" class="mc-btn" id="mc-again">Play again</button>
-          <button type="button" class="mc-btn secondary" id="mc-menu">All modes</button>
-        </section>`;
-      document.getElementById("mc-again").onclick = () => startMode(modeIndex);
-      document.getElementById("mc-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      const stars = typeof saveStars === 'function' ? saveStars() : 0;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: modeCorrect,
+          total: 15,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startMode(modeIndex),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u3a-again">Again</button>`;
+      document.getElementById("u3a-again").onclick = () => startMode(modeIndex);
       return;
     }
 

@@ -73,6 +73,7 @@
   }
 
   function startMode(mi) {
+    if (window.LAFinish) LAFinish.startTimer();
     modeIndex = mi;
     correctCount = 0;
     const ids = PRONOUNS.map((p) => p.id);
@@ -226,26 +227,24 @@
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      const m = MODES[modeIndex];
-      app.innerHTML = `
-        <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back">←</a>
-          <span class="mc-title">You / We / They</span>
-          <span class="mc-badge">Done</span>
-        </header>
-        <section class="mc-done">
-          <div class="trophy-scene${stars === 3 ? " perfect" : ""}" aria-hidden="true"><div class="orbit-system"><div class="trophy-float">🏆</div><div class="star-orbit"><span class="star${stars >= 1 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 2 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 3 ? " filled" : ""}">★</span></div></div></div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p><strong>${m.title}</strong><br>You matched <strong>${correctCount} / 3</strong>.</p>
-          <button type="button" class="mc-btn" id="mc-again">Play again</button>
-          <button type="button" class="mc-btn secondary" id="mc-menu">All modes</button>
-        </section>`;
-      document.getElementById("mc-again").onclick = () => startMode(modeIndex);
-      document.getElementById("mc-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      const stars = typeof saveStars === "function" ? saveStars() : 0;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: 3,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startMode(modeIndex),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2a-again">Again</button>`;
+      document.getElementById("u2a-again").onclick = () => startMode(modeIndex);
       return;
     }
 

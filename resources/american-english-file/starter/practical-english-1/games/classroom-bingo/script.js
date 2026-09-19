@@ -181,6 +181,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     stopAudio();
     card = dealCard();
     marked = Array(9).fill(false);
@@ -236,11 +237,31 @@
       phase = "bingo";
       stopAudio();
       playSfx("bingo");
+      const stars = isBlackout() ? 3 : 2;
+      const markedCount = marked.filter(Boolean).length;
       if (window.LAStars) {
-        const stars = isBlackout() ? 3 : 2;
         LAStars.recordPlay(GAME_ID);
         LAStars.save(GAME_ID, stars);
       }
+      render();
+      // Shared finish overlay
+      if (window.LAFinish) {
+        setTimeout(function () {
+          const timeMs = LAFinish.stopTimer();
+          LAFinish.show({
+            gameId: GAME_ID,
+            score: markedCount,
+            total: 9,
+            stars: stars,
+            timeMs: timeMs,
+            onAgain: startGame,
+            onModes: function () { phase = "start"; render(); },
+            backHref: "../",
+            save: false,
+          });
+        }, 600);
+      }
+      return;
     } else {
       playSfx("correct");
     }

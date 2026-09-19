@@ -53,6 +53,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     order = shuffle(COUNTRIES.map((_, i) => i));
     index = 0;
     correctCount = 0;
@@ -243,31 +244,26 @@
     if (phase === "done") {
       const total = COUNTRIES.length;
       const stars = correctCount === total ? 3 : correctCount >= total - 2 ? 2 : correctCount >= Math.ceil(total / 2) ? 1 : 0;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: total,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: startGame,
+          onModes: () => { phase = "start"; render(); },
+          backHref: "../",
+        });
+        return;
+      }
       if (window.LAStars) {
         LAStars.recordPlay(GAME_ID);
         LAStars.save(GAME_ID, stars);
       }
-      app.innerHTML = `
-        <header class="uc-topbar">
-          <a class="uc-back" href="../" aria-label="Back">←</a>
-          <div class="uc-topbar-center">
-            <span class="uc-kicker">STARTER · UNIT 1B</span>
-            <span class="uc-title">Results</span>
-          </div>
-          <span class="uc-badge">${correctCount}/${total}</span>
-        </header>
-        <section class="uc-done">
-          <div class="uc-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="uc-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p>You spelled <strong>${correctCount}</strong> of <strong>${total}</strong> countries correctly.</p>
-          <button type="button" class="uc-btn" id="uc-again">Play again</button>
-        </section>`;
-      document.getElementById("uc-again").onclick = startGame;
+      app.innerHTML = `<p>Done ${correctCount}/${total}</p><button type="button" id="fb-again">Again</button>`;
+      document.getElementById("fb-again").onclick = startGame;
       return;
     }
 

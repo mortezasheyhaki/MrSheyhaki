@@ -107,6 +107,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     order = shuffle(ITEMS.map((_, i) => i));
     index = 0;
     correctCount = 0;
@@ -174,29 +175,23 @@
     if (phase === "done") {
       const stars = calcStars();
       saveProgress(stars);
-      app.innerHTML = `
-        <header class="lc-topbar">
-          <a class="lc-back" href="../" aria-label="Back">←</a>
-          <span class="lc-title">Listen & Choose</span>
-          <span class="lc-badge">Done</span>
-        </header>
-        <section class="lc-done">
-          <div class="lc-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="lc-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p>You got <strong>${correctCount} / ${ITEMS.length}</strong> correct.</p>
-          <button type="button" class="lc-btn" id="lc-again">Play again</button>
-          <button type="button" class="lc-btn secondary" id="lc-menu">Back to menu</button>
-        </section>`;
-      document.getElementById("lc-again").onclick = startGame;
-      document.getElementById("lc-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: Math.max(ITEMS.length, 1),
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: startGame,
+          onModes: () => { phase = "menu"; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done ${correctCount}/${ITEMS.length}</p><button type="button" id="fb-again">Again</button>`;
+      document.getElementById("fb-again").onclick = startGame;
       return;
     }
 

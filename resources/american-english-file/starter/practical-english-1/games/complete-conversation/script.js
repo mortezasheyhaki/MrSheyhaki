@@ -143,6 +143,7 @@
   }
 
   function showStart() {
+    if (window.LAFinish) LAFinish.startTimer();
     stopAudio();
     locked = false;
     partIndex = 0;
@@ -350,30 +351,25 @@
   }
 
   function showDone(hadSkip) {
-    stopAudio();
-    locked = false;
-    // 3 stars if finished without needing to track skips strictly; still reward play
+    const stars = 3;
     saveStars(3);
-    app.innerHTML = `
-      <header class="cc-topbar">
-        <a class="cc-back" href="../" aria-label="Back">←</a>
-        <span class="cc-title">Complete</span>
-        <span class="cc-badge">✓</span>
-      </header>
-      <section class="cc-done">
-        <div class="cc-stars">⭐ ⭐ ⭐</div>
-        <h1>Great job!</h1>
-        <p>You finished all three classroom conversations.</p>
-        <button type="button" class="cc-btn primary" id="cc-again">Play again</button>
-        <button type="button" class="cc-btn secondary" id="cc-home">Back to games</button>
-      </section>`;
-    document.getElementById("cc-again").onclick = () => {
-      partIndex = 0;
-      renderPart();
-    };
-    document.getElementById("cc-home").onclick = () => {
-      window.location.href = "../";
-    };
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: 10,
+        total: 10,
+        stars: stars,
+        timeMs: timeMs,
+        onAgain: showStart,
+        onModes: () => showStart(),
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+    app.innerHTML = `<p>Done</p><button type="button" id="pe-again">Again</button>`;
+    document.getElementById("pe-again").onclick = showStart;
   }
 
   showStart();

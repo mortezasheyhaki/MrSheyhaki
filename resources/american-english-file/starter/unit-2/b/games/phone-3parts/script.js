@@ -317,7 +317,8 @@
       function goNext() {
         if (idx < NUMBERS.length - 1) {
           idx++;
-          phase = "mode1";
+          phase = "mode1"
+    if (window.LAFinish) LAFinish.startTimer();;
           render();
         } else {
           phase = "mode1done";
@@ -364,9 +365,24 @@
     }
 
     if (phase === "mode1done") {
-      const n = modeOk.filter(Boolean).length;
-      const stars = saveStars(calcStars(n, 3));
-      doneScreen("Nice speaking!", "You said " + n + " number" + (n === 1 ? "" : "s") + " correctly.", stars, "mode1");
+      const n = correctCount; const stars = saveStars(calcStars(n, 3));
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: n,
+          total: 3,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: function () { phase = "menu"; render(); },
+          onModes: function () { phase = "menu"; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="p3-again">Again</button>`;
+      document.getElementById("p3-again").onclick = function () { phase = "menu"; render(); };
       return;
     }
 
@@ -446,9 +462,24 @@
     }
 
     if (phase === "mode2done") {
-      const n = modeOk.filter(Boolean).length;
-      const stars = saveStars(calcStars(n, 3));
-      doneScreen("Good listening!", "You wrote " + n + " number" + (n === 1 ? "" : "s") + " correctly.", stars, "mode2");
+      const n = correctCount; const stars = saveStars(calcStars(n, 3));
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: n,
+          total: 3,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: function () { phase = "menu"; render(); },
+          onModes: function () { phase = "menu"; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="p3-again">Again</button>`;
+      document.getElementById("p3-again").onclick = function () { phase = "menu"; render(); };
       return;
     }
 
@@ -571,7 +602,23 @@
 
     if (phase === "mode3done") {
       const stars = saveStars(3);
-      doneScreen("Well done!", "You answered the question.", stars, "mode3");
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: 3,
+          total: 3,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: function () { phase = "menu"; render(); },
+          onModes: function () { phase = "menu"; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="p3-again">Again</button>`;
+      document.getElementById("p3-again").onclick = function () { phase = "menu"; render(); };
       return;
     }
   }

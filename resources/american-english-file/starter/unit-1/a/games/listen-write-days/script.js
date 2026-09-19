@@ -216,6 +216,7 @@
   }
 
   function beginPart1() {
+    if (window.LAFinish) LAFinish.startTimer();
     scoreUnscramble = 0;
     scoreWrite = 0;
     round = 0;
@@ -493,27 +494,35 @@
       clearNextTimer();
       const got = totalScore();
       const max = maxScore();
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: got,
+          total: max,
+          timeMs: timeMs,
+          onAgain: function () {
+            if (window.LAFinish) LAFinish.startTimer();
+            beginPart1();
+          },
+          onModes: function () {
+            mode = "start";
+            render();
+          },
+          backHref: "../",
+        });
+        return;
+      }
       const stars = got >= 12 ? 3 : got >= 8 ? 2 : got >= 4 ? 1 : 0;
       if (window.LAStars) {
         LAStars.recordPlay(GAME_ID);
         LAStars.save(GAME_ID, stars);
       }
       app.innerHTML =
-        '<header class="lw-topbar">' +
-        '<a class="lw-back" href="../" aria-label="Back">←</a>' +
-        '<span class="lw-title">Results</span>' +
-        '<span class="lw-badge">' + got + "/" + max + "</span></header>" +
-        '<section class="lw-done"><div class="lw-done-inner">' +
-        '<div class="lw-trophy" aria-hidden="true">' + (stars ? "🏆" : "💪") + "</div>" +
-        '<div class="lw-stars" aria-hidden="true">' +
-        '<span class="lw-star">' + (stars >= 1 ? "⭐" : "☆") + "</span>" +
-        '<span class="lw-star">' + (stars >= 2 ? "⭐" : "☆") + "</span>" +
-        '<span class="lw-star">' + (stars >= 3 ? "⭐" : "☆") + "</span></div>" +
-        "<h1>" + (got === max ? "Perfect!" : got >= 8 ? "Great job!" : "Keep practicing!") + "</h1>" +
-        "<p>Unscramble: <strong>" + scoreUnscramble + "/" + TOTAL + "</strong> · Write: <strong>" + scoreWrite + "/" + TOTAL + "</strong></p>" +
-        '<button type="button" class="lw-btn" id="lw-again">Play again</button>' +
-        '<a class="lw-btn secondary" href="../">Back to games</a>' +
-        "</div></section>";
+        '<header class="lw-topbar"><a class="lw-back" href="../">←</a><span class="lw-title">Results</span></header>' +
+        '<section class="lw-done"><div class="lw-done-inner"><h1>Done!</h1>' +
+        "<p>" + got + "/" + max + "</p>" +
+        '<button type="button" class="lw-btn" id="lw-again">Play again</button></div></section>';
       document.getElementById("lw-again").onclick = function () {
         mode = "start";
         render();

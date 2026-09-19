@@ -129,7 +129,8 @@
     answered = false;
     lastSkipped = false;
     lastUserInput = "";
-    phase = "play";
+    phase = "play"
+    if (window.LAFinish) LAFinish.startTimer();;
     render();
     if (PARTS[partIndex].id === "listen") {
       setTimeout(playAudio, 350);
@@ -286,33 +287,24 @@
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      app.innerHTML = `
-        <header class="cw-topbar">
-          <a class="cw-back" href="../" aria-label="Back">←</a>
-          <span class="cw-title">Classroom Write</span>
-          <span class="cw-badge">Done</span>
-        </header>
-        <section class="cw-done">
-          <div class="cw-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="cw-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p>You got <strong>${correctCount}</strong> correct overall.</p>
-          <button type="button" class="cw-btn" id="cw-again">Play again</button>
-          <button type="button" class="cw-btn secondary" id="cw-menu">All parts</button>
-        </section>`;
-      document.getElementById("cw-again").onclick = () => {
-        correctCount = 0;
-        startPart(0);
-      };
-      document.getElementById("cw-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      const stars = typeof saveStars === "function" ? saveStars() : 3;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: typeof correctCount !== "undefined" ? correctCount : stars,
+          total: typeof ITEMS !== "undefined" ? ITEMS.length : (typeof order !== "undefined" ? order.length : 10),
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: typeof startGame === "function" ? startGame : () => { phase = "start"; render(); },
+          onModes: () => { phase = "start"; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="cw-again">Again</button>`;
+      document.getElementById("cw-again").onclick = () => { phase = "start"; render(); };
       return;
     }
 

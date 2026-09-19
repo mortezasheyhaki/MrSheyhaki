@@ -82,7 +82,27 @@
     }, 260);
   }
 
-  function next() { goTo(index + 1, "left"); }
+  function next() {
+    if (index >= CARDS.length - 1) {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer ? LAFinish.stopTimer() : null;
+        if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, 3); }
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: CARDS.length,
+          total: CARDS.length,
+          stars: 3,
+          timeMs: timeMs,
+          onAgain: function () { index = 0; flipped = false; render(); if (window.LAFinish) LAFinish.startTimer(); },
+          onModes: function () { index = 0; flipped = false; render(); },
+          backHref: "../",
+          save: false,
+        });
+      }
+      return;
+    }
+    goTo(index + 1, "left");
+  }
   function prev() { goTo(index - 1, "right"); }
 
   function flip() {

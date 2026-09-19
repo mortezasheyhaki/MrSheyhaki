@@ -92,6 +92,7 @@
   }
 
   function showStart() {
+    if (window.LAFinish) LAFinish.startTimer();
     stopAudio();
     locked = false;
     order = [];
@@ -383,27 +384,25 @@
   }
 
   function showDone(score) {
-    stopAudio();
-    locked = false;
     const stars = score === LINES.length ? 3 : score >= 8 ? 2 : score >= 5 ? 1 : 0;
     saveStars(stars);
-    app.innerHTML = `
-      <header class="od-topbar">
-        <a class="od-back" href="../" aria-label="Back">←</a>
-        <span class="od-title">Complete</span>
-        <span class="od-badge">✓</span>
-      </header>
-      <section class="od-done">
-        <div class="od-stars">${stars > 0 ? "⭐ ".repeat(stars).trim() : "—"}</div>
-        <h1>${score === LINES.length ? "Perfect!" : score >= 8 ? "Well done!" : "Good try!"}</h1>
-        <p>You ordered <strong>${score} / ${LINES.length}</strong> correctly.</p>
-        <button type="button" class="od-btn primary" id="od-again">Play again</button>
-        <button type="button" class="od-btn secondary" id="od-home">Back to games</button>
-      </section>`;
-    document.getElementById("od-again").onclick = startGame;
-    document.getElementById("od-home").onclick = () => {
-      window.location.href = "../";
-    };
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: score,
+        total: LINES.length,
+        stars: stars,
+        timeMs: timeMs,
+        onAgain: showStart,
+        onModes: () => showStart(),
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+    app.innerHTML = `<p>Done</p><button type="button" id="pe-again">Again</button>`;
+    document.getElementById("pe-again").onclick = showStart;
   }
 
   showStart();

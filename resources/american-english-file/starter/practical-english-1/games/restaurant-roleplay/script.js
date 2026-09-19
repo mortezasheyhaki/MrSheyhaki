@@ -488,6 +488,7 @@
   }
 
   function showStart() {
+    if (window.LAFinish) LAFinish.startTimer();
     stopListening();
     try {
       window.speechSynthesis && window.speechSynthesis.cancel();
@@ -713,32 +714,25 @@
   }
 
   function showDone() {
-    stopListening();
-    try {
-      window.speechSynthesis && window.speechSynthesis.cancel();
-    } catch (_) {}
+    const stars = 3;
     saveStars(3);
-    app.innerHTML = `
-      <header class="rr-topbar">
-        <a class="rr-back" href="../" aria-label="Back">←</a>
-        <span class="rr-title">Booked!</span>
-        <span class="rr-badge">✓</span>
-      </header>
-      <section class="rr-done">
-        <div class="rr-hero-emoji">🍽️</div>
-        <div class="rr-stars">⭐ ⭐ ⭐</div>
-        <h1>Table booked!</h1>
-        <p>A table for <strong>${escapeHtml(peopleLabel(booking.people))}</strong>
-        on <strong>${escapeHtml(dayLabel(booking.day))}</strong>
-        at <strong>${escapeHtml(String(booking.time))}</strong><br>
-        for ${escapeHtml(title)}. ${escapeHtml(lastName)}.</p>
-        <button type="button" class="rr-btn primary" id="rr-again">Play again</button>
-        <button type="button" class="rr-btn secondary" id="rr-home">Back to games</button>
-      </section>`;
-    document.getElementById("rr-again").onclick = showStart;
-    document.getElementById("rr-home").onclick = () => {
-      window.location.href = "../";
-    };
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: 10,
+        total: 10,
+        stars: stars,
+        timeMs: timeMs,
+        onAgain: showStart,
+        onModes: () => showStart(),
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+    app.innerHTML = `<p>Done</p><button type="button" id="pe-again">Again</button>`;
+    document.getElementById("pe-again").onclick = showStart;
   }
 
   if (canSpeak) {

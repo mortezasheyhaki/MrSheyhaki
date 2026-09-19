@@ -196,7 +196,8 @@
     stopAudio();
     checked = false;
     fieldOk = [false, false, false];
-    phase = "play";
+    phase = "play"
+    if (window.LAFinish) LAFinish.startTimer();;
     render();
   }
 
@@ -219,40 +220,24 @@
     }
 
     if (phase === "done") {
-      const n = fieldOk.filter(Boolean).length;
-      const stars = saveStars(3); // completed successfully
-      app.innerHTML =
-        '<header class="sc-topbar">' +
-        '<a class="sc-back" href="../" aria-label="Back">←</a>' +
-        '<span class="sc-title">Student Card</span>' +
-        '<span class="sc-badge">Done</span>' +
-        "</header>" +
-        '<section class="sc-done">' +
-        '<div class="trophy-scene' +
-        (stars === 3 ? " perfect" : "") +
-        '" aria-hidden="true"><div class="orbit-system">' +
-        '<div class="trophy-float">🏆</div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 1 ? " filled" : "") +
-        '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 2 ? " filled" : "") +
-        '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 3 ? " filled" : "") +
-        '">★</span></div>' +
-        "</div></div>" +
-        "<h1>Card complete!</h1>" +
-        "<p>Alex Martínez · Mexican · 22</p>" +
-        '<button type="button" class="sc-btn" id="sc-again">Play again</button>' +
-        '<button type="button" class="sc-btn secondary" id="sc-menu">Home</button>' +
-        "</section>";
-      document.getElementById("sc-again").onclick = start;
-      document.getElementById("sc-menu").onclick = () => {
-        stopAudio();
-        phase = "menu";
-        render();
-      };
+      const stars = saveStars(3);
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: fieldOk.filter(Boolean).length,
+          total: fieldOk.length,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => { phase = 'start'; render(); },
+          onModes: () => { phase = 'start'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2b-again">Again</button>`;
+      document.getElementById("u2b-again").onclick = () => { phase = 'start'; render(); };
       return;
     }
 

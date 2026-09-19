@@ -340,6 +340,7 @@
       document.getElementById("cc-start").onclick = () => {
         answers = {};
         partScores = [];
+        if (window.LAFinish) LAFinish.startTimer();
         startPart(0);
       };
       return;
@@ -373,35 +374,33 @@
     if (mode === "result") {
       const totalC = partScores.reduce((s, p) => s + (p ? p.correct : 0), 0);
       const totalT = partScores.reduce((s, p) => s + (p ? p.total : 0), 0);
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: totalC,
+          total: Math.max(totalT, 1),
+          timeMs: timeMs,
+          onAgain: () => {
+            answers = {};
+            partScores = [];
+            if (window.LAFinish) LAFinish.startTimer();
+            startPart(0);
+          },
+          onModes: () => {
+            mode = "start";
+            render();
+          },
+          backHref: "../",
+        });
+        return;
+      }
       const stars = totalC === totalT ? 3 : totalC >= totalT - 2 ? 2 : totalC >= Math.ceil(totalT / 2) ? 1 : 0;
       if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
-      app.innerHTML = `
-        <header class="cc-topbar">
-          <a class="cc-back" href="../" aria-label="Back">←</a>
-          <span class="cc-title">Activity Complete</span>
-          <span class="cc-badge">Summary</span>
-        </header>
-        <section class="cc-done">
-          <div class="cc-trophy">${stars === 3 ? "🏆" : "🌟"}</div>
-          <div class="cc-stars">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${totalC === totalT ? "Perfect Score!" : "Well Done!"}</h1>
-          <p>Total Correct: <strong>${totalC}</strong> / <strong>${totalT}</strong></p>
-          <ul class="cc-score-list">
-            ${PARTS.map((p, i) => {
-              const sc = partScores[i] || { correct: 0, total: 0 };
-              return `<li><span>${p.title} (${p.scene})</span><strong>${sc.correct}/${sc.total}</strong></li>`;
-            }).join("")}
-          </ul>
-          <button type="button" class="cc-btn" id="cc-again">Try Again</button>
-        </section>`;
-      document.getElementById("cc-again").onclick = () => {
-        mode = "start";
-        render();
-      };
+      app.innerHTML = `<header class="cc-topbar"><a class="cc-back" href="../">←</a><span class="cc-title">Activity Complete</span></header>
+        <section class="cc-done"><h1>Done!</h1><p>${totalC} / ${totalT}</p>
+        <button type="button" class="cc-btn" id="cc-again">Try Again</button></section>`;
+      document.getElementById("cc-again").onclick = () => { mode = "start"; render(); };
       return;
     }
 

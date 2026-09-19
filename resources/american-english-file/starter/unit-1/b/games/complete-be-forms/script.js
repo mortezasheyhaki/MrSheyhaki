@@ -264,6 +264,7 @@
     totalBlanks = countBlanks(PARTS[pi]);
     locked = false;
     phase = "play";
+    if (window.LAFinish) LAFinish.startTimer();
     render();
   }
 
@@ -408,31 +409,26 @@
     if (phase === "done") {
       const stars = calcStars();
       saveProgress(stars);
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: Math.max(totalBlanks, 1),
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startPart(partIndex),
+          onModes: () => { phase = "menu"; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
       const part = PARTS[partIndex];
-      app.innerHTML = `
-        <header class="cb-topbar">
-          <a class="cb-back" href="../" aria-label="Back">←</a>
-          <span class="cb-title">Complete with be</span>
-          <span class="cb-badge">Done</span>
-        </header>
-        <section class="cb-done">
-          <div class="cb-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="cb-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p><strong>Part ${part.letter}</strong> · ${part.title}<br>
-          You got <strong>${correctCount} / ${totalBlanks}</strong> correct.</p>
-          <button type="button" class="cb-btn" id="cb-again">Play again</button>
-          <button type="button" class="cb-btn secondary" id="cb-menu">All parts</button>
-        </section>`;
+      app.innerHTML = `<header class="cb-topbar"><a class="cb-back" href="../">←</a><span class="cb-title">Done</span></header>
+        <section class="cb-done"><h1>Done!</h1><p>${correctCount} / ${totalBlanks}</p>
+        <button type="button" class="cb-btn" id="cb-again">Play again</button></section>`;
       document.getElementById("cb-again").onclick = () => startPart(partIndex);
-      document.getElementById("cb-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
       return;
     }
 

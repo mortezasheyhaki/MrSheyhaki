@@ -105,6 +105,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     clearAuto();
     order = shuffle(ITEMS);
     index = 0;
@@ -250,27 +251,23 @@
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      const total = ITEMS.length * 2;
-      app.innerHTML = `
-        <header class="wt-topbar">
-          <a class="wt-back" href="../" aria-label="Back">←</a>
-          <span class="wt-title">What's this?</span>
-          <span class="wt-badge">Done</span>
-        </header>
-        <section class="wt-done">
-          <div class="wt-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="wt-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p>You got <strong>${correctCount} / ${total}</strong> correct.</p>
-          <button type="button" class="wt-btn" id="wt-again">Play again</button>
-          <a class="wt-btn secondary" href="../">Back to games</a>
-        </section>`;
-      document.getElementById("wt-again").onclick = startGame;
+      const stars = typeof saveStars === 'function' ? saveStars() : 0;
+      const total = typeof ITEMS !== 'undefined' ? ITEMS.length : correctCount;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: total,
+          timeMs: timeMs,
+          onAgain: () => { phase = 'start'; render(); },
+          onModes: () => { phase = 'start'; render(); },
+          backHref: "../",
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="pe-again">Again</button>`;
+      document.getElementById("pe-again").onclick = () => { phase = 'start'; render(); };
       return;
     }
 

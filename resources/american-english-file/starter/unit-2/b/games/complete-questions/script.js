@@ -269,6 +269,7 @@
   }
 
   function startPart(pi) {
+    if (window.LAFinish) LAFinish.startTimer();
     const part = PARTS[pi];
     if (!part.items || !part.items.length) return;
     partIndex = pi;
@@ -578,45 +579,23 @@
 
     if (phase === "done") {
       const stars = saveStars(totalCorrect, items.length);
-      app.innerHTML =
-        '<header class="cq-topbar">' +
-        '<a class="cq-back" href="../" aria-label="Back">←</a>' +
-        '<span class="cq-title">' +
-        part.title +
-        "</span>" +
-        '<span class="cq-badge">Done</span>' +
-        "</header>" +
-        '<section class="cq-done">' +
-        '<div class="trophy-scene' +
-        (stars === 3 ? " perfect" : "") +
-        '" aria-hidden="true"><div class="orbit-system">' +
-        '<div class="trophy-float">🏆</div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 1 ? " filled" : "") +
-        '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 2 ? " filled" : "") +
-        '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 3 ? " filled" : "") +
-        '">★</span></div>' +
-        "</div></div>" +
-        "<h1>" +
-        (stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!") +
-        "</h1>" +
-        "<p>You got <strong>" +
-        totalCorrect +
-        " / " +
-        items.length +
-        "</strong> correct.</p>" +
-        '<button type="button" class="cq-btn" id="cq-again">Play again</button>' +
-        '<button type="button" class="cq-btn secondary" id="cq-menu">All parts</button>' +
-        "</section>";
-      document.getElementById("cq-again").onclick = () => startPart(partIndex);
-      document.getElementById("cq-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: totalCorrect,
+          total: items.length,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startPart(partIndex),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2b-again">Again</button>`;
+      document.getElementById("u2b-again").onclick = () => startPart(partIndex);
       return;
     }
 

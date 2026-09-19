@@ -249,6 +249,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     order = shuffle(PEOPLE.map((_, i) => i));
     index = 0;
     correctCount = 0;
@@ -331,31 +332,26 @@
       const total = PEOPLE.length;
       const stars =
         correctCount === total ? 3 : correctCount >= total - 2 ? 2 : correctCount >= Math.ceil(total / 2) ? 1 : 0;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: total,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: startGame,
+          onModes: () => { phase = "start"; render(); },
+          backHref: "../",
+        });
+        return;
+      }
       if (window.LAStars) {
         LAStars.recordPlay(GAME_ID);
         LAStars.save(GAME_ID, stars);
       }
-      app.innerHTML = `
-        <header class="wf-topbar">
-          <a class="wf-back" href="../" aria-label="Back">←</a>
-          <div class="wf-topbar-center">
-            <span class="wf-kicker">STARTER · UNIT 1B</span>
-            <span class="wf-title">Results</span>
-          </div>
-          <span class="wf-badge">${correctCount}/${total}</span>
-        </header>
-        <section class="wf-done">
-          <div class="wf-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="wf-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p>You got <strong>${correctCount}</strong> of <strong>${total}</strong> correct.</p>
-          <button type="button" class="wf-btn" id="wf-again">Play again</button>
-        </section>`;
-      document.getElementById("wf-again").onclick = startGame;
+      app.innerHTML = `<p>Done ${correctCount}/${total}</p><button type="button" id="fb-again">Again</button>`;
+      document.getElementById("fb-again").onclick = startGame;
       return;
     }
 

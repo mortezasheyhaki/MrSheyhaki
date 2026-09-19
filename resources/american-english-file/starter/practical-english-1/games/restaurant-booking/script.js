@@ -84,6 +84,7 @@
   }
 
   function showStart() {
+    if (window.LAFinish) LAFinish.startTimer();
     stopAudio();
     locked = false;
     app.innerHTML = `
@@ -263,27 +264,25 @@
   }
 
   function showDone(score) {
-    stopAudio();
-    locked = false;
     const stars = score === 4 ? 3 : score === 3 ? 2 : score >= 1 ? 1 : 0;
     saveStars(stars);
-    app.innerHTML = `
-      <header class="rb-topbar">
-        <a class="rb-back" href="../" aria-label="Back">←</a>
-        <span class="rb-title">Complete</span>
-        <span class="rb-badge">✓</span>
-      </header>
-      <section class="rb-done">
-        <div class="rb-stars">${stars > 0 ? "⭐ ".repeat(stars).trim() : "—"}</div>
-        <h1>${score === 4 ? "Perfect!" : score >= 3 ? "Well done!" : "Good try!"}</h1>
-        <p>You got <strong>${score} / 4</strong> correct.</p>
-        <button type="button" class="rb-btn primary" id="rb-again">Play again</button>
-        <button type="button" class="rb-btn secondary" id="rb-home">Back to games</button>
-      </section>`;
-    document.getElementById("rb-again").onclick = renderForm;
-    document.getElementById("rb-home").onclick = () => {
-      window.location.href = "../";
-    };
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: score,
+        total: 4,
+        stars: stars,
+        timeMs: timeMs,
+        onAgain: showStart,
+        onModes: () => showStart(),
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+    app.innerHTML = `<p>Done</p><button type="button" id="pe-again">Again</button>`;
+    document.getElementById("pe-again").onclick = showStart;
   }
 
   showStart();

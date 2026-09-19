@@ -167,6 +167,7 @@
       firstTryCorrect = 0;
       totalBlanksChecked = 0;
       correctBlanks = 0;
+      if (window.LAFinish) LAFinish.startTimer();
       renderItem();
     });
   }
@@ -360,39 +361,31 @@
   }
 
   function showDone() {
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: correctBlanks,
+        total: Math.max(totalBlanksChecked, 1),
+        timeMs: timeMs,
+        onAgain: () => {
+          index = 0; locked = false; firstTryCorrect = 0; totalBlanksChecked = 0; correctBlanks = 0;
+          if (window.LAFinish) LAFinish.startTimer();
+          renderItem();
+        },
+        onModes: () => showStart(),
+        backHref: "../",
+      });
+      return;
+    }
     const stars = calcStars(correctBlanks, Math.max(totalBlanksChecked, 1));
     if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
-    app.innerHTML = `
-      <div class="dg-topbar">
-        <a class="dg-back-btn" href="../" title="Back" aria-label="Back">←</a>
-        <span class="dg-topbar-title">Unit 1A · Games</span>
-      </div>
-      <div class="dg-done">
-        <div class="dg-done-burst" id="dg-burst">
-          <div class="dg-ring"></div>
-          <div class="dg-ring"></div>
-        </div>
-        <div class="dg-done-inner">
-          <div class="dg-trophy" aria-hidden="true">${stars === 3 ? "🏆" : "🌟"}</div>
-          <div class="dg-stars" aria-hidden="true">
-            <span class="dg-star">${stars >= 1 ? "⭐" : "☆"}</span>
-            <span class="dg-star">${stars >= 2 ? "⭐" : "☆"}</span>
-            <span class="dg-star">${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : "Well done!"}</h1>
-          <p>You completed all the dialogues.</p>
-          <div class="dg-done-score">${ITEMS.length} / ${ITEMS.length} complete · ${correctBlanks}/${totalBlanksChecked} blanks right</div>
-          <button class="dg-btn" id="dg-again">Practice again</button>
-          <button class="dg-btn secondary" id="dg-home">Back to games</button>
-        </div>
-      </div>
-    `;
-    if (stars >= 2) spawnConfetti(document.getElementById("dg-burst"));
+    app.innerHTML = `<div class="dg-topbar"><a class="dg-back-btn" href="../">←</a></div>
+      <div class="dg-done"><div class="dg-done-inner"><h1>Done!</h1>
+      <p>${correctBlanks}/${totalBlanksChecked} blanks right</p>
+      <button class="dg-btn" id="dg-again">Practice again</button></div></div>`;
     document.getElementById("dg-again").addEventListener("click", () => {
       index = 0; locked = false; firstTryCorrect = 0; totalBlanksChecked = 0; correctBlanks = 0; renderItem();
-    });
-    document.getElementById("dg-home").addEventListener("click", () => {
-      window.location.href = "../";
     });
   }
 

@@ -141,6 +141,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     totalCorrect = 0;
     startRound(0);
   }
@@ -214,43 +215,24 @@
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      app.innerHTML =
-        '<header class="sm-topbar">' +
-        '<a class="sm-back" href="../" aria-label="Back">←</a>' +
-        '<span class="sm-title">Sentence Match</span>' +
-        '<span class="sm-badge">Done</span>' +
-        "</header>" +
-        '<section class="sm-done">' +
-        '<div class="trophy-scene' +
-        (stars === 3 ? " perfect" : "") +
-        '" aria-hidden="true">' +
-        '<div class="orbit-system">' +
-        '<div class="trophy-float">🏆</div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 1 ? " filled" : "") +
-        '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 2 ? " filled" : "") +
-        '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 3 ? " filled" : "") +
-        '">★</span></div>' +
-        "</div></div>" +
-        "<h1>" +
-        (stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!") +
-        "</h1>" +
-        "<p>You matched <strong>" +
-        totalCorrect +
-        " / 10</strong> pairs.</p>" +
-        '<button type="button" class="sm-btn" id="sm-again">Play again</button>' +
-        '<button type="button" class="sm-btn secondary" id="sm-menu">Home</button>' +
-        "</section>";
-      document.getElementById("sm-again").onclick = startGame;
-      document.getElementById("sm-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      const stars = typeof saveStars === "function" ? saveStars() : 0;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: totalCorrect,
+          total: 10,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: startGame,
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2a-again">Again</button>`;
+      document.getElementById("u2a-again").onclick = startGame;
       return;
     }
 

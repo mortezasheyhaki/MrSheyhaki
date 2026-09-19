@@ -102,6 +102,7 @@
   }
 
   function startDeck(m) {
+    if (window.LAFinish) LAFinish.startTimer();
     mode = m;
     index = 0;
     enterDir = null;
@@ -277,28 +278,23 @@
 
   function showDone() {
     saveStars(3);
-    app.innerHTML = `
-      <header class="afc-topbar">
-        <a class="afc-back" href="../" aria-label="Back">←</a>
-        <span class="afc-title">Complete</span>
-        <span class="afc-badge">✓</span>
-      </header>
-      <section class="afc-done">
-        <div class="afc-stars">⭐ ⭐ ⭐</div>
-        <h1>Great job!</h1>
-        <p>You finished <strong>${mode === "names" ? "letter names" : "letter sounds"}</strong>.</p>
-        <button type="button" class="afc-btn" id="afc-other">
-          ${mode === "names" ? "Practice sounds →" : "Practice names →"}
-        </button>
-        <button type="button" class="afc-btn secondary" id="afc-again">Again</button>
-        <button type="button" class="afc-btn secondary" id="afc-home">Back to games</button>
-      </section>`;
-    document.getElementById("afc-other").onclick = () =>
-      startDeck(mode === "names" ? "sounds" : "names");
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: 26,
+        total: 26,
+        stars: 3,
+        timeMs: timeMs,
+        onAgain: () => startDeck(mode),
+        onModes: () => showStart(),
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+    app.innerHTML = `<p>Done</p><button type="button" id="afc-again">Again</button>`;
     document.getElementById("afc-again").onclick = () => startDeck(mode);
-    document.getElementById("afc-home").onclick = () => {
-      window.location.href = "../";
-    };
   }
 
   showStart();

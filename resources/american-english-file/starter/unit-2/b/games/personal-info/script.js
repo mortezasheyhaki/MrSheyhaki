@@ -218,7 +218,8 @@
       document.getElementById("pi-start").onclick = function () {
         index = 0;
         score = 0;
-        phase = "play";
+        phase = "play"
+    if (window.LAFinish) LAFinish.startTimer();;
         render();
         setTimeout(playClip, 250);
       };
@@ -227,37 +228,23 @@
 
     if (phase === "done") {
       const stars = saveStars(calcStars());
-      app.innerHTML =
-        '<header class="pi-topbar">' +
-        '<a class="pi-back" href="../" aria-label="Back">←</a>' +
-        '<span class="pi-title">Personal Info</span>' +
-        '<span class="pi-badge">Done</span>' +
-        "</header>" +
-        '<section class="pi-done">' +
-        '<div class="trophy-scene" aria-hidden="true"><div class="orbit-system">' +
-        '<div class="trophy-float">🏆</div>' +
-        '<div class="star-orbit"><span class="star' + (stars >= 1 ? " filled" : "") + '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' + (stars >= 2 ? " filled" : "") + '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' + (stars >= 3 ? " filled" : "") + '">★</span></div>' +
-        "</div></div>" +
-        "<h1>" + (stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!") + "</h1>" +
-        "<p>You got <strong>" + score + " / " + ITEMS.length + "</strong> correct.</p>" +
-        '<div class="pi-overview">' +
-        "<strong>Answers</strong><br/>" +
-        "1. 📞 " + ITEMS[0].display + "<br/>" +
-        "2. " + ITEMS[1].display + "<br/>" +
-        "3. Age: " + ITEMS[2].display + "<br/>" +
-        "4. " + ITEMS[3].display +
-        "</div>" +
-        '<button type="button" class="pi-btn" id="pi-again">Play again</button>' +
-        "</section>";
-      document.getElementById("pi-again").onclick = function () {
-        index = 0;
-        score = 0;
-        phase = "play";
-        render();
-        setTimeout(playClip, 250);
-      };
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: QUESTIONS.length,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => { phase = 'start'; render(); },
+          onModes: () => { phase = 'start'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2b-again">Again</button>`;
+      document.getElementById("u2b-again").onclick = () => { phase = 'start'; render(); };
       return;
     }
 

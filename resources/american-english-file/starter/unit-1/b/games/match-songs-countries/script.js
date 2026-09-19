@@ -181,6 +181,10 @@
           stars: stars,
           timeMs: timeMs,
           onAgain: function () {
+            if (window.LAFinish) LAFinish.startTimer();
+            startGame();
+          },
+          onModes: function () {
             mode = "start";
             render();
           },

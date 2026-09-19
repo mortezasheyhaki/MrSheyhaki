@@ -271,6 +271,7 @@
         round = 0;
         used = [];
         muted = [];
+        if (window.LAFinish) LAFinish.startTimer();
         startRound();
       };
       return;
@@ -279,32 +280,37 @@
     if (mode === "result") {
       stopAudio();
       clearNextTimer();
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: TOTAL,
+          timeMs: timeMs,
+          onAgain: () => {
+            mode = "play";
+            score = 0;
+            round = 0;
+            used = [];
+            muted = [];
+            if (window.LAFinish) LAFinish.startTimer();
+            startRound();
+          },
+          onModes: () => {
+            mode = "start";
+            render();
+          },
+          backHref: "../",
+        });
+        return;
+      }
       const stars = score >= 6 ? 3 : score >= 4 ? 2 : score >= 2 ? 1 : 0;
       if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
-      app.innerHTML = `
-        <header class="ld-topbar">
-          <a class="ld-back" href="../" aria-label="Back">←</a>
-          <span class="ld-title">Results</span>
-          <span class="ld-badge">${score}/${TOTAL}</span>
-        </header>
-        <section class="ld-done">
-          <div class="ld-done-inner">
-            <div class="ld-trophy" aria-hidden="true">${stars ? "🏆" : "💪"}</div>
-            <div class="ld-stars" aria-hidden="true">
-              <span class="ld-star">${stars >= 1 ? "⭐" : "☆"}</span>
-              <span class="ld-star">${stars >= 2 ? "⭐" : "☆"}</span>
-              <span class="ld-star">${stars >= 3 ? "⭐" : "☆"}</span>
-            </div>
-            <h1>${score === TOTAL ? "Perfect!" : score >= 5 ? "Great job!" : "Keep practicing!"}</h1>
-            <p>You got <strong>${score}</strong> of ${TOTAL} days right.</p>
-            <button type="button" class="ld-btn" id="ld-again">Play again</button>
-            <a class="ld-btn secondary" href="../">Back to games</a>
-          </div>
-        </section>`;
-      document.getElementById("ld-again").onclick = () => {
-        mode = "start";
-        render();
-      };
+      app.innerHTML = `<header class="ld-topbar"><a class="ld-back" href="../">←</a><span class="ld-title">Results</span></header>
+        <section class="ld-done"><div class="ld-done-inner"><h1>Done!</h1>
+        <p>${score} of ${TOTAL} right</p>
+        <button type="button" class="ld-btn" id="ld-again">Play again</button></div></section>`;
+      document.getElementById("ld-again").onclick = () => { mode = "start"; render(); };
       return;
     }
 

@@ -1,6 +1,64 @@
 document.addEventListener("DOMContentLoaded", () => {
   "use strict";
 
+  const GAME_ID = "starter-3a-a-an-swipe";
+
+
+  /* ---------- sound effects (Web Audio) ---------- */
+  var sfxCtx = null;
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try { sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    }
+    if (sfxCtx.state === "suspended") sfxCtx.resume().catch(function () {});
+    return sfxCtx;
+  }
+  function sfxTone(freq, start, dur, type, gain, slideTo) {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, start);
+    if (slideTo) osc.frequency.linearRampToValueAtTime(slideTo, start + dur * 0.85);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.1), start + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.02);
+  }
+  function sfxCorrect() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.1);
+    sfxTone(659.25, t + 0.08, 0.12, "triangle", 0.1);
+    sfxTone(783.99, t + 0.16, 0.16, "sine", 0.09);
+  }
+  function sfxWrong() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(220, t, 0.14, "sawtooth", 0.05, 140);
+    sfxTone(180, t + 0.05, 0.14, "triangle", 0.04, 120);
+  }
+  function sfxClick() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    sfxTone(720, ctx.currentTime, 0.045, "sine", 0.04);
+  }
+  function sfxComplete() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.09);
+    sfxTone(659.25, t + 0.1, 0.1, "triangle", 0.09);
+    sfxTone(783.99, t + 0.2, 0.12, "triangle", 0.1);
+    sfxTone(1046.5, t + 0.32, 0.22, "sine", 0.08);
+  }
+
   const WORDS = [
     { word: "apple", article: "an" },
     { word: "apartment", article: "an" },
@@ -88,6 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     if (state?.timer) clearInterval(state.timer);
 
     state = {
@@ -214,7 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function handleCorrect(direction, item) {
     state.answering = true;
-    state.correct++;
+    sfxCorrect(); state.correct++;
     state.combo++;
     state.bestCombo = Math.max(state.bestCombo, state.combo);
 
@@ -252,6 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
     state.combo = 0;
 
     const target = targetFor(direction);
+    sfxWrong();
     if (target) target.classList.add("wrong");
 
     feedback.textContent = "Try again!";
@@ -295,10 +355,25 @@ document.addEventListener("DOMContentLoaded", () => {
     $("accuracy").textContent = `${accuracy}%`;
     try {
       if (window.LAStars) {
-        LAStars.recordPlay("starter-3a-a-an-swipe");
-        LAStars.saveFromAccuracy("starter-3a-a-an-swipe", accuracy);
+        LAStars.recordPlay(GAME_ID);
+        LAStars.saveFromAccuracy(GAME_ID, accuracy);
       }
     } catch (e) {}
+    if (window.LAFinish) {
+      const stars = accuracy >= 90 ? 3 : accuracy >= 70 ? 2 : accuracy >= 40 ? 1 : 0;
+      const timeMs = LAFinish.stopTimer ? LAFinish.stopTimer() : null;
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: state.correct,
+        total: TOTAL,
+        stars: stars,
+        timeMs: timeMs,
+        onAgain: () => startGame(),
+        onModes: () => startGame(),
+        backHref: "../",
+        save: false,
+      });
+    }
     $("bestCombo").textContent = state.bestCombo;
     $("endTitle").textContent = won ? "Excellent!" : "Time's up!";
     $("endMessage").textContent = won

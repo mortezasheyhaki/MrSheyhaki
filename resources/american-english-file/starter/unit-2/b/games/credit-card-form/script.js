@@ -179,6 +179,7 @@
         "</section>";
       document.getElementById("cc-start").onclick = function () {
         phase = "form";
+        if (window.LAFinish) LAFinish.startTimer();
         render();
       };
       return;
@@ -343,40 +344,24 @@
 
     if (phase === "done") {
       const stars = saveStars(calcStars());
-      let review = "";
-      QUESTIONS.forEach(function (item, i) {
-        review +=
-          '<div class="cc-review-item">' +
-          "<strong>" + item.id + ". " + item.q + "</strong><br/>" +
-          '<span class="cc-your">You: ' + (answers[i] || "—") + "</span><br/>" +
-          '<span class="cc-model">Model: ' + item.model(data) + "</span>" +
-          "</div>";
-      });
-      app.innerHTML =
-        '<header class="cc-topbar">' +
-        '<a class="cc-back" href="../" aria-label="Back">←</a>' +
-        '<span class="cc-title">Credit Card Form</span>' +
-        '<span class="cc-badge">Done</span>' +
-        "</header>" +
-        '<section class="cc-done">' +
-        '<div class="trophy-scene" aria-hidden="true"><div class="orbit-system">' +
-        '<div class="trophy-float">🏆</div>' +
-        '<div class="star-orbit"><span class="star' + (stars >= 1 ? " filled" : "") + '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' + (stars >= 2 ? " filled" : "") + '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' + (stars >= 3 ? " filled" : "") + '">★</span></div>' +
-        "</div></div>" +
-        "<h1>" + (stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!") + "</h1>" +
-        "<p>You got <strong>" + score + " / " + QUESTIONS.length + "</strong> answers accepted.</p>" +
-        '<div class="cc-review">' + review + "</div>" +
-        '<button type="button" class="cc-btn" id="cc-again">Play again</button>' +
-        "</section>";
-      document.getElementById("cc-again").onclick = function () {
-        phase = "menu";
-        qIndex = 0;
-        score = 0;
-        answers = {};
-        render();
-      };
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: QUESTIONS.length,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => { phase = 'menu'; render(); },
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2b-again">Again</button>`;
+      document.getElementById("u2b-again").onclick = () => { phase = 'menu'; render(); };
+      return;
     }
   }
 

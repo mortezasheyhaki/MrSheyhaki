@@ -72,6 +72,7 @@
   }
 
   function showPlay() {
+    if (window.LAFinish) LAFinish.startTimer();
     selected = null;
     locked = false;
 
@@ -200,37 +201,25 @@
 
   function showDone() {
     const a = document.getElementById("lc-audio");
-    if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, 3); }
     if (a) a.pause();
-    app.innerHTML = `
-      <div class="lc-topbar">
-        <a class="lc-back-btn" href="../" title="Back" aria-label="Back">←</a>
-        <span class="lc-topbar-title">Unit 1A · Games</span>
-      </div>
-      <div class="lc-done">
-        <div class="lc-done-burst" id="lc-burst">
-          <div class="lc-ring"></div>
-          <div class="lc-ring"></div>
-        </div>
-        <div class="lc-done-inner">
-          <div class="lc-trophy" aria-hidden="true">🏆</div>
-          <div class="lc-stars" aria-hidden="true">
-            <span class="lc-star">⭐</span>
-            <span class="lc-star">⭐</span>
-            <span class="lc-star">⭐</span>
-          </div>
-          <h1>Well done!</h1>
-          <p>You chose the correct photo.</p>
-          <button class="lc-btn" id="lc-again">Practice again</button>
-          <button class="lc-btn secondary" id="lc-home">Back to games</button>
-        </div>
-      </div>
-    `;
-    spawnConfetti(document.getElementById("lc-burst"));
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: 1,
+        total: 1,
+        timeMs: timeMs,
+        onAgain: showPlay,
+        onModes: showStart,
+        backHref: "../",
+      });
+      return;
+    }
+    if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, 3); }
+    app.innerHTML = `<div class="lc-topbar"><a class="lc-back-btn" href="../">←</a></div>
+      <div class="lc-done"><div class="lc-done-inner"><h1>Well done!</h1>
+      <button class="lc-btn" id="lc-again">Practice again</button></div></div>`;
     document.getElementById("lc-again").addEventListener("click", showPlay);
-    document.getElementById("lc-home").addEventListener("click", () => {
-      window.location.href = "../";
-    });
   }
 
   showStart();

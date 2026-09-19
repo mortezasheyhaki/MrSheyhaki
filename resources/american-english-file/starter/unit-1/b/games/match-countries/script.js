@@ -27,6 +27,68 @@
     ["saudi-arabia", "spain", "turkey", "vietnam", "usa"],
   ];
 
+
+  /* ---------- sound effects (Web Audio, no files) ---------- */
+  var sfxCtx = null;
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try { sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    }
+    if (sfxCtx.state === "suspended") sfxCtx.resume().catch(function () {});
+    return sfxCtx;
+  }
+  function sfxTone(freq, start, dur, type, gain, slideTo) {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, start);
+    if (slideTo) osc.frequency.linearRampToValueAtTime(slideTo, start + dur * 0.85);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.1), start + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.02);
+  }
+  function sfxCorrect() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.11);
+    sfxTone(659.25, t + 0.08, 0.12, "triangle", 0.11);
+    sfxTone(783.99, t + 0.16, 0.18, "sine", 0.1);
+  }
+  function sfxWrong() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(220, t, 0.14, "sawtooth", 0.06, 140);
+    sfxTone(180, t + 0.06, 0.16, "triangle", 0.05, 120);
+  }
+  function sfxSelect() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    sfxTone(640, ctx.currentTime, 0.06, "sine", 0.05);
+  }
+  function sfxSetComplete() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.12, "triangle", 0.1);
+    sfxTone(659.25, t + 0.1, 0.12, "triangle", 0.1);
+    sfxTone(783.99, t + 0.2, 0.14, "triangle", 0.11);
+    sfxTone(1046.5, t + 0.34, 0.28, "sine", 0.09);
+  }
+  function sfxClick() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    sfxTone(880, ctx.currentTime, 0.04, "square", 0.03);
+  }
+
+
   const MODES = [
     { id: "pic-word", title: "Pictures → Words", left: "picture", right: "word", tip: "Match each picture to the country name." },
     { id: "audio-word", title: "Audio → Words", left: "audio", right: "word", tip: "Listen, then match to the country name." },
@@ -98,6 +160,7 @@
   }
 
   function startMode(mi) {
+    if (window.LAFinish) LAFinish.startTimer();
     modeIndex = mi;
     modeCorrect = 0;
     startSet(0);
@@ -118,29 +181,95 @@
   }
 
   
+  const PARTICLE_COLORS = [
+    "#34d399", "#10b981", "#fbbf24", "#f59e0b", "#6366f1",
+    "#8b5cf6", "#ec4899", "#f472b6", "#38bdf8", "#a78bfa",
+  ];
+  const WRONG_COLORS = ["#f87171", "#ef4444", "#fb923c", "#f97316", "#fda4af"];
+
+  function spawnBurst(el, opts) {
+    if (!el) return;
+    opts = opts || {};
+    var count = opts.count || 12;
+    var colors = opts.colors || PARTICLE_COLORS;
+    var minDist = opts.minDist || 24;
+    var maxDist = opts.maxDist || 56;
+    var shapes = opts.shapes || ["dot", "star", "square"];
+    var dur = opts.dur || 700;
+    for (var i = 0; i < count; i++) {
+      var s = document.createElement("span");
+      var shape = shapes[i % shapes.length];
+      s.className = "mc-particle mc-particle--" + shape;
+      var angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+      var dist = minDist + Math.random() * (maxDist - minDist);
+      s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+      s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+      s.style.setProperty("--delay", (i * 0.012) + "s");
+      s.style.setProperty("--rot", (Math.random() * 360) + "deg");
+      s.style.setProperty("--size", (5 + Math.random() * 7) + "px");
+      s.style.background = colors[i % colors.length];
+      el.appendChild(s);
+      (function (node) {
+        setTimeout(function () { if (node.parentNode) node.remove(); }, dur + 80);
+      })(s);
+    }
+  }
+
   function spawnMatchFX(leftEl, rightEl) {
-    [leftEl, rightEl].forEach((el) => {
+    [leftEl, rightEl].forEach(function (el) {
       if (!el) return;
       el.classList.add("mc-match-pop");
-      // sparkles
-      for (let i = 0; i < 8; i++) {
-        const s = document.createElement("span");
-        s.className = "mc-spark";
-        const angle = (i / 8) * Math.PI * 2;
-        const dist = 28 + Math.random() * 18;
-        s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
-        s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
-        s.style.setProperty("--delay", (i * 0.02) + "s");
-        el.appendChild(s);
-        setTimeout(() => s.remove(), 700);
-      }
-      setTimeout(() => el.classList.remove("mc-match-pop"), 550);
+      spawnBurst(el, { count: 14, minDist: 28, maxDist: 64, dur: 750 });
+      setTimeout(function () { el.classList.remove("mc-match-pop"); }, 550);
     });
-    // brief full-board flash ring
-    const flash = document.createElement("div");
+    // ring pulse between the two cards
+    var flash = document.createElement("div");
     flash.className = "mc-match-flash";
     app.appendChild(flash);
-    setTimeout(() => flash.remove(), 500);
+    setTimeout(function () { if (flash.parentNode) flash.remove(); }, 500);
+  }
+
+  function spawnWrongFX(leftEl, rightEl) {
+    [leftEl, rightEl].forEach(function (el) {
+      if (!el) return;
+      spawnBurst(el, {
+        count: 8,
+        colors: WRONG_COLORS,
+        minDist: 16,
+        maxDist: 40,
+        shapes: ["dot", "square"],
+        dur: 550,
+      });
+    });
+  }
+
+  /** Full-board confetti for set / mode complete */
+  function spawnCelebrateFX(intensity) {
+    intensity = intensity || 1;
+    var layer = document.createElement("div");
+    layer.className = "mc-celebrate-layer";
+    app.appendChild(layer);
+    var count = intensity >= 2 ? 48 : 28;
+    var w = app.clientWidth || 320;
+    var h = app.clientHeight || 480;
+    for (var i = 0; i < count; i++) {
+      var p = document.createElement("span");
+      var shape = i % 3 === 0 ? "star" : i % 3 === 1 ? "square" : "dot";
+      p.className = "mc-confetti mc-particle--" + shape;
+      p.style.left = Math.random() * 100 + "%";
+      p.style.top = -8 - Math.random() * 20 + "%";
+      p.style.setProperty("--fall", 70 + Math.random() * 40 + "vh");
+      p.style.setProperty("--drift", (Math.random() - 0.5) * 80 + "px");
+      p.style.setProperty("--rot", (Math.random() * 720 - 360) + "deg");
+      p.style.setProperty("--dur", 1.1 + Math.random() * 1.1 + "s");
+      p.style.setProperty("--delay", Math.random() * 0.35 + "s");
+      p.style.setProperty("--size", (6 + Math.random() * 8) + "px");
+      p.style.background = PARTICLE_COLORS[i % PARTICLE_COLORS.length];
+      layer.appendChild(p);
+    }
+    setTimeout(function () {
+      if (layer.parentNode) layer.remove();
+    }, 2800);
   }
 
   function playCountryAudio(countryId) {
@@ -164,6 +293,7 @@
   function selectLeft(i) {
     if (locked[i]) return;
     selectedLeft = i;
+    sfxSelect();
     app.querySelectorAll(".mc-left-item").forEach((el) => {
       el.classList.toggle("is-selected", +el.dataset.i === i);
     });
@@ -198,6 +328,7 @@
       modeCorrect += 1;
       if (leftEl) leftEl.classList.add("is-correct");
       if (rightEl) rightEl.classList.add("is-correct", "is-used");
+      sfxCorrect();
       spawnMatchFX(leftEl, rightEl);
       // Picture → Words: play country audio on each successful match
       if (MODES[modeIndex].id === "pic-word") {
@@ -209,20 +340,28 @@
       if (allMatched()) {
         setTimeout(() => {
           if (setIndex < SETS.length - 1) {
-            startSet(setIndex + 1);
+            sfxSetComplete();
+            spawnCelebrateFX(1);
+            setTimeout(function () { startSet(setIndex + 1); }, 450);
           } else {
-            phase = "done";
-            render();
+            sfxSetComplete();
+            spawnCelebrateFX(2);
+            setTimeout(function () {
+              phase = "done";
+              render();
+            }, 550);
           }
         }, 700);
       }
     } else {
+      sfxWrong();
+      spawnWrongFX(leftEl, rightEl);
       if (leftEl) leftEl.classList.add("is-wrong");
       if (rightEl) rightEl.classList.add("is-wrong");
       setTimeout(() => {
         if (leftEl) leftEl.classList.remove("is-wrong");
         if (rightEl) rightEl.classList.remove("is-wrong");
-      }, 650);;
+      }, 650);
     }
   }
 
@@ -314,14 +453,32 @@
           </div>
         </section>`;
       app.querySelectorAll(".mc-mode-btn").forEach((btn) => {
-        btn.onclick = () => startMode(+btn.dataset.mode);
+        btn.onclick = () => {
+          sfxClick();
+          startMode(+btn.dataset.mode);
+        };
       });
       return;
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      const m = MODES[modeIndex];
+      const stars = calcStars();
+      saveStars();
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: modeCorrect,
+          total: 15,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startMode(modeIndex),
+          onModes: () => { phase = "menu"; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
       app.innerHTML = `
         <header class="mc-topbar">
           <a class="mc-back" href="../" aria-label="Back">←</a>
@@ -330,21 +487,13 @@
         </header>
         <section class="mc-done">
           <div class="mc-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="mc-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p><strong>${m.title}</strong><br>You matched <strong>${modeCorrect} / 15</strong> countries.</p>
-          <button type="button" class="mc-btn" id="mc-again">Play again</button>
-          <button type="button" class="mc-btn secondary" id="mc-menu">All modes</button>
+          <h1>${stars === 3 ? "Perfect!" : "Well done!"}</h1>
+          <p>You matched <strong>${modeCorrect} / 15</strong> pairs.</p>
+          <button type="button" class="mc-btn" id="fb-again">Play again</button>
+          <button type="button" class="mc-btn secondary" id="fb-menu">All modes</button>
         </section>`;
-      document.getElementById("mc-again").onclick = () => startMode(modeIndex);
-      document.getElementById("mc-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      document.getElementById("fb-again").onclick = () => startMode(modeIndex);
+      document.getElementById("fb-menu").onclick = () => { phase = "menu"; render(); };
       return;
     }
 

@@ -85,6 +85,7 @@
       locked = false;
       correctAttempts = 0;
       totalAttempts = 0;
+      if (window.LAFinish) LAFinish.startTimer();
       renderItem();
     });
   }
@@ -197,45 +198,35 @@
   }
 
   function showDone() {
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: correctAttempts,
+        total: Math.max(totalAttempts, 1),
+        timeMs: timeMs,
+        onAgain: () => {
+          index = 0;
+          locked = false;
+          correctAttempts = 0;
+          totalAttempts = 0;
+          if (window.LAFinish) LAFinish.startTimer();
+          renderItem();
+        },
+        onModes: () => showStart(),
+        backHref: "../",
+      });
+      return;
+    }
+    // Fallback (should not happen if la-finish.js is loaded)
     const stars = calcStars(correctAttempts, Math.max(totalAttempts, 1));
     if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
-    app.innerHTML = `
-      <div class="mq-topbar">
-        <a class="mq-back-btn" href="../" title="Back to Unit 1A Games" aria-label="Back">←</a>
-        <span class="mq-topbar-title">Unit 1A · Games</span>
-      </div>
-      <div class="mq-done">
-        <div class="mq-done-burst" id="mq-burst">
-          <div class="mq-ring"></div>
-          <div class="mq-ring"></div>
-        </div>
-        <div class="mq-done-inner">
-          <div class="mq-trophy" aria-hidden="true">${stars === 3 ? "🏆" : "🌟"}</div>
-          <div class="mq-stars" aria-hidden="true">
-            <span class="mq-star">${stars >= 1 ? "⭐" : "☆"}</span>
-            <span class="mq-star">${stars >= 2 ? "⭐" : "☆"}</span>
-            <span class="mq-star">${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : "Well done!"}</h1>
-          <p>You made all the questions.</p>
-          <div class="mq-done-score">${ITEMS.length} / ${ITEMS.length} complete · ${correctAttempts}/${totalAttempts} correct tries</div>
-          <button class="mq-btn" id="mq-again">Practice again</button>
-          <button class="mq-btn secondary" id="mq-home">Back to games</button>
-        </div>
-      </div>
-    `;
-
-    if (stars >= 2) spawnConfetti(document.getElementById("mq-burst"));
-
+    app.innerHTML = `<div class="mq-topbar"><a class="mq-back-btn" href="../">←</a><span class="mq-topbar-title">Unit 1A · Games</span></div>
+      <div class="mq-done"><div class="mq-done-inner"><h1>Done!</h1>
+      <p>${correctAttempts}/${totalAttempts} correct tries</p>
+      <button class="mq-btn" id="mq-again">Practice again</button></div></div>`;
     document.getElementById("mq-again").addEventListener("click", () => {
-      index = 0;
-      locked = false;
-      correctAttempts = 0;
-      totalAttempts = 0;
-      renderItem();
-    });
-    document.getElementById("mq-home").addEventListener("click", () => {
-      window.location.href = "../";
+      index = 0; locked = false; correctAttempts = 0; totalAttempts = 0; renderItem();
     });
   }
 

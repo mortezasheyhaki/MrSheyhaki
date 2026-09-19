@@ -2,23 +2,79 @@
 (function () {
   const GAME_ID = "starter-3a-unscramble";
 
+
+  /* ---------- sound effects (Web Audio) ---------- */
+  var sfxCtx = null;
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try { sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    }
+    if (sfxCtx.state === "suspended") sfxCtx.resume().catch(function () {});
+    return sfxCtx;
+  }
+  function sfxTone(freq, start, dur, type, gain, slideTo) {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, start);
+    if (slideTo) osc.frequency.linearRampToValueAtTime(slideTo, start + dur * 0.85);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.1), start + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.02);
+  }
+  function sfxCorrect() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.1);
+    sfxTone(659.25, t + 0.08, 0.12, "triangle", 0.1);
+    sfxTone(783.99, t + 0.16, 0.16, "sine", 0.09);
+  }
+  function sfxWrong() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(220, t, 0.14, "sawtooth", 0.05, 140);
+    sfxTone(180, t + 0.05, 0.14, "triangle", 0.04, 120);
+  }
+  function sfxClick() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    sfxTone(720, ctx.currentTime, 0.045, "sine", 0.04);
+  }
+  function sfxComplete() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.09);
+    sfxTone(659.25, t + 0.1, 0.1, "triangle", 0.09);
+    sfxTone(783.99, t + 0.2, 0.12, "triangle", 0.1);
+    sfxTone(1046.5, t + 0.32, 0.22, "sine", 0.08);
+  }
+
   // spell = letters only (no spaces/hyphens); label = full phrase with article
   const ITEMS = [
-    { id: "cellphone",   label: "a cell phone",   spell: "cellphone",   audio: "audio/cellphone.mp3",   image: "images/cellphone.png" },
-    { id: "newspaper",   label: "a newspaper",    spell: "newspaper",   audio: "audio/newspaper.mp3",   image: "images/newspaper.png" },
-    { id: "key",         label: "a key",          spell: "key",         audio: "audio/key.mp3",         image: "images/key.png" },
-    { id: "credit-card", label: "a credit card",  spell: "creditcard",  audio: "audio/credit-card.mp3", image: "images/credit-card.png" },
-    { id: "camera",      label: "a camera",       spell: "camera",      audio: "audio/camera.mp3",      image: "images/camera.png" },
-    { id: "umbrella",    label: "an umbrella",    spell: "umbrella",    audio: "audio/umbrella.mp3",    image: "images/umbrella.png" },
-    { id: "passport",    label: "a passport",     spell: "passport",    audio: "audio/passport.mp3",    image: "images/passport.png" },
-    { id: "charger",     label: "a charger",      spell: "charger",     audio: "audio/charger.mp3",     image: "images/charger.png" },
-    { id: "photo",       label: "a photo",        spell: "photo",       audio: "audio/photo.mp3",       image: "images/photo.png" },
-    { id: "glasses",     label: "glasses",        spell: "glasses",     audio: "audio/glasses.mp3",     image: "images/glasses.png" },
-    { id: "notebook",    label: "a notebook",     spell: "notebook",    audio: "audio/notebook.mp3",    image: "images/notebook.png" },
-    { id: "pencil",      label: "a pencil",       spell: "pencil",      audio: "audio/pencil.mp3",      image: "images/pencil.png" },
-    { id: "wallet",      label: "a wallet",       spell: "wallet",      audio: "audio/wallet.mp3",      image: "images/wallet.png" },
-    { id: "tablet",      label: "a tablet",       spell: "tablet",      audio: "audio/tablet.mp3",      image: "images/tablet.png" },
-    { id: "watch",       label: "a watch",        spell: "watch",       audio: "audio/watch.mp3",       image: "images/watch.png" },
+    { id: "cellphone",   label: "a cell phone",   spell: "cellphone",   audio: "https://cdn.imgurl.ir/uploads/l582776_cellphone.mp3",   image: "https://cdn.imgurl.ir/uploads/y766894_a_cell_phone_1.png" },
+    { id: "newspaper",   label: "a newspaper",    spell: "newspaper",   audio: "https://cdn.imgurl.ir/uploads/t562234_newspaper.mp3",   image: "https://cdn.imgurl.ir/uploads/m25347_a_newspaper_1.png" },
+    { id: "key",         label: "a key",          spell: "key",         audio: "https://cdn.imgurl.ir/uploads/b438206_key.mp3",         image: "https://cdn.imgurl.ir/uploads/r0663_a_key_1.png" },
+    { id: "credit-card", label: "a credit card",  spell: "creditcard",  audio: "https://cdn.imgurl.ir/uploads/e878515_credit-card.mp3", image: "https://cdn.imgurl.ir/uploads/c836363_a_credit_card_1.png" },
+    { id: "camera",      label: "a camera",       spell: "camera",      audio: "https://cdn.imgurl.ir/uploads/q357436_camera.mp3",      image: "https://cdn.imgurl.ir/uploads/22726_a_camera_1.png" },
+    { id: "umbrella",    label: "an umbrella",    spell: "umbrella",    audio: "https://cdn.imgurl.ir/uploads/p997348_umbrella.mp3",    image: "https://cdn.imgurl.ir/uploads/a45664_an_umbrella_1.png" },
+    { id: "passport",    label: "a passport",     spell: "passport",    audio: "https://cdn.imgurl.ir/uploads/t119646_pport.mp3",    image: "https://cdn.imgurl.ir/uploads/q11632_pport_1.png" },
+    { id: "charger",     label: "a charger",      spell: "charger",     audio: "https://cdn.imgurl.ir/uploads/w128819_charger.mp3",     image: "https://cdn.imgurl.ir/uploads/e590817_charger_1.png" },
+    { id: "photo",       label: "a photo",        spell: "photo",       audio: "https://cdn.imgurl.ir/uploads/s457565_photo.mp3",       image: "https://cdn.imgurl.ir/uploads/c513843_a_photo_1.png" },
+    { id: "glasses",     label: "glasses",        spell: "glasses",     audio: "https://cdn.imgurl.ir/uploads/r73308_gles.mp3",     image: "https://cdn.imgurl.ir/uploads/t135626_sungles_1.png" },
+    { id: "notebook",    label: "a notebook",     spell: "notebook",    audio: "https://cdn.imgurl.ir/uploads/u905875_notebook.mp3",    image: "https://cdn.imgurl.ir/uploads/c529991_a_notebook_1.png" },
+    { id: "pencil",      label: "a pencil",       spell: "pencil",      audio: "https://cdn.imgurl.ir/uploads/l326640_pencil.mp3",      image: "https://cdn.imgurl.ir/uploads/h677030_a_pencil_1.png" },
+    { id: "wallet",      label: "a wallet",       spell: "wallet",      audio: "https://cdn.imgurl.ir/uploads/v793231_wallet.mp3",      image: "https://cdn.imgurl.ir/uploads/z327768_a_wallet_1.png" },
+    { id: "tablet",      label: "a tablet",       spell: "tablet",      audio: "https://cdn.imgurl.ir/uploads/g87260_tablet.mp3",      image: "https://cdn.imgurl.ir/uploads/c08067_a_tablet_1.png" },
+    { id: "watch",       label: "a watch",        spell: "watch",       audio: "https://cdn.imgurl.ir/uploads/y85649_watch.mp3",       image: "https://cdn.imgurl.ir/uploads/y08797_a_watch_1.png" },
   ];
 
   const SETS = [
@@ -92,6 +148,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     setIndex = 0;
     firstTryCorrect = 0;
     totalCorrect = 0;
@@ -128,6 +185,7 @@
     if (empty === -1) return;
     const letter = bank[bankIdx];
     if (!letter) return;
+    if (typeof sfxClick === "function") sfxClick();
     slots[empty] = letter;
     bank[bankIdx] = null;
     renderSlotsAndBank();
@@ -171,9 +229,10 @@
     });
 
     if (ok) {
+      sfxCorrect();
       totalCorrect += 1;
       if (attemptsThisWord === 1) firstTryCorrect += 1;
-      playAudio(item.audio);
+      // Do NOT replay word audio after the word is built — only on load / hear button
       setTimeout(() => {
         if (itemIndex < order.length - 1) {
           itemIndex += 1;
@@ -181,11 +240,13 @@
         } else if (setIndex < SETS.length - 1) {
           startSet(setIndex + 1);
         } else {
+          if (typeof sfxComplete === "function") sfxComplete();
           phase = "done";
           render();
         }
-      }, 1100);
+      }, 900);
     } else {
+      sfxWrong();
       // shake then unlock so they can fix
       setTimeout(() => {
         checked = false;
@@ -242,7 +303,7 @@
     slotsEl.innerHTML = slots
       .map((s, i) => {
         if (s) {
-          return `<button type="button" class="us-slot filled" data-slot="${i}">${s.ch.toUpperCase()}</button>`;
+          return `<button type="button" class="us-slot filled" data-slot="${i}"><span>${s.ch.toUpperCase()}</span></button>`;
         }
         return `<button type="button" class="us-slot empty" data-slot="${i}" disabled></button>`;
       })
@@ -251,14 +312,14 @@
     bankEl.innerHTML = bank
       .map((b, i) => {
         if (!b) return `<span class="us-bank-empty"></span>`;
-        return `<button type="button" class="us-letter" data-bank="${i}">${b.ch.toUpperCase()}</button>`;
+        return `<button type="button" class="us-chip" data-bank="${i}"><span class="us-chip-letter">${b.ch.toUpperCase()}</span></button>`;
       })
       .join("");
 
     slotsEl.querySelectorAll(".us-slot.filled").forEach((btn) => {
       btn.onclick = () => removeFromSlot(+btn.dataset.slot);
     });
-    bankEl.querySelectorAll(".us-letter").forEach((btn) => {
+    bankEl.querySelectorAll(".us-chip").forEach((btn) => {
       btn.onclick = () => placeLetter(+btn.dataset.bank);
     });
   }
@@ -282,33 +343,24 @@
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      app.innerHTML = `
-        <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back">←</a>
-          <span class="mc-title">Unscramble</span>
-          <span class="mc-badge">Done</span>
-        </header>
-        <section class="mc-done">
-          <div class="trophy-scene${stars === 3 ? " perfect" : ""}" aria-hidden="true">
-            <div class="orbit-system">
-              <div class="trophy-float">🏆</div>
-              <div class="star-orbit"><span class="star${stars >= 1 ? " filled" : ""}">★</span></div>
-              <div class="star-orbit"><span class="star${stars >= 2 ? " filled" : ""}">★</span></div>
-              <div class="star-orbit"><span class="star${stars >= 3 ? " filled" : ""}">★</span></div>
-            </div>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p>You unscrambled <strong>${totalCorrect} / ${ITEMS.length}</strong><br>
-          First try: <strong>${firstTryCorrect}</strong></p>
-          <button type="button" class="mc-btn" id="us-again">Play again</button>
-          <button type="button" class="mc-btn secondary" id="us-menu">Menu</button>
-        </section>`;
-      document.getElementById("us-again").onclick = () => startGame();
-      document.getElementById("us-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      const stars = typeof saveStars === 'function' ? saveStars() : 0;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: totalCorrect,
+          total: ITEMS.length,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startGame(),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u3a-again">Again</button>`;
+      document.getElementById("u3a-again").onclick = () => startGame();
       return;
     }
 
@@ -320,7 +372,7 @@
         <span class="mc-title">Unscramble · Set ${setIndex + 1}/${SETS.length}</span>
         <span class="mc-progress" id="mc-progress">Set ${setIndex + 1}/${SETS.length} · ${itemIndex + 1}/${order.length}</span>
       </header>
-      <p class="mc-instruction">Look at the picture, listen, then unscramble the letters.</p>
+      <p class="mc-instruction">Look · Listen once · Tap letters to build the word.</p>
       <div class="us-stage">
         <div class="us-pic-wrap">
           <img class="us-pic" src="${item.image}" alt="${item.label}" draggable="false">

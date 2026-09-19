@@ -70,6 +70,7 @@
   }
 
   function showPlay() {
+    if (window.LAFinish) LAFinish.startTimer();
     mode = "play";
     playing = false;
 
@@ -249,6 +250,20 @@
       playing = false;
     }
 
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: correct,
+        total: total,
+        timeMs: timeMs,
+        onAgain: showPlay,
+        onModes: showStart,
+        backHref: "../",
+      });
+      return;
+    }
+
     const stars = perfect
       ? 3
       : correct >= total - 1 || correct / total >= 0.8
@@ -260,45 +275,11 @@
       LAStars.recordPlay(GAME_ID);
       LAStars.save(GAME_ID, stars);
     }
-
-    const answerRow = ANSWERS.map(
-      (n) => `<span class="ln-ans-chip">${n}</span>`
-    ).join("");
-
-    app.innerHTML = `
-      <div class="ln-topbar">
-        <a class="ln-back" href="../" title="Back to Unit 1A Games" aria-label="Back">←</a>
-        <span class="ln-topbar-title">Unit 1A · Games</span>
-      </div>
-      <div class="ln-done">
-        <div class="ln-done-burst" id="ln-burst">
-          <div class="ln-ring"></div>
-          <div class="ln-ring"></div>
-        </div>
-        <div class="ln-done-inner">
-          <div class="ln-trophy" aria-hidden="true">${perfect ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="ln-stars" aria-hidden="true">
-            <span class="ln-star">${stars >= 1 ? "⭐" : "☆"}</span>
-            <span class="ln-star">${stars >= 2 ? "⭐" : "☆"}</span>
-            <span class="ln-star">${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${perfect ? "Perfect!" : stars >= 1 ? "Nice try!" : "Keep practicing!"}</h1>
-          <p>You wrote <strong>${correct} / ${total}</strong> numbers correctly.</p>
-          <div class="ln-answer-key">
-            <span class="ln-answer-label">Answer key</span>
-            <div class="ln-answer-row">${answerRow}</div>
-          </div>
-          <button class="ln-btn" id="ln-again">Practice again</button>
-          <button class="ln-btn secondary" id="ln-home">Back to games</button>
-        </div>
-      </div>
-    `;
-
-    if (stars >= 2) spawnConfetti(document.getElementById("ln-burst"));
+    app.innerHTML = `<div class="ln-topbar"><a class="ln-back" href="../">←</a></div>
+      <div class="ln-done"><div class="ln-done-inner"><h1>${perfect ? "Perfect!" : "Done!"}</h1>
+      <p>${correct} / ${total} correct</p>
+      <button class="ln-btn" id="ln-again">Practice again</button></div></div>`;
     document.getElementById("ln-again").addEventListener("click", showPlay);
-    document.getElementById("ln-home").addEventListener("click", () => {
-      window.location.href = "../";
-    });
   }
 
   function spawnConfetti(container) {

@@ -116,6 +116,7 @@
   }
 
   function startPart(pi) {
+    if (window.LAFinish) LAFinish.startTimer();
     partIndex = pi;
     order = shuffle(ITEMS);
     index = 0;
@@ -332,47 +333,23 @@
 
     if (phase === "done") {
       const stars = saveStars();
-      app.innerHTML =
-        '<header class="lw-topbar">' +
-        '<a class="lw-back" href="../" aria-label="Back">←</a>' +
-        '<span class="lw-title">' +
-        part.title +
-        "</span>" +
-        '<span class="lw-badge">Done</span>' +
-        "</header>" +
-        '<section class="lw-done">' +
-        '<div class="trophy-scene' +
-        (stars === 3 ? " perfect" : "") +
-        '" aria-hidden="true"><div class="orbit-system">' +
-        '<div class="trophy-float">🏆</div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 1 ? " filled" : "") +
-        '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 2 ? " filled" : "") +
-        '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 3 ? " filled" : "") +
-        '">★</span></div>' +
-        "</div></div>" +
-        "<h1>" +
-        (stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!") +
-        "</h1>" +
-        "<p>You got <strong>" +
-        correctCount +
-        " / " +
-        ITEMS.length +
-        "</strong> correct.</p>" +
-        '<button type="button" class="lw-btn" id="lw-again">Play again</button>' +
-        '<button type="button" class="lw-btn secondary" id="lw-menu">All parts</button>' +
-        "</section>";
-      document.getElementById("lw-again").onclick = () => startPart(partIndex);
-      document.getElementById("lw-menu").onclick = () => {
-        stopAudio();
-        stopRecognition();
-        phase = "menu";
-        render();
-      };
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: ITEMS.length,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startPart(partIndex),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2b-again">Again</button>`;
+      document.getElementById("u2b-again").onclick = () => startPart(partIndex);
       return;
     }
 

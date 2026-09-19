@@ -38,6 +38,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     order = shuffle(SENTENCES);
     index = 0;
     correctCount = 0;
@@ -224,22 +225,24 @@
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      app.innerHTML = `
-        <header class="sb-topbar">
-          <a class="sb-back" href="../" aria-label="Back">←</a>
-          <span class="sb-title">Sentence Builder</span>
-          <span class="sb-badge">Done</span>
-        </header>
-        <section class="sb-done">
-          <div class="trophy-scene${stars === 3 ? " perfect" : ""}" aria-hidden="true"><div class="orbit-system"><div class="trophy-float">🏆</div><div class="star-orbit"><span class="star${stars >= 1 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 2 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 3 ? " filled" : ""}">★</span></div></div></div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p>You built <strong>${correctCount} / 10</strong> sentences correctly.</p>
-          <button type="button" class="sb-btn" id="sb-again">Play again</button>
-          <button type="button" class="sb-btn secondary" id="sb-menu">Home</button>
-        </section>`;
-      document.getElementById("sb-again").onclick = startGame;
-      document.getElementById("sb-menu").onclick = () => { phase = "menu"; render(); };
+      const stars = typeof saveStars === "function" ? saveStars() : 0;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: 10,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: startGame,
+          onModes: () => { phase = 'start'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2a-again">Again</button>`;
+      document.getElementById("u2a-again").onclick = startGame;
       return;
     }
 

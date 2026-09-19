@@ -161,6 +161,7 @@
   }
 
   function startPart1() {
+    if (window.LAFinish) LAFinish.startTimer();
     pickSecret();
     waitingForAnswer = false;
     const g = secret.gender;
@@ -448,30 +449,33 @@
 
   function showPart2Win() {
     const stars = saveStars();
-    app.innerHTML = `
-      <header class="ish-topbar">
-        <a class="ish-back" href="../">←</a>
-        <span class="ish-title">Part 2 complete</span>
-        <span class="ish-badge">✓</span>
-      </header>
-      <section class="ish-win">
-        <img src="${POSE.success}" class="ish-char-img" style="width:200px" alt="">
-        <div class="ish-stars">
-          <span>${stars >= 1 ? "⭐" : "☆"}</span>
-          <span>${stars >= 2 ? "⭐" : "☆"}</span>
-          <span>${stars >= 3 ? "⭐" : "☆"}</span>
-        </div>
-        <h1>I got it!</h1>
-        <p>You chose <strong>${escapeHtml(playerRole.name)}</strong><br>from <strong>${escapeHtml(playerRole.country)}</strong>.</p>
-        <button type="button" class="ish-btn" id="ish-again">Again?</button>
-        <button type="button" class="ish-btn secondary" id="ish-home">Back to games</button>
-      </section>`;
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      const accuracy = stars === 3 ? 100 : stars === 2 ? 80 : stars === 1 ? 50 : 20;
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: accuracy,
+        total: 100,
+        stars: stars,
+        timeMs: timeMs,
+        onAgain: () => {
+          part1Done = false;
+          part2Done = false;
+          startPart1();
+        },
+        onModes: () => showStart(),
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+    app.innerHTML = `<section class="ish-win"><h1>I got it!</h1>
+      <button type="button" class="ish-btn" id="ish-again">Again?</button></section>`;
     document.getElementById("ish-again").onclick = () => {
       part1Done = false;
       part2Done = false;
       startPart1();
     };
-    document.getElementById("ish-home").onclick = () => { window.location.href = "../"; };
   }
 
   showStart();

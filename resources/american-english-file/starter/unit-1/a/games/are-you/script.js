@@ -189,6 +189,7 @@
 
   function startPart1() {
     mode = "part1";
+    if (window.LAFinish) LAFinish.startTimer();
     pickSecret();
     waitingForAnswer = false;
     app.innerHTML = `
@@ -460,7 +461,28 @@
 
   function showPart2Win() {
     mode = "part2-win";
-    const stars = saveStars();
+    const stars = saveStars(); // still save via existing helper (also used by LAFinish if save:true)
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      // Map stars 0-3 to a rough accuracy for the shared screen
+      const accuracy = stars === 3 ? 100 : stars === 2 ? 80 : stars === 1 ? 50 : 20;
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: accuracy,
+        total: 100,
+        stars: stars,
+        timeMs: timeMs,
+        onAgain: () => {
+          part1Done = false;
+          part2Done = false;
+          startPart1();
+        },
+        onModes: () => showStart(),
+        backHref: "../",
+        save: false, // already saved by saveStars()
+      });
+      return;
+    }
     app.innerHTML = `
       <header class="ay-topbar">
         <a class="ay-back" href="../" aria-label="Back">←</a>

@@ -76,6 +76,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     order = shuffle(ITEMS);
     index = 0;
     score = 0;
@@ -180,24 +181,23 @@
     const total = order.length;
     const stars = score >= total ? 3 : score >= total - 2 ? 2 : score >= total / 2 ? 1 : 0;
     saveStars(stars);
-    const starStr = "⭐".repeat(stars) + "☆".repeat(3 - stars);
-    app.innerHTML = `
-      <header class="lc-topbar">
-        <a class="lc-back" href="../" aria-label="Back">←</a>
-        <span class="lc-title">Complete</span>
-        <span class="lc-badge">✓</span>
-      </header>
-      <section class="lc-done">
-        <div class="lc-stars">${starStr}</div>
-        <h1>${score === total ? "Perfect!" : "Nice work!"}</h1>
-        <p>You got <strong>${score}</strong> out of <strong>${total}</strong> correct.</p>
-        <button type="button" class="lc-btn" id="lc-again">Play again</button>
-        <button type="button" class="lc-btn secondary" id="lc-home">Back to games</button>
-      </section>`;
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: score,
+        total: total,
+        stars: stars,
+        timeMs: timeMs,
+        onAgain: startGame,
+        onModes: () => showStart(),
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+    app.innerHTML = `<p>Done ${score}/${total}</p><button type="button" id="lc-again">Again</button>`;
     document.getElementById("lc-again").onclick = startGame;
-    document.getElementById("lc-home").onclick = () => {
-      window.location.href = "../";
-    };
   }
 
   showStart();

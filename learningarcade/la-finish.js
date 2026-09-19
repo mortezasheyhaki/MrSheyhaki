@@ -16,10 +16,10 @@
  *     total: 100,
  *     // accuracy: 80,        // optional if score+total given
  *     // stars: 3,            // optional — auto from accuracy
- *     timeMs: timeMs,         // optional
- *     onAgain: startGame,
- *     backHref: "../",
- *     // onBack: fn,          // optional instead of backHref
+ *     timeMs: timeMs,         // optional (also uses startTimer/stopTimer)
+ *     onAgain: startGame,     // ↻ Restart current mode
+ *     onModes: showStart,     // ▦ Back to mode / start screen
+ *     backHref: "../",        // ← Games menu (or onBack: fn)
  *     // save: true,          // default true → LAStars.recordPlay + save
  *     // sound: true,         // default true
  *   });
@@ -159,7 +159,10 @@
       "html[data-theme=dark] .la-finish-stat--score .la-finish-stat-label{color:#c4b5fd}",
 
       /* Actions */
-      ".la-finish-actions{display:flex;justify-content:center;gap:12px}",
+      ".la-finish-actions{display:flex;justify-content:center;align-items:flex-start;gap:14px;flex-wrap:wrap}",
+      ".la-finish-action{display:flex;flex-direction:column;align-items:center;gap:6px}",
+      ".la-finish-action-label{font-size:.58rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#8b86b0;line-height:1}",
+      "html[data-theme=dark] .la-finish-action-label{color:#9499b5}",
       ".la-finish-btn{width:52px;height:52px;border-radius:16px;border:1.5px solid #e8e4f5;background:#fff;color:#1e1b4b;font-size:1.2rem;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(99,80,200,.08);transition:transform .15s,border-color .15s,background .15s,box-shadow .15s}",
       ".la-finish-btn:hover{border-color:#7c6cf0;transform:translateY(-2px);box-shadow:0 6px 16px rgba(124,108,240,.18)}",
       ".la-finish-btn:active{transform:scale(.96)}",
@@ -538,41 +541,74 @@
 
     inner.appendChild(stats);
 
-    // Actions
+    // Actions — Restart | Modes | Games menu
     var actions = document.createElement("div");
     actions.className = "la-finish-actions";
 
+    function makeAction(btnEl, label) {
+      var wrap = document.createElement("div");
+      wrap.className = "la-finish-action";
+      wrap.appendChild(btnEl);
+      if (label) {
+        var lab = document.createElement("span");
+        lab.className = "la-finish-action-label";
+        lab.textContent = label;
+        wrap.appendChild(lab);
+      }
+      return wrap;
+    }
+
+    // 1) Restart current mode
     var againBtn = document.createElement("button");
     againBtn.type = "button";
     againBtn.className = "la-finish-btn la-finish-btn-primary";
-    againBtn.setAttribute("aria-label", "Play again");
+    againBtn.setAttribute("aria-label", "Restart");
+    againBtn.title = "Restart";
     againBtn.textContent = "↻";
     againBtn.addEventListener("click", function () {
       hide();
       if (typeof opts.onAgain === "function") opts.onAgain();
     });
-    actions.appendChild(againBtn);
+    actions.appendChild(makeAction(againBtn, "Restart"));
 
+    // 2) Back to mode / start screen (optional)
+    if (typeof opts.onModes === "function") {
+      var modesBtn = document.createElement("button");
+      modesBtn.type = "button";
+      modesBtn.className = "la-finish-btn";
+      modesBtn.setAttribute("aria-label", "Modes");
+      modesBtn.title = "Modes";
+      modesBtn.textContent = "▦";
+      modesBtn.addEventListener("click", function () {
+        hide();
+        opts.onModes();
+      });
+      actions.appendChild(makeAction(modesBtn, "Modes"));
+    }
+
+    // 3) Back to games menu
     if (typeof opts.onBack === "function" || opts.backHref) {
       var backBtn;
       if (opts.backHref) {
         backBtn = document.createElement("a");
         backBtn.href = opts.backHref;
         backBtn.className = "la-finish-btn";
-        backBtn.setAttribute("aria-label", "Back");
+        backBtn.setAttribute("aria-label", "Games menu");
+        backBtn.title = "Games menu";
         backBtn.textContent = "←";
       } else {
         backBtn = document.createElement("button");
         backBtn.type = "button";
         backBtn.className = "la-finish-btn";
-        backBtn.setAttribute("aria-label", "Back");
+        backBtn.setAttribute("aria-label", "Games menu");
+        backBtn.title = "Games menu";
         backBtn.textContent = "←";
         backBtn.addEventListener("click", function () {
           hide();
           opts.onBack();
         });
       }
-      actions.appendChild(backBtn);
+      actions.appendChild(makeAction(backBtn, "Menu"));
     }
 
     inner.appendChild(actions);

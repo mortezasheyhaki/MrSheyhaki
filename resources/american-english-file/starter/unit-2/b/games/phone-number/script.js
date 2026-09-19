@@ -143,7 +143,8 @@
   function start() {
     stopAudio();
     checked = false;
-    phase = "play";
+    phase = "play"
+    if (window.LAFinish) LAFinish.startTimer();;
     render();
   }
 
@@ -166,40 +167,25 @@
     }
 
     if (phase === "done") {
-      const total = BLANK_INDEXES.length;
+      const total = typeof ITEMS !== 'undefined' ? ITEMS.length : (correctCount || 10);
       const stars = saveStars(calcStars(correctCount || total, total));
-      app.innerHTML =
-        '<header class="pn-topbar">' +
-        '<a class="pn-back" href="../" aria-label="Back">←</a>' +
-        '<span class="pn-title">Phone Number</span>' +
-        '<span class="pn-badge">Done</span>' +
-        "</header>" +
-        '<section class="pn-done">' +
-        '<div class="trophy-scene' +
-        (stars === 3 ? " perfect" : "") +
-        '" aria-hidden="true"><div class="orbit-system">' +
-        '<div class="trophy-float">🏆</div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 1 ? " filled" : "") +
-        '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 2 ? " filled" : "") +
-        '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 3 ? " filled" : "") +
-        '">★</span></div>' +
-        "</div></div>" +
-        "<h1>Number complete!</h1>" +
-        '<p class="pn-answer">212-555-0375</p>' +
-        '<button type="button" class="pn-btn" id="pn-again">Play again</button>' +
-        '<button type="button" class="pn-btn secondary" id="pn-menu">Home</button>' +
-        "</section>";
-      document.getElementById("pn-again").onclick = start;
-      document.getElementById("pn-menu").onclick = () => {
-        stopAudio();
-        phase = "menu";
-        render();
-      };
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: total,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => { phase = 'start'; render(); },
+          onModes: () => { phase = 'start'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2b-again">Again</button>`;
+      document.getElementById("u2b-again").onclick = () => { phase = 'start'; render(); };
       return;
     }
 

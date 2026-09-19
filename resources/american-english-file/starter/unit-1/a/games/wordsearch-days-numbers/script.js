@@ -262,6 +262,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     found = new Set();
     path = [];
     selecting = false;
@@ -292,35 +293,30 @@
     }
 
     if (mode === "result") {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: TOTAL,
+          total: TOTAL,
+          timeMs: timeMs,
+          onAgain: () => {
+            if (window.LAFinish) LAFinish.startTimer();
+            startGame();
+          },
+          onModes: () => {
+            mode = "start";
+            render();
+          },
+          backHref: "../",
+        });
+        return;
+      }
       if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, 3); }
-      app.innerHTML = `
-        <header class="ws-topbar">
-          <a class="ws-back" href="../" aria-label="Back">←</a>
-          <span class="ws-title">Word Search</span>
-          <span class="ws-badge">Done</span>
-        </header>
-        <section class="ws-done">
-          <div class="ws-trophy" aria-hidden="true">🏆</div>
-          <div class="ws-stars" aria-hidden="true">⭐ ⭐ ⭐</div>
-          <h1>Perfect!</h1>
-          <p>You found all <strong>${TOTAL}</strong> words.</p>
-          <div class="ws-summary">
-            <div>
-              <h3>Numbers</h3>
-              <ul>${WORDS.numbers.map((x) => `<li>${x.label}</li>`).join("")}</ul>
-            </div>
-            <div>
-              <h3>Days</h3>
-              <ul>${WORDS.days.map((x) => `<li>${x.label}</li>`).join("")}</ul>
-            </div>
-          </div>
-          <button type="button" class="ws-btn" id="ws-again">Play again</button>
-          <a class="ws-btn secondary" href="../">Back to games</a>
-        </section>`;
-      document.getElementById("ws-again").onclick = () => {
-        mode = "start";
-        render();
-      };
+      app.innerHTML = `<header class="ws-topbar"><a class="ws-back" href="../">←</a><span class="ws-title">Word Search</span></header>
+        <section class="ws-done"><h1>Perfect!</h1><p>You found all ${TOTAL} words.</p>
+        <button type="button" class="ws-btn" id="ws-again">Play again</button></section>`;
+      document.getElementById("ws-again").onclick = () => { mode = "start"; render(); };
       return;
     }
 

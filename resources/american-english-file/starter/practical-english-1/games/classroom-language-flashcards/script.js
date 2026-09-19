@@ -35,7 +35,8 @@
   let deck = CARDS.slice();
   let index = 0;
   let currentAudio = null;
-  let phase = "play";
+  let phase = "play"
+    if (window.LAFinish) LAFinish.startTimer();;
   let showLabel = true;
 
   function shuffle(arr) {
@@ -193,24 +194,22 @@
 
   function render() {
     if (phase === "done") {
-      app.innerHTML = `
-        <header class="clf-top">
-          <a class="clf-back" href="../" aria-label="Back">←</a>
-          <div class="clf-head-text">
-            <span class="clf-eyebrow">PE1 · Classroom language</span>
-            <h1>Classroom Language</h1>
-          </div>
-        </header>
-        <section class="clf-done">
-          <div class="clf-stars">⭐ ⭐ ⭐</div>
-          <h2>Great job!</h2>
-          <p>You reviewed all <strong>${CARDS.length}</strong> phrases.</p>
-          <button type="button" class="clf-btn" id="clf-again">Practice again</button>
-          <button type="button" class="clf-btn secondary" id="clf-shuffle">Shuffle &amp; restart</button>
-          <a class="clf-btn secondary" href="../">Back to games</a>
-        </section>`;
-      document.getElementById("clf-again").onclick = restart;
-      document.getElementById("clf-shuffle").onclick = doShuffle;
+      if (typeof saveStars === 'function') saveStars();
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: 10,
+          total: 10,
+          timeMs: timeMs,
+          onAgain: () => { phase = 'play'; render(); },
+          onModes: () => { phase = 'play'; render(); },
+          backHref: "../",
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="pe-again">Again</button>`;
+      document.getElementById("pe-again").onclick = () => { phase = 'play'; render(); };
       return;
     }
 

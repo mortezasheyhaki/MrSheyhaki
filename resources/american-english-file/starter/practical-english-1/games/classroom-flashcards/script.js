@@ -95,6 +95,7 @@
   }
 
   function restart() {
+    if (window.LAFinish) LAFinish.startTimer();
     stopAudio();
     deck = CARDS.slice();
     index = 0;
@@ -177,23 +178,22 @@
 
   function render() {
     if (phase === "done") {
-      app.innerHTML = `
-        <header class="fc-topbar">
-          <a class="fc-back" href="../" aria-label="Back">←</a>
-          <span class="fc-title">Classroom Flashcards</span>
-          <span class="fc-badge">Done</span>
-        </header>
-        <section class="fc-done">
-          <div class="fc-trophy">⭐</div>
-          <div class="fc-stars">⭐ ⭐ ⭐</div>
-          <h1>Great job!</h1>
-          <p>You reviewed all <strong>${CARDS.length}</strong> classroom objects.</p>
-          <button type="button" class="fc-btn" id="fc-again">Practice again</button>
-          <button type="button" class="fc-btn secondary" id="fc-shuffle">Shuffle &amp; restart</button>
-          <a class="fc-btn secondary" href="../">Back to games</a>
-        </section>`;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: CARDS.length,
+          total: CARDS.length,
+          stars: 3,
+          timeMs: timeMs,
+          onAgain: restart,
+          onModes: () => { phase = "play"; restart(); },
+          backHref: "../",
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="fc-again">Again</button>`;
       document.getElementById("fc-again").onclick = restart;
-      document.getElementById("fc-shuffle").onclick = doShuffle;
       return;
     }
 

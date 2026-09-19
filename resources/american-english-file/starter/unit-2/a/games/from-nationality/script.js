@@ -93,6 +93,7 @@
   }
 
   function startPart(p) {
+    if (window.LAFinish) LAFinish.startTimer();
     part = p;
     order = p === 1 ? PART1.slice() : PART2.slice();
     index = 0;
@@ -242,26 +243,24 @@
     if (phase === "done") {
       const totalCorrect = part === 2 ? part1Correct + correctCount : correctCount;
       const totalItems = part === 2 ? 16 : 8;
-      const stars = saveStars();
-      const perfectClass = stars === 3 ? " perfect" : "";
-      app.innerHTML = `
-        <header class="lw-topbar">
-          <a class="lw-back" href="../" aria-label="Back">←</a>
-          <span class="lw-title">I'm from…</span>
-          <span class="lw-badge">Done</span>
-        </header>
-        <section class="lw-done">
-          <div class="trophy-scene${stars === 3 ? " perfect" : ""}" aria-hidden="true"><div class="orbit-system"><div class="trophy-float">🏆</div><div class="star-orbit"><span class="star${stars >= 1 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 2 ? " filled" : ""}">★</span></div><div class="star-orbit"><span class="star${stars >= 3 ? " filled" : ""}">★</span></div></div></div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p>You got <strong>${totalCorrect} / ${totalItems}</strong> correct.</p>
-          <button type="button" class="lw-btn" id="lw-again">Play again</button>
-          <button type="button" class="lw-btn secondary" id="lw-menu">Home</button>
-        </section>`;
-      document.getElementById("lw-again").onclick = () => startPart(1);
-      document.getElementById("lw-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      const stars = typeof saveStars === "function" ? saveStars() : 0;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: totalCorrect,
+          total: totalItems,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startPart(1),
+          onModes: () => { phase = 'start'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2a-again">Again</button>`;
+      document.getElementById("u2a-again").onclick = () => startPart(1);
       return;
     }
 

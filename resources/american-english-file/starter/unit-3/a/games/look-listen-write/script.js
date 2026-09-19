@@ -2,25 +2,81 @@
 (function () {
   const GAME_ID = "starter-3a-look-listen-write";
 
+
+  /* ---------- sound effects (Web Audio) ---------- */
+  var sfxCtx = null;
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try { sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    }
+    if (sfxCtx.state === "suspended") sfxCtx.resume().catch(function () {});
+    return sfxCtx;
+  }
+  function sfxTone(freq, start, dur, type, gain, slideTo) {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, start);
+    if (slideTo) osc.frequency.linearRampToValueAtTime(slideTo, start + dur * 0.85);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.1), start + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.02);
+  }
+  function sfxCorrect() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.1);
+    sfxTone(659.25, t + 0.08, 0.12, "triangle", 0.1);
+    sfxTone(783.99, t + 0.16, 0.16, "sine", 0.09);
+  }
+  function sfxWrong() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(220, t, 0.14, "sawtooth", 0.05, 140);
+    sfxTone(180, t + 0.05, 0.14, "triangle", 0.04, 120);
+  }
+  function sfxClick() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    sfxTone(720, ctx.currentTime, 0.045, "sine", 0.04);
+  }
+  function sfxComplete() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.09);
+    sfxTone(659.25, t + 0.1, 0.1, "triangle", 0.09);
+    sfxTone(783.99, t + 0.2, 0.12, "triangle", 0.1);
+    sfxTone(1046.5, t + 0.32, 0.22, "sine", 0.08);
+  }
+
   const SpeechRecognitionAPI =
     window.SpeechRecognition || window.webkitSpeechRecognition || null;
 
   const ITEMS = [
-    { id: "cellphone",   label: "a cell phone",  answers: ["cellphone", "cell phone", "a cell phone", "cell-phone", "mobile", "a mobile", "phone", "a phone", "mobile phone", "a mobile phone"], audio: "audio/cellphone.mp3", image: "images/cellphone.png" },
-    { id: "newspaper",   label: "a newspaper",   answers: ["newspaper", "a newspaper", "paper", "a paper", "news paper"], audio: "audio/newspaper.mp3", image: "images/newspaper.png" },
-    { id: "key",         label: "a key",         answers: ["key", "a key", "keys"], audio: "audio/key.mp3", image: "images/key.png" },
-    { id: "credit-card", label: "a credit card", answers: ["credit card", "a credit card", "creditcard", "credit-card", "card", "a card"], audio: "audio/credit-card.mp3", image: "images/credit-card.png" },
-    { id: "camera",      label: "a camera",      answers: ["camera", "a camera"], audio: "audio/camera.mp3", image: "images/camera.png" },
-    { id: "umbrella",    label: "an umbrella",   answers: ["umbrella", "an umbrella", "a umbrella"], audio: "audio/umbrella.mp3", image: "images/umbrella.png" },
-    { id: "passport",    label: "a passport",    answers: ["passport", "a passport"], audio: "audio/passport.mp3", image: "images/passport.png" },
-    { id: "charger",     label: "a charger",     answers: ["charger", "a charger", "phone charger", "a phone charger"], audio: "audio/charger.mp3", image: "images/charger.png" },
-    { id: "photo",       label: "a photo",       answers: ["photo", "a photo", "photograph", "a photograph", "picture", "a picture"], audio: "audio/photo.mp3", image: "images/photo.png" },
-    { id: "glasses",     label: "glasses",       answers: ["glasses", "a glasses", "eyeglasses", "spectacles", "eye glasses"], audio: "audio/glasses.mp3", image: "images/glasses.png" },
-    { id: "notebook",    label: "a notebook",    answers: ["notebook", "a notebook", "note book", "a note book", "notepad", "a notepad"], audio: "audio/notebook.mp3", image: "images/notebook.png" },
-    { id: "pencil",      label: "a pencil",      answers: ["pencil", "a pencil"], audio: "audio/pencil.mp3", image: "images/pencil.png" },
-    { id: "wallet",      label: "a wallet",      answers: ["wallet", "a wallet"], audio: "audio/wallet.mp3", image: "images/wallet.png" },
-    { id: "tablet",      label: "a tablet",      answers: ["tablet", "a tablet", "ipad", "an ipad", "i pad"], audio: "audio/tablet.mp3", image: "images/tablet.png" },
-    { id: "watch",       label: "a watch",       answers: ["watch", "a watch"], audio: "audio/watch.mp3", image: "images/watch.png" },
+    { id: "cellphone",   label: "a cell phone",  answers: ["cellphone", "cell phone", "a cell phone", "cell-phone", "mobile", "a mobile", "phone", "a phone", "mobile phone", "a mobile phone"], audio: "https://cdn.imgurl.ir/uploads/l582776_cellphone.mp3", image: "https://cdn.imgurl.ir/uploads/y766894_a_cell_phone_1.png" },
+    { id: "newspaper",   label: "a newspaper",   answers: ["newspaper", "a newspaper", "paper", "a paper", "news paper"], audio: "https://cdn.imgurl.ir/uploads/t562234_newspaper.mp3", image: "https://cdn.imgurl.ir/uploads/m25347_a_newspaper_1.png" },
+    { id: "key",         label: "a key",         answers: ["key", "a key", "keys"], audio: "https://cdn.imgurl.ir/uploads/b438206_key.mp3", image: "https://cdn.imgurl.ir/uploads/r0663_a_key_1.png" },
+    { id: "credit-card", label: "a credit card", answers: ["credit card", "a credit card", "creditcard", "credit-card", "card", "a card"], audio: "https://cdn.imgurl.ir/uploads/e878515_credit-card.mp3", image: "https://cdn.imgurl.ir/uploads/c836363_a_credit_card_1.png" },
+    { id: "camera",      label: "a camera",      answers: ["camera", "a camera"], audio: "https://cdn.imgurl.ir/uploads/q357436_camera.mp3", image: "https://cdn.imgurl.ir/uploads/22726_a_camera_1.png" },
+    { id: "umbrella",    label: "an umbrella",   answers: ["umbrella", "an umbrella", "a umbrella"], audio: "https://cdn.imgurl.ir/uploads/p997348_umbrella.mp3", image: "https://cdn.imgurl.ir/uploads/a45664_an_umbrella_1.png" },
+    { id: "passport",    label: "a passport",    answers: ["passport", "a passport"], audio: "https://cdn.imgurl.ir/uploads/t119646_pport.mp3", image: "https://cdn.imgurl.ir/uploads/q11632_pport_1.png" },
+    { id: "charger",     label: "a charger",     answers: ["charger", "a charger", "phone charger", "a phone charger"], audio: "https://cdn.imgurl.ir/uploads/w128819_charger.mp3", image: "https://cdn.imgurl.ir/uploads/e590817_charger_1.png" },
+    { id: "photo",       label: "a photo",       answers: ["photo", "a photo", "photograph", "a photograph", "picture", "a picture"], audio: "https://cdn.imgurl.ir/uploads/s457565_photo.mp3", image: "https://cdn.imgurl.ir/uploads/c513843_a_photo_1.png" },
+    { id: "glasses",     label: "glasses",       answers: ["glasses", "a glasses", "eyeglasses", "spectacles", "eye glasses"], audio: "https://cdn.imgurl.ir/uploads/r73308_gles.mp3", image: "https://cdn.imgurl.ir/uploads/t135626_sungles_1.png" },
+    { id: "notebook",    label: "a notebook",    answers: ["notebook", "a notebook", "note book", "a note book", "notepad", "a notepad"], audio: "https://cdn.imgurl.ir/uploads/u905875_notebook.mp3", image: "https://cdn.imgurl.ir/uploads/c529991_a_notebook_1.png" },
+    { id: "pencil",      label: "a pencil",      answers: ["pencil", "a pencil"], audio: "https://cdn.imgurl.ir/uploads/l326640_pencil.mp3", image: "https://cdn.imgurl.ir/uploads/h677030_a_pencil_1.png" },
+    { id: "wallet",      label: "a wallet",      answers: ["wallet", "a wallet"], audio: "https://cdn.imgurl.ir/uploads/v793231_wallet.mp3", image: "https://cdn.imgurl.ir/uploads/z327768_a_wallet_1.png" },
+    { id: "tablet",      label: "a tablet",      answers: ["tablet", "a tablet", "ipad", "an ipad", "i pad"], audio: "https://cdn.imgurl.ir/uploads/g87260_tablet.mp3", image: "https://cdn.imgurl.ir/uploads/c08067_a_tablet_1.png" },
+    { id: "watch",       label: "a watch",       answers: ["watch", "a watch"], audio: "https://cdn.imgurl.ir/uploads/y85649_watch.mp3", image: "https://cdn.imgurl.ir/uploads/y08797_a_watch_1.png" },
   ];
 
   const SETS = [
@@ -84,20 +140,57 @@
       .replace(/\s+/g, " ");
   }
 
-  /** Flexible match: exact, contains, or contained (speech-friendly). */
+  /** Stricter match for typed + spoken answers (avoids accepting random speech). */
+  function stripArticle(s) {
+    return String(s || "").replace(/^(a|an|the)\s+/i, "").trim();
+  }
+
   function isCorrect(user, answers) {
-    const u = normalize(user);
-    if (!u) return false;
-    for (let i = 0; i < answers.length; i++) {
-      const a = normalize(answers[i]);
-      if (!a) continue;
-      if (u === a || u.includes(a) || a.includes(u)) return true;
-    }
-    // also try without spaces (cellphone vs cell phone)
+    const u0 = normalize(user);
+    if (!u0 || u0.length < 2) return false;
+
+    const FILLER = {
+      a: 1, an: 1, the: 1, it: 1, its: 1, is: 1, this: 1, that: 1,
+      um: 1, uh: 1, oh: 1, hmm: 1, yes: 1, no: 1, ok: 1, okay: 1
+    };
+    if (FILLER[u0]) return false;
+
+    const u = stripArticle(u0);
     const uFlat = u.replace(/[\s\-]/g, "");
+    if (!u || uFlat.length < 3) return false;
+
     for (let i = 0; i < answers.length; i++) {
-      const aFlat = normalize(answers[i]).replace(/[\s\-]/g, "");
-      if (aFlat && (uFlat === aFlat || uFlat.includes(aFlat) || aFlat.includes(uFlat))) return true;
+      const a0 = normalize(answers[i]);
+      if (!a0 || a0.length <= 2) continue;
+
+      const a = stripArticle(a0);
+      const aFlat = a.replace(/[\s\-]/g, "");
+      if (!a || aFlat.length < 3) continue;
+
+      // Exact match (with/without article, with/without spaces)
+      if (u0 === a0 || u === a || uFlat === aFlat) return true;
+
+      // User speech contains the full answer as a contiguous phrase
+      // Pad with spaces so "phone" does not match inside "headphones" incorrectly via flat alone
+      const padded = " " + u0 + " ";
+      const phrase = " " + a + " ";
+      if (padded.indexOf(phrase) !== -1) return true;
+      // multi-word answer without requiring trailing space exactness
+      if (a.indexOf(" ") !== -1 && u0.indexOf(a) !== -1) return true;
+
+      // Flat: full answer (min 4 letters) appears inside user speech
+      // e.g. "cellphone" in "um cellphone"
+      if (aFlat.length >= 4 && uFlat.indexOf(aFlat) !== -1) return true;
+
+      // Close shortening: user is ≥70% of the answer length
+      if (
+        uFlat.length >= 4 &&
+        aFlat.length >= 4 &&
+        aFlat.indexOf(uFlat) !== -1 &&
+        uFlat.length / aFlat.length >= 0.7
+      ) {
+        return true;
+      }
     }
     return false;
   }
@@ -251,6 +344,7 @@
   }
 
   function startMode(mi) {
+    if (window.LAFinish) LAFinish.startTimer();
     modeIndex = mi;
     modeCorrect = 0;
     startSet(0);
@@ -304,6 +398,7 @@
     const ok = isCorrect(user, item.answers);
 
     if (ok) {
+      sfxCorrect();
       modeCorrect += 1;
       input.classList.add("is-correct");
       setFeedback("Correct!", "ok");
@@ -326,6 +421,7 @@
         advance();
       }
     } else {
+      sfxWrong();
       input.classList.add("is-wrong");
       setFeedback('It\'s "' + item.label + '"', "bad");
       if (mode.playOnCorrect) {
@@ -402,33 +498,24 @@
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      const m = MODES[modeIndex];
-      app.innerHTML = `
-        <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back">←</a>
-          <span class="mc-title">Look & Listen Write</span>
-          <span class="mc-badge">Done</span>
-        </header>
-        <section class="mc-done">
-          <div class="trophy-scene${stars === 3 ? " perfect" : ""}" aria-hidden="true">
-            <div class="orbit-system">
-              <div class="trophy-float">🏆</div>
-              <div class="star-orbit"><span class="star${stars >= 1 ? " filled" : ""}">★</span></div>
-              <div class="star-orbit"><span class="star${stars >= 2 ? " filled" : ""}">★</span></div>
-              <div class="star-orbit"><span class="star${stars >= 3 ? " filled" : ""}">★</span></div>
-            </div>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p><strong>${m.title}</strong><br>You got <strong>${modeCorrect} / ${ITEMS.length}</strong> correct.</p>
-          <button type="button" class="mc-btn" id="ll-again">Play again</button>
-          <button type="button" class="mc-btn secondary" id="ll-menu">All modes</button>
-        </section>`;
-      document.getElementById("ll-again").onclick = () => startMode(modeIndex);
-      document.getElementById("ll-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      const stars = typeof saveStars === 'function' ? saveStars() : 0;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: modeCorrect,
+          total: 15,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startMode(modeIndex),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u3a-again">Again</button>`;
+      document.getElementById("u3a-again").onclick = () => startMode(modeIndex);
       return;
     }
 

@@ -101,6 +101,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     order = shuffle(COUNTRIES);
     index = 0;
     correctCount = 0;
@@ -191,29 +192,23 @@
 
     if (phase === "done") {
       const stars = saveStars();
-      app.innerHTML = `
-        <header class="lw-topbar">
-          <a class="lw-back" href="../" aria-label="Back">←</a>
-          <span class="lw-title">Listen & Write</span>
-          <span class="lw-badge">Done</span>
-        </header>
-        <section class="lw-done">
-          <div class="lw-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="lw-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p>You wrote <strong>${correctCount} / 15</strong> countries correctly.</p>
-          <button type="button" class="lw-btn" id="lw-again">Play again</button>
-          <button type="button" class="lw-btn secondary" id="lw-menu">Back to menu</button>
-        </section>`;
-      document.getElementById("lw-again").onclick = startGame;
-      document.getElementById("lw-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: Math.max(COUNTRIES.length, 1),
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: startGame,
+          onModes: () => { phase = "menu"; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="fb-again">Again</button>`;
+      document.getElementById("fb-again").onclick = startGame;
       return;
     }
 

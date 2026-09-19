@@ -2,6 +2,62 @@
 (function () {
   const GAME_ID = "starter-3a-listen-number";
 
+
+  /* ---------- sound effects (Web Audio) ---------- */
+  var sfxCtx = null;
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try { sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    }
+    if (sfxCtx.state === "suspended") sfxCtx.resume().catch(function () {});
+    return sfxCtx;
+  }
+  function sfxTone(freq, start, dur, type, gain, slideTo) {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, start);
+    if (slideTo) osc.frequency.linearRampToValueAtTime(slideTo, start + dur * 0.85);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.1), start + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.02);
+  }
+  function sfxCorrect() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.1);
+    sfxTone(659.25, t + 0.08, 0.12, "triangle", 0.1);
+    sfxTone(783.99, t + 0.16, 0.16, "sine", 0.09);
+  }
+  function sfxWrong() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(220, t, 0.14, "sawtooth", 0.05, 140);
+    sfxTone(180, t + 0.05, 0.14, "triangle", 0.04, 120);
+  }
+  function sfxClick() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    sfxTone(720, ctx.currentTime, 0.045, "sine", 0.04);
+  }
+  function sfxComplete() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.09);
+    sfxTone(659.25, t + 0.1, 0.1, "triangle", 0.09);
+    sfxTone(783.99, t + 0.2, 0.12, "triangle", 0.1);
+    sfxTone(1046.5, t + 0.32, 0.22, "sine", 0.08);
+  }
+
   // Display order matches the textbook list (not the ranking order)
   const ITEMS = [
     { id: "pens",     label: "pens and pencils",                    correct: 3 },
@@ -93,7 +149,7 @@
     checked = true;
     correctCount = 0;
     ITEMS.forEach((it) => {
-      if (numbers[it.id] === it.correct) correctCount += 1;
+      if (numbers[it.id] === it.correct) { correctCount += 1; }
     });
     renderPlay(true);
     setTimeout(() => {
@@ -112,6 +168,7 @@
   }
 
   function start() {
+    if (window.LAFinish) LAFinish.startTimer();
     reset();
     phase = "play";
     render();
@@ -142,6 +199,7 @@
       let state = "";
       if (showResult && n != null) {
         state = n === it.correct ? " is-correct" : " is-wrong";
+      if (n === it.correct) sfxCorrect(); else sfxWrong();
       }
       return `
         <button type="button" class="ln-row${sel}${state}" data-id="${it.id}" ${checked ? "disabled" : ""}>
@@ -237,32 +295,24 @@
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      app.innerHTML = `
-        <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back">←</a>
-          <span class="mc-title">Listen & Number</span>
-          <span class="mc-badge">Done</span>
-        </header>
-        <section class="mc-done">
-          <div class="trophy-scene${stars === 3 ? " perfect" : ""}" aria-hidden="true">
-            <div class="orbit-system">
-              <div class="trophy-float">🏆</div>
-              <div class="star-orbit"><span class="star${stars >= 1 ? " filled" : ""}">★</span></div>
-              <div class="star-orbit"><span class="star${stars >= 2 ? " filled" : ""}">★</span></div>
-              <div class="star-orbit"><span class="star${stars >= 3 ? " filled" : ""}">★</span></div>
-            </div>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p>You got <strong>${correctCount} / 8</strong> in the correct order.</p>
-          <button type="button" class="mc-btn" id="ln-again">Play again</button>
-          <button type="button" class="mc-btn secondary" id="ln-menu">Menu</button>
-        </section>`;
-      document.getElementById("ln-again").onclick = () => start();
-      document.getElementById("ln-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      const stars = typeof saveStars === 'function' ? saveStars() : 0;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: 8,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => start(),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u3a-again">Again</button>`;
+      document.getElementById("u3a-again").onclick = () => start();
       return;
     }
 

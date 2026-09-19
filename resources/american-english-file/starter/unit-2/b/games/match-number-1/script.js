@@ -113,6 +113,7 @@
   }
 
   function startMode(mi) {
+    if (window.LAFinish) LAFinish.startTimer();
     modeIndex = mi;
     modeCorrect = 0;
     startSet(0);
@@ -345,44 +346,23 @@
 
     if (phase === "done") {
       const stars = saveStars(calcStars());
-      const m = MODES[modeIndex];
-      app.innerHTML =
-        '<header class="mc-topbar">' +
-        '<a class="mc-back" href="../" aria-label="Back">←</a>' +
-        '<span class="mc-title">Finished</span>' +
-        '<span class="mc-progress">Done</span>' +
-        "</header>" +
-        '<section class="mc-done">' +
-        '<div class="trophy-scene' +
-        (stars === 3 ? " perfect" : "") +
-        '" aria-hidden="true"><div class="orbit-system">' +
-        '<div class="trophy-float">🏆</div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 1 ? " filled" : "") +
-        '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 2 ? " filled" : "") +
-        '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' +
-        (stars >= 3 ? " filled" : "") +
-        '">★</span></div>' +
-        "</div></div>" +
-        "<h1>" +
-        (stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!") +
-        "</h1>" +
-        "<p><strong>" +
-        m.title +
-        "</strong><br>You matched <strong>" +
-        modeCorrect +
-        " / 10</strong> numbers.</p>" +
-        '<button type="button" class="mc-btn" id="mc-again">Play again</button>' +
-        '<button type="button" class="mc-btn secondary" id="mc-menu">All modes</button>' +
-        "</section>";
-      document.getElementById("mc-again").onclick = () => startMode(modeIndex);
-      document.getElementById("mc-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: modeCorrect,
+          total: 10,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startMode(modeIndex),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2b-again">Again</button>`;
+      document.getElementById("u2b-again").onclick = () => startMode(modeIndex);
       return;
     }
 

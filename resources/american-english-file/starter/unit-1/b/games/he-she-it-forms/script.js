@@ -173,6 +173,7 @@
       ? buildMakeQuestions(count)
       : buildIdentifyQuestions(count);
     phase = "play";
+    if (window.LAFinish) LAFinish.startTimer();
     render();
   }
 
@@ -249,30 +250,24 @@
     if (phase === "done") {
       const stars = calcStars();
       saveProgress(stars);
-      const mode = MODES[modeIndex];
-      app.innerHTML = `
-        <header class="hs-topbar">
-          <span class="hs-title">He / She / It</span>
-          <span class="hs-badge">Done</span>
-        </header>
-        <section class="hs-done">
-          <div class="hs-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="hs-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p><strong>${mode.title}</strong><br>
-          You got <strong>${correctCount} / ${questions.length}</strong> correct.</p>
-          <button type="button" class="hs-btn" id="hs-again">Play again</button>
-          <button type="button" class="hs-btn secondary" id="hs-menu">All modes</button>
-        </section>`;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: Math.max(questions.length, 1),
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => startMode(modeIndex),
+          onModes: () => { phase = "menu"; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<section class="hs-done"><h1>Done!</h1><p>${correctCount} / ${questions.length}</p>
+        <button type="button" class="hs-btn" id="hs-again">Play again</button></section>`;
       document.getElementById("hs-again").onclick = () => startMode(modeIndex);
-      document.getElementById("hs-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
       return;
     }
 

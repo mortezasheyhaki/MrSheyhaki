@@ -92,6 +92,7 @@
   }
 
   function startMode(mi) {
+    if (window.LAFinish) LAFinish.startTimer();
     modeIndex = mi;
     modeCorrect = 0;
     startSet(0);
@@ -308,32 +309,22 @@
     }
 
     if (phase === "done") {
-      const stars = saveStars();
-      const m = MODES[modeIndex];
-      const totalPairs = SETS.reduce((sum, s) => sum + s.length, 0);
-      app.innerHTML = `
-        <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back">←</a>
-          <span class="mc-title">Match Classroom Objects</span>
-          <span class="mc-badge">Done</span>
-        </header>
-        <section class="mc-done">
-          <div class="mc-trophy">${stars === 3 ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="mc-stars" aria-hidden="true">
-            <span>${stars >= 1 ? "⭐" : "☆"}</span>
-            <span>${stars >= 2 ? "⭐" : "☆"}</span>
-            <span>${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p><strong>${m.title}</strong><br>You matched <strong>${modeCorrect} / ${totalPairs}</strong>.</p>
-          <button type="button" class="mc-btn" id="mc-again">Play again</button>
-          <button type="button" class="mc-btn secondary" id="mc-menu">All modes</button>
-        </section>`;
-      document.getElementById("mc-again").onclick = () => startMode(modeIndex);
-      document.getElementById("mc-menu").onclick = () => {
-        phase = "menu";
-        render();
-      };
+      const stars = typeof saveStars === 'function' ? saveStars() : 3;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: typeof modeCorrect !== 'undefined' ? modeCorrect : 15,
+          total: 15,
+          timeMs: timeMs,
+          onAgain: () => { phase = 'menu'; render(); },
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="pe-again">Again</button>`;
+      document.getElementById("pe-again").onclick = () => { phase = 'menu'; render(); };
       return;
     }
 

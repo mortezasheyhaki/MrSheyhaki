@@ -182,6 +182,7 @@
   let member = "";
   let qIndex = 0;
   let answers = [];
+    if (window.LAFinish) LAFinish.startTimer();
   let lastReply = "";
   let musicOn = true;
   let audioCtx = null;
@@ -481,31 +482,24 @@
 
     if (phase === "done") {
       const stars = saveStars(calcStars());
-      const list = answers.map(function (a, i) {
-        return "<li><strong>" + qs()[i].text + "</strong><br/>" + (a || "—") + "</li>";
-      }).join("");
-      app.innerHTML = renderShell(
-        '<section class="pi-done">' +
-        '<div class="pi-hero small"><img src="' + IMAGES.thanks + '" alt="" /></div>' +
-        '<div class="trophy-scene" aria-hidden="true"><div class="orbit-system">' +
-        '<div class="trophy-float">🏆</div>' +
-        '<div class="star-orbit"><span class="star' + (stars >= 1 ? " filled" : "") + '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' + (stars >= 2 ? " filled" : "") + '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' + (stars >= 3 ? " filled" : "") + '">★</span></div>' +
-        "</div></div>" +
-        "<h1>" + (stars === 3 ? "Perfect!" : "Great chat!") + "</h1>" +
-        (member ? "<p>About your <strong>" + member.toLowerCase() + "</strong></p>" : "") +
-        '<ul class="pi-summary">' + list + "</ul>" +
-        '<button type="button" class="pi-btn" id="pi-again">Play again</button>' +
-        "</section>"
-      );
-      bindMusic();
-      document.getElementById("pi-again").onclick = function () {
-        stopMusic();
-        clearTimers();
-        phase = "menu";
-        render();
-      };
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: qs().length,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => { phase = 'start'; render(); },
+          onModes: () => { phase = 'start'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2b-again">Again</button>`;
+      document.getElementById("u2b-again").onclick = () => { phase = 'start'; render(); };
+      return;
     }
   }
 

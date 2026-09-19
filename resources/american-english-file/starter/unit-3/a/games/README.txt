@@ -1,17 +1,15 @@
-What's in Your Bag? — Unit 3A (2 pages)
-=======================================
-Page 1 — Bag
-  Items: notebook, two pencils, a book, two pens, a phone
-  Example: I have a notebook, two pencils, a book, two pens, and a phone.
+Unit 3A – match audio fix + sound effects
+==========================================
 
-Page 2 — Wallet
-  Items: two credit cards, an ID card, money
-  Example: I have two credit cards, an ID card, and some money.
+1) Match games – last match no longer cuts off word audio
+   pictures-words-match, plural-match, sing-plur-match
+   Advance waits for currentAudio.onended (or ~1.6s) before next set / finish.
 
-Rules (both pages):
-  • Tap container to open → items pop out
-  • Sentence MUST start with "I have" / "I've" / "I have got" / "I've got"
-  • All items must be mentioned (order flexible)
+2) Sound effects (Web Audio) on all 15 games:
+   sfxCorrect – rising chime
+   sfxWrong   – low buzz
+   sfxComplete – short fanfare on finish
+   sfxClick   – available for UI taps
 
-Path:
-  resources/american-english-file/starter/unit-3/a/games/whats-in-your-bag/
+Copy each script.js into:
+  resources/american-english-file/starter/unit-3/a/games/<game>/

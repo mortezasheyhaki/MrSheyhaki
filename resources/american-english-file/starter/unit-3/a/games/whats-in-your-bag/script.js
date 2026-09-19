@@ -8,6 +8,62 @@
 
   const GAME_ID = "starter-3a-whats-in-your-bag";
 
+
+  /* ---------- sound effects (Web Audio) ---------- */
+  var sfxCtx = null;
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try { sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    }
+    if (sfxCtx.state === "suspended") sfxCtx.resume().catch(function () {});
+    return sfxCtx;
+  }
+  function sfxTone(freq, start, dur, type, gain, slideTo) {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, start);
+    if (slideTo) osc.frequency.linearRampToValueAtTime(slideTo, start + dur * 0.85);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.1), start + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.02);
+  }
+  function sfxCorrect() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.1);
+    sfxTone(659.25, t + 0.08, 0.12, "triangle", 0.1);
+    sfxTone(783.99, t + 0.16, 0.16, "sine", 0.09);
+  }
+  function sfxWrong() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(220, t, 0.14, "sawtooth", 0.05, 140);
+    sfxTone(180, t + 0.05, 0.14, "triangle", 0.04, 120);
+  }
+  function sfxClick() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    sfxTone(720, ctx.currentTime, 0.045, "sine", 0.04);
+  }
+  function sfxComplete() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    sfxTone(523.25, t, 0.1, "triangle", 0.09);
+    sfxTone(659.25, t + 0.1, 0.1, "triangle", 0.09);
+    sfxTone(783.99, t + 0.2, 0.12, "triangle", 0.1);
+    sfxTone(1046.5, t + 0.32, 0.22, "sine", 0.08);
+  }
+
   const PAGES = [
     {
       id: "bag",
@@ -402,7 +458,7 @@
           loadPage(pageIndex + 1);
         }, 1600);
       } else {
-        finishAll();
+        sfxComplete(); finishAll();
       }
     }, 450);
   }
@@ -414,6 +470,21 @@
         window.LAStars.saveFromAccuracy(GAME_ID, 100);
       }
     } catch (e) {}
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer ? LAFinish.stopTimer() : null;
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: completedModels.filter(Boolean).length || 1,
+        total: Math.max(completedModels.filter(Boolean).length, 1),
+        stars: 3,
+        timeMs: timeMs,
+        onAgain: function () { location.reload(); },
+        onModes: function () { location.href = "../"; },
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
 
     allModels.innerHTML = "";
     completedModels.forEach(function (m, i) {
@@ -437,6 +508,7 @@
   function resetGame() {
     completedModels.length = 0;
     loadPage(0);
+    if (window.LAFinish) LAFinish.startTimer();
   }
 
   // Events

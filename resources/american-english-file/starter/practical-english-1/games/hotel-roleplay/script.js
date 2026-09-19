@@ -315,6 +315,7 @@
   }
 
   function showStart() {
+    if (window.LAFinish) LAFinish.startTimer();
     stopListening();
     try {
       window.speechSynthesis && window.speechSynthesis.cancel();
@@ -540,30 +541,25 @@
   }
 
   function showDone() {
-    stopListening();
-    try {
-      window.speechSynthesis && window.speechSynthesis.cancel();
-    } catch (_) {}
+    const stars = 3;
     saveStars(3);
-    app.innerHTML = `
-      <header class="hr-topbar">
-        <a class="hr-back" href="../" aria-label="Back">←</a>
-        <span class="hr-title">Checked in!</span>
-        <span class="hr-badge">✓</span>
-      </header>
-      <section class="hr-done">
-        <img class="hr-done-img" src="${IMG.key}" alt="Your key" draggable="false">
-        <div class="hr-stars">⭐ ⭐ ⭐</div>
-        <h1>Well done, ${escapeHtml(title)}. ${escapeHtml(lastName)}!</h1>
-        <p>You're in room <strong>${ROOM}</strong>.<br>
-        Great job with the hotel check-in.</p>
-        <button type="button" class="hr-btn primary" id="hr-again">Play again</button>
-        <button type="button" class="hr-btn secondary" id="hr-home">Back to games</button>
-      </section>`;
-    document.getElementById("hr-again").onclick = showStart;
-    document.getElementById("hr-home").onclick = () => {
-      window.location.href = "../";
-    };
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: 10,
+        total: 10,
+        stars: stars,
+        timeMs: timeMs,
+        onAgain: showStart,
+        onModes: () => showStart(),
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+    app.innerHTML = `<p>Done</p><button type="button" id="pe-again">Again</button>`;
+    document.getElementById("pe-again").onclick = showStart;
   }
 
   if (canSpeak) {

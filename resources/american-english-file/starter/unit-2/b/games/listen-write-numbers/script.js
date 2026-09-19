@@ -20,7 +20,8 @@
   const app = document.getElementById("game-app");
   if (!app) return;
 
-  let phase = "play";
+  let phase = "play"
+    if (window.LAFinish) LAFinish.startTimer();;
   let currentAudio = null;
   let playingIndex = null;
   let correctCount = 0;
@@ -149,24 +150,23 @@
 
     if (phase === "done") {
       const stars = saveStars(calcStars());
-      app.innerHTML =
-        '<header class="lw-topbar">' +
-        '<a class="lw-back" href="../" aria-label="Back">←</a>' +
-        '<span class="lw-title">Listen &amp; Write</span>' +
-        '<span class="lw-badge">Done</span>' +
-        "</header>" +
-        '<section class="lw-done">' +
-        '<div class="trophy-scene" aria-hidden="true"><div class="orbit-system">' +
-        '<div class="trophy-float">🏆</div>' +
-        '<div class="star-orbit"><span class="star' + (stars >= 1 ? " filled" : "") + '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' + (stars >= 2 ? " filled" : "") + '">★</span></div>' +
-        '<div class="star-orbit"><span class="star' + (stars >= 3 ? " filled" : "") + '">★</span></div>' +
-        "</div></div>" +
-        "<h1>" + (stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!") + "</h1>" +
-        "<p>You wrote <strong>" + correctCount + " / " + ITEMS.length + "</strong> numbers.</p>" +
-        '<button type="button" class="lw-btn" id="lw-again">Play again</button>' +
-        "</section>";
-      document.getElementById("lw-again").onclick = reset;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: ITEMS.length,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => { phase = 'start'; render(); },
+          onModes: () => { phase = 'start'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+      app.innerHTML = `<p>Done</p><button type="button" id="u2b-again">Again</button>`;
+      document.getElementById("u2b-again").onclick = () => { phase = 'start'; render(); };
       return;
     }
 

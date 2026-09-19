@@ -81,6 +81,7 @@
   }
 
   function showStart() {
+    if (window.LAFinish) LAFinish.startTimer();
     stopAudio();
     answers = {};
     locked = false;
@@ -242,30 +243,25 @@
   }
 
   function showDone(score) {
-    stopAudio();
-    locked = false;
     const stars = score === 3 ? 3 : score === 2 ? 2 : score === 1 ? 1 : 0;
     saveStars(stars);
-    app.innerHTML = `
-      <header class="mr-topbar">
-        <a class="mr-back" href="../" aria-label="Back">←</a>
-        <span class="mr-title">Complete</span>
-        <span class="mr-badge">✓</span>
-      </header>
-      <section class="mr-done">
-        <div class="mr-stars">${stars > 0 ? "⭐ ".repeat(stars).trim() : "—"}</div>
-        <h1>${score === 3 ? "Perfect!" : score >= 2 ? "Well done!" : "Good try!"}</h1>
-        <p>You got <strong>${score} / ${QUESTIONS.length}</strong> correct.</p>
-        <button type="button" class="mr-btn primary" id="mr-again">Play again</button>
-        <button type="button" class="mr-btn secondary" id="mr-home">Back to games</button>
-      </section>`;
-    document.getElementById("mr-again").onclick = () => {
-      answers = {};
-      renderQuiz();
-    };
-    document.getElementById("mr-home").onclick = () => {
-      window.location.href = "../";
-    };
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: score,
+        total: QUESTIONS.length,
+        stars: stars,
+        timeMs: timeMs,
+        onAgain: showStart,
+        onModes: () => showStart(),
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+    app.innerHTML = `<p>Done</p><button type="button" id="pe-again">Again</button>`;
+    document.getElementById("pe-again").onclick = showStart;
   }
 
   showStart();

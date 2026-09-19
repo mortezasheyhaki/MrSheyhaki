@@ -31,6 +31,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     order = shuffle(DAYS.map((d) => d.id));
     // Avoid already-correct shuffle
     let tries = 0;
@@ -401,33 +402,32 @@
     if (mode === "result") {
       const ok = isCorrect();
       const correctCount = order.filter((id, i) => id === CORRECT[i]).length;
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: 7,
+          timeMs: timeMs,
+          onAgain: () => {
+            if (window.LAFinish) LAFinish.startTimer();
+            startGame();
+          },
+          onModes: () => {
+            mode = "start";
+            render();
+          },
+          backHref: "../",
+        });
+        return;
+      }
       const stars = ok ? 3 : correctCount >= 6 ? 2 : correctCount >= 4 ? 1 : 0;
       if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
-      app.innerHTML = `
-        <header class="od-topbar">
-          <a class="od-back" href="../" aria-label="Back">←</a>
-          <span class="od-title">Order the Days</span>
-          <span class="od-badge">Done</span>
-        </header>
-        <section class="od-done">
-          <div class="od-trophy" aria-hidden="true">${ok ? "🏆" : stars >= 1 ? "🌟" : "💪"}</div>
-          <div class="od-stars" aria-hidden="true">
-            <span class="od-star">${stars >= 1 ? "⭐" : "☆"}</span>
-            <span class="od-star">${stars >= 2 ? "⭐" : "☆"}</span>
-            <span class="od-star">${stars >= 3 ? "⭐" : "☆"}</span>
-          </div>
-          <h1>${ok ? "Perfect!" : stars >= 1 ? "Almost!" : "Keep practicing!"}</h1>
-          <p>${ok ? "You put all the days in the right order." : correctCount + " of 7 in the right place — try again."}</p>
-          <div class="od-answer">
-            ${DAYS.map((d) => `<span class="od-chip">${d.emoji} ${d.label}</span>`).join("")}
-          </div>
-          <button type="button" class="od-btn" id="od-again">Play again</button>
-          <a class="od-btn secondary" href="../">Back to games</a>
-        </section>`;
-      document.getElementById("od-again").onclick = () => {
-        mode = "start";
-        render();
-      };
+      app.innerHTML = `<header class="od-topbar"><a class="od-back" href="../">←</a><span class="od-title">Order the Days</span></header>
+        <section class="od-done"><h1>${ok ? "Perfect!" : "Keep practicing!"}</h1>
+        <p>${correctCount} of 7 correct</p>
+        <button type="button" class="od-btn" id="od-again">Play again</button></section>`;
+      document.getElementById("od-again").onclick = () => { mode = "start"; render(); };
       return;
     }
 
