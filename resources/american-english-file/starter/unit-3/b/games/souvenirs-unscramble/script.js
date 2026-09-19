@@ -68,6 +68,7 @@
   }
 
   function start() {
+    if (window.LAFinish) LAFinish.startTimer();
     order = shuffle(ITEMS.map((x) => x.id));
     current = 0;
     correctCount = 0;
@@ -242,6 +243,21 @@
     }
 
     if (phase === "done") {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: ITEMS.length,
+          timeMs: timeMs,
+          onAgain: () => start(),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
       const stars = saveStars();
       app.innerHTML = `
         <header class="mc-topbar">

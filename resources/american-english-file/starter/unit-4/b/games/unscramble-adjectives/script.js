@@ -373,6 +373,30 @@
   }
 
   function showEnd() {
+    // LAStars + LAFinish
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay(GAME_ID);
+        LAStars.saveFromAccuracy(GAME_ID, order.length ? (score / order.length) * 100 : 0);
+      }
+    } catch (e) {}
+    if (window.LAFinish) {
+      try {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: order.length,
+          timeMs: timeMs,
+          onAgain: () => startGame(),
+          onModes: () => { location.href = '../'; },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      } catch (e) { console.warn("LAFinish", e); }
+    }
+
     const total = order.length;
     playVictory();
     spawnConfetti();
@@ -396,6 +420,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     order = shuffle(WORDS);
     index = 0;
     score = 0;

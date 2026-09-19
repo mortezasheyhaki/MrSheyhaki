@@ -297,6 +297,7 @@
   }
 
   function startMode(m) {
+    if (window.LAFinish) LAFinish.startTimer();
     mode = m;
     order = shuffle(m === "write" ? WRITE_ITEMS : ORDER_ITEMS);
     index = 0;
@@ -493,6 +494,30 @@
   }
 
   function showEnd() {
+    // LAStars + LAFinish
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay(GAME_ID + '-' + mode);
+        LAStars.saveFromAccuracy(GAME_ID + '-' + mode, order.length ? (score / order.length) * 100 : 0);
+      }
+    } catch (e) {}
+    if (window.LAFinish) {
+      try {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID + '-' + mode,
+          score: score,
+          total: order.length,
+          timeMs: timeMs,
+          onAgain: () => startMode(mode),
+          onModes: () => showStart(),
+          backHref: "../",
+          save: false,
+        });
+        return;
+      } catch (e) { console.warn("LAFinish", e); }
+    }
+
     playVictory();
     spawnConfetti();
     const total = order.length;

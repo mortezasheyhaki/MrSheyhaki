@@ -318,7 +318,7 @@
         if (idx < NUMBERS.length - 1) {
           idx++;
           phase = "mode1"
-    if (window.LAFinish) LAFinish.startTimer();;
+    if (window.LAFinish) LAFinish.startTimer();
           render();
         } else {
           phase = "mode1done";
@@ -367,6 +367,7 @@
     if (phase === "mode1done") {
       const n = correctCount; const stars = saveStars(calcStars(n, 3));
       if (window.LAFinish) {
+      try {
         const timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
@@ -380,7 +381,8 @@
           save: false,
         });
         return;
-      }
+      } catch (e) { console.warn("LAFinish error", e); }
+    }
       app.innerHTML = `<p>Done</p><button type="button" id="p3-again">Again</button>`;
       document.getElementById("p3-again").onclick = function () { phase = "menu"; render(); };
       return;
@@ -464,6 +466,7 @@
     if (phase === "mode2done") {
       const n = correctCount; const stars = saveStars(calcStars(n, 3));
       if (window.LAFinish) {
+      try {
         const timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
@@ -477,7 +480,8 @@
           save: false,
         });
         return;
-      }
+      } catch (e) { console.warn("LAFinish error", e); }
+    }
       app.innerHTML = `<p>Done</p><button type="button" id="p3-again">Again</button>`;
       document.getElementById("p3-again").onclick = function () { phase = "menu"; render(); };
       return;
@@ -603,6 +607,7 @@
     if (phase === "mode3done") {
       const stars = saveStars(3);
       if (window.LAFinish) {
+      try {
         const timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
@@ -616,7 +621,8 @@
           save: false,
         });
         return;
-      }
+      } catch (e) { console.warn("LAFinish error", e); }
+    }
       app.innerHTML = `<p>Done</p><button type="button" id="p3-again">Again</button>`;
       document.getElementById("p3-again").onclick = function () { phase = "menu"; render(); };
       return;

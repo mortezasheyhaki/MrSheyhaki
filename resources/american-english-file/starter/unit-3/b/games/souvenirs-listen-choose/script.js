@@ -71,6 +71,7 @@
   }
 
   function startMode(mi) {
+    if (window.LAFinish) LAFinish.startTimer();
     modeIndex = mi;
     order = shuffle(ITEMS.map((x) => x.id));
     gridOrder = shuffle(ITEMS.map((x) => x.id)); // fixed board for the whole run
@@ -202,6 +203,21 @@
     }
 
     if (phase === "done") {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: ITEMS.length,
+          timeMs: timeMs,
+          onAgain: () => startMode(modeIndex),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
       const stars = saveStars();
       const m = MODES[modeIndex];
       app.innerHTML = `

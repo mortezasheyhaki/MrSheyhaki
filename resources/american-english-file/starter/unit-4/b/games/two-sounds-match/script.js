@@ -94,6 +94,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     queue = shuffle(WORDS);
     index = 0;
     score = 0;
@@ -397,6 +398,22 @@
   }
 
   function renderDone() {
+    if (window.LAFinish) {
+      try {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: WORDS.length,
+          timeMs: timeMs,
+          onAgain: () => startGame(),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      } catch (e) { console.warn("LAFinish", e); }
+    }
     const stars = saveStars();
     const starStr = "★".repeat(stars) + "☆".repeat(3 - stars);
     app.innerHTML = `

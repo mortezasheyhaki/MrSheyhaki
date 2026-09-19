@@ -179,6 +179,21 @@
         LAStars.saveFromAccuracy(GAME_ID, (score / 2) * 100);
       }
     } catch (e) {}
+    if (window.LAFinish) {
+      try {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: 2,
+          timeMs: timeMs,
+          onAgain: () => reset(),
+          onModes: () => { location.href = "../"; },
+          backHref: "../",
+          save: false,
+        });
+      } catch (e) { console.warn("LAFinish", e); }
+    }
 
     if (score === 2) {
       setTimeout(() => {
@@ -205,6 +220,7 @@
   }
 
   function reset() {
+    if (window.LAFinish) LAFinish.startTimer();
     locked = false;
     stopAudio();
     womanInput.value = "";

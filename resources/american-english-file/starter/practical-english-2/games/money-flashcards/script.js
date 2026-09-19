@@ -119,6 +119,7 @@
     index = 0;
     flipped = false;
     phase = "play";
+    if (window.LAFinish) LAFinish.startTimer();
     render();
   }
 
@@ -131,6 +132,28 @@
 
   function render() {
     if (phase === "done") {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: CARDS.length,
+          total: CARDS.length,
+          timeMs: timeMs,
+          onAgain: () => {
+            deck = CARDS.slice();
+            index = 0;
+            flipped = false;
+            phase = "play";
+            if (window.LAFinish) LAFinish.startTimer();
+            render();
+          },
+          onModes: () => { location.href = "../"; },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
       app.innerHTML = `
         <header class="mc-topbar">
           <a class="mc-back" href="../" aria-label="Back">←</a>

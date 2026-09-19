@@ -148,6 +148,7 @@
       return;
     }
     phase = "play";
+    if (window.LAFinish) LAFinish.startTimer();
     index = 0;
     correct = 0;
     checked = false;
@@ -272,6 +273,21 @@
     }
 
     if (phase === "done") {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: typeof GAME_ID !== "undefined" ? GAME_ID : "starter-4a-game",
+          score: 0,
+          total: 10,
+          timeMs: timeMs,
+          onAgain: () => location.reload(),
+          onModes: () => { phase = 'menu'; if (typeof render === 'function') render(); else location.href = '../'; },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
       const stars = saveStars();
       app.innerHTML =
         '<header class="fr-topbar">' +

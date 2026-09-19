@@ -70,6 +70,7 @@
   }
 
   function start() {
+    if (window.LAFinish) LAFinish.startTimer();
     phase = "play";
     correct = 0;
     checked = false;
@@ -154,6 +155,21 @@
     }
 
     if (phase === "done") {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: typeof GAME_ID !== "undefined" ? GAME_ID : "starter-4a-game",
+          score: 0,
+          total: ITEMS.length,
+          timeMs: timeMs,
+          onAgain: () => start(),
+          onModes: () => { phase = 'menu'; if (typeof render === 'function') render(); else location.href = '../'; },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
       const stars = saveStars();
       app.innerHTML =
         '<header class="ps-topbar">' +

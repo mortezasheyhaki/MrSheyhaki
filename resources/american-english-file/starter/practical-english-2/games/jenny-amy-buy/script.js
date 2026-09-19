@@ -141,6 +141,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     checked = false;
     correctCount = 0;
     phase = "play";
@@ -166,6 +167,21 @@
     }
 
     if (phase === "done") {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: totalSlots,
+          timeMs: timeMs,
+          onAgain: () => startGame(),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
       const stars = saveStars();
       app.innerHTML = `
         <header class="ja-topbar">

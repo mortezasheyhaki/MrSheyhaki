@@ -290,18 +290,16 @@
     });
 
     try {
-      try {
-        if (window.LAStars) {
-          LAStars.recordPlay("grammar-possessives-match");
-          LAStars.save("grammar-possessives-match", stars);
-        }
-      } catch (e) {}
+      if (window.LAStars && typeof window.LAStars.set === "function") {
+        window.LAStars.set("grammar-possessives-match", stars);
+      }
     } catch (e) {}
 
     showScreen("end");
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     allPairs = ALL_PAIRS[currentMode].slice();
     chunkIndex = 0;
     totalMatched = 0;
@@ -335,4 +333,21 @@
   }
 
   setMode("adjectives");
+
+  function __laFinishShow(scoreVal, totalVal) {
+    if (!window.LAFinish) return false;
+    const timeMs = LAFinish.stopTimer();
+    LAFinish.show({
+      gameId: typeof GAME_ID !== "undefined" ? GAME_ID : "starter-4a-game",
+      score: scoreVal,
+      total: totalVal,
+      timeMs: timeMs,
+      onAgain: () => startGame(),
+      onModes: () => { location.href = '../'; },
+      backHref: "../",
+      save: false,
+    });
+    return true;
+  }
+
 })();

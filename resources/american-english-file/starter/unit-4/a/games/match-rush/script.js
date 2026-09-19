@@ -86,6 +86,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     deck = shuffle(WORDS);
     totalRounds = Math.ceil(deck.length / PAIR_COUNT);
     roundIndex = 0;
@@ -208,6 +209,21 @@
   }
 
   function finish() {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: typeof GAME_ID !== "undefined" ? GAME_ID : "starter-4a-game",
+          score: score,
+          total: WORDS.length,
+          timeMs: timeMs,
+          onAgain: () => startGame(),
+          onModes: () => { location.href = '../'; },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
     const max = WORDS.length * 10;
     const acc = Math.round((score / max) * 100);
     $("endTitle").textContent = acc >= 90 ? "Perfect!" : "Well done!";

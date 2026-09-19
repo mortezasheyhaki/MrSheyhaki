@@ -580,6 +580,7 @@
     if (phase === "done") {
       const stars = saveStars(totalCorrect, items.length);
       if (window.LAFinish) {
+      try {
         const timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
@@ -593,7 +594,8 @@
           save: false,
         });
         return;
-      }
+      } catch (e) { console.warn("LAFinish error", e); }
+    }
       app.innerHTML = `<p>Done</p><button type="button" id="u2b-again">Again</button>`;
       document.getElementById("u2b-again").onclick = () => startPart(partIndex);
       return;

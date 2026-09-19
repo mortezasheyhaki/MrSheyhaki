@@ -62,6 +62,7 @@
   }
 
   function playAudio(url) {
+    if (window.LAFinish) LAFinish.startTimer();
     if (!url) return;
     stopAudio();
     const a = new Audio(url);
@@ -379,5 +380,21 @@
   index = 0;
   preparePuzzle(deck[0]);
   renderCard();
-})();
 
+  function __laFinishShow(scoreVal, totalVal) {
+    if (!window.LAFinish) return false;
+    const timeMs = LAFinish.stopTimer();
+    LAFinish.show({
+      gameId: typeof GAME_ID !== "undefined" ? GAME_ID : "starter-4a-game",
+      score: scoreVal,
+      total: totalVal,
+      timeMs: timeMs,
+      onAgain: () => location.reload(),
+      onModes: () => { location.href = '../'; },
+      backHref: "../",
+      save: false,
+    });
+    return true;
+  }
+
+})();

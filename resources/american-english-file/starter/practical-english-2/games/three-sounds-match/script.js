@@ -80,6 +80,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     queue = shuffle(WORDS);
     index = 0;
     score = 0;
@@ -394,6 +395,21 @@
   }
 
   function renderDone() {
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: score,
+        total: WORDS.length,
+        timeMs: timeMs,
+        onAgain: () => startGame(),
+        onModes: () => { phase = 'menu'; render(); },
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+
     const stars = saveStars();
     app.innerHTML = `
       <header class="ts-topbar">

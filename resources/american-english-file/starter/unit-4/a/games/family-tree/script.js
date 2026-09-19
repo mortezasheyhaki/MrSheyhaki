@@ -153,6 +153,7 @@
   }
 
   function startPlay(keys) {
+    if (window.LAFinish) LAFinish.startTimer();
     buildQueue(keys);
     index = 0;
     score = 0;
@@ -245,6 +246,21 @@
   }
 
   function finish() {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: typeof GAME_ID !== "undefined" ? GAME_ID : "starter-4a-game",
+          score: score,
+          total: 10,
+          timeMs: timeMs,
+          onAgain: () => location.reload(),
+          onModes: () => { location.href = '../'; },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
     const total = queue.length;
     const acc = Math.round((score / total) * 100);
     $("endTitle").textContent =

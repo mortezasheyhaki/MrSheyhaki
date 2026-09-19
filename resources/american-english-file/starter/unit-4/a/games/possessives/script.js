@@ -185,6 +185,21 @@
   }
 
   function finish() {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: typeof GAME_ID !== "undefined" ? GAME_ID : "starter-4a-game",
+          score: score,
+          total: ITEMS.length,
+          timeMs: timeMs,
+          onAgain: () => location.reload(),
+          onModes: () => { location.href = '../'; },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
     const total = ITEMS.length;
     const acc = Math.round((score / total) * 100);
     $("endTitle").textContent =
@@ -201,6 +216,7 @@
   }
 
   function reset() {
+    if (window.LAFinish) LAFinish.startTimer();
     index = 0;
     score = 0;
     endOverlay.hidden = true;

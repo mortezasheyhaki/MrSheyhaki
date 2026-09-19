@@ -254,6 +254,7 @@
 
   // ---------- check / reset ----------
   function checkAnswers() {
+    if (window.LAFinish) LAFinish.startTimer();
     if (locked) return;
     locked = true;
 
@@ -303,6 +304,27 @@
 
     if (typeof window.laStars === "function") {
       try { window.laStars(GAME_ID, score, 8); } catch (e) {}
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay(GAME_ID);
+        LAStars.saveFromAccuracy(GAME_ID, (score / 8) * 100);
+      }
+    } catch (e) {}
+    if (window.LAFinish) {
+      try {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: 8,
+          timeMs: timeMs,
+          onAgain: () => location.reload(),
+          onModes: () => { location.href = "../"; },
+          backHref: "../",
+          save: false,
+        });
+      } catch (e) { console.warn("LAFinish", e); }
+    }
     }
 
     setTimeout(() => {

@@ -27,6 +27,7 @@
   const app = document.getElementById("game-app");
   if (!app) return;
 
+  let lastCorrectCount = 0;
   let phase = "menu";
   let currentAudio = null;
   let checked = false;
@@ -98,7 +99,7 @@
       wrap.classList.remove("is-ok", "is-bad");
       wrap.classList.add(ok ? "is-ok" : "is-bad");
       if (ok) {
-        correctCount++;
+        correctCount++; lastCorrectCount = correctCount;
         inp.disabled = true;
       } else {
         allOk = false;
@@ -144,7 +145,7 @@
     stopAudio();
     checked = false;
     phase = "play"
-    if (window.LAFinish) LAFinish.startTimer();;
+    if (window.LAFinish) LAFinish.startTimer();
     render();
   }
 
@@ -167,13 +168,14 @@
     }
 
     if (phase === "done") {
-      const total = typeof ITEMS !== 'undefined' ? ITEMS.length : (correctCount || 10);
-      const stars = saveStars(calcStars(correctCount || total, total));
+      const total = typeof ITEMS !== 'undefined' ? ITEMS.length : (lastCorrectCount || 10);
+      const stars = saveStars(calcStars(lastCorrectCount || total, total));
       if (window.LAFinish) {
+      try {
         const timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
-          score: correctCount,
+          score: lastCorrectCount,
           total: total,
           stars: stars,
           timeMs: timeMs,
@@ -183,7 +185,8 @@
           save: false,
         });
         return;
-      }
+      } catch (e) { console.warn("LAFinish error", e); }
+    }
       app.innerHTML = `<p>Done</p><button type="button" id="u2b-again">Again</button>`;
       document.getElementById("u2b-again").onclick = () => { phase = 'start'; render(); };
       return;

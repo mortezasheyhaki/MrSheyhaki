@@ -214,6 +214,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     playClick();
     order = shuffle(ITEMS);
     index = 0;
@@ -294,6 +295,23 @@
   }
 
   function showEnd() {
+    if (window.LAFinish) {
+      try {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: order.length || ITEMS.length,
+          timeMs: timeMs,
+          onAgain: () => startGame(),
+          onModes: () => showStart(),
+          backHref: "../",
+          save: false,
+        });
+        return;
+      } catch (e) { console.warn("LAFinish", e); }
+    }
+
     stopAudio();
     playVictory();
     spawnConfetti();

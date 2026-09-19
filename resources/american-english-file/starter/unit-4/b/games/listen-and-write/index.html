@@ -666,6 +666,7 @@ body {
 
   <script>
   (function () {
+    const GAME_ID = "starter-4b-listen-and-write";
     const ITEMS = [
       { id: 1, text: "an ugly house",      us: "american/01.mp3", uk: "british/01.mp3" },
       { id: 2, text: "an easy exercise",   us: "american/02.mp3", uk: "british/02.mp3" },
@@ -714,6 +715,7 @@ body {
     }
 
     function showItem() {
+      if (window.LAFinish && index === 0) LAFinish.startTimer();
       stopAudio();
       input.value = "";
       input.classList.remove("is-ok", "is-bad");
@@ -761,6 +763,29 @@ body {
     }
 
     function finish() {
+      try {
+        if (window.LAStars) {
+          LAStars.recordPlay(GAME_ID);
+          LAStars.saveFromAccuracy(GAME_ID, ITEMS.length ? (score / ITEMS.length) * 100 : 0);
+        }
+      } catch (e) {}
+      if (window.LAFinish) {
+        try {
+          const timeMs = LAFinish.stopTimer();
+          LAFinish.show({
+            gameId: GAME_ID,
+            score: score,
+            total: ITEMS.length,
+            timeMs: timeMs,
+            onAgain: () => restart(),
+            onModes: () => { location.href = "../"; },
+            backHref: "../",
+            save: false,
+          });
+          return;
+        } catch (e) { console.warn("LAFinish", e); }
+      }
+
       stopAudio();
       $("gameMain").classList.add("hidden");
       $("finishScreen").classList.remove("hidden");
@@ -799,6 +824,7 @@ body {
   })();
   </script>
 <script src="/learningarcade/la-stars.js"></script>
+<script src="/learningarcade/la-finish.js"></script>
 <script src="../../../../../../../theme.js"></script>
 </body>
 </html>

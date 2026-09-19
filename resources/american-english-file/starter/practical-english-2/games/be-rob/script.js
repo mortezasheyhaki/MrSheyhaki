@@ -306,6 +306,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     stepIndex = 0;
     score = 0;
     lastTranscript = "";
@@ -429,6 +430,21 @@
   }
 
   function renderDone() {
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: score,
+        total: totalRob,
+        timeMs: timeMs,
+        onAgain: () => startGame(),
+        onModes: () => { phase = 'menu'; render(); },
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+
     const stars = saveStars();
     app.innerHTML = `
       <header class="br-topbar">

@@ -302,10 +302,26 @@
       }
     });
 
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      const acc = (typeof accuracy !== "undefined") ? accuracy : 0;
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: correctPairs,
+        total: rounds.length,
+        timeMs: timeMs,
+        onAgain: () => startGame(),
+        onModes: () => startGame(),
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
     show("end");
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     const shuffled = shuffle(ALL_ITEMS);
     rounds = [];
     for (let i = 0; i < shuffled.length; i += PAIR_COUNT) {

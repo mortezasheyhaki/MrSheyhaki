@@ -173,6 +173,7 @@
   }
 
   function startMode(m) {
+    if (window.LAFinish) LAFinish.startTimer();
     if (m === "family" && FAMILY.length === 0) {
       // still allow opening with empty message
     }
@@ -396,4 +397,21 @@
   }
 
   render();
+
+  function __laFinishShow(scoreVal, totalVal) {
+    if (!window.LAFinish) return false;
+    const timeMs = LAFinish.stopTimer();
+    LAFinish.show({
+      gameId: typeof GAME_ID !== "undefined" ? GAME_ID : "starter-4a-game",
+      score: scoreVal,
+      total: totalVal,
+      timeMs: timeMs,
+      onAgain: () => startMode(typeof modeIndex !== 'undefined' ? modeIndex : 0),
+      onModes: () => { location.href = '../'; },
+      backHref: "../",
+      save: false,
+    });
+    return true;
+  }
+
 })();

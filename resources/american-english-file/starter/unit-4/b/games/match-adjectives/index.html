@@ -1258,12 +1258,28 @@ body {
             var acc = Math.min(100, Math.round((score / 100) * 100));
             LAStars.recordPlay('starter-4b-match-adjectives');
             LAStars.saveFromAccuracy('starter-4b-match-adjectives', acc);
+          if (window.LAFinish) {
+            try {
+              const timeMs = LAFinish.stopTimer();
+              LAFinish.show({
+                gameId: "starter-4b-match-adjectives",
+                score: score,
+                total: 100,
+                timeMs: timeMs,
+                onAgain: () => startGame(currentMode),
+                onModes: () => { location.href = "../"; },
+                backHref: "../",
+                save: false,
+              });
+            } catch (e) { console.warn("LAFinish", e); }
+          }
           }
         } catch (e) {}
       }
     }
 
     function startGame(mode) {
+      if (window.LAFinish) LAFinish.startTimer();
       currentMode = mode;
       currentRound = 1;
       score = 0;
@@ -1314,6 +1330,7 @@ body {
     });
   </script>
 <script src="/learningarcade/la-stars.js"></script>
+<script src="/learningarcade/la-finish.js"></script>
 <script src="../../../../../../../theme.js"></script>
 </body>
 </html>

@@ -131,6 +131,23 @@ function selectPicture(selectedPrompt, button) {
 }
 
 function showFinish() {
+    if (window.LAFinish) {
+      try {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: 'starter-4b-sound-match-picture',
+          score: score,
+          total: prompts.length,
+          timeMs: timeMs,
+          onAgain: () => startGame(),
+          onModes: () => goHome(),
+          backHref: "../",
+          save: false,
+        });
+        return;
+      } catch (e) { console.warn("LAFinish", e); }
+    }
+
   stopCurrentAudio();
   gameScreen.classList.add('hidden');
   finishScreen.classList.remove('hidden');
@@ -204,6 +221,7 @@ document.querySelector('#submitScoreBtn')?.addEventListener('click', submitScore
 
 
 function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
   stopCurrentAudio();
   promptOrder = shuffle(prompts);
   tileOrder = shuffle(prompts);

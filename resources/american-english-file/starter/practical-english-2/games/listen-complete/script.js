@@ -156,6 +156,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     answers = {};
     checked = false;
     correctCount = 0;
@@ -182,6 +183,21 @@
     }
 
     if (phase === "done") {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: 5,
+          timeMs: timeMs,
+          onAgain: () => startGame(),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
       const stars = calcStars();
       app.innerHTML = `
         <header class="lc-topbar">

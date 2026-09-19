@@ -322,10 +322,26 @@
       }
     });
 
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      const acc = (typeof accuracy !== "undefined") ? accuracy : 0;
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: correctCount,
+        total: TOTAL_BLANKS,
+        timeMs: timeMs,
+        onAgain: () => startGame(),
+        onModes: () => startGame(),
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
     show("end");
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     sceneIndex = 0;
     answers = {};
     score = 0;

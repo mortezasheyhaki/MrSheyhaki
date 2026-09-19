@@ -218,7 +218,6 @@
       // now allow fuller idle poses after greeting
       idleKeys.length = 0;
       idleKeys.push("idle", "phoneStart", "help");
-      startIdleCycle();
       return;
     }
 
@@ -231,6 +230,7 @@
       await wait(3200);
       isBusy = false;
       resetButtons();
+      finishShop();
       startIdleCycle();
       return;
     }
@@ -398,6 +398,24 @@
   // boot
   setImage("idle");
   setText("…");
+  if (window.LAFinish) LAFinish.startTimer();
+
+  function finishShop() {
+    if (!window.LAFinish) return;
+    const timeMs = LAFinish.stopTimer();
+    const n = askedItems.size + (buying ? 1 : 0) + (paid ? 1 : 0);
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: n,
+      total: 6,
+      timeMs: timeMs,
+      onAgain: () => location.reload(),
+      onModes: () => { location.href = "../"; },
+      backHref: "../",
+      save: false,
+    });
+  }
+
   startIdleCycle();
   startMusic();
 })();

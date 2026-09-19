@@ -81,6 +81,7 @@
     }, 700);
   }
   function start() {
+    if (window.LAFinish) LAFinish.startTimer();
     state.order = shuffled(ROUNDS);
     state.index = 0;
     state.score = 0;
@@ -91,6 +92,23 @@
     renderRound();
   }
   function finish() {
+    if (window.LAFinish) {
+      try {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: 'starter-4b-opposite-snap',
+          score: state.score,
+          total: 120,
+          timeMs: timeMs,
+          onAgain: () => start(),
+          onModes: () => { location.href = '../'; },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      } catch (e) { console.warn("LAFinish", e); }
+    }
+
     $('gameScreen').classList.add('is-hidden');
     $('finishScreen').classList.remove('is-hidden');
     $('finishScore').textContent = `Final score: ${state.score} · You practiced all 8 opposite pairs.`;

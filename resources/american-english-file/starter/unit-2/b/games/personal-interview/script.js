@@ -483,10 +483,11 @@
     if (phase === "done") {
       const stars = saveStars(calcStars());
       if (window.LAFinish) {
+      try {
         const timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
-          score: score,
+          score: answers.filter(function (a) { return a && a.trim(); }).length,
           total: qs().length,
           stars: stars,
           timeMs: timeMs,
@@ -496,7 +497,8 @@
           save: false,
         });
         return;
-      }
+      } catch (e) { console.warn("LAFinish error", e); }
+    }
       app.innerHTML = `<p>Done</p><button type="button" id="u2b-again">Again</button>`;
       document.getElementById("u2b-again").onclick = () => { phase = 'start'; render(); };
       return;

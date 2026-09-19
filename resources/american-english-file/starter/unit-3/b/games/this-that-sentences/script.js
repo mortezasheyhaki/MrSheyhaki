@@ -282,10 +282,26 @@
         el.textContent = "☆";
       }
     });
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      const acc = (typeof accuracy !== "undefined") ? accuracy : 0;
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: correctCount,
+        total: attempts || correctCount,
+        timeMs: timeMs,
+        onAgain: () => startGame(),
+        onModes: () => startGame(),
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
     show("end");
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     level = 0;
     order = shuffle(ITEMS.map(function (_, i) { return i; }));
     itemIndex = 0;

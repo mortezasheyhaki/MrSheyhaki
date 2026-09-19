@@ -43,6 +43,7 @@
 
   const app = document.getElementById("game-app");
   let phase = "play"; // play | done
+  if (window.LAFinish) LAFinish.startTimer();
   let listensLeft = 3;
   let attempts = 0;
   let correctCount = 0;
@@ -144,6 +145,30 @@
 
   function render() {
     if (phase === "done") {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        const stars = typeof calcStars === "function" ? calcStars() : undefined;
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: ITEMS.length,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: () => {
+            phase = "play";
+            listensLeft = 3;
+            attempts = 0;
+            correctCount = 0;
+            if (window.LAFinish) LAFinish.startTimer();
+            render();
+          },
+          onModes: () => { location.href = "../"; },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
       const stars = correctCount >= 5 ? 3 : correctCount >= 3 ? 2 : correctCount >= 1 ? 1 : 0;
       app.innerHTML = `
         <header class="mc-topbar">

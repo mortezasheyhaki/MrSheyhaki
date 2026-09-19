@@ -79,6 +79,7 @@
   }
 
   function startMode(mi) {
+    if (window.LAFinish) LAFinish.startTimer();
     modeIndex = mi;
     const items = MODES[mi].items;
     order = shuffle(items.map((_, i) => i));
@@ -197,6 +198,21 @@
     }
 
     if (phase === "done") {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correctCount,
+          total: order.length,
+          timeMs: timeMs,
+          onAgain: () => startMode(modeIndex),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
       const total = order.length;
       const stars = correctCount >= total ? 3 : correctCount >= Math.ceil(total * 0.6) ? 2 : correctCount >= 1 ? 1 : 0;
       app.innerHTML = `

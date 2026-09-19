@@ -102,6 +102,7 @@
   }
 
   function startGame() {
+    if (window.LAFinish) LAFinish.startTimer();
     selected = new Set();
     submitted = false;
     phase = "play";
@@ -193,6 +194,21 @@
   }
 
   function renderResult(allCorrect, stars) {
+    if (window.LAFinish) {
+      const timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: allCorrect ? 1 : 0,
+        total: 1,
+        timeMs: timeMs,
+        onAgain: () => startGame(),
+        onModes: () => { phase = 'menu'; render(); },
+        backHref: "../",
+        save: false,
+      });
+      return;
+    }
+
     const correctLabels = [];
     MENU.food.concat(MENU.drinks).forEach((item) => {
       if (CORRECT_IDS.has(item.id)) correctLabels.push(item.label);

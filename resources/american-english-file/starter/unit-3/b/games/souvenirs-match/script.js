@@ -90,6 +90,7 @@
   }
 
   function startMode(mi) {
+    if (window.LAFinish) LAFinish.startTimer();
     modeIndex = mi;
     modeCorrect = 0;
     startSet(0);
@@ -302,6 +303,21 @@
     }
 
     if (phase === "done") {
+      if (window.LAFinish) {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: modeCorrect,
+          total: SETS.reduce((n,s)=>n+s.length,0),
+          timeMs: timeMs,
+          onAgain: () => startMode(modeIndex),
+          onModes: () => { phase = 'menu'; render(); },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      }
+
       const stars = saveStars();
       const m = MODES[modeIndex];
       app.innerHTML = `

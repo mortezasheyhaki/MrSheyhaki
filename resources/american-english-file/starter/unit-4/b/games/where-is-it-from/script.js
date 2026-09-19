@@ -241,6 +241,23 @@
   }
 
   function finish() {
+    if (window.LAFinish) {
+      try {
+        const timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: ITEMS.length,
+          timeMs: timeMs,
+          onAgain: () => reset(),
+          onModes: () => { location.href = '../'; },
+          backHref: "../",
+          save: false,
+        });
+        return;
+      } catch (e) { console.warn("LAFinish", e); }
+    }
+
     stopAudio();
     const total = ITEMS.length;
     const acc = Math.round((score / total) * 100);
@@ -261,6 +278,7 @@
   }
 
   function reset() {
+    if (window.LAFinish) LAFinish.startTimer();
     index = 0;
     score = 0;
     endOverlay.hidden = true;
