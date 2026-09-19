@@ -64,62 +64,62 @@
   const SINGULAR = [
     {
       id: "book",
-      image: "images/book.png",
+      image: "https://cdn.imgurl.ir/uploads/y7168_book.png",
       answers: ["it's a book", "it is a book", "a book", "book"],
       label: "It's a book.",
-      answerAudio: "audio/its-a-book.mp3",
+      answerAudio: "https://cdn.imgurl.ir/uploads/t34153_its-a-book.mp3",
     },
     {
       id: "watch",
-      image: "https://cdn.imgurl.ir/uploads/y08797_a_watch_1.png",
+      image: "https://cdn.imgurl.ir/uploads/n665390_watch.png",
       answers: ["it's a watch", "it is a watch", "a watch", "watch"],
       label: "It's a watch.",
-      answerAudio: "audio/its-a-watch.mp3",
+      answerAudio: "https://cdn.imgurl.ir/uploads/c46227_its-a-watch.mp3",
     },
     {
       id: "dictionary",
-      image: "images/dictionary.png",
+      image: "https://cdn.imgurl.ir/uploads/y2043_dictionary.png",
       answers: ["it's a dictionary", "it is a dictionary", "a dictionary", "dictionary"],
       label: "It's a dictionary.",
-      answerAudio: "audio/its-a-dictionary.mp3",
+      answerAudio: "https://cdn.imgurl.ir/uploads/h512063_its-a-dictionary.mp3",
     },
     {
       id: "key",
-      image: "https://cdn.imgurl.ir/uploads/r0663_a_key_1.png",
+      image: "https://cdn.imgurl.ir/uploads/h49467_key.png",
       answers: ["it's a key", "it is a key", "a key", "key"],
       label: "It's a key.",
-      answerAudio: "audio/its-a-key.mp3",
+      answerAudio: "https://cdn.imgurl.ir/uploads/e60883_its-a-key.mp3",
     },
   ];
 
   const PLURAL = [
     {
       id: "books",
-      image: "images/books.png",
+      image: "https://cdn.imgurl.ir/uploads/v63154_books.png",
       answers: ["they're books", "they are books", "books"],
       label: "They're books.",
-      answerAudio: "audio/theyre-books.mp3",
+      answerAudio: "https://cdn.imgurl.ir/uploads/q017440_theyre-books.mp3",
     },
     {
       id: "watches",
-      image: "https://cdn.imgurl.ir/uploads/y08797_a_watch_1.png",
+      image: "https://cdn.imgurl.ir/uploads/q88152_watches.png",
       answers: ["they're watches", "they are watches", "watches"],
       label: "They're watches.",
-      answerAudio: "audio/theyre-watches.mp3",
+      answerAudio: "https://cdn.imgurl.ir/uploads/e653533_theyre-watches.mp3",
     },
     {
       id: "dictionaries",
-      image: "images/dictionaries.png",
+      image: "https://cdn.imgurl.ir/uploads/q734326_dictionaries.png",
       answers: ["they're dictionaries", "they are dictionaries", "dictionaries"],
       label: "They're dictionaries.",
-      answerAudio: "audio/theyre-dictionaries.mp3",
+      answerAudio: "https://cdn.imgurl.ir/uploads/q99145_theyre-dictionaries.mp3",
     },
     {
       id: "keys",
-      image: "https://cdn.imgurl.ir/uploads/r0663_a_key_1.png",
+      image: "https://cdn.imgurl.ir/uploads/z232297_keys.png",
       answers: ["they're keys", "they are keys", "keys"],
       label: "They're keys.",
-      answerAudio: "audio/theyre-keys.mp3",
+      answerAudio: "https://cdn.imgurl.ir/uploads/w235122_theyre-keys.mp3",
     },
   ];
 
@@ -129,7 +129,7 @@
       title: "What is it?",
       tip: "Look at the picture. Answer: It's a…",
       question: "What is it?",
-      questionAudio: "audio/what-is-it.mp3",
+      questionAudio: "https://cdn.imgurl.ir/uploads/j136490_what-is-it.mp3",
       items: SINGULAR,
     },
     {
@@ -137,7 +137,7 @@
       title: "What are they?",
       tip: "Look at the picture. Answer: They're…",
       question: "What are they?",
-      questionAudio: "audio/what-are-they.mp3",
+      questionAudio: "https://cdn.imgurl.ir/uploads/198598_what-are-they.mp3",
       items: PLURAL,
     },
   ];

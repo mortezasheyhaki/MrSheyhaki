@@ -59,16 +59,16 @@
   }
 
   const ITEMS = [
-    { id: "bags",          label: "bags",           audio: "audio/bags.mp3",          image: "images/bags.png" },
-    { id: "change-purses", label: "change purses",  audio: "audio/change-purses.mp3", image: "images/change-purses.png" },
-    { id: "watches",       label: "watches",        audio: "https://cdn.imgurl.ir/uploads/y85649_watch.mp3",       image: "https://cdn.imgurl.ir/uploads/y08797_a_watch_1.png" },
-    { id: "tablets",       label: "tablets",        audio: "https://cdn.imgurl.ir/uploads/g87260_tablet.mp3",       image: "https://cdn.imgurl.ir/uploads/c08067_a_tablet_1.png" },
-    { id: "passports",     label: "passports",      audio: "https://cdn.imgurl.ir/uploads/t119646_pport.mp3",     image: "https://cdn.imgurl.ir/uploads/q11632_pport_1.png" },
-    { id: "coats",         label: "coats",          audio: "audio/coats.mp3",         image: "images/coats.png" },
-    { id: "books",         label: "books",          audio: "audio/books.mp3",         image: "images/books.png" },
-    { id: "pens",          label: "pens",           audio: "audio/pens.mp3",          image: "images/pens.png" },
-    { id: "keys",          label: "keys",           audio: "https://cdn.imgurl.ir/uploads/b438206_key.mp3",          image: "https://cdn.imgurl.ir/uploads/r0663_a_key_1.png" },
-    { id: "phones",        label: "phones",         audio: "https://cdn.imgurl.ir/uploads/l582776_cellphone.mp3",        image: "https://cdn.imgurl.ir/uploads/y766894_a_cell_phone_1.png" },
+    { id: "bags",          label: "bags",           audio: "https://cdn.imgurl.ir/uploads/x638628_bags.mp3",          image: "https://cdn.imgurl.ir/uploads/w262412_bags.png" },
+    { id: "change-purses", label: "change purses",  audio: "https://cdn.imgurl.ir/uploads/z462354_change_purses.mp3", image: "https://cdn.imgurl.ir/uploads/k580194_change-purses.png" },
+    { id: "watches",       label: "watches",        audio: "https://cdn.imgurl.ir/uploads/o076155_watches.mp3",       image: "https://cdn.imgurl.ir/uploads/p259799_watches.png" },
+    { id: "tablets",       label: "tablets",        audio: "https://cdn.imgurl.ir/uploads/t104692_Tablets.mp3",       image: "https://cdn.imgurl.ir/uploads/j885732_tablets.png" },
+    { id: "passports",     label: "passports",      audio: "https://cdn.imgurl.ir/uploads/o75155_Pports.mp3",     image: "https://cdn.imgurl.ir/uploads/s1568_pports.png" },
+    { id: "coats",         label: "coats",          audio: "https://cdn.imgurl.ir/uploads/o62846_coats.mp3",         image: "https://cdn.imgurl.ir/uploads/s711384_coats.png" },
+    { id: "books",         label: "books",          audio: "https://cdn.imgurl.ir/uploads/w44344_books.mp3",         image: "https://cdn.imgurl.ir/uploads/u3980_books.png" },
+    { id: "pens",          label: "pens",           audio: "https://cdn.imgurl.ir/uploads/b728985_pens.mp3",          image: "https://cdn.imgurl.ir/uploads/w233287_pens.png" },
+    { id: "keys",          label: "keys",           audio: "https://cdn.imgurl.ir/uploads/d512633_keys.mp3",          image: "https://cdn.imgurl.ir/uploads/d780604_keys.png" },
+    { id: "phones",        label: "phones",         audio: "https://cdn.imgurl.ir/uploads/i79236_phones.mp3",        image: "https://cdn.imgurl.ir/uploads/v24516_phones.png" },
   ];
 
   // 2 fixed sets of 5
