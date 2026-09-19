@@ -86,6 +86,32 @@
   line-height: 1;
   opacity: 0.9;
 }
+.resource-card--game .game-plays-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  margin-left: auto;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--muted, #7c7a9a);
+  background: rgba(124, 108, 240, 0.10);
+  border: 1px solid rgba(124, 108, 240, 0.18);
+  flex: 0 0 auto;
+}
+.resource-card--game .game-plays-badge[hidden] {
+  display: none !important;
+}
+html[data-theme="dark"] .resource-card--game .game-plays-badge {
+  color: #c4b5fd;
+  background: rgba(167, 139, 250, 0.16);
+  border-color: rgba(167, 139, 250, 0.28);
+}
 /* Hide the old top-right play slot on game cards (footer owns it) */
 .resource-card--game > .resource-button {
   display: none !important;
@@ -538,6 +564,13 @@ html[data-theme="dark"] .skill-badge--communication {
               el("span", { class: "star", "data-n": "2", text: "☆" }),
               el("span", { class: "star", "data-n": "3", text: "☆" }),
             ]),
+            el("span", {
+              class: "game-plays game-plays-badge",
+              "data-game": gameId,
+              "data-format": "short",
+              hidden: true,
+              "aria-label": "Times played",
+            }),
           ])
         );
         grid.appendChild(

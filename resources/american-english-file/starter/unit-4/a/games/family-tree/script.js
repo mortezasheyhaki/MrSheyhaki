@@ -3,7 +3,7 @@
 (function () {
   "use strict";
 
-  const GAME_ID = "vocab-family-tree";
+  const GAME_ID = "starter-4a-family-tree";
 
   const TREES = {
     joe: {

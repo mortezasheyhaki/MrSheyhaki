@@ -3,7 +3,7 @@
 (function () {
   "use strict";
 
-  const GAME_ID = "vocab-people-words";
+  const GAME_ID = "starter-4a-people-words";
   const WORD_LIST = ["boy", "children", "friends", "girl", "man", "men", "woman", "women"];
 
   const ITEMS = [

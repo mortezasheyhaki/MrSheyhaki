@@ -376,9 +376,22 @@
     scope.querySelectorAll(".game-plays[data-game]").forEach(function (el) {
       var id = el.getAttribute("data-game");
       var n = bestPlaysFor(id, playsData);
-      el.textContent = playLabel(n);
       el.setAttribute("data-count", String(n));
       el.setAttribute("aria-label", playLabel(n));
+
+      // Short badge format (e.g. "3" or "99+") — hide when never played
+      if (el.getAttribute("data-format") === "short" || el.classList.contains("game-plays-badge")) {
+        if (n <= 0) {
+          el.hidden = true;
+          el.textContent = "";
+        } else {
+          el.hidden = false;
+          el.textContent = n > 99 ? "99+" : String(n);
+        }
+      } else {
+        el.hidden = false;
+        el.textContent = playLabel(n);
+      }
     });
   }
 

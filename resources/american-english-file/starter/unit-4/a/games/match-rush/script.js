@@ -3,7 +3,7 @@
 (function () {
   "use strict";
 
-  const GAME_ID = "vocab-family-match-rush";
+  const GAME_ID = "starter-4a-match-rush";
   const PAIR_COUNT = 5;
 
   const WORDS = [

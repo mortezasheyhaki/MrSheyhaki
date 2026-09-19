@@ -101,6 +101,7 @@
     selectedSong = null;
     stopAudio();
     mode = "play";
+    if (window.LAFinish) LAFinish.startTimer();
     render();
   }
 
@@ -169,9 +170,38 @@
     stopAudio();
     const n = correctCount();
     const stars = calcStars(n);
+    const timeMs = window.LAFinish ? LAFinish.stopTimer() : 0;
+
+    if (window.LAFinish && typeof LAFinish.show === "function") {
+      try {
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: n,
+          total: TRACKS.length,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: function () {
+            mode = "start";
+            render();
+          },
+          backHref: "../",
+        });
+        return;
+      } catch (err) {
+        console.error("[Match Songs] LAFinish.show failed:", err);
+      }
+    } else {
+      console.warn(
+        "[Match Songs] LAFinish not found. Upload /learningarcade/la-finish.js and hard-refresh."
+      );
+    }
+
+    // Fallback if la-finish.js is missing
     if (window.LAStars) {
-      LAStars.recordPlay(GAME_ID);
-      LAStars.save(GAME_ID, stars);
+      try {
+        LAStars.recordPlay(GAME_ID);
+        LAStars.save(GAME_ID, stars);
+      } catch (e) {}
     }
     render();
   }
