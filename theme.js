@@ -285,3 +285,67 @@
   window.addEventListener("load", pinNavToBody);
 })();
 
+
+/* =========================================================
+   Profile shortcut on every page
+   Uses a root-absolute URL so depth (games/resources/arcade)
+   never breaks the link.
+========================================================= */
+(function () {
+  var PROFILE_HREF = "/learningarcade/profile/";
+
+  function ensureProfileLink() {
+    try {
+      // Already has a working profile control in the main nav
+      if (document.querySelector(".arcade-nav .nav-profile, a.profile-fab, a[href*='learningarcade/profile']")) {
+        // Fix any relative profile links that point to the wrong folder
+        document.querySelectorAll("a[href*='profile']").forEach(function (a) {
+          var h = a.getAttribute("href") || "";
+          if (/profile\/?$/i.test(h) || /\/profile\//i.test(h) || h.indexOf("profile") !== -1) {
+            // Only rewrite if it looks like an internal profile nav link
+            if (a.classList.contains("profile-fab") || a.classList.contains("nav-profile") ||
+                (a.getAttribute("aria-label") || "").toLowerCase().indexOf("profile") !== -1) {
+              a.setAttribute("href", PROFILE_HREF);
+            }
+          }
+        });
+        return;
+      }
+
+      // Inject floating profile button
+      if (document.querySelector("a.profile-fab-global")) return;
+      var a = document.createElement("a");
+      a.href = PROFILE_HREF;
+      a.className = "profile-fab profile-fab-global";
+      a.setAttribute("aria-label", "My Profile");
+      a.title = "My Profile";
+      a.textContent = "👤";
+      a.style.cssText = [
+        "position:fixed",
+        "top:max(12px, env(safe-area-inset-top))",
+        "right:max(12px, env(safe-area-inset-right))",
+        "z-index:9998",
+        "width:44px",
+        "height:44px",
+        "border-radius:50%",
+        "display:flex",
+        "align-items:center",
+        "justify-content:center",
+        "font-size:1.25rem",
+        "text-decoration:none",
+        "background:rgba(105,55,216,.92)",
+        "color:#fff",
+        "box-shadow:0 4px 14px rgba(84,37,184,.35)",
+        "backdrop-filter:blur(6px)"
+      ].join(";");
+      document.body.appendChild(a);
+    } catch (e) {}
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", ensureProfileLink);
+  } else {
+    ensureProfileLink();
+  }
+  window.addEventListener("load", ensureProfileLink);
+})();

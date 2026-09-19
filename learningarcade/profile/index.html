@@ -2,289 +2,840 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
   <meta name="theme-color" content="#6937d8" />
   <title>My Profile | Learning Arcade</title>
-  <meta name="description" content="Your Learning Arcade profile and scores." />
+  <meta name="description" content="Your Learning Arcade profile and achievements." />
   <link rel="stylesheet" href="../style.css" />
-  <!-- site style.css optional -->
   <link rel="stylesheet" href="../theme.css" />
   <style>
-    .profile-wrap { max-width: 640px; margin: 0 auto; padding: 0 16px 48px; }
-    .profile-card {
-      padding: 20px 18px;
-      border-radius: 20px;
-      background: rgba(255,255,255,.96);
-      box-shadow: 0 8px 0 rgba(84,37,184,.1), 0 14px 28px rgba(32,38,54,.07);
-      margin-bottom: 20px;
+    :root {
+      --pf-bg: #0f0a1e;
+      --pf-card: #ffffff;
+      --pf-purple: #6937d8;
+      --pf-purple-deep: #5425b8;
+      --pf-text: #202636;
+      --pf-muted: #687184;
+      --pf-star: #f5b942;
+      --pf-radius: 18px;
+      --safe-t: env(safe-area-inset-top, 0px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+      --safe-l: env(safe-area-inset-left, 0px);
+      --safe-r: env(safe-area-inset-right, 0px);
     }
-    .profile-card h2 {
-      margin: 0 0 12px;
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: #202636;
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--pf-bg);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     }
-    .name-row {
-      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+
+    body.profile-app {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      max-height: 100dvh;
+      padding:
+        max(8px, var(--safe-t))
+        max(12px, var(--safe-r))
+        max(8px, var(--safe-b))
+        max(12px, var(--safe-l));
+      box-sizing: border-box;
+      background:
+        radial-gradient(ellipse 90% 55% at 50% -15%, rgba(105,55,216,.5), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 100% 100%, rgba(167,139,250,.2), transparent 50%),
+        radial-gradient(ellipse 40% 30% at 0% 80%, rgba(84,37,184,.18), transparent 45%),
+        var(--pf-bg);
     }
-    .name-row input {
-      flex: 1; min-width: 140px;
-      border: 2px solid #e8e0ff; border-radius: 12px;
-      padding: 12px 14px; font: inherit; font-weight: 700;
+
+    /* Hide site chrome that causes scroll */
+    body.profile-app .arcade-header-bar,
+    body.profile-app .site-footer,
+    body.profile-app .profile-fab { display: none !important; }
+
+    .pf-shell {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      max-width: 720px;
+      width: 100%;
+      margin: 0 auto;
+      gap: 10px;
     }
-    .name-row input:read-only {
-      background: #f5f2ff;
-      color: #2c2450;
-      cursor: default;
-    }
-    .name-row button {
-      border: 0; cursor: pointer;
-      padding: 12px 18px; border-radius: 12px;
-      background: #6937d8; color: #fff; font-weight: 800;
-      box-shadow: 0 3px 0 #5425b8;
-      min-width: 52px;
-      display: inline-flex;
+
+    /* —— Top bar —— */
+    .pf-top {
+      flex: 0 0 auto;
+      display: flex;
       align-items: center;
-      justify-content: center;
-      line-height: 1;
+      gap: 10px;
     }
-    .name-row button.is-edit {
-      padding: 12px 14px;
+    .pf-back {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      border: 0;
+      background: rgba(255,255,255,.12);
+      color: #fff;
       font-size: 1.15rem;
-    }
-    .status { min-height: 1.3em; margin: 8px 0 0; font-weight: 700; color: #687184; font-size: 0.9rem; }
-    .status.is-ok { color: #27a76f; }
-    .score-list { display: grid; gap: 10px; }
-    .score-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: #fff;
-      box-shadow: 0 4px 0 rgba(84,37,184,.08);
+      cursor: pointer;
+      display: grid; place-items: center;
       text-decoration: none;
-      color: inherit;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      flex-shrink: 0;
     }
-    a.score-row:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 rgba(84,37,184,.12);
+    .pf-back:hover { background: rgba(255,255,255,.2); }
+    .pf-title-wrap { flex: 1; min-width: 0; }
+    .pf-title-wrap h1 {
+      margin: 0;
+      font-size: clamp(1.05rem, 3.5vw, 1.35rem);
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.02em;
     }
-    a.score-row:active { transform: translateY(1px); }
-    .score-row strong { display: block; font-size: 1rem; color: #202636; }
-    .score-row small { color: #687184; font-weight: 600; }
-    .score-row .pts { font-size: 1.2rem; font-weight: 900; color: #6937d8; align-self: center; }
-    .score-row .play-hint {
-      display: block;
+    .pf-title-wrap p {
+      margin: 2px 0 0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(255,255,255,.55);
+    }
+    .pf-name-chip {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,.14);
+      border-radius: 999px;
+      padding: 6px 8px 6px 12px;
+      max-width: 42%;
+    }
+    .pf-name-chip input {
+      border: 0;
+      background: transparent;
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.85rem;
+      width: 88px;
+      min-width: 0;
+      outline: none;
+    }
+    .pf-name-chip input::placeholder { color: rgba(255,255,255,.4); }
+    .pf-name-chip input:read-only { cursor: default; }
+    .pf-name-chip button {
+      border: 0;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--pf-purple);
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 2px 0 var(--pf-purple-deep);
+      flex-shrink: 0;
+    }
+
+    /* —— Tabs —— */
+    .pf-tabs {
+      flex: 0 0 auto;
+      display: flex;
+      gap: 6px;
+      background: rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 4px;
+    }
+    .pf-tab {
+      flex: 1;
+      border: 0;
+      border-radius: 11px;
+      padding: 10px 8px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: transparent;
+      color: rgba(255,255,255,.55);
+      transition: .15s ease;
+    }
+    .pf-tab.is-on {
+      background: #fff;
+      color: var(--pf-purple);
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    }
+
+    /* —— Main panel —— */
+    .pf-panel {
+      flex: 1;
+      min-height: 0;
+      background: var(--pf-card);
+      border-radius: 22px;
+      box-shadow: 0 12px 40px rgba(32,38,54,.18), 0 0 0 1px rgba(105,55,216,.06);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 14px 14px 12px;
+    }
+    .pf-panel.is-on { display: flex; }
+
+    .pf-panel-head {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+    .pf-panel-head h2 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--pf-text);
+    }
+    .pf-count {
       font-size: 0.75rem;
       font-weight: 700;
-      color: #6937d8;
-      margin-top: 2px;
+      color: var(--pf-muted);
+      background: #f3efff;
+      padding: 4px 10px;
+      border-radius: 999px;
     }
-    .empty {
-      text-align: center; padding: 28px 16px; color: #687184; font-weight: 600;
-      background: rgba(255,255,255,.85); border-radius: 16px;
+
+    /* —— Achievements swipe —— */
+    .ach-viewport {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+      touch-action: pan-y;
+      border-radius: 14px;
     }
-    #achievements {
+    .ach-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.32s cubic-bezier(.22,.9,.3,1);
+      will-change: transform;
+    }
+    .ach-page {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(4, 1fr);
       gap: 8px;
-      margin-top: 6px;
+      padding: 2px;
+      box-sizing: border-box;
     }
-    .achieve-tile {
-      aspect-ratio: 1;
+
+    .ach-tile {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      padding: 6px 4px;
-      border-radius: 12px;
-      background: #fff;
-      border: 1.5px solid rgba(105, 55, 216, 0.12);
-      box-shadow: 0 3px 0 rgba(84, 37, 184, 0.08);
-      text-align: center;
-      min-height: 0;
+      gap: 5px;
+      padding: 8px 5px 7px;
+      border-radius: 16px;
+      background: linear-gradient(165deg, #ffffff 0%, #f4f0ff 100%);
+      border: 1.5px solid #e4dcff;
+      box-shadow: 0 2px 0 rgba(105,55,216,.06), 0 4px 12px rgba(32,38,54,.04);
       text-decoration: none;
       color: inherit;
-      transition: transform 0.15s ease;
+      text-align: center;
+      min-height: 0;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      box-sizing: border-box;
+      position: relative;
+      overflow: visible;
     }
-    a.achieve-tile:hover { transform: scale(1.04); }
-    .achieve-tile strong {
-      display: block;
-      font-size: 0.72rem;
+    .ach-tile.is-hot {
+      border-color: #ffb070;
+      background: linear-gradient(165deg, #fff9f3 0%, #fff0e4 100%);
+      box-shadow: 0 2px 0 rgba(255,107,26,.12), 0 6px 16px rgba(255,107,26,.1);
+    }
+    a.ach-tile:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 4px 0 rgba(105,55,216,.1), 0 10px 22px rgba(105,55,216,.14);
+      border-color: #c4b5fd;
+    }
+    a.ach-tile:active { transform: translateY(0) scale(1); }
+    .ach-tile-title {
+      font-size: clamp(0.58rem, 1.55vw, 0.72rem);
       font-weight: 800;
-      color: #2c2450;
+      color: #3b2f6b;
       line-height: 1.2;
-      max-width: 100%;
+      max-height: 2.4em;
       overflow: hidden;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
+      word-break: break-word;
     }
-    .achieve-stars {
+    /* Stars — match LAStars .game-stars structure for fire animations */
+    .ach-tile .game-stars {
       display: flex;
-      gap: 1px;
-      font-size: 0.95rem;
-      letter-spacing: 0;
-      color: #d5cce8;
+      gap: 3px;
+      margin: 0;
+      font-size: clamp(0.75rem, 2vw, 0.95rem);
       line-height: 1;
+      justify-content: center;
     }
-    .achieve-star.is-on { color: #f5b942; }
-    .achieve-empty {
+    .ach-tile .game-stars .star {
+      opacity: 0.3;
+      filter: grayscale(1);
+      position: relative;
+      display: inline-block;
+      transition: color .25s, filter .25s, transform .25s, text-shadow .25s;
+    }
+    .ach-tile .game-stars .star.is-filled {
+      opacity: 1;
+      filter: none;
+      color: #fbbf24;
+      text-shadow: 0 1px 2px rgba(251,191,36,.35);
+    }
+    .ach-tile .game-stars .star.on-fire {
+      opacity: 1;
+      filter: none;
+      color: #ff6b1a;
+      text-shadow: 0 0 6px #ff3d00, 0 0 14px #ff8c00;
+      animation: ach-star-pulse 1.2s ease-in-out infinite alternate;
+    }
+    .ach-tile .game-stars .star.on-fire::after {
+      content: "🔥";
+      position: absolute;
+      left: 50%;
+      bottom: 72%;
+      transform: translateX(-50%) scale(.55);
+      font-size: 1em;
+      pointer-events: none;
+      animation: la-flame 0.7s ease-in-out infinite alternate;
+      z-index: 2;
+    }
+    @keyframes ach-star-pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.12); }
+    }
+    @keyframes la-flame {
+      0% { transform: translateX(-50%) scale(.5) translateY(0); opacity: .85; }
+      100% { transform: translateX(-50%) scale(.65) translateY(-3px); opacity: 1; }
+    }
+    .ach-tile .game-stars .star .la-particles {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .ach-tile .game-stars .star .la-particle--fire {
+      position: absolute;
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffeb3b 0%, #ff6b1a 60%, transparent 100%);
+      opacity: 0;
+      animation: la-particle-fire 1.4s ease-out infinite;
+      animation-delay: var(--d, 0s);
+    }
+    @keyframes la-particle-fire {
+      0% { opacity: 0; transform: translate(var(--x, 0), 0) scale(.4); }
+      15% { opacity: .95; transform: translate(calc(var(--x, 0) + var(--w, 0px) * 0.25), -5px) scale(.9); }
+      55% { opacity: .6; transform: translate(calc(var(--x, 0) + var(--w, 0px) * 0.7), -12px) scale(.5); }
+      100% { opacity: 0; transform: translate(calc(var(--x, 0) + var(--w, 0px)), -20px) scale(.15); }
+    }
+    .ach-tile .game-stars .star .la-particle--smoke {
+      position: absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(220,220,220,.7) 0%, rgba(160,160,160,.35) 50%, transparent 100%);
+      opacity: 0;
+      filter: blur(1px);
+      animation: la-particle-smoke 2.8s ease-out infinite;
+      animation-delay: var(--d, 0s);
+    }
+    @keyframes la-particle-smoke {
+      0% { opacity: 0; transform: translate(var(--x, 0), 2px) scale(calc(var(--s, 1) * 0.45)); }
+      18% { opacity: .55; transform: translate(calc(var(--x, 0) + var(--w, 0px) * 0.3), -6px) scale(calc(var(--s, 1) * 0.75)); }
+      50% { opacity: .35; transform: translate(calc(var(--x, 0) + var(--w, 0px) * 0.75), -16px) scale(calc(var(--s, 1) * 1.05)); }
+      100% { opacity: 0; transform: translate(calc(var(--x, 0) + var(--w, 0px) * 1.35), -32px) scale(calc(var(--s, 1) * 1.4)); }
+    }
+    .ach-plays {
+      font-size: 0.55rem;
+      font-weight: 700;
+      color: #a78bfa;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      min-height: 0.7em;
+    }
+    .ach-plays.is-hot { color: #ff6b1a; }
+
+    .ach-empty {
       grid-column: 1 / -1;
-      padding: 20px 14px;
+      grid-row: 1 / -1;
+      display: grid;
+      place-items: center;
       text-align: center;
-      color: #687184;
-      font-weight: 600;
-      font-size: 0.92rem;
-      background: #f8f7fc;
+      color: var(--pf-muted);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 24px;
+    }
+
+    /* —— Dots + arrows —— */
+    .ach-nav {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .ach-arrow {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 0;
+      background: #efeaff;
+      color: var(--pf-purple);
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: grid; place-items: center;
+    }
+    .ach-arrow:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+    .ach-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .ach-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #d8d0f0;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+    }
+    .ach-dot.is-on {
+      background: var(--pf-purple);
+      width: 20px;
+      border-radius: 6px;
+    }
+
+    /* —— Scores panel —— */
+    .scores-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .score-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 12px 14px;
       border-radius: 14px;
+      background: #f7f5ff;
+      border: 1.5px solid #ebe6ff;
+      text-decoration: none;
+      color: inherit;
+      flex-shrink: 0;
     }
-    @media (min-width: 520px) {
-      #achievements {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 10px;
-      }
-      .achieve-tile {
-        padding: 8px 6px;
-        border-radius: 14px;
-      }
-      .achieve-tile strong { font-size: 0.72rem; }
-      .achieve-stars { font-size: 0.95rem; }
+    .score-row strong { display: block; font-size: 0.9rem; color: var(--pf-text); }
+    .score-row small { color: var(--pf-muted); font-weight: 600; font-size: 0.72rem; }
+    .score-row .pts {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--pf-purple);
+      align-self: center;
     }
-    @media (max-width: 360px) {
-      #achievements { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .scores-status {
+      margin: 0 0 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--pf-muted);
+    }
+    .scores-empty {
+      margin: auto;
+      text-align: center;
+      color: var(--pf-muted);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 20px;
+    }
+
+    .pf-hint {
+      flex: 0 0 auto;
+      text-align: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: rgba(255,255,255,.4);
+      padding-top: 2px;
+    }
+
+
+    html[data-theme="light"] body.profile-app,
+    html:not([data-theme="dark"]) body.profile-app {
+      --pf-bg: #1a0f3c;
+    }
+    html[data-theme="light"] .ach-tile {
+      background: linear-gradient(165deg, #ffffff 0%, #f6f3ff 100%);
+    }
+
+    /* —— Mobile: 4×3 per page for taller tiles —— */
+    @media (max-width: 640px) {
+      .ach-page {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 7px;
+      }
+      .ach-tile-title { font-size: 0.62rem; }
+      .pf-name-chip input { width: 72px; }
+      .pf-panel { padding: 12px 10px 10px; border-radius: 18px; }
+    }
+
+    @media (max-width: 380px) {
+      .ach-page {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+      }
+    }
+
+    /* Short landscape phones */
+    @media (max-height: 500px) {
+      .pf-tabs { display: none; }
+      .pf-title-wrap p { display: none; }
+      .ach-page {
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+      }
+    }
+
+    html[data-theme="dark"] body.profile-app {
+      --pf-card: #16122a;
+      --pf-text: #f3f0ff;
+      --pf-muted: #a89bbf;
+      --pf-bg: #0a0614;
+    }
+    html[data-theme="dark"] .ach-tile {
+      background: linear-gradient(165deg, #2a2342 0%, #1e1834 100%);
+      border-color: #3d3560;
+      box-shadow: 0 2px 0 rgba(0,0,0,.25), 0 4px 14px rgba(0,0,0,.2);
+    }
+    html[data-theme="dark"] .ach-tile.is-hot {
+      background: linear-gradient(165deg, #3a2818 0%, #2a1c12 100%);
+      border-color: #c45d20;
+      box-shadow: 0 2px 0 rgba(255,107,26,.2), 0 6px 18px rgba(255,107,26,.15);
+    }
+    html[data-theme="dark"] a.ach-tile:hover {
+      border-color: #7c5cbf;
+      box-shadow: 0 4px 0 rgba(0,0,0,.3), 0 12px 24px rgba(105,55,216,.25);
+    }
+    html[data-theme="dark"] .ach-tile-title { color: #ede7ff; }
+    html[data-theme="dark"] .ach-plays { color: #9b87d8; }
+    html[data-theme="dark"] .ach-plays.is-hot { color: #ff8c42; }
+    html[data-theme="dark"] .score-row {
+      background: #241e36;
+      border-color: #352d52;
+    }
+    html[data-theme="dark"] .ach-arrow { background: #2a2340; color: #c4b5fd; }
+    html[data-theme="dark"] .pf-count { background: #2a2340; color: #c4b5fd; }
+    html[data-theme="dark"] .pf-panel {
+      box-shadow: 0 12px 40px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.04);
+    }
+    html[data-theme="dark"] .ach-dot { background: #3d3560; }
+    html[data-theme="dark"] .ach-dot.is-on { background: #a78bfa; }
+
+    /* —— Leaderboard —— */
+    .lb-filters {
+      flex: 0 0 auto;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+      margin-bottom: 8px;
+    }
+    .lb-filters::-webkit-scrollbar { display: none; }
+    .lb-chip {
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: #efeaff;
+      color: #5b21b6;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .lb-chip.is-on {
+      background: var(--pf-purple);
+      color: #fff;
+      box-shadow: 0 2px 0 var(--pf-purple-deep);
+    }
+    .lb-body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow: hidden;
+    }
+    .lb-podium {
+      flex: 0 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      gap: 8px;
+      align-items: end;
+      min-height: 0;
+    }
+    .lb-podium:empty { display: none; }
+    .lb-pod {
+      background: linear-gradient(180deg, #f7f5ff 0%, #efeaff 100%);
+      border: 1.5px solid #e4dcff;
+      border-radius: 16px;
+      padding: 10px 6px 12px;
+      text-align: center;
+      min-width: 0;
+    }
+    .lb-pod.is-me {
+      border-color: var(--pf-purple);
+      box-shadow: 0 0 0 2px rgba(105,55,216,.2);
+    }
+    .lb-pod.is-first {
+      background: linear-gradient(180deg, #fff9e6 0%, #fef3c7 100%);
+      border-color: #f5d78e;
+      padding-top: 14px;
+      padding-bottom: 16px;
+    }
+    .lb-pod-medal { font-size: 1.35rem; line-height: 1; margin-bottom: 4px; }
+    .lb-pod-name {
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: var(--pf-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .lb-pod-score {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--pf-purple);
+      margin-top: 2px;
+    }
+    .lb-pod-rank {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--pf-muted);
+      margin-top: 2px;
+    }
+    .lb-list {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .lb-row {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #f7f5ff;
+      border: 1.5px solid transparent;
+      flex-shrink: 0;
+    }
+    .lb-row.is-me {
+      border-color: var(--pf-purple);
+      background: #f0ebff;
+    }
+    .lb-row-rank {
+      font-weight: 900;
+      font-size: 0.85rem;
+      color: var(--pf-muted);
+      text-align: center;
+    }
+    .lb-row-name {
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--pf-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .lb-row-score {
+      font-weight: 900;
+      font-size: 0.95rem;
+      color: var(--pf-purple);
+    }
+    .lb-empty {
+      margin: auto;
+      text-align: center;
+      color: var(--pf-muted);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 24px 12px;
+      line-height: 1.45;
+    }
+    html[data-theme="dark"] .lb-chip { background: #2a2340; color: #c4b5fd; }
+    html[data-theme="dark"] .lb-chip.is-on { background: var(--pf-purple); color: #fff; }
+    html[data-theme="dark"] .lb-pod {
+      background: linear-gradient(180deg, #241e36, #1e1830);
+      border-color: #352d52;
+    }
+    html[data-theme="dark"] .lb-pod.is-first {
+      background: linear-gradient(180deg, #3d3420, #2a2418);
+      border-color: #6b5a2a;
+    }
+    html[data-theme="dark"] .lb-row { background: #241e36; }
+    html[data-theme="dark"] .lb-row.is-me { background: #2e2648; border-color: #7c5cbf; }
+
+    @media (max-width: 640px) {
+      .lb-pod-name { font-size: 0.65rem; }
+      .lb-pod-score { font-size: 0.95rem; }
+      .pf-tab { font-size: 0.78rem; padding: 9px 4px; }
     }
   </style>
 </head>
-<body>
-<a href="./" class="profile-fab" aria-label="My Profile" title="My Profile">👤</a>
-<header class="arcade-header-bar">
-  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
-      <a href="../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
-      <a href="../" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
-      <a href="../../topics/" class="nav-link" aria-label="Topics" data-icon="🎯"><span class="nav-ico" aria-hidden="true">🎯</span><span class="nav-text">Topics</span></a>
-      <a href="../../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-      <a href="../leaderboard/" class="nav-link" aria-label="Leaderboard" data-icon="🏆"><span class="nav-ico" aria-hidden="true">🏆</span><span class="nav-text">Leaderboard</span></a>
-      <a href="./" class="nav-link nav-profile" aria-label="My Profile" title="My Profile"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
-      <a href="../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
-    </nav>
-</header>
+<body class="profile-app">
+  <div class="pf-shell">
+    <header class="pf-top">
+      <a class="pf-back" href="../" aria-label="Back">←</a>
+      <div class="pf-title-wrap">
+        <h1>My Profile</h1>
+        <p>Stars save automatically on this device</p>
+      </div>
+      <div class="pf-name-chip">
+        <input id="playerName" type="text" maxlength="32" placeholder="Your name" autocomplete="nickname" readonly />
+        <button type="button" id="saveNameBtn" class="is-edit" aria-label="Edit name">✎</button>
+      </div>
+    </header>
 
-<main class="profile-wrap">
-  <section class="arcade-intro skill-intro" style="margin-bottom: 8px;">
-    <div class="skill-intro-top">
-      <a class="skill-back-btn" href="../" data-back-one aria-label="Back" title="Back"><span aria-hidden="true">←</span></a>
-      <span class="eyebrow">LEARNING ARCADE</span>
+    <div class="pf-tabs" role="tablist">
+      <button type="button" class="pf-tab is-on" data-tab="achievements" role="tab" aria-selected="true">★ Stars</button>
+      <button type="button" class="pf-tab" data-tab="leaderboard" role="tab" aria-selected="false">🏆 Board</button>
+      <button type="button" class="pf-tab" data-tab="scores" role="tab" aria-selected="false">Scores</button>
     </div>
-    <h1>My Profile</h1>
-    <p style="margin:8px 0 0;color:#687184;font-weight:600;">Your name, achievements, and scores from this device.</p>
-  </section>
 
-  <section class="profile-card">
-    <h2>Player identity</h2>
-    <p class="status" style="margin-bottom:12px;color:#64748b;">
-      Name + class code keep scores unique (e.g. two students both named Ali).
-    </p>
-    <label for="playerName" style="display:block;font-weight:700;font-size:0.85rem;margin-bottom:6px;">Name</label>
-    <div class="name-row">
-      <input id="playerName" type="text" maxlength="32" placeholder="e.g. Ali" autocomplete="nickname" />
-    </div>
-    <label for="classCode" style="display:block;font-weight:700;font-size:0.85rem;margin:14px 0 6px;">Class code</label>
-    <div class="name-row">
-      <input id="classCode" type="text" maxlength="12" placeholder="e.g. 7A or G1" autocomplete="off" spellcheck="false" style="text-transform:uppercase;" />
-      <button type="button" id="saveNameBtn" aria-label="Save identity">Save</button>
-    </div>
-    <p class="status" id="nameStatus"></p>
-    <p class="status" id="identityPreview" style="margin-top:8px;font-weight:700;color:#6937d8;"></p>
-  </section>
+    <!-- Achievements -->
+    <section class="pf-panel is-on" id="panel-achievements" role="tabpanel">
+      <div class="pf-panel-head">
+        <h2>Achievements</h2>
+        <span class="pf-count" id="achCount">0 games</span>
+      </div>
+      <div class="ach-viewport" id="achViewport">
+        <div class="ach-track" id="achTrack">
+          <!-- pages injected -->
+        </div>
+      </div>
+      <div class="ach-nav">
+        <button type="button" class="ach-arrow" id="achPrev" aria-label="Previous">‹</button>
+        <div class="ach-dots" id="achDots"></div>
+        <button type="button" class="ach-arrow" id="achNext" aria-label="Next">›</button>
+      </div>
+    </section>
 
-  <section class="profile-card">
-    <h2>Achievements</h2>
-    <div class="stars-local" id="achievements">Loading…</div>
-  </section>
 
-  <section class="profile-card">
-    <h2>Saved scores</h2>
-    <p class="status" id="scoresStatus">Loading…</p>
-    <div class="score-list" id="scoreList"></div>
-  </section>
-</main>
+    <!-- Leaderboard -->
+    <section class="pf-panel" id="panel-leaderboard" role="tabpanel">
+      <div class="pf-panel-head">
+        <h2>Leaderboard</h2>
+        <span class="pf-count" id="lbMeta">Overall</span>
+      </div>
+      <div class="lb-filters" id="lbFilters" role="tablist" aria-label="Filter by game">
+        <button type="button" class="lb-chip is-on" data-game="overall">Overall</button>
+      </div>
+      <div class="lb-body" id="lbBody">
+        <div class="lb-podium" id="lbPodium"></div>
+        <div class="lb-list" id="lbList"></div>
+      </div>
+      <p class="lb-empty" id="lbEmpty" hidden>No scores on the board yet.<br>Finish games with your name set to appear here.</p>
+    </section>
+    <!-- Scores -->
+    <section class="pf-panel" id="panel-scores" role="tabpanel">
+      <div class="pf-panel-head">
+        <h2>Saved scores</h2>
+      </div>
+      <p class="scores-status" id="scoresStatus">Loading…</p>
+      <div class="scores-scroll" id="scoreList"></div>
+    </section>
 
-<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · English Teacher</p></footer>
+    <p class="pf-hint" id="swipeHint">Swipe or use arrows to see more games</p>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
-<script src="../firebase-scores.js"></script>
-<script src="../la-stars.js"></script>
-<!-- site script.js optional -->
-<script src="../theme.js"></script>
-<script>
+  <!-- optional class kept in DOM for compatibility, hidden -->
+  <input type="hidden" id="classCode" value="" />
+
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
+  <script src="../firebase-scores.js"></script>
+  <script src="../la-stars.js"></script>
+  <script src="../theme.js"></script>
+  <script>
 (function () {
-  var year = document.getElementById('year');
-  if (year) year.textContent = new Date().getFullYear();
+  "use strict";
 
-  var input = document.getElementById('playerName');
-  var nameStatus = document.getElementById('nameStatus');
-  var saveNameBtn = document.getElementById('saveNameBtn');
-  var scoresStatus = document.getElementById('scoresStatus');
-  var scoreList = document.getElementById('scoreList');
-  var editingName = true;
-
-  /* Display names */
   var TITLES = {
-    'opposite-snap': 'Opposite Snap',
-    'sound-match-picture': 'Sound Match Picture',
-    'vocab-clothes-voice-hunt': 'Voice Treasure Hunt',
-    'writing-sara-daily': "Sara's Daily Routine",
-    'vocab-clothes-match': 'Clothes Match',
-    'vocab-clothes-dictation': 'Clothes Dictation',
-    'there-is-there-are': 'There is / There are',
-    'starter-3a-a-an-swipe': 'A / An Swipe',
-    'starter-7a-question-builder': 'Question Builder',
-    'starter-6a-listen-and-write': 'Listen and Write',
-    'starter-7a-build-the-question': 'Build the Question',
-    'starter-3a-plural-s-sound-match': 'Plural -s Sound Match',
-    'starter-3a-pictures-words-match': 'Pictures & Words Match',
-    'starter-3b-listen-match': 'Listen & Match',
-    'starter-3b-dialogue-completer': 'Dialogue Completer',
-    'starter-3b-this-that-sentences': 'This / That Sentences',
-    'starter-3a-whats-in-your-bag': "What's in Your Bag?",
-    'nouns': 'Nouns',
-    'match-rush': 'Match Rush'
+    "opposite-snap": "Opposite Snap",
+    "sound-match-picture": "Sound Match",
+    "vocab-clothes-voice-hunt": "Voice Hunt",
+    "writing-sara-daily": "Sara's Routine",
+    "vocab-clothes-match": "Clothes Match",
+    "vocab-clothes-dictation": "Clothes Dictation",
+    "there-is-there-are": "There is / are",
+    "starter-3a-a-an-swipe": "A / An Swipe",
+    "starter-7a-question-builder": "Question Builder",
+    "starter-6a-listen-and-write": "Listen & Write",
+    "starter-7a-build-the-question": "Build Question",
+    "starter-3a-plural-s-sound-match": "Plural -s Sound",
+    "starter-3a-pictures-words-match": "Pictures & Words",
+    "starter-3b-listen-match": "Listen & Match",
+    "starter-3b-dialogue-completer": "Dialogue",
+    "starter-3b-this-that-sentences": "This / That",
+    "starter-3a-whats-in-your-bag": "What's in Bag?",
+    "nouns": "Nouns",
+    "match-rush": "Match Rush",
+    "starter-4b-car-adjectives": "Car Adjectives",
+    "starter-4b-opposite-snap": "Opposite Snap",
+    "be-verbs": "Be Verbs"
   };
 
-  /* Paths relative to learningarcade/profile/ */
   var GAME_URLS = {
-    'opposite-snap': '../vocabulary/Adjectives/Opposite_Snap/',
-    'sound-match-picture': '../vocabulary/Adjectives/Sound_Match_Picture/',
-    'vocab-clothes-voice-hunt': '../vocabulary/clothes/voice-treasure-hunt/',
-    'vocab-clothes-match': '../vocabulary/clothes/match/',
-    'vocab-clothes-dictation': '../vocabulary/clothes/dictation/',
-    'writing-sara-daily': '../writing/Daily%20Routine/Sara/',
-    'there-is-there-are': '../grammar/there-is-there-are/',
-    'nouns': '../grammar/nouns/',
-    'match-rush': '../vocabulary/match-rush/',
-    'starter-3a-a-an-swipe': '../../resources/american-english-file/starter/unit-3/a/games/',
-    'starter-3a-plural-s-sound-match': '../../resources/american-english-file/starter/unit-3/a/games/plural-s-sound-match/',
-    'starter-3a-pictures-words-match': '../../resources/american-english-file/starter/unit-3/a/games/',
-    'starter-3a-whats-in-your-bag': '../../resources/american-english-file/starter/unit-3/a/games/',
-    'starter-3b-listen-match': '../../resources/american-english-file/starter/unit-3/b/games/',
-    'starter-3b-dialogue-completer': '../../resources/american-english-file/starter/unit-3/b/games/',
-    'starter-3b-this-that-sentences': '../../resources/american-english-file/starter/unit-3/b/games/',
-    'starter-6a-listen-and-write': '../../resources/american-english-file/starter/unit-6/a/games/',
-    'starter-7a-question-builder': '../../resources/american-english-file/starter/unit-7/a/games/',
-    'starter-7a-build-the-question': '../../resources/american-english-file/starter/unit-7/a/games/'
+    "opposite-snap": "../vocabulary/Adjectives/Opposite_Snap/",
+    "sound-match-picture": "../vocabulary/Adjectives/Sound_Match_Picture/",
+    "vocab-clothes-voice-hunt": "../vocabulary/clothes/voice-treasure-hunt/",
+    "vocab-clothes-match": "../vocabulary/clothes/match/",
+    "vocab-clothes-dictation": "../vocabulary/clothes/dictation/",
+    "writing-sara-daily": "../writing/Daily%20Routine/Sara/",
+    "there-is-there-are": "../grammar/there-is-there-are/",
+    "nouns": "../grammar/nouns/",
+    "match-rush": "../vocabulary/match-rush/",
+    "starter-3a-a-an-swipe": "../../resources/american-english-file/starter/unit-3/a/games/a-an-swipe/",
+    "starter-3a-plural-s-sound-match": "../../resources/american-english-file/starter/unit-3/a/games/plural-s-sound-match/",
+    "starter-3a-pictures-words-match": "../../resources/american-english-file/starter/unit-3/a/games/pictures-words-match/",
+    "starter-3a-whats-in-your-bag": "../../resources/american-english-file/starter/unit-3/a/games/whats-in-your-bag/",
+    "starter-3b-listen-match": "../../resources/american-english-file/starter/unit-3/b/games/listen-match/",
+    "starter-3b-dialogue-completer": "../../resources/american-english-file/starter/unit-3/b/games/dialogue-completer/",
+    "starter-3b-this-that-sentences": "../../resources/american-english-file/starter/unit-3/b/games/this-that-sentences/"
   };
 
   function prettyTitle(id) {
     if (TITLES[id]) return TITLES[id];
     return String(id)
-      .replace(/^starter-\d+[a-z]-/i, '')
-      .replace(/^vocab-/i, '')
-      .replace(/^writing-/i, '')
-      .replace(/[-_]+/g, ' ')
+      .replace(/^starter-\d+[a-z]-/i, "")
+      .replace(/^starter-pe\d+-/i, "")
+      .replace(/^vocab-/i, "")
+      .replace(/^writing-/i, "")
+      .replace(/^aef\d?\s*/i, "")
+      .replace(/[-_]+/g, " ")
       .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
   }
 
@@ -292,174 +843,657 @@
     return GAME_URLS[id] || null;
   }
 
-  var classInput = document.getElementById('classCode');
-  var identityPreview = document.getElementById('identityPreview');
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
 
-  function updatePreview() {
-    if (!identityPreview || !window.LAScores) return;
-    var n = (input.value || '').trim();
-    var c = (classInput && classInput.value || '').trim().toUpperCase();
-    if (n && c) {
-      identityPreview.textContent = 'Scores will show as: ' + n + ' · ' + c;
-    } else if (n) {
-      identityPreview.textContent = 'Add a class code so your name stays unique.';
-    } else {
-      identityPreview.textContent = '';
-    }
+  /* —— Name chip —— */
+  var input = document.getElementById("playerName");
+  var saveNameBtn = document.getElementById("saveNameBtn");
+  var editingName = false;
+
+  function loadName() {
+    var n = "";
+    try {
+      if (window.LAScores && LAScores.getPlayerName) n = LAScores.getPlayerName() || "";
+      if (!n) n = localStorage.getItem("laPlayerName") || "";
+    } catch (e) {}
+    input.value = n;
   }
 
   function setNameMode(editing) {
     editingName = editing;
+    input.readOnly = !editing;
     if (editing) {
-      input.readOnly = false;
-      if (classInput) classInput.readOnly = false;
-      saveNameBtn.textContent = 'Save';
-      saveNameBtn.classList.remove('is-edit');
-      saveNameBtn.setAttribute('aria-label', 'Save identity');
+      saveNameBtn.textContent = "✓";
+      saveNameBtn.setAttribute("aria-label", "Save name");
       input.focus();
     } else {
-      input.readOnly = true;
-      if (classInput) classInput.readOnly = true;
-      saveNameBtn.innerHTML = '✎';
-      saveNameBtn.classList.add('is-edit');
-      saveNameBtn.setAttribute('aria-label', 'Edit identity');
+      saveNameBtn.textContent = "✎";
+      saveNameBtn.setAttribute("aria-label", "Edit name");
     }
-    updatePreview();
   }
 
-  var existingName = LAScores.getPlayerName();
-  var existingClass = LAScores.getClassCode ? LAScores.getClassCode() : '';
-  input.value = existingName;
-  if (classInput) classInput.value = existingClass;
-  if (existingName && existingClass) {
-    setNameMode(false);
-  } else {
-    setNameMode(true);
-  }
-  updatePreview();
-
-  saveNameBtn.addEventListener('click', function () {
+  saveNameBtn.addEventListener("click", function () {
     if (!editingName) {
       setNameMode(true);
       return;
     }
-    var n = LAScores.setPlayerName(input.value);
-    var c = LAScores.setClassCode ? LAScores.setClassCode(classInput ? classInput.value : '') : '';
+    var n = (input.value || "").trim().slice(0, 32);
+    try {
+      if (n) localStorage.setItem("laPlayerName", n);
+      else localStorage.removeItem("laPlayerName");
+    } catch (e) {}
+    if (window.LAScores && LAScores.setPlayerName) LAScores.setPlayerName(n);
     input.value = n;
-    if (classInput) classInput.value = c;
-    if (n && c) {
-      var display = LAScores.getDisplayName ? LAScores.getDisplayName() : (n + ' · ' + c);
-      nameStatus.textContent = 'Saved as: ' + display;
-      nameStatus.className = 'status is-ok';
-      setNameMode(false);
-      loadScores();
-    } else if (!n) {
-      nameStatus.textContent = 'Enter a name first.';
-      nameStatus.className = 'status';
-    } else {
-      nameStatus.textContent = 'Enter a class code (e.g. 7A) so scores stay unique.';
-      nameStatus.className = 'status';
-    }
-    updatePreview();
+    setNameMode(false);
+    loadAchievements();
+    loadScores();
   });
 
-  input.addEventListener('input', updatePreview);
-  if (classInput) {
-    classInput.addEventListener('input', function () {
-      classInput.value = classInput.value.toUpperCase();
-      updatePreview();
-    });
-    classInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' && editingName) {
-        e.preventDefault();
-        saveNameBtn.click();
-      }
-    });
-  }
-
-  input.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' && editingName) {
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && editingName) {
       e.preventDefault();
       saveNameBtn.click();
     }
   });
 
-  function formatDate(ms) {
-    if (!ms) return '';
+  loadName();
+  setNameMode(false);
+
+  /* —— Tabs —— */
+  var tabs = document.querySelectorAll(".pf-tab");
+  var panels = {
+    achievements: document.getElementById("panel-achievements"),
+    leaderboard: document.getElementById("panel-leaderboard"),
+    scores: document.getElementById("panel-scores")
+  };
+  var swipeHint = document.getElementById("swipeHint");
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      var id = tab.getAttribute("data-tab");
+      tabs.forEach(function (t) {
+        t.classList.toggle("is-on", t === tab);
+        t.setAttribute("aria-selected", t === tab ? "true" : "false");
+      });
+      Object.keys(panels).forEach(function (k) {
+        panels[k].classList.toggle("is-on", k === id);
+      });
+      if (swipeHint) {
+        if (id === "achievements") {
+          swipeHint.style.visibility = "visible";
+        } else if (id === "leaderboard") {
+          swipeHint.style.visibility = "visible";
+          swipeHint.textContent = "Filter by game · top scores across the class";
+        } else {
+          swipeHint.style.visibility = "hidden";
+        }
+      }
+      if (id === "leaderboard") loadLeaderboard();
+    });
+  });
+
+  /* —— Achievements grid (swipe pages) —— */
+  var PER_PAGE = 20; // 5×4 desktop; mobile CSS may show fewer cells but same data chunking
+  var pageIndex = 0;
+  var pageCount = 1;
+  var track = document.getElementById("achTrack");
+  var dotsEl = document.getElementById("achDots");
+  var prevBtn = document.getElementById("achPrev");
+  var nextBtn = document.getElementById("achNext");
+  var achCount = document.getElementById("achCount");
+  var viewport = document.getElementById("achViewport");
+
+  function perPageForViewport() {
+    var w = window.innerWidth;
+    if (w <= 380) return 9;  // 3×3
+    if (w <= 640) return 12; // 4×3
+    if (window.innerHeight <= 500) return 15; // 5×3
+    return 20; // 5×4
+  }
+
+  function fireLevelFromPlays(plays) {
+    plays = Number(plays) || 0;
+    if (plays >= 10) return 3;
+    if (plays > 6) return 2;
+    if (plays > 3) return 1;
+    return 0;
+  }
+
+  function ensureParticles(star) {
+    if (star.querySelector(".la-particles")) return;
+    var wrap = document.createElement("span");
+    wrap.className = "la-particles";
+    wrap.setAttribute("aria-hidden", "true");
+    var wind = (Math.random() * 2 - 1) * 12;
+    for (var i = 0; i < 5; i++) {
+      var p = document.createElement("span");
+      p.className = "la-particle la-particle--fire";
+      p.style.setProperty("--d", (i * 0.18) + "s");
+      p.style.setProperty("--x", (Math.random() * 10 - 5).toFixed(1) + "px");
+      p.style.setProperty("--w", (wind * (0.35 + Math.random() * 0.3)).toFixed(1) + "px");
+      wrap.appendChild(p);
+    }
+    for (var j = 0; j < 4; j++) {
+      var s = document.createElement("span");
+      s.className = "la-particle la-particle--smoke";
+      s.style.setProperty("--d", (j * 0.35 + 0.2) + "s");
+      s.style.setProperty("--x", (Math.random() * 12 - 6).toFixed(1) + "px");
+      s.style.setProperty("--s", (0.7 + Math.random() * 0.8).toFixed(2));
+      s.style.setProperty("--w", (wind * (0.9 + Math.random() * 0.5)).toFixed(1) + "px");
+      wrap.appendChild(s);
+    }
+    star.appendChild(wrap);
+  }
+
+  function starsEl(n, fire) {
+    n = Math.min(3, Math.max(0, Number(n) || 0));
+    fire = Math.min(3, Math.max(0, Number(fire) || 0));
+    var wrap = document.createElement("div");
+    wrap.className = "game-stars";
+    wrap.setAttribute("data-fire", String(fire));
+    for (var i = 1; i <= 3; i++) {
+      var star = document.createElement("span");
+      star.className = "star";
+      star.setAttribute("data-n", String(i));
+      if (i <= n) {
+        star.classList.add("is-filled");
+        star.textContent = "★";
+      } else {
+        star.textContent = "☆";
+      }
+      if (i <= fire) {
+        star.classList.add("on-fire");
+        ensureParticles(star);
+      }
+      wrap.appendChild(star);
+    }
+    return wrap;
+  }
+
+  function loadPlaysMap() {
     try {
-      return new Date(ms).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
-    } catch (e) { return ''; }
+      var key = "laGamePlays";
+      var nm = (localStorage.getItem("laPlayerName") || "").trim().toLowerCase();
+      var cd = (localStorage.getItem("laClassCode") || "").trim().toUpperCase();
+      if (nm && cd) key = "laGamePlays::" + nm + "::" + cd;
+      else if (nm) key = "laGamePlays::" + nm;
+      var raw = localStorage.getItem(key);
+      var data = raw ? JSON.parse(raw) : {};
+      if (!Object.keys(data || {}).length && key !== "laGamePlays") {
+        try { data = JSON.parse(localStorage.getItem("laGamePlays") || "{}") || {}; } catch (e2) { data = {}; }
+      }
+      return data || {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function goPage(i) {
+    pageIndex = Math.max(0, Math.min(pageCount - 1, i));
+    track.style.transform = "translateX(" + -pageIndex * 100 + "%)";
+    dotsEl.querySelectorAll(".ach-dot").forEach(function (d, idx) {
+      d.classList.toggle("is-on", idx === pageIndex);
+    });
+    prevBtn.disabled = pageIndex <= 0;
+    nextBtn.disabled = pageIndex >= pageCount - 1;
   }
 
   function loadAchievements() {
-    var el = document.getElementById('achievements');
+    var data = {};
     try {
-      var raw = localStorage.getItem('laGameStars');
-      var data = raw ? JSON.parse(raw) : {};
-      var keys = Object.keys(data || {}).filter(function (id) {
-        return Number(data[id]) > 0;
-      });
-      keys.sort(function (a, b) {
-        return Number(data[b]) - Number(data[a]) || prettyTitle(a).localeCompare(prettyTitle(b));
-      });
-      if (!keys.length) {
-        el.innerHTML = '<div class="achieve-empty">No achievements yet. Finish a game to earn stars.</div>';
-        return;
+      var starsKey = "laGameStars";
+      var nm = (localStorage.getItem("laPlayerName") || "").trim().toLowerCase();
+      var cd = (localStorage.getItem("laClassCode") || "").trim().toUpperCase();
+      if (nm && cd) starsKey = "laGameStars::" + nm + "::" + cd;
+      else if (nm) starsKey = "laGameStars::" + nm;
+      var raw = localStorage.getItem(starsKey);
+      data = raw ? JSON.parse(raw) : {};
+      if (!Object.keys(data || {}).length && starsKey !== "laGameStars") {
+        try {
+          data = JSON.parse(localStorage.getItem("laGameStars") || "{}") || {};
+        } catch (e2) {
+          data = {};
+        }
       }
-      el.innerHTML = keys.map(function (id) {
+    } catch (e) {
+      data = {};
+    }
+
+    var keys = Object.keys(data || {}).filter(function (id) {
+      return Number(data[id]) > 0;
+    });
+    keys.sort(function (a, b) {
+      return Number(data[b]) - Number(data[a]) || prettyTitle(a).localeCompare(prettyTitle(b));
+    });
+
+    achCount.textContent = keys.length + " game" + (keys.length === 1 ? "" : "s");
+
+    var per = perPageForViewport();
+    pageCount = Math.max(1, Math.ceil(keys.length / per) || 1);
+    pageIndex = Math.min(pageIndex, pageCount - 1);
+
+    track.innerHTML = "";
+    dotsEl.innerHTML = "";
+
+    if (!keys.length) {
+      var emptyPage = document.createElement("div");
+      emptyPage.className = "ach-page";
+      emptyPage.innerHTML =
+        '<div class="ach-empty">No achievements yet.<br>Finish a game to earn stars ★</div>';
+      track.appendChild(emptyPage);
+      pageCount = 1;
+      goPage(0);
+      if (swipeHint) swipeHint.textContent = "Play games to unlock achievements";
+      return;
+    }
+
+    for (var p = 0; p < pageCount; p++) {
+      var page = document.createElement("div");
+      page.className = "ach-page";
+      var slice = keys.slice(p * per, (p + 1) * per);
+      var playsMap = loadPlaysMap();
+      slice.forEach(function (id) {
         var n = Math.min(3, Number(data[id]) || 0);
+        var plays = Number(playsMap[id] || 0);
+        var fire = fireLevelFromPlays(plays);
         var title = prettyTitle(id);
         var url = gameUrl(id);
-        var stars = [1,2,3].map(function (i) {
-          return '<span class="achieve-star' + (i <= n ? ' is-on' : '') + '">' + (i <= n ? '★' : '☆') + '</span>';
-        }).join('');
-        var inner = '<strong>' + escapeHtml(title) + '</strong>' +
-          '<div class="achieve-stars" aria-label="' + n + ' of 3 stars">' + stars + '</div>';
-        if (url) {
-          return '<a class="achieve-tile" href="' + url + '" title="Play ' + escapeHtml(title) + ' — ' + n + ' of 3 stars">' + inner + '</a>';
+        var el = url ? document.createElement("a") : document.createElement("article");
+        el.className = "ach-tile" + (fire > 0 ? " is-hot" : "");
+        if (url) el.href = url;
+        var label = title + " — " + n + " of 3 stars";
+        if (fire > 0) label += ", " + fire + " on fire · played " + plays + "×";
+        el.title = label;
+
+        var titleEl = document.createElement("span");
+        titleEl.className = "ach-tile-title";
+        titleEl.textContent = title;
+        el.appendChild(titleEl);
+        el.appendChild(starsEl(n, fire));
+
+        if (plays > 0) {
+          var playsEl = document.createElement("span");
+          playsEl.className = "ach-plays" + (fire > 0 ? " is-hot" : "");
+          playsEl.textContent = plays >= 10 ? "🔥 " + plays + "×" : plays + "× played";
+          el.appendChild(playsEl);
         }
-        return '<article class="achieve-tile" title="' + escapeHtml(title) + ' — ' + n + ' of 3 stars">' + inner + '</article>';
-      }).join('');
+        page.appendChild(el);
+      });
+      track.appendChild(page);
+
+      var dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "ach-dot" + (p === pageIndex ? " is-on" : "");
+      dot.setAttribute("aria-label", "Page " + (p + 1));
+      (function (idx) {
+        dot.addEventListener("click", function () {
+          goPage(idx);
+        });
+      })(p);
+      dotsEl.appendChild(dot);
+    }
+
+    goPage(pageIndex);
+    if (swipeHint) {
+      swipeHint.textContent =
+        pageCount > 1 ? "Swipe or use arrows to see more games" : "Tap a game to play again";
+    }
+  }
+
+  prevBtn.addEventListener("click", function () {
+    goPage(pageIndex - 1);
+  });
+  nextBtn.addEventListener("click", function () {
+    goPage(pageIndex + 1);
+  });
+
+  /* Touch / pointer swipe */
+  (function bindSwipe() {
+    var startX = 0;
+    var startY = 0;
+    var dragging = false;
+    viewport.addEventListener(
+      "pointerdown",
+      function (e) {
+        dragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        try {
+          viewport.setPointerCapture(e.pointerId);
+        } catch (err) {}
+      },
+      { passive: true }
+    );
+    viewport.addEventListener(
+      "pointerup",
+      function (e) {
+        if (!dragging) return;
+        dragging = false;
+        var dx = e.clientX - startX;
+        var dy = e.clientY - startY;
+        if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+        if (dx < 0) goPage(pageIndex + 1);
+        else goPage(pageIndex - 1);
+      },
+      { passive: true }
+    );
+  })();
+
+  window.addEventListener("resize", function () {
+    loadAchievements();
+  });
+
+  /* —— Scores —— */
+  function formatDate(ms) {
+    if (!ms) return "";
+    try {
+      return new Date(ms).toLocaleString(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short"
+      });
     } catch (e) {
-      el.textContent = 'Could not load achievements.';
+      return "";
     }
   }
 
   function loadScores() {
-    scoresStatus.textContent = 'Loading scores…';
-    scoreList.innerHTML = '';
-    LAScores.ensureAuth().then(function () {
+    var scoresStatus = document.getElementById("scoresStatus");
+    var scoreList = document.getElementById("scoreList");
+    scoresStatus.textContent = "Loading…";
+    scoreList.innerHTML = "";
+
+    if (!window.LAScores || !LAScores.myScores) {
+      scoresStatus.textContent = "";
+      scoreList.innerHTML =
+        '<div class="scores-empty">Cloud scores need a connection.<br>Your stars still save on this device.</div>';
+      return;
+    }
+
+    var p = LAScores.ensureAuth ? LAScores.ensureAuth() : Promise.resolve();
+    p.then(function () {
       return LAScores.myScores();
-    }).then(function (rows) {
-      if (!rows.length) {
-        scoresStatus.textContent = 'No saved scores yet.';
-        scoreList.innerHTML = '<div class="empty">Play a game, then tap <b>Save score</b>.</div>';
-        return;
-      }
-      scoresStatus.textContent = rows.length + ' saved score' + (rows.length === 1 ? '' : 's') + ' — tap a game to play again';
-      scoreList.innerHTML = rows.map(function (r) {
-        var title = r.gameName || TITLES[r.gameId] || r.gameId;
-        var url = gameUrl(r.gameId);
-        var body = '<div><strong>' + escapeHtml(title) + '</strong><small>' + formatDate(r.at) + '</small>' +
-          (url ? '<span class="play-hint">▶ Play again</span>' : '') +
-          '</div><div class="pts">' + r.score + '</div>';
-        if (url) {
-          return '<a class="score-row" href="' + url + '">' + body + '</a>';
+    })
+      .then(function (rows) {
+        rows = rows || [];
+        if (!rows.length) {
+          scoresStatus.textContent = "";
+          scoreList.innerHTML =
+            '<div class="scores-empty">No cloud scores yet.<br>Enter your name above — scores save when you finish games.</div>';
+          return;
         }
-        return '<div class="score-row">' + body + '</div>';
-      }).join('');
-    }).catch(function () {
-      scoresStatus.textContent = 'Could not load scores. Check Firebase rules.';
+        scoresStatus.textContent =
+          rows.length + " score" + (rows.length === 1 ? "" : "s");
+        scoreList.innerHTML = rows
+          .map(function (r) {
+            var title = r.gameName || TITLES[r.gameId] || prettyTitle(r.gameId);
+            var url = gameUrl(r.gameId);
+            var body =
+              "<div><strong>" +
+              escapeHtml(title) +
+              "</strong><small>" +
+              formatDate(r.at) +
+              "</small></div><div class=\"pts\">" +
+              r.score +
+              "</div>";
+            if (url) return '<a class="score-row" href="' + url + '">' + body + "</a>";
+            return '<div class="score-row">' + body + "</div>";
+          })
+          .join("");
+      })
+      .catch(function () {
+        scoresStatus.textContent = "";
+        scoreList.innerHTML =
+          '<div class="scores-empty">Could not load cloud scores.<br>Local stars still work.</div>';
+      });
+  }
+
+
+  /* —— Leaderboard —— */
+  var lbCache = { overall: [], games: {}, loaded: false, filter: "overall" };
+  var lbFilters = document.getElementById("lbFilters");
+  var lbPodium = document.getElementById("lbPodium");
+  var lbList = document.getElementById("lbList");
+  var lbEmpty = document.getElementById("lbEmpty");
+  var lbMeta = document.getElementById("lbMeta");
+  var lbBody = document.getElementById("lbBody");
+
+  function myNameKey() {
+    var n = "";
+    try {
+      if (window.LAScores && LAScores.getPlayerName) n = LAScores.getPlayerName() || "";
+      if (!n) n = localStorage.getItem("laPlayerName") || "";
+    } catch (e) {}
+    return String(n).trim().toLowerCase();
+  }
+
+  function medal(rank) {
+    if (rank === 1) return "🥇";
+    if (rank === 2) return "🥈";
+    if (rank === 3) return "🥉";
+    return String(rank);
+  }
+
+  function buildLbFilters(gameIds) {
+    lbFilters.innerHTML = '<button type="button" class="lb-chip is-on" data-game="overall">Overall</button>';
+    (gameIds || []).forEach(function (id) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "lb-chip";
+      btn.setAttribute("data-game", id);
+      btn.textContent = prettyTitle(id);
+      lbFilters.appendChild(btn);
     });
   }
 
-  function escapeHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  lbFilters.addEventListener("click", function (e) {
+    var btn = e.target.closest(".lb-chip");
+    if (!btn) return;
+    lbFilters.querySelectorAll(".lb-chip").forEach(function (b) {
+      b.classList.toggle("is-on", b === btn);
+    });
+    lbCache.filter = btn.getAttribute("data-game") || "overall";
+    renderLeaderboard();
+  });
+
+  function renderLeaderboard() {
+    var filter = lbCache.filter || "overall";
+    var rows =
+      filter === "overall"
+        ? lbCache.overall || []
+        : (lbCache.games && lbCache.games[filter]) || [];
+
+    lbMeta.textContent = filter === "overall" ? "Overall" : prettyTitle(filter);
+
+    if (!rows.length) {
+      lbBody.hidden = true;
+      lbEmpty.hidden = false;
+      return;
+    }
+    lbBody.hidden = false;
+    lbEmpty.hidden = true;
+
+    var me = myNameKey();
+    var top3 = rows.slice(0, 3);
+    // Visual order: 2nd, 1st, 3rd
+    var visual = [];
+    if (top3[1]) visual.push({ row: top3[1], rank: 2 });
+    if (top3[0]) visual.push({ row: top3[0], rank: 1 });
+    if (top3[2]) visual.push({ row: top3[2], rank: 3 });
+
+    lbPodium.innerHTML = visual
+      .map(function (item) {
+        var isMe = me && item.row.key === me;
+        return (
+          '<div class="lb-pod' +
+          (item.rank === 1 ? " is-first" : "") +
+          (isMe ? " is-me" : "") +
+          '">' +
+          '<div class="lb-pod-medal">' +
+          medal(item.rank) +
+          "</div>" +
+          '<div class="lb-pod-name">' +
+          escapeHtml(item.row.name) +
+          "</div>" +
+          '<div class="lb-pod-score">' +
+          item.row.score +
+          "</div>" +
+          '<div class="lb-pod-rank">#' +
+          item.rank +
+          (filter === "overall" && item.row.games
+            ? " · " + item.row.games + "g"
+            : "") +
+          "</div>" +
+          "</div>"
+        );
+      })
+      .join("");
+
+    var rest = rows.slice(3, 30);
+    lbList.innerHTML = rest
+      .map(function (p, i) {
+        var rank = i + 4;
+        var isMe = me && p.key === me;
+        return (
+          '<div class="lb-row' +
+          (isMe ? " is-me" : "") +
+          '">' +
+          '<span class="lb-row-rank">' +
+          rank +
+          "</span>" +
+          '<span class="lb-row-name">' +
+          escapeHtml(p.name) +
+          "</span>" +
+          '<span class="lb-row-score">' +
+          p.score +
+          "</span>" +
+          "</div>"
+        );
+      })
+      .join("");
+
+    // If I'm not in top list, still highlight if in rest — already done via is-me
   }
 
-  loadAchievements();
-  loadScores();
+  function loadLeaderboard() {
+    if (!window.LAScores || !LAScores.top) {
+      lbBody.hidden = true;
+      lbEmpty.hidden = false;
+      lbEmpty.innerHTML =
+        "Leaderboard needs a connection.<br>Your local stars still work on the Stars tab.";
+      return;
+    }
+    if (lbCache.loaded) {
+      renderLeaderboard();
+      return;
+    }
+    lbEmpty.hidden = false;
+    lbEmpty.textContent = "Loading leaderboard…";
+    lbBody.hidden = true;
+
+    var auth = LAScores.ensureAuth ? LAScores.ensureAuth() : Promise.resolve();
+    auth
+      .catch(function () {
+        return null;
+      })
+      .then(function () {
+        return LAScores.listGames().then(function (ids) {
+          if (!ids || !ids.length) {
+            ids = Object.keys((LAScores.GAMES || {}));
+          }
+          return Promise.all(
+            (ids || []).map(function (gid) {
+              return LAScores.top(gid, 50).then(function (rows) {
+                return { gameId: gid, rows: rows || [] };
+              });
+            })
+          );
+        });
+      })
+      .then(function (gameBuckets) {
+        var perGame = {};
+        var overall = {};
+
+        (gameBuckets || []).forEach(function (bucket) {
+          var gameId = bucket.gameId;
+          perGame[gameId] = {};
+          (bucket.rows || []).forEach(function (v) {
+            var name = String(v.name || "Player").trim() || "Player";
+            var key = name.toLowerCase();
+            var score = Number(v.score) || 0;
+            var at = Number(v.at) || 0;
+            var prev = perGame[gameId][key];
+            if (!prev || score > prev.score || (score === prev.score && at > prev.at)) {
+              perGame[gameId][key] = { name: name, score: score, at: at };
+            }
+          });
+        });
+
+        Object.keys(perGame).forEach(function (gameId) {
+          Object.keys(perGame[gameId]).forEach(function (key) {
+            var p = perGame[gameId][key];
+            if (!overall[key]) {
+              overall[key] = { name: p.name, total: 0, games: 0, best: 0 };
+            }
+            overall[key].total += p.score;
+            overall[key].games += 1;
+            if (p.score > overall[key].best) overall[key].best = p.score;
+          });
+        });
+
+        function toRanked(map, scoreKey) {
+          return Object.keys(map)
+            .map(function (k) {
+              var o = map[k];
+              return {
+                name: o.name,
+                score: o[scoreKey] != null ? o[scoreKey] : o.score,
+                games: o.games || 1,
+                best: o.best != null ? o.best : o.score,
+                key: k
+              };
+            })
+            .sort(function (a, b) {
+              if (b.score !== a.score) return b.score - a.score;
+              if ((b.games || 0) !== (a.games || 0)) return (b.games || 0) - (a.games || 0);
+              return a.name.localeCompare(b.name);
+            });
+        }
+
+        lbCache.overall = toRanked(overall, "total");
+        lbCache.games = {};
+        Object.keys(perGame).forEach(function (gameId) {
+          lbCache.games[gameId] = toRanked(perGame[gameId], "score");
+        });
+        lbCache.loaded = true;
+        buildLbFilters(Object.keys(perGame).sort());
+        renderLeaderboard();
+      })
+      .catch(function (err) {
+        console.warn("[Profile LB]", err);
+        lbBody.hidden = true;
+        lbEmpty.hidden = false;
+        lbEmpty.innerHTML = "Could not load leaderboard.<br>Check your connection and try again.";
+      });
+  }
+
+
+  try {
+    loadAchievements();
+  } catch (e) {
+    console.warn(e);
+  }
+  try {
+    loadScores();
+  } catch (e) {
+    console.warn(e);
+  }
 })();
-</script>
+  </script>
 </body>
 </html>

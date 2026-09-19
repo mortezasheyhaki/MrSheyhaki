@@ -160,6 +160,22 @@
 
       /* Actions */
       ".la-finish-actions{display:flex;justify-content:center;align-items:flex-start;gap:14px;flex-wrap:wrap}",
+
+      ".la-finish-speed{margin:0 0 14px;padding:10px 12px;border-radius:14px;background:linear-gradient(180deg,#f0f9ff,#e8f4fc);border:1.5px solid #bae6fd;text-align:center}",
+      "html[data-theme=dark] .la-finish-speed{background:linear-gradient(180deg,#1a2836,#15202c);border-color:#2d4a60}",
+      ".la-finish-speed-title{font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#0284c7;margin:0 0 8px}",
+      "html[data-theme=dark] .la-finish-speed-title{color:#7dd3fc}",
+      ".la-finish-speed-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 4px;border-radius:8px;font-size:.82rem}",
+      ".la-finish-speed-row.is-me{background:rgba(2,132,199,.12)}",
+      "html[data-theme=dark] .la-finish-speed-row.is-me{background:rgba(125,211,252,.1)}",
+      ".la-finish-speed-left{display:flex;align-items:center;gap:6px;min-width:0;font-weight:800;color:#0f172a}",
+      "html[data-theme=dark] .la-finish-speed-left{color:#e2e8f0}",
+      ".la-finish-speed-medal{flex-shrink:0;font-size:1rem}",
+      ".la-finish-speed-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+      ".la-finish-speed-time{flex-shrink:0;font-weight:900;color:#0284c7;font-variant-numeric:tabular-nums}",
+      "html[data-theme=dark] .la-finish-speed-time{color:#7dd3fc}",
+      ".la-finish-speed-loading{font-size:.78rem;font-weight:700;color:#64748b;padding:4px}",
+
       ".la-finish-action{display:flex;flex-direction:column;align-items:center;gap:6px}",
       ".la-finish-action-label{font-size:.58rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#8b86b0;line-height:1}",
       "html[data-theme=dark] .la-finish-action-label{color:#9499b5}",
@@ -405,13 +421,36 @@
     var sound = opts.sound !== false;
     var gameId = opts.gameId || null;
 
-    // Persist progress
+    // Persist progress (local stars — automatic, no name required)
     if (save && gameId && global.LAStars) {
       try {
         LAStars.recordPlay(gameId);
         if (opts.stars != null) LAStars.save(gameId, stars);
         else LAStars.saveFromAccuracy(gameId, accuracy);
       } catch (e) {}
+    }
+
+    // Auto cloud score when player has a name (includes timeMs for speed board)
+    var submitPromise = null;
+    if (gameId && global.LAScores && typeof LAScores.submit === "function") {
+      try {
+        var hasName = LAScores.getPlayerName && LAScores.getPlayerName();
+        if (hasName && score != null) {
+          var payload = {
+            gameId: gameId,
+            score: score,
+            maxScore: total,
+            gameName: opts.gameName || gameId
+          };
+          // Only race times from solid runs enter the speed board (≥70% accuracy)
+          if (timeMs != null && timeMs > 0 && accuracy >= 70) {
+            payload.timeMs = timeMs;
+          }
+          submitPromise = LAScores.submit(payload).catch(function () {
+            return null;
+          });
+        }
+      } catch (e2) {}
     }
 
     // Build / reuse overlay
@@ -540,6 +579,86 @@
     stats.appendChild(starsStat);
 
     inner.appendChild(stats);
+
+    // Speed board (top 3 fastest) — filled async after submit
+    var speedBox = document.createElement("div");
+    speedBox.className = "la-finish-speed";
+    speedBox.hidden = true;
+    speedBox.innerHTML =
+      '<div class="la-finish-speed-title">⚡ Fastest</div>' +
+      '<div class="la-finish-speed-loading">Loading…</div>';
+    inner.appendChild(speedBox);
+
+    function formatSpeedTime(ms) {
+      return formatTime(ms);
+    }
+
+    function renderSpeedBoard(rows) {
+      if (!rows || !rows.length) {
+        speedBox.hidden = true;
+        return;
+      }
+      speedBox.hidden = false;
+      var me = "";
+      try {
+        if (global.LAScores && LAScores.getDisplayName) me = (LAScores.getDisplayName() || "").toLowerCase();
+        if (!me && LAScores.getPlayerName) me = (LAScores.getPlayerName() || "").toLowerCase();
+      } catch (e) {}
+
+      var html =
+        '<div class="la-finish-speed-title">⚡ Fastest</div>';
+      rows.slice(0, 3).forEach(function (r, i) {
+        var medals = ["🥇", "🥈", "🥉"];
+        var isMe = me && r.key === me;
+        html +=
+          '<div class="la-finish-speed-row' +
+          (isMe ? " is-me" : "") +
+          '">' +
+          '<span class="la-finish-speed-left">' +
+          '<span class="la-finish-speed-medal">' +
+          medals[i] +
+          "</span>" +
+          '<span class="la-finish-speed-name">' +
+          String(r.name || "Player").replace(/</g, "&lt;") +
+          (isMe ? " (you)" : "") +
+          "</span></span>" +
+          '<span class="la-finish-speed-time">' +
+          formatSpeedTime(r.timeMs) +
+          "</span></div>";
+      });
+      speedBox.innerHTML = html;
+    }
+
+    function loadSpeedBoard() {
+      if (!gameId || !global.LAScores || typeof LAScores.topByTime !== "function") {
+        speedBox.hidden = true;
+        return;
+      }
+      // Only show speed board when this run (or game) has timing
+      if (!(timeMs > 0)) {
+        speedBox.hidden = true;
+        return;
+      }
+      speedBox.hidden = false;
+      var run = function () {
+        LAScores.topByTime(gameId, 3, 70)
+          .then(function (rows) {
+            renderSpeedBoard(rows || []);
+          })
+          .catch(function () {
+            speedBox.hidden = true;
+          });
+      };
+      // Wait briefly for our own submit so we can appear on the board
+      if (submitPromise && typeof submitPromise.then === "function") {
+        submitPromise.then(function () {
+          setTimeout(run, 200);
+        });
+      } else {
+        run();
+      }
+    }
+    loadSpeedBoard();
 
     // Actions — Restart | Modes | Games menu
     var actions = document.createElement("div");

@@ -172,15 +172,13 @@
     }
     setPlayerName(rawName);
 
+    // Class code is optional (kept for shared tablets if a teacher wants it)
     if (opts.classCode != null) {
       setClassCode(opts.classCode);
     }
     var classCode = getClassCode();
-    if (!classCode) {
-      return Promise.resolve({ ok: false, error: 'Please enter a class code' });
-    }
 
-    // Unique on leaderboard: "Name · CLASS"
+    // Leaderboard label: just the name, or "Name · CLASS" if a class code was set
     var name = getDisplayName(rawName, classCode);
 
     var gameId = sanitizeGameId(opts.gameId);
@@ -198,13 +196,32 @@
     if (opts.maxScore != null && isFinite(Number(opts.maxScore))) {
       data.maxScore = Number(opts.maxScore);
     }
+    // Optional race time (ms). Requires Appwrite attribute: timeMs (integer).
+    var timeMs = opts.timeMs != null ? Number(opts.timeMs) : null;
+    if (timeMs != null && isFinite(timeMs) && timeMs > 0) {
+      data.timeMs = Math.round(timeMs);
+    }
 
-    return tablesDB
-      .createRow({
+    function create(payload) {
+      return tablesDB.createRow({
         databaseId: DATABASE_ID,
         tableId: TABLE_ID,
         rowId: ID.unique(),
-        data: data
+        data: payload
+      });
+    }
+
+    return create(data)
+      .catch(function (err) {
+        // If timeMs column is missing in Appwrite, retry without it
+        var msg = err && err.message ? err.message : String(err);
+        if (data.timeMs != null && /timeMs|attribute|unknown|invalid/i.test(msg)) {
+          console.warn('[LAScores] timeMs not accepted — retrying without it. Add integer attribute timeMs in Appwrite.');
+          var fallback = Object.assign({}, data);
+          delete fallback.timeMs;
+          return create(fallback);
+        }
+        throw err;
       })
       .then(function (row) {
         return {
@@ -214,6 +231,7 @@
             name: data.name,
             score: data.score,
             maxScore: data.maxScore != null ? data.maxScore : null,
+            timeMs: data.timeMs != null ? data.timeMs : null,
             gameName: data.gameName,
             uid: null,
             at: data.at,
@@ -228,6 +246,70 @@
           msg = 'Permission denied. Set table Create+Read for role Any in Appwrite.';
         }
         return { ok: false, error: msg };
+      });
+  }
+
+  /**
+   * Fastest players for a game (lowest timeMs wins).
+   * Best time per player name. Optional minAccuracy (0–100) filters by score/maxScore.
+   */
+  function topByTime(gameId, limit, minAccuracy) {
+    if (!init()) return Promise.resolve([]);
+    limit = limit || 3;
+    minAccuracy = minAccuracy != null ? Number(minAccuracy) : 90;
+    var id = sanitizeGameId(gameId);
+
+    return tablesDB
+      .listRows({
+        databaseId: DATABASE_ID,
+        tableId: TABLE_ID,
+        queries: [
+          Query.equal('gameId', id),
+          Query.limit(100)
+        ]
+      })
+      .then(function (res) {
+        var best = {};
+        (res.rows || res.documents || []).forEach(function (r) {
+          var t = Number(r.timeMs);
+          if (!isFinite(t) || t <= 0) return;
+
+          // Quality filter: only count strong runs for the speed board
+          if (minAccuracy > 0) {
+            var sc = Number(r.score) || 0;
+            var mx = Number(r.maxScore);
+            if (isFinite(mx) && mx > 0) {
+              if ((sc / mx) * 100 < minAccuracy) return;
+            }
+          }
+
+          var name = String(r.name || 'Player').trim() || 'Player';
+          var key = name.toLowerCase();
+          var prev = best[key];
+          if (!prev || t < prev.timeMs) {
+            best[key] = {
+              name: name,
+              timeMs: Math.round(t),
+              score: Number(r.score) || 0,
+              maxScore: r.maxScore != null ? Number(r.maxScore) : null,
+              gameId: id,
+              at: Number(r.at) || 0,
+              key: key
+            };
+          }
+        });
+
+        return Object.keys(best)
+          .map(function (k) { return best[k]; })
+          .sort(function (a, b) {
+            if (a.timeMs !== b.timeMs) return a.timeMs - b.timeMs;
+            return a.name.localeCompare(b.name);
+          })
+          .slice(0, limit);
+      })
+      .catch(function (err) {
+        console.warn('[LAScores] topByTime failed', err);
+        return [];
       });
   }
 
@@ -344,6 +426,7 @@
     getDisplayName: getDisplayName,
     submit: submit,
     top: top,
+    topByTime: topByTime,
     myScores: myScores,
     listGames: listGames,
     GAMES: {

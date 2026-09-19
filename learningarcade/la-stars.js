@@ -200,7 +200,9 @@
     try {
       var name = (localStorage.getItem("laPlayerName") || "").trim().toLowerCase();
       var code = (localStorage.getItem("laClassCode") || "").trim().toUpperCase();
+      // Name alone is enough; class code is optional extra scope
       if (name && code) return "::" + name + "::" + code;
+      if (name) return "::" + name;
     } catch (e) {}
     return "";
   }
