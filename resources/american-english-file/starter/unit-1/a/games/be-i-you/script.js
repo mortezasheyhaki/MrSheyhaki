@@ -349,7 +349,7 @@
     if (window.LAFinish) {
       const timeMs = LAFinish.stopTimer();
       LAFinish.show({
-        gameId: GAME_ID + "-forms",
+        gameId: GAME_ID,
         score: accuracy,
         total: formsTotal,
         timeMs: timeMs,
@@ -501,7 +501,7 @@
     if (window.LAFinish) {
       const timeMs = LAFinish.stopTimer();
       LAFinish.show({
-        gameId: GAME_ID + "-" + part,
+        gameId: GAME_ID,
         score: partScore,
         total: Math.max(partAttempts, 1),
         timeMs: timeMs,

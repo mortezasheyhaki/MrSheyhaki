@@ -76,6 +76,48 @@
   position: static !important;
   margin: 0 !important;
   flex: 0 0 auto;
+  padding: 10px 16px !important;
+  border-radius: 999px !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  white-space: nowrap !important;
+  color: #fff !important;
+  border: none !important;
+  transition: filter 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease !important;
+  background: #4f46e5 !important;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35) !important;
+}
+.resource-card--skill-grammar .resource-card-footer .resource-button {
+  background: #6d28d9 !important;
+  box-shadow: 0 4px 12px rgba(109, 40, 217, 0.4) !important;
+}
+.resource-card--skill-vocabulary .resource-card-footer .resource-button {
+  background: #1d4ed8 !important;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.4) !important;
+}
+.resource-card--skill-pronunciation .resource-card-footer .resource-button {
+  background: #be185d !important;
+  box-shadow: 0 4px 12px rgba(190, 24, 93, 0.4) !important;
+}
+.resource-card--skill-listening .resource-card-footer .resource-button {
+  background: #0f766e !important;
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.4) !important;
+}
+.resource-card--skill-speaking .resource-card-footer .resource-button {
+  background: #c2410c !important;
+  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.4) !important;
+}
+.resource-card--skill-reading .resource-card-footer .resource-button {
+  background: #b45309 !important;
+  box-shadow: 0 4px 12px rgba(180, 83, 9, 0.4) !important;
+}
+.resource-card--skill-communication .resource-card-footer .resource-button {
+  background: #0e7490 !important;
+  box-shadow: 0 4px 12px rgba(14, 116, 144, 0.4) !important;
+}
+.resource-card--game:hover .resource-card-footer .resource-button {
+  filter: brightness(1.08);
+  transform: translateX(2px);
 }
 .resource-card--game .game-stars {
   display: inline-flex;
@@ -115,6 +157,76 @@ html[data-theme="dark"] .resource-card--game .game-plays-badge {
 /* Hide the old top-right play slot on game cards (footer owns it) */
 .resource-card--game > .resource-button {
   display: none !important;
+}
+
+/* Soft corner curve on all unit game cards */
+.resource-card--game {
+  position: relative !important;
+  overflow: hidden !important;
+}
+.resource-card--game .resource-card-curve {
+  position: absolute;
+  right: -40px;
+  bottom: -40px;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: rgba(124, 108, 240, 0.12);
+  pointer-events: none;
+  z-index: 0;
+  transition: transform 0.3s ease;
+}
+.resource-card--game:hover .resource-card-curve {
+  transform: scale(1.35);
+}
+.resource-card--game .resource-card-main {
+  position: relative;
+  z-index: 2;
+}
+.resource-card--skill-grammar .resource-card-curve {
+  background: rgba(124, 58, 237, 0.14);
+}
+.resource-card--skill-vocabulary .resource-card-curve {
+  background: rgba(37, 99, 235, 0.14);
+}
+.resource-card--skill-pronunciation .resource-card-curve {
+  background: rgba(219, 39, 119, 0.14);
+}
+.resource-card--skill-listening .resource-card-curve {
+  background: rgba(13, 148, 136, 0.14);
+}
+.resource-card--skill-speaking .resource-card-curve {
+  background: rgba(234, 88, 12, 0.14);
+}
+.resource-card--skill-reading .resource-card-curve {
+  background: rgba(217, 119, 6, 0.14);
+}
+.resource-card--skill-communication .resource-card-curve {
+  background: rgba(8, 145, 178, 0.14);
+}
+html[data-theme="dark"] .resource-card--game .resource-card-curve {
+  background: rgba(167, 139, 250, 0.18);
+}
+html[data-theme="dark"] .resource-card--skill-grammar .resource-card-curve {
+  background: rgba(167, 139, 250, 0.2);
+}
+html[data-theme="dark"] .resource-card--skill-vocabulary .resource-card-curve {
+  background: rgba(96, 165, 250, 0.2);
+}
+html[data-theme="dark"] .resource-card--skill-pronunciation .resource-card-curve {
+  background: rgba(244, 114, 182, 0.2);
+}
+html[data-theme="dark"] .resource-card--skill-listening .resource-card-curve {
+  background: rgba(45, 212, 191, 0.2);
+}
+html[data-theme="dark"] .resource-card--skill-speaking .resource-card-curve {
+  background: rgba(251, 146, 60, 0.2);
+}
+html[data-theme="dark"] .resource-card--skill-reading .resource-card-curve {
+  background: rgba(251, 191, 36, 0.2);
+}
+html[data-theme="dark"] .resource-card--skill-communication .resource-card-curve {
+  background: rgba(34, 211, 238, 0.2);
 }
 .skill-badge--grammar {
   background: rgba(124, 58, 237, 0.12);
@@ -719,6 +831,7 @@ html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-
               (skillSlug ? " resource-card--skill-" + skillSlug : ""),
             href: item.url,
           }, [
+            el("span", { class: "resource-card-curve", "aria-hidden": "true" }),
             el("div", { class: "resource-card-main" }, [
               el("div", { class: "resource-icon", "aria-hidden": "true", text: meta.icon }),
               el("div", { class: "resource-card-body" }, bodyKids),
