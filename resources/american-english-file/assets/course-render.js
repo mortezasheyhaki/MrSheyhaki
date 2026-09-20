@@ -186,6 +186,109 @@ html[data-theme="dark"] .skill-badge--communication {
   color: #67e8f9;
   border-color: rgba(34, 211, 238, 0.28);
 }
+
+/* Light mode: colored outline + matching top bar by skill (white card fill) */
+a.resource-card.resource-card--game.resource-card--skill-grammar,
+.resource-card.resource-card--game.resource-card--skill-grammar {
+  border-color: rgba(124, 58, 237, 0.5) !important;
+  box-shadow: 0 8px 22px rgba(124, 58, 237, 0.06) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-grammar::before,
+.resource-card.resource-card--game.resource-card--skill-grammar::before {
+  background: linear-gradient(90deg, #a78bfa, #7c3aed) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-vocabulary,
+.resource-card.resource-card--game.resource-card--skill-vocabulary {
+  border-color: rgba(37, 99, 235, 0.5) !important;
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.06) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-vocabulary::before,
+.resource-card.resource-card--game.resource-card--skill-vocabulary::before {
+  background: linear-gradient(90deg, #93c5fd, #2563eb) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-pronunciation,
+.resource-card.resource-card--game.resource-card--skill-pronunciation {
+  border-color: rgba(219, 39, 119, 0.5) !important;
+  box-shadow: 0 8px 22px rgba(219, 39, 119, 0.06) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-pronunciation::before,
+.resource-card.resource-card--game.resource-card--skill-pronunciation::before {
+  background: linear-gradient(90deg, #f9a8d4, #db2777) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-listening,
+.resource-card.resource-card--game.resource-card--skill-listening {
+  border-color: rgba(13, 148, 136, 0.5) !important;
+  box-shadow: 0 8px 22px rgba(13, 148, 136, 0.06) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-listening::before,
+.resource-card.resource-card--game.resource-card--skill-listening::before {
+  background: linear-gradient(90deg, #5eead4, #0d9488) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-speaking,
+.resource-card.resource-card--game.resource-card--skill-speaking {
+  border-color: rgba(234, 88, 12, 0.5) !important;
+  box-shadow: 0 8px 22px rgba(234, 88, 12, 0.06) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-speaking::before,
+.resource-card.resource-card--game.resource-card--skill-speaking::before {
+  background: linear-gradient(90deg, #fdba74, #ea580c) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-reading,
+.resource-card.resource-card--game.resource-card--skill-reading {
+  border-color: rgba(217, 119, 6, 0.5) !important;
+  box-shadow: 0 8px 22px rgba(217, 119, 6, 0.06) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-reading::before,
+.resource-card.resource-card--game.resource-card--skill-reading::before {
+  background: linear-gradient(90deg, #fcd34d, #d97706) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-communication,
+.resource-card.resource-card--game.resource-card--skill-communication {
+  border-color: rgba(8, 145, 178, 0.5) !important;
+  box-shadow: 0 8px 22px rgba(8, 145, 178, 0.06) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-communication::before,
+.resource-card.resource-card--game.resource-card--skill-communication::before {
+  background: linear-gradient(90deg, #67e8f9, #0891b2) !important;
+}
+
+/* Soft skill cards — dark mode (muted, not deep) */
+html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-grammar,
+html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-grammar {
+  background: linear-gradient(160deg, rgba(91, 33, 182, 0.28) 0%, rgba(30, 20, 50, 0.95) 100%) !important;
+  border-color: rgba(167, 139, 250, 0.3) !important;
+}
+html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-vocabulary,
+html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-vocabulary {
+  background: linear-gradient(160deg, rgba(37, 99, 235, 0.28) 0%, rgba(20, 30, 55, 0.95) 100%) !important;
+  border-color: rgba(96, 165, 250, 0.3) !important;
+}
+html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-pronunciation,
+html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-pronunciation {
+  background: linear-gradient(160deg, rgba(190, 24, 93, 0.28) 0%, rgba(50, 20, 40, 0.95) 100%) !important;
+  border-color: rgba(244, 114, 182, 0.3) !important;
+}
+html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-listening,
+html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-listening {
+  background: linear-gradient(160deg, rgba(15, 118, 110, 0.28) 0%, rgba(15, 40, 40, 0.95) 100%) !important;
+  border-color: rgba(45, 212, 191, 0.3) !important;
+}
+html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-speaking,
+html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-speaking {
+  background: linear-gradient(160deg, rgba(194, 65, 12, 0.28) 0%, rgba(45, 25, 15, 0.95) 100%) !important;
+  border-color: rgba(251, 146, 60, 0.3) !important;
+}
+html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-reading,
+html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-reading {
+  background: linear-gradient(160deg, rgba(180, 83, 9, 0.28) 0%, rgba(45, 35, 15, 0.95) 100%) !important;
+  border-color: rgba(251, 191, 36, 0.3) !important;
+}
+html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-communication,
+html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-communication {
+  background: linear-gradient(160deg, rgba(14, 116, 144, 0.28) 0%, rgba(15, 35, 45, 0.95) 100%) !important;
+  border-color: rgba(34, 211, 238, 0.3) !important;
+}
+
 @media (max-width: 640px) {
   .resource-card--game {
     min-height: 150px !important;
@@ -606,9 +709,14 @@ html[data-theme="dark"] .skill-badge--communication {
             }),
           ])
         );
+        const skillSlug = skillLabel
+          ? skillLabel.toLowerCase().replace(/[^a-z]/g, "")
+          : "";
         grid.appendChild(
           el("a", {
-            class: "content-card resource-card resource-card--game",
+            class:
+              "content-card resource-card resource-card--game" +
+              (skillSlug ? " resource-card--skill-" + skillSlug : ""),
             href: item.url,
           }, [
             el("div", { class: "resource-card-main" }, [
