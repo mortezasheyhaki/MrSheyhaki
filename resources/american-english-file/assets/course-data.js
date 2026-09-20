@@ -264,9 +264,12 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.b.games = [
   { title: "Choose the Verb", url: "verb-choice/", label: "Grammar" },
   { title: "Write the Verb", url: "write-the-verb/", label: "Grammar" },
   { title: "Fix the Mistake", url: "fix-the-mistake/", label: "Grammar" },
+  { title: "Clothes Flashcards", url: "clothes-flashcards/", label: "Vocabulary" },
   { title: "Clothes Match", url: "clothes-match/", label: "Vocabulary" },
   { title: "Unscramble Clothes", url: "unscramble-clothes/", label: "Vocabulary" },
   { title: "Write the Clothes", url: "write-the-clothes/", label: "Vocabulary" },
+  { title: "Sound Match Picture", url: "sound-match-picture/", label: "Vocabulary" },
+  { title: "Clothes Bingo", url: "clothes-bingo/", label: "Vocabulary" },
 ];
 
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)

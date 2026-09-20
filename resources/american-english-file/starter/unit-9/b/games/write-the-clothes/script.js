@@ -235,7 +235,8 @@
         '" alt="" draggable="false"></div>' +
         '<button type="button" class="lw-play" aria-label="Play audio">' +
         '<span class="wave"></span><span class="wave"></span><span class="wave"></span>' +
-        '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>' +
+        '<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>' +
+        '<div class="eq"><span></span><span></span><span></span><span></span></div>' +
         "</button>" +
         '<div class="lw-input-wrap">' +
         '<input type="text" id="lw-input" class="lw-input" placeholder="Type the word…" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">' +
@@ -266,7 +267,7 @@
       return;
     }
 
-    // feedback
+    // feedback – keep same structure as play phase to avoid layout jump
     app.innerHTML =
       '<header class="lw-topbar">' +
       '<a class="lw-back" href="../" aria-label="Back">←</a>' +
@@ -276,19 +277,25 @@
       "</span>" +
       "</header>" +
       '<section class="lw-play-area">' +
+      '<p class="lw-instruction" style="visibility:hidden">Type the name of the item</p>' +
       '<div class="lw-pic-wrap"><img class="lw-pic" src="' +
       item.image +
       '" alt="" draggable="false"></div>' +
+      // spacer matching play-button height so the picture does not jump
+      '<div class="lw-play" style="visibility:hidden;pointer-events:none" aria-hidden="true"></div>' +
+      '<div class="lw-input-wrap" style="text-align:center">' +
       '<p class="lw-feedback ' +
       (lastCorrect ? "ok" : "bad") +
-      '">' +
+      '" style="margin:0;animation:lw-fade-in 0.3s ease">' +
       (lastCorrect
         ? "Correct!"
         : 'Answer: <strong class="lw-answer-word">' + escapeHtml(item.label) + "</strong>") +
       "</p>" +
       (lastCorrect
         ? ""
-        : '<p class="lw-your-answer">You wrote: <em>' + escapeHtml(lastUserInput) + "</em></p>") +
+        : '<p class="lw-your-answer" style="margin:8px 0 0">You wrote: <em>' + escapeHtml(lastUserInput) + "</em></p>") +
+      "</div>" +
+      '<div class="lw-actions" style="visibility:hidden;height:50px" aria-hidden="true"></div>' +
       "</section>";
   }
 
