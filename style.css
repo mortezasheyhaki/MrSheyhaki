@@ -2214,7 +2214,7 @@ body:not(.cabinet-body):not(.wh-body):not(.light-mode):not(.game-page) {
   --hub-contact: #ec4899;
   --hub-text: #1e293b;
   --hub-muted: #64748b;
-  --hub-bg: #f8fafc;
+  --hub-bg: #f0f4ff;
   --hub-card-bg: #ffffff;
   --hub-border: #e8ecf4;
 }
@@ -2230,7 +2230,8 @@ body.home-page[data-theme="dark"] {
 }
 
 body.home-page {
-  background: var(--hub-bg);
+  /* Atmosphere comes from theme.css; keep text colors */
+  background-color: transparent;
   color: var(--hub-text);
 }
 
@@ -2343,6 +2344,15 @@ body.home-page {
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Main page with 4 cards */
+.hub-cards--4 {
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 1080px;
+  margin-left: auto;
+  margin-right: auto;
+  gap: 14px;
 }
 
 .hub-card {
@@ -2516,16 +2526,21 @@ body.home-page {
 
 .hub-journey {
   text-align: center;
-  margin: 36px 0 8px;
+  margin: 20px 0 10px;
+  padding: 6px 12px;
   font-size: 15px;
   font-weight: 700;
   color: var(--hub-muted);
   letter-spacing: 0.2px;
+  line-height: 1.5;
+  overflow: visible;
+  white-space: normal;
 }
 
 .hub-journey span {
   color: #8b5cf6;
   margin: 0 8px;
+  display: inline;
 }
 
 .hub-footer .footer-inner {
@@ -2742,11 +2757,7 @@ html[data-theme="dark"] body.home-page {
 ========================================================= */
 
 body.home-page {
-  background:
-    radial-gradient(ellipse 90% 55% at 50% -15%, rgba(124, 92, 255, 0.12), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 100% 30%, rgba(59, 130, 246, 0.08), transparent 50%),
-    radial-gradient(ellipse 40% 35% at 0% 70%, rgba(236, 72, 153, 0.06), transparent 50%),
-    var(--hub-bg);
+  /* Shared atmosphere from theme.css */
   min-height: 100dvh;
 }
 
@@ -2756,17 +2767,8 @@ body.home-page .hub-main {
 }
 
 body.home-page .hub-main::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image:
-    linear-gradient(rgba(99, 102, 241, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 20%, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 20%, transparent 75%);
+  content: none;
+  display: none;
 }
 
 body.home-page .hub-main > * {
@@ -2798,33 +2800,70 @@ body.home-page .hub-underline {
   box-shadow: 0 0 16px rgba(124, 92, 255, 0.35);
 }
 
-/* Cards — arcade cabinet feel */
+/* Cards — colored glass tiles (not flat white) */
 body.home-page .hub-card {
-  border-radius: 22px;
-  border-width: 2px;
-  padding: 28px 22px 24px;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-  backdrop-filter: blur(8px);
+  position: relative;
+  border-radius: 24px;
+  border-width: 1.5px;
+  padding: 26px 20px 22px;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, filter 0.22s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+body.home-page .hub-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  border-radius: 24px 24px 0 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.95;
+}
+body.home-page .hub-card::after {
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: -20%;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.55) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.7;
+}
+body.home-page .hub-card > * {
+  position: relative;
+  z-index: 2;
 }
 
 body.home-page .hub-card:hover {
-  transform: translateY(-6px) scale(1.015);
+  transform: translateY(-7px) scale(1.02);
 }
 
 body.home-page .hub-card-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
   display: grid;
   place-items: center;
   margin: 0 auto 14px;
-  background: rgba(124, 92, 255, 0.08);
+  border: 1px solid rgba(255,255,255,0.55);
 }
 
 body.home-page .hub-card h2 {
-  font-size: 15px;
+  font-size: 14px;
   letter-spacing: 0.08em;
   font-weight: 900;
+  color: #1e1b4b;
+}
+
+body.home-page .hub-card p {
+  color: #475569;
+  font-weight: 600;
 }
 
 body.home-page .hub-card-btn {
@@ -2832,84 +2871,165 @@ body.home-page .hub-card-btn {
   font-weight: 800;
   letter-spacing: 0.04em;
   font-size: 12px;
-  padding: 10px 18px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  padding: 11px 18px;
+  border: none;
+  color: #fff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
 
 body.home-page .hub-card:hover .hub-card-btn {
-  transform: scale(1.04);
+  transform: scale(1.05);
+  filter: brightness(1.06);
 }
 
-/* Per-card light accents */
+/* —— Arcade: violet —— */
 body.home-page .hub-card--arcade {
-  border-color: rgba(124, 92, 255, 0.35);
-  background: linear-gradient(165deg, #f5f0ff 0%, #ffffff 55%);
-  box-shadow: 0 10px 28px rgba(124, 92, 255, 0.12);
+  border-color: rgba(124, 92, 255, 0.45);
+  background:
+    linear-gradient(160deg, rgba(237, 233, 254, 0.95) 0%, rgba(221, 214, 254, 0.75) 42%, rgba(245, 243, 255, 0.9) 100%);
+  box-shadow:
+    0 14px 36px rgba(124, 92, 255, 0.18),
+    0 0 0 1px rgba(167, 139, 250, 0.15) inset;
+}
+body.home-page .hub-card--arcade::before {
+  background: linear-gradient(90deg, #a78bfa, #7c5cff, #6366f1);
 }
 body.home-page .hub-card--arcade .hub-card-icon {
-  background: rgba(124, 92, 255, 0.12);
-  color: #7c5cff;
-  box-shadow: 0 0 20px rgba(124, 92, 255, 0.2);
+  background: linear-gradient(145deg, #ede9fe, #c4b5fd);
+  color: #5b21b6;
+  box-shadow: 0 8px 20px rgba(124, 92, 255, 0.28);
+}
+body.home-page .hub-card--arcade .hub-card-rule { background: #7c5cff; }
+body.home-page .hub-card--arcade .hub-card-btn {
+  background: linear-gradient(180deg, #a78bfa, #7c5cff);
+  box-shadow: 0 4px 0 #5b21b6, 0 10px 22px rgba(124, 92, 255, 0.35);
 }
 body.home-page .hub-card--arcade:hover {
   border-color: #7c5cff;
-  box-shadow: 0 16px 40px rgba(124, 92, 255, 0.22);
+  box-shadow: 0 20px 48px rgba(124, 92, 255, 0.28), 0 0 40px rgba(124, 92, 255, 0.12);
 }
 
+/* —— Topics: rose —— */
+body.home-page .hub-card--topics {
+  border-color: rgba(244, 63, 94, 0.4);
+  background:
+    linear-gradient(160deg, rgba(255, 228, 230, 0.95) 0%, rgba(254, 205, 211, 0.7) 42%, rgba(255, 241, 242, 0.92) 100%);
+  box-shadow:
+    0 14px 36px rgba(244, 63, 94, 0.16),
+    0 0 0 1px rgba(251, 113, 133, 0.12) inset;
+  color: #1e1b4b;
+}
+body.home-page .hub-card--topics::before {
+  background: linear-gradient(90deg, #fb7185, #e11d48, #be123c);
+}
+body.home-page .hub-card--topics h2 { color: #1e1b4b; }
+body.home-page .hub-card--topics p { color: #64748b; }
+body.home-page .hub-card--topics .hub-card-icon {
+  background: linear-gradient(145deg, #ffe4e6, #fda4af);
+  color: #9f1239;
+  box-shadow: 0 8px 20px rgba(244, 63, 94, 0.28);
+}
+body.home-page .hub-card--topics .hub-card-rule { background: #e11d48; }
+body.home-page .hub-card--topics .hub-card-btn {
+  color: #fff !important;
+  background: linear-gradient(180deg, #fb7185, #e11d48) !important;
+  border-color: #e11d48 !important;
+  box-shadow: 0 4px 0 #be123c, 0 10px 22px rgba(225, 29, 72, 0.32) !important;
+}
+body.home-page .hub-card--topics:hover {
+  border-color: #e11d48;
+  box-shadow: 0 20px 48px rgba(244, 63, 94, 0.26), 0 0 40px rgba(244, 63, 94, 0.1);
+}
+
+/* —— Resources: sky blue —— */
 body.home-page .hub-card--resources {
-  border-color: rgba(59, 130, 246, 0.3);
-  background: linear-gradient(165deg, #eff6ff 0%, #ffffff 55%);
-  box-shadow: 0 10px 28px rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.42);
+  background:
+    linear-gradient(160deg, rgba(219, 234, 254, 0.95) 0%, rgba(191, 219, 254, 0.7) 42%, rgba(239, 246, 255, 0.92) 100%);
+  box-shadow:
+    0 14px 36px rgba(59, 130, 246, 0.15),
+    0 0 0 1px rgba(96, 165, 250, 0.12) inset;
+}
+body.home-page .hub-card--resources::before {
+  background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
 }
 body.home-page .hub-card--resources .hub-card-icon {
-  background: rgba(59, 130, 246, 0.12);
-  color: #3b82f6;
+  background: linear-gradient(145deg, #dbeafe, #93c5fd);
+  color: #1d4ed8;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.28);
+}
+body.home-page .hub-card--resources .hub-card-rule { background: #3b82f6; }
+body.home-page .hub-card--resources .hub-card-btn {
+  background: linear-gradient(180deg, #60a5fa, #2563eb);
+  box-shadow: 0 4px 0 #1e40af, 0 10px 22px rgba(37, 99, 235, 0.32);
 }
 body.home-page .hub-card--resources:hover {
   border-color: #3b82f6;
-  box-shadow: 0 16px 40px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 20px 48px rgba(59, 130, 246, 0.24), 0 0 40px rgba(59, 130, 246, 0.1);
 }
 
-body.home-page .hub-card--worksheets {
-  border-color: rgba(34, 197, 94, 0.3);
-  background: linear-gradient(165deg, #f0fdf4 0%, #ffffff 55%);
-  box-shadow: 0 10px 28px rgba(34, 197, 94, 0.1);
-}
-body.home-page .hub-card--worksheets .hub-card-icon {
-  background: rgba(34, 197, 94, 0.12);
-  color: #22c55e;
-}
-body.home-page .hub-card--worksheets:hover {
-  border-color: #22c55e;
-  box-shadow: 0 16px 40px rgba(34, 197, 94, 0.18);
-}
-
+/* —— About: amber —— */
 body.home-page .hub-card--about {
-  border-color: rgba(245, 158, 11, 0.3);
-  background: linear-gradient(165deg, #fffbeb 0%, #ffffff 55%);
-  box-shadow: 0 10px 28px rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.42);
+  background:
+    linear-gradient(160deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.65) 42%, rgba(255, 251, 235, 0.92) 100%);
+  box-shadow:
+    0 14px 36px rgba(245, 158, 11, 0.15),
+    0 0 0 1px rgba(251, 191, 36, 0.14) inset;
+}
+body.home-page .hub-card--about::before {
+  background: linear-gradient(90deg, #fcd34d, #f59e0b, #d97706);
 }
 body.home-page .hub-card--about .hub-card-icon {
-  background: rgba(245, 158, 11, 0.12);
-  color: #f59e0b;
+  background: linear-gradient(145deg, #fef3c7, #fcd34d);
+  color: #b45309;
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.28);
+}
+body.home-page .hub-card--about .hub-card-rule { background: #f59e0b; }
+body.home-page .hub-card--about .hub-card-btn {
+  background: linear-gradient(180deg, #fbbf24, #d97706);
+  box-shadow: 0 4px 0 #b45309, 0 10px 22px rgba(217, 119, 6, 0.32);
 }
 body.home-page .hub-card--about:hover {
   border-color: #f59e0b;
-  box-shadow: 0 16px 40px rgba(245, 158, 11, 0.18);
+  box-shadow: 0 20px 48px rgba(245, 158, 11, 0.24), 0 0 40px rgba(245, 158, 11, 0.1);
+}
+
+/* Optional extras */
+body.home-page .hub-card--worksheets {
+  border-color: rgba(34, 197, 94, 0.4);
+  background: linear-gradient(160deg, rgba(220, 252, 231, 0.95) 0%, rgba(187, 247, 208, 0.65) 42%, rgba(240, 253, 244, 0.92) 100%);
+  box-shadow: 0 14px 36px rgba(34, 197, 94, 0.14);
+}
+body.home-page .hub-card--worksheets::before {
+  background: linear-gradient(90deg, #86efac, #22c55e, #16a34a);
+}
+body.home-page .hub-card--worksheets .hub-card-icon {
+  background: linear-gradient(145deg, #dcfce7, #86efac);
+  color: #15803d;
+  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.25);
+}
+body.home-page .hub-card--worksheets .hub-card-btn {
+  background: linear-gradient(180deg, #4ade80, #16a34a);
+  box-shadow: 0 4px 0 #166534, 0 10px 22px rgba(22, 163, 74, 0.3);
 }
 
 body.home-page .hub-card--contact {
-  border-color: rgba(236, 72, 153, 0.3);
-  background: linear-gradient(165deg, #fdf2f8 0%, #ffffff 55%);
-  box-shadow: 0 10px 28px rgba(236, 72, 153, 0.1);
+  border-color: rgba(236, 72, 153, 0.4);
+  background: linear-gradient(160deg, rgba(252, 231, 243, 0.95) 0%, rgba(251, 207, 232, 0.65) 42%, rgba(253, 242, 248, 0.92) 100%);
+  box-shadow: 0 14px 36px rgba(236, 72, 153, 0.14);
+}
+body.home-page .hub-card--contact::before {
+  background: linear-gradient(90deg, #f9a8d4, #ec4899, #db2777);
 }
 body.home-page .hub-card--contact .hub-card-icon {
-  background: rgba(236, 72, 153, 0.12);
-  color: #ec4899;
+  background: linear-gradient(145deg, #fce7f3, #f9a8d4);
+  color: #be185d;
+  box-shadow: 0 8px 20px rgba(236, 72, 153, 0.25);
 }
-body.home-page .hub-card--contact:hover {
-  border-color: #ec4899;
-  box-shadow: 0 16px 40px rgba(236, 72, 153, 0.18);
+body.home-page .hub-card--contact .hub-card-btn {
+  background: linear-gradient(180deg, #f472b6, #db2777);
+  box-shadow: 0 4px 0 #9d174d, 0 10px 22px rgba(219, 39, 119, 0.3);
 }
 
 body.home-page .hub-journey {
@@ -2926,11 +3046,8 @@ body.home-page .hub-footer {
 
 /* ---- DARK arcade hub ---- */
 html[data-theme="dark"] body.home-page {
-  background:
-    radial-gradient(ellipse 90% 50% at 50% -10%, rgba(124, 92, 255, 0.28), transparent 55%),
-    radial-gradient(ellipse 45% 35% at 100% 20%, rgba(59, 130, 246, 0.16), transparent 50%),
-    radial-gradient(ellipse 40% 30% at 0% 80%, rgba(236, 72, 153, 0.12), transparent 50%),
-    #060812;
+  /* shared atmosphere from theme.css; mild extra glow only */
+  background-color: transparent;
 }
 
 html[data-theme="dark"] body.home-page .hub-main::before {
@@ -2956,62 +3073,160 @@ html[data-theme="dark"] body.home-page .hub-underline {
   box-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
 }
 
+/* Dark mode cards — readable, colored glass */
 html[data-theme="dark"] body.home-page .hub-card {
-  background: linear-gradient(180deg, rgba(20, 24, 40, 0.95) 0%, rgba(10, 14, 26, 0.98) 100%);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  background: linear-gradient(165deg, rgba(30, 35, 55, 0.92) 0%, rgba(12, 16, 32, 0.96) 100%);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+}
+html[data-theme="dark"] body.home-page .hub-card h2 {
+  color: #f8fafc !important;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+}
+html[data-theme="dark"] body.home-page .hub-card p {
+  color: #94a3b8 !important;
+}
+html[data-theme="dark"] body.home-page .hub-card::after {
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  opacity: 0.5;
 }
 
+/* Arcade — violet */
 html[data-theme="dark"] body.home-page .hub-card--arcade {
   border-color: rgba(167, 139, 250, 0.55);
-  background: linear-gradient(165deg, #1a1235 0%, #0c1020 65%);
-  box-shadow: 0 0 28px rgba(124, 92, 255, 0.22), 0 12px 36px rgba(0, 0, 0, 0.45);
+  background: linear-gradient(160deg, rgba(76, 29, 149, 0.45) 0%, rgba(30, 20, 60, 0.9) 45%, rgba(12, 16, 32, 0.95) 100%);
+  box-shadow: 0 0 32px rgba(124, 92, 255, 0.25), 0 14px 40px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] body.home-page .hub-card--arcade::before {
+  background: linear-gradient(90deg, #c4b5fd, #a78bfa, #7c5cff);
 }
 html[data-theme="dark"] body.home-page .hub-card--arcade .hub-card-icon {
-  background: rgba(124, 92, 255, 0.2);
-  box-shadow: 0 0 24px rgba(124, 92, 255, 0.35);
+  background: linear-gradient(145deg, rgba(167, 139, 250, 0.35), rgba(124, 92, 255, 0.25));
+  color: #e9d5ff;
+  border-color: rgba(196, 181, 253, 0.35);
+  box-shadow: 0 0 24px rgba(124, 92, 255, 0.4);
+}
+html[data-theme="dark"] body.home-page .hub-card--arcade .hub-card-rule {
+  background: #a78bfa;
+}
+html[data-theme="dark"] body.home-page .hub-card--arcade .hub-card-btn {
+  color: #fff !important;
+  background: linear-gradient(180deg, #c4b5fd, #7c5cff) !important;
+  box-shadow: 0 4px 0 #5b21b6, 0 10px 24px rgba(124, 92, 255, 0.4) !important;
 }
 html[data-theme="dark"] body.home-page .hub-card--arcade:hover {
-  box-shadow: 0 0 40px rgba(124, 92, 255, 0.35), 0 16px 44px rgba(0, 0, 0, 0.5);
+  border-color: #a78bfa;
+  box-shadow: 0 0 48px rgba(124, 92, 255, 0.4), 0 18px 48px rgba(0, 0, 0, 0.55);
 }
 
+/* Topics — rose */
+html[data-theme="dark"] body.home-page .hub-card--topics {
+  border-color: rgba(251, 113, 133, 0.55);
+  background: linear-gradient(160deg, rgba(159, 18, 57, 0.4) 0%, rgba(50, 15, 30, 0.9) 45%, rgba(12, 16, 32, 0.95) 100%);
+  box-shadow: 0 0 32px rgba(244, 63, 94, 0.22), 0 14px 40px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] body.home-page .hub-card--topics::before {
+  background: linear-gradient(90deg, #fda4af, #fb7185, #e11d48);
+}
+html[data-theme="dark"] body.home-page .hub-card--topics h2 {
+  color: #ffe4e6 !important;
+}
+html[data-theme="dark"] body.home-page .hub-card--topics p {
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] body.home-page .hub-card--topics .hub-card-icon {
+  background: linear-gradient(145deg, rgba(251, 113, 133, 0.35), rgba(225, 29, 72, 0.25));
+  color: #fecdd3;
+  border-color: rgba(251, 113, 133, 0.35);
+  box-shadow: 0 0 24px rgba(244, 63, 94, 0.4);
+}
+html[data-theme="dark"] body.home-page .hub-card--topics .hub-card-rule {
+  background: #fb7185;
+}
+html[data-theme="dark"] body.home-page .hub-card--topics .hub-card-btn {
+  color: #fff !important;
+  background: linear-gradient(180deg, #fb7185, #e11d48) !important;
+  box-shadow: 0 4px 0 #9f1239, 0 10px 24px rgba(225, 29, 72, 0.4) !important;
+}
+html[data-theme="dark"] body.home-page .hub-card--topics:hover {
+  border-color: #fb7185;
+  box-shadow: 0 0 48px rgba(244, 63, 94, 0.35), 0 18px 48px rgba(0, 0, 0, 0.55);
+}
+
+/* Resources — blue */
 html[data-theme="dark"] body.home-page .hub-card--resources {
-  border-color: rgba(96, 165, 250, 0.5);
-  background: linear-gradient(165deg, #0c1a32 0%, #0c1020 65%);
-  box-shadow: 0 0 28px rgba(59, 130, 246, 0.18), 0 12px 36px rgba(0, 0, 0, 0.45);
+  border-color: rgba(96, 165, 250, 0.55);
+  background: linear-gradient(160deg, rgba(30, 64, 175, 0.4) 0%, rgba(15, 30, 55, 0.9) 45%, rgba(12, 16, 32, 0.95) 100%);
+  box-shadow: 0 0 32px rgba(59, 130, 246, 0.22), 0 14px 40px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] body.home-page .hub-card--resources::before {
+  background: linear-gradient(90deg, #93c5fd, #60a5fa, #3b82f6);
 }
 html[data-theme="dark"] body.home-page .hub-card--resources .hub-card-icon {
-  background: rgba(59, 130, 246, 0.2);
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(145deg, rgba(96, 165, 250, 0.35), rgba(37, 99, 235, 0.25));
+  color: #bfdbfe;
+  border-color: rgba(147, 197, 253, 0.35);
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.4);
+}
+html[data-theme="dark"] body.home-page .hub-card--resources .hub-card-rule {
+  background: #60a5fa;
+}
+html[data-theme="dark"] body.home-page .hub-card--resources .hub-card-btn {
+  color: #fff !important;
+  background: linear-gradient(180deg, #60a5fa, #2563eb) !important;
+  box-shadow: 0 4px 0 #1e40af, 0 10px 24px rgba(37, 99, 235, 0.4) !important;
+}
+html[data-theme="dark"] body.home-page .hub-card--resources:hover {
+  border-color: #60a5fa;
+  box-shadow: 0 0 48px rgba(59, 130, 246, 0.35), 0 18px 48px rgba(0, 0, 0, 0.55);
 }
 
-html[data-theme="dark"] body.home-page .hub-card--worksheets {
-  border-color: rgba(74, 222, 128, 0.45);
-  background: linear-gradient(165deg, #0a1f14 0%, #0c1020 65%);
-  box-shadow: 0 0 28px rgba(34, 197, 94, 0.15), 0 12px 36px rgba(0, 0, 0, 0.45);
-}
-html[data-theme="dark"] body.home-page .hub-card--worksheets .hub-card-icon {
-  background: rgba(34, 197, 94, 0.18);
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.28);
-}
-
+/* About — amber */
 html[data-theme="dark"] body.home-page .hub-card--about {
-  border-color: rgba(251, 191, 36, 0.45);
-  background: linear-gradient(165deg, #1c1608 0%, #0c1020 65%);
-  box-shadow: 0 0 28px rgba(245, 158, 11, 0.15), 0 12px 36px rgba(0, 0, 0, 0.45);
+  border-color: rgba(251, 191, 36, 0.55);
+  background: linear-gradient(160deg, rgba(146, 64, 14, 0.4) 0%, rgba(40, 28, 10, 0.9) 45%, rgba(12, 16, 32, 0.95) 100%);
+  box-shadow: 0 0 32px rgba(245, 158, 11, 0.2), 0 14px 40px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] body.home-page .hub-card--about::before {
+  background: linear-gradient(90deg, #fde68a, #fbbf24, #f59e0b);
 }
 html[data-theme="dark"] body.home-page .hub-card--about .hub-card-icon {
-  background: rgba(245, 158, 11, 0.18);
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.28);
+  background: linear-gradient(145deg, rgba(251, 191, 36, 0.35), rgba(217, 119, 6, 0.25));
+  color: #fef3c7;
+  border-color: rgba(252, 211, 77, 0.35);
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.35);
+}
+html[data-theme="dark"] body.home-page .hub-card--about .hub-card-rule {
+  background: #fbbf24;
+}
+html[data-theme="dark"] body.home-page .hub-card--about .hub-card-btn {
+  color: #1c1917 !important;
+  background: linear-gradient(180deg, #fde68a, #f59e0b) !important;
+  box-shadow: 0 4px 0 #b45309, 0 10px 24px rgba(245, 158, 11, 0.4) !important;
+}
+html[data-theme="dark"] body.home-page .hub-card--about:hover {
+  border-color: #fbbf24;
+  box-shadow: 0 0 48px rgba(245, 158, 11, 0.32), 0 18px 48px rgba(0, 0, 0, 0.55);
 }
 
+/* Worksheets / Contact (extras) */
+html[data-theme="dark"] body.home-page .hub-card--worksheets {
+  border-color: rgba(74, 222, 128, 0.5);
+  background: linear-gradient(160deg, rgba(20, 83, 45, 0.4) 0%, rgba(12, 16, 32, 0.95) 100%);
+}
+html[data-theme="dark"] body.home-page .hub-card--worksheets .hub-card-icon {
+  background: rgba(34, 197, 94, 0.22);
+  color: #bbf7d0;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+}
 html[data-theme="dark"] body.home-page .hub-card--contact {
   border-color: rgba(244, 114, 182, 0.5);
-  background: linear-gradient(165deg, #1c0f18 0%, #0c1020 65%);
-  box-shadow: 0 0 28px rgba(236, 72, 153, 0.18), 0 12px 36px rgba(0, 0, 0, 0.45);
+  background: linear-gradient(160deg, rgba(131, 24, 67, 0.35) 0%, rgba(12, 16, 32, 0.95) 100%);
 }
 html[data-theme="dark"] body.home-page .hub-card--contact .hub-card-icon {
-  background: rgba(236, 72, 153, 0.18);
-  box-shadow: 0 0 20px rgba(236, 72, 153, 0.28);
+  background: rgba(236, 72, 153, 0.22);
+  color: #fbcfe8;
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
 }
 
 html[data-theme="dark"] body.home-page .hub-footer {
@@ -3050,12 +3265,16 @@ html[data-theme="dark"] body.home-page .hub-journey {
   animation: hub-float-y 5.5s ease-in-out infinite;
 }
 
-.hub-float--l1 { left: 4%; top: 8%; width: 56px; height: 56px; animation-delay: 0s; }
-.hub-float--l2 { left: 8%; top: 58%; width: 48px; height: 48px; opacity: 0.45; animation-delay: 1.2s; }
-.hub-float--l3 { left: 18%; top: 28%; width: 36px; height: 36px; opacity: 0.4; animation-delay: 2s; }
-.hub-float--r1 { right: 5%; top: 6%; width: 54px; height: 54px; animation-delay: 0.6s; }
-.hub-float--r2 { right: 7%; top: 55%; width: 48px; height: 48px; opacity: 0.45; animation-delay: 1.8s; }
-.hub-float--r3 { right: 16%; top: 30%; width: 40px; height: 40px; opacity: 0.4; animation-delay: 2.6s; }
+.hub-float--l1 { left: 3%; top: 6%; width: 56px; height: 56px; animation-delay: 0s; }
+.hub-float--l2 { left: 5%; top: 42%; width: 48px; height: 48px; opacity: 0.5; animation-delay: 0.9s; }
+.hub-float--l3 { left: 14%; top: 22%; width: 40px; height: 40px; opacity: 0.45; animation-delay: 1.6s; }
+.hub-float--l4 { left: 4%; top: 72%; width: 44px; height: 44px; opacity: 0.42; animation-delay: 2.2s; }
+.hub-float--l5 { left: 16%; top: 58%; width: 38px; height: 38px; opacity: 0.4; animation-delay: 2.8s; }
+.hub-float--r1 { right: 4%; top: 8%; width: 58px; height: 58px; opacity: 0.75; animation-delay: 0.5s; }
+.hub-float--r2 { right: 7%; top: 32%; width: 50px; height: 50px; opacity: 0.7; animation-delay: 1.3s; }
+.hub-float--r3 { right: 14%; top: 18%; width: 48px; height: 48px; opacity: 0.72; animation-delay: 1.9s; }
+.hub-float--r4 { right: 5%; top: 55%; width: 50px; height: 50px; opacity: 0.68; animation-delay: 2.5s; }
+.hub-float--r5 { right: 15%; top: 48%; width: 46px; height: 46px; opacity: 0.7; animation-delay: 3.1s; }
 
 @keyframes hub-float-y {
   0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -3068,8 +3287,8 @@ html[data-theme="dark"] .hub-float {
 }
 
 @media (max-width: 700px) {
-  .hub-float { width: 36px !important; height: 36px !important; opacity: 0.4; }
-  .hub-float--l3, .hub-float--r3 { display: none; }
+  .hub-float { width: 32px !important; height: 32px !important; opacity: 0.4; }
+  .hub-float--l3, .hub-float--l5, .hub-float--r3, .hub-float--r5 { display: none; }
 }
 
 
@@ -3084,15 +3303,18 @@ html[data-theme="dark"] .hub-float {
 }
 
 .hub-character-img {
-  width: min(140px, 32vw);
+  width: min(168px, 36vw);
   height: auto;
+  max-height: 180px;
   display: block;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35));
+  object-fit: contain;
+  filter: drop-shadow(0 10px 22px rgba(15, 23, 42, 0.18));
   animation: hub-character-float 3.2s ease-in-out infinite;
   user-select: none;
   -webkit-user-drag: none;
   opacity: 1;
-  border-radius: 12px;
+  border-radius: 16px;
+  background: transparent;
 }
 
 @keyframes hub-character-float {
@@ -3528,36 +3750,36 @@ html[data-theme="light"] .arcade-nav .nav-profile {
   transform: translateY(-1px);
 }
 
-/* Topics — indigo (matches Numbers section) */
+/* Topics — soft rose / coral (light mode friendly) */
 .hub-card--topics {
-  background: linear-gradient(165deg, rgba(99, 102, 241, 0.14), rgba(15, 18, 32, 0.92) 45%);
-  border: 1px solid rgba(129, 140, 248, 0.45);
-  box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.35),
-    0 0 0 1px rgba(129, 140, 248, 0.08) inset,
-    0 0 40px rgba(99, 102, 241, 0.12);
+  border-color: #fecdd3;
+  background: linear-gradient(165deg, #fff1f2 0%, #ffffff 55%);
+  box-shadow: 0 10px 28px rgba(244, 63, 94, 0.1);
 }
 .hub-card--topics .hub-card-glow {
-  background: #818cf8;
+  background: #fb7185;
 }
 .hub-card--topics .hub-card-icon {
-  background: linear-gradient(145deg, rgba(165, 180, 252, 0.25), rgba(99, 102, 241, 0.35));
-  color: #c7d2fe;
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+  background: rgba(244, 63, 94, 0.12);
+  color: #e11d48;
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.18);
 }
 .hub-card--topics .hub-card-rule {
-  background: linear-gradient(90deg, #a5b4fc, #6366f1);
+  background: linear-gradient(90deg, #fb7185, #e11d48);
 }
 .hub-card--topics .hub-card-btn {
-  color: #fff;
-  background: linear-gradient(180deg, #a5b4fc, #6366f1);
-  box-shadow: 0 5px 0 #4338ca, 0 10px 22px rgba(67, 56, 202, 0.4);
+  color: #fff !important;
+  border-color: #e11d48 !important;
+  background: linear-gradient(180deg, #fb7185, #e11d48) !important;
+  box-shadow: 0 4px 0 #be123c, 0 8px 18px rgba(225, 29, 72, 0.3) !important;
 }
 .hub-card--topics:hover {
-  border-color: rgba(165, 180, 252, 0.7);
-  box-shadow:
-    0 22px 50px rgba(0, 0, 0, 0.4),
-    0 0 48px rgba(99, 102, 241, 0.28);
+  border-color: #fb7185;
+  box-shadow: 0 16px 40px rgba(244, 63, 94, 0.2);
+}
+.hub-card--topics:hover .hub-card-btn {
+  background: linear-gradient(180deg, #f43f5e, #be123c);
+  filter: brightness(1.02);
 }
 
 /* Arcade — purple */
@@ -3624,4 +3846,253 @@ html[data-theme="light"] .arcade-nav .nav-profile {
 .hub-card--about:hover {
   border-color: rgba(252, 211, 77, 0.65);
   box-shadow: 0 22px 50px rgba(0,0,0,0.4), 0 0 48px rgba(245, 158, 11, 0.22);
+}
+
+
+/* Theme FAB — always bottom-right */
+.site-theme-fab,
+button.site-theme-fab,
+[data-theme-toggle].site-theme-fab,
+.site-theme-fab.wall-switch {
+  position: fixed !important;
+  top: auto !important;
+  left: auto !important;
+  right: max(12px, env(safe-area-inset-right, 0px)) !important;
+  bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 10060 !important;
+}
+@media (max-width: 700px) {
+  .site-theme-fab,
+  button.site-theme-fab,
+  [data-theme-toggle].site-theme-fab,
+  .site-theme-fab.wall-switch {
+    bottom: max(72px, calc(env(safe-area-inset-bottom, 0px) + 64px)) !important;
+  }
+}
+
+
+/* HOME NO-SCROLL + IG */
+html:has(body.home-page),
+body.home-page {
+  height: 100%;
+  max-height: 100dvh;
+  overflow: hidden !important;
+}
+body.home-page {
+  display: flex;
+  flex-direction: column;
+}
+body.home-page .hub-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 56px 0 8px;
+  overflow: visible;
+}
+body.home-page .hub-hero {
+  padding: 12px 12px 16px;
+  flex: 0 0 auto;
+}
+body.home-page .hub-cards--3 {
+  flex: 0 0 auto;
+  margin-top: 4px;
+}
+body.home-page .hub-journey {
+  flex: 0 0 auto;
+  margin: 14px 0 8px;
+  padding: 4px 16px;
+  line-height: 1.55;
+  overflow: visible;
+  position: relative;
+  z-index: 2;
+}
+body.home-page .hub-footer {
+  flex: 0 0 auto;
+  padding: 10px 16px max(12px, env(safe-area-inset-bottom, 0px));
+}
+body.home-page .hub-footer .footer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+body.home-page .hub-copy {
+  margin: 0;
+  font-size: 0.85rem;
+}
+.hub-ig {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 45%, #6228d7 100%) !important;
+  box-shadow: 0 4px 0 #4a1d96, 0 8px 20px rgba(238, 42, 123, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  border: none;
+}
+.hub-ig:hover {
+  transform: translateY(-2px) scale(1.03);
+  filter: brightness(1.06);
+  box-shadow: 0 6px 0 #4a1d96, 0 12px 28px rgba(238, 42, 123, 0.5);
+  color: #ffffff !important;
+}
+.hub-ig-icon {
+  display: block;
+  flex-shrink: 0;
+  color: #ffffff;
+  fill: currentColor;
+}
+.hub-ig-text {
+  letter-spacing: 0.02em;
+  color: #ffffff !important;
+}
+@media (max-width: 700px) {
+  body.home-page .hub-main {
+    padding: 52px 0 72px;
+    width: min(100% - 24px, 1120px);
+  }
+  body.home-page .hub-cards--3 {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+    gap: 10px;
+  }
+  body.home-page .hub-cards--4 {
+    grid-template-columns: 1fr 1fr;
+    max-width: 400px;
+    gap: 10px;
+  }
+  body.home-page .hub-card {
+    min-height: 0;
+    padding: 14px 14px 12px;
+  }
+  body.home-page .hub-card p {
+    display: none;
+  }
+  body.home-page .hub-kicker {
+    font-size: 1rem;
+  }
+  body.home-page .hub-title {
+    font-size: clamp(1.6rem, 8vw, 2.2rem);
+  }
+  body.home-page .hub-character-img {
+    width: 72px !important;
+    height: auto !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .hub-cards--4 {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 560px;
+  }
+}
+
+html[data-theme="dark"] .hub-card--topics {
+  background: linear-gradient(165deg, rgba(244, 63, 94, 0.18), rgba(15, 18, 32, 0.95) 50%);
+  border-color: rgba(251, 113, 133, 0.4);
+}
+html[data-theme="dark"] .hub-card--topics .hub-card-icon {
+  color: #fb7185;
+  background: rgba(244, 63, 94, 0.2);
+}
+html[data-theme="dark"] .hub-card--topics h2 { color: #ffe4e6; }
+html[data-theme="dark"] .hub-card--topics p { color: #94a3b8; }
+html[data-theme="dark"] .hub-card--topics .hub-card-rule { background: #fb7185; }
+html[data-theme="dark"] .hub-card--topics .hub-card-btn {
+  background: linear-gradient(180deg, #fb7185, #e11d48);
+  color: #fff;
+}
+
+html[data-theme="dark"] body.home-page .hub-card--topics {
+  border-color: rgba(251, 113, 133, 0.5);
+  background: linear-gradient(165deg, #2a0f18 0%, #0c1020 65%);
+  box-shadow: 0 0 28px rgba(244, 63, 94, 0.2), 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+html[data-theme="dark"] body.home-page .hub-card--topics .hub-card-icon {
+  background: rgba(244, 63, 94, 0.22);
+  color: #fb7185;
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.3);
+}
+html[data-theme="dark"] body.home-page .hub-card--topics h2 { color: #ffe4e6; }
+html[data-theme="dark"] body.home-page .hub-card--topics p { color: #94a3b8; }
+
+
+/* FINAL: Topics Open button — rose (force) */
+body.home-page a.hub-card--topics .hub-card-btn,
+body.home-page .hub-card.hub-card--topics .hub-card-btn,
+a.hub-card--topics .hub-card-btn,
+.hub-card--topics .hub-card-btn {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #fb7185 0%, #e11d48 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 0 #be123c, 0 10px 22px rgba(225, 29, 72, 0.35) !important;
+}
+body.home-page a.hub-card--topics:hover .hub-card-btn,
+.hub-card--topics:hover .hub-card-btn {
+  background: linear-gradient(180deg, #f43f5e 0%, #be123c 100%) !important;
+  filter: brightness(1.05);
+}
+
+
+/* FINAL: solid 3D CTAs — match Open Topics style */
+body.home-page .hub-card--arcade .hub-card-btn,
+a.hub-card--arcade .hub-card-btn {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #a78bfa 0%, #6d28d9 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 0 #4c1d95, 0 10px 22px rgba(109, 40, 217, 0.4) !important;
+}
+body.home-page .hub-card--arcade:hover .hub-card-btn {
+  background: linear-gradient(180deg, #c4b5fd 0%, #5b21b6 100%) !important;
+  filter: brightness(1.05);
+}
+
+body.home-page .hub-card--resources .hub-card-btn,
+a.hub-card--resources .hub-card-btn {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #60a5fa 0%, #1d4ed8 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 0 #1e3a8a, 0 10px 22px rgba(29, 78, 216, 0.4) !important;
+}
+body.home-page .hub-card--resources:hover .hub-card-btn {
+  background: linear-gradient(180deg, #93c5fd 0%, #1e40af 100%) !important;
+  filter: brightness(1.05);
+}
+
+body.home-page .hub-card--about .hub-card-btn,
+a.hub-card--about .hub-card-btn {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 0 #92400e, 0 10px 22px rgba(217, 119, 6, 0.4) !important;
+}
+body.home-page .hub-card--about:hover .hub-card-btn {
+  background: linear-gradient(180deg, #fcd34d 0%, #b45309 100%) !important;
+  filter: brightness(1.05);
+}
+
+/* Topics already solid rose — keep consistent */
+body.home-page .hub-card--topics .hub-card-btn,
+a.hub-card--topics .hub-card-btn {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #fb7185 0%, #e11d48 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 0 #9f1239, 0 10px 22px rgba(225, 29, 72, 0.4) !important;
+}
+
+/* Instagram dark mode readability */
+html[data-theme="dark"] .hub-ig {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 45%, #6228d7 100%) !important;
+  box-shadow: 0 4px 0 #3b0764, 0 10px 24px rgba(238, 42, 123, 0.45);
+}
+html[data-theme="dark"] .hub-ig-text {
+  color: #ffffff !important;
 }

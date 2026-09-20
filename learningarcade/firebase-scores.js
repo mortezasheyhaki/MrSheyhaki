@@ -9,9 +9,9 @@
   'use strict';
 
   var ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
-  var PROJECT_ID = '6a95e7a70024d9b0d634';
-  var DATABASE_ID = '6a95eae8000d3381dfb9';
-  var TABLE_ID = 'scores';
+  var PROJECT_ID = '6aafc5370019ebd5da7c';
+  var DATABASE_ID = '6aafc5ce007461d09d3';
+  var TABLE_ID = '6aafc6060001c3f793eb';
 
   var NAME_KEY = 'laPlayerName';
   var CLASS_KEY = 'laClassCode';
@@ -166,7 +166,19 @@
       return Promise.resolve({ ok: false, error: initError || 'Appwrite not ready' });
     }
 
+    // Prefer logged-in user name when available
+    var sessionUser = null;
+    if (global.LAAuth && typeof LAAuth.currentUser === 'function') {
+      sessionUser = LAAuth.currentUser();
+    }
+
     var rawName = (opts.name != null ? String(opts.name) : getPlayerName()).trim().slice(0, 32);
+    if (!rawName && sessionUser && sessionUser.displayName) {
+      rawName = String(sessionUser.displayName).trim().slice(0, 32);
+    }
+    if (!rawName && sessionUser && sessionUser.username) {
+      rawName = String(sessionUser.username).trim().slice(0, 32);
+    }
     if (!rawName) {
       return Promise.resolve({ ok: false, error: 'Please enter a name' });
     }
@@ -186,6 +198,20 @@
     if (!isFinite(score)) score = 0;
     score = Math.max(0, Math.round(score));
 
+    // Link to logged-in account when available
+    var userId = null;
+    if (global.LAAuth && typeof LAAuth.currentUser === 'function') {
+      var session = LAAuth.currentUser();
+      if (session && session.id) {
+        userId = session.id;
+        // Prefer account display name when logged in
+        if (session.displayName) {
+          name = session.displayName;
+          if (classCode) name = name + ' · ' + classCode;
+        }
+      }
+    }
+
     var data = {
       name: name,
       score: score,
@@ -193,6 +219,9 @@
       gameName: opts.gameName ? String(opts.gameName).slice(0, 128) : gameId,
       at: Date.now()
     };
+    if (userId) {
+      data.userId = userId;
+    }
     if (opts.maxScore != null && isFinite(Number(opts.maxScore))) {
       data.maxScore = Number(opts.maxScore);
     }
@@ -215,6 +244,12 @@
       .catch(function (err) {
         // If timeMs column is missing in Appwrite, retry without it
         var msg = err && err.message ? err.message : String(err);
+        if (data.userId != null && /userId|attribute|unknown|invalid/i.test(msg)) {
+          console.warn('[LAScores] userId not accepted — retrying without it. Add string attribute userId in Appwrite.');
+          var fallback = Object.assign({}, data);
+          delete fallback.userId;
+          return create(fallback);
+        }
         if (data.timeMs != null && /timeMs|attribute|unknown|invalid/i.test(msg)) {
           console.warn('[LAScores] timeMs not accepted — retrying without it. Add integer attribute timeMs in Appwrite.');
           var fallback = Object.assign({}, data);

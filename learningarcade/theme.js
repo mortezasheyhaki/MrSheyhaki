@@ -82,7 +82,7 @@
   function ensureThemeFab() {
     var nav = document.querySelector(".arcade-nav");
 
-    // Fixed top-right theme toggle (always site-theme-fab — never inside nav)
+    // Fixed bottom-right theme toggle (always site-theme-fab — never inside nav)
     var existing = document.querySelector("[data-theme-toggle]");
     if (existing) {
       if (existing.closest(".arcade-nav") || existing.closest("header")) {
@@ -100,7 +100,25 @@
       btn.setAttribute("data-icon-only", "true");
       btn.setAttribute("aria-label", "Toggle color theme");
       document.body.appendChild(btn);
+      existing = btn;
     }
+    // Ensure visible + bottom-right even if page CSS is missing
+    (function (el) {
+      if (!el) return;
+      el.style.display = "inline-flex";
+      el.style.position = "fixed";
+      el.style.top = "auto";
+      el.style.left = "auto";
+      el.style.right = "max(12px, env(safe-area-inset-right, 0px))";
+      el.style.bottom = "max(16px, env(safe-area-inset-bottom, 0px))";
+      el.style.zIndex = "10060";
+      el.style.width = el.style.width || "48px";
+      el.style.height = el.style.height || "48px";
+      el.style.alignItems = "center";
+      el.style.justifyContent = "center";
+      el.style.cursor = "pointer";
+      el.removeAttribute("hidden");
+    })(document.querySelector("[data-theme-toggle]"));
 
     // Profile icon — only inside arcade-nav (never floating on kids/world pages)
     var path = (location.pathname || "").toLowerCase();

@@ -23,7 +23,7 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background: #fff;
+  /* Atmosphere comes from ../theme.css — do not paint solid bg here */
   color: var(--text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -877,7 +877,7 @@ html[data-theme="dark"] .item-card.unit-style-card:hover {
 
 html[data-theme="dark"] body,
 html[data-theme="dark"] {
-  background: #0b1020;
+  /* keep shared atmosphere; only set text color */
   color: #f5f7ff;
 }
 
@@ -1093,17 +1093,8 @@ html[data-theme="dark"] .theme-toggle {
 ========================================================= */
 
 body {
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59, 130, 246, 0.1), transparent 55%),
-    radial-gradient(ellipse 40% 35% at 100% 20%, rgba(34, 197, 94, 0.06), transparent 50%),
-    #f8fafc;
   min-height: 100dvh;
-}
-
-html[data-theme="dark"] body {
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59, 130, 246, 0.14), transparent 55%),
-    #070b16;
+  /* shared atmosphere from theme.css */
 }
 
 .arcade-intro {
@@ -2652,5 +2643,748 @@ html[data-theme="dark"] .item-card.unit-style-card::before {
   .lesson-type-card::after,
   .item-card.unit-style-card::before {
     transition: none !important;
+  }
+}
+
+
+/* =========================================================
+   RESOURCES HUB v3 — light + dark (matches home cards)
+========================================================= */
+
+body.page-calm main {
+  padding-bottom: 48px;
+}
+
+/* Eyebrow pill */
+body.page-calm .arcade-intro .eyebrow,
+.arcade-intro .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.12), rgba(59, 130, 246, 0.1));
+  color: #6d28d9;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  border: 1px solid rgba(124, 92, 255, 0.18);
+}
+
+.arcade-intro h1 {
+  letter-spacing: -0.03em;
+  color: #0f172a;
+}
+
+.section-heading h2 {
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+/* Card layout */
+.resource-grid {
+  gap: 20px;
+}
+
+a.resource-card,
+.resource-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: 200px;
+  padding: 26px 24px;
+  border-radius: 22px;
+  border: 1.5px solid rgba(148, 163, 184, 0.25);
+  background: linear-gradient(160deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+a.resource-card:hover,
+.resource-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 44px rgba(15, 23, 42, 0.1);
+}
+
+.resource-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  border-radius: 22px 22px 0 0;
+  z-index: 1;
+  background: linear-gradient(90deg, #a78bfa, #3b82f6);
+}
+
+.resource-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.resource-icon {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  font-size: 26px;
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+.resource-card h3 {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin: 0 0 8px;
+}
+
+.resource-card p {
+  color: #64748b;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+
+.card-tag {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+/* Solid CTA like home page */
+.card-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 11px 18px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #fff !important;
+  text-decoration: none;
+  border: none;
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+.resource-card:hover .card-link {
+  transform: scale(1.04);
+  filter: brightness(1.05);
+}
+
+/* —— Pre-starter: teal —— */
+.resource-card--pre-starter {
+  border-color: rgba(20, 184, 166, 0.35);
+  background: linear-gradient(160deg, rgba(204, 251, 241, 0.85) 0%, rgba(240, 253, 250, 0.95) 45%, #fff 100%);
+}
+.resource-card--pre-starter::before {
+  background: linear-gradient(90deg, #5eead4, #14b8a6, #0d9488);
+}
+.resource-card--pre-starter .resource-icon {
+  background: linear-gradient(145deg, #ccfbf1, #5eead4);
+  color: #0f766e;
+}
+.resource-card--pre-starter .card-tag {
+  background: rgba(20, 184, 166, 0.15);
+  color: #0f766e;
+}
+.resource-card--pre-starter .card-link {
+  background: linear-gradient(180deg, #2dd4bf, #0d9488) !important;
+  box-shadow: 0 4px 0 #0f766e, 0 10px 20px rgba(13, 148, 136, 0.3);
+}
+.resource-card--pre-starter:hover {
+  border-color: #14b8a6;
+  box-shadow: 0 20px 44px rgba(20, 184, 166, 0.2);
+}
+
+/* —— AEF: blue —— */
+.resource-card--aef {
+  border-color: rgba(59, 130, 246, 0.35);
+  background: linear-gradient(160deg, rgba(219, 234, 254, 0.85) 0%, rgba(239, 246, 255, 0.95) 45%, #fff 100%);
+}
+.resource-card--aef::before {
+  background: linear-gradient(90deg, #93c5fd, #3b82f6, #2563eb);
+}
+.resource-card--aef .resource-icon {
+  background: linear-gradient(145deg, #dbeafe, #93c5fd);
+  color: #1d4ed8;
+}
+.resource-card--aef .card-tag {
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
+}
+.resource-card--aef .card-link {
+  background: linear-gradient(180deg, #60a5fa, #2563eb) !important;
+  box-shadow: 0 4px 0 #1e40af, 0 10px 20px rgba(37, 99, 235, 0.3);
+}
+.resource-card--aef:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 20px 44px rgba(59, 130, 246, 0.2);
+}
+
+/* —— Worksheets: green —— */
+.resource-card--worksheets {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: linear-gradient(160deg, rgba(220, 252, 231, 0.85) 0%, rgba(240, 253, 244, 0.95) 45%, #fff 100%);
+}
+.resource-card--worksheets::before {
+  background: linear-gradient(90deg, #86efac, #22c55e, #16a34a);
+}
+.resource-card--worksheets .resource-icon {
+  background: linear-gradient(145deg, #dcfce7, #86efac);
+  color: #15803d;
+}
+.resource-card--worksheets .card-tag {
+  background: rgba(34, 197, 94, 0.14);
+  color: #15803d;
+}
+.resource-card--worksheets .card-link {
+  background: linear-gradient(180deg, #4ade80, #16a34a) !important;
+  box-shadow: 0 4px 0 #166534, 0 10px 20px rgba(22, 163, 74, 0.3);
+}
+.resource-card--worksheets:hover {
+  border-color: #22c55e;
+  box-shadow: 0 20px 44px rgba(34, 197, 94, 0.2);
+}
+
+.resource-grid--worksheets {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: min(calc(100% - 48px), 560px);
+  margin-left: auto;
+  margin-right: auto;
+  width: min(calc(100% - 48px), var(--container));
+}
+
+/* ========== DARK MODE ========== */
+html[data-theme="dark"] body.page-calm .arcade-intro .eyebrow,
+html[data-theme="dark"] .arcade-intro .eyebrow {
+  background: rgba(124, 92, 255, 0.18);
+  color: #c4b5fd;
+  border-color: rgba(167, 139, 250, 0.3);
+}
+
+html[data-theme="dark"] .arcade-intro h1,
+html[data-theme="dark"] .section-heading h2 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .arcade-intro p,
+html[data-theme="dark"] .section-heading p {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] a.resource-card,
+html[data-theme="dark"] .resource-card {
+  background: linear-gradient(165deg, rgba(30, 35, 55, 0.95) 0%, rgba(12, 16, 32, 0.98) 100%);
+  border-color: rgba(148, 163, 184, 0.18);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+
+html[data-theme="dark"] .resource-card h3 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .resource-card p {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .resource-card--pre-starter {
+  border-color: rgba(45, 212, 191, 0.4);
+  background: linear-gradient(160deg, rgba(19, 78, 74, 0.5) 0%, rgba(12, 16, 32, 0.95) 100%);
+  box-shadow: 0 0 28px rgba(20, 184, 166, 0.12), 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+html[data-theme="dark"] .resource-card--pre-starter .resource-icon {
+  background: rgba(20, 184, 166, 0.22);
+  color: #5eead4;
+  border-color: rgba(45, 212, 191, 0.25);
+}
+html[data-theme="dark"] .resource-card--pre-starter .card-tag {
+  background: rgba(20, 184, 166, 0.18);
+  color: #5eead4;
+}
+html[data-theme="dark"] .resource-card--pre-starter .card-link {
+  background: linear-gradient(180deg, #2dd4bf, #0d9488) !important;
+  box-shadow: 0 4px 0 #115e59, 0 10px 22px rgba(13, 148, 136, 0.35);
+}
+
+html[data-theme="dark"] .resource-card--aef {
+  border-color: rgba(96, 165, 250, 0.45);
+  background: linear-gradient(160deg, rgba(30, 64, 175, 0.4) 0%, rgba(12, 16, 32, 0.95) 100%);
+  box-shadow: 0 0 28px rgba(59, 130, 246, 0.15), 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+html[data-theme="dark"] .resource-card--aef .resource-icon {
+  background: rgba(59, 130, 246, 0.22);
+  color: #93c5fd;
+  border-color: rgba(147, 197, 253, 0.25);
+}
+html[data-theme="dark"] .resource-card--aef .card-tag {
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+}
+html[data-theme="dark"] .resource-card--aef .card-link {
+  background: linear-gradient(180deg, #60a5fa, #2563eb) !important;
+  box-shadow: 0 4px 0 #1e3a8a, 0 10px 22px rgba(37, 99, 235, 0.35);
+}
+
+html[data-theme="dark"] .resource-card--worksheets {
+  border-color: rgba(74, 222, 128, 0.4);
+  background: linear-gradient(160deg, rgba(20, 83, 45, 0.4) 0%, rgba(12, 16, 32, 0.95) 100%);
+  box-shadow: 0 0 28px rgba(34, 197, 94, 0.12), 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+html[data-theme="dark"] .resource-card--worksheets .resource-icon {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+  border-color: rgba(134, 239, 172, 0.25);
+}
+html[data-theme="dark"] .resource-card--worksheets .card-tag {
+  background: rgba(34, 197, 94, 0.16);
+  color: #86efac;
+}
+html[data-theme="dark"] .resource-card--worksheets .card-link {
+  background: linear-gradient(180deg, #4ade80, #16a34a) !important;
+  box-shadow: 0 4px 0 #14532d, 0 10px 22px rgba(22, 163, 74, 0.35);
+}
+
+html[data-theme="dark"] .site-footer {
+  color: #94a3b8;
+  border-top-color: rgba(255,255,255,0.06);
+}
+
+@media (max-width: 700px) {
+  .resource-grid {
+    grid-template-columns: 1fr !important;
+  }
+  a.resource-card,
+  .resource-card {
+    min-height: 0;
+  }
+}
+
+
+/* =========================================================
+   FINAL DARK MODE — coursebook cards (definitive colors)
+========================================================= */
+
+/* Neutralize generic purple icon/tag rules on typed cards */
+html[data-theme="dark"] .resource-card--pre-starter .resource-icon,
+html[data-theme="dark"] .resource-card--aef .resource-icon,
+html[data-theme="dark"] .resource-card--worksheets .resource-icon,
+html[data-theme="dark"] .resource-card--pre-starter .card-tag,
+html[data-theme="dark"] .resource-card--aef .card-tag,
+html[data-theme="dark"] .resource-card--worksheets .card-tag,
+html[data-theme="dark"] .resource-card--pre-starter .card-link,
+html[data-theme="dark"] .resource-card--aef .card-link,
+html[data-theme="dark"] .resource-card--worksheets .card-link {
+  /* specificity anchors — values below */
+}
+
+/* —— Pre-starter: TEAL —— */
+html[data-theme="dark"] a.resource-card.resource-card--pre-starter,
+html[data-theme="dark"] .resource-card.resource-card--pre-starter {
+  border: 1.5px solid rgba(45, 212, 191, 0.55) !important;
+  background:
+    linear-gradient(155deg,
+      rgba(13, 148, 136, 0.35) 0%,
+      rgba(15, 40, 45, 0.92) 40%,
+      rgba(10, 16, 28, 0.98) 100%) !important;
+  box-shadow:
+    0 0 0 1px rgba(45, 212, 191, 0.12) inset,
+    0 0 36px rgba(20, 184, 166, 0.18),
+    0 16px 40px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .resource-card--pre-starter::before {
+  content: "" !important;
+  height: 4px !important;
+  background: linear-gradient(90deg, #5eead4, #14b8a6, #0f766e) !important;
+  opacity: 1 !important;
+}
+html[data-theme="dark"] .resource-card--pre-starter .resource-icon {
+  background: linear-gradient(145deg, #0d9488, #115e59) !important;
+  color: #ccfbf1 !important;
+  border: 1px solid rgba(94, 234, 212, 0.35) !important;
+  box-shadow: 0 0 20px rgba(45, 212, 191, 0.35) !important;
+}
+html[data-theme="dark"] .resource-card--pre-starter .card-tag {
+  background: rgba(45, 212, 191, 0.18) !important;
+  color: #5eead4 !important;
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
+}
+html[data-theme="dark"] .resource-card--pre-starter .card-link {
+  background: linear-gradient(180deg, #2dd4bf 0%, #0d9488 100%) !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 0 #115e59, 0 10px 24px rgba(13, 148, 136, 0.4) !important;
+}
+
+/* —— American English File: BLUE —— */
+html[data-theme="dark"] a.resource-card.resource-card--aef,
+html[data-theme="dark"] .resource-card.resource-card--aef {
+  border: 1.5px solid rgba(96, 165, 250, 0.55) !important;
+  background:
+    linear-gradient(155deg,
+      rgba(37, 99, 235, 0.38) 0%,
+      rgba(20, 35, 70, 0.92) 40%,
+      rgba(10, 16, 28, 0.98) 100%) !important;
+  box-shadow:
+    0 0 0 1px rgba(96, 165, 250, 0.12) inset,
+    0 0 36px rgba(59, 130, 246, 0.2),
+    0 16px 40px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .resource-card--aef::before {
+  content: "" !important;
+  height: 4px !important;
+  background: linear-gradient(90deg, #93c5fd, #3b82f6, #1d4ed8) !important;
+  opacity: 1 !important;
+}
+html[data-theme="dark"] .resource-card--aef .resource-icon {
+  background: linear-gradient(145deg, #2563eb, #1e40af) !important;
+  color: #dbeafe !important;
+  border: 1px solid rgba(147, 197, 253, 0.35) !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.35) !important;
+}
+html[data-theme="dark"] .resource-card--aef .card-tag {
+  background: rgba(59, 130, 246, 0.2) !important;
+  color: #93c5fd !important;
+  border: 1px solid rgba(96, 165, 250, 0.28) !important;
+}
+html[data-theme="dark"] .resource-card--aef .card-link {
+  background: linear-gradient(180deg, #60a5fa 0%, #1d4ed8 100%) !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 0 #1e3a8a, 0 10px 24px rgba(29, 78, 216, 0.4) !important;
+}
+
+/* Generic purple fallback must not win on typed cards — explicit reset of global dark tag */
+html[data-theme="dark"] .resource-card--pre-starter span.card-tag,
+html[data-theme="dark"] .resource-card--aef span.card-tag {
+  background-image: none !important;
+}
+
+
+/* =========================================================
+   FINAL LIGHT MODE — coursebook cards (match dark themes)
+========================================================= */
+
+/* —— Pre-starter: TEAL —— */
+a.resource-card.resource-card--pre-starter,
+.resource-card.resource-card--pre-starter {
+  border: 1.5px solid rgba(20, 184, 166, 0.4) !important;
+  background:
+    linear-gradient(155deg,
+      rgba(204, 251, 241, 0.95) 0%,
+      rgba(240, 253, 250, 0.98) 45%,
+      #ffffff 100%) !important;
+  box-shadow:
+    0 0 0 1px rgba(20, 184, 166, 0.08) inset,
+    0 12px 32px rgba(20, 184, 166, 0.12) !important;
+}
+.resource-card--pre-starter::before {
+  content: "" !important;
+  height: 4px !important;
+  background: linear-gradient(90deg, #5eead4, #14b8a6, #0d9488) !important;
+  opacity: 1 !important;
+}
+.resource-card--pre-starter .resource-icon {
+  background: linear-gradient(145deg, #ccfbf1, #5eead4) !important;
+  color: #0f766e !important;
+  border: 1px solid rgba(45, 212, 191, 0.4) !important;
+  box-shadow: 0 8px 18px rgba(20, 184, 166, 0.2) !important;
+}
+.resource-card--pre-starter .card-tag {
+  background: rgba(20, 184, 166, 0.14) !important;
+  color: #0f766e !important;
+  border: 1px solid rgba(20, 184, 166, 0.2) !important;
+}
+.resource-card--pre-starter .card-link {
+  background: linear-gradient(180deg, #2dd4bf 0%, #0d9488 100%) !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 0 #0f766e, 0 10px 22px rgba(13, 148, 136, 0.3) !important;
+}
+a.resource-card--pre-starter:hover,
+.resource-card--pre-starter:hover {
+  border-color: #14b8a6 !important;
+  box-shadow: 0 18px 40px rgba(20, 184, 166, 0.2) !important;
+}
+
+/* —— American English File: BLUE —— */
+a.resource-card.resource-card--aef,
+.resource-card.resource-card--aef {
+  border: 1.5px solid rgba(59, 130, 246, 0.4) !important;
+  background:
+    linear-gradient(155deg,
+      rgba(219, 234, 254, 0.95) 0%,
+      rgba(239, 246, 255, 0.98) 45%,
+      #ffffff 100%) !important;
+  box-shadow:
+    0 0 0 1px rgba(59, 130, 246, 0.08) inset,
+    0 12px 32px rgba(59, 130, 246, 0.12) !important;
+}
+.resource-card--aef::before {
+  content: "" !important;
+  height: 4px !important;
+  background: linear-gradient(90deg, #93c5fd, #3b82f6, #2563eb) !important;
+  opacity: 1 !important;
+}
+.resource-card--aef .resource-icon {
+  background: linear-gradient(145deg, #dbeafe, #93c5fd) !important;
+  color: #1d4ed8 !important;
+  border: 1px solid rgba(147, 197, 253, 0.45) !important;
+  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.2) !important;
+}
+.resource-card--aef .card-tag {
+  background: rgba(59, 130, 246, 0.12) !important;
+  color: #1d4ed8 !important;
+  border: 1px solid rgba(59, 130, 246, 0.2) !important;
+}
+.resource-card--aef .card-link {
+  background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%) !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 0 #1e40af, 0 10px 22px rgba(37, 99, 235, 0.3) !important;
+}
+a.resource-card--aef:hover,
+.resource-card--aef:hover {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 18px 40px rgba(59, 130, 246, 0.2) !important;
+}
+
+
+/* =========================================================
+   HUB-STYLE resource cards (match main page)
+========================================================= */
+
+.resource-grid--hub {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 360px)) !important;
+  gap: 28px !important;
+  justify-content: center !important;
+  width: min(calc(100% - 48px), 800px) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+a.resource-card.resource-card--hub,
+.resource-card.resource-card--hub {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  min-height: 320px !important;
+  padding: 28px 24px 26px !important;
+  border-radius: 24px !important;
+  gap: 0 !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  position: relative !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease !important;
+}
+
+.resource-card--hub > * {
+  position: relative;
+  z-index: 2;
+}
+
+.resource-card--hub::after {
+  content: "";
+  position: absolute;
+  top: -35%;
+  left: -15%;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.55) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.65;
+}
+
+.resource-card--hub .resource-icon {
+  flex: 0 0 auto !important;
+  width: 64px !important;
+  height: 64px !important;
+  margin: 0 auto 16px !important;
+  border-radius: 18px !important;
+  font-size: 28px !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.resource-card--hub h3 {
+  margin: 0 0 10px !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: #1e1b4b !important;
+}
+
+.resource-card--hub .card-rule {
+  display: block !important;
+  width: 40px !important;
+  height: 3px !important;
+  border-radius: 999px !important;
+  margin: 0 auto 14px !important;
+}
+
+.resource-card--hub p {
+  margin: 0 0 14px !important;
+  font-size: 0.9rem !important;
+  line-height: 1.5 !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  max-width: 280px !important;
+}
+
+.resource-card--hub .card-tag {
+  margin: 0 auto 18px !important;
+  align-self: center !important;
+}
+
+.resource-card--hub .card-link {
+  margin-top: auto !important;
+  align-self: center !important;
+  min-width: 160px !important;
+  justify-content: center !important;
+  padding: 12px 22px !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  letter-spacing: 0.04em !important;
+}
+
+.resource-card--hub:hover {
+  transform: translateY(-7px) scale(1.02) !important;
+}
+
+/* Light: Pre-starter teal */
+.resource-card--hub.resource-card--pre-starter {
+  border-color: rgba(20, 184, 166, 0.4) !important;
+  background: linear-gradient(160deg, rgba(204, 251, 241, 0.95) 0%, rgba(240, 253, 250, 0.9) 45%, #fff 100%) !important;
+  box-shadow: 0 14px 36px rgba(20, 184, 166, 0.14) !important;
+}
+.resource-card--hub.resource-card--pre-starter::before {
+  background: linear-gradient(90deg, #5eead4, #14b8a6, #0d9488) !important;
+}
+.resource-card--hub.resource-card--pre-starter .resource-icon {
+  background: linear-gradient(145deg, #ccfbf1, #5eead4) !important;
+  color: #0f766e !important;
+  box-shadow: 0 8px 20px rgba(20, 184, 166, 0.25) !important;
+}
+.resource-card--hub.resource-card--pre-starter .card-rule {
+  background: #14b8a6 !important;
+}
+.resource-card--hub.resource-card--pre-starter .card-tag {
+  background: rgba(20, 184, 166, 0.14) !important;
+  color: #0f766e !important;
+}
+.resource-card--hub.resource-card--pre-starter .card-link {
+  background: linear-gradient(180deg, #2dd4bf, #0d9488) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 0 #0f766e, 0 10px 22px rgba(13, 148, 136, 0.32) !important;
+}
+
+/* Light: AEF blue */
+.resource-card--hub.resource-card--aef {
+  border-color: rgba(59, 130, 246, 0.4) !important;
+  background: linear-gradient(160deg, rgba(219, 234, 254, 0.95) 0%, rgba(239, 246, 255, 0.9) 45%, #fff 100%) !important;
+  box-shadow: 0 14px 36px rgba(59, 130, 246, 0.14) !important;
+}
+.resource-card--hub.resource-card--aef::before {
+  background: linear-gradient(90deg, #93c5fd, #3b82f6, #2563eb) !important;
+}
+.resource-card--hub.resource-card--aef .resource-icon {
+  background: linear-gradient(145deg, #dbeafe, #93c5fd) !important;
+  color: #1d4ed8 !important;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25) !important;
+}
+.resource-card--hub.resource-card--aef .card-rule {
+  background: #3b82f6 !important;
+}
+.resource-card--hub.resource-card--aef .card-tag {
+  background: rgba(59, 130, 246, 0.12) !important;
+  color: #1d4ed8 !important;
+}
+.resource-card--hub.resource-card--aef .card-link {
+  background: linear-gradient(180deg, #60a5fa, #2563eb) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 0 #1e40af, 0 10px 22px rgba(37, 99, 235, 0.32) !important;
+}
+
+/* Dark hub cards */
+html[data-theme="dark"] .resource-card--hub.resource-card--pre-starter {
+  border-color: rgba(45, 212, 191, 0.5) !important;
+  background: linear-gradient(160deg, rgba(13, 148, 136, 0.4) 0%, rgba(15, 40, 45, 0.92) 45%, rgba(10, 16, 28, 0.98) 100%) !important;
+  box-shadow: 0 0 36px rgba(20, 184, 166, 0.18), 0 16px 40px rgba(0,0,0,0.5) !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--pre-starter h3 {
+  color: #f0fdfa !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--pre-starter p {
+  color: #99f6e4 !important;
+  opacity: 0.85;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--pre-starter .resource-icon {
+  background: linear-gradient(145deg, #0d9488, #115e59) !important;
+  color: #ccfbf1 !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--pre-starter .card-tag {
+  background: rgba(45, 212, 191, 0.18) !important;
+  color: #5eead4 !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--pre-starter .card-link {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #2dd4bf, #0d9488) !important;
+}
+
+html[data-theme="dark"] .resource-card--hub.resource-card--aef {
+  border-color: rgba(96, 165, 250, 0.5) !important;
+  background: linear-gradient(160deg, rgba(37, 99, 235, 0.4) 0%, rgba(20, 35, 70, 0.92) 45%, rgba(10, 16, 28, 0.98) 100%) !important;
+  box-shadow: 0 0 36px rgba(59, 130, 246, 0.2), 0 16px 40px rgba(0,0,0,0.5) !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--aef h3 {
+  color: #eff6ff !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--aef p {
+  color: #bfdbfe !important;
+  opacity: 0.85;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--aef .resource-icon {
+  background: linear-gradient(145deg, #2563eb, #1e40af) !important;
+  color: #dbeafe !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--aef .card-tag {
+  background: rgba(59, 130, 246, 0.2) !important;
+  color: #93c5fd !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--aef .card-link {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #60a5fa, #1d4ed8) !important;
+}
+
+html[data-theme="dark"] .resource-card--hub::after {
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  opacity: 0.5;
+}
+
+@media (max-width: 700px) {
+  .resource-grid--hub {
+    grid-template-columns: 1fr !important;
+    max-width: 360px !important;
+  }
+  a.resource-card.resource-card--hub {
+    min-height: 0 !important;
   }
 }

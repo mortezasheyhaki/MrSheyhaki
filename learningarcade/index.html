@@ -18,6 +18,8 @@
     href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
     rel="stylesheet"
   >
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="theme.css">
 
   <style>
 
@@ -34,6 +36,8 @@
     html,
     body {
       height: 100%;
+      max-height: 100dvh;
+      overflow: hidden;
     }
 
     body {
@@ -47,8 +51,10 @@
 
       background: var(--la-bg, #07080f);
       color: var(--la-text, #f4f6fb);
-      min-height: 100dvh;
-      overflow-x: hidden;
+      height: 100dvh;
+      max-height: 100dvh;
+      min-height: 0;
+      overflow: hidden;
       transition: background-color 0.25s ease, color 0.25s ease;
     }
 
@@ -91,13 +97,17 @@
     .arcade-bg {
       position: relative;
 
+      height: 100dvh;
       min-height: 100dvh;
+      max-height: 100dvh;
 
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
 
-      padding: 28px 16px 56px;
+      padding: 72px 16px 56px;
+      box-sizing: border-box;
 
       overflow: hidden;
 
@@ -212,7 +222,7 @@
 
       object-fit: contain;
 
-      opacity: 0.42;
+      opacity: 0.55;
 
       pointer-events: none;
 
@@ -225,7 +235,16 @@
         );
 
       animation:
-        float-y 6s ease-in-out infinite;
+        float-y 5.5s ease-in-out infinite;
+      font-size: 2.2rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    .fi:nth-child(even) {
+      animation-name: float-y-alt;
     }
 
 
@@ -306,19 +325,22 @@
     }
 
 
-    /* FLOATING ANIMATION */
-
+    /* FLOATING ANIMATION — bounce up/down */
     @keyframes float-y {
-
-      0%,
-      100% {
-        transform: translateY(0);
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
       }
-
       50% {
-        transform: translateY(-14px);
+        transform: translateY(-18px) rotate(4deg);
       }
-
+    }
+    @keyframes float-y-alt {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-14px) rotate(-5deg);
+      }
     }
 
 
@@ -453,6 +475,12 @@
     }
 
 
+    .arcade-header {
+      flex: 0 0 auto;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
     .arcade-title-flicker {
 
       font-family:
@@ -461,7 +489,7 @@
         monospace;
 
       font-size:
-        clamp(1.15rem, 4.2vw, 2.1rem);
+        clamp(0.95rem, 3.2vw, 1.6rem);
 
       font-weight: 400;
 
@@ -534,13 +562,18 @@
       display: grid;
 
       grid-template-columns:
-        repeat(auto-fit, minmax(320px, 1fr));
+        repeat(2, minmax(0, 440px));
 
-      gap: 32px;
+      gap: 36px;
 
       width: 100%;
 
-      max-width: 980px;
+      max-width: 960px;
+
+      margin: 0 auto;
+      justify-content: center;
+      align-items: stretch;
+      flex: 0 0 auto;
     }
 
 
@@ -548,11 +581,12 @@
 
       position: relative;
 
-      border-radius: 24px;
+      border-radius: 28px;
 
-      padding: 40px 32px 36px;
+      padding: 28px 28px 28px;
 
-      min-height: 420px;
+      min-height: 0;
+      max-height: none;
 
       text-decoration: none;
 
@@ -702,12 +736,13 @@
 
     .card-image {
 
-      width: 200px;
-      height: 200px;
+      width: min(100%, 320px);
+      height: clamp(220px, 30vh, 300px);
+      aspect-ratio: 1 / 1;
 
-      border-radius: 20px;
+      border-radius: 22px;
 
-      margin-bottom: 24px;
+      margin-bottom: 20px;
 
       display: flex;
 
@@ -719,7 +754,7 @@
 
       border: 2px solid rgba(255, 255, 255, 0.12);
 
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.12);
 
       flex-shrink: 0;
     }
@@ -745,8 +780,27 @@
       height: 100%;
 
       object-fit: cover;
+      object-position: center top;
 
-      border-radius: 18px;
+      border-radius: 20px;
+      display: block;
+    }
+
+    /* Kids art is taller — show full scene without hard crop */
+    .choice-card.kids .card-image {
+      background: linear-gradient(180deg, #fff7ed 0%, #ffedd5 100%);
+    }
+    .choice-card.kids .card-image img {
+      object-fit: contain;
+      object-position: center center;
+      background: transparent;
+    }
+    .choice-card.adults .card-image {
+      background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+    }
+    .choice-card.adults .card-image img {
+      object-fit: contain;
+      object-position: center center;
     }
 
 
@@ -950,7 +1004,8 @@
     .music-toggle {
       position: fixed;
       bottom: 20px;
-      right: 20px;
+      left: 20px;
+      right: auto;
       z-index: 50;
       display: inline-flex;
       align-items: center;
@@ -996,7 +1051,8 @@
     @media (max-width: 700px) {
       .music-toggle {
         bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px)));
-        right: max(12px, env(safe-area-inset-right, 0px));
+        left: max(12px, env(safe-area-inset-left, 0px));
+        right: auto;
         width: 52px;
         height: 52px;
         min-width: 52px;
@@ -1042,37 +1098,48 @@
     @media (max-width: 700px) {
 
       .choice-grid {
-
         grid-template-columns: 1fr;
-
-        max-width: 400px;
+        max-width: min(400px, calc(100vw - 28px));
+        gap: 18px;
       }
-
-
-      .choice-card {
-
-        min-height: 380px;
-
-        padding: 32px 24px 28px;
-      }
-
-
-      .card-image {
-
-        width: 160px;
-        height: 160px;
-      }
-
-
-      .card-title {
-
-        font-size: 1.6rem;
-      }
-
 
       .arcade-bg {
+        padding: 64px 12px 80px;
+        justify-content: center;
+      }
 
-        padding-top: 20px;
+      .arcade-header {
+        margin-bottom: 12px;
+      }
+
+      .arcade-title-flicker {
+        font-size: clamp(0.85rem, 4vw, 1.15rem);
+        margin-bottom: 10px;
+      }
+
+      .choice-card {
+        padding: 18px 16px 16px;
+        max-height: none;
+      }
+
+      .card-image {
+        width: min(100%, 260px) !important;
+        height: clamp(160px, 26vh, 240px) !important;
+        aspect-ratio: 1 / 1;
+      }
+
+      .card-title {
+        font-size: 1.35rem;
+      }
+
+      .tagline-row {
+        font-size: 0.68rem;
+        padding: 6px 12px;
+      }
+
+      .arcade-footer {
+        margin-top: 12px;
+        font-size: 0.8rem;
       }
 
     }
@@ -1085,6 +1152,37 @@
       pointer-events: none;
       -webkit-user-drag: none;
     }
+
+    /* No-scroll lock + vertical center content */
+    html, body {
+      overflow: hidden !important;
+      height: 100% !important;
+      max-height: 100dvh !important;
+    }
+    .arcade-bg {
+      height: 100dvh !important;
+      max-height: 100dvh !important;
+      overflow: hidden !important;
+      justify-content: center !important;
+    }
+    .arcade-footer {
+      margin-top: 16px;
+      flex: 0 0 auto;
+    }
+    /* Hide broken float icons boxes if images missing */
+    .float-icons img {
+      background: transparent;
+    }
+    .card-image.no-img {
+      display: none;
+    }
+    .choice-card {
+      justify-content: center;
+    }
+    .float-icons img[src]:not([src=""]) {
+      /* keep */
+    }
+
     .card-emoji {
       display: grid;
       place-items: center;
@@ -1468,7 +1566,8 @@
     .music-toggle {
       position: fixed !important;
       bottom: max(24px, env(safe-area-inset-bottom, 0px)) !important;
-      right: max(16px, env(safe-area-inset-right, 0px)) !important;
+      left: max(16px, env(safe-area-inset-left, 0px)) !important;
+      right: auto !important;
       width: 56px !important;
       height: 56px !important;
       min-width: 56px !important;
@@ -1542,7 +1641,8 @@
     @media (max-width: 700px) {
       .music-toggle {
         bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
-        right: max(12px, env(safe-area-inset-right, 0px)) !important;
+        left: max(12px, env(safe-area-inset-left, 0px)) !important;
+        right: auto !important;
         width: 52px !important;
         height: 52px !important;
         min-width: 52px !important;
@@ -1558,16 +1658,13 @@
   <!-- =================================
        FLOATING ARCADE-STYLE HEADER
   ================================== -->
-  <a href="./profile/" class="profile-fab" aria-label="My Profile" title="My Profile">👤</a>
 <header class="arcade-header-bar">
   <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
       <a href="../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
       <a href="./" class="nav-link active" aria-current="page" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
-      <a href="../../topics/" class="nav-link" aria-label="Topics" data-icon="🎯"><span class="nav-ico" aria-hidden="true">🎯</span><span class="nav-text">Topics</span></a>
       <a href="../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-      <a href="./leaderboard/" class="nav-link" aria-label="Leaderboard" data-icon="🏆"><span class="nav-ico" aria-hidden="true">🏆</span><span class="nav-text">Leaderboard</span></a>
-      <a href="./profile/" class="nav-link nav-profile" aria-label="My Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
       <a href="../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+      <a href="./profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
     </nav>
 </header>
 
@@ -1581,18 +1678,18 @@
     ====================================================== -->
 
         <div class="float-icons" aria-hidden="true">
-      <!-- LEFT SIDE -->
-      <img class="fi fi-left fi-1" src="assets/icons/trophy.png" alt="" width="68" height="68">
-      <img class="fi fi-left fi-2" src="assets/icons/rocket.png" alt="" width="50" height="50">
-      <img class="fi fi-left fi-3" src="assets/icons/star.png" alt="" width="64" height="64">
-      <img class="fi fi-left fi-4" src="assets/icons/controller.png" alt="" width="54" height="54">
-      <img class="fi fi-left fi-5" src="assets/icons/books.png" alt="" width="48" height="48">
+      <!-- LEFT SIDE — bouncing icons -->
+      <img class="fi fi-left fi-1" src="https://cdn.imgurl.ir/uploads/f232610_trophy.png" alt="" width="68" height="68">
+      <img class="fi fi-left fi-2" src="https://cdn.imgurl.ir/uploads/n156413_rocket.png" alt="" width="50" height="50">
+      <img class="fi fi-left fi-3" src="https://cdn.imgurl.ir/uploads/f7198_star.png" alt="" width="64" height="64">
+      <img class="fi fi-left fi-4" src="https://cdn.imgurl.ir/uploads/j55307_controller.png" alt="" width="54" height="54">
+      <img class="fi fi-left fi-5" src="https://cdn.imgurl.ir/uploads/q389948_books.png" alt="" width="48" height="48">
       <!-- RIGHT SIDE -->
-      <img class="fi fi-right fi-1" src="assets/icons/arrow.png" alt="" width="68" height="68">
-      <img class="fi fi-right fi-2" src="assets/icons/heart.png" alt="" width="50" height="50">
-      <img class="fi fi-right fi-3" src="assets/icons/level-up.png" alt="" width="64" height="64">
-      <img class="fi fi-right fi-4" src="assets/icons/headphone.png" alt="" width="54" height="54">
-      <img class="fi fi-right fi-5" src="assets/icons/medal.png" alt="" width="48" height="48">
+      <img class="fi fi-right fi-1" src="https://cdn.imgurl.ir/uploads/u099192_arrow.png" alt="" width="68" height="68">
+      <img class="fi fi-right fi-2" src="https://cdn.imgurl.ir/uploads/r628606_heart.png" alt="" width="50" height="50">
+      <img class="fi fi-right fi-3" src="https://cdn.imgurl.ir/uploads/j52846_level-up.png" alt="" width="64" height="64">
+      <img class="fi fi-right fi-4" src="https://cdn.imgurl.ir/uploads/a81537_headphone.png" alt="" width="54" height="54">
+      <img class="fi fi-right fi-5" src="https://cdn.imgurl.ir/uploads/m08707_medal.png" alt="" width="48" height="48">
     </div>
 
 <!-- =====================================================
@@ -1643,7 +1740,7 @@
         href="adult/"
       >
 
-        <div class="card-image"><img src="assets/adults-card.jpg" alt="Adults" width="720" height="480" loading="lazy"></div>
+        <div class="card-image"><img src="https://cdn.imgurl.ir/uploads/f523500_ChatGPT_Image_Aug_22_2026_03_21_43_AM.png" onerror="this.parentElement.classList.add('no-img')" alt="Adults" width="720" height="480" loading="lazy"></div>
 
         <h2 class="card-title">
           Adults
@@ -1673,7 +1770,7 @@
         href="kids/select-teacher/"
       >
 
-        <div class="card-image"><img src="assets/kids-card.jpg" alt="Kids and Teens" width="720" height="788" loading="lazy"></div>
+        <div class="card-image"><img src="https://cdn.imgurl.ir/uploads/m876285_ChatGPT_Image_Aug_22_2026_03_29_37_AM.png" onerror="this.parentElement.classList.add('no-img')" alt="Kids and Teens" width="720" height="788" loading="lazy"></div>
 
         <h2 class="card-title">
 
@@ -1954,6 +2051,11 @@
 
   <script src="theme.js"></script>
 <!-- swipe-nav.js optional -->
+
+  <!-- Auth system (login / register) -->
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
+  <script src="auth-system/auth.js"></script>
+  <script src="auth-system/add-login-button.js"></script>
 
 </body>
 </html>

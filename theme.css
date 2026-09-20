@@ -5,23 +5,34 @@
    persisted across every page and game.
 ========================================================= */
 :root{
-  --site-bg:#ffffff;
+  /* Neutral base + soft atmosphere */
+  --site-bg:#f0f4ff;
   --site-surface:#ffffff;
   --site-surface-2:#f7f8fb;
   --site-text:#202636;
   --site-muted:#687184;
   --site-border:#e7e9ef;
   --site-shadow:rgba(32,38,54,.08);
+  --site-grid:rgba(15,23,42,0.045);
+  --site-glow-a:rgba(124,92,255,0.14);
+  --site-glow-b:rgba(56,189,248,0.11);
+  --site-glow-c:rgba(244,63,94,0.06);
+  --site-grid-size:48px;
 }
 html[data-theme="dark"]{
   color-scheme:dark;
-  --site-bg:#0f1117;
+  --site-bg:#070b16;
   --site-surface:#181b24;
   --site-surface-2:#11141b;
   --site-text:#f4f6fb;
   --site-muted:#aeb6c8;
   --site-border:#2b3040;
   --site-shadow:rgba(0,0,0,.28);
+  --site-grid:rgba(148,163,184,0.055);
+  --site-glow-a:rgba(124,92,255,0.22);
+  --site-glow-b:rgba(56,189,248,0.12);
+  --site-glow-c:rgba(236,72,153,0.10);
+  --site-grid-size:48px;
 }
 
 /* Wall-switch + LED edge theme tokens */
@@ -46,7 +57,58 @@ html[data-theme="dark"] {
   --switch-handle-shadow: 0 -3px 6px rgba(0, 0, 0, 0.5);
 }
 
-body{background:var(--site-bg)!important;color:var(--site-text)!important;transition:background-color .25s ease,color .25s ease}
+/* Shared site atmosphere — light & dark */
+body{
+  color:var(--site-text)!important;
+  background-color:var(--site-bg)!important;
+  background-image:
+    radial-gradient(ellipse 85% 55% at 8% -12%, var(--site-glow-a), transparent 58%),
+    radial-gradient(ellipse 70% 45% at 100% 105%, var(--site-glow-b), transparent 52%),
+    radial-gradient(ellipse 50% 35% at 50% 50%, var(--site-glow-c), transparent 60%),
+    linear-gradient(var(--site-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--site-grid) 1px, transparent 1px)!important;
+  background-size:
+    auto,
+    auto,
+    auto,
+    var(--site-grid-size) var(--site-grid-size),
+    var(--site-grid-size) var(--site-grid-size)!important;
+  background-attachment: fixed, fixed, fixed, fixed, fixed;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat;
+  transition:background-color .28s ease,color .28s ease;
+}
+/* Calmer pages: slightly softer glows */
+body.page-calm{
+  --site-glow-a:rgba(124,92,255,0.08);
+  --site-glow-b:rgba(56,189,248,0.06);
+  --site-glow-c:transparent;
+}
+html[data-theme="dark"] body.page-calm{
+  --site-glow-a:rgba(124,92,255,0.14);
+  --site-glow-b:rgba(56,189,248,0.08);
+  --site-glow-c:transparent;
+}
+/* Arcade intensity */
+body.page-arcade,
+body.home-page{
+  --site-glow-a:rgba(124,92,255,0.16);
+  --site-glow-b:rgba(56,189,248,0.12);
+  --site-glow-c:rgba(244,63,94,0.07);
+}
+html[data-theme="dark"] body.page-arcade,
+html[data-theme="dark"] body.home-page{
+  --site-glow-a:rgba(124,92,255,0.26);
+  --site-glow-b:rgba(56,189,248,0.14);
+  --site-glow-c:rgba(236,72,153,0.12);
+}
+/* Games: keep playfield clean */
+body.game-page,
+body.cabinet-body,
+body.wh-body{
+  background-image:none!important;
+  background-color:var(--site-bg)!important;
+  background-attachment:scroll!important;
+}
 .theme-toggle{
   display:inline-flex!important;align-items:center;justify-content:center;gap:7px;
   min-height:38px;padding:0 12px;border:1px solid var(--site-border);
@@ -846,7 +908,7 @@ header .theme-toggle:not(.site-theme-fab),
   display: none !important;
 }
 
-/* Wall switch FAB */
+/* Wall switch FAB — bottom-right corner */
 .site-theme-fab.wall-switch,
 button.site-theme-fab.wall-switch,
 [data-theme-toggle].site-theme-fab.wall-switch {
@@ -854,9 +916,9 @@ button.site-theme-fab.wall-switch,
   align-items: center !important;
   justify-content: center !important;
   position: fixed !important;
-  top: max(12px, env(safe-area-inset-top, 0px)) !important;
+  top: auto !important;
   right: max(12px, env(safe-area-inset-right, 0px)) !important;
-  bottom: auto !important;
+  bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
   left: auto !important;
   z-index: 10060 !important;
   width: 52px !important;
@@ -958,8 +1020,10 @@ html[data-theme="dark"] .site-theme-fab.wall-switch .switch-handle {
     height: 70px !important;
     min-width: 46px !important;
     min-height: 70px !important;
-    top: max(10px, env(safe-area-inset-top, 0px)) !important;
+    top: auto !important;
     right: max(10px, env(safe-area-inset-right, 0px)) !important;
+    /* Sit above bottom nav bar */
+    bottom: max(72px, calc(env(safe-area-inset-bottom, 0px) + 64px)) !important;
   }
   .site-theme-fab.wall-switch .switch-track {
     width: 24px;

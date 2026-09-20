@@ -115,15 +115,36 @@
       document.body.appendChild(buildWallSwitch());
     }
 
+    // Force bottom-right placement (in case CSS not loaded yet)
+    (function (el) {
+      if (!el) el = document.querySelector("[data-theme-toggle]");
+      if (!el) return;
+      el.style.position = "fixed";
+      el.style.top = "auto";
+      el.style.left = "auto";
+      el.style.right = "max(12px, env(safe-area-inset-right, 0px))";
+      el.style.bottom = "max(16px, env(safe-area-inset-bottom, 0px))";
+      el.style.zIndex = "10060";
+      el.style.display = "flex";
+      el.removeAttribute("hidden");
+    })(document.querySelector("[data-theme-toggle]"));
+
     ensureLedStrips();
 
     // Profile icon — only inside arcade-nav (never as a floating FAB on game pages)
     if (nav && !nav.querySelector(".nav-profile")) {
       var profile = document.createElement("a");
-      profile.href = "learningarcade/profile/";
+      // Smart path based on current location
+      var path = (window.location.pathname || "").replace(/\\/g, "/");
+      if (/\/learningarcade(\/|$)/i.test(path)) {
+        profile.href = path.match(/\/learningarcade\/?$/i) ? "profile/" : "../profile/";
+      } else {
+        profile.href = "learningarcade/profile/";
+      }
       profile.className = "nav-link nav-profile";
-      profile.setAttribute("aria-label", "My Profile");
+      profile.setAttribute("aria-label", "Profile");
       profile.title = "My Profile";
+      profile.setAttribute("data-icon", "👤");
       profile.innerHTML =
         '<span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span>';
       nav.appendChild(profile);
