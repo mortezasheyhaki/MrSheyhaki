@@ -171,18 +171,17 @@
       };
     }
 
-    // Update any existing Profile links
-    var profileLinks = document.querySelectorAll('a.nav-profile, a.profile-fab, a[href*="profile"]');
+    // Profile links always open the profile page (guests + logged-in).
+    // Login stays only on the floating Login button.
+    var profileLinks = document.querySelectorAll('a.nav-profile, a.profile-fab, a[href*="profile/"]');
     profileLinks.forEach(function (link) {
+      var href = link.getAttribute("href") || "";
+      if (/login\.html/i.test(href)) return;
+      link.setAttribute("href", profileHref);
       if (user) {
-        link.setAttribute("href", profileHref);
         link.setAttribute("title", "My Profile (" + (user.displayName || user.username) + ")");
       } else {
-        // Guests go to login
-        if (link.classList.contains("nav-profile") || link.classList.contains("profile-fab")) {
-          link.setAttribute("href", loginHref);
-          link.setAttribute("title", "Login / Register");
-        }
+        link.setAttribute("title", "My Profile");
       }
     });
   }
