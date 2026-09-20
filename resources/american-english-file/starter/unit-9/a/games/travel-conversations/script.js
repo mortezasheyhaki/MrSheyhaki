@@ -237,6 +237,7 @@
     listenDone = true;
     advancing = false;
     phase = "doing";
+    if (window.LAFinish) LAFinish.startTimer();
     render();
   }
 
@@ -299,6 +300,7 @@
     const conv = CONVS[convIndex];
     const ok = opt === conv.doing.correct;
     if (ok) scoreDoing += 1;
+    if (window.LASfx) { if (ok) LASfx.correct(); else LASfx.wrong(); }
     // show feedback
     app.querySelectorAll(".tc-choice").forEach((btn) => {
       btn.disabled = true;
@@ -334,6 +336,7 @@
       if (ok) scoreDetails += 1;
       else allOk = false;
     });
+    if (window.LASfx) { if (allOk) LASfx.correct(); else LASfx.wrong(); }
     // lock UI
     app.querySelectorAll(".tc-opt button").forEach((btn) => {
       btn.disabled = true;
@@ -466,9 +469,25 @@
     }
 
     if (phase === "done") {
+      if (window.LASfx) LASfx.win();
       const stars = saveStars();
       const total = totalDoing + totalDetails;
       const got = scoreDoing + scoreDetails;
+      if (window.LAFinish) {
+        var timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: got,
+          total: Math.max(total, 1),
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: startGame,
+          onModes: function () { phase = "menu"; render(); },
+          backHref: "../",
+          save: false
+        });
+        // Keep a minimal fallback shell in case overlay is closed
+      }
       app.innerHTML = `
         <header class="tc-top">
           <a class="tc-back" href="../" aria-label="Back">←</a>

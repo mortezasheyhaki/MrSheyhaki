@@ -287,6 +287,7 @@
     modeLabel.textContent = mode === "chips" ? "Word chips" : "Write it";
     chipsPanel.classList.toggle("hidden", mode !== "chips");
     writePanel.classList.toggle("hidden", mode !== "write");
+    if (window.LAFinish) LAFinish.startTimer();
     loadStep();
   }
 
@@ -395,6 +396,7 @@
     locked = true;
     score++;
     scoreText.textContent = String(score);
+    if (window.LASfx) LASfx.correct();
     const shown =
       step.kind === "question"
         ? step.sentence + "?"
@@ -427,6 +429,7 @@
       answerSlots.className = "tray bad shake";
       chipsFeedback.textContent = "Try again";
       chipsFeedback.className = "feedback bad";
+      if (window.LASfx) LASfx.wrong();
       setTimeout(function () {
         answerSlots.classList.remove("shake");
       }, 300);
@@ -442,6 +445,7 @@
       answerInput.className = "answer-input bad shake";
       writeFeedback.textContent = "Try again";
       writeFeedback.className = "feedback bad";
+      if (window.LASfx) LASfx.wrong();
       setTimeout(function () {
         answerInput.classList.remove("shake");
       }, 300);
@@ -455,6 +459,28 @@
       return;
     }
     if (setIndex + 1 >= order.length) {
+      if (window.LASfx) LASfx.win();
+      if (window.LAFinish) {
+        var timeMs = LAFinish.stopTimer();
+        var totalStepsCount = order.length * (SETS[0] ? SETS[0].steps.length : 1);
+        // Prefer actual total steps if available
+        try { totalStepsCount = order.reduce(function(s,i){ return s + (SETS[i].steps ? SETS[i].steps.length : 1); }, 0); } catch(e) {}
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: Math.max(totalStepsCount, 1),
+          timeMs: timeMs,
+          onAgain: function () { start(mode); },
+          onModes: function () {
+            gameScreen.classList.add("hidden");
+            endOverlay.classList.add("hidden");
+            startScreen.classList.remove("hidden");
+          },
+          backHref: "../",
+          save: true
+        });
+        return;
+      }
       endOverlay.classList.remove("hidden");
       saveStars();
       $("endTitle").textContent = "Done!";

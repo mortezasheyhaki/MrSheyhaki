@@ -6,6 +6,8 @@
 (function () {
   "use strict";
 
+  const GAME_ID = "starter-9a-listen-and-write";
+
   // -------------------------------------------------------
   // DATA – Unit 9A (picture descriptions)
   // -------------------------------------------------------
@@ -266,17 +268,34 @@
       state.locked = true;
       hideFeedback();
       renderBoxes();
+      if (window.LASfx) LASfx.correct();
 
       if (allBoxesCorrect()) {
-        try { __saveLAStarsFromLaw(100); } catch (e) {}
-        setTimeout(() => {
-          successOverlay.classList.add("is-visible");
-        }, 350);
+        if (window.LASfx) LASfx.win();
+        if (window.LAFinish) {
+          var timeMs = LAFinish.stopTimer();
+          LAFinish.show({
+            gameId: GAME_ID,
+            score: boxStates.length,
+            total: boxStates.length,
+            timeMs: timeMs,
+            onAgain: function () { window.location.reload(); },
+            onModes: function () { window.location.href = "../"; },
+            backHref: "../",
+            save: true
+          });
+        } else {
+          try { __saveLAStarsFromLaw(100); } catch (e) {}
+          setTimeout(() => {
+            successOverlay.classList.add("is-visible");
+          }, 350);
+        }
       }
     } else {
       attemptsLeft--;
       updateStats();
       renderBoxes();
+      if (window.LASfx) LASfx.wrong();
 
       if (attemptsLeft <= 0) {
         revealAnswers();
@@ -293,7 +312,22 @@
     try {
       var ok = boxStates.filter(function(b){ return b.correct; }).length;
       var tot = boxStates.length || 1;
-      __saveLAStarsFromLaw(Math.round(ok / tot * 100));
+      if (window.LAFinish) {
+        var timeMs = LAFinish.stopTimer();
+        // Still show the in-page reveal, but also save stars via finish system
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: ok,
+          total: tot,
+          timeMs: timeMs,
+          onAgain: function () { window.location.reload(); },
+          onModes: function () { window.location.href = "../"; },
+          backHref: "../",
+          save: true
+        });
+      } else {
+        __saveLAStarsFromLaw(Math.round(ok / tot * 100));
+      }
     } catch (e) {}
     boxStates.forEach(b => { b.locked = true; });
 
@@ -403,6 +437,7 @@ successContinue.addEventListener("click", () => {
   function init() {
     updateStats();
     renderBoxes();
+    if (window.LAFinish) LAFinish.startTimer();
   }
 
   init();

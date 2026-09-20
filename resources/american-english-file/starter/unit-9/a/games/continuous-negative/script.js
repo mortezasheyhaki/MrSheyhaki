@@ -156,6 +156,7 @@
     modeLabel.textContent = mode === "chips" ? "Word chips" : "Write it";
     chipsPanel.classList.toggle("hidden", mode !== "chips");
     writePanel.classList.toggle("hidden", mode !== "write");
+    if (window.LAFinish) LAFinish.startTimer();
     loadItem();
   }
 
@@ -263,6 +264,7 @@
       locked = true;
       score++;
       scoreText.textContent = String(score);
+      if (window.LASfx) LASfx.correct();
       answerSlots.className = "tray ok";
       chipsFeedback.textContent = item.sentence + ".";
       chipsFeedback.className = "feedback ok";
@@ -273,6 +275,7 @@
       answerSlots.className = "tray bad shake";
       chipsFeedback.textContent = "Try again";
       chipsFeedback.className = "feedback bad";
+      if (window.LASfx) LASfx.wrong();
       setTimeout(function () {
         answerSlots.classList.remove("shake");
       }, 300);
@@ -286,6 +289,7 @@
       locked = true;
       score++;
       scoreText.textContent = String(score);
+      if (window.LASfx) LASfx.correct();
       answerInput.className = "answer-input ok";
       answerInput.disabled = true;
       writeFeedback.textContent = item.sentence + ".";
@@ -297,6 +301,7 @@
       answerInput.className = "answer-input bad shake";
       writeFeedback.textContent = "Try again";
       writeFeedback.className = "feedback bad";
+      if (window.LASfx) LASfx.wrong();
       setTimeout(function () {
         answerInput.classList.remove("shake");
       }, 300);
@@ -305,6 +310,25 @@
 
   function next() {
     if (index + 1 >= order.length) {
+      if (window.LASfx) LASfx.win();
+      if (window.LAFinish) {
+        var timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: Math.max(order.length, 1),
+          timeMs: timeMs,
+          onAgain: function () { start(mode); },
+          onModes: function () {
+            gameScreen.classList.add("hidden");
+            endOverlay.classList.add("hidden");
+            startScreen.classList.remove("hidden");
+          },
+          backHref: "../",
+          save: true
+        });
+        return;
+      }
       endOverlay.classList.remove("hidden");
       $("endTitle").textContent = "Done!";
       $("endMsg").textContent = "You scored " + score + " of " + order.length;

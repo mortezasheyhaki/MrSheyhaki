@@ -298,10 +298,12 @@
     if (isMatch(transcript, line.answers)) {
       repeatFeedback.textContent = "Great! ✓";
       repeatFeedback.className = "feedback ok";
+      if (window.LASfx) LASfx.correct();
       repeatMicBtn.disabled = true;
       repeatNextRow.classList.remove("hidden");
       locked = true;
     } else {
+      if (window.LASfx) LASfx.wrong();
       repeatFeedback.textContent = "Try again — listen once more if you need";
       repeatFeedback.className = "feedback bad";
       // allow retry
@@ -422,10 +424,12 @@
     if (isMatch(transcript, line.answers)) {
       roleFeedback.textContent = "Perfect! ✓";
       roleFeedback.className = "feedback ok";
+      if (window.LASfx) LASfx.correct();
       roleMicBtn.disabled = true;
       roleNextRow.classList.remove("hidden");
       locked = true;
     } else {
+      if (window.LASfx) LASfx.wrong();
       roleFeedback.textContent = "Almost — try again";
       roleFeedback.className = "feedback bad";
       setTimeout(() => {
@@ -485,6 +489,28 @@
   function finishGame() {
     stopAudio();
     stopListening();
+    if (window.LASfx) LASfx.win();
+    if (window.LAFinish) {
+      var timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: 1,
+        total: 1,
+        stars: 3,
+        timeMs: timeMs,
+        onAgain: function () {
+          endOverlay.classList.add("hidden");
+          show(startScreen);
+        },
+        onModes: function () {
+          endOverlay.classList.add("hidden");
+          show(startScreen);
+        },
+        backHref: "../",
+        save: true
+      });
+      return;
+    }
     show(endOverlay);
     endOverlay.classList.remove("hidden");
     if (window.LAStars) {
@@ -497,6 +523,7 @@
 
   // ---------- Events ----------
   document.getElementById("startBtn").addEventListener("click", () => {
+    if (window.LAFinish) LAFinish.startTimer();
     buildFullDialogue();
     show(fullScreen);
     fullContinueRow.classList.add("hidden");

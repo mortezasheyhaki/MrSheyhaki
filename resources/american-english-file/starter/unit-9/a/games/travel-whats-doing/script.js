@@ -204,6 +204,7 @@
     lastGained = 0;
     locked = false;
     phase = "play";
+    if (window.LAFinish) LAFinish.startTimer();
     render();
   }
 
@@ -340,6 +341,7 @@
       if (ok) {
         acceptCorrect();
       } else {
+        if (window.LASfx) LASfx.wrong();
         attempts += 1;
         streak = 0;
         if (hint) {
@@ -381,6 +383,7 @@
   function acceptCorrect() {
     if (locked) return;
     locked = true;
+    if (window.LASfx) LASfx.correct();
     const item = current();
     score += 1;
     streak += 1;
@@ -408,6 +411,7 @@
     if (isMatch(typed, item)) {
       acceptCorrect();
     } else {
+      if (window.LASfx) LASfx.wrong();
       attempts += 1;
       streak = 0;
       input.classList.add("is-bad");
@@ -486,8 +490,23 @@
     }
 
     if (phase === "done") {
+      if (window.LASfx) LASfx.win();
       const stars = saveStars();
       const acc = order.length ? Math.round((score / order.length) * 100) : 0;
+      if (window.LAFinish) {
+        var timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: Math.max(order.length, 1),
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: function () { startGame(mode); },
+          onModes: function () { phase = "menu"; render(); },
+          backHref: "../",
+          save: false
+        });
+      }
       app.innerHTML = `
         <header class="twd-top">
           <a class="twd-back" href="../" aria-label="Back">←</a>

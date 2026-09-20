@@ -86,17 +86,20 @@
   }
 
   function sfxCorrect() {
+    if (window.LASfx) return LASfx.correct();
     sfxTone(523.25, 0.08, "sine", 0.1);
     setTimeout(() => sfxTone(659.25, 0.1, "sine", 0.1), 70);
     setTimeout(() => sfxTone(783.99, 0.16, "sine", 0.12), 140);
   }
 
   function sfxWrong() {
+    if (window.LASfx) return LASfx.wrong();
     sfxTone(220, 0.12, "triangle", 0.1);
     setTimeout(() => sfxTone(165, 0.18, "triangle", 0.1), 90);
   }
 
   function sfxWin() {
+    if (window.LASfx) return LASfx.win();
     const notes = [523.25, 659.25, 783.99, 1046.5];
     notes.forEach((f, i) => setTimeout(() => sfxTone(f, 0.2, "sine", 0.11), i * 120));
   }
@@ -138,6 +141,7 @@
   function startMode(mi) {
     modeIndex = mi;
     modeCorrect = 0;
+    if (window.LAFinish) LAFinish.startTimer();
     startSet(0);
   }
 
@@ -432,6 +436,20 @@
       const stars = saveStars();
       const m = MODES[modeIndex];
       const totalPairs = SETS.reduce((sum, s) => sum + s.length, 0);
+      if (window.LAFinish) {
+        var timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: modeCorrect,
+          total: Math.max(totalPairs, 1),
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: function () { startMode(modeIndex); },
+          onModes: function () { phase = "menu"; render(); },
+          backHref: "../",
+          save: false
+        });
+      }
       app.innerHTML = `
         <header class="mc-topbar">
           <a class="mc-back" href="../" aria-label="Back">←</a>

@@ -145,6 +145,7 @@
     startScreen.classList.add("hidden");
     endOverlay.classList.add("hidden");
     gameScreen.classList.remove("hidden");
+    if (window.LAFinish) LAFinish.startTimer();
     loadItem();
   }
 
@@ -183,8 +184,10 @@
       writeFeedback.className = "feedback ok";
       writeActions.classList.add("hidden");
       writeNextRow.classList.remove("hidden");
+      if (window.LASfx) LASfx.correct();
     } else {
       answerInput.className = "answer-input bad shake";
+      if (window.LASfx) LASfx.wrong();
       writeFeedback.textContent = "Write be + -ing  ·  e.g. is working";
       writeFeedback.className = "feedback bad";
       setTimeout(function () { answerInput.classList.remove("shake"); }, 300);
@@ -193,6 +196,25 @@
 
   function next() {
     if (index + 1 >= order.length) {
+      if (window.LASfx) LASfx.win();
+      if (window.LAFinish) {
+        var timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: Math.max(order.length, 1),
+          timeMs: timeMs,
+          onAgain: start,
+          onModes: function () {
+            gameScreen.classList.add("hidden");
+            endOverlay.classList.add("hidden");
+            startScreen.classList.remove("hidden");
+          },
+          backHref: "../",
+          save: true
+        });
+        return;
+      }
       endOverlay.classList.remove("hidden");
       $("endTitle").textContent = "Done!";
       $("endMsg").textContent = "You scored " + score + " of " + order.length;

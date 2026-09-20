@@ -173,6 +173,7 @@
     attempts = 0;
     locked = false;
     phase = "play";
+    if (window.LAFinish) LAFinish.startTimer();
     buildBank(currentItem());
     render();
   }
@@ -181,6 +182,7 @@
     if (locked || bank[bankIndex].used) return;
     bank[bankIndex].used = true;
     answer.push({ word: bank[bankIndex].word, bankIndex });
+    if (window.LASfx) LASfx.pop();
     renderPlay(false);
   }
 
@@ -275,6 +277,7 @@
     phase = "feedback";
 
     if (ok) {
+      if (window.LASfx) LASfx.correct();
       score += 1;
       streak += 1;
       if (streak > bestStreak) bestStreak = streak;
@@ -290,6 +293,7 @@
         playItemAudio(item, btn);
       }, 280);
     } else {
+      if (window.LASfx) LASfx.wrong();
       attempts += 1;
       streak = 0;
       lastGained = 0;
@@ -387,8 +391,23 @@
     }
 
     if (phase === "done") {
+      if (window.LASfx) LASfx.win();
       const stars = saveStars();
       const acc = order.length ? Math.round((score / order.length) * 100) : 0;
+      if (window.LAFinish) {
+        var timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: Math.max(order.length, 1),
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: startGame,
+          onModes: function () { phase = "menu"; render(); },
+          backHref: "../",
+          save: false
+        });
+      }
       app.innerHTML = `
         <header class="tpc-top">
           <a class="tpc-back" href="../" aria-label="Back">←</a>

@@ -144,6 +144,7 @@
     });
     slots[msgId] = letter;
     selectedLetter = null;
+    if (window.LASfx) LASfx.pop();
     lastPlaced = { msgId: +msgId, letter };
     if (lastPlacedTimer) clearTimeout(lastPlacedTimer);
     lastPlacedTimer = setTimeout(() => {
@@ -229,6 +230,7 @@
     });
     vocabSlots[itemId] = word;
     selectedWord = null;
+    if (window.LASfx) LASfx.pop();
     render();
   }
 
@@ -273,6 +275,25 @@
       if (vocabSlots[v.id] === v.correct) vocabScore += 1;
     });
     phase = "vocab-done";
+    if (window.LASfx) LASfx.win();
+    if (window.LAFinish) {
+      var timeMs = LAFinish.stopTimer();
+      var totalScore = matchScore + vocabScore;
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: totalScore,
+        total: 10,
+        timeMs: timeMs,
+        onAgain: resetGame,
+        onModes: function () { window.location.href = "../"; },
+        backHref: "../",
+        save: true
+      });
+      // still render the review page underneath if user closes overlay
+      render();
+      setTimeout(playAudio, 400);
+      return;
+    }
     saveStars(matchScore + vocabScore, 10);
     render();
     setTimeout(playAudio, 400);
@@ -293,6 +314,7 @@
     vocabScore = 0;
     vocabOrder = shuffle(VOCAB_CHIPS.slice());
     vocabChecked = false;
+    if (window.LAFinish) LAFinish.startTimer();
     render();
   }
 
@@ -680,5 +702,6 @@
     return renderMatch();
   }
 
+  if (window.LAFinish) LAFinish.startTimer();
   render();
 })();

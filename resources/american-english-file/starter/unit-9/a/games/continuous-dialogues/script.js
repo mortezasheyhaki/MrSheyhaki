@@ -349,6 +349,7 @@
     startScreen.classList.add("hidden");
     endOverlay.classList.add("hidden");
     gameScreen.classList.remove("hidden");
+    if (window.LAFinish) LAFinish.startTimer();
     loadItem();
   }
 
@@ -452,16 +453,37 @@
       feedback.className = "feedback ok";
       actions.classList.add("hidden");
       nextRow.classList.remove("hidden");
+      if (window.LASfx) LASfx.correct();
     } else {
       feedback.textContent = "Check the blanks · use be + -ing";
       feedback.className = "feedback bad";
+      if (window.LASfx) LASfx.wrong();
     }
   }
 
   function showEnd() {
-    endOverlay.classList.remove("hidden");
-      saveStars();
+    if (window.LASfx) LASfx.win();
     var total = order.length;
+    if (window.LAFinish) {
+      var timeMs = LAFinish.stopTimer();
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: score,
+        total: Math.max(total, 1),
+        timeMs: timeMs,
+        onAgain: start,
+        onModes: function () {
+          gameScreen.classList.add("hidden");
+          endOverlay.classList.add("hidden");
+          startScreen.classList.remove("hidden");
+        },
+        backHref: "../",
+        save: true
+      });
+      return;
+    }
+    endOverlay.classList.remove("hidden");
+    saveStars();
     var pct = total ? Math.round((score / total) * 100) : 0;
     var emoji = score === total ? "🏆" : score >= total * 0.7 ? "🎉" : score >= total * 0.4 ? "👍" : "💪";
     var title = score === total ? "Perfect!" : score >= total * 0.7 ? "Well done!" : score >= total * 0.4 ? "Nice try!" : "Keep going!";

@@ -259,6 +259,16 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
   { title: "Order the Messages", url: "order-the-messages/", label: "Reading" },
 ];
 
+// Unit 9B – Working undercover
+COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.b.games = [
+  { title: "Choose the Verb", url: "verb-choice/", label: "Grammar" },
+  { title: "Write the Verb", url: "write-the-verb/", label: "Grammar" },
+  { title: "Fix the Mistake", url: "fix-the-mistake/", label: "Grammar" },
+  { title: "Clothes Match", url: "clothes-match/", label: "Vocabulary" },
+  { title: "Unscramble Clothes", url: "unscramble-clothes/", label: "Vocabulary" },
+  { title: "Write the Clothes", url: "write-the-clothes/", label: "Vocabulary" },
+];
+
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)
 COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.games = [
   { title: "Where is it from?", url: "where-is-it-from/" , label: "Vocabulary" },
