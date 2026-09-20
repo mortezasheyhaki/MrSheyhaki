@@ -62,6 +62,15 @@
     } catch (e) {}
 
     document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
+      // Wall-switch style: aria only — visual is CSS-driven
+      if (btn.classList.contains("wall-switch")) {
+        btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+        btn.setAttribute(
+          "aria-label",
+          theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+        );
+        return;
+      }
       var iconOnly =
         btn.classList.contains("icon-btn") ||
         btn.classList.contains("theme-icon-only") ||
@@ -79,43 +88,57 @@
 
   applyTheme(getPreferred());
 
+  function buildWallSwitch() {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "site-theme-fab wall-switch";
+    btn.setAttribute("data-theme-toggle", "true");
+    btn.setAttribute("aria-label", "Toggle color theme");
+    btn.setAttribute("aria-pressed", "false");
+    btn.innerHTML =
+      '<span class="switch-plate" aria-hidden="true">' +
+        '<span class="screw top"></span>' +
+        '<span class="switch-track">' +
+          '<span class="switch-handle"></span>' +
+        "</span>" +
+        '<span class="screw bottom"></span>' +
+      "</span>";
+    return btn;
+  }
+
   function ensureThemeFab() {
     var nav = document.querySelector(".arcade-nav");
 
-    // Fixed bottom-right theme toggle (always site-theme-fab — never inside nav)
+    // Use the same wall light-switch FAB as the main website
     var existing = document.querySelector("[data-theme-toggle]");
     if (existing) {
       if (existing.closest(".arcade-nav") || existing.closest("header")) {
         document.body.appendChild(existing);
       }
-      existing.className = "site-theme-fab theme-icon-only";
-      existing.setAttribute("data-icon-only", "true");
-      existing.setAttribute("data-theme-toggle", "true");
-      if (existing.tagName === "BUTTON") existing.type = "button";
+      if (!existing.classList.contains("wall-switch") || !existing.querySelector(".switch-handle")) {
+        var neu = buildWallSwitch();
+        existing.parentNode.replaceChild(neu, existing);
+        existing = neu;
+      } else {
+        existing.className = "site-theme-fab wall-switch";
+        existing.setAttribute("data-theme-toggle", "true");
+        if (existing.tagName === "BUTTON") existing.type = "button";
+      }
     } else {
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "site-theme-fab theme-icon-only";
-      btn.setAttribute("data-theme-toggle", "true");
-      btn.setAttribute("data-icon-only", "true");
-      btn.setAttribute("aria-label", "Toggle color theme");
-      document.body.appendChild(btn);
-      existing = btn;
+      document.body.appendChild(buildWallSwitch());
     }
-    // Ensure visible + bottom-right even if page CSS is missing
+
+    // Ensure visible + bottom-right (above mobile dock)
     (function (el) {
+      if (!el) el = document.querySelector("[data-theme-toggle]");
       if (!el) return;
-      el.style.display = "inline-flex";
+      el.style.display = "flex";
       el.style.position = "fixed";
       el.style.top = "auto";
       el.style.left = "auto";
       el.style.right = "max(12px, env(safe-area-inset-right, 0px))";
       el.style.bottom = "max(16px, env(safe-area-inset-bottom, 0px))";
       el.style.zIndex = "10060";
-      el.style.width = el.style.width || "48px";
-      el.style.height = el.style.height || "48px";
-      el.style.alignItems = "center";
-      el.style.justifyContent = "center";
       el.style.cursor = "pointer";
       el.removeAttribute("hidden");
     })(document.querySelector("[data-theme-toggle]"));
