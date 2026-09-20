@@ -247,44 +247,56 @@ html[data-theme="dark"] .skill-badge--communication {
         ]),
       ])
     );
-    const grid = el("section", { class: "level-grid", "aria-label": "Levels" });
+    const grid = el("section", { class: "level-grid level-grid--hub", "aria-label": "Levels" });
     // Explicit order: Starter first, then 1, then any other unlocked levels
     const levelOrder = ["starter", "1"].concat(
       Object.keys(course.levels).filter((k) => k !== "starter" && k !== "1")
     );
-    const levelImages = {
-      starter:
-        "https://cdn.imgurl.ir/uploads/w372563_ChatGPT_Image_Aug_23_2026_03_46_57_AM.png",
+    const levelMeta = {
+      starter: { badge: "STARTER", title: "Beginner", desc: "12 units with 6 Practical English lessons." },
+      "1": { badge: "LEVEL 1", title: "Elementary", desc: "12 units with 6 Practical English lessons." },
+      "2": { badge: "LEVEL 2", title: "Pre-intermediate", desc: "12 units with 6 Practical English lessons." },
+      "3": { badge: "LEVEL 3", title: "Intermediate", desc: "12 units with 6 Practical English lessons." },
+      "4": { badge: "LEVEL 4", title: "Intermediate Plus", desc: "12 units with 6 Practical English lessons." },
+      "5": { badge: "LEVEL 5", title: "Upper-intermediate", desc: "12 units with 6 Practical English lessons." },
     };
     levelOrder.forEach((key) => {
       if (!course.levels[key]) return;
-      const kids = [
-        el("div", { class: "level-card-body" }, [
-          el("h3", { text: course.levels[key].label }),
-          el("p", { text: "Units and Practical English lessons." }),
-        ]),
-      ];
-      if (levelImages[key]) {
-        kids.push(
-          el("div", { class: "level-card-art", "aria-hidden": "true" }, [
-            el("img", {
-              src: levelImages[key],
-              alt: "",
-              loading: "lazy",
-            }),
-          ])
-        );
-      }
+      const meta = levelMeta[key] || {
+        badge: "LEVEL " + key.toUpperCase(),
+        title: course.levels[key].label,
+        desc: "Units and Practical English lessons.",
+      };
       grid.appendChild(
-        el("a", { class: "level-card" + (levelImages[key] ? " level-card--has-art" : ""), href: key + "/" }, kids)
+        el(
+          "a",
+          {
+            class: "level-card level-card--hub level-card--" + key,
+            href: key + "/",
+          },
+          [
+            el("span", { class: "level-badge", text: meta.badge }),
+            el("h3", { text: meta.title }),
+            el("p", { text: meta.desc }),
+            el("span", { class: "level-arrow", "aria-hidden": "true", text: "→" }),
+          ]
+        )
       );
     });
     // Levels not yet in course-data.js show as locked/coming soon.
     (course.lockedLevels || []).forEach((label) => {
+      const key = String(label).toLowerCase().replace(/\s+/g, "-");
+      const meta = levelMeta[key] || {
+        badge: "LEVEL " + String(label).toUpperCase(),
+        title: "Level " + label,
+        desc: "Coming soon.",
+      };
       grid.appendChild(
-        el("div", { class: "level-card level-locked" }, [
-          el("h3", { text: "🔒 " + label }),
-          el("span", { class: "lock-tag", text: "Coming soon" }),
+        el("div", { class: "level-card level-card--hub level-card--" + key + " level-locked" }, [
+          el("span", { class: "level-badge", text: meta.badge }),
+          el("h3", { text: meta.title }),
+          el("p", { text: "This level is not available yet." }),
+          el("span", { class: "level-arrow level-arrow--locked", "aria-hidden": "true", text: "🔒" }),
         ])
       );
     });
@@ -299,20 +311,41 @@ html[data-theme="dark"] .skill-badge--communication {
         ]),
       ])
     );
-    const quizGrid = el("section", { class: "level-grid", "aria-label": "Quizzes" });
+    const quizGrid = el("section", { class: "level-grid level-grid--hub", "aria-label": "Quizzes" });
     quizGrid.appendChild(
-      el("a", { class: "level-card", href: "quiz/" }, [
-        el("h3", { text: "🧠 Multiple Choice" }),
-        el("p", { text: "40 questions per unit · Grammar & Vocabulary." }),
-      ])
+      el(
+        "a",
+        { class: "level-card level-card--hub level-card--quiz", href: "quiz/" },
+        [
+          el("span", { class: "level-badge", text: "QUIZ" }),
+          el("h3", { text: "Multiple Choice" }),
+          el("p", { text: "40 questions per unit · Grammar & Vocabulary." }),
+          el("span", { class: "level-arrow", "aria-hidden": "true", text: "→" }),
+        ]
+      )
     );
     main.appendChild(quizGrid);
   }
 
   function itemCard(href, index, title, name, isPE) {
+    // AEF book color groups: units 1/5/9 purple, 2/6/10 teal, 3/7/11 orange, 4/8/12 blue
+    let colorClass = "";
+    if (!isPE) {
+      const n = parseInt(index, 10);
+      if ([1, 5, 9].indexOf(n) !== -1) colorClass = " unit-color--purple";
+      else if ([2, 6, 10].indexOf(n) !== -1) colorClass = " unit-color--teal";
+      else if ([3, 7, 11].indexOf(n) !== -1) colorClass = " unit-color--orange";
+      else if ([4, 8, 12].indexOf(n) !== -1) colorClass = " unit-color--blue";
+    }
     return el(
       "a",
-      { class: "item-card unit-style-card" + (isPE ? " item-card--pe" : ""), href },
+      {
+        class:
+          "item-card unit-style-card" +
+          (isPE ? " item-card--pe" : "") +
+          colorClass,
+        href,
+      },
       [
         el("span", { class: "unit-number", text: isPE ? "PE" : "UNIT " + index }),
         el("h3", { text: title }),
