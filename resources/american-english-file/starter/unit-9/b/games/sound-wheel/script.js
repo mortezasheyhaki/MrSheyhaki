@@ -91,59 +91,8 @@
     el.className = "sw-feedback" + (type ? " " + type : "");
   }
 
-  // Pronunciation audio supplied for Unit 9B.
-  // Sound-tab audio plays when a sound button is clicked. Word audio plays
-  // when a new word appears in the centre.
-  var AUDIO = {
-    sounds: {
-      e: "https://cdn.imgurl.ir/uploads/z975901_e.mp3",
-      u: "https://cdn.imgurl.ir/uploads/f94926_u.mp3",
-      ae: "https://cdn.imgurl.ir/uploads/k98073_a.mp3",
-      ou: "https://cdn.imgurl.ir/uploads/f092272_o.mp3",
-      i: "https://cdn.imgurl.ir/uploads/u13673_ee.mp3"
-    },
-    words: {
-      dress: "https://cdn.imgurl.ir/uploads/c067945_dress_2.mp3",
-      sweater: "https://cdn.imgurl.ir/uploads/l57763_swer_2.mp3",
-      shoes: "https://cdn.imgurl.ir/uploads/s905022_shoes_2.mp3",
-      suit: "https://cdn.imgurl.ir/uploads/a757580_suit_2.mp3",
-      cap: "https://cdn.imgurl.ir/uploads/k967572_cap_2.mp3",
-      hat: "https://cdn.imgurl.ir/uploads/t878496_hat_2.mp3",
-      jacket: "https://cdn.imgurl.ir/uploads/t53672_jacket_2.mp3",
-      coat: "https://cdn.imgurl.ir/uploads/c248956_coat_2.mp3",
-      jeans: "https://cdn.imgurl.ir/uploads/t81781_jeans_2.mp3",
-      sneakers: "https://cdn.imgurl.ir/uploads/s341035_sneakers_2.mp3"
-    }
-  };
-
-  var currentAudio = null;
-
-  function playAudio(url) {
-    if (!url) return;
-    try {
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-      }
-      currentAudio = new Audio(url);
-      currentAudio.preload = "auto";
-      currentAudio.volume = 1;
-      var promise = currentAudio.play();
-      if (promise && promise.catch) promise.catch(function () {});
-    } catch (_) {}
-  }
-
-  function playSoundAudio(soundId) {
-    playAudio(AUDIO.sounds[soundId]);
-  }
-
-  function playWordAudio(wordId) {
-    playAudio(AUDIO.words[wordId]);
-  }
-
   function chooseSound(id) {
     selectedSound = id;
-    playSoundAudio(id);
     sfx("click");
     document.querySelectorAll(".sw-tab").forEach(function (tab) {
       tab.classList.toggle("active", tab.dataset.sound === id);
@@ -172,9 +121,6 @@
       setFeedback("✓ " + word.word + " goes with /" + soundById(targetSound).ipa + "/.", "good");
       if (correct === WORDS.length) {
         setTimeout(finishGame, 650);
-      } else {
-        // Reveal exactly one new word in the centre after the success animation.
-        setTimeout(renderPlay, 520);
       }
     } else {
       sourceEl.classList.remove("dragging");
@@ -228,7 +174,6 @@
 
   function renderPlay() {
     var words = order.map(function (i) { return WORDS[i]; }).filter(function (w) { return !solved[w.id]; });
-    var currentWord = words[0] || null;
 
     app.innerHTML = '' +
       '<header class="sw-topbar">' +
@@ -246,17 +191,16 @@
               '<span class="mini">' + escapeHtml(s.hint) + '</span>' +
             '</button>';
           }).join('') +
-          '<div class="sw-center" id="center" aria-label="Word to sort">' +
-            '<span class="sw-center-label">Drag this word</span>' +
-            (currentWord ? '<div class="sw-word sw-word-current" draggable="true" tabindex="0" data-word="' + escapeHtml(currentWord.id) + '" role="button" aria-label="Drag ' + escapeHtml(currentWord.word) + '">' + escapeHtml(currentWord.word) + '</div>' : '<span class="sw-center-done">All words sorted!</span>') +
+          '<div class="sw-center" id="center" aria-label="Words to sort">' +
+            '<span class="sw-center-label">Drag words</span>' +
+            words.map(function (w) {
+              return '<div class="sw-word" draggable="true" tabindex="0" data-word="' + escapeHtml(w.id) + '" role="button" aria-label="Drag ' + escapeHtml(w.word) + '">' + escapeHtml(w.word) + '</div>';
+            }).join('') +
           '</div>' +
         '</div>' +
       '</section>' +
       '<div class="sw-help">Sounds: /e/ egg · /u/ boot · /æ/ cat · /oʊ/ phone · /i/ tree</div>' +
       '<p class="sw-feedback" id="feedback" aria-live="polite"></p>';
-
-    // Play the pronunciation as soon as the new centre word appears.
-    if (currentWord) playWordAudio(currentWord.id);
 
     document.querySelectorAll(".sw-tab").forEach(function (tab) {
       tab.addEventListener("click", function () { chooseSound(tab.dataset.sound); });

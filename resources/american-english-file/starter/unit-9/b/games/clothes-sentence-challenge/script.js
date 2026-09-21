@@ -14,46 +14,41 @@
       image: IMAGE_BASE + "o634851_1_what_is_he_wearing.png",
       question: "What is he wearing?",
       sentence: ["He's", "wearing", "a", "cap", ",", "a", "shirt", ",", "shorts", "and", "sneakers."],
-      targets: ["cap", "shirt", "shorts", "sneakers"],
-      markerNumbers: [1, 2, 3, 4]
+      targets: ["cap", "shirt", "shorts", "sneakers"]
     },
     {
       id: "she-sweater-skirt-shoes",
       image: IMAGE_BASE + "n739549_2_what_is_she_wearing.png",
       question: "What is she wearing?",
       sentence: ["She's", "wearing", "a", "sweater", ",", "a", "skirt", "and", "shoes."],
-      targets: ["sweater", "skirt", "shoes"],
-      markerNumbers: [5, 6, 7]
+      targets: ["sweater", "skirt", "shoes"]
     },
     {
       id: "he-jacket-shirt-jeans",
       image: IMAGE_BASE + "c571974_3_What_is_he_wearing.png",
       question: "What is he wearing?",
       sentence: ["He's", "wearing", "a", "jacket", ",", "a", "shirt", "and", "jeans."],
-      targets: ["jacket", "shirt", "jeans"],
-      markerNumbers: [8, 9, 10]
+      targets: ["jacket", "shirt", "jeans"]
     },
     {
       id: "she-coat-dress",
       image: IMAGE_BASE + "m411084_4_what_is_she_wearing.png",
       question: "What is she wearing?",
       sentence: ["She's", "wearing", "a", "coat", "and", "a", "dress."],
-      targets: ["coat", "dress"],
-      markerNumbers: [11, 12]
+      targets: ["coat", "dress"]
     },
     {
       id: "they-suit-shoes-pants",
       image: IMAGE_BASE + "o675076_5_What_are_they_wearing.png",
       question: "What are they wearing?",
       sentence: ["He's", "wearing", "a", "suit", "and", "shoes", "and", "she's", "wearing", "pants."],
-      targets: ["suit", "shoes", "pants"],
-      markerNumbers: [13, 14, 15]
+      targets: ["suit", "shoes", "pants"]
     }
   ];
 
   var CLOTHES = ["cap", "shirt", "shorts", "sneakers", "sweater", "skirt", "shoes", "jacket", "jeans", "coat", "dress", "suit", "pants"];
   var COLORS = ["red", "blue", "green", "black", "white", "yellow", "brown", "pink", "purple", "orange", "gray"];
-  var WORDS = CLOTHES;
+  var WORDS = CLOTHES.concat(COLORS);
   var app = document.getElementById("game-app");
   if (!app) return;
 
@@ -187,7 +182,7 @@
         var slotIndex = targetIndex++;
         var val = filled && filled[slotIndex] ? filled[slotIndex] : "";
         var label = val ? val : "____";
-        out.push('<button type="button" class="csc-blank ' + (val ? "filled" : "empty") + '" data-slot="' + slotIndex + '" aria-label="' + (val ? "Blank " + (item.markerNumbers ? item.markerNumbers[slotIndex] : (slotIndex + 1)) + ": filled with " + escapeHtml(val) : "Blank " + (item.markerNumbers ? item.markerNumbers[slotIndex] : (slotIndex + 1)) + ": empty clothing blank") + '"><span class="csc-blank-number" aria-hidden="true">' + (item.markerNumbers ? item.markerNumbers[slotIndex] : (slotIndex + 1)) + '</span><span class="csc-blank-text">' + escapeHtml(label) + '</span></button>');
+        out.push('<button type="button" class="csc-blank ' + (val ? "filled" : "empty") + '" data-slot="' + slotIndex + '" aria-label="' + (val ? "Blank " + (slotIndex + 1) + ": filled with " + escapeHtml(val) : "Blank " + (slotIndex + 1) + ": empty clothing blank") + '"><span class="csc-blank-number" aria-hidden="true">' + (slotIndex + 1) + '</span><span class="csc-blank-text">' + escapeHtml(label) + '</span></button>');
       } else {
         out.push('<span class="csc-token">' + escapeHtml(token) + '</span>');
       }
@@ -230,14 +225,14 @@
   function renderPart1() {
     var item = currentItem();
     currentSlots = new Array(item.targets.length).fill("");
-    var bank = shuffle(WORDS);
+    var bank = shuffle(CLOTHES);
     app.innerHTML = renderTopbar("Part 1 · " + (index + 1) + " / " + ITEMS.length) +
       '<div class="csc-screen"><section class="csc-panel csc-play-panel"><div class="csc-play">' +
         '<div class="csc-visual"><div class="csc-image-box"><img class="csc-image" src="' + item.image + '" alt="Clothes picture" draggable="false"></div><p class="csc-question">' + escapeHtml(item.question) + '</p></div>' +
         '<div class="csc-content">' +
           '<span class="csc-part-label">Part 1 · Build it</span>' +
           '<div class="csc-sentence-card"><p class="csc-sentence" id="csc-sentence">' + makeSentenceHtml(item, currentSlots) + '</p></div>' +
-          '<p class="csc-bank-title">Tap a word to fill the next blank, or drag it onto a blank. Clothing words can be in any order.</p>' +
+          '<p class="csc-bank-title">Tap a word to fill the next blank, or drag it onto a blank. Clothing words can be in any order. In Part 2, you can add a color before a clothing word.</p>' +
           '<div class="csc-bank" id="csc-bank" aria-label="Clothes word bank">' + bank.map(function(w){ return '<button type="button" class="csc-word" draggable="true" data-word="' + escapeHtml(w) + '">' + escapeHtml(w) + '</button>'; }).join('') + '</div>' +
           '<p class="csc-feedback" id="csc-feedback" aria-live="polite"></p>' +
         '</div>' +

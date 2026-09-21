@@ -18,66 +18,6 @@
     "What clothes do you usually wear for a party?"
   ];
 
-  // The player is free to choose the content of the answer, but the response
-  // must look like a meaningful sentence rather than random/gibberish text.
-  // Each question has a small set of natural sentence starters that are accepted.
-  var ANSWER_STARTERS = [
-    ["i'm wearing", "i am wearing", "today i'm wearing", "today i am wearing"],
-    ["i like wearing", "i like to wear", "i love wearing", "i love to wear"],
-    ["i usually wear", "i wear", "in summer i wear", "in the summer i wear"],
-    ["i usually wear", "i wear", "in winter i wear", "in the winter i wear"],
-    ["i usually wear", "i wear", "for work i wear", "to work i wear"],
-    ["i usually wear", "i wear", "for school i wear", "to school i wear"],
-    ["i usually wear", "i wear", "for a party i wear", "to a party i wear"]
-  ];
-
-  function normalizeAnswer(text) {
-    return String(text || "")
-      .toLowerCase()
-      .replace(/[’‘]/g, "'")
-      .replace(/[^a-z0-9'\s]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  function validateAnswer(text) {
-    var answer = normalizeAnswer(text);
-    if (!answer) return { ok: false, message: "Please give an answer first." };
-
-    var starters = ANSWER_STARTERS[index] || [];
-    var matchesStarter = starters.some(function (starter) {
-      return answer === starter || answer.indexOf(starter + " ") === 0;
-    });
-
-    if (!matchesStarter) {
-      return {
-        ok: false,
-        message: "Start your answer with a sentence starter such as “" + starters[0] + " …”"
-      };
-    }
-
-    // Reject a starter followed only by another tiny fragment such as a single
-    // random letter. A complete starter by itself is still accepted.
-    var words = answer.split(" ").filter(Boolean);
-    var starterLength = 0;
-    for (var i = 0; i < starters.length; i += 1) {
-      if (answer === starters[i] || answer.indexOf(starters[i] + " ") === 0) {
-        starterLength = starters[i].split(" ").length;
-        break;
-      }
-    }
-    if (words.length > starterLength) {
-      var addedWords = words.slice(starterLength).filter(function (word) {
-        return /[a-z]{2,}/.test(word);
-      });
-      if (!addedWords.length) {
-        return { ok: false, message: "Please add some clothes, colors, or other information to your answer." };
-      }
-    }
-
-    return { ok: true };
-  }
-
   var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   var startScreen = document.getElementById("startScreen");
   var questionScreen = document.getElementById("questionScreen");
@@ -204,9 +144,8 @@
   function submitAnswer() {
     if (submitted) return;
     var answer = String(answerInput.value || "").trim();
-    var validation = validateAnswer(answer);
-    if (!validation.ok) {
-      voiceStatus.textContent = validation.message;
+    if (!answer) {
+      voiceStatus.textContent = "Please write an answer or use the microphone first.";
       answerInput.focus();
       sfx("wrong");
       return;
