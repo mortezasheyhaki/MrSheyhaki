@@ -40,7 +40,7 @@ button { font: inherit; }
 button:focus-visible { outline: 3px solid #ffbd42; outline-offset: 3px; }
 
 .app-shell {
-  width: min(100%, 640px);
+  width: min(100%, 720px);
   min-height: 100dvh;
   margin: 0 auto;
   padding: clamp(14px, 3.5vw, 28px) clamp(12px, 3.2vw, 22px) 22px;
@@ -267,6 +267,10 @@ h2 { margin-bottom: 8px; font-size: clamp(1.35rem, 5vw, 1.85rem); line-height: 1
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 12px;
+  color: var(--ink);
+  -webkit-text-fill-color: var(--ink);
+  font-size: clamp(1.15rem, 4.2vw, 1.45rem);
+  line-height: 1.25;
 }
 
 /* Soft-round circle listen-again button with icon */
@@ -955,3 +959,225 @@ img {
   max-width: 100%;
   height: auto;
 }
+
+/* Dark mode fixes for remaining light-only elements */
+html[data-theme="dark"] .brand-chip {
+  background: #1e2433 !important;
+  color: #c7d2fe !important;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3) !important;
+}
+html[data-theme="dark"] .button-icon {
+  background: #243044 !important;
+  color: #a5b4fc !important;
+}
+html[data-theme="dark"] .round-pill {
+  background: #1e2433 !important;
+  color: #c7d2fe !important;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.35) !important;
+}
+html[data-theme="dark"] .icon-button {
+  background: #1e2433 !important;
+  color: #e2e8f0 !important;
+}
+html[data-theme="dark"] .icon-button:hover {
+  background: #243044 !important;
+}
+html[data-theme="dark"] .soft-yellow,
+html[data-theme="dark"] [style*="fff1c8"] {
+  background: #2a2410 !important;
+}
+html[data-theme="dark"] .soft-violet,
+html[data-theme="dark"] [class*="f3efff"] {
+  background: #1e1b4b !important;
+}
+
+html[data-theme="dark"] .picture-card {
+  background: #1e2433 !important;
+  border-color: #2d3548 !important;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 8px 14px rgba(0,0,0,0.25) !important;
+}
+html[data-theme="dark"] .picture-card img {
+  background: #1a1f2e !important;
+}
+
+/* ===== Sound Match: dark mode listen panel + no-scroll shell ===== */
+html[data-theme="dark"] .listen-panel {
+  background: #1e2433 !important;
+  color: #f1f5f9 !important;
+  box-shadow: 0 8px 0 rgba(0,0,0,0.35), 0 14px 28px rgba(0,0,0,0.25) !important;
+}
+html[data-theme="dark"] .listen-panel h2,
+html[data-theme="dark"] .listen-panel #gameHeading {
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+}
+html[data-theme="dark"] .listen-panel .eyebrow {
+  color: #a78bfa !important;
+}
+html[data-theme="dark"] .listen-panel .feedback {
+  color: #94a3b8 !important;
+}
+html[data-theme="dark"] .listen-panel .feedback.correct {
+  color: #34d399 !important;
+}
+html[data-theme="dark"] .listen-panel .feedback.incorrect {
+  color: #f87171 !important;
+}
+html[data-theme="dark"] .picture-card {
+  background: #1e2433 !important;
+  border-color: #3d4a63 !important;
+}
+html[data-theme="dark"] .round-pill {
+  background: #243044 !important;
+  color: #e2e8f0 !important;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.35) !important;
+}
+html[data-theme="dark"] .progress-area p {
+  color: #cbd5e1 !important;
+}
+
+/* Game layout — original sizes restored; keep screens from overlapping */
+.hidden {
+  display: none !important;
+}
+
+/* Ensure game/start screens never both show */
+.game-screen.hidden,
+.start-screen.hidden,
+.finish-screen.hidden {
+  display: none !important;
+}
+
+body.is-playing {
+  /* light touch: prevent body rubber-band only */
+  overscroll-behavior: none;
+}
+
+body.is-playing .app-shell {
+  width: min(100%, 640px);
+  max-width: 100%;
+  margin: 0 auto;
+  /* Extra top space: browser chrome is NOT in safe-area-inset on many mobile browsers */
+  padding: max(56px, calc(env(safe-area-inset-top, 0px) + 48px))
+           max(14px, env(safe-area-inset-right, 0px))
+           max(14px, env(safe-area-inset-bottom, 0px))
+           max(14px, env(safe-area-inset-left, 0px));
+  box-sizing: border-box;
+  align-items: start;
+  min-height: 100dvh;
+}
+
+.game-screen:not(.hidden) {
+  display: block !important;
+  width: 100%;
+  max-width: 100%;
+  padding-top: 0;
+  box-sizing: border-box;
+}
+
+.game-screen:not(.hidden) .game-header {
+  margin-bottom: 14px;
+  /* sticky so it stays visible if user scrolls */
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding-top: 4px;
+  padding-bottom: 6px;
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 18, 32, 0.97) 60%,
+    rgba(15, 18, 32, 0)
+  );
+}
+
+.game-screen:not(.hidden) .listen-panel {
+  padding: 16px 16px 14px !important;
+  border-radius: 20px !important;
+}
+
+.game-screen:not(.hidden) .listen-panel h2 {
+  font-size: clamp(1.15rem, 4.2vw, 1.45rem) !important;
+  margin-bottom: 12px !important;
+  line-height: 1.25 !important;
+}
+
+.game-screen:not(.hidden) .listen-button {
+  width: 64px !important;
+  height: 64px !important;
+}
+
+.game-screen:not(.hidden) .listen-button .listen-icon {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.game-screen:not(.hidden) .feedback {
+  margin: 10px 0 0 !important;
+  font-size: 0.9rem !important;
+  min-height: 1.2em !important;
+}
+
+.game-screen:not(.hidden) .grid-wrap {
+  margin-top: 14px !important;
+}
+
+.game-screen:not(.hidden) .picture-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: clamp(6px, 1.6vw, 10px) !important;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: auto !important;
+}
+
+.game-screen:not(.hidden) .picture-card {
+  aspect-ratio: 1 / 1 !important; /* keep squares as user liked */
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+
+.game-screen:not(.hidden) .picture-card img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+@media (max-width: 420px) {
+  .game-screen:not(.hidden) .picture-grid {
+    gap: 5px !important;
+  }
+  .game-screen:not(.hidden) .listen-button {
+    width: 56px !important;
+    height: 56px !important;
+  }
+  .game-screen:not(.hidden) .listen-button .listen-icon {
+    width: 24px !important;
+    height: 24px !important;
+  }
+}
+
+/* Dark mode start screen polish */
+html[data-theme="dark"] .start-screen {
+  color: #e8ecf4;
+}
+html[data-theme="dark"] .start-screen h1 {
+  color: #f1f5f9 !important;
+}
+html[data-theme="dark"] .start-screen h1 span {
+  color: #a78bfa !important;
+}
+html[data-theme="dark"] .intro-copy {
+  color: #94a3b8 !important;
+}
+html[data-theme="dark"] .brand-chip {
+  background: #243044 !important;
+  color: #c4b5fd !important;
+}
+html[data-theme="dark"] .skill-strip {
+  color: #94a3b8 !important;
+}
+

@@ -10,7 +10,7 @@ else document.documentElement.setAttribute("data-theme","light");
 }catch(e){}})();
 </script>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#6937d8" />
     <title>Sound Match Picture</title>
   <link rel="stylesheet" href="../../../../../../../theme.css">
@@ -295,6 +295,38 @@ button, a, input, select, textarea {
   }
 }
 
+
+
+/* Sound Match: force readable listen panel in dark mode */
+html[data-theme="dark"] .listen-panel {
+  background: #1e2433 !important;
+  color: #f1f5f9 !important;
+  box-shadow: 0 8px 0 rgba(0,0,0,0.35), 0 14px 28px rgba(0,0,0,0.25) !important;
+}
+html[data-theme="dark"] .listen-panel h2,
+html[data-theme="dark"] .listen-panel #gameHeading {
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+}
+html[data-theme="dark"] .listen-panel .eyebrow {
+  color: #a78bfa !important;
+}
+html[data-theme="dark"] .listen-panel .feedback {
+  color: #94a3b8 !important;
+}
+html[data-theme="dark"] .listen-panel .feedback.correct { color: #34d399 !important; }
+html[data-theme="dark"] .listen-panel .feedback.incorrect { color: #f87171 !important; }
+
+
+/* Keep game header below browser address bar */
+body.is-playing .app-shell {
+  padding-top: max(56px, calc(env(safe-area-inset-top, 0px) + 48px)) !important;
+}
+body.is-playing .game-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
 
 </style>
 </head>

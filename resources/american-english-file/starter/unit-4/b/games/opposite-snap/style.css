@@ -403,17 +403,19 @@ button:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #e0d6ff;
+  border: 2px solid #c4b5fd;
   border-radius: 14px;
-  color: var(--ink);
-  background: #fff;
+  color: #1e293b !important;          /* always readable on light */
+  background: #ffffff !important;
   box-shadow: 0 4px 0 rgba(84, 37, 184, 0.12);
-  font-size: clamp(0.9rem, 3.2vw, 1.05rem);
+  font-size: clamp(0.95rem, 3.4vw, 1.1rem);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.25;
   text-align: center;
   word-break: break-word;
-  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+  letter-spacing: 0.01em;
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  -webkit-text-fill-color: #1e293b;   /* defeat any inherited light fill */
 }
 
 .choice:hover:not(:disabled) {
@@ -1088,4 +1090,44 @@ input, textarea, select {
 img {
   max-width: 100%;
   height: auto;
+}
+
+/* ===== Opposite Snap: force readable choice buttons (dark + light) ===== */
+html[data-theme="dark"] .choice {
+  background: #243044 !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  border: 2px solid #6366f1 !important;
+  box-shadow: 0 4px 0 rgba(99, 102, 241, 0.25) !important;
+}
+html[data-theme="dark"] .choice:hover:not(:disabled) {
+  border-color: #818cf8 !important;
+  background: #2d3a52 !important;
+}
+html[data-theme="dark"] .choice.is-correct {
+  background: #143528 !important;
+  border-color: #34d399 !important;
+  color: #6ee7b0 !important;
+  -webkit-text-fill-color: #6ee7b0 !important;
+}
+html[data-theme="dark"] .choice.is-wrong {
+  background: #3a1a22 !important;
+  border-color: #f87171 !important;
+  color: #fca5b5 !important;
+  -webkit-text-fill-color: #fca5b5 !important;
+}
+
+/* Light mode safety — never allow washed-out text on white buttons */
+.choice:not(.is-correct):not(.is-wrong) {
+  color: #1e293b !important;
+  -webkit-text-fill-color: #1e293b !important;
+  background: #ffffff !important;
+}
+.choice.is-correct {
+  color: #166534 !important;
+  -webkit-text-fill-color: #166534 !important;
+}
+.choice.is-wrong {
+  color: #b91c1c !important;
+  -webkit-text-fill-color: #b91c1c !important;
 }

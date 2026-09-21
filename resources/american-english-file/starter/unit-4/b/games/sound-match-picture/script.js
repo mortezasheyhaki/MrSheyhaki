@@ -150,6 +150,7 @@ function showFinish() {
   stopCurrentAudio();
   gameScreen.classList.add('hidden');
   finishScreen.classList.remove('hidden');
+  document.body.classList.remove('is-playing');
   finishScore.textContent = String(score);
   exposeState();
   const acc = prompts.length ? Math.round((score / prompts.length) * 100) : 0;
@@ -229,6 +230,7 @@ function startGame() {
   startScreen.classList.add('hidden');
   finishScreen.classList.add('hidden');
   gameScreen.classList.remove('hidden');
+  document.body.classList.add('is-playing');
   renderTiles();
   beginRound();
 }
@@ -238,6 +240,7 @@ function goHome() {
   gameScreen.classList.add('hidden');
   finishScreen.classList.add('hidden');
   startScreen.classList.remove('hidden');
+  document.body.classList.remove('is-playing');
   exposeState();
 }
 
