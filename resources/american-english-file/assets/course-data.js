@@ -270,6 +270,9 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.b.games = [
   { title: "Write the Clothes", url: "write-the-clothes/", label: "Vocabulary" },
   { title: "Sound Match Picture", url: "sound-match-picture/", label: "Vocabulary" },
   { title: "Clothes Bingo", url: "clothes-bingo/", label: "Vocabulary" },
+  { title: "Sound Wheel", url: "sound-wheel/", label: "Pronunciation" },
+  { title: "Clothes Sentence Challenge", url: "clothes-sentence-challenge/", label: "Vocabulary" },
+  { title: "Communication Time", url: "communication-time/", label: "Communication" },
 ];
 
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)
