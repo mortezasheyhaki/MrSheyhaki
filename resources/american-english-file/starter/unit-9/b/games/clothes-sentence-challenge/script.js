@@ -14,35 +14,40 @@
       image: IMAGE_BASE + "o634851_1_what_is_he_wearing.png",
       question: "What is he wearing?",
       sentence: ["He's", "wearing", "a", "cap", ",", "a", "shirt", ",", "shorts", "and", "sneakers."],
-      targets: ["cap", "shirt", "shorts", "sneakers"]
+      targets: ["cap", "shirt", "shorts", "sneakers"],
+      numbers: [1, 2, 3, 4]
     },
     {
       id: "she-sweater-skirt-shoes",
       image: IMAGE_BASE + "n739549_2_what_is_she_wearing.png",
       question: "What is she wearing?",
       sentence: ["She's", "wearing", "a", "sweater", ",", "a", "skirt", "and", "shoes."],
-      targets: ["sweater", "skirt", "shoes"]
+      targets: ["sweater", "skirt", "shoes"],
+      numbers: [5, 6, 7]
     },
     {
       id: "he-jacket-shirt-jeans",
       image: IMAGE_BASE + "c571974_3_What_is_he_wearing.png",
       question: "What is he wearing?",
       sentence: ["He's", "wearing", "a", "jacket", ",", "a", "shirt", "and", "jeans."],
-      targets: ["jacket", "shirt", "jeans"]
+      targets: ["jacket", "shirt", "jeans"],
+      numbers: [8, 9, 10]
     },
     {
       id: "she-coat-dress",
       image: IMAGE_BASE + "m411084_4_what_is_she_wearing.png",
       question: "What is she wearing?",
       sentence: ["She's", "wearing", "a", "coat", "and", "a", "dress."],
-      targets: ["coat", "dress"]
+      targets: ["coat", "dress"],
+      numbers: [11, 12]
     },
     {
       id: "they-suit-shoes-pants",
       image: IMAGE_BASE + "o675076_5_What_are_they_wearing.png",
       question: "What are they wearing?",
       sentence: ["He's", "wearing", "a", "suit", "and", "shoes", "and", "she's", "wearing", "pants."],
-      targets: ["suit", "shoes", "pants"]
+      targets: ["suit", "shoes", "pants"],
+      numbers: [13, 14, 15]
     }
   ];
 
@@ -182,7 +187,8 @@
         var slotIndex = targetIndex++;
         var val = filled && filled[slotIndex] ? filled[slotIndex] : "";
         var label = val ? val : "____";
-        out.push('<button type="button" class="csc-blank ' + (val ? "filled" : "empty") + '" data-slot="' + slotIndex + '" aria-label="' + (val ? "Blank " + (slotIndex + 1) + ": filled with " + escapeHtml(val) : "Blank " + (slotIndex + 1) + ": empty clothing blank") + '"><span class="csc-blank-number" aria-hidden="true">' + (slotIndex + 1) + '</span><span class="csc-blank-text">' + escapeHtml(label) + '</span></button>');
+        var picNum = (item.numbers && item.numbers[slotIndex] != null) ? item.numbers[slotIndex] : (slotIndex + 1);
+        out.push('<button type="button" class="csc-blank ' + (val ? "filled" : "empty") + '" data-slot="' + slotIndex + '" aria-label="' + (val ? "Blank " + picNum + ": filled with " + escapeHtml(val) : "Blank " + picNum + ": empty clothing blank") + '"><span class="csc-blank-number" aria-hidden="true">' + picNum + '</span><span class="csc-blank-text">' + escapeHtml(label) + '</span></button>');
       } else {
         out.push('<span class="csc-token">' + escapeHtml(token) + '</span>');
       }

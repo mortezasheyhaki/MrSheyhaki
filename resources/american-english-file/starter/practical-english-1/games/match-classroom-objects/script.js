@@ -231,15 +231,6 @@
     return 0;
   }
 
-  function saveStars() {
-    const stars = calcStars();
-    if (window.LAStars) {
-      LAStars.recordPlay(GAME_ID);
-      LAStars.save(GAME_ID, stars);
-    }
-    return stars;
-  }
-
   function leftCell(id, i, kind) {
     const c = byId(id);
     const isLocked = !!locked[i];
@@ -309,13 +300,16 @@
     }
 
     if (phase === "done") {
-      const stars = typeof saveStars === 'function' ? saveStars() : 3;
+      const stars = calcStars();
       if (window.LAFinish) {
         const timeMs = LAFinish.stopTimer();
+        const totalItems = SETS.reduce((sum, s) => sum + s.length, 0);
         LAFinish.show({
           gameId: GAME_ID,
-          score: typeof modeCorrect !== 'undefined' ? modeCorrect : 15,
-          total: 15,
+          score: typeof modeCorrect !== 'undefined' ? modeCorrect : totalItems,
+          total: totalItems,
+          stars: stars,
+          save: true,
           timeMs: timeMs,
           onAgain: () => { phase = 'menu'; render(); },
           onModes: () => { phase = 'menu'; render(); },
