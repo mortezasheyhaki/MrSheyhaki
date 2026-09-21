@@ -275,6 +275,13 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.b.games = [
   { title: "Communication Time", url: "communication-time/", label: "Communication" },
 ];
 
+// Unit 10A – A room with a view (hotel room vocabulary)
+COURSE_DATA["american-english-file"].levels.starter.units[10].lessons.a.games = [
+  { title: "Hotel Flashcards", url: "hotel-flashcards/", label: "Vocabulary" },
+  { title: "Match Hotel", url: "match-hotel/", label: "Vocabulary" },
+];
+
+
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)
 COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.games = [
   { title: "Where is it from?", url: "where-is-it-from/" , label: "Vocabulary" },

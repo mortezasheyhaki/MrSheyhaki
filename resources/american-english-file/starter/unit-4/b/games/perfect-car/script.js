@@ -189,8 +189,7 @@
           timeMs: timeMs,
           onAgain: () => reset(),
           onModes: () => { location.href = "../"; },
-          backHref: "../",
-          save: false,
+          backHref: "../"
         });
       } catch (e) { console.warn("LAFinish", e); }
     }

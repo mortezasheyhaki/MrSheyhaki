@@ -141,8 +141,7 @@ function showFinish() {
           timeMs: timeMs,
           onAgain: () => startGame(),
           onModes: () => goHome(),
-          backHref: "../",
-          save: false,
+          backHref: "../"
         });
         return;
       } catch (e) { console.warn("LAFinish", e); }

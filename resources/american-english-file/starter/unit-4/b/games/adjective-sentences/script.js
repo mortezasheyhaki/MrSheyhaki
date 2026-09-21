@@ -511,8 +511,7 @@
           timeMs: timeMs,
           onAgain: () => startMode(mode),
           onModes: () => showStart(),
-          backHref: "../",
-          save: false,
+          backHref: "../"
         });
         return;
       } catch (e) { console.warn("LAFinish", e); }

@@ -320,8 +320,7 @@
           timeMs: timeMs,
           onAgain: () => location.reload(),
           onModes: () => { location.href = "../"; },
-          backHref: "../",
-          save: false,
+          backHref: "../"
         });
       } catch (e) { console.warn("LAFinish", e); }
     }

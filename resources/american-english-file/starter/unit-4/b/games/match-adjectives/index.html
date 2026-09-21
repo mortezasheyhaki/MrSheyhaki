@@ -34,7 +34,8 @@ else document.documentElement.setAttribute("data-theme","light");
 
     html, body {
       height: 100%;
-      overflow: hidden;
+      min-height: 100dvh;
+      overflow-x: hidden;
     }
 
     body {
@@ -44,19 +45,24 @@ else document.documentElement.setAttribute("data-theme","light");
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 8px;
+      padding: max(8px, env(safe-area-inset-top, 0px))
+               max(8px, env(safe-area-inset-right, 0px))
+               max(8px, env(safe-area-inset-bottom, 0px))
+               max(8px, env(safe-area-inset-left, 0px));
       margin: 0;
+      box-sizing: border-box;
     }
 
     .app {
       width: 100%;
       max-width: 480px;
-      height: 100dvh;
-      max-height: 100dvh;
+      min-height: min(100dvh, 100svh);
       background: #fff;
       border-radius: 20px;
       box-shadow: var(--shadow);
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       display: flex;
       flex-direction: column;
     }
@@ -67,7 +73,9 @@ else document.documentElement.setAttribute("data-theme","light");
       display: flex;
       flex-direction: column;
       min-height: 0;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     #gameScreen.hidden { display: none !important; }
 

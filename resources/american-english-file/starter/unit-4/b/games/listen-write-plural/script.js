@@ -305,8 +305,7 @@
           timeMs: timeMs,
           onAgain: () => startGame(),
           onModes: () => showStart(),
-          backHref: "../",
-          save: false,
+          backHref: "../"
         });
         return;
       } catch (e) { console.warn("LAFinish", e); }
