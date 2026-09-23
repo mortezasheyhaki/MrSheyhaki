@@ -279,7 +279,8 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.b.games = [
 COURSE_DATA["american-english-file"].levels.starter.units[10].lessons.a.games = [
   { title: "Hotel Flashcards", url: "hotel-flashcards/", label: "Vocabulary" },
   { title: "Match Hotel", url: "match-hotel/", label: "Vocabulary" },
-  { title: "Unscramble Hotel Room", url: "unscramble-hotel-room/", label: "Vocabulary" }
+  { title: "Unscramble Hotel Room", url: "unscramble-hotel-room/", label: "Vocabulary" },
+  { title: "Sound Match Picture", url: "sound-match-picture/", label: "Vocabulary" },
 ];
 
 
