@@ -390,7 +390,8 @@
           timeMs: timeMs,
           onAgain: () => startGame(),
           onModes: () => { location.href = '../'; },
-          backHref: "../"
+          backHref: "../",
+          save: false,
         });
         return;
       } catch (e) { console.warn("LAFinish", e); }
