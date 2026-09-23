@@ -19,6 +19,7 @@
   let target = null;
   let scoreUnscramble = 0;
   let scoreWrite = 0;
+  let skippedCount = 0;
   let round = 0;
   const TOTAL = 7;
   let used = [];
@@ -30,6 +31,7 @@
 
   // Unscramble state
   let poolLetters = []; // {ch, id} available to pick
+  let poolOrder = []; // fixed order for stable layout
   let builtLetters = []; // {ch, id} in answer slots
 
   function shuffle(arr) {
@@ -165,19 +167,20 @@
   function setPlayUI(on) {
     const btn = document.getElementById("lw-play");
     const player = document.getElementById("lw-player");
+    const label = player ? player.querySelector(".lw-play-label") : null;
     if (!btn) return;
     if (on) {
       btn.classList.add("is-playing");
       if (player) player.classList.add("is-playing");
-      btn.innerHTML =
-        '<span class="lw-play-ico" aria-hidden="true">⏸</span><span class="lw-play-label">Pause</span>';
+      btn.innerHTML = '<span class="lw-play-ico" aria-hidden="true">⏸</span>';
       btn.setAttribute("aria-label", "Pause");
+      if (label) label.textContent = "Pause";
     } else {
       btn.classList.remove("is-playing");
       if (player) player.classList.remove("is-playing");
-      btn.innerHTML =
-        '<span class="lw-play-ico" aria-hidden="true">▶</span><span class="lw-play-label">Play audio</span>';
+      btn.innerHTML = '<span class="lw-play-ico" aria-hidden="true">▶</span>';
       btn.setAttribute("aria-label", "Play audio");
+      if (label) label.textContent = "Play audio";
     }
   }
 
@@ -195,6 +198,7 @@
     round += 1;
     target = pickDay();
     poolLetters = scrambleWord(target.label);
+    poolOrder = poolLetters.slice();
     builtLetters = [];
     stopAudio();
     render();
@@ -219,6 +223,7 @@
     if (window.LAFinish) LAFinish.startTimer();
     scoreUnscramble = 0;
     scoreWrite = 0;
+    skippedCount = 0;
     round = 0;
     used = [];
     startUnscrambleRound();
@@ -230,6 +235,49 @@
     startWriteRound();
   }
 
+  var sfxCtx = null;
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try { sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    }
+    if (sfxCtx.state === "suspended") sfxCtx.resume().catch(function () {});
+    return sfxCtx;
+  }
+  function tone(freq, start, dur, type, gain) {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var o = ctx.createOscillator();
+    var g = ctx.createGain();
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(freq, start);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.1), start + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(start); o.stop(start + dur + 0.02);
+  }
+  function sfxTap() {
+    try { if (window.LASfx && LASfx.click) LASfx.click(); } catch (_) {}
+    var ctx = getSfxCtx(); if (!ctx) return;
+    tone(640, ctx.currentTime, 0.05, "sine", 0.07);
+  }
+  function sfxOk() {
+    try { if (window.LASfx && LASfx.correct) LASfx.correct(); } catch (_) {}
+    var ctx = getSfxCtx(); if (!ctx) return;
+    var t = ctx.currentTime;
+    tone(523.25, t, 0.1, "triangle", 0.13);
+    tone(659.25, t + 0.08, 0.11, "triangle", 0.13);
+    tone(783.99, t + 0.16, 0.14, "sine", 0.12);
+    tone(1046.5, t + 0.28, 0.2, "sine", 0.1);
+  }
+  function sfxBad() {
+    try { if (window.LASfx && LASfx.wrong) LASfx.wrong(); } catch (_) {}
+    var ctx = getSfxCtx(); if (!ctx) return;
+    var t = ctx.currentTime;
+    tone(220, t, 0.14, "sawtooth", 0.07);
+    tone(180, t + 0.08, 0.16, "triangle", 0.06);
+  }
+
   // ── Unscramble interactions ──
   function pickLetter(id) {
     if (locked) return;
@@ -237,6 +285,7 @@
       return l.id === id;
     });
     if (idx < 0) return;
+    sfxTap();
     const letter = poolLetters.splice(idx, 1)[0];
     builtLetters.push(letter);
     updateUnscrambleUI();
@@ -252,6 +301,7 @@
       return l.id === id;
     });
     if (idx < 0) return;
+    sfxTap();
     const letter = builtLetters.splice(idx, 1)[0];
     poolLetters.push(letter);
     updateUnscrambleUI();
@@ -262,7 +312,7 @@
     const poolEl = document.getElementById("lw-pool");
     if (!builtEl || !poolEl) return;
 
-    builtEl.innerHTML = builtLetters
+    var builtHtml = builtLetters
       .map(function (l) {
         return (
           '<button type="button" class="lw-tile lw-tile-built" data-id="' +
@@ -273,19 +323,28 @@
         );
       })
       .join("");
-
-    // empty slots hint
-    const empty = target.label.length - builtLetters.length;
-    for (let i = 0; i < empty; i++) {
-      builtEl.innerHTML += '<span class="lw-slot"></span>';
+    var empty = target.label.length - builtLetters.length;
+    for (var ei = 0; ei < empty; ei++) {
+      builtHtml += '<span class="lw-slot"></span>';
     }
+    builtEl.innerHTML = builtHtml;
 
-    poolEl.innerHTML = poolLetters
+    var available = {};
+    poolLetters.forEach(function (l) {
+      available[l.id] = true;
+    });
+    var order = poolOrder.length ? poolOrder : poolLetters;
+    poolEl.innerHTML = order
       .map(function (l) {
+        var used = !available[l.id];
         return (
-          '<button type="button" class="lw-tile lw-tile-pool" data-id="' +
+          '<button type="button" class="lw-tile lw-tile-pool' +
+          (used ? " is-used" : "") +
+          '" data-id="' +
           l.id +
-          '">' +
+          '"' +
+          (used ? " disabled" : "") +
+          ">" +
           l.ch +
           "</button>"
         );
@@ -297,63 +356,108 @@
         unpickLetter(btn.getAttribute("data-id"));
       };
     });
-    poolEl.querySelectorAll(".lw-tile-pool").forEach(function (btn) {
+    poolEl.querySelectorAll(".lw-tile-pool:not(.is-used)").forEach(function (btn) {
       btn.onclick = function () {
         pickLetter(btn.getAttribute("data-id"));
       };
     });
   }
 
+
+  function clearUnscramble() {
+    if (locked) return;
+    if (!builtLetters.length) return;
+    sfxTap();
+    poolLetters = poolLetters.concat(builtLetters);
+    builtLetters = [];
+    updateUnscrambleUI();
+    var fb = document.getElementById("lw-fb");
+    if (fb) {
+      fb.textContent = "";
+      fb.className = "lw-fb";
+    }
+  }
+
+  function skipRound() {
+    if (locked) return;
+    locked = true;
+    stopAudio();
+    clearNextTimer();
+    skippedCount += 1;
+    var fb = document.getElementById("lw-fb");
+    if (fb) {
+      fb.textContent = "Skipped";
+      fb.className = "lw-fb";
+    }
+    nextTimer = setTimeout(function () {
+      nextTimer = null;
+      locked = false;
+      if (mode === "unscramble") {
+        if (round >= TOTAL) {
+          mode = "bridge";
+          render();
+        } else {
+          startUnscrambleRound();
+        }
+      } else if (mode === "write") {
+        if (round >= TOTAL) {
+          mode = "result";
+          render();
+        } else {
+          startWriteRound();
+        }
+      }
+    }, 350);
+  }
+
   function checkUnscramble() {
     if (locked) return;
-    const built = builtLetters.map(function (l) {
-      return l.ch;
-    }).join("");
+    const built = builtLetters
+      .map(function (l) {
+        return l.ch;
+      })
+      .join("");
     const ok = built === target.label;
 
     if (!ok) {
-      // Flash wrong, return letters to pool
-      const builtEl = document.getElementById("lw-built");
-      if (builtEl) builtEl.classList.add("shake");
+      sfxBad();
+      document.querySelectorAll(".lw-tile-built").forEach(function (el) {
+        el.classList.add("bad");
+      });
       const fb = document.getElementById("lw-fb");
       if (fb) {
-        fb.innerHTML = '<span class="lw-fb-ico">✗</span> Try again';
+        fb.textContent = "Try again";
         fb.className = "lw-fb bad";
       }
       setTimeout(function () {
-        if (builtEl) builtEl.classList.remove("shake");
-        // return all to pool
         poolLetters = poolLetters.concat(builtLetters);
         builtLetters = [];
-        // reshuffle pool slightly
-        poolLetters = shuffle(poolLetters);
         updateUnscrambleUI();
         if (fb) {
-          fb.innerHTML = "";
+          fb.textContent = "";
           fb.className = "lw-fb";
         }
-      }, 650);
+      }, 450);
       return;
     }
 
-    // Correct
     locked = true;
     stopAudio();
+    sfxOk();
     scoreUnscramble += 1;
     const fb = document.getElementById("lw-fb");
     if (fb) {
-      fb.innerHTML =
-        '<span class="lw-fb-ico">✓</span> Correct! <strong>' + target.label + "</strong>";
+      fb.innerHTML = "✓ Correct! <strong>" + target.label + "</strong>";
       fb.className = "lw-fb ok";
     }
-    const builtEl = document.getElementById("lw-built");
-    if (builtEl) builtEl.classList.add("ok");
+    document.querySelectorAll(".lw-tile-built").forEach(function (el) {
+      el.classList.add("ok");
+    });
 
     clearNextTimer();
     nextTimer = setTimeout(function () {
       nextTimer = null;
       if (round >= TOTAL) {
-        // Transition to part 2
         mode = "bridge";
         render();
       } else {
@@ -374,10 +478,10 @@
     }
 
     if (!isCapitalizedDay(val) && strip(val).toLowerCase() === target.id) {
+      sfxBad();
       const fb = document.getElementById("lw-fb");
       if (fb) {
-        fb.innerHTML =
-          '<span class="lw-fb-ico">A</span> Start with a <strong>capital letter</strong> (e.g. Monday)';
+        fb.innerHTML = 'Start with a <strong>capital letter</strong> (e.g. Monday)';
         fb.className = "lw-fb bad";
       }
       input.focus();
@@ -390,15 +494,12 @@
     const correct = matchesDay(val, target);
 
     if (!correct) {
+      sfxBad();
       input.classList.remove("ok");
-      input.classList.add("bad", "shake");
-      setTimeout(function () {
-        input.classList.remove("shake");
-      }, 400);
+      input.classList.add("bad");
       const fb = document.getElementById("lw-fb");
       if (fb) {
-        fb.innerHTML =
-          '<span class="lw-fb-ico">✗</span> Try again — listen and write the day.';
+        fb.textContent = "Try again — listen and write the day.";
         fb.className = "lw-fb bad";
       }
       input.focus();
@@ -410,6 +511,7 @@
 
     locked = true;
     stopAudio();
+    sfxOk();
     scoreWrite += 1;
 
     input.disabled = true;
@@ -419,8 +521,7 @@
 
     const fb = document.getElementById("lw-fb");
     if (fb) {
-      fb.innerHTML =
-        '<span class="lw-fb-ico">✓</span> Correct! <strong>' + target.label + "</strong>";
+      fb.innerHTML = "✓ Correct! <strong>" + target.label + "</strong>";
       fb.className = "lw-fb ok";
     }
 
@@ -455,18 +556,30 @@
         '<header class="lw-topbar">' +
         '<a class="lw-back" href="../" aria-label="Back">←</a>' +
         '<span class="lw-title">Days of the week</span>' +
-        '<span class="lw-badge">✍️ Write</span></header>' +
+        '<span class="lw-badge">1A</span></header>' +
         '<section class="lw-start">' +
-        '<div class="lw-hero"><div class="lw-blob" aria-hidden="true"></div>' +
-        '<div class="lw-icon-wrap"><span class="lw-icon">✍️</span></div></div>' +
-        '<p class="lw-eyebrow">LISTENING · SPELLING</p>' +
+        '<div class="lw-hero" aria-hidden="true">📅</div>' +
+        '<p class="lw-eyebrow">Listening · Spelling</p>' +
         "<h1>Listen &amp; Write</h1>" +
-        '<p class="lw-sub"><strong>Part 1:</strong> Unscramble the letters<br>' +
-        "<strong>Part 2:</strong> Listen again and write the word</p>" +
-        '<p class="lw-hint">' + TOTAL + " days · two parts</p>" +
-        '<button type="button" class="lw-btn" id="lw-go">Start</button>' +
+        '<p class="lw-sub">7 days · two parts · listen carefully</p>' +
+        '<div class="lw-modes">' +
+        '<button type="button" class="lw-mode-btn" id="lw-go">' +
+        '<span class="lw-mode-ico" aria-hidden="true">🔤</span>' +
+        "<div><h3>Part 1 · Unscramble</h3><p>Listen, then tap the letters in order</p></div>" +
+        "</button>" +
+        '<button type="button" class="lw-mode-btn" id="lw-go-write">' +
+        '<span class="lw-mode-ico" aria-hidden="true">✍️</span>' +
+        "<div><h3>Part 2 · Write</h3><p>Listen again and type the day</p></div>" +
+        "</button>" +
+        "</div>" +
         "</section>";
       document.getElementById("lw-go").onclick = beginPart1;
+      document.getElementById("lw-go-write").onclick = function () {
+        if (window.LAFinish) LAFinish.startTimer();
+        scoreUnscramble = 0;
+        scoreWrite = 0;
+        beginPart2();
+      };
       return;
     }
 
@@ -479,11 +592,11 @@
         '<span class="lw-title">Part 1 done</span>' +
         '<span class="lw-badge">' + scoreUnscramble + "/" + TOTAL + "</span></header>" +
         '<section class="lw-start">' +
-        '<div class="lw-icon-wrap"><span class="lw-icon">🎧</span></div>' +
+        '<div class="lw-hero" aria-hidden="true">✨</div>' +
         "<h1>Nice work!</h1>" +
         '<p class="lw-sub">You unscrambled <strong>' + scoreUnscramble + "</strong> of " + TOTAL + " days.</p>" +
         '<p class="lw-sub">Now listen again and <strong>write</strong> each day.</p>' +
-        '<button type="button" class="lw-btn" id="lw-part2">Part 2 →</button>' +
+        '<button type="button" class="lw-btn" id="lw-part2">Part 2 · Write →</button>' +
         "</section>";
       document.getElementById("lw-part2").onclick = beginPart2;
       return;
@@ -513,10 +626,21 @@
         });
         return;
       }
-      const stars = got >= 12 ? 3 : got >= 8 ? 2 : got >= 4 ? 1 : 0;
+      // No stars if they skipped everything (score 0)
+      var stars = 0;
+      if (got > 0) {
+        stars = got >= 12 ? 3 : got >= 8 ? 2 : got >= 4 ? 1 : 0;
+      }
       if (window.LAStars) {
         LAStars.recordPlay(GAME_ID);
-        LAStars.save(GAME_ID, stars);
+        if (got > 0) {
+          LAStars.save(GAME_ID, stars);
+        } else {
+          // record play only — do not award stars for skip-all
+          try {
+            if (LAStars.saveFromAccuracy) LAStars.saveFromAccuracy(GAME_ID, 0);
+          } catch (e) {}
+        }
       }
       app.innerHTML =
         '<header class="lw-topbar"><a class="lw-back" href="../">←</a><span class="lw-title">Results</span></header>' +
@@ -533,23 +657,46 @@
     // Shared player + header for unscramble / write
     const partLabel = mode === "unscramble" ? "Unscramble" : "Write";
     const partNum = mode === "unscramble" ? "1" : "2";
+    const pct = Math.round(((round - 1) / TOTAL) * 100);
 
     let body = "";
     if (mode === "unscramble") {
       body =
+        '<p class="lw-phase">Part ' + partNum + " · " + partLabel + "</p>" +
+        '<div class="lw-player" id="lw-player">' +
+        '<button type="button" class="lw-play-btn" id="lw-play" aria-label="Play audio">' +
+        '<span class="lw-play-ico" aria-hidden="true">▶</span></button>' +
+        '<span class="lw-play-label">Play audio</span>' +
+        '<div class="lw-wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>' +
+        "</div>" +
         '<p class="lw-instruction">Listen, then tap the letters in order.</p>' +
-        '<div class="lw-unscramble">' +
+        '<div class="lw-prompt-card">' +
         '<div class="lw-built" id="lw-built"></div>' +
+        "</div>" +
         '<div class="lw-pool" id="lw-pool"></div>' +
+        '<div class="lw-actions">' +
+        '<button type="button" class="lw-btn secondary" id="lw-clear">Clear</button>' +
+        '<button type="button" class="lw-btn secondary" id="lw-skip">Skip</button>' +
         "</div>" +
         '<div class="lw-fb" id="lw-fb" aria-live="polite"></div>';
     } else {
       body =
+        '<p class="lw-phase">Part ' + partNum + " · " + partLabel + "</p>" +
+        '<div class="lw-player" id="lw-player">' +
+        '<button type="button" class="lw-play-btn" id="lw-play" aria-label="Play audio">' +
+        '<span class="lw-play-ico" aria-hidden="true">▶</span></button>' +
+        '<span class="lw-play-label">Play audio</span>' +
+        '<div class="lw-wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>' +
+        "</div>" +
         '<p class="lw-instruction">Listen again, then write the day (capital first).</p>' +
         '<div class="lw-write-card">' +
         '<label class="lw-label" for="lw-input">Day</label>' +
         '<input type="text" id="lw-input" class="lw-input" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Monday" maxlength="20" />' +
-        '<button type="button" class="lw-btn lw-check" id="lw-check">Check</button>' +
+        '<button type="button" class="lw-btn lw-check" id="lw-check">Check ✓</button>' +
+        "</div>" +
+        '<div class="lw-actions">' +
+        '<button type="button" class="lw-btn secondary" id="lw-clear-write">Clear</button>' +
+        '<button type="button" class="lw-btn secondary" id="lw-skip">Skip</button>' +
         "</div>" +
         '<div class="lw-fb" id="lw-fb" aria-live="polite"></div>';
     }
@@ -557,22 +704,38 @@
     app.innerHTML =
       '<header class="lw-topbar">' +
       '<a class="lw-back" href="../" aria-label="Back">←</a>' +
-      '<span class="lw-title">Part ' + partNum + " · " + partLabel + "</span>" +
+      '<div class="lw-progress"><span style="width:' + Math.max(0, pct) + '%"></span></div>' +
       '<span class="lw-badge">' + round + " / " + TOTAL + "</span></header>" +
-      '<div class="lw-player" id="lw-player">' +
-      '<button type="button" class="lw-play-btn" id="lw-play" aria-label="Play audio">' +
-      '<span class="lw-play-ico" aria-hidden="true">▶</span>' +
-      '<span class="lw-play-label">Play audio</span></button>' +
-      '<div class="lw-wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>' +
-      "</div>" +
-      body;
+      '<div class="lw-play">' + body + "</div>";
 
     document.getElementById("lw-play").onclick = togglePlay;
 
+    var skipBtn = document.getElementById("lw-skip");
+    if (skipBtn) skipBtn.onclick = skipRound;
+
     if (mode === "unscramble") {
       updateUnscrambleUI();
+      var clearBtn = document.getElementById("lw-clear");
+      if (clearBtn) clearBtn.onclick = clearUnscramble;
     } else {
       document.getElementById("lw-check").onclick = checkWrite;
+      var clearWrite = document.getElementById("lw-clear-write");
+      if (clearWrite) {
+        clearWrite.onclick = function () {
+          if (locked) return;
+          var input = document.getElementById("lw-input");
+          if (!input) return;
+          sfxTap();
+          input.value = "";
+          input.classList.remove("ok", "bad");
+          input.focus();
+          var fb = document.getElementById("lw-fb");
+          if (fb) {
+            fb.textContent = "";
+            fb.className = "lw-fb";
+          }
+        };
+      }
       const input = document.getElementById("lw-input");
       input.addEventListener("keydown", function (e) {
         if (e.key === "Enter") {
