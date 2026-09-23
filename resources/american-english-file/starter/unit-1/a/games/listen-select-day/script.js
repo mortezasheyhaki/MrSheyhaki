@@ -26,6 +26,7 @@
   let playing = false;
   let locked = false;
   let nextTimer = null;
+  let firstPlayRender = true; // only run entrance animation on first board
 
   function pickDay() {
     const pool = DAYS.filter((d) => !used.includes(d.id));
@@ -271,6 +272,7 @@
         round = 0;
         used = [];
         muted = [];
+        firstPlayRender = true;
         if (window.LAFinish) LAFinish.startTimer();
         startRound();
       };
@@ -293,6 +295,7 @@
             round = 0;
             used = [];
             muted = [];
+            firstPlayRender = true;
             if (window.LAFinish) LAFinish.startTimer();
             startRound();
           },
@@ -345,9 +348,11 @@
       </div>
 
       <p class="ld-instruction">Listen, then tap the day you hear.</p>
-      <div class="ld-days" id="ld-days">${cards}</div>
+      <div class="ld-days${firstPlayRender ? "" : " ld-no-enter"}" id="ld-days">${cards}</div>
       <div class="ld-fb" id="ld-fb" aria-live="polite"></div>
     `;
+
+    firstPlayRender = false;
 
     document.getElementById("ld-play").onclick = togglePlay;
     document.querySelectorAll(".ld-day:not(.muted)").forEach((btn) => {
