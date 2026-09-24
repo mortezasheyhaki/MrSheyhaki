@@ -223,8 +223,14 @@ COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.games = [
   { title: "Family Introduction", url: "family-roleplay/", label: "Vocabulary" },
 ];
 
-// Unit 5A – Games
-COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.games = [];
+// Unit 5A – Games (A big breakfast? · food vocabulary)
+COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.games = [
+  { title: "Food Flashcards", url: "food-flashcards/", label: "Vocabulary" },
+  { title: "Food & Drinks Sort", url: "food-drinks-sort/", label: "Vocabulary" },
+  { title: "Food Verb Match", url: "food-verb-match/", label: "Vocabulary" },
+  { title: "Food Match", url: "food-match/", label: "Vocabulary" },
+  { title: "Sound Match Picture", url: "food-sound-match-picture/", label: "Vocabulary" },
+];
 
 // Unit 6A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.games = [
