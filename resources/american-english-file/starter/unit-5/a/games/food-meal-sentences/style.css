@@ -1,0 +1,314 @@
+/* Meal Sentences · Unit 5A */
+:root {
+  --ms-bg: #f4f6fb;
+  --ms-card: #ffffff;
+  --ms-text: #1e1b4b;
+  --ms-muted: #64748b;
+  --ms-purple: #6d28d9;
+  --ms-green: #16a34a;
+  --ms-red: #dc2626;
+  --ms-radius: 18px;
+  --ms-shadow: 0 10px 30px rgba(30, 27, 75, 0.08);
+}
+html[data-theme="dark"] {
+  --ms-bg: #0f1220;
+  --ms-card: #1a1f35;
+  --ms-text: #f1f5f9;
+  --ms-muted: #94a3b8;
+  --ms-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  min-height: 100dvh;
+  background: var(--ms-bg) !important;
+  color: var(--ms-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.arcade-header-bar, .arcade-nav, .site-footer, body > header {
+  display: none !important;
+}
+
+.ms-game {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 16px 40px;
+  min-height: 100dvh;
+}
+
+.ms-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.ms-back {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--ms-card);
+  color: var(--ms-text);
+  text-decoration: none;
+  border: 1px solid rgba(109, 40, 217, 0.12);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  flex-shrink: 0;
+}
+.ms-title {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ms-muted);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ms-badge {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(109, 40, 217, 0.12);
+  color: var(--ms-purple);
+  flex-shrink: 0;
+}
+
+.ms-progress {
+  height: 6px;
+  background: rgba(109, 40, 217, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.ms-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #818cf8, #6366f1);
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.ms-start {
+  text-align: center;
+  padding: 40px 12px;
+}
+.ms-hero {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #34d399, #6366f1);
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+  margin: 0 auto 14px;
+  box-shadow: 0 10px 28px rgba(99, 102, 241, 0.3);
+}
+.ms-start h1 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+.ms-sub {
+  margin: 0 0 20px;
+  color: var(--ms-muted);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* Large sentence card */
+.ms-sentence-card {
+  background: var(--ms-card);
+  border-radius: 22px;
+  padding: 22px 20px;
+  box-shadow: var(--ms-shadow);
+  border: 1px solid rgba(109, 40, 217, 0.12);
+  font-size: clamp(1.15rem, 4.2vw, 1.45rem);
+  font-weight: 700;
+  line-height: 1.7;
+  color: var(--ms-text);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 4px;
+  margin-bottom: 12px;
+}
+.ms-text {
+  white-space: pre-wrap;
+}
+
+.ms-blank {
+  appearance: none;
+  border: 2px dashed rgba(109, 40, 217, 0.35);
+  background: rgba(109, 40, 217, 0.06);
+  border-radius: 12px;
+  min-width: 4.5em;
+  min-height: 2.2em;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 0.95em;
+  font-weight: 800;
+  color: var(--ms-purple);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  transition: none;
+}
+.ms-blank.is-filled {
+  border-style: solid;
+  border-color: rgba(109, 40, 217, 0.35);
+  background: #ede9fe;
+  color: #5b21b6;
+}
+.ms-blank.ok {
+  border-color: var(--ms-green);
+  background: #dcfce7;
+  color: #15803d;
+}
+.ms-blank.bad {
+  border-color: var(--ms-red);
+  background: #fee2e2;
+  color: #b91c1c;
+}
+html[data-theme="dark"] .ms-blank.is-filled {
+  background: rgba(109, 40, 217, 0.28);
+  color: #c4b5fd;
+}
+html[data-theme="dark"] .ms-blank.ok {
+  background: rgba(22, 163, 74, 0.22);
+  color: #86efac;
+}
+
+.ms-hint {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ms-muted);
+}
+
+/* Chips under sentence */
+.ms-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 16px;
+  min-height: 48px;
+}
+.ms-chip {
+  appearance: none;
+  border: 1px solid rgba(109, 40, 217, 0.18);
+  background: var(--ms-card);
+  color: var(--ms-text);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+.ms-chip:active {
+  transform: scale(0.97);
+}
+.ms-chip.is-used {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.ms-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.ms-btn {
+  appearance: none;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 24px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  background: linear-gradient(145deg, #818cf8, #6366f1);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+  min-width: 120px;
+}
+.ms-btn.secondary {
+  background: var(--ms-card);
+  color: var(--ms-purple);
+  border: 2px solid rgba(109, 40, 217, 0.25);
+  box-shadow: none;
+}
+.ms-fb {
+  text-align: center;
+  min-height: 1.4em;
+  font-weight: 700;
+  font-size: 1rem;
+}
+.ms-fb.ok { color: var(--ms-green); }
+.ms-fb.bad { color: var(--ms-red); }
+
+@media (min-width: 900px) {
+  .ms-game {
+    max-width: 720px;
+    padding: 24px 28px 48px;
+  }
+  .ms-sentence-card {
+    padding: 28px 28px;
+    font-size: 1.55rem;
+    border-radius: 24px;
+  }
+  .ms-chip {
+    font-size: 1.1rem;
+    padding: 12px 18px;
+  }
+  .ms-blank {
+    min-width: 5em;
+    min-height: 2.4em;
+  }
+}
+
+@media (max-width: 400px) {
+  .ms-sentence-card {
+    padding: 16px 14px;
+    font-size: 1.05rem;
+  }
+  .ms-chip {
+    font-size: 0.92rem;
+    padding: 9px 12px;
+  }
+  .ms-blank {
+    min-width: 3.8em;
+    padding: 3px 8px;
+  }
+}
+
+/* Desktop: keep sentence on one line */
+@media (min-width: 900px) {
+  .ms-game {
+    max-width: 920px !important;
+  }
+  .ms-sentence-card {
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+    overflow-x: auto;
+    justify-content: flex-start;
+    gap: 8px !important;
+    padding: 24px 28px !important;
+    font-size: 1.4rem !important;
+  }
+  .ms-sentence-card .ms-text {
+    white-space: nowrap !important;
+  }
+  .ms-blank {
+    min-width: 5.5em !important;
+    flex-shrink: 0;
+  }
+}

@@ -232,6 +232,9 @@ COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.games = [
   { title: "Sound Match Picture", url: "food-sound-match-picture/", label: "Vocabulary" },
   { title: "Food Unscramble", url: "food-unscramble/", label: "Vocabulary" },
   { title: "Food Type", url: "food-type/", label: "Vocabulary" },
+  { title: "Meal Sentences", url: "food-meal-sentences/", label: "Grammar" },
+  { title: "Breakfast Stories", url: "breakfast-listen/", label: "Listening" },
+  { title: "Sentence Unscramble", url: "breakfast-sentence-unscramble/", label: "Grammar" },
 ];
 
 // Unit 6A – Games
