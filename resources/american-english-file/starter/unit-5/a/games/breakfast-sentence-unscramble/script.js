@@ -1,4 +1,5 @@
-/* Breakfast Sentence Unscramble · force listen after correct · Unit 5A */
+/* Sentence Unscramble · Unit 5A
+   Layout matched to Sentence Builder · be (Unit 1A) */
 (function () {
   "use strict";
 
@@ -43,7 +44,7 @@
   var index = 0;
   var tokens = []; // correct order
   var pool = []; // { id, text, used }
-  var built = []; // ids in order
+  var selected = []; // texts in order (like SB)
   var locked = false;
   var score = 0;
   var listened = false;
@@ -63,11 +64,7 @@
   }
 
   function tokenize(sentence) {
-    // Keep punctuation attached to words: "coffee." "soup." "morning."
-    return sentence
-      .trim()
-      .split(/\s+/)
-      .filter(Boolean);
+    return sentence.trim().split(/\s+/).filter(Boolean);
   }
 
   function getSfxCtx() {
@@ -88,17 +85,16 @@
     var o = ctx.createOscillator();
     var g = ctx.createGain();
     o.type = type || "sine";
-    o.frequency.setValueAtTime(freq, start);
-    g.gain.setValueAtTime(0.0001, start);
-    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.1), start + 0.012);
-    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(gain || 0.1, start);
+    g.gain.exponentialRampToValueAtTime(0.001, start + dur);
     o.connect(g);
     g.connect(ctx.destination);
     o.start(start);
     o.stop(start + dur + 0.02);
   }
 
-  function sfxTap() {
+  function sfxClick() {
     try {
       if (window.LASfx && LASfx.click) LASfx.click();
     } catch (_) {}
@@ -135,7 +131,7 @@
       } catch (_) {}
       currentAudio = null;
     }
-    app.querySelectorAll(".su-play.playing").forEach(function (b) {
+    app.querySelectorAll(".su-play-btn.playing").forEach(function (b) {
       b.classList.remove("playing");
     });
   }
@@ -146,7 +142,7 @@
     stopAudio();
     var a = new Audio(item.audio);
     currentAudio = a;
-    var btn = app.querySelector(".su-play");
+    var btn = app.querySelector(".su-play-btn");
     if (btn) btn.classList.add("playing");
     a.play().catch(function () {
       if (btn) btn.classList.remove("playing");
@@ -193,53 +189,30 @@
     stopAudio();
     tokens = tokenize(ITEMS[index].sentence);
     var scrambled = shuffle(tokens.slice());
-    // avoid identical order when possible
     var tries = 0;
     while (scrambled.join(" ") === tokens.join(" ") && tokens.length > 2 && tries < 15) {
       scrambled = shuffle(tokens.slice());
       tries++;
     }
-    pool = scrambled.map(function (text) {
-      return { id: "w" + ++uid, text: text, used: false };
+    uid = 0;
+    pool = scrambled.map(function (t) {
+      return { id: ++uid, text: t, used: false };
     });
-    built = [];
+    selected = [];
     phase = "play";
     render();
   }
 
-  function pickWord(id) {
-    if (locked || phase !== "play") return;
-    var chip = pool.find(function (c) {
-      return c.id === id;
-    });
-    if (!chip || chip.used) return;
-    sfxTap();
-    chip.used = true;
-    built.push(id);
-    updateTiles();
-  }
-
-  function unpickWord(id) {
-    if (locked || phase !== "play") return;
-    var i = built.indexOf(id);
-    if (i < 0) return;
-    sfxTap();
-    built.splice(i, 1);
-    var chip = pool.find(function (c) {
-      return c.id === id;
-    });
-    if (chip) chip.used = false;
-    updateTiles();
-  }
-
   function clearAll() {
-    if (locked || phase !== "play") return;
-    sfxTap();
-    built = [];
-    pool.forEach(function (c) {
-      c.used = false;
+    if (locked) return;
+    sfxClick();
+    selected = [];
+    pool.forEach(function (p) {
+      p.used = false;
     });
-    updateTiles();
+    updateSlotsAndChips();
+    var checkBtn = document.getElementById("su-check");
+    if (checkBtn) checkBtn.disabled = true;
     var fb = document.getElementById("su-fb");
     if (fb) {
       fb.textContent = "";
@@ -247,129 +220,166 @@
     }
   }
 
-  function builtText() {
-    return built
-      .map(function (id) {
-        var c = pool.find(function (x) {
-          return x.id === id;
-        });
-        return c ? c.text : "";
-      })
-      .join(" ");
-  }
-
   function checkAnswer() {
-    if (locked || phase !== "play") return;
-    if (built.length !== tokens.length) {
-      var fb0 = document.getElementById("su-fb");
-      if (fb0) {
-        fb0.textContent = "Use all the words.";
-        fb0.className = "su-fb bad";
-      }
-      return;
-    }
+    if (locked || selected.length !== tokens.length) return;
+    locked = true;
+    var ok = selected.join(" ") === tokens.join(" ");
+    var slots = app.querySelectorAll(".su-slot");
+    slots.forEach(function (slot, i) {
+      slot.classList.remove("filled");
+      slot.classList.add(ok ? "correct" : "wrong");
+    });
 
-    var ok = builtText() === tokens.join(" ");
-    if (!ok) {
-      sfxBad();
-      locked = true;
-      document.querySelectorAll(".su-built-chip").forEach(function (el) {
-        el.classList.add("bad");
-      });
+    var checkBtn = document.getElementById("su-check");
+    if (checkBtn) checkBtn.disabled = true;
+
+    if (ok) {
+      sfxOk();
+      score++;
       var fb = document.getElementById("su-fb");
       if (fb) {
-        fb.textContent = "Not quite — try again.";
-        fb.className = "su-fb bad";
+        fb.textContent = "Perfect!";
+        fb.className = "su-fb ok";
+      }
+      setTimeout(function () {
+        phase = "listen";
+        renderListenStep();
+      }, 700);
+    } else {
+      sfxBad();
+      var fb2 = document.getElementById("su-fb");
+      if (fb2) {
+        fb2.textContent = "Try again";
+        fb2.className = "su-fb bad";
       }
       setTimeout(function () {
         locked = false;
-        document.querySelectorAll(".su-built-chip").forEach(function (el) {
-          el.classList.remove("bad");
+        selected = [];
+        pool.forEach(function (p) {
+          p.used = false;
         });
-      }, 550);
-      return;
+        updateSlotsAndChips();
+        if (checkBtn) checkBtn.disabled = true;
+        if (fb2) {
+          fb2.textContent = "";
+          fb2.className = "su-fb";
+        }
+      }, 900);
     }
-
-    // Correct → force listen
-    locked = true;
-    sfxOk();
-    score += 1;
-    document.querySelectorAll(".su-built-chip").forEach(function (el) {
-      el.classList.add("ok");
-    });
-    var fb2 = document.getElementById("su-fb");
-    if (fb2) {
-      fb2.textContent = "✓ Correct! Now listen.";
-      fb2.className = "su-fb ok";
-    }
-    phase = "listen";
-    listened = false;
-    setTimeout(function () {
-      renderListenStep();
-      playAudio(true);
-    }, 500);
   }
 
   function renderListenStep() {
     var actions = document.getElementById("su-actions");
-    var poolEl = document.getElementById("su-pool");
-    var hint = document.getElementById("su-hint");
-    if (poolEl) poolEl.style.display = "none";
-    if (hint) hint.style.display = "none";
+    var chipsEl = document.getElementById("su-chips");
+    var label = app.querySelector(".su-prompt-label");
+    if (label) label.textContent = "Listen to the sentence";
+    if (chipsEl) chipsEl.innerHTML = "";
     if (actions) {
       actions.innerHTML =
         '<div class="su-listen-bar">' +
-        '<button type="button" class="su-play" id="su-play" aria-label="Play audio">' +
+        '<button type="button" class="su-play-btn" id="su-play" aria-label="Play audio">' +
+        '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>' +
         '<span class="wave"></span><span class="wave"></span><span class="wave"></span>' +
-        '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>' +
-        '<div class="eq"><span></span><span></span><span></span><span></span></div>' +
+        '<span class="eq"><span></span><span></span><span></span><span></span></span>' +
         "</button>" +
-        '<p class="su-listen-hint" id="su-listen-hint">Listen to the sentence to continue</p>' +
-        "</div>" +
-        '<button type="button" class="su-btn is-disabled" id="su-next" disabled>Next →</button>';
+        '<p class="su-listen-hint" id="su-listen-hint">Listening…</p>' +
+        '<button type="button" class="su-btn su-btn-primary is-disabled" id="su-next" disabled style="max-width:260px;width:100%;">Next →</button>' +
+        "</div>";
       document.getElementById("su-play").onclick = function () {
         playAudio(true);
       };
       document.getElementById("su-next").onclick = function () {
         if (!listened) return;
-        index += 1;
+        index++;
         startRound();
       };
+      // Auto-play audio after correct answer — no need to press Play
+      setTimeout(function () {
+        playAudio(true);
+      }, 150);
     }
   }
 
-  function finishGame() {
-    stopAudio();
-    phase = "done";
-    var stars = score >= TOTAL ? 3 : score >= 5 ? 2 : score >= 3 ? 1 : 0;
-    if (window.LAFinish) {
-      try {
-        var timeMs = LAFinish.stopTimer();
-        LAFinish.show({
-          gameId: GAME_ID,
-          score: score,
-          total: TOTAL,
-          stars: stars,
-          timeMs: timeMs,
-          onAgain: startGame,
-          onModes: function () {
-            phase = "start";
-            render();
-          },
-          backHref: "../"
+  function updateSlotsAndChips() {
+    var slotsEl = document.getElementById("su-slots");
+    var chipsEl = document.getElementById("su-chips");
+    if (!slotsEl || !chipsEl) return;
+
+    // slots
+    slotsEl.innerHTML = tokens
+      .map(function (_, i) {
+        var text = selected[i] || "";
+        var cls = "su-slot" + (text ? " filled" : "");
+        return (
+          '<span class="' +
+          cls +
+          '" data-i="' +
+          i +
+          '">' +
+          (text ? escapeHtml(text) : "") +
+          "</span>"
+        );
+      })
+      .join("");
+
+    // chips
+    chipsEl.innerHTML = pool
+      .map(function (p) {
+        return (
+          '<button type="button" class="su-chip' +
+          (p.used ? " used" : "") +
+          '" data-id="' +
+          p.id +
+          '" data-text="' +
+          escapeAttr(p.text) +
+          '"' +
+          (p.used ? " disabled" : "") +
+          ">" +
+          escapeHtml(p.text) +
+          "</button>"
+        );
+      })
+      .join("");
+
+    // chip clicks
+    chipsEl.querySelectorAll(".su-chip:not(.used)").forEach(function (btn) {
+      btn.onclick = function () {
+        if (locked) return;
+        sfxClick();
+        var id = +btn.dataset.id;
+        var text = btn.dataset.text;
+        var item = pool.find(function (p) {
+          return p.id === id;
         });
-        return;
-      } catch (e) {
-        console.warn(e);
-      }
-    }
-    if (window.LAStars) {
-      try {
-        LAStars.recordPlay(GAME_ID);
-        if (stars > 0) LAStars.save(GAME_ID, stars);
-      } catch (_) {}
-    }
-    render();
+        if (!item || item.used) return;
+        item.used = true;
+        selected.push(text);
+        updateSlotsAndChips();
+        var checkBtn = document.getElementById("su-check");
+        if (checkBtn) checkBtn.disabled = selected.length !== tokens.length;
+      };
+    });
+
+    // slot clicks (remove last matching)
+    slotsEl.querySelectorAll(".su-slot.filled").forEach(function (slot) {
+      slot.onclick = function () {
+        if (locked) return;
+        var i = +slot.dataset.i;
+        if (i !== selected.length - 1) return; // only allow removing from end for simplicity
+        sfxClick();
+        var text = selected.pop();
+        var item = pool
+          .slice()
+          .reverse()
+          .find(function (p) {
+            return p.used && p.text === text;
+          });
+        if (item) item.used = false;
+        updateSlotsAndChips();
+        var checkBtn = document.getElementById("su-check");
+        if (checkBtn) checkBtn.disabled = selected.length !== tokens.length;
+      };
+    });
   }
 
   function escapeHtml(s) {
@@ -380,119 +390,112 @@
       .replace(/"/g, "&quot;");
   }
 
-  function updateTiles() {
-    var builtEl = document.getElementById("su-built");
-    var poolEl = document.getElementById("su-pool");
-    if (!builtEl || !poolEl) return;
+  function escapeAttr(s) {
+    return escapeHtml(s).replace(/'/g, "&#39;");
+  }
 
-    builtEl.innerHTML = built
-      .map(function (id) {
-        var c = pool.find(function (x) {
-          return x.id === id;
+  function progressPct() {
+    return Math.round((index / TOTAL) * 100);
+  }
+
+  function finishGame() {
+    phase = "done";
+    stopAudio();
+    var timeMs = 0;
+    try {
+      if (window.LAFinish && LAFinish.stopTimer) timeMs = LAFinish.stopTimer();
+    } catch (_) {}
+    if (window.LAFinish) {
+      try {
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: TOTAL,
+          stars: score >= TOTAL ? 3 : score >= 5 ? 2 : score >= 3 ? 1 : 0,
+          timeMs: timeMs,
+          onAgain: function () {
+            startGame();
+          },
+          backHref: "../"
         });
-        return (
-          '<button type="button" class="su-chip su-built-chip" data-id="' +
-          id +
-          '">' +
-          escapeHtml(c.text) +
-          "</button>"
-        );
-      })
-      .join("");
-
-    poolEl.innerHTML = pool
-      .map(function (c) {
-        return (
-          '<button type="button" class="su-chip su-pool-chip' +
-          (c.used ? " is-used" : "") +
-          '" data-id="' +
-          c.id +
-          '"' +
-          (c.used ? " disabled" : "") +
-          ">" +
-          escapeHtml(c.text) +
-          "</button>"
-        );
-      })
-      .join("");
-
-    builtEl.querySelectorAll(".su-built-chip").forEach(function (btn) {
-      btn.onclick = function () {
-        unpickWord(btn.getAttribute("data-id"));
-      };
-    });
-    poolEl.querySelectorAll(".su-pool-chip:not(.is-used)").forEach(function (btn) {
-      btn.onclick = function () {
-        pickWord(btn.getAttribute("data-id"));
-      };
-    });
+      } catch (_) {}
+    }
+    // Keep a simple fallback behind the overlay in case LAFinish is missing
+    render();
   }
 
   function render() {
     if (phase === "start") {
       stopAudio();
       app.innerHTML =
-        '<header class="su-topbar">' +
+        '<div class="su-top">' +
         '<a class="su-back" href="../" aria-label="Back">←</a>' +
-        '<span class="su-title">Sentence Unscramble</span>' +
-        '<span class="su-badge">5A</span></header>' +
-        '<section class="su-start">' +
+        "</div>" +
+        '<div class="su-start">' +
         '<div class="su-hero" aria-hidden="true">🔤</div>' +
-        "<h1>Breakfast Sentences</h1>" +
-        '<p class="su-sub">Unscramble the words, then listen to each sentence.</p>' +
-        '<button type="button" class="su-btn" id="su-start">Start</button>' +
-        "</section>";
+        "<h1>Sentence Unscramble</h1>" +
+        "<p>Unscramble the breakfast sentences, then listen to each one.</p>" +
+        '<button type="button" class="su-btn su-btn-primary" id="su-start" style="max-width:280px;width:100%;margin:0 auto;display:block;">Start</button>' +
+        "</div>";
       document.getElementById("su-start").onclick = startGame;
       return;
     }
 
     if (phase === "done") {
       var stars = score >= TOTAL ? 3 : score >= 5 ? 2 : score >= 3 ? 1 : 0;
+      var title =
+        stars === 3 ? "Perfect!" : stars > 0 ? "Well done!" : "Keep practicing!";
       app.innerHTML =
-        '<header class="su-topbar">' +
+        '<div class="su-top">' +
         '<a class="su-back" href="../" aria-label="Back">←</a>' +
-        '<span class="su-title">Sentence Unscramble</span>' +
-        '<span class="su-badge">Done</span></header>' +
-        '<section class="su-start">' +
+        "</div>" +
+        '<div class="su-start">' +
         "<h1>" +
-        (stars === 3 ? "Perfect!" : stars > 0 ? "Well done!" : "Keep practicing!") +
+        title +
         "</h1>" +
-        '<p class="su-sub">You built <strong>' +
+        "<p>You built <strong>" +
         score +
         "</strong> of " +
         TOTAL +
         " sentences.</p>" +
-        '<button type="button" class="su-btn" id="su-again">Play again</button>' +
-        "</section>";
+        '<button type="button" class="su-btn su-btn-primary" id="su-again" style="max-width:280px;width:100%;margin:0 auto;display:block;">Play again</button>' +
+        "</div>";
       document.getElementById("su-again").onclick = startGame;
       return;
     }
 
-    var pct = Math.round((index / TOTAL) * 100);
+    // play phase
     app.innerHTML =
-      '<header class="su-topbar">' +
+      '<div class="su-top">' +
       '<a class="su-back" href="../" aria-label="Back">←</a>' +
-      '<span class="su-title">Sentence Unscramble</span>' +
-      '<span class="su-badge">' +
+      '<div class="su-progress"><span style="width:' +
+      progressPct() +
+      '%"></span></div>' +
+      '<span class="su-mode-tag">' +
       (index + 1) +
       " / " +
       TOTAL +
-      "</span></header>" +
-      '<div class="su-progress"><div class="su-progress-fill" style="width:' +
-      pct +
-      '%"></div></div>' +
-      '<p class="su-hint" id="su-hint">Tap the words in the correct order</p>' +
-      '<div class="su-built" id="su-built"></div>' +
-      '<div class="su-pool" id="su-pool"></div>' +
-      '<div class="su-actions" id="su-actions">' +
-      '<button type="button" class="su-btn secondary" id="su-clear">Clear</button>' +
-      '<button type="button" class="su-btn" id="su-check">Check ✓</button>' +
+      "</span>" +
       "</div>" +
-      '<div class="su-fb" id="su-fb" aria-live="polite"></div>';
+      '<div class="su-play">' +
+      '<div class="su-phase">Sentence ' +
+      (index + 1) +
+      "</div>" +
+      '<div class="su-prompt">' +
+      '<div class="su-prompt-label">Tap the words in the correct order</div>' +
+      '<div class="su-slots" id="su-slots"></div>' +
+      "</div>" +
+      '<div class="su-chips" id="su-chips"></div>' +
+      '<div class="su-actions" id="su-actions">' +
+      '<button type="button" class="su-btn su-btn-ghost" id="su-clear">Clear</button>' +
+      '<button type="button" class="su-btn su-btn-primary" id="su-check" disabled>Check ✓</button>' +
+      "</div>" +
+      '<div class="su-fb" id="su-fb" aria-live="polite"></div>' +
+      "</div>";
 
     document.getElementById("su-clear").onclick = clearAll;
     document.getElementById("su-check").onclick = checkAnswer;
-    updateTiles();
+    updateSlotsAndChips();
   }
 
   render();
