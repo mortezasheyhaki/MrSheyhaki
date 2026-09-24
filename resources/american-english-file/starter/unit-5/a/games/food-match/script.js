@@ -74,6 +74,7 @@
   var locked = {}; // leftIndex -> rightId
   var matches = {};
   var modeCorrect = 0;
+  var lives = 3;
   var promptAudio = null;
   var matchAudio = null; // never cut on set change
   var busy = false;
@@ -225,6 +226,7 @@
     if (window.LAFinish) LAFinish.startTimer();
     modeIndex = mi;
     modeCorrect = 0;
+    lives = 3;
     phase = "play";
     startSet(0);
   }
@@ -280,6 +282,61 @@
     }, 800);
   }
 
+
+  function heartsHtml() {
+    var h = '<div class="mc-hearts" id="mc-hearts" aria-label="Lives">';
+    for (var i = 0; i < 3; i++) {
+      if (i < lives) {
+        h += '<span class="mc-heart is-full" data-i="' + i + '">♥</span>';
+      } else {
+        h += '<span class="mc-heart is-broken" data-i="' + i + '">♡</span>';
+      }
+    }
+    return h + "</div>";
+  }
+
+  function renderHearts() {
+    var root = document.getElementById("mc-hearts");
+    if (!root) return;
+    var nodes = root.querySelectorAll(".mc-heart");
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      el.classList.remove("is-full", "is-broken", "is-breaking");
+      if (i < lives) {
+        el.classList.add("is-full");
+        el.textContent = "♥";
+      } else {
+        el.classList.add("is-broken");
+        el.textContent = "♡";
+      }
+    }
+  }
+
+  function breakHeart(done) {
+    if (lives <= 0) {
+      if (done) done();
+      return;
+    }
+    var loseIndex = lives - 1;
+    lives -= 1;
+    var root = document.getElementById("mc-hearts");
+    var el = root ? root.querySelector('.mc-heart[data-i="' + loseIndex + '"]') : null;
+    if (el) {
+      el.classList.remove("is-full");
+      el.classList.add("is-breaking");
+      el.textContent = "♥";
+      setTimeout(function () {
+        el.classList.remove("is-breaking");
+        el.classList.add("is-broken");
+        el.textContent = "♡";
+        if (done) done();
+      }, 480);
+    } else {
+      renderHearts();
+      if (done) done();
+    }
+  }
+
   function selectRight(rightId) {
     if (busy || selectedLeft == null) return;
     if (Object.keys(locked).some(function (li) { return matches[li] === rightId; })) return;
@@ -290,12 +347,20 @@
 
     if (leftId !== rightId) {
       sfxBad();
+      busy = true;
       if (leftEl) leftEl.classList.add("is-wrong");
       if (rightEl) rightEl.classList.add("is-wrong");
       setTimeout(function () {
         if (leftEl) leftEl.classList.remove("is-wrong");
         if (rightEl) rightEl.classList.remove("is-wrong");
       }, 500);
+      breakHeart(function () {
+        if (lives <= 0) {
+          setTimeout(finishMode, 400);
+        } else {
+          busy = false;
+        }
+      });
       return;
     }
 
@@ -357,8 +422,10 @@
   function finishMode() {
     phase = "done";
     stopPromptAudio();
+    busy = true;
     var total = totalPairs();
-    var stars = modeCorrect >= total - 1 ? 3 : modeCorrect >= Math.floor(total * 0.7) ? 2 : modeCorrect >= Math.floor(total * 0.4) ? 1 : 0;
+    // Stars = hearts remaining (0–3)
+    var stars = Math.max(0, Math.min(3, lives));
 
     if (window.LAFinish) {
       try {
@@ -367,6 +434,7 @@
           gameId: GAME_ID,
           score: modeCorrect,
           total: total,
+          stars: stars,
           timeMs: timeMs,
           onAgain: function () {
             startMode(modeIndex);
@@ -386,7 +454,7 @@
     if (window.LAStars) {
       try {
         LAStars.recordPlay(GAME_ID);
-        LAStars.save(GAME_ID, stars);
+        if (stars > 0) LAStars.save(GAME_ID, stars);
       } catch (_) {}
     }
 
@@ -492,7 +560,7 @@
 
     if (phase === "done") {
       var total = totalPairs();
-      var stars = modeCorrect >= total - 1 ? 3 : modeCorrect >= Math.floor(total * 0.7) ? 2 : modeCorrect >= Math.floor(total * 0.4) ? 1 : 0;
+      var stars = Math.max(0, Math.min(3, lives));
       app.innerHTML =
         '<header class="mc-topbar">' +
         '<a class="mc-back" href="../" aria-label="Back">←</a>' +
@@ -533,6 +601,7 @@
       '<header class="mc-topbar">' +
       '<a class="mc-back" href="../" aria-label="Back">←</a>' +
       '<span class="mc-title">' + escapeHtml(mode.title) + " · Set " + (setIndex + 1) + "/4</span>" +
+      heartsHtml() +
       '<span class="mc-progress" id="mc-progress">Set ' +
       (setIndex + 1) +
       "/4 · " +

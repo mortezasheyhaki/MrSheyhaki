@@ -230,6 +230,8 @@ COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.games = [
   { title: "Food Verb Match", url: "food-verb-match/", label: "Vocabulary" },
   { title: "Food Match", url: "food-match/", label: "Vocabulary" },
   { title: "Sound Match Picture", url: "food-sound-match-picture/", label: "Vocabulary" },
+  { title: "Food Unscramble", url: "food-unscramble/", label: "Vocabulary" },
+  { title: "Food Type", url: "food-type/", label: "Vocabulary" },
 ];
 
 // Unit 6A – Games
