@@ -1,3 +1,45 @@
+/* === Shared UI sound effects (Web Audio) === */
+(function () {
+  if (window.__laUiSfx) return;
+  var ctx = null;
+  function getCtx() {
+    if (!ctx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ctx = new AC();
+    }
+    if (ctx.state === "suspended") ctx.resume().catch(function () {});
+    return ctx;
+  }
+  function tone(freq, dur, type, vol, when) {
+    var c = getCtx();
+    if (!c) return;
+    var t0 = (when || 0) + c.currentTime;
+    var osc = c.createOscillator();
+    var gain = c.createGain();
+    osc.type = type || "sine";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol || 0.12, t0);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    osc.connect(gain);
+    gain.connect(c.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.02);
+  }
+  function sfxTap() { tone(520, 0.06, "triangle", 0.08); }
+  function sfxCorrect() {
+    tone(523, 0.1, "sine", 0.12, 0);
+    tone(659, 0.12, "sine", 0.12, 0.08);
+    tone(784, 0.18, "sine", 0.1, 0.16);
+  }
+  function sfxWrong() {
+    tone(220, 0.14, "sawtooth", 0.07, 0);
+    tone(180, 0.18, "sawtooth", 0.06, 0.1);
+  }
+  window.__laUiSfx = { tap: sfxTap, correct: sfxCorrect, wrong: sfxWrong };
+  window.sfxTap = sfxTap; window.sfxCorrect = sfxCorrect; window.sfxWrong = sfxWrong;
+})();
+
 /* Listen & Write – days of the week · Unscramble then Write */
 (function () {
   const GAME_ID = "starter-1a-listen-write-days";
@@ -271,7 +313,7 @@
     tone(1046.5, t + 0.28, 0.2, "sine", 0.1);
   }
   function sfxBad() {
-    try { if (window.LASfx && LASfx.wrong) LASfx.wrong(); } catch (_) {}
+    try { if (window.LASfx && LASfx.wrong) LASfx.wrong(); else sfxWrong(); } catch (_) {}
     var ctx = getSfxCtx(); if (!ctx) return;
     var t = ctx.currentTime;
     tone(220, t, 0.14, "sawtooth", 0.07);
@@ -428,6 +470,7 @@
       if (fb) {
         fb.textContent = "Try again";
         fb.className = "lw-fb bad";
+        try{sfxWrong();}catch(e){}
       }
       setTimeout(function () {
         poolLetters = poolLetters.concat(builtLetters);
@@ -449,6 +492,7 @@
     if (fb) {
       fb.innerHTML = "✓ Correct! <strong>" + target.label + "</strong>";
       fb.className = "lw-fb ok";
+      try{sfxCorrect();}catch(e){}
     }
     document.querySelectorAll(".lw-tile-built").forEach(function (el) {
       el.classList.add("ok");
@@ -501,6 +545,7 @@
       if (fb) {
         fb.textContent = "Try again — listen and write the day.";
         fb.className = "lw-fb bad";
+        try{sfxWrong();}catch(e){}
       }
       input.focus();
       try {
@@ -523,6 +568,7 @@
     if (fb) {
       fb.innerHTML = "✓ Correct! <strong>" + target.label + "</strong>";
       fb.className = "lw-fb ok";
+      try{sfxCorrect();}catch(e){}
     }
 
     const checkBtn = document.getElementById("lw-check");
