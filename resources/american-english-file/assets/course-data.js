@@ -101,7 +101,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.games = [
   { title: "Listen & Write (Days)", url: "listen-write-days/", label: "Vocabulary" },
   { title: "Make Questions", url: "make-questions/", label: "Grammar" },
   { title: "Complete the Dialogues", url: "complete-dialogues/", label: "Grammar" },
-  { title: "Listen and Choose", url: "listen-choose/", label: "Vocabulary" },
   { title: "Order the Days", url: "order-days/", label: "Vocabulary" },
   { title: "Listen & Repeat (Days)", url: "listen-repeat-days/", label: "Pronunciation" },
   { title: "Word Search · Numbers & Days", url: "wordsearch-days-numbers/", label: "Vocabulary" },
@@ -233,6 +232,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.games = [
   { title: "Food Unscramble", url: "food-unscramble/", label: "Vocabulary" },
   { title: "Food Type", url: "food-type/", label: "Vocabulary" },
   { title: "Meal Sentences", url: "food-meal-sentences/", label: "Grammar" },
+  { title: "Picture Sentences", url: "picture-sentences/", label: "Grammar" },
   { title: "Breakfast Stories", url: "breakfast-listen/", label: "Listening" },
   { title: "Sentence Unscramble", url: "breakfast-sentence-unscramble/", label: "Grammar" },
   { title: "Listen & Write", url: "breakfast-listen-write/", label: "Listening" }
