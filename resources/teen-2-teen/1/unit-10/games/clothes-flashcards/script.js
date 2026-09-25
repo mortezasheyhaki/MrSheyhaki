@@ -7,7 +7,7 @@
 
   var CARDS = [
     { id: "sweater", label: "a sweater", image: CDN + "q049292_swer.png", audio: CDN + "d159367_a_swer.mp3" },
-    { id: "t-shirt", label: "a T-shirt", image: CDN + "m335_st.png", audio: CDN + "796411_a_st.mp3" },
+    { id: "skirt", label: "a skirt", image: CDN + "a444189_st.png", audio: CDN + "b668114_st.mp3" },
     { id: "shorts", label: "shorts", image: CDN + "p155179_shorts.png", audio: CDN + "b61351_shorts_2.mp3" },
     { id: "shoes", label: "shoes", image: CDN + "i80933_shoes.png", audio: CDN + "y529847_shoes_3.mp3" },
     { id: "shirt", label: "a shirt", image: CDN + "y409033_shirt.png", audio: CDN + "f1066_a_shirt.mp3" },

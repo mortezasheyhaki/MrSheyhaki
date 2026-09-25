@@ -478,10 +478,12 @@ COURSE_DATA["teen2teen"] = {
   },
 };
 
-// T2T1 Unit 10 – Clothes Flashcards
+// T2T1 Unit 10 – Clothes games
 COURSE_DATA["teen2teen"].levels["1"].units[10].games = [
   { title: "Clothes Flashcards", url: "games/clothes-flashcards/", label: "Vocabulary" },
   { title: "Clothes Match", url: "games/clothes-match/", label: "Vocabulary" },
+  { title: "Sound Match Picture", url: "games/clothes-sound-match-picture/", label: "Listening" },
+  { title: "Clothes Bingo", url: "games/clothes-bingo/", label: "Listening" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.

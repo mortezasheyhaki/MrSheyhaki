@@ -7,7 +7,7 @@
 
   var ITEMS = [
     { id: "sweater", label: "a sweater", image: CDN + "q049292_swer.png", audio: CDN + "d159367_a_swer.mp3" },
-    { id: "skirt", label: "a skirt", image: CDN + "m335_st.png", audio: CDN + "796411_a_st.mp3" },
+    { id: "skirt", label: "a skirt", image: CDN + "a444189_st.png", audio: CDN + "b668114_st.mp3" },
     { id: "shorts", label: "shorts", image: CDN + "p155179_shorts.png", audio: CDN + "b61351_shorts_2.mp3" },
     { id: "shoes", label: "shoes", image: CDN + "i80933_shoes.png", audio: CDN + "y529847_shoes_3.mp3" },
     { id: "shirt", label: "a shirt", image: CDN + "y409033_shirt.png", audio: CDN + "f1066_a_shirt.mp3" },
@@ -429,19 +429,33 @@
 
   function updateProgress() {
     var el = document.getElementById("mc-progress");
-    if (el) {
-      el.textContent =
-        "Part " +
-        (modeIndex + 1) +
-        "/" +
-        MODES.length +
-        " · Set " +
-        (setIndex + 1) +
-        "/" +
-        SETS.length +
-        " · " +
-        correctCount() +
-        "/5";
+    if (!el) return;
+    var full =
+      "Part " +
+      (modeIndex + 1) +
+      "/" +
+      MODES.length +
+      " · Set " +
+      (setIndex + 1) +
+      "/" +
+      SETS.length +
+      " · " +
+      correctCount() +
+      "/5";
+    var short =
+      (setIndex + 1) +
+      "/" +
+      SETS.length +
+      " · " +
+      correctCount() +
+      "/5";
+    var fullEl = el.querySelector(".mc-prog-full");
+    var shortEl = el.querySelector(".mc-prog-short");
+    if (fullEl && shortEl) {
+      fullEl.textContent = full;
+      shortEl.textContent = short;
+    } else {
+      el.textContent = full;
     }
   }
 
@@ -666,16 +680,25 @@
       })
       .join("");
 
+    var shortTitles = ["Words → Pics", "Audio → Words", "Audio → Pics"];
+    var shortTitle = shortTitles[modeIndex] || mode.title;
     app.innerHTML =
       '<header class="mc-topbar">' +
       '<a class="mc-back" href="../" aria-label="Back">←</a>' +
-      '<span class="mc-title">Part ' +
+      '<span class="mc-title" title="' +
+      mode.title +
+      '"><span class="mc-title-full">Part ' +
       (modeIndex + 1) +
       " · " +
       mode.title +
-      "</span>" +
+      '</span><span class="mc-title-short">P' +
+      (modeIndex + 1) +
+      " · " +
+      shortTitle +
+      "</span></span>" +
       heartsHtml() +
-      '<span class="mc-progress" id="mc-progress">Part ' +
+      '<span class="mc-progress" id="mc-progress">' +
+      '<span class="mc-prog-full">Part ' +
       (modeIndex + 1) +
       "/" +
       MODES.length +
@@ -685,7 +708,13 @@
       SETS.length +
       " · " +
       correctCount() +
-      "/5</span>" +
+      '/5</span><span class="mc-prog-short">' +
+      (setIndex + 1) +
+      "/" +
+      SETS.length +
+      " · " +
+      correctCount() +
+      "/5</span></span>" +
       "</header>" +
       '<p class="mc-instruction" id="mc-hint">' +
       mode.tip +
