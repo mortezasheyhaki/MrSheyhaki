@@ -1,4 +1,4 @@
-/* Clothes Match – 3 modes × 2 sets of 5 – Teen2Teen 1 Unit 10 */
+/* Clothes Match – 3 sequential parts × 2 sets of 5 – Teen2Teen 1 Unit 10 */
 (function () {
   "use strict";
 
@@ -7,7 +7,7 @@
 
   var ITEMS = [
     { id: "sweater", label: "a sweater", image: CDN + "q049292_swer.png", audio: CDN + "d159367_a_swer.mp3" },
-    { id: "t-shirt", label: "a T-shirt", image: CDN + "m335_st.png", audio: CDN + "796411_a_st.mp3" },
+    { id: "skirt", label: "a skirt", image: CDN + "m335_st.png", audio: CDN + "796411_a_st.mp3" },
     { id: "shorts", label: "shorts", image: CDN + "p155179_shorts.png", audio: CDN + "b61351_shorts_2.mp3" },
     { id: "shoes", label: "shoes", image: CDN + "i80933_shoes.png", audio: CDN + "y529847_shoes_3.mp3" },
     { id: "shirt", label: "a shirt", image: CDN + "y409033_shirt.png", audio: CDN + "f1066_a_shirt.mp3" },
@@ -20,41 +20,45 @@
 
   // 2 fixed sets of 5 (covers all 10)
   var SETS = [
-    ["sweater", "t-shirt", "shorts", "shoes", "shirt"],
+    ["sweater", "skirt", "shorts", "shoes", "shirt"],
     ["pants", "jeans", "jacket", "dress", "blouse"]
   ];
 
+  // Sequential parts (not free-choice modes)
   var MODES = [
-    {
-      id: "pic-word",
-      title: "Pictures → Words",
-      left: "pic",
-      right: "word",
-      tip: "Tap a picture, then match the word."
-    },
     {
       id: "word-pic",
       title: "Words → Pictures",
       left: "word",
       right: "pic",
-      tip: "Tap a word, then match the picture."
+      tip: "Tap a word, then match the picture.",
+      encourage: "Awesome matching! 🌟 You finished Words → Pictures."
     },
     {
       id: "audio-word",
       title: "Audio → Words",
       left: "audio",
       right: "word",
-      tip: "Listen, then match the word."
+      tip: "Listen, then match the word.",
+      encourage: "Great listening! 🎧 You finished Audio → Words."
+    },
+    {
+      id: "audio-pic",
+      title: "Audio → Pictures",
+      left: "audio",
+      right: "pic",
+      tip: "Listen, then match the picture.",
+      encourage: "Amazing work! 🎉 You finished all the parts."
     }
   ];
 
-  var TOTAL_PAIRS = 10; // 2 sets × 5
+  var TOTAL_PAIRS = 30; // 3 parts × 2 sets × 5
 
   var app = document.getElementById("game-app");
   if (!app) return;
 
   var modeIndex = 0;
-  var phase = "menu"; // menu | play | done
+  var phase = "menu"; // menu | play | between | done
   var setIndex = 0;
   var leftOrder = [];
   var rightOrder = [];
@@ -65,6 +69,8 @@
   var playingLeft = null;
   var setCorrect = 0;
   var modeCorrect = 0;
+  var totalCorrect = 0;
+  var lives = 3;
   var busy = false;
 
   function byId(id) {
@@ -84,6 +90,24 @@
     return a;
   }
 
+  var sfxCtx = null;
+
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try {
+        sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) {
+        return null;
+      }
+    }
+    if (sfxCtx.state === "suspended") {
+      try {
+        sfxCtx.resume();
+      } catch (_) {}
+    }
+    return sfxCtx;
+  }
+
   function sfx(name) {
     if (!window.LASfx) return;
     try {
@@ -92,6 +116,54 @@
       else if (name === "win" && LASfx.win) LASfx.win();
       else if (name === "pop" && LASfx.pop) LASfx.pop();
       else if (name === "click" && LASfx.click) LASfx.click();
+    } catch (_) {}
+  }
+
+  /** Heart-break SFX — short crack + descending tone */
+  function sfxHeartBreak() {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    try {
+      var t0 = ctx.currentTime;
+      // Soft crack (noise burst)
+      var bufferSize = Math.floor(ctx.sampleRate * 0.08);
+      var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      var data = buffer.getChannelData(0);
+      for (var i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2.5);
+      }
+      var noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      var noiseGain = ctx.createGain();
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = "bandpass";
+      noiseFilter.frequency.value = 1200;
+      noiseFilter.Q.value = 0.8;
+      noiseGain.gain.setValueAtTime(0.18, t0);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.09);
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      noise.start(t0);
+      noise.stop(t0 + 0.1);
+
+      // Descending glass-like tones
+      function drop(freq, delay, dur, vol) {
+        var o = ctx.createOscillator();
+        var g = ctx.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(freq, t0 + delay);
+        o.frequency.exponentialRampToValueAtTime(freq * 0.45, t0 + delay + dur);
+        g.gain.setValueAtTime(0.0001, t0 + delay);
+        g.gain.exponentialRampToValueAtTime(vol, t0 + delay + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + delay + dur);
+        o.connect(g);
+        g.connect(ctx.destination);
+        o.start(t0 + delay);
+        o.stop(t0 + delay + dur + 0.02);
+      }
+      drop(520, 0.02, 0.22, 0.12);
+      drop(340, 0.06, 0.28, 0.09);
     } catch (_) {}
   }
 
@@ -134,10 +206,12 @@
     };
   }
 
-  function startMode(mi) {
-    if (window.LAFinish) LAFinish.startTimer();
+  function startPart(mi) {
+    if (window.LAFinish && mi === 0) LAFinish.startTimer();
     modeIndex = mi;
     modeCorrect = 0;
+    // Lives reset only when starting the full game (part 1)
+    if (mi === 0) lives = 3;
     phase = "play";
     startSet(0);
   }
@@ -163,6 +237,61 @@
 
   function allMatched() {
     return correctCount() === 5;
+  }
+
+  function heartsHtml() {
+    var h = '<div class="mc-hearts" id="mc-hearts" aria-label="Lives">';
+    for (var i = 0; i < 3; i++) {
+      if (i < lives) {
+        h += '<span class="mc-heart is-full" data-i="' + i + '">♥</span>';
+      } else {
+        h += '<span class="mc-heart is-broken" data-i="' + i + '">♡</span>';
+      }
+    }
+    return h + "</div>";
+  }
+
+  function renderHearts() {
+    var root = document.getElementById("mc-hearts");
+    if (!root) return;
+    var nodes = root.querySelectorAll(".mc-heart");
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      el.classList.remove("is-full", "is-broken", "is-breaking");
+      if (i < lives) {
+        el.classList.add("is-full");
+        el.textContent = "♥";
+      } else {
+        el.classList.add("is-broken");
+        el.textContent = "♡";
+      }
+    }
+  }
+
+  function breakHeart(done) {
+    if (lives <= 0) {
+      if (done) done();
+      return;
+    }
+    var loseIndex = lives - 1;
+    lives -= 1;
+    sfxHeartBreak();
+    var root = document.getElementById("mc-hearts");
+    var el = root ? root.querySelector('.mc-heart[data-i="' + loseIndex + '"]') : null;
+    if (el) {
+      el.classList.remove("is-full");
+      el.classList.add("is-breaking");
+      el.textContent = "♥";
+      setTimeout(function () {
+        el.classList.remove("is-breaking");
+        el.classList.add("is-broken");
+        el.textContent = "♡";
+        if (done) done();
+      }, 480);
+    } else {
+      renderHearts();
+      if (done) done();
+    }
   }
 
   function spawnMatchFX(leftEl, rightEl) {
@@ -246,6 +375,7 @@
       matches[selectedLeft] = rightId;
       setCorrect += 1;
       modeCorrect += 1;
+      totalCorrect += 1;
       if (leftEl) leftEl.classList.add("is-correct");
       if (rightEl) rightEl.classList.add("is-correct", "is-used");
       spawnMatchFX(leftEl, rightEl);
@@ -260,8 +390,15 @@
         busy = true;
         setTimeout(function () {
           if (setIndex < SETS.length - 1) {
+            // Next set of current part
             startSet(setIndex + 1);
+          } else if (modeIndex < MODES.length - 1) {
+            // Part finished → encouraging screen, then next part
+            sfx("win");
+            phase = "between";
+            render();
           } else {
+            // Last part finished → finish screen
             sfx("win");
             phase = "done";
             render();
@@ -276,8 +413,17 @@
       setTimeout(function () {
         if (leftEl) leftEl.classList.remove("is-wrong");
         if (rightEl) rightEl.classList.remove("is-wrong");
-        busy = false;
-      }, 550);
+      }, 500);
+      breakHeart(function () {
+        if (lives <= 0) {
+          setTimeout(function () {
+            phase = "done";
+            render();
+          }, 400);
+        } else {
+          busy = false;
+        }
+      });
     }
   }
 
@@ -285,17 +431,23 @@
     var el = document.getElementById("mc-progress");
     if (el) {
       el.textContent =
-        "Set " + (setIndex + 1) + "/" + SETS.length + " · " + correctCount() + "/5";
+        "Part " +
+        (modeIndex + 1) +
+        "/" +
+        MODES.length +
+        " · Set " +
+        (setIndex + 1) +
+        "/" +
+        SETS.length +
+        " · " +
+        correctCount() +
+        "/5";
     }
   }
 
   function calcStars() {
-    var n = modeCorrect;
-    // 10 pairs total
-    if (n >= 10) return 3;
-    if (n >= 7) return 2;
-    if (n >= 4) return 1;
-    return 0;
+    // Stars = hearts remaining (same as Food Match)
+    return Math.max(0, Math.min(3, lives));
   }
 
   function saveStars() {
@@ -415,30 +567,51 @@
         '<section class="mc-start">' +
         '<div class="mc-hero" aria-hidden="true">👕</div>' +
         "<h1>Clothes Match</h1>" +
-        '<p class="mc-desc">Choose a mode · 10 items (2 sets of 5)</p>' +
-        '<div class="mc-mode-list">' +
-        MODES.map(function (m, i) {
-          return (
-            '<button type="button" class="mc-mode-card mc-mode-btn" data-mode="' +
-            i +
-            '">' +
-            '<span class="mc-mode-num">' +
-            (i + 1) +
-            "</span>" +
-            "<div><strong>" +
-            m.title +
-            "</strong><p>" +
-            m.tip +
-            "</p></div></button>"
-          );
-        }).join("") +
-        "</div></section>";
-      app.querySelectorAll(".mc-mode-btn").forEach(function (btn) {
-        btn.onclick = function () {
-          sfx("click");
-          startMode(+btn.dataset.mode);
-        };
-      });
+        '<p class="mc-desc">3 parts · 10 items each · 3 hearts</p>' +
+        '<ol class="mc-part-list">' +
+        "<li><strong>Part 1</strong> — Words → Pictures</li>" +
+        "<li><strong>Part 2</strong> — Audio → Words</li>" +
+        "<li><strong>Part 3</strong> — Audio → Pictures</li>" +
+        "</ol>" +
+        '<button type="button" class="mc-btn mc-start-btn" id="mc-start">Start Part 1</button>' +
+        "</section>";
+      document.getElementById("mc-start").onclick = function () {
+        sfx("click");
+        totalCorrect = 0;
+        startPart(0);
+      };
+      return;
+    }
+
+    if (phase === "between") {
+      var finished = MODES[modeIndex];
+      var next = MODES[modeIndex + 1];
+      app.innerHTML =
+        '<header class="mc-topbar">' +
+        '<a class="mc-back" href="../" aria-label="Back">←</a>' +
+        '<span class="mc-title">Clothes Match</span>' +
+        '<span class="mc-badge">Unit 10</span>' +
+        "</header>" +
+        '<section class="mc-start mc-between">' +
+        '<div class="mc-hero" aria-hidden="true">✨</div>' +
+        "<h1>Part " +
+        (modeIndex + 1) +
+        " complete!</h1>" +
+        '<p class="mc-desc">' +
+        finished.encourage +
+        "</p>" +
+        '<p class="mc-next-label">Up next:</p>' +
+        '<p class="mc-next-title"><strong>Part ' +
+        (modeIndex + 2) +
+        "</strong> — " +
+        next.title +
+        "</p>" +
+        '<button type="button" class="mc-btn mc-start-btn" id="mc-continue">Continue</button>' +
+        "</section>";
+      document.getElementById("mc-continue").onclick = function () {
+        sfx("click");
+        startPart(modeIndex + 1);
+      };
       return;
     }
 
@@ -448,12 +621,13 @@
         var timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
-          score: modeCorrect,
+          score: totalCorrect,
           total: TOTAL_PAIRS,
           stars: stars,
           timeMs: timeMs,
           onAgain: function () {
-            startMode(modeIndex);
+            totalCorrect = 0;
+            startPart(0);
           },
           onModes: function () {
             phase = "menu";
@@ -467,13 +641,14 @@
       app.innerHTML =
         '<section class="mc-done"><h1>Done!</h1>' +
         "<p>You matched " +
-        modeCorrect +
+        totalCorrect +
         "/" +
         TOTAL_PAIRS +
         ".</p>" +
         '<button type="button" class="mc-btn" id="cm-again">Again</button></section>';
       document.getElementById("cm-again").onclick = function () {
-        startMode(modeIndex);
+        totalCorrect = 0;
+        startPart(0);
       };
       return;
     }
@@ -494,14 +669,17 @@
     app.innerHTML =
       '<header class="mc-topbar">' +
       '<a class="mc-back" href="../" aria-label="Back">←</a>' +
-      '<span class="mc-title">' +
+      '<span class="mc-title">Part ' +
+      (modeIndex + 1) +
+      " · " +
       mode.title +
-      " · Set " +
-      (setIndex + 1) +
-      "/" +
-      SETS.length +
       "</span>" +
-      '<span class="mc-progress" id="mc-progress">Set ' +
+      heartsHtml() +
+      '<span class="mc-progress" id="mc-progress">Part ' +
+      (modeIndex + 1) +
+      "/" +
+      MODES.length +
+      " · Set " +
       (setIndex + 1) +
       "/" +
       SETS.length +
