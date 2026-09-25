@@ -4,9 +4,13 @@
  * This is the ONLY file you need to edit to add or change units,
  * lessons, audio tracks, worksheets, or games.
  *
- * The whole resources/american-english-file/ folder tree is generated
+ * The resources/american-english-file/ folder tree is generated
  * FROM this file by tools/generate-resources.js — you never hand-edit
  * the generated index.html files.
+ *
+ * Teen2Teen data lives under COURSE_DATA["teen2teen"] (levels 1–2).
+ * Unit pages under resources/teen-2-teen/ are currently hand-built;
+ * keep this file in sync when adding games / worksheets / audio.
  *
  * HOW TO ADD AN AUDIO TRACK
  *   Find the lesson (or Practical English entry) below and add a line
@@ -402,6 +406,82 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].games = 
   { title: "Alphabet Flashcards", url: "alphabet-flashcards/", label: "Vocabulary" },
   { title: "Listen & Choose", url: "listen-choose/", label: "Vocabulary" },
   { title: "Match Classroom Objects", url: "match-classroom-objects/", label: "Vocabulary" },
+];
+
+
+// ============================================================
+// TEEN2TEEN
+// ============================================================
+// Structure: levels 1–2 (T2T1, T2T2), each with 12 units.
+// Units are flat (no lesson a/b) — games / worksheets / audio
+// live directly on the unit object.
+// Parts: A (1–3), B (4–6), C (7–9), D (10–12)
+
+function makeT2TUnits(names) {
+  const units = {};
+  const parts = { 1: "A", 2: "A", 3: "A", 4: "B", 5: "B", 6: "B", 7: "C", 8: "C", 9: "C", 10: "D", 11: "D", 12: "D" };
+  for (let i = 1; i <= 12; i++) {
+    units[i] = {
+      name: names[i - 1] || "",
+      part: parts[i],
+      games: [],
+      worksheets: [],
+      audio: [],
+    };
+  }
+  return units;
+}
+
+COURSE_DATA["teen2teen"] = {
+  label: "Teen2Teen",
+  edition: "",
+  lockedLevels: ["3", "4"],
+  levels: {
+    "1": {
+      label: "T2T1",
+      fullLabel: "Teen2Teen 1",
+      cefr: "A1",
+      units: makeT2TUnits([
+        "Welcome to English class.",
+        "Is she your mom?",
+        "Where are you from?",
+        "Are we late?",
+        "The new girl is very cute!",
+        "Today's my birthday!",
+        "Here. Use my phone.",
+        "It's really sunny now!",
+        "There's a school next door.",
+        "Look at those black jeans!",
+        "I can do that!",
+        "You should visit Brazil!",
+      ]),
+    },
+    "2": {
+      label: "T2T2",
+      fullLabel: "Teen2Teen 2",
+      cefr: "A2",
+      units: makeT2TUnits([
+        "We're wearing our new uniform!",
+        "Are you doing your homework?",
+        "What are you doing this year?",
+        "Are there any eggs?",
+        "We need a box of rice.",
+        "Do you eat dinner late?",
+        "How do you get there?",
+        "What do your parents do?",
+        "Feel better!",
+        "The key rings? I love them!",
+        "Can I borrow your charger?",
+        "She's smarter than me!",
+      ]),
+    },
+  },
+};
+
+// T2T1 Unit 10 – Clothes Flashcards
+COURSE_DATA["teen2teen"].levels["1"].units[10].games = [
+  { title: "Clothes Flashcards", url: "games/clothes-flashcards/", label: "Vocabulary" },
+  { title: "Clothes Match", url: "games/clothes-match/", label: "Vocabulary" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.

@@ -35,6 +35,8 @@
  *     starter-4b-unscramble-adjectives, starter-4b-listen-write-adjectives, starter-4b-listen-write-plural,
  *     starter-4b-two-sounds-match, starter-4b-listen-and-say, starter-4b-sentence-builder,
  *     starter-4b-listen-and-write, starter-4b-adjective-sentences
+ *   Teen2Teen
+ *     t2t1-u10-clothes-flashcards, t2t1-u10-clothes-match
  */
 (function (global) {
   "use strict";
