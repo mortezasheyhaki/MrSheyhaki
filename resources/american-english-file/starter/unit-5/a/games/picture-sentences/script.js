@@ -52,50 +52,58 @@
   var ITEMS = [
     {
       image: "https://cdn.imgurl.ir/uploads/l405492_we_have_sandwich_for_lunch.png",
-      words: ["We", "have", "sandwich", "for", "lunch"],
-      sentence: "We have sandwich for lunch"
+      words: ["We", "have", "sandwiches", "for", "lunch"],
+      sentence: "We have sandwiches for lunch",
+      audio: "audio/sandwiches.mp3"
     },
     {
       image: "https://cdn.imgurl.ir/uploads/m486648_we__rice_in_the_evening.png",
       words: ["We", "eat", "rice", "in", "the", "evening"],
-      sentence: "We eat rice in the evening"
+      sentence: "We eat rice in the evening",
+      audio: "audio/rice.mp3"
     },
     {
       image: "https://cdn.imgurl.ir/uploads/v228255_We_don39t_drink_tea_in_the_evening.png",
       words: ["We", "don't", "drink", "tea", "in", "the", "evening"],
-      sentence: "We don't drink tea in the evening"
+      sentence: "We don't drink tea in the evening",
+      audio: "audio/tea.mp3"
     },
     {
       image: "https://cdn.imgurl.ir/uploads/a970191_They_like_chocolate.png",
       words: ["They", "like", "chocolate"],
-      sentence: "They like chocolate"
+      sentence: "They like chocolate",
+      audio: "audio/chocolate.mp3"
     },
     {
       image: "https://cdn.imgurl.ir/uploads/o46619_the_children__vegetables.png",
       words: ["The", "children", "eat", "vegetables"],
-      sentence: "The children eat vegetables"
+      sentence: "The children eat vegetables",
+      audio: "audio/vegetables.mp3"
     },
     {
       image: "https://cdn.imgurl.ir/uploads/n830550_I_have_eggs_for_breakfast.png",
       words: ["I", "have", "eggs", "for", "breakfast"],
-      sentence: "I have eggs for breakfast"
+      sentence: "I have eggs for breakfast",
+      audio: "audio/eggs.mp3"
     },
     {
       image: "https://cdn.imgurl.ir/uploads/u679647_I_don39t_like_fish.png",
       words: ["I", "don't", "like", "fish"],
-      sentence: "I don't like fish"
+      sentence: "I don't like fish",
+      audio: "audio/fish.mp3"
     },
     {
       image: "https://cdn.imgurl.ir/uploads/t71_I_don39t_have_sugar_in_my_coffee.png",
       words: ["I", "don't", "have", "sugar", "in", "my", "coffee"],
-      sentence: "I don't have sugar in my coffee"
+      sentence: "I don't have sugar in my coffee",
+      audio: "audio/sugar.mp3"
     }
   ];
 
   /* Extra distractors drawn from the whole set */
   var EXTRA_POOL = [
     "We", "I", "They", "The", "children", "have", "eat", "drink", "like",
-    "don't", "sandwich", "rice", "tea", "chocolate", "vegetables", "eggs",
+    "don't", "sandwiches", "rice", "tea", "chocolate", "vegetables", "eggs",
     "fish", "sugar", "coffee", "for", "in", "the", "my", "lunch", "breakfast", "evening"
   ];
 
@@ -112,6 +120,7 @@
   var locked = false;
   var score = 0;
   var sfxCtx = null;
+  var currentAudio = null;
 
   function shuffle(arr) {
     var a = arr.slice();
@@ -161,6 +170,45 @@
     try { if (window.sfxCelebrate) sfxCelebrate(); } catch (_) {}
   }
 
+  function stopSentenceAudio() {
+    if (currentAudio) {
+      try {
+        currentAudio.onended = null;
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      } catch (_) {}
+      currentAudio = null;
+    }
+  }
+
+  function playSentenceAudio(item, onDone) {
+    stopSentenceAudio();
+    if (!item || !item.audio) {
+      if (onDone) onDone();
+      return;
+    }
+    try {
+      var a = new Audio(item.audio);
+      currentAudio = a;
+      var finished = false;
+      function done() {
+        if (finished) return;
+        finished = true;
+        currentAudio = null;
+        if (onDone) onDone();
+      }
+      a.onended = done;
+      a.onerror = done;
+      a.play().catch(done);
+      // safety: never hang more than 5s
+      setTimeout(function () {
+        if (!finished) done();
+      }, 5000);
+    } catch (_) {
+      if (onDone) onDone();
+    }
+  }
+
   function buildPool(correctWords) {
     var need = 2; /* always exactly two extra distractor words */
     var distractors = [];
@@ -192,6 +240,7 @@
       finishGame();
       return;
     }
+    stopSentenceAudio();
     locked = false;
     var item = ITEMS[order[index]];
     slots = new Array(item.words.length).fill(null);
@@ -260,10 +309,11 @@
         fb.textContent = "Correct!";
         fb.className = "ps-fb is-ok";
       }
-      setTimeout(function () {
+      // Play full sentence audio, then advance
+      playSentenceAudio(item, function () {
         index++;
         startRound();
-      }, 900);
+      });
     } else {
       playBad();
       var sent2 = document.getElementById("ps-slots");
