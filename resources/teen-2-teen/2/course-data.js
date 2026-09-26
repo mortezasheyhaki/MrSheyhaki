@@ -502,9 +502,13 @@ COURSE_DATA["teen2teen"].levels["1"].units[10].games = [
   { title: "Listen & Write", url: "games/listen-write-clothes/", label: "Listening" },
 ];
 
-// T2T2 Unit 1 – Present continuous (am / is / are)
+// T2T2 Unit 1 – Present continuous
 COURSE_DATA["teen2teen"].levels["2"].units[1].games = [
   { title: "Am / Is / Are", url: "games/am-is-are/", label: "Grammar" },
+  { title: "Verb + -ing", url: "games/verb-ing/", label: "Grammar" },
+  { title: "Correct Sentence", url: "games/choose-sentence/", label: "Grammar" },
+  { title: "Picture Sentences", url: "games/picture-sentences/", label: "Grammar" },
+  { title: "Write the Sentences", url: "games/write-sentences/", label: "Grammar" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.

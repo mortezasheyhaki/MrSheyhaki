@@ -59,15 +59,16 @@
       id: "homework",
       image: "https://cdn.imgurl.ir/uploads/t966606_He39s_doing_homework.png",
       pos: { words: ["He", "is", "doing", "homework"], sentence: "He is doing homework." },
-      neg: { words: ["He", "isn't", "doing", "homework"], sentence: "He isn't doing homework." },
+      neg: { words: ["He", "isn't", "watching", "TV"], sentence: "He isn't watching TV." },
       q:   { words: ["Is", "he", "doing", "homework"], sentence: "Is he doing homework?" },
-      sa:  { words: ["Yes,", "he", "is"], sentence: "Yes, he is." }
+      qFalse: { words: ["Is", "he", "watching", "TV"], sentence: "Is he watching TV?" },
+      sa:  { words: ["No,", "he", "isn't"], sentence: "No, he isn't." }
     },
     {
       id: "drawing",
       image: "https://cdn.imgurl.ir/uploads/r44869_he39s_drawing.png",
       pos: { words: ["He", "is", "drawing", "a", "picture"], sentence: "He is drawing a picture." },
-      neg: { words: ["He", "isn't", "drawing", "a", "picture"], sentence: "He isn't drawing a picture." },
+      neg: { words: ["He", "isn't", "writing"], sentence: "He isn't writing." },
       q:   { words: ["Is", "he", "drawing", "a", "picture"], sentence: "Is he drawing a picture?" },
       sa:  { words: ["Yes,", "he", "is"], sentence: "Yes, he is." }
     },
@@ -75,7 +76,7 @@
       id: "drinking",
       image: "https://cdn.imgurl.ir/uploads/y010844_he39s_drinking_water.png",
       pos: { words: ["He", "is", "drinking", "water"], sentence: "He is drinking water." },
-      neg: { words: ["He", "isn't", "drinking", "water"], sentence: "He isn't drinking water." },
+      neg: { words: ["He", "isn't", "eating"], sentence: "He isn't eating." },
       q:   { words: ["Is", "he", "drinking", "water"], sentence: "Is he drinking water?" },
       sa:  { words: ["Yes,", "he", "is"], sentence: "Yes, he is." }
     },
@@ -83,7 +84,7 @@
       id: "driving",
       image: "https://cdn.imgurl.ir/uploads/d89655_he39s_driving.png",
       pos: { words: ["He", "is", "driving"], sentence: "He is driving." },
-      neg: { words: ["He", "isn't", "driving"], sentence: "He isn't driving." },
+      neg: { words: ["He", "isn't", "walking"], sentence: "He isn't walking." },
       q:   { words: ["Is", "he", "driving"], sentence: "Is he driving?" },
       sa:  { words: ["Yes,", "he", "is"], sentence: "Yes, he is." }
     },
@@ -91,15 +92,16 @@
       id: "shopping",
       image: "https://cdn.imgurl.ir/uploads/x0515_he39s_going_shopping.png",
       pos: { words: ["He", "is", "going", "shopping"], sentence: "He is going shopping." },
-      neg: { words: ["He", "isn't", "going", "shopping"], sentence: "He isn't going shopping." },
+      neg: { words: ["He", "isn't", "going", "to", "work"], sentence: "He isn't going to work." },
       q:   { words: ["Is", "he", "going", "shopping"], sentence: "Is he going shopping?" },
-      sa:  { words: ["Yes,", "he", "is"], sentence: "Yes, he is." }
+      qFalse: { words: ["Is", "he", "going", "to", "work"], sentence: "Is he going to work?" },
+      sa:  { words: ["No,", "he", "isn't"], sentence: "No, he isn't." }
     },
     {
       id: "singing",
       image: "https://cdn.imgurl.ir/uploads/a305738_he39s_singing.png",
       pos: { words: ["He", "is", "singing"], sentence: "He is singing." },
-      neg: { words: ["He", "isn't", "singing"], sentence: "He isn't singing." },
+      neg: { words: ["He", "isn't", "dancing"], sentence: "He isn't dancing." },
       q:   { words: ["Is", "he", "singing"], sentence: "Is he singing?" },
       sa:  { words: ["Yes,", "he", "is"], sentence: "Yes, he is." }
     },
@@ -107,7 +109,7 @@
       id: "dishes",
       image: "https://cdn.imgurl.ir/uploads/e24135_He39s_washing_the_dishes.png",
       pos: { words: ["He", "is", "washing", "the", "dishes"], sentence: "He is washing the dishes." },
-      neg: { words: ["He", "isn't", "washing", "the", "dishes"], sentence: "He isn't washing the dishes." },
+      neg: { words: ["He", "isn't", "cooking"], sentence: "He isn't cooking." },
       q:   { words: ["Is", "he", "washing", "the", "dishes"], sentence: "Is he washing the dishes?" },
       sa:  { words: ["Yes,", "he", "is"], sentence: "Yes, he is." }
     },
@@ -115,7 +117,7 @@
       id: "teeth",
       image: "https://cdn.imgurl.ir/uploads/o71967_she39s_brushing_her_teeth.png",
       pos: { words: ["She", "is", "brushing", "her", "teeth"], sentence: "She is brushing her teeth." },
-      neg: { words: ["She", "isn't", "brushing", "her", "teeth"], sentence: "She isn't brushing her teeth." },
+      neg: { words: ["She", "isn't", "washing", "her", "hair"], sentence: "She isn't washing her hair." },
       q:   { words: ["Is", "she", "brushing", "her", "teeth"], sentence: "Is she brushing her teeth?" },
       sa:  { words: ["Yes,", "she", "is"], sentence: "Yes, she is." }
     },
@@ -123,15 +125,16 @@
       id: "cooking",
       image: "https://cdn.imgurl.ir/uploads/k33142_she39s_cooking.png",
       pos: { words: ["She", "is", "making", "food"], sentence: "She is making food." },
-      neg: { words: ["She", "isn't", "making", "food"], sentence: "She isn't making food." },
+      neg: { words: ["She", "isn't", "cleaning"], sentence: "She isn't cleaning." },
       q:   { words: ["Is", "she", "making", "food"], sentence: "Is she making food?" },
-      sa:  { words: ["Yes,", "she", "is"], sentence: "Yes, she is." }
+      qFalse: { words: ["Is", "she", "cleaning"], sentence: "Is she cleaning?" },
+      sa:  { words: ["No,", "she", "isn't"], sentence: "No, she isn't." }
     },
     {
       id: "dancing",
       image: "https://cdn.imgurl.ir/uploads/w811394_she39s_dancing.png",
       pos: { words: ["She", "is", "dancing"], sentence: "She is dancing." },
-      neg: { words: ["She", "isn't", "dancing"], sentence: "She isn't dancing." },
+      neg: { words: ["She", "isn't", "singing"], sentence: "She isn't singing." },
       q:   { words: ["Is", "she", "dancing"], sentence: "Is she dancing?" },
       sa:  { words: ["Yes,", "she", "is"], sentence: "Yes, she is." }
     },
@@ -139,7 +142,7 @@
       id: "fruit",
       image: "https://cdn.imgurl.ir/uploads/v620492_she39s_ing_fruit.png",
       pos: { words: ["She", "is", "eating", "fruit"], sentence: "She is eating fruit." },
-      neg: { words: ["She", "isn't", "eating", "fruit"], sentence: "She isn't eating fruit." },
+      neg: { words: ["She", "isn't", "drinking", "water"], sentence: "She isn't drinking water." },
       q:   { words: ["Is", "she", "eating", "fruit"], sentence: "Is she eating fruit?" },
       sa:  { words: ["Yes,", "she", "is"], sentence: "Yes, she is." }
     },
@@ -147,7 +150,7 @@
       id: "fishing",
       image: "https://cdn.imgurl.ir/uploads/h63991_She39s_fishing.png",
       pos: { words: ["She", "is", "fishing"], sentence: "She is fishing." },
-      neg: { words: ["She", "isn't", "fishing"], sentence: "She isn't fishing." },
+      neg: { words: ["She", "isn't", "swimming"], sentence: "She isn't swimming." },
       q:   { words: ["Is", "she", "fishing"], sentence: "Is she fishing?" },
       sa:  { words: ["Yes,", "she", "is"], sentence: "Yes, she is." }
     },
@@ -155,7 +158,7 @@
       id: "reading",
       image: "https://cdn.imgurl.ir/uploads/e923690_she39s_reading_a_book.png",
       pos: { words: ["She", "is", "reading", "a", "book"], sentence: "She is reading a book." },
-      neg: { words: ["She", "isn't", "reading", "a", "book"], sentence: "She isn't reading a book." },
+      neg: { words: ["She", "isn't", "writing"], sentence: "She isn't writing." },
       q:   { words: ["Is", "she", "reading", "a", "book"], sentence: "Is she reading a book?" },
       sa:  { words: ["Yes,", "she", "is"], sentence: "Yes, she is." }
     },
@@ -163,15 +166,16 @@
       id: "football",
       image: "https://cdn.imgurl.ir/uploads/d69439_they39re_aying_football.png",
       pos: { words: ["They", "are", "playing", "football"], sentence: "They are playing football." },
-      neg: { words: ["They", "aren't", "playing", "football"], sentence: "They aren't playing football." },
+      neg: { words: ["They", "aren't", "playing", "tennis"], sentence: "They aren't playing tennis." },
       q:   { words: ["Are", "they", "playing", "football"], sentence: "Are they playing football?" },
-      sa:  { words: ["Yes,", "they", "are"], sentence: "Yes, they are." }
+      qFalse: { words: ["Are", "they", "playing", "tennis"], sentence: "Are they playing tennis?" },
+      sa:  { words: ["No,", "they", "aren't"], sentence: "No, they aren't." }
     },
     {
       id: "videogames",
       image: "https://cdn.imgurl.ir/uploads/c22242_they39re_aying_video_games.png",
       pos: { words: ["They", "are", "playing", "video", "games"], sentence: "They are playing video games." },
-      neg: { words: ["They", "aren't", "playing", "video", "games"], sentence: "They aren't playing video games." },
+      neg: { words: ["They", "aren't", "watching", "TV"], sentence: "They aren't watching TV." },
       q:   { words: ["Are", "they", "playing", "video", "games"], sentence: "Are they playing video games?" },
       sa:  { words: ["Yes,", "they", "are"], sentence: "Yes, they are." }
     },
@@ -179,7 +183,7 @@
       id: "bikes",
       image: "https://cdn.imgurl.ir/uploads/s375622_they39re_riding_a_bike.png",
       pos: { words: ["They", "are", "riding", "bikes"], sentence: "They are riding bikes." },
-      neg: { words: ["They", "aren't", "riding", "bikes"], sentence: "They aren't riding bikes." },
+      neg: { words: ["They", "aren't", "walking"], sentence: "They aren't walking." },
       q:   { words: ["Are", "they", "riding", "bikes"], sentence: "Are they riding bikes?" },
       sa:  { words: ["Yes,", "they", "are"], sentence: "Yes, they are." }
     },
@@ -187,7 +191,7 @@
       id: "running",
       image: "https://cdn.imgurl.ir/uploads/p5418_They39re_running.jpg",
       pos: { words: ["They", "are", "running"], sentence: "They are running." },
-      neg: { words: ["They", "aren't", "running"], sentence: "They aren't running." },
+      neg: { words: ["They", "aren't", "walking"], sentence: "They aren't walking." },
       q:   { words: ["Are", "they", "running"], sentence: "Are they running?" },
       sa:  { words: ["Yes,", "they", "are"], sentence: "Yes, they are." }
     },
@@ -195,15 +199,16 @@
       id: "swimming",
       image: "https://cdn.imgurl.ir/uploads/u086247_they39re_swimming.png",
       pos: { words: ["They", "are", "swimming"], sentence: "They are swimming." },
-      neg: { words: ["They", "aren't", "swimming"], sentence: "They aren't swimming." },
+      neg: { words: ["They", "aren't", "running"], sentence: "They aren't running." },
       q:   { words: ["Are", "they", "swimming"], sentence: "Are they swimming?" },
-      sa:  { words: ["Yes,", "they", "are"], sentence: "Yes, they are." }
+      qFalse: { words: ["Are", "they", "running"], sentence: "Are they running?" },
+      sa:  { words: ["No,", "they", "aren't"], sentence: "No, they aren't." }
     },
     {
       id: "photos",
       image: "https://cdn.imgurl.ir/uploads/u983480_they39re_taking_photos.png",
       pos: { words: ["They", "are", "taking", "photos"], sentence: "They are taking photos." },
-      neg: { words: ["They", "aren't", "taking", "photos"], sentence: "They aren't taking photos." },
+      neg: { words: ["They", "aren't", "painting"], sentence: "They aren't painting." },
       q:   { words: ["Are", "they", "taking", "photos"], sentence: "Are they taking photos?" },
       sa:  { words: ["Yes,", "they", "are"], sentence: "Yes, they are." }
     },
@@ -211,11 +216,12 @@
       id: "picnic",
       image: "https://cdn.imgurl.ir/uploads/n984898_they39re_having_a_picnic.png",
       pos: { words: ["They", "are", "having", "a", "picnic"], sentence: "They are having a picnic." },
-      neg: { words: ["They", "aren't", "having", "a", "picnic"], sentence: "They aren't having a picnic." },
+      neg: { words: ["They", "aren't", "studying"], sentence: "They aren't studying." },
       q:   { words: ["Are", "they", "having", "a", "picnic"], sentence: "Are they having a picnic?" },
       sa:  { words: ["Yes,", "they", "are"], sentence: "Yes, they are." }
     }
   ];
+
 
   var EXTRA_POOL = [
     "He", "She", "They", "is", "are", "isn't", "aren't", "Is", "Are",
@@ -537,7 +543,8 @@
 
     var qHint = "";
     if (part.key === "sa") {
-      qHint = '<p class="ps-qhint">' + escapeHtml(item.q.sentence) + "</p>";
+      var promptQ = (item.qFalse && item.qFalse.sentence) ? item.qFalse.sentence : item.q.sentence;
+      qHint = '<p class="ps-qhint">' + escapeHtml(promptQ) + "</p>";
     }
 
     app.innerHTML =
