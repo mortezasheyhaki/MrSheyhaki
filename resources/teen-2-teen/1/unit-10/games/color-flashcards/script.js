@@ -1,21 +1,26 @@
-/* Clothes Flashcards – Teen2Teen 1 Unit 10 */
+/* Color Flashcards – Teen2Teen 1 Unit 10 */
 (function () {
   "use strict";
 
-  var GAME_ID = "t2t1-u10-clothes-flashcards";
+  var GAME_ID = "t2t1-u10-color-flashcards";
   var CDN = "https://cdn.imgurl.ir/uploads/";
 
+  // Every id below is also a valid CSS color name — used for the card's
+  // accent glow, the back-face swatch, and as a graceful fallback if an
+  // image ever fails to load.
+  var DARK_TEXT_IDS = { yellow: 1, orange: 1, white: 1 };
+
   var CARDS = [
-    { id: "sweater", label: "a sweater", image: CDN + "q049292_swer.png", audio: CDN + "d159367_a_swer.mp3" },
-    { id: "skirt", label: "a skirt", image: CDN + "a444189_st.png", audio: CDN + "b668114_st.mp3" },
-    { id: "shorts", label: "shorts", image: CDN + "p155179_shorts.png", audio: CDN + "b61351_shorts_2.mp3" },
-    { id: "shoes", label: "shoes", image: CDN + "i80933_shoes.png", audio: CDN + "y529847_shoes_3.mp3" },
-    { id: "shirt", label: "a shirt", image: CDN + "y409033_shirt.png", audio: CDN + "f1066_a_shirt.mp3" },
-    { id: "pants", label: "pants", image: CDN + "b63746_pants.png", audio: CDN + "e126543_pants_2.mp3" },
-    { id: "jeans", label: "jeans", image: CDN + "s86734_jeans.png", audio: CDN + "p371082_jeans_3.mp3" },
-    { id: "jacket", label: "a jacket", image: CDN + "n731967_jacket.png", audio: CDN + "c58647_a_jacket.mp3" },
-    { id: "dress", label: "a dress", image: CDN + "e35407_dress.png", audio: CDN + "m241908_a_dress.mp3" },
-    { id: "blouse", label: "a blouse", image: CDN + "d598847_blouse.png", audio: CDN + "m041818_a_blouse.mp3" }
+    { id: "yellow", label: "yellow", image: CDN + "i856407_yellow.png", audio: CDN + "j933699_yellow.mp3" },
+    { id: "red",    label: "red",    image: CDN + "e455378_red.png",    audio: CDN + "m694443_red.mp3" },
+    { id: "purple", label: "purple", image: CDN + "w67709_pure.png",    audio: CDN + "b02213_pure.mp3" },
+    { id: "orange", label: "orange", image: CDN + "t0707_orange.png",   audio: CDN + "b442281_orange.mp3" },
+    { id: "green",  label: "green",  image: CDN + "g32224_green.png",   audio: CDN + "t0097_green.mp3" },
+    { id: "gray",   label: "gray",   image: CDN + "g617677_gray.png",   audio: CDN + "z479822_gray.mp3" },
+    { id: "brown",  label: "brown",  image: CDN + "i5856_brown.png",    audio: CDN + "w8891_brown.mp3" },
+    { id: "blue",   label: "blue",   image: CDN + "j139466_blue.png",   audio: CDN + "e7345_blue.mp3" },
+    { id: "black",  label: "black",  image: CDN + "y147580_black.png",  audio: CDN + "l85386_black.mp3" },
+    { id: "white",  label: "white",  image: CDN + "i49240_white.png",  audio: CDN + "y12792_white.mp3" }
   ];
 
   var app = document.getElementById("game-app");
@@ -232,7 +237,7 @@
         "<h1>Done!</h1>" +
         "<p>You reviewed all " +
         CARDS.length +
-        " clothes cards.</p>" +
+        " color cards.</p>" +
         '<div class="fc-actions">' +
         '<button type="button" class="fc-btn" id="fc-again">Play again</button>' +
         '<a class="fc-btn secondary" href="../">Back to games</a>' +
@@ -245,10 +250,12 @@
     var isFirst = index === 0;
     var isLast = index === deck.length - 1;
     var pct = ((index + 1) / deck.length) * 100;
+    var darkText = !!DARK_TEXT_IDS[card.id];
+
     app.innerHTML =
       '<header class="fc-topbar">' +
       '<a class="fc-back" href="../" aria-label="Back to games">←</a>' +
-      '<span class="fc-title">Clothes Flashcards</span>' +
+      '<span class="fc-title">Color Flashcards</span>' +
       '<button type="button" class="fc-shuffle' +
       (shuffled ? " is-on" : "") +
       '" id="fc-shuffle" aria-pressed="' +
@@ -272,21 +279,25 @@
       '" aria-label="Flashcard, ' +
       card.label +
       ". Press space or enter to flip." +
-      '" style="--card-color:#6d28d9; --card-text:#ffffff">' +
+      '" style="--card-color:' +
+      card.id +
+      "; --card-text:" +
+      (darkText ? "#1e293b" : "#ffffff") +
+      '">' +
       '<div class="fc-card-inner">' +
       '<div class="fc-face fc-front">' +
       '<img class="fc-img" src="' +
       card.image +
       '" alt="' +
       card.label +
-      ' clothes item" draggable="false" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'" />' +
+      ' color swatch" draggable="false" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'" />' +
       '<div class="fc-img-fallback"><span>' +
       card.label +
       "</span></div>" +
       '<span class="fc-hint">Tap to flip · Swipe for next</span>' +
       "</div>" +
       '<div class="fc-face fc-back">' +
-      '<span class="fc-swatch fc-swatch--icon" aria-hidden="true">👕</span>' +
+      '<span class="fc-swatch" aria-hidden="true"></span>' +
       '<p class="fc-word">' +
       card.label +
       "</p>" +

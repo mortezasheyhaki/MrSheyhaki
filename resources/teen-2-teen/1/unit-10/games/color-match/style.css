@@ -20,6 +20,26 @@ body[data-type="game"] {
   padding-bottom: 0 !important;
 }
 
+/* Match Nationalities – 3 modes · Unit 2B */
+
+.arcade-header-bar, .arcade-nav, .site-footer, body > header {
+  display: none !important;
+}
+
+/* Kill global header offset on game pages (mobile reserves 56px+safe-area) */
+html, body {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+}
+body.game-page,
+body[data-type="game"] {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+
+
 html, body {
   height: 100%;
   height: 100dvh;
@@ -813,10 +833,7 @@ html[data-theme="dark"] .mc-right-item:not(.is-correct):not(.is-used):hover {
   .mc-spark,
   .mc-match-flash,
   .mc-left-item.is-wrong,
-  .mc-right-item.is-wrong,
-  .mc-screen,
-  .mc-screen.mc-screen-leave,
-  .mc-game::before {
+  .mc-right-item.is-wrong {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
@@ -824,8 +841,7 @@ html[data-theme="dark"] .mc-right-item:not(.is-correct):not(.is-used):hover {
   .mc-left-item,
   .mc-right-item,
   .mc-mode-card,
-  .mc-btn,
-  .mc-set-progress-fill {
+  .mc-btn {
     transition: none !important;
   }
 }
@@ -1146,129 +1162,4 @@ html[data-theme="dark"] .mc-heart.is-broken {
     font-size: 10px;
     padding: 3px 6px;
   }
-}
-
-/* ══════════════════════════════════════════════════════════
-   Polish pass: screen transitions, ambient backdrop,
-   per-set progress bar, and finer responsive tuning.
-   ══════════════════════════════════════════════════════════ */
-
-/* Soft ambient glow behind the game card — subtle, static-friendly */
-.mc-game {
-  isolation: isolate;
-}
-.mc-game::before {
-  content: "";
-  position: fixed;
-  inset: -10%;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(38% 30% at 18% 12%, rgba(99, 102, 241, 0.16), transparent 60%),
-    radial-gradient(42% 34% at 86% 88%, rgba(52, 211, 153, 0.14), transparent 60%);
-  animation: mc-ambient-drift 16s ease-in-out infinite alternate;
-}
-html[data-theme="dark"] .mc-game::before {
-  background:
-    radial-gradient(38% 30% at 18% 12%, rgba(99, 102, 241, 0.22), transparent 60%),
-    radial-gradient(42% 34% at 86% 88%, rgba(52, 211, 153, 0.16), transparent 60%);
-}
-@keyframes mc-ambient-drift {
-  0%   { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(-2%, 2%) scale(1.05); }
-}
-
-/* Whole-screen swap: every render() paints a fresh .mc-screen, so the
-   entrance animation just plays on insert — no JS coordination needed. */
-.mc-screen {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  height: 100%;
-  animation: mc-screen-in 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes mc-screen-in {
-  0%   { opacity: 0; transform: translateY(10px) scale(0.985); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-.mc-screen.mc-screen-leave {
-  animation: mc-screen-out 0.19s cubic-bezier(0.4, 0, 1, 1) both;
-  pointer-events: none;
-}
-@keyframes mc-screen-out {
-  0%   { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(-8px) scale(0.98); }
-}
-
-/* Per-set progress bar under the instruction line */
-.mc-set-progress {
-  flex-shrink: 0;
-  width: 100%;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(100, 116, 139, 0.15);
-  overflow: hidden;
-  margin: 0 0 10px;
-}
-html[data-theme="dark"] .mc-set-progress {
-  background: rgba(148, 163, 184, 0.18);
-}
-.mc-set-progress-fill {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #6366f1, #34d399);
-  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Buttons: crisper tactile feedback */
-.mc-btn {
-  will-change: transform;
-}
-.mc-btn:active {
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
-}
-.mc-play:active { transform: scale(0.94); }
-.mc-left-item:active:not(.is-correct),
-.mc-right-item:active:not(.is-correct):not(.is-used) {
-  transform: scale(0.97);
-}
-
-/* Keyboard focus visibility (mouse users unaffected) */
-.mc-left-item:focus-visible,
-.mc-right-item:focus-visible,
-.mc-btn:focus-visible,
-.mc-back:focus-visible,
-.mc-play:focus-visible {
-  outline: 3px solid #6366f1;
-  outline-offset: 2px;
-}
-html[data-theme="dark"] .mc-left-item:focus-visible,
-html[data-theme="dark"] .mc-right-item:focus-visible,
-html[data-theme="dark"] .mc-btn:focus-visible,
-html[data-theme="dark"] .mc-back:focus-visible,
-html[data-theme="dark"] .mc-play:focus-visible {
-  outline-color: #a5b4fc;
-}
-
-/* Short / landscape phones: keep everything reachable without scrolling */
-@media (max-height: 560px) {
-  .mc-hero { width: 56px; height: 56px; font-size: 26px; margin-bottom: 8px; }
-  .mc-start h1, .mc-done h1 { font-size: 1.2rem; }
-  .mc-desc { margin-bottom: 8px; }
-  .mc-part-list li { padding: 7px 12px; margin-bottom: 6px; font-size: 0.85rem; }
-  .mc-set-progress { margin-bottom: 6px; }
-  .mc-instruction { margin-bottom: 4px; }
-}
-@media (max-height: 420px) {
-  .mc-topbar { margin-bottom: 3px; }
-  .mc-hero { display: none; }
-  .mc-part-list li { padding: 5px 10px; margin-bottom: 4px; }
-}
-
-/* Very narrow phones: tighten card padding so labels never wrap awkwardly */
-@media (max-width: 340px) {
-  .mc-board { gap: 8px; }
-  .mc-col { gap: 5px; }
 }

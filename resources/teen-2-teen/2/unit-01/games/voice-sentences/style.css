@@ -1,0 +1,380 @@
+/* Speak the Sentences · Teen2Teen 2 Unit 1 */
+:root {
+  --vs-bg: #f4f6fb;
+  --vs-card: #ffffff;
+  --vs-text: #1e1b4b;
+  --vs-muted: #64748b;
+  --vs-purple: #6d28d9;
+  --vs-purple-soft: rgba(109, 40, 217, 0.12);
+  --vs-green: #16a34a;
+  --vs-red: #dc2626;
+  --vs-radius: 16px;
+  --vs-shadow: 0 10px 28px rgba(30, 27, 75, 0.08);
+  --vs-mic: #6d28d9;
+  --vs-mic-listening: #dc2626;
+}
+
+html[data-theme="dark"] {
+  --vs-bg: #0f1220;
+  --vs-card: #1a1f35;
+  --vs-text: #f1f5f9;
+  --vs-muted: #94a3b8;
+  --vs-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  --vs-purple-soft: rgba(167, 139, 250, 0.18);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  min-height: 100dvh;
+  background: var(--vs-bg) !important;
+  color: var(--vs-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.arcade-header-bar,
+.arcade-nav,
+.nav-profile,
+.profile-fab,
+[data-theme-toggle],
+.theme-toggle,
+body > header,
+.site-footer {
+  display: none !important;
+}
+html, body, body.game-page {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+}
+
+.vs-game {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 12px 16px 36px;
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-bottom: max(36px, env(safe-area-inset-bottom));
+  min-height: 100dvh;
+}
+
+/* Top bar */
+.vs-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.vs-back {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--vs-card);
+  color: var(--vs-text);
+  text-decoration: none;
+  border: 1px solid rgba(109, 40, 217, 0.15);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  flex-shrink: 0;
+  font-size: 1.15rem;
+}
+.vs-title {
+  flex: 1;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--vs-muted);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vs-badge {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: var(--vs-purple-soft);
+  color: var(--vs-purple);
+  flex-shrink: 0;
+}
+.vs-stat {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--vs-muted);
+  margin-left: 4px;
+}
+
+/* Progress */
+.vs-progress {
+  height: 5px;
+  background: rgba(109, 40, 217, 0.1);
+  border-radius: 3px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.vs-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6d28d9, #a78bfa);
+  width: 0%;
+  transition: width 0.35s ease;
+  border-radius: 3px;
+}
+.vs-partlabel {
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vs-muted);
+  margin: 0 0 10px;
+}
+
+/* Picture */
+.vs-picwrap {
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto 14px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--vs-shadow);
+  border: 1px solid rgba(109, 40, 217, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  max-height: min(38vh, 280px);
+}
+html[data-theme="dark"] .vs-picwrap { background: #111827; }
+.vs-pic {
+  width: 100%;
+  height: auto;
+  max-height: min(38vh, 280px);
+  display: block;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Question prompt */
+.vs-prompt {
+  text-align: center;
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--vs-text);
+  line-height: 1.35;
+}
+.vs-type-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--vs-purple-soft);
+  color: var(--vs-purple);
+  margin-bottom: 8px;
+}
+
+/* Heard transcript */
+.vs-heard {
+  text-align: center;
+  min-height: 1.5em;
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vs-muted);
+  transition: color 0.2s;
+}
+.vs-heard.is-listening { color: var(--vs-mic-listening); }
+.vs-heard.is-ok { color: var(--vs-green); }
+.vs-heard.is-bad { color: var(--vs-red); }
+
+/* Mic button */
+.vs-mic-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 18px;
+}
+.vs-mic-btn {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: var(--vs-mic);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 24px rgba(109, 40, 217, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s;
+  position: relative;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.vs-mic-btn:active { transform: scale(0.94); }
+.vs-mic-btn svg {
+  width: 36px;
+  height: 36px;
+  fill: currentColor;
+}
+.vs-mic-btn.is-listening {
+  background: var(--vs-mic-listening);
+  box-shadow: 0 8px 28px rgba(220, 38, 38, 0.45);
+  animation: vs-pulse 1.2s ease-in-out infinite;
+}
+.vs-mic-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+@keyframes vs-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.45); }
+  50% { box-shadow: 0 0 0 18px rgba(220, 38, 38, 0); }
+}
+.vs-mic-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--vs-muted);
+}
+
+/* Feedback */
+.vs-fb {
+  text-align: center;
+  min-height: 1.4em;
+  font-size: 0.98rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--vs-muted);
+}
+.vs-fb.is-ok { color: var(--vs-green); }
+.vs-fb.is-bad { color: var(--vs-red); }
+
+/* Buttons */
+.vs-btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 14px 28px;
+  border-radius: 14px;
+  background: var(--vs-purple);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(109, 40, 217, 0.28);
+  min-height: 48px;
+  transition: transform 0.12s ease;
+}
+.vs-btn:active { transform: scale(0.97); }
+.vs-btn.secondary {
+  background: var(--vs-card);
+  color: var(--vs-text);
+  border: 1px solid rgba(109, 40, 217, 0.18);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+.vs-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Start / bridge / done */
+.vs-start, .vs-done {
+  text-align: center;
+  padding: 24px 8px 16px;
+}
+.vs-hero {
+  font-size: 3.2rem;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.vs-start h1, .vs-done h1 {
+  margin: 0 0 8px;
+  font-size: clamp(1.4rem, 5vw, 1.75rem);
+  font-weight: 800;
+}
+.vs-sub {
+  margin: 0 auto 18px;
+  max-width: 340px;
+  color: var(--vs-muted);
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+.vs-tips {
+  list-style: none;
+  margin: 0 auto 22px;
+  padding: 0;
+  max-width: 300px;
+  text-align: left;
+  color: var(--vs-muted);
+  font-size: 0.92rem;
+}
+.vs-tips li {
+  padding: 6px 0 6px 22px;
+  position: relative;
+}
+.vs-tips li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--vs-green);
+  font-weight: 700;
+}
+
+/* Unsupported banner */
+.vs-unsupported {
+  background: #fef2f2;
+  color: #991b1b;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  margin: 12px 0;
+  text-align: center;
+}
+html[data-theme="dark"] .vs-unsupported {
+  background: rgba(220, 38, 38, 0.15);
+  color: #fca5a5;
+}
+
+/* Skip / next */
+.vs-skip {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--vs-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+@media (min-width: 640px) {
+  .vs-game { max-width: 520px; padding: 18px 20px 40px; }
+  .vs-picwrap {
+    max-width: 380px;
+    min-height: 200px;
+    max-height: min(42vh, 320px);
+  }
+  .vs-pic { max-height: min(42vh, 320px); }
+  .vs-mic-btn { width: 96px; height: 96px; }
+  .vs-mic-btn svg { width: 40px; height: 40px; }
+  .vs-prompt { font-size: 1.3rem; }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .vs-picwrap {
+    min-height: 90px;
+    max-height: 26vh;
+  }
+  .vs-pic { max-height: 26vh; }
+  .vs-mic-btn { width: 64px; height: 64px; }
+  .vs-mic-btn svg { width: 28px; height: 28px; }
+}

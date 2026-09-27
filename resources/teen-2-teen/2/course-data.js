@@ -509,6 +509,7 @@ COURSE_DATA["teen2teen"].levels["2"].units[1].games = [
   { title: "Correct Sentence", url: "games/choose-sentence/", label: "Grammar" },
   { title: "Picture Sentences", url: "games/picture-sentences/", label: "Grammar" },
   { title: "Write the Sentences", url: "games/write-sentences/", label: "Grammar" },
+  { title: "Speak the Sentences", url: "games/voice-sentences/", label: "Grammar" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.

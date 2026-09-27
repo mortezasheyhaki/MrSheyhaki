@@ -262,6 +262,8 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
   { title: "Present Continuous −", url: "continuous-negative/", label: "Grammar" },
   { title: "Present Continuous ?", url: "continuous-questions/", label: "Grammar" },
   { title: "Picture Sentences", url: "continuous-pictures/", label: "Grammar" },
+  { title: "Picture Sentences (build)", url: "picture-sentences/", label: "Grammar" },
+  { title: "Write the Sentences", url: "write-sentences/", label: "Grammar" },
   { title: "Dialogue Complete", url: "continuous-dialogues/", label: "Grammar" },
   { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
   { title: "Listen & Repeat", url: "listen-repeat-conversation/", label: "Pronunciation" },

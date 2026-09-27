@@ -1,27 +1,27 @@
-/* Clothes Match – 3 sequential parts × 2 sets of 5 – Teen2Teen 1 Unit 10 */
+/* Color Match – 3 sequential parts × 2 sets of 5 – Teen2Teen 1 Unit 10 */
 (function () {
   "use strict";
 
-  var GAME_ID = "t2t1-u10-clothes-match";
+  var GAME_ID = "t2t1-u10-color-match";
   var CDN = "https://cdn.imgurl.ir/uploads/";
 
   var ITEMS = [
-    { id: "sweater", label: "a sweater", image: CDN + "q049292_swer.png", audio: CDN + "d159367_a_swer.mp3" },
-    { id: "skirt", label: "a skirt", image: CDN + "a444189_st.png", audio: CDN + "b668114_st.mp3" },
-    { id: "shorts", label: "shorts", image: CDN + "p155179_shorts.png", audio: CDN + "b61351_shorts_2.mp3" },
-    { id: "shoes", label: "shoes", image: CDN + "i80933_shoes.png", audio: CDN + "y529847_shoes_3.mp3" },
-    { id: "shirt", label: "a shirt", image: CDN + "y409033_shirt.png", audio: CDN + "f1066_a_shirt.mp3" },
-    { id: "pants", label: "pants", image: CDN + "b63746_pants.png", audio: CDN + "e126543_pants_2.mp3" },
-    { id: "jeans", label: "jeans", image: CDN + "s86734_jeans.png", audio: CDN + "p371082_jeans_3.mp3" },
-    { id: "jacket", label: "a jacket", image: CDN + "n731967_jacket.png", audio: CDN + "c58647_a_jacket.mp3" },
-    { id: "dress", label: "a dress", image: CDN + "e35407_dress.png", audio: CDN + "m241908_a_dress.mp3" },
-    { id: "blouse", label: "a blouse", image: CDN + "d598847_blouse.png", audio: CDN + "m041818_a_blouse.mp3" }
+    { id: "yellow", label: "yellow", image: CDN + "i856407_yellow.png", audio: CDN + "j933699_yellow.mp3" },
+    { id: "red",    label: "red",    image: CDN + "e455378_red.png",    audio: CDN + "m694443_red.mp3" },
+    { id: "purple", label: "purple", image: CDN + "w67709_pure.png",    audio: CDN + "b02213_pure.mp3" },
+    { id: "orange", label: "orange", image: CDN + "t0707_orange.png",   audio: CDN + "b442281_orange.mp3" },
+    { id: "green",  label: "green",  image: CDN + "g32224_green.png",   audio: CDN + "t0097_green.mp3" },
+    { id: "gray",   label: "gray",   image: CDN + "g617677_gray.png",   audio: CDN + "z479822_gray.mp3" },
+    { id: "brown",  label: "brown",  image: CDN + "i5856_brown.png",    audio: CDN + "w8891_brown.mp3" },
+    { id: "blue",   label: "blue",   image: CDN + "j139466_blue.png",   audio: CDN + "e7345_blue.mp3" },
+    { id: "black",  label: "black",  image: CDN + "y147580_black.png",  audio: CDN + "l85386_black.mp3" },
+    { id: "white",  label: "white",  image: CDN + "i49240_white.png",  audio: CDN + "y12792_white.mp3" }
   ];
 
   // 2 fixed sets of 5 (covers all 10)
   var SETS = [
-    ["sweater", "skirt", "shorts", "shoes", "shirt"],
-    ["pants", "jeans", "jacket", "dress", "blouse"]
+    ["yellow", "red", "purple", "orange", "green"],
+    ["gray", "brown", "blue", "black", "white"]
   ];
 
   // Sequential parts (not free-choice modes)
@@ -54,7 +54,7 @@
 
   var TOTAL_PAIRS = 30; // 3 parts × 2 sets × 5
 
-  var app = document.getElementById("game-app");
+var app = document.getElementById("game-app");
   if (!app) return;
 
   var modeIndex = 0;
@@ -88,22 +88,6 @@
       a[j] = t;
     }
     return a;
-  }
-
-  /* ── Screen transitions: fade+slide the current screen out, then
-     hand control back so the caller can change state and re-render.
-     The freshly rendered screen fades itself in via the .mc-screen
-     entrance animation in CSS, so no "enter" bookkeeping is needed. ── */
-  var SCREEN_LEAVE_MS = 190;
-
-  function playExit(cb) {
-    var scr = app.querySelector(".mc-screen");
-    if (!scr) {
-      cb();
-      return;
-    }
-    scr.classList.add("mc-screen-leave");
-    setTimeout(cb, SCREEN_LEAVE_MS);
   }
 
   var sfxCtx = null;
@@ -473,8 +457,6 @@
     } else {
       el.textContent = full;
     }
-    var fill = document.getElementById("mc-set-progress-fill");
-    if (fill) fill.style.width = Math.round((correctCount() / 5) * 100) + "%";
   }
 
   function calcStars() {
@@ -591,15 +573,14 @@
   function render() {
     if (phase === "menu") {
       app.innerHTML =
-        '<div class="mc-screen">' +
         '<header class="mc-topbar">' +
         '<a class="mc-back" href="../" aria-label="Back">←</a>' +
-        '<span class="mc-title">Clothes Match</span>' +
+        '<span class="mc-title">Color Match</span>' +
         '<span class="mc-badge">Unit 10</span>' +
         "</header>" +
         '<section class="mc-start">' +
-        '<div class="mc-hero" aria-hidden="true">👕</div>' +
-        "<h1>Clothes Match</h1>" +
+        '<div class="mc-hero" aria-hidden="true">🎨</div>' +
+        "<h1>Color Match</h1>" +
         '<p class="mc-desc">3 parts · 10 items each · 3 hearts</p>' +
         '<ol class="mc-part-list">' +
         "<li><strong>Part 1</strong> — Words → Pictures</li>" +
@@ -607,14 +588,11 @@
         "<li><strong>Part 3</strong> — Audio → Pictures</li>" +
         "</ol>" +
         '<button type="button" class="mc-btn mc-start-btn" id="mc-start">Start Part 1</button>' +
-        "</section>" +
-        "</div>";
+        "</section>";
       document.getElementById("mc-start").onclick = function () {
         sfx("click");
-        playExit(function () {
-          totalCorrect = 0;
-          startPart(0);
-        });
+        totalCorrect = 0;
+        startPart(0);
       };
       return;
     }
@@ -623,10 +601,9 @@
       var finished = MODES[modeIndex];
       var next = MODES[modeIndex + 1];
       app.innerHTML =
-        '<div class="mc-screen">' +
         '<header class="mc-topbar">' +
         '<a class="mc-back" href="../" aria-label="Back">←</a>' +
-        '<span class="mc-title">Clothes Match</span>' +
+        '<span class="mc-title">Color Match</span>' +
         '<span class="mc-badge">Unit 10</span>' +
         "</header>" +
         '<section class="mc-start mc-between">' +
@@ -644,13 +621,10 @@
         next.title +
         "</p>" +
         '<button type="button" class="mc-btn mc-start-btn" id="mc-continue">Continue</button>' +
-        "</section>" +
-        "</div>";
+        "</section>";
       document.getElementById("mc-continue").onclick = function () {
         sfx("click");
-        playExit(function () {
-          startPart(modeIndex + 1);
-        });
+        startPart(modeIndex + 1);
       };
       return;
     }
@@ -666,16 +640,12 @@
           stars: stars,
           timeMs: timeMs,
           onAgain: function () {
-            playExit(function () {
-              totalCorrect = 0;
-              startPart(0);
-            });
+            totalCorrect = 0;
+            startPart(0);
           },
           onModes: function () {
-            playExit(function () {
-              phase = "menu";
-              render();
-            });
+            phase = "menu";
+            render();
           },
           backHref: "../",
           save: false
@@ -683,21 +653,16 @@
         return;
       }
       app.innerHTML =
-        '<div class="mc-screen">' +
         '<section class="mc-done"><h1>Done!</h1>' +
         "<p>You matched " +
         totalCorrect +
         "/" +
         TOTAL_PAIRS +
         ".</p>" +
-        '<button type="button" class="mc-btn" id="cm-again">Again</button></section>' +
-        "</div>";
+        '<button type="button" class="mc-btn" id="cm-again">Again</button></section>';
       document.getElementById("cm-again").onclick = function () {
-        sfx("click");
-        playExit(function () {
-          totalCorrect = 0;
-          startPart(0);
-        });
+        totalCorrect = 0;
+        startPart(0);
       };
       return;
     }
@@ -717,9 +682,7 @@
 
     var shortTitles = ["Words → Pics", "Audio → Words", "Audio → Pics"];
     var shortTitle = shortTitles[modeIndex] || mode.title;
-    var progressPct = Math.round((correctCount() / 5) * 100);
     app.innerHTML =
-      '<div class="mc-screen">' +
       '<header class="mc-topbar">' +
       '<a class="mc-back" href="../" aria-label="Back">←</a>' +
       '<span class="mc-title" title="' +
@@ -756,11 +719,6 @@
       '<p class="mc-instruction" id="mc-hint">' +
       mode.tip +
       "</p>" +
-      '<div class="mc-set-progress" aria-hidden="true">' +
-      '<span class="mc-set-progress-fill" id="mc-set-progress-fill" style="width:' +
-      progressPct +
-      '%"></span>' +
-      "</div>" +
       '<div class="mc-board is-entering">' +
       '<div class="mc-col mc-col-left">' +
       left +
@@ -771,7 +729,6 @@
       "</div>" +
       '<div class="mc-actions">' +
       '<button type="button" class="mc-btn secondary" id="mc-reset">Reset round</button>' +
-      "</div>" +
       "</div>";
 
     // clear enter animation class after it runs
@@ -800,9 +757,7 @@
     });
     document.getElementById("mc-reset").onclick = function () {
       sfx("click");
-      playExit(function () {
-        startSet(setIndex);
-      });
+      startSet(setIndex);
     };
   }
 

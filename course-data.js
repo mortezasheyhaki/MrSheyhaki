@@ -231,9 +231,11 @@ COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.games = [
   { title: "Subject vs Object Pronouns", url: "subject-object-pronouns/" },
 ];
 
-// Unit 9A – Listen & Write game
+// Unit 9A – Present continuous + travel + messages
 COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
   { title: "Listen & Write", url: "listen-and-write/" },
+  { title: "Picture Sentences", url: "picture-sentences/", label: "Grammar" },
+  { title: "Write the Sentences", url: "write-sentences/", label: "Grammar" },
 ];
 
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)
@@ -494,9 +496,13 @@ COURSE_DATA["teen2teen"] = {
 // T2T1 Unit 10 – Clothes games
 COURSE_DATA["teen2teen"].levels["1"].units[10].games = [
   { title: "Clothes Flashcards", url: "games/clothes-flashcards/", label: "Vocabulary" },
+  { title: "Color Flashcards", url: "games/color-flashcards/", label: "Vocabulary" },
+  { title: "Color Match", url: "games/color-match/", label: "Vocabulary" },
   { title: "Clothes Match", url: "games/clothes-match/", label: "Vocabulary" },
   { title: "A / No A", url: "games/clothes-a-no-a/", label: "Vocabulary" },
-  { title: "Sound Match Picture", url: "games/clothes-sound-match-picture/", label: "Listening" },
+  { title: "Sound Match Picture · Clothes", url: "games/clothes-sound-match-picture/", label: "Listening" },
+  { title: "Sound Match Picture · Colors", url: "games/color-sound-match-picture/", label: "Listening" },
+  { title: "Plural -s Sound Match", url: "games/plural-s-sound-match/", label: "Pronunciation" },
   { title: "Clothes Bingo", url: "games/clothes-bingo/", label: "Listening" },
   { title: "Unscramble Clothes", url: "games/unscramble-clothes/", label: "Vocabulary" },
   { title: "Listen & Write", url: "games/listen-write-clothes/", label: "Listening" },
@@ -509,6 +515,7 @@ COURSE_DATA["teen2teen"].levels["2"].units[1].games = [
   { title: "Correct Sentence", url: "games/choose-sentence/", label: "Grammar" },
   { title: "Picture Sentences", url: "games/picture-sentences/", label: "Grammar" },
   { title: "Write the Sentences", url: "games/write-sentences/", label: "Grammar" },
+  { title: "Speak the Sentences", url: "games/voice-sentences/", label: "Grammar" },
 ];
 
 // Node (generator script) and browser (rendered pages) both need this object.
