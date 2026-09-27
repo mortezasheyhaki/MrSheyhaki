@@ -376,6 +376,18 @@ COURSE_DATA["american-english-file"].levels["1"].units[10].name = "Travel & fort
 COURSE_DATA["american-english-file"].levels["1"].units[10].lessons.a.name = "The most dangerous place...";
 COURSE_DATA["american-english-file"].levels["1"].units[10].lessons.b.name = "Five continents in a day";
 COURSE_DATA["american-english-file"].levels["1"].units[10].lessons.c.name = "The fortune-teller";
+
+// Level 1 – Unit 10A – Place names
+COURSE_DATA["american-english-file"].levels["1"].units[10].lessons.a.games = [
+  { title: "Place Names", url: "place-names/", label: "Vocabulary" },
+  { title: "Places Flashcards", url: "places-flashcards/", label: "Vocabulary" },
+  { title: "Places Match", url: "places-match/", label: "Vocabulary" },
+  { title: "Sound Match Picture", url: "places-sound-match-picture/", label: "Listening" },
+  { title: "Places Memory", url: "places-memory/", label: "Vocabulary" },
+  { title: "Places Spelling Bee", url: "places-spelling-bee/", label: "Vocabulary" },
+  { title: "Superlatives", url: "superlatives/", label: "Grammar" },
+];
+
 COURSE_DATA["american-english-file"].levels["1"].units[11].name = "Culture & experiences";
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.name = "Culture shock";
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.b.name = "Experiences or things?";
