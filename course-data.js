@@ -316,6 +316,9 @@ COURSE_DATA["american-english-file"].levels["1"].units[10].lessons.a.games = [
   { title: "Places Memory", url: "places-memory/", label: "Vocabulary" },
   { title: "Places Spelling Bee", url: "places-spelling-bee/", label: "Vocabulary" },
   { title: "Superlatives", url: "superlatives/", label: "Grammar" },
+  { title: "Write Superlatives", url: "superlatives-write/", label: "Writing" },
+  { title: "Question Builder", url: "question-builder/", label: "Grammar" },
+  { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
 ];
 
 COURSE_DATA["american-english-file"].levels["1"].units[11].name = "Culture & experiences";

@@ -1,0 +1,280 @@
+/* Write Superlatives · AEF 1 Unit 10A */
+:root {
+  --sw-bg: #f4f6fb;
+  --sw-card: #ffffff;
+  --sw-text: #1e1b4b;
+  --sw-muted: #64748b;
+  --sw-purple: #6d28d9;
+  --sw-purple-soft: rgba(109, 40, 217, 0.12);
+  --sw-green: #16a34a;
+  --sw-red: #dc2626;
+  --sw-shadow: 0 10px 28px rgba(30, 27, 75, 0.08);
+  --sw-radius: 16px;
+}
+html[data-theme="dark"] {
+  --sw-bg: #0f1220;
+  --sw-card: #1a1f35;
+  --sw-text: #f1f5f9;
+  --sw-muted: #94a3b8;
+  --sw-purple-soft: rgba(167, 139, 250, 0.18);
+  --sw-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  min-height: 100dvh;
+  background: var(--sw-bg) !important;
+  color: var(--sw-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+.arcade-header-bar, .arcade-nav, .nav-profile, .profile-fab,
+[data-theme-toggle], .theme-toggle, body > header, .site-footer {
+  display: none !important;
+}
+html, body, body.game-page {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+}
+
+.sw-game {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 12px 16px 36px;
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-bottom: max(36px, env(safe-area-inset-bottom));
+  min-height: 100dvh;
+}
+
+.sw-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.sw-back {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  background: var(--sw-card);
+  color: var(--sw-text);
+  text-decoration: none;
+  border: 1px solid rgba(109, 40, 217, 0.15);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  flex-shrink: 0;
+  font-size: 1.15rem;
+}
+.sw-title {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--sw-muted);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sw-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--sw-purple-soft);
+  color: var(--sw-purple);
+  white-space: nowrap;
+}
+html[data-theme="dark"] .sw-badge {
+  color: #c4b5fd;
+}
+
+.sw-progress {
+  height: 6px;
+  background: rgba(109, 40, 217, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.sw-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7c3aed, #a78bfa);
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.sw-start {
+  text-align: center;
+  padding: 24px 8px 12px;
+}
+.sw-hero {
+  font-size: 3.2rem;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+.sw-start h1 {
+  font-size: 1.55rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+  letter-spacing: -0.03em;
+  color: var(--sw-text);
+}
+.sw-sub {
+  color: var(--sw-muted);
+  font-size: 0.95rem;
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+.sw-tips {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 22px;
+  text-align: left;
+  display: inline-block;
+}
+.sw-tips li {
+  position: relative;
+  padding-left: 1.25rem;
+  margin-bottom: 6px;
+  color: var(--sw-muted);
+  font-size: 0.9rem;
+}
+.sw-tips li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--sw-purple);
+  font-weight: 700;
+}
+
+.sw-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(109, 40, 217, 0.28);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.sw-btn:active { transform: scale(0.97); }
+.sw-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+.sw-btn.secondary {
+  background: var(--sw-card);
+  color: var(--sw-text);
+  border: 1px solid rgba(109, 40, 217, 0.2);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.sw-card {
+  background: var(--sw-card);
+  border-radius: var(--sw-radius);
+  box-shadow: var(--sw-shadow);
+  padding: 20px 18px 18px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(109, 40, 217, 0.08);
+}
+.sw-prompt {
+  font-size: 1.2rem;
+  line-height: 1.7;
+  color: var(--sw-text);
+  margin: 0 0 12px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.sw-blank {
+  display: inline-block;
+  min-width: 8.5em;
+  height: 1.15em;
+  border-bottom: 2.5px solid var(--sw-purple);
+  vertical-align: baseline;
+  margin: 0 3px;
+  padding: 0;
+  color: transparent;
+  line-height: 1;
+}
+.sw-adj {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--sw-muted);
+  background: var(--sw-purple-soft);
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.sw-input-wrap {
+  margin: 14px 0 10px;
+}
+.sw-input {
+  width: 100%;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 15px 16px;
+  border-radius: 14px;
+  border: 2px solid rgba(109, 40, 217, 0.22);
+  background: var(--sw-bg);
+  color: var(--sw-text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+.sw-input:focus {
+  border-color: var(--sw-purple);
+  box-shadow: 0 0 0 3px var(--sw-purple-soft);
+}
+.sw-input.is-ok {
+  border-color: var(--sw-green);
+  background: rgba(22, 163, 74, 0.08);
+}
+.sw-input.is-bad {
+  border-color: var(--sw-red);
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.sw-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.sw-actions .sw-btn {
+  flex: 1;
+}
+
+.sw-fb {
+  min-height: 1.4em;
+  margin: 12px 0 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--sw-muted);
+}
+.sw-fb.is-ok { color: var(--sw-green); }
+.sw-fb.is-bad { color: var(--sw-red); }
+
+.sw-hint {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--sw-muted);
+  margin: 10px 0 0;
+  opacity: 0.85;
+}
+
+@media (max-width: 380px) {
+  .sw-prompt { font-size: 1.05rem; }
+  .sw-input { font-size: 1.1rem; }
+  .sw-blank { min-width: 6.5em; }
+}

@@ -263,9 +263,9 @@
 
   function starsFromGame() {
     var perfect = pairsTotal;
-    if (moves <= perfect + 2) return 3;
-    if (moves <= perfect + 6) return 2;
-    if (moves <= perfect + 12) return 1;
+    if (moves <= perfect + 4) return 3;
+    if (moves <= perfect + 10) return 2;
+    if (moves <= perfect + 20) return 1;
     return 0;
   }
 
