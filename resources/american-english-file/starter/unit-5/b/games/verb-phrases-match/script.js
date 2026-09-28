@@ -596,7 +596,7 @@
         '<header class="mc-topbar">' +
         '<a class="mc-back" href="../" aria-label="Back">←</a>' +
         '<span class="mc-title">Verb Phrases Match</span>' +
-        '<span class="mc-badge">Unit 10</span>' +
+        '<span class="mc-badge">Unit 5B</span>' +
         "</header>" +
         '<section class="mc-start">' +
         '<div class="mc-hero" aria-hidden="true">🏙️</div>' +
@@ -625,7 +625,7 @@
         '<header class="mc-topbar">' +
         '<a class="mc-back" href="../" aria-label="Back">←</a>' +
         '<span class="mc-title">Verb Phrases Match</span>' +
-        '<span class="mc-badge">Unit 10</span>' +
+        '<span class="mc-badge">Unit 5B</span>' +
         "</header>" +
         '<section class="mc-start mc-between">' +
         '<div class="mc-hero" aria-hidden="true">✨</div>' +
