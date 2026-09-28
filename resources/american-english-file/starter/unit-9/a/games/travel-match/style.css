@@ -1,14 +1,44 @@
-/* === Kill site header offset (empty top band on mobile) === */
-.arcade-header-bar, .arcade-nav, .nav-profile, .profile-fab,
-[data-theme-toggle], .theme-toggle, body > header, .site-footer { display: none !important; }
-html, body { padding-top: 0 !important; padding-bottom: 0 !important; margin: 0 !important; }
-body.game-page, body[data-type="game"] { padding-top: 0 !important; padding-bottom: 0 !important; }
+/* === Unit 10 game: kill site header offset (empty top band) === */
+.arcade-header-bar,
+.arcade-nav,
+.nav-profile,
+.profile-fab,
+[data-theme-toggle],
+.theme-toggle,
+body > header,
+.site-footer {
+  display: none !important;
+}
+html, body {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+}
+body.game-page,
+body[data-type="game"] {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
 
-/* Match Countries – 3 modes · Unit 1B */
+/* Match Nationalities – 3 modes · Unit 2B */
 
 .arcade-header-bar, .arcade-nav, .site-footer, body > header {
   display: none !important;
 }
+
+/* Kill global header offset on game pages (mobile reserves 56px+safe-area) */
+html, body {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+}
+body.game-page,
+body[data-type="game"] {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+
 
 html, body {
   height: 100%;
@@ -273,7 +303,7 @@ html[data-theme="dark"] .mc-right-item.is-correct {
   75% { transform: translateX(4px); }
 }
 
-/* Pictures */
+/* Pictures – fit fully inside the button */
 .mc-thumb {
   width: 100%;
   height: 100%;
@@ -299,7 +329,8 @@ html[data-theme="dark"] .mc-right-item.is-correct {
 }
 .mc-pic-cell, .mc-pic-btn {
   position: relative;
-  padding: 8px;
+  padding: 4px;
+  overflow: hidden;
 }
 .mc-pic-btn {
   appearance: none;
@@ -309,8 +340,13 @@ html[data-theme="dark"] .mc-right-item.is-correct {
   font: inherit;
   color: inherit;
   display: flex;
-  align-items: stretch;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+  background: #fff;
+}
+html[data-theme="dark"] .mc-pic-btn {
+  background: rgba(255,255,255,0.05);
 }
 
 /* Words */
@@ -322,7 +358,7 @@ html[data-theme="dark"] .mc-right-item.is-correct {
   align-items: center;
   justify-content: center;
   gap: 0;
-  padding: 12px 14px;
+  padding: 10px 14px;
   font: inherit;
   font-weight: 800;
   font-size: 1.15rem;
@@ -333,7 +369,7 @@ html[data-theme="dark"] .mc-right-item.is-correct {
 html[data-theme="dark"] .mc-word { color: #f1f5f9; }
 .mc-word-label {
   min-width: 0;
-  line-height: 1.3;
+  line-height: 1.25;
   font-size: 1.15rem;
   font-weight: 800;
 }
@@ -449,7 +485,7 @@ html[data-theme="dark"] .mc-btn.secondary {
 .mc-done .mc-btn { margin-top: 8px; width: min(220px, 100%); flex: none; }
 
 @media (max-width: 400px) {
-  .mc-word, .mc-word-label { font-size: 1.05rem; }
+  .mc-word, .mc-word-label, .mc-word-left, .mc-word-left .mc-word-label { font-size: 1.05rem; }
   .mc-word { padding: 8px 10px; }
   .mc-play { width: 50px; height: 50px; }
   .mc-pic-flag { font-size: 1rem; }
@@ -570,230 +606,560 @@ html[data-theme="dark"] .mc-match-pop {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.35);
 }
 
-/* Travel Match extras – 6-item sets + larger tiles */
-.mc-board {
-  gap: 12px;
-}
-.mc-col {
-  gap: 10px;
-}
-.mc-pic-cell,
-.mc-pic-btn {
-  min-height: 110px;
-  padding: 10px;
-}
-.mc-pic-cell .mc-thumb,
-.mc-pic-btn .mc-thumb {
-  max-height: 96px;
-  width: 100%;
-  object-fit: contain;
-  padding: 4px;
-}
-.mc-word {
-  min-height: 110px;
-  font-size: 1.15rem;
-}
-.mc-word-label {
-  font-size: 1.15rem;
-  line-height: 1.3;
-}
-.mc-done-anim .mc-trophy {
-  animation: mc-trophy-pop 0.7s cubic-bezier(.2,.9,.3,1.4);
-}
-.mc-done-anim .mc-stars span {
-  display: inline-block;
-  opacity: 0.35;
-  transform: scale(0.6);
-  animation: mc-star-in 0.45s ease forwards;
-}
-.mc-done-anim .mc-stars span:nth-child(1) { animation-delay: 0.15s; }
-.mc-done-anim .mc-stars span:nth-child(2) { animation-delay: 0.3s; }
-.mc-done-anim .mc-stars span:nth-child(3) { animation-delay: 0.45s; }
-.mc-done-anim .mc-stars span.lit {
-  opacity: 1;
-}
-@keyframes mc-trophy-pop {
-  0% { transform: scale(0) rotate(-20deg); opacity: 0; }
-  60% { transform: scale(1.2) rotate(8deg); opacity: 1; }
-  100% { transform: scale(1) rotate(0); }
-}
-@keyframes mc-star-in {
-  to { opacity: 1; transform: scale(1); }
-}
-.mc-confetti {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 50;
-}
-.mc-confetti i {
-  position: absolute;
-  top: -12px;
-  width: 8px;
-  height: 12px;
-  border-radius: 2px;
-  opacity: 0.95;
-  animation: mc-confetti-fall linear forwards;
-}
-@keyframes mc-confetti-fall {
-  to {
-    transform: translateY(110vh) rotate(720deg);
-    opacity: 0;
-  }
-}
-@media (max-width: 420px) {
-  .mc-pic-cell,
-  .mc-pic-btn,
-  .mc-word {
-    min-height: 88px;
-  }
-  .mc-pic-cell .mc-thumb,
-  .mc-pic-btn .mc-thumb {
-    max-height: 76px;
-  }
-  .mc-word,
-  .mc-word-label {
-    font-size: 1rem;
-  }
-}
-
-/* ===== Particle system ===== */
-.mc-particle-layer {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  overflow: hidden;
-}
-.mc-particle {
-  position: fixed;
-  width: var(--size, 8px);
-  height: var(--size, 8px);
-  margin: 0;
-  border-radius: 50%;
-  pointer-events: none;
-  opacity: 0;
-  animation: mc-particle-fly var(--dur, 0.6s) ease-out forwards;
-  animation-delay: var(--delay, 0s);
-  will-change: transform, opacity;
-}
-.mc-particle--star {
-  background: transparent !important;
-  color: #fbbf24;
-  font-size: var(--size, 12px);
-  line-height: 1;
+/* Country name on left – same font/size as nationality words on right */
+.mc-word-left {
   display: flex;
   align-items: center;
   justify-content: center;
-  text-shadow: 0 0 8px rgba(251, 191, 36, 0.7);
-  animation-name: mc-particle-star;
+  gap: 0;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #1e293b;
+  cursor: pointer;
+  text-align: center;
+  position: relative;
 }
-.mc-particle--ring {
-  background: transparent !important;
-  border: 2px solid #34d399;
-  box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
-  animation-name: mc-particle-ring;
+html[data-theme="dark"] .mc-word-left {
+  color: #f1f5f9;
 }
-.mc-particle--dot {
-  background: #f87171 !important;
-  box-shadow: 0 0 6px rgba(248, 113, 113, 0.5);
+.mc-word-left .mc-word-label {
+  min-width: 0;
+  line-height: 1.25;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: inherit;
+  text-align: center;
 }
-@keyframes mc-particle-fly {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.15);
-  }
-}
-@keyframes mc-particle-star {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.4) rotate(0deg);
-  }
-  30% {
-    opacity: 1;
-    transform: translate(calc(-50% + var(--dx) * 0.35), calc(-50% + var(--dy) * 0.35)) scale(1.15) rotate(calc(var(--rot) * 0.4));
-  }
-  100% {
-    opacity: 0;
-    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.3) rotate(var(--rot));
-  }
-}
-@keyframes mc-particle-ring {
-  0% {
-    opacity: 0.9;
-    transform: translate(-50%, -50%) scale(0.3);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.8);
-  }
-}
-.mc-shake {
-  animation: mc-shake 0.4s ease !important;
-}
-@keyframes mc-shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(6px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
+.mc-word-left.is-selected {
+  border-color: #7c5cff;
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.25);
 }
 
-/* Enhanced confetti */
-.mc-confetti i.is-star {
-  background: transparent !important;
-  color: #fbbf24;
-  font-size: 14px;
-  width: auto;
-  height: auto;
-  text-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
+/* ========== Smooth animations (all modes) ========== */
+
+/* Staggered entrance when a set loads */
+.mc-board .mc-left-item,
+.mc-board .mc-right-item {
+  opacity: 1;
 }
-.mc-confetti i.is-circle {
-  border-radius: 50%;
-  width: 9px;
-  height: 9px;
+.mc-board.is-entering .mc-left-item,
+.mc-board.is-entering .mc-right-item {
+  animation: mc-card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.mc-confetti i.is-rect {
-  border-radius: 2px;
-  width: 8px;
-  height: 12px;
-}
-.mc-confetti i.is-strip {
-  border-radius: 1px;
-  width: 4px;
-  height: 14px;
-}
-.mc-confetti i {
-  animation-name: mc-confetti-fall-drift;
-}
-@keyframes mc-confetti-fall-drift {
+.mc-board .mc-left-item:nth-child(1),
+.mc-board .mc-right-item:nth-child(1) { animation-delay: 0.04s; }
+.mc-board .mc-left-item:nth-child(2),
+.mc-board .mc-right-item:nth-child(2) { animation-delay: 0.08s; }
+.mc-board .mc-left-item:nth-child(3),
+.mc-board .mc-right-item:nth-child(3) { animation-delay: 0.12s; }
+.mc-board .mc-left-item:nth-child(4),
+.mc-board .mc-right-item:nth-child(4) { animation-delay: 0.16s; }
+.mc-board .mc-left-item:nth-child(5),
+.mc-board .mc-right-item:nth-child(5) { animation-delay: 0.20s; }
+
+@keyframes mc-card-in {
   0% {
-    transform: translateY(0) translateX(0) rotate(0deg);
-    opacity: 1;
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
   }
   100% {
-    transform: translateY(110vh) translateX(var(--drift, 0px)) rotate(var(--spin, 540deg));
-    opacity: 0;
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
-.mc-finish-burst {
+
+/* Smoother base transitions on all cards */
+.mc-left-item,
+.mc-right-item {
+  transition: border-color 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Soft lift on hover / selected */
+.mc-left-item:not(.is-correct):hover,
+.mc-right-item:not(.is-correct):not(.is-used):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+html[data-theme="dark"] .mc-left-item:not(.is-correct):hover,
+html[data-theme="dark"] .mc-right-item:not(.is-correct):not(.is-used):hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.mc-left-item.is-selected {
+  transform: translateY(-2px) scale(1.02);
+  transition: border-color 0.2s ease, box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Correct match – gentle settle */
+.mc-left-item.is-correct,
+.mc-right-item.is-correct {
+  transition: border-color 0.3s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Wrong – smoother shake */
+.mc-left-item.is-wrong,
+.mc-right-item.is-wrong {
+  animation: mc-shake-smooth 0.48s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+@keyframes mc-shake-smooth {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-5px); }
+  30% { transform: translateX(5px); }
+  45% { transform: translateX(-4px); }
+  60% { transform: translateX(3px); }
+  75% { transform: translateX(-2px); }
+}
+
+/* Stronger but smoother pop on match */
+.mc-match-pop {
+  animation: mc-pop-smooth 0.55s cubic-bezier(0.22, 1.25, 0.36, 1);
+}
+@keyframes mc-pop-smooth {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.1); }
+  55% { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+/* Sparkles – slightly longer, softer fade */
+.mc-spark {
+  animation: mc-spark-smooth 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes mc-spark-smooth {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(0.15);
+  }
+}
+
+/* Flash ring – softer */
+.mc-match-flash {
+  animation: mc-flash-smooth 0.55s ease-out forwards;
+}
+@keyframes mc-flash-smooth {
+  0% { opacity: 0.55; transform: scale(0.92); }
+  100% { opacity: 0; transform: scale(1.08); }
+}
+
+/* Check mark – smoother bounce in */
+.mc-left-item.is-correct::after,
+.mc-right-item.is-correct::after {
+  animation: mc-check-smooth 0.45s cubic-bezier(0.22, 1.3, 0.36, 1);
+}
+@keyframes mc-check-smooth {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Menu mode cards – smooth entrance */
+.mc-mode-list .mc-mode-card {
+  opacity: 0;
+  animation: mc-card-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.mc-mode-list .mc-mode-card:nth-child(1) { animation-delay: 0.06s; }
+.mc-mode-list .mc-mode-card:nth-child(2) { animation-delay: 0.12s; }
+.mc-mode-list .mc-mode-card:nth-child(3) { animation-delay: 0.18s; }
+
+.mc-mode-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mc-mode-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Done screen – soft fade up */
+.mc-done {
+  animation: mc-card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mc-done .mc-trophy {
+  animation: mc-check-smooth 0.55s cubic-bezier(0.22, 1.3, 0.36, 1) 0.1s both;
+}
+.mc-done .mc-stars span {
+  display: inline-block;
+  opacity: 0;
+  animation: mc-card-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.mc-done .mc-stars span:nth-child(1) { animation-delay: 0.2s; }
+.mc-done .mc-stars span:nth-child(2) { animation-delay: 0.3s; }
+.mc-done .mc-stars span:nth-child(3) { animation-delay: 0.4s; }
+
+/* Instruction / progress – subtle fade */
+.mc-instruction,
+.mc-progress {
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.mc-instruction.mc-hint-warn {
+  animation: mc-hint-pulse 0.9s ease;
+}
+@keyframes mc-hint-pulse {
+  0%, 100% { opacity: 1; }
+  30% { opacity: 0.55; }
+  60% { opacity: 1; }
+}
+
+/* Buttons */
+.mc-btn {
+  transition: background 0.2s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
+}
+.mc-btn:hover {
+  transform: translateY(-1px);
+}
+.mc-btn:active {
+  transform: scale(0.97);
+}
+
+/* Prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .mc-board .mc-left-item,
+  .mc-board .mc-right-item,
+  .mc-mode-list .mc-mode-card,
+  .mc-done,
+  .mc-done .mc-trophy,
+  .mc-done .mc-stars span,
+  .mc-match-pop,
+  .mc-spark,
+  .mc-match-flash,
+  .mc-left-item.is-wrong,
+  .mc-right-item.is-wrong {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .mc-left-item,
+  .mc-right-item,
+  .mc-mode-card,
+  .mc-btn {
+    transition: none !important;
+  }
+}
+
+/* ── Trophy win animation: stars orbit around the cup (behind → front) ── */
+.trophy-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0 16px;
+  position: relative;
+  width: 100%;
+  min-height: 160px;
+  perspective: 600px;
+  perspective-origin: 50% 45%;
+}
+
+.orbit-system {
+  position: relative;
+  width: 200px;
+  height: 150px;
+  transform-style: preserve-3d;
+}
+
+/* Cup fixed in the center plane (translateZ 0) */
+.trophy-float {
   position: absolute;
   left: 50%;
-  top: 38%;
-  width: 12px;
-  height: 12px;
-  margin: -6px 0 0 -6px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(251, 191, 36, 0.9), rgba(99, 102, 241, 0.4) 40%, transparent 70%);
-  animation: mc-finish-burst 0.9s ease-out forwards;
+  top: 44%;
+  font-size: 64px;
+  line-height: 1;
+  user-select: none;
   pointer-events: none;
+  transform: translate(-50%, -50%) translateZ(0);
+  filter: drop-shadow(0 8px 18px rgba(251, 191, 36, 0.4));
+  animation: trophy-float 3s ease-in-out infinite;
+  will-change: transform;
+  /* solid-ish backdrop so stars disappear when behind */
+  background: radial-gradient(circle at 50% 55%, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 55%, transparent 72%);
+  border-radius: 50%;
+  padding: 8px 10px;
 }
-@keyframes mc-finish-burst {
-  0% { transform: scale(0.2); opacity: 1; }
-  100% { transform: scale(28); opacity: 0; }
+
+html:not([data-theme="dark"]) .trophy-float {
+  background: radial-gradient(circle at 50% 55%, rgba(244, 246, 251, 0.95) 0%, rgba(244, 246, 251, 0.65) 55%, transparent 72%);
+}
+
+.trophy-scene.perfect .trophy-float {
+  filter: drop-shadow(0 10px 24px rgba(251, 191, 36, 0.6));
+  animation: trophy-float 2.6s ease-in-out infinite;
+}
+
+/* Orbital arms — 3 stars evenly spaced */
+.star-orbit {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  animation: orbit-around 10s linear infinite;
+}
+
+.star-orbit:nth-child(2) { animation-delay: 0s; }
+.star-orbit:nth-child(3) { animation-delay: -3.33s; }
+.star-orbit:nth-child(4) { animation-delay: -6.66s; }
+
+.star {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  font-size: 26px;
+  line-height: 28px;
+  text-align: center;
+  color: rgba(148, 163, 184, 0.35);
+  /* radius of the orbit */
+  transform: translateZ(70px);
+  transform-origin: center center;
+  pointer-events: none;
+  backface-visibility: visible;
+}
+
+.star.filled {
+  color: #fbbf24;
+  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.85));
+  animation: star-self-spin 5.5s linear infinite;
+}
+
+/* Tilted Y-orbit so path is elliptical and clearly goes behind/front */
+@keyframes orbit-around {
+  from { transform: rotateX(22deg) rotateY(0deg); }
+  to   { transform: rotateX(22deg) rotateY(360deg); }
+}
+
+/* Self-spin while keeping the orbital radius (translateZ) */
+@keyframes star-self-spin {
+  from { transform: translateZ(70px) rotate(0deg); }
+  to   { transform: translateZ(70px) rotate(360deg); }
+}
+
+@keyframes trophy-float {
+  0%, 100% { transform: translate(-50%, -50%) translateZ(0) translateY(0) rotate(-2deg); }
+  50%      { transform: translate(-50%, -50%) translateZ(0) translateY(-10px) rotate(2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trophy-float,
+  .star-orbit,
+  .star.filled {
+    animation: none !important;
+  }
+  .star-orbit:nth-child(2) { transform: rotateX(22deg) rotateY(0deg); }
+  .star-orbit:nth-child(3) { transform: rotateX(22deg) rotateY(120deg); }
+  .star-orbit:nth-child(4) { transform: rotateX(22deg) rotateY(240deg); }
+  .star { transform: translateZ(70px); }
+}
+
+
+/* === Shared mismatch style (Units 1–2 match games) === */
+.mc-left-item.is-wrong,
+.mc-right-item.is-wrong,
+.mc-card.is-wrong,
+.sm-card.is-wrong,
+.ms-item.is-wrong,
+[class*="is-wrong"] {
+  border-color: #ef4444 !important;
+  background: #fee2e2 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.4) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  animation: mc-mismatch-shake 0.48s cubic-bezier(0.36, 0.07, 0.19, 0.97) !important;
+}
+html[data-theme="dark"] .mc-left-item.is-wrong,
+html[data-theme="dark"] .mc-right-item.is-wrong,
+html[data-theme="dark"] .mc-card.is-wrong,
+html[data-theme="dark"] .sm-card.is-wrong,
+html[data-theme="dark"] .ms-item.is-wrong,
+html[data-theme="dark"] [class*="is-wrong"] {
+  background: rgba(239, 68, 68, 0.22) !important;
+  border-color: #f87171 !important;
+}
+@keyframes mc-mismatch-shake {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  15% { transform: translate3d(-5px, 0, 0); }
+  30% { transform: translate3d(5px, 0, 0); }
+  45% { transform: translate3d(-4px, 0, 0); }
+  60% { transform: translate3d(3px, 0, 0); }
+  75% { transform: translate3d(-2px, 0, 0); }
+}
+
+/* Sequential parts – start & between screens */
+.mc-part-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 18px;
+  width: 100%;
+  text-align: left;
+}
+.mc-part-list li {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #334155;
+}
+html[data-theme="dark"] .mc-part-list li {
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+.mc-part-list li strong {
+  color: #6366f1;
+}
+html[data-theme="dark"] .mc-part-list li strong {
+  color: #a5b4fc;
+}
+.mc-start-btn {
+  width: min(240px, 100%);
+  margin-top: 4px;
+}
+.mc-between .mc-next-label {
+  margin: 12px 0 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+html[data-theme="dark"] .mc-between .mc-next-label {
+  color: #94a3b8;
+}
+.mc-between .mc-next-title {
+  margin: 0 0 18px;
+  font-size: 1.05rem;
+  color: #1e293b;
+}
+html[data-theme="dark"] .mc-between .mc-next-title {
+  color: #f1f5f9;
+}
+
+/* ===== Lives hearts (from AEF Starter Food Match) ===== */
+.mc-hearts {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  margin-left: auto;
+  margin-right: 8px;
+}
+html[data-theme="dark"] .mc-hearts {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(148,163,184,0.25);
+}
+.mc-heart {
+  font-size: 1.1rem;
+  line-height: 1;
+  display: inline-block;
+  transform-origin: center;
+}
+.mc-heart.is-full {
+  color: #ef4444;
+  text-shadow: 0 1px 0 #b91c1c;
+}
+.mc-heart.is-broken {
+  color: #cbd5e1;
+  opacity: 0.85;
+  transform: scale(0.95);
+}
+html[data-theme="dark"] .mc-heart.is-broken {
+  color: #64748b;
+}
+.mc-heart.is-breaking {
+  color: #ef4444;
+  animation: mc-heartBreak 0.48s ease forwards;
+}
+@keyframes mc-heartBreak {
+  0% { transform: scale(1) rotate(0deg); opacity: 1; filter: none; }
+  25% { transform: scale(1.25) rotate(-12deg); }
+  50% { transform: scale(1.1) rotate(10deg); filter: grayscale(0.3); }
+  75% { transform: scale(0.9) rotate(-6deg); opacity: 0.7; filter: grayscale(0.7); }
+  100% { transform: scale(0.95) rotate(0deg); opacity: 0.85; filter: grayscale(1); }
+}
+.mc-topbar .mc-progress {
+  flex-shrink: 0;
+}
+
+/* ===== Phone: compact topbar (avoid truncated titles) ===== */
+.mc-title-short,
+.mc-prog-short {
+  display: none;
+}
+.mc-title-full,
+.mc-prog-full {
+  display: inline;
+}
+@media (max-width: 420px) {
+  .mc-topbar {
+    gap: 6px;
+  }
+  .mc-title {
+    font-size: 12px;
+    min-width: 0;
+  }
+  .mc-title-full,
+  .mc-prog-full {
+    display: none;
+  }
+  .mc-title-short,
+  .mc-prog-short {
+    display: inline;
+  }
+  .mc-progress {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+  .mc-hearts {
+    margin-right: 4px;
+    padding: 3px 6px;
+  }
+  .mc-heart {
+    font-size: 1rem;
+  }
+  .mc-instruction {
+    font-size: 0.82rem;
+    margin-bottom: 6px;
+  }
+  .mc-col {
+    gap: 6px;
+  }
+  .mc-col > * {
+    min-height: 48px;
+  }
+  .mc-thumb {
+    padding: 4px;
+  }
+  .mc-word-label {
+    font-size: 0.88rem;
+  }
+}
+@media (max-width: 360px) {
+  .mc-back {
+    width: 34px;
+    height: 34px;
+  }
+  .mc-progress {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
 }
