@@ -240,6 +240,18 @@ COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.games = [
   { title: "Listen & Write", url: "breakfast-listen-write/", label: "Listening" }
 ];
 
+// Unit 5B – Games (A very long flight · verb phrases)
+COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.b.games = [
+  { title: "Verb Phrases Flashcards", url: "verb-phrases-flashcards/", label: "Vocabulary" },
+  { title: "Verb Phrases Match", url: "verb-phrases-match/", label: "Vocabulary" },
+  { title: "Sound Match Picture", url: "verb-phrases-sound-match-picture/", label: "Listening" },
+  { title: "Complete the Phrase", url: "verb-phrases-complete/", label: "Vocabulary" },
+  { title: "Listen & Write", url: "verb-phrases-listen-write/", label: "Listening" },
+  { title: "Sentence Builder", url: "verb-phrases-sentences/", label: "Grammar" },
+  { title: "Question Builder", url: "verb-phrases-questions/", label: "Grammar" },
+  { title: "About You", url: "verb-phrases-preferences/", label: "Speaking" },
+];
+
 // Unit 6A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.games = [
   { title: "Listen & Write", url: "listen-and-write/" },
