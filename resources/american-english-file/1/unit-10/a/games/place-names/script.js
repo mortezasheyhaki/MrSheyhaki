@@ -69,6 +69,7 @@
   var index = 0;
   var score = 0;
   var total = 0;
+  var missed = false; // wrong attempt on the current round
   var selected = null;
   var locked = false;
   var currentAudio = null;
@@ -181,6 +182,112 @@
     return order[index];
   }
 
+  var streak = 0, bestStreak = 0, lastPct = 0, lastRw = 0;
+  var CHEERS = [
+    { e: "🌟", t: "Awesome!", s: "10 correct answers!" },
+    { e: "🚀", t: "Superstar!", s: "20 correct — unstoppable!" },
+    { e: "👑", t: "Legend!", s: "30 correct — the best of the best!" }
+  ];
+  /* ---------- combo + milestone effects ---------- */
+  var fxCtx = null;
+  function fxTone(f, d, type, v, when) {
+    try {
+      if (!fxCtx) { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; fxCtx = new AC(); }
+      if (fxCtx.state === "suspended") fxCtx.resume();
+      var t0 = fxCtx.currentTime + (when || 0), o = fxCtx.createOscillator(), g = fxCtx.createGain();
+      o.type = type || "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(v || 0.1, t0);
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + d);
+      o.connect(g); g.connect(fxCtx.destination); o.start(t0); o.stop(t0 + d + 0.03);
+    } catch (_) {}
+  }
+  function sfxCombo(n) {
+    var base = 660 * Math.pow(1.0595, Math.min(n, 12));
+    fxTone(base, 0.09, "triangle", 0.09, 0);
+    fxTone(base * 1.5, 0.14, "triangle", 0.08, 0.07);
+  }
+  function sfxMilestone() {
+    [523, 659, 784, 1047, 1319].forEach(function (f, i) { fxTone(f, 0.22, "triangle", 0.11, i * 0.09); });
+    fxTone(1568, 0.6, "sine", 0.09, 0.5);
+    fxTone(392, 0.7, "sine", 0.07, 0.45);
+  }
+  function sfxBreak() { fxTone(300, 0.12, "sawtooth", 0.05, 0); fxTone(200, 0.2, "sawtooth", 0.05, 0.09); }
+
+  function comboLabel(n) {
+    return n >= 10 ? "UNSTOPPABLE" : n >= 7 ? "ON FIRE" : n >= 5 ? "HOT STREAK" : n >= 3 ? "NICE" : "";
+  }
+  function bumpCombo() {
+    var el = document.getElementById("pn-combo");
+    if (!el) return;
+    el.className = "pn-combo is-on is-bump";
+    el.innerHTML = '<span class="pn-combo-fire">🔥</span> x' + streak + " <em>" + comboLabel(streak) + "</em>";
+    if (streak >= 5) el.classList.add("is-hot");
+    var pop = document.createElement("span");
+    pop.className = "pn-plus"; pop.textContent = "+1";
+    el.appendChild(pop);
+  }
+  function breakCombo() {
+    var el = document.getElementById("pn-combo");
+    if (!el) return;
+    el.className = "pn-combo is-lost";
+    el.textContent = "Combo lost";
+  }
+  function fillMeters(afterCorrect) {
+    var p = document.querySelector(".pn-progress-fill");
+    var r = document.querySelector(".pn-reward-fill");
+    if (p) p.style.width = Math.round(((index + (afterCorrect ? 1 : 0)) / order.length) * 100) + "%";
+    if (r) r.style.width = (afterCorrect && score % 10 === 0 ? 100 : (score % 10) * 10) + "%";
+  }
+  function celebrate(n) {
+    var c = CHEERS[Math.min(Math.floor(n / 10) - 1, CHEERS.length - 1)];
+    sfxMilestone();
+    var ov = document.createElement("div");
+    ov.className = "pn-burst";
+    var conf = "";
+    var cols = ["#f59e0b", "#ec4899", "#8b5cf6", "#22c55e", "#3b82f6", "#ef4444"];
+    for (var i = 0; i < 44; i++) {
+      conf += '<i style="left:' + (Math.random() * 100) + "%;background:" + cols[i % cols.length] +
+        ";animation-delay:" + (Math.random() * 0.35).toFixed(2) + "s;animation-duration:" +
+        (1.3 + Math.random() * 0.9).toFixed(2) + "s;transform:rotate(" + Math.round(Math.random() * 360) + 'deg)"></i>';
+    }
+    ov.innerHTML = conf +
+      '<div class="pn-burst-card"><div class="pn-burst-emoji">' + c.e + '</div>' +
+      '<div class="pn-burst-title">' + c.t + '</div><div class="pn-burst-sub">' + c.s + "</div></div>";
+    document.body.appendChild(ov);
+    setTimeout(function () { ov.classList.add("is-out"); }, 1900);
+    setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 2300);
+  }
+
+  function FXok(firstTry) {
+    if (firstTry) {
+      streak++;
+      if (streak > bestStreak) bestStreak = streak;
+      if (streak >= 2) sfxCombo(streak);
+      bumpCombo();
+    }
+    fillMeters(true);
+    if (firstTry && score % 10 === 0) setTimeout(function () { celebrate(score); }, 250);
+  }
+  function FXbad() {
+    if (streak >= 3) sfxBreak();
+    var had = streak >= 2;
+    streak = 0;
+    if (had) breakCombo();
+  }
+  function FXreset() { streak = 0; bestStreak = 0; lastPct = 0; lastRw = 0; }
+  function FXmeta(p) {
+    setTimeout(function () {
+      var pf = document.querySelector(".pn-progress-fill"), r = document.querySelector(".pn-reward-fill");
+      if (pf) pf.style.width = p + "%";
+      if (r) r.style.width = ((score % 10) * 10) + "%";
+      lastPct = p; lastRw = (score % 10) * 10;
+    }, 40);
+    return '<div class="pn-meta"><span id="pn-combo" class="pn-combo' + (streak >= 2 ? " is-on" + (streak >= 5 ? " is-hot" : "") : "") + '">' +
+      (streak >= 2 ? '<span class="pn-combo-fire">🔥</span> x' + streak + " <em>" + comboLabel(streak) + "</em>" : "") + "</span>" +
+      '<span class="pn-reward" title="Next reward at 10 correct"><span class="pn-reward-ico">🎁</span>' +
+      '<span class="pn-reward-bar"><span class="pn-reward-fill" style="width:' + lastRw + '%"></span></span></span></div>';
+  }
+
   function startGame() {
     if (window.LAFinish && LAFinish.startTimer) {
       try { LAFinish.startTimer(); } catch (_) {}
@@ -189,6 +296,8 @@
     index = 0;
     score = 0;
     total = 0;
+    missed = false;
+    FXreset();
     selected = null;
     locked = false;
     phase = "play";
@@ -229,7 +338,6 @@
   function check() {
     if (locked || !selected) return;
     locked = true;
-    total++;
 
     var item = currentItem();
     var ok = selected === item.answer;
@@ -239,7 +347,11 @@
     if (checkBtn) checkBtn.disabled = true;
 
     if (ok) {
-      score++;
+      var firstTry = !missed;
+      if (firstTry) score++;
+      total++;
+      missed = false;
+      FXok(firstTry);
       sfxOk();
       if (blank) {
         blank.classList.remove("is-empty");
@@ -261,6 +373,8 @@
       return;
     } else {
       sfxBad();
+      missed = true;
+      FXbad();
       if (blank) {
         blank.classList.remove("is-empty");
         blank.classList.add("is-bad");
@@ -314,7 +428,7 @@
       '<ul class="pn-tips">' +
       '<li>Bridge · Castle · Gallery</li>' +
       '<li>Park · Square · Street</li>' +
-      '<li>6 sentences · listen after Check</li>' +
+      '<li>' + ITEMS.length + ' sentences · listen after Check</li>' +
       '</ul>' +
       '<button type="button" class="pn-btn" id="pn-start">START</button>' +
       '</section>';
@@ -333,7 +447,8 @@
       '<span class="pn-badge">' + (index + 1) + "/" + order.length + "</span>" +
       '<span class="pn-stat">SCORE ' + score + "/" + total + "</span>" +
       "</header>" +
-      '<div class="pn-progress"><div class="pn-progress-fill" style="width:' + pct + '%"></div></div>' +
+      '<div class="pn-progress"><div class="pn-progress-fill" style="width:' + lastPct + '%"></div></div>' +
+      FXmeta(pct) +
       '<div class="pn-card">' +
       '<p class="pn-qnum">Sentence ' + (index + 1) + " of " + order.length + "</p>" +
       (item.image
@@ -385,6 +500,7 @@
       '<div class="pn-hero" aria-hidden="true">🎯</div>' +
       "<h1>" + (stars === 3 ? "Perfect!" : stars > 0 ? "Well done!" : "Keep going!") + "</h1>" +
       '<p class="pn-sub">You got <strong>' + score + "</strong> of <strong>" + total + "</strong> correct.</p>" +
+      '<p class="pn-sub">Best combo: <strong>🔥 x' + bestStreak + "</strong></p>" +
       '<p class="pn-sub">' + msg + "</p>" +
       '<button type="button" class="pn-btn" id="pn-again">PLAY AGAIN</button>' +
       '</section>';

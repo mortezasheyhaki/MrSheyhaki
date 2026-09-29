@@ -916,26 +916,49 @@ html[data-theme="dark"] .site-theme-fab {
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
 }
 
-/* Hide leftover theme toggles in headers / game chrome — keep fixed FAB */
-.arcade-nav .theme-toggle,
-.arcade-nav [data-theme-toggle],
-header .theme-toggle:not(.site-theme-fab),
-#darkModeBtn,
-.header-controls .theme-toggle {
-  display: none !important;
-}
+/* Theme toggle lives in the header (emoji) — hide bottom FAB */
 .site-theme-fab,
 button.site-theme-fab,
-[data-theme-toggle].site-theme-fab {
+[data-theme-toggle].site-theme-fab,
+[data-theme-toggle].wall-switch,
+button.wall-switch {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.arcade-nav .theme-toggle,
+.arcade-nav .nav-theme-toggle,
+.arcade-nav [data-theme-toggle],
+header .theme-toggle,
+header [data-theme-toggle] {
   display: inline-flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  color: inherit !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
   align-items: center !important;
   justify-content: center !important;
-  position: fixed !important;
-  top: auto !important;
-  right: max(14px, env(safe-area-inset-right, 0px)) !important;
-  bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
-  left: auto !important;
-  z-index: 10060 !important;
+  padding: 0 10px !important;
+  margin: 0 !important;
+  z-index: auto !important;
+}
+/* legacy sizing stub (FAB removed) — keep selectors harmless */
+.site-theme-fab-legacy-stub {
   width: 48px !important;
   height: 48px !important;
   min-width: 48px !important;
@@ -2230,7 +2253,7 @@ html[data-theme="dark"] {
 .site-theme-fab.wall-switch,
 button.site-theme-fab.wall-switch,
 [data-theme-toggle].site-theme-fab.wall-switch {
-  display: flex !important;
+  display: none !important;
   align-items: center !important;
   justify-content: center !important;
   position: fixed !important;

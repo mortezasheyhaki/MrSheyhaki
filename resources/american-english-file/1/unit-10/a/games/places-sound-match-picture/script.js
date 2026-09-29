@@ -184,6 +184,110 @@
     order = shuffle(withAudio);
   }
 
+  var streak = 0, bestStreak = 0, lastPct = 0, lastRw = 0;
+  var CHEERS = [
+    { e: "🌟", t: "Awesome!", s: "10 correct answers!" },
+    { e: "🚀", t: "Superstar!", s: "20 correct — unstoppable!" },
+    { e: "👑", t: "Legend!", s: "30 correct — the best of the best!" }
+  ];
+  /* ---------- combo + milestone effects ---------- */
+  var fxCtx = null;
+  function fxTone(f, d, type, v, when) {
+    try {
+      if (!fxCtx) { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; fxCtx = new AC(); }
+      if (fxCtx.state === "suspended") fxCtx.resume();
+      var t0 = fxCtx.currentTime + (when || 0), o = fxCtx.createOscillator(), g = fxCtx.createGain();
+      o.type = type || "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(v || 0.1, t0);
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + d);
+      o.connect(g); g.connect(fxCtx.destination); o.start(t0); o.stop(t0 + d + 0.03);
+    } catch (_) {}
+  }
+  function sfxCombo(n) {
+    var base = 660 * Math.pow(1.0595, Math.min(n, 12));
+    fxTone(base, 0.09, "triangle", 0.09, 0);
+    fxTone(base * 1.5, 0.14, "triangle", 0.08, 0.07);
+  }
+  function sfxMilestone() {
+    [523, 659, 784, 1047, 1319].forEach(function (f, i) { fxTone(f, 0.22, "triangle", 0.11, i * 0.09); });
+    fxTone(1568, 0.6, "sine", 0.09, 0.5);
+    fxTone(392, 0.7, "sine", 0.07, 0.45);
+  }
+  function sfxBreak() { fxTone(300, 0.12, "sawtooth", 0.05, 0); fxTone(200, 0.2, "sawtooth", 0.05, 0.09); }
+
+  function comboLabel(n) {
+    return n >= 10 ? "UNSTOPPABLE" : n >= 7 ? "ON FIRE" : n >= 5 ? "HOT STREAK" : n >= 3 ? "NICE" : "";
+  }
+  function bumpCombo() {
+    var el = document.getElementById("sp-combo");
+    if (!el) return;
+    el.className = "sp-combo is-on is-bump";
+    el.innerHTML = '<span class="sp-combo-fire">🔥</span> x' + streak + " <em>" + comboLabel(streak) + "</em>";
+    if (streak >= 5) el.classList.add("is-hot");
+    var pop = document.createElement("span");
+    pop.className = "sp-plus"; pop.textContent = "+1";
+    el.appendChild(pop);
+  }
+  function breakCombo() {
+    var el = document.getElementById("sp-combo");
+    if (!el) return;
+    el.className = "sp-combo is-lost";
+    el.textContent = "Combo lost";
+  }
+  function fillMeters(afterCorrect) {
+    var r = document.querySelector(".sp-reward-fill");
+    if (r) r.style.width = (afterCorrect && score % 10 === 0 ? 100 : (score % 10) * 10) + "%";
+  }
+  function celebrate(n) {
+    var c = CHEERS[Math.min(Math.floor(n / 10) - 1, CHEERS.length - 1)];
+    sfxMilestone();
+    var ov = document.createElement("div");
+    ov.className = "sp-burst";
+    var conf = "";
+    var cols = ["#f59e0b", "#ec4899", "#8b5cf6", "#22c55e", "#3b82f6", "#ef4444"];
+    for (var i = 0; i < 44; i++) {
+      conf += '<i style="left:' + (Math.random() * 100) + "%;background:" + cols[i % cols.length] +
+        ";animation-delay:" + (Math.random() * 0.35).toFixed(2) + "s;animation-duration:" +
+        (1.3 + Math.random() * 0.9).toFixed(2) + "s;transform:rotate(" + Math.round(Math.random() * 360) + 'deg)"></i>';
+    }
+    ov.innerHTML = conf +
+      '<div class="sp-burst-card"><div class="sp-burst-emoji">' + c.e + '</div>' +
+      '<div class="sp-burst-title">' + c.t + '</div><div class="sp-burst-sub">' + c.s + "</div></div>";
+    document.body.appendChild(ov);
+    setTimeout(function () { ov.classList.add("is-out"); }, 1900);
+    setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 2300);
+  }
+
+  function FXok(firstTry) {
+    if (firstTry) {
+      streak++;
+      if (streak > bestStreak) bestStreak = streak;
+      if (streak >= 2) sfxCombo(streak);
+      bumpCombo();
+    }
+    fillMeters(true);
+    if (firstTry && score % 10 === 0) setTimeout(function () { celebrate(score); }, 250);
+  }
+  function FXbad() {
+    if (streak >= 3) sfxBreak();
+    var had = streak >= 2;
+    streak = 0;
+    if (had) breakCombo();
+  }
+  function FXreset() { streak = 0; bestStreak = 0; lastPct = 0; lastRw = 0; }
+  function FXmeta(p) {
+    setTimeout(function () {
+      var pf = document.querySelector(".sp-progress-fill"), r = document.querySelector(".sp-reward-fill");
+      if (pf) pf.style.width = p + "%";
+      if (r) r.style.width = ((score % 10) * 10) + "%";
+      lastPct = p; lastRw = (score % 10) * 10;
+    }, 40);
+    return '<div class="sp-meta"><span id="sp-combo" class="sp-combo' + (streak >= 2 ? " is-on" + (streak >= 5 ? " is-hot" : "") : "") + '">' +
+      (streak >= 2 ? '<span class="sp-combo-fire">🔥</span> x' + streak + " <em>" + comboLabel(streak) + "</em>" : "") + "</span>" +
+      '<span class="sp-reward" title="Next reward at 10 correct"><span class="sp-reward-ico">🎁</span>' +
+      '<span class="sp-reward-bar"><span class="sp-reward-fill" style="width:' + lastRw + '%"></span></span></span></div>';
+  }
+
   function startGame() {
     getSfxCtx();
     if (window.LAFinish && LAFinish.startTimer) {
@@ -193,6 +297,7 @@
     buildOrder();
     roundIndex = 0;
     score = 0;
+    FXreset();
     lives = 3;
     accepting = false;
     phase = "play";
@@ -215,6 +320,7 @@
 
     if (item.id !== prompt.id) {
       sfxBad();
+      FXbad();
       tileEl.classList.add("is-wrong");
       setFeedback("Try again — listen once more.", "is-bad");
       accepting = false;
@@ -236,6 +342,7 @@
     tileEl.classList.add("is-matched");
     tileEl.disabled = true;
     score += 1;
+    FXok(true);
     setFeedback("✓ " + item.word, "is-ok");
     updateHud();
 
@@ -344,7 +451,7 @@
       '<p class="sp-sub">Listen to the word, then tap the matching picture in the grid.</p>' +
       '<ul class="sp-tips">' +
       "<li>5 × 5 grid — 25 pictures</li>" +
-      "<li>24 rounds · 3 hearts</li>" +
+      "<li>" + ALL.filter(function (it) { return it.audio; }).length + " rounds · 3 hearts</li>" +
       "<li>Tap the speaker to hear it again</li>" +
       "</ul>" +
       '<button type="button" class="sp-btn" id="sp-start">START</button>' +
@@ -361,6 +468,7 @@
       '<div class="sp-hearts" id="sp-hearts"></div>' +
       "</header>" +
       '<div class="sp-progress"><div class="sp-progress-fill" id="sp-progress-fill"></div></div>' +
+      FXmeta(0) +
       '<div class="sp-listen-panel">' +
       '<button type="button" class="sp-play-btn" id="sp-play" aria-label="Play sound">' +
       '<span class="sp-wave"></span><span class="sp-wave"></span>' +
@@ -406,6 +514,7 @@
       '<div class="sp-hero" aria-hidden="true">🎯</div>' +
       "<h1>" + (stars === 3 ? "Perfect!" : stars > 0 ? "Well done!" : "Keep going!") + "</h1>" +
       '<p class="sp-sub">You matched <strong>' + score + "</strong> of <strong>" + order.length + "</strong> places.</p>" +
+      '<p class="sp-sub">Best combo: <strong>🔥 x' + bestStreak + "</strong></p>" +
       '<p class="sp-sub">' + escapeHtml(msg) + "</p>" +
       '<button type="button" class="sp-btn" id="sp-again">PLAY AGAIN</button>' +
       "</section>";

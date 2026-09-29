@@ -899,20 +899,74 @@ body.site-led-ambient::after {
   background: linear-gradient(to left, var(--led-ambient), transparent);
 }
 
-/* Hide legacy header toggles */
-.arcade-nav .theme-toggle,
-.arcade-nav [data-theme-toggle],
-header .theme-toggle:not(.site-theme-fab),
-#darkModeBtn,
-.header-controls .theme-toggle {
+/* Theme toggle lives in the header (emoji) — hide bottom wall-switch FAB */
+.site-theme-fab,
+.site-theme-fab.wall-switch,
+button.site-theme-fab,
+[data-theme-toggle].site-theme-fab,
+[data-theme-toggle].wall-switch,
+button.wall-switch {
   display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Header emoji theme toggle — visible in nav */
+.arcade-nav .theme-toggle,
+.arcade-nav .nav-theme-toggle,
+.arcade-nav [data-theme-toggle],
+header .theme-toggle,
+header [data-theme-toggle] {
+  display: inline-flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  color: inherit !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  cursor: pointer !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 10px !important;
+  margin: 0 !important;
+  z-index: auto !important;
+}
+.arcade-nav .theme-toggle:hover,
+.arcade-nav .nav-theme-toggle:hover,
+header .theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+  transform: translateY(-1px);
+}
+html[data-theme="light"] .arcade-nav .theme-toggle,
+html[data-theme="light"] .arcade-nav .nav-theme-toggle,
+html[data-theme="light"] header .theme-toggle {
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: #171a26 !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+#darkModeBtn,
+.header-controls .theme-toggle:not(.nav-theme-toggle):not([data-theme-toggle]) {
+  /* keep legacy standalone buttons usable if present outside nav */
 }
 
 /* Wall switch FAB — bottom-right corner */
 .site-theme-fab.wall-switch,
 button.site-theme-fab.wall-switch,
 [data-theme-toggle].site-theme-fab.wall-switch {
-  display: flex !important;
+  display: none !important; /* moved to header emoji */
   align-items: center !important;
   justify-content: center !important;
   position: fixed !important;

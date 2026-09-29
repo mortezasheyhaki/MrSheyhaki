@@ -65,7 +65,7 @@
     }
   ];
 
-  var TOTAL_PAIRS = 30; // 3 parts × 2 sets × 5
+  var TOTAL_PAIRS = 30; // recomputed below: parts × 2 sets × 5
 
   function buildSets() {
     // Prefer items that have audio for audio-based parts
@@ -86,6 +86,7 @@
     ];
   }
 
+  TOTAL_PAIRS = MODES.length * 10;
   var app = document.getElementById("game-app");
   if (!app) return;
 

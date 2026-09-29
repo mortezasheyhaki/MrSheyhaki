@@ -31,20 +31,24 @@
       localStorage.setItem(STORAGE_KEY, theme);
     } catch (e) {}
 
-    // Sync wall-switch handle + ARIA
+    // Sync header emoji toggle + ARIA
     document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
       btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
       btn.setAttribute(
         "aria-label",
         theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
       );
-      // Legacy emoji FABs (if any remain)
-      var iconOnly =
-        btn.classList.contains("icon-btn") ||
-        btn.classList.contains("theme-icon-only") ||
-        btn.getAttribute("data-icon-only") === "true";
-      if (!btn.classList.contains("wall-switch") && iconOnly && !btn.querySelector(".switch-handle")) {
-        btn.innerHTML = theme === "dark" ? "☀️" : "🌙";
+      // Header emoji button (🌙 in light mode → click for dark; ☀️ in dark → click for light)
+      if (
+        !btn.classList.contains("wall-switch") &&
+        !btn.querySelector(".switch-handle") &&
+        (btn.classList.contains("theme-toggle") ||
+          btn.classList.contains("nav-theme-toggle") ||
+          btn.getAttribute("data-icon-only") === "true" ||
+          btn.classList.contains("icon-btn") ||
+          btn.classList.contains("theme-icon-only"))
+      ) {
+        btn.textContent = theme === "dark" ? "☀️" : "🌙";
       }
     });
 
@@ -75,66 +79,77 @@
     }
   }
 
-  function buildWallSwitch() {
+  function buildNavThemeToggle() {
     var btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "site-theme-fab wall-switch";
+    btn.className = "theme-toggle nav-theme-toggle";
     btn.setAttribute("data-theme-toggle", "true");
+    btn.setAttribute("data-icon-only", "true");
     btn.setAttribute("aria-label", "Toggle color theme");
-    btn.setAttribute("aria-pressed", "false");
-    btn.innerHTML =
-      '<span class="switch-plate" aria-hidden="true">' +
-        '<span class="screw top"></span>' +
-        '<span class="switch-track">' +
-          '<span class="switch-handle"></span>' +
-        '</span>' +
-        '<span class="screw bottom"></span>' +
-      '</span>';
+    btn.setAttribute("aria-pressed", currentTheme() === "dark" ? "true" : "false");
+    btn.textContent = currentTheme() === "dark" ? "☀️" : "🌙";
     return btn;
   }
 
-  function ensureThemeFab() {
-    var nav = document.querySelector(".arcade-nav");
+  function findHeaderNav() {
+    return (
+      document.querySelector(".arcade-nav") ||
+      document.querySelector(".arcade-header-bar nav") ||
+      document.querySelector("header.arcade-header-bar nav") ||
+      document.querySelector("header nav.arcade-nav") ||
+      document.querySelector("header .main-nav") ||
+      document.querySelector("nav.arcade-nav")
+    );
+  }
 
-    var existing = document.querySelector("[data-theme-toggle]");
-    if (existing) {
-      if (existing.closest(".arcade-nav") || existing.closest("header")) {
-        document.body.appendChild(existing);
-      }
-      // Upgrade plain FAB into wall switch if needed
-      if (!existing.classList.contains("wall-switch") || !existing.querySelector(".switch-handle")) {
-        var neu = buildWallSwitch();
-        existing.parentNode.replaceChild(neu, existing);
-        existing = neu;
-      } else {
-        existing.className = "site-theme-fab wall-switch";
-        existing.setAttribute("data-theme-toggle", "true");
-        if (existing.tagName === "BUTTON") existing.type = "button";
-      }
-    } else {
-      document.body.appendChild(buildWallSwitch());
+  function ensureThemeFab() {
+    // Remove bottom wall-switch / floating theme FABs
+    document.querySelectorAll(".site-theme-fab, [data-theme-toggle].wall-switch, button.wall-switch").forEach(function (el) {
+      el.remove();
+    });
+
+    var nav = findHeaderNav();
+    if (!nav) {
+      // No header on this page (e.g. game pages) — nothing to inject
+      applyTheme(root.getAttribute("data-theme") || getPreferred());
+      return;
     }
 
-    // Force bottom-right placement (in case CSS not loaded yet)
-    (function (el) {
-      if (!el) el = document.querySelector("[data-theme-toggle]");
-      if (!el) return;
-      el.style.position = "fixed";
-      el.style.top = "auto";
-      el.style.left = "auto";
-      el.style.right = "max(12px, env(safe-area-inset-right, 0px))";
-      el.style.bottom = "max(16px, env(safe-area-inset-bottom, 0px))";
-      el.style.zIndex = "10060";
-      el.style.display = "flex";
-      el.removeAttribute("hidden");
-    })(document.querySelector("[data-theme-toggle]"));
+    var existing = nav.querySelector("[data-theme-toggle], .theme-toggle, .nav-theme-toggle");
+    if (!existing) {
+      var btn = buildNavThemeToggle();
+      var profile = nav.querySelector(".nav-profile");
+      if (profile) nav.insertBefore(btn, profile);
+      else nav.appendChild(btn);
+    } else {
+      existing.classList.remove("site-theme-fab", "wall-switch");
+      existing.classList.add("theme-toggle", "nav-theme-toggle");
+      existing.setAttribute("data-theme-toggle", "true");
+      existing.setAttribute("data-icon-only", "true");
+      if (existing.tagName === "BUTTON") existing.type = "button";
+      // Clear any fixed bottom positioning left over from old FAB
+      existing.style.position = "";
+      existing.style.top = "";
+      existing.style.right = "";
+      existing.style.bottom = "";
+      existing.style.left = "";
+      existing.style.zIndex = "";
+      existing.style.width = "";
+      existing.style.height = "";
+      existing.style.minWidth = "";
+      existing.style.minHeight = "";
+      existing.style.display = "";
+      existing.removeAttribute("hidden");
+      // Ensure emoji content (not wall-switch HTML)
+      if (existing.querySelector(".switch-handle") || existing.querySelector(".switch-plate")) {
+        existing.innerHTML = "";
+        existing.textContent = currentTheme() === "dark" ? "☀️" : "🌙";
+      }
+    }
 
-    ensureLedStrips();
-
-    // Profile icon — only inside arcade-nav (never as a floating FAB on game pages)
+    // Profile icon — only inside arcade-nav
     if (nav && !nav.querySelector(".nav-profile")) {
       var profile = document.createElement("a");
-      // Smart path based on current location
       var path = (window.location.pathname || "").replace(/\\/g, "/");
       if (/\/learningarcade(\/|$)/i.test(path)) {
         profile.href = path.match(/\/learningarcade\/?$/i) ? "profile/" : "../profile/";
@@ -153,7 +168,7 @@
       if (existingProfile) nav.appendChild(existingProfile);
     }
 
-    // Remove any leftover floating profile FABs (legacy / game pages)
+    // Remove any leftover floating profile FABs
     document.querySelectorAll("a.profile-fab, .profile-fab").forEach(function (el) {
       el.remove();
     });

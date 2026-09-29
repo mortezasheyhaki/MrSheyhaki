@@ -62,177 +62,118 @@
     } catch (e) {}
 
     document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
-      // Wall-switch style: aria only — visual is CSS-driven
-      if (btn.classList.contains("wall-switch")) {
-        btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
-        btn.setAttribute(
-          "aria-label",
-          theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
-        );
-        return;
-      }
-      var iconOnly =
-        btn.classList.contains("icon-btn") ||
-        btn.classList.contains("theme-icon-only") ||
-        btn.getAttribute("data-icon-only") === "true";
-
-      if (theme === "dark") {
-        btn.innerHTML = iconOnly ? "☀️" : '☀️<span>Light Mode</span>';
-        btn.setAttribute("aria-label", "Switch to light mode");
-      } else {
-        btn.innerHTML = iconOnly ? "🌙" : '🌙<span>Dark Mode</span>';
-        btn.setAttribute("aria-label", "Switch to dark mode");
+      btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+      btn.setAttribute(
+        "aria-label",
+        theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+      );
+      if (
+        !btn.classList.contains("wall-switch") &&
+        !btn.querySelector(".switch-handle") &&
+        (btn.classList.contains("theme-toggle") ||
+          btn.classList.contains("nav-theme-toggle") ||
+          btn.getAttribute("data-icon-only") === "true" ||
+          btn.classList.contains("icon-btn") ||
+          btn.classList.contains("theme-icon-only"))
+      ) {
+        btn.textContent = theme === "dark" ? "☀️" : "🌙";
       }
     });
   }
 
   applyTheme(getPreferred());
 
-  function buildWallSwitch() {
+  function buildNavThemeToggle() {
     var btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "site-theme-fab wall-switch";
+    btn.className = "theme-toggle nav-theme-toggle";
     btn.setAttribute("data-theme-toggle", "true");
+    btn.setAttribute("data-icon-only", "true");
     btn.setAttribute("aria-label", "Toggle color theme");
-    btn.setAttribute("aria-pressed", "false");
-    btn.innerHTML =
-      '<span class="switch-plate" aria-hidden="true">' +
-        '<span class="screw top"></span>' +
-        '<span class="switch-track">' +
-          '<span class="switch-handle"></span>' +
-        "</span>" +
-        '<span class="screw bottom"></span>' +
-      "</span>";
+    btn.setAttribute("aria-pressed", currentTheme() === "dark" ? "true" : "false");
+    btn.textContent = currentTheme() === "dark" ? "☀️" : "🌙";
     return btn;
   }
 
+  function findHeaderNav() {
+    return (
+      document.querySelector(".arcade-nav") ||
+      document.querySelector(".arcade-header-bar nav") ||
+      document.querySelector("header.arcade-header-bar nav") ||
+      document.querySelector("header nav.arcade-nav") ||
+      document.querySelector("header .main-nav") ||
+      document.querySelector("nav.arcade-nav")
+    );
+  }
+
   function ensureThemeFab() {
-    var nav = document.querySelector(".arcade-nav");
+    // Remove bottom wall-switch / floating theme FABs
+    document.querySelectorAll(".site-theme-fab, [data-theme-toggle].wall-switch, button.wall-switch").forEach(function (el) {
+      el.remove();
+    });
 
-    // Use the same wall light-switch FAB as the main website
-    var existing = document.querySelector("[data-theme-toggle]");
-    if (existing) {
-      if (existing.closest(".arcade-nav") || existing.closest("header")) {
-        document.body.appendChild(existing);
-      }
-      if (!existing.classList.contains("wall-switch") || !existing.querySelector(".switch-handle")) {
-        var neu = buildWallSwitch();
-        existing.parentNode.replaceChild(neu, existing);
-        existing = neu;
-      } else {
-        existing.className = "site-theme-fab wall-switch";
-        existing.setAttribute("data-theme-toggle", "true");
-        if (existing.tagName === "BUTTON") existing.type = "button";
-      }
+    var nav = findHeaderNav();
+    if (!nav) {
+      applyTheme(root.getAttribute("data-theme") || getPreferred());
+      return;
+    }
+
+    var existing = nav.querySelector("[data-theme-toggle], .theme-toggle, .nav-theme-toggle");
+    if (!existing) {
+      var btn = buildNavThemeToggle();
+      var profile = nav.querySelector(".nav-profile");
+      if (profile) nav.insertBefore(btn, profile);
+      else nav.appendChild(btn);
     } else {
-      document.body.appendChild(buildWallSwitch());
+      existing.classList.remove("site-theme-fab", "wall-switch");
+      existing.classList.add("theme-toggle", "nav-theme-toggle");
+      existing.setAttribute("data-theme-toggle", "true");
+      existing.setAttribute("data-icon-only", "true");
+      if (existing.tagName === "BUTTON") existing.type = "button";
+      existing.style.position = "";
+      existing.style.top = "";
+      existing.style.right = "";
+      existing.style.bottom = "";
+      existing.style.left = "";
+      existing.style.zIndex = "";
+      existing.style.width = "";
+      existing.style.height = "";
+      existing.style.minWidth = "";
+      existing.style.minHeight = "";
+      existing.style.display = "";
+      existing.removeAttribute("hidden");
+      if (existing.querySelector(".switch-handle") || existing.querySelector(".switch-plate")) {
+        existing.innerHTML = "";
+        existing.textContent = currentTheme() === "dark" ? "☀️" : "🌙";
+      }
     }
 
-    // Ensure visible + bottom-right (above mobile dock)
-    (function (el) {
-      if (!el) el = document.querySelector("[data-theme-toggle]");
-      if (!el) return;
-      el.style.display = "flex";
-      el.style.position = "fixed";
-      el.style.top = "auto";
-      el.style.left = "auto";
-      el.style.right = "max(12px, env(safe-area-inset-right, 0px))";
-      el.style.bottom = "max(16px, env(safe-area-inset-bottom, 0px))";
-      el.style.zIndex = "10060";
-      el.style.cursor = "pointer";
-      el.removeAttribute("hidden");
-    })(document.querySelector("[data-theme-toggle]"));
-
-    // Profile icon — only inside arcade-nav (never floating on kids/world pages)
-    var path = (location.pathname || "").toLowerCase();
-    var isKidsWorld = path.indexOf("/kids/") !== -1 || path.indexOf("select-teacher") !== -1 || path.indexOf("starlight") !== -1;
-
-    if (!isKidsWorld && !document.querySelector(".arcade-nav .nav-profile, a.nav-profile")) {
+    // Profile icon — only inside arcade-nav (skip kids worlds)
+    var path = (window.location.pathname || "").replace(/\\/g, "/");
+    var isKidsWorld = /\/kids\//i.test(path);
+    if (nav && !isKidsWorld && !nav.querySelector(".nav-profile")) {
       var profile = document.createElement("a");
-      profile.href = resolveArcadeHref("profile/");
+      if (/\/learningarcade(\/|$)/i.test(path)) {
+        profile.href = path.match(/\/learningarcade\/?$/i) ? "profile/" : "../profile/";
+      } else {
+        profile.href = "learningarcade/profile/";
+      }
       profile.className = "nav-link nav-profile";
-      profile.setAttribute("aria-label", "My Profile");
+      profile.setAttribute("aria-label", "Profile");
       profile.title = "My Profile";
-      profile.innerHTML = '<span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span>';
-      if (nav) nav.appendChild(profile);
-      // Do NOT append a floating profile FAB when there is no nav
-    } else if (nav && !isKidsWorld) {
-      var existingProf = nav.querySelector(".nav-profile");
-      if (existingProf) {
-        // Fix broken absolute profile links
-        try {
-          var href = existingProf.getAttribute("href") || "";
-          if (href.indexOf("/learningarcade/profile") === 0 || href === "/profile/" || href === "profile") {
-            existingProf.setAttribute("href", resolveArcadeHref("profile/"));
-          }
-        } catch (e) {}
-        nav.appendChild(existingProf);
-      }
+      profile.setAttribute("data-icon", "👤");
+      profile.innerHTML =
+        '<span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span>';
+      nav.appendChild(profile);
+    } else if (nav) {
+      var existingProfile = nav.querySelector(".nav-profile");
+      if (existingProfile) nav.appendChild(existingProfile);
     }
 
-    // Fix any existing profile links on the page (absolute → relative)
-    document.querySelectorAll("a.nav-profile, a.profile-fab").forEach(function (el) {
-      if (isKidsWorld) return;
-      var href = el.getAttribute("href") || "";
-      if (
-        href === "/learningarcade/profile/" ||
-        href === "/learningarcade/profile" ||
-        href.indexOf("/learningarcade/profile/") === 0
-      ) {
-        el.setAttribute("href", resolveArcadeHref("profile/"));
-      }
-      // Ensure clickable
-      el.style.pointerEvents = "auto";
-      el.style.cursor = "pointer";
-      el.removeAttribute("hidden");
-      if (el.classList.contains("nav-profile") && el.closest(".arcade-nav")) {
-        el.style.display = "";
-      }
-    });
-
-    // Profile FABs: keep one usable control on arcade pages
     document.querySelectorAll("a.profile-fab, .profile-fab").forEach(function (el) {
-      if (isKidsWorld) {
-        el.style.display = "none";
-        el.setAttribute("hidden", "true");
-        return;
-      }
-      // Prefer nav profile; hide floating fab when nav already has profile
-      if (nav && nav.querySelector(".nav-profile")) {
-        el.style.display = "none";
-        el.setAttribute("hidden", "true");
-        return;
-      }
-      // No nav profile → show fab with correct href
-      el.setAttribute("href", resolveArcadeHref("profile/"));
-      el.style.display = "";
-      el.style.pointerEvents = "auto";
-      el.style.cursor = "pointer";
-      el.removeAttribute("hidden");
+      el.remove();
     });
 
-    // If still no profile control anywhere, inject a fixed one (game pages without arcade-nav)
-    // Skip when page opts out: body.no-profile-fab / body.no-profile
-    var noProfile = document.body.classList.contains("no-profile-fab") || document.body.classList.contains("no-profile");
-    if (!isKidsWorld && !noProfile && !document.querySelector("a.nav-profile, a.profile-fab:not([hidden])")) {
-      var fab = document.createElement("a");
-      fab.href = resolveArcadeHref("profile/");
-      fab.className = "profile-fab profile-fab--header";
-      fab.setAttribute("aria-label", "My Profile");
-      fab.title = "My Profile";
-      fab.textContent = "👤";
-      fab.style.cssText = "position:fixed;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:10060;width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(30,41,59,0.9);color:#fff;text-decoration:none;font-size:1.2rem;box-shadow:0 4px 14px rgba(0,0,0,0.25);";
-      document.body.appendChild(fab);
-    }
-
-    if (isKidsWorld || document.body.classList.contains("no-profile-fab") || document.body.classList.contains("no-profile")) {
-      document.querySelectorAll("a.nav-profile, .nav-profile, a.profile-fab, .profile-fab").forEach(function (el) {
-        el.style.display = "none";
-        el.setAttribute("hidden", "true");
-      });
-    }
-
-    // Refresh icon for current theme
     applyTheme(root.getAttribute("data-theme") || getPreferred());
   }
 
