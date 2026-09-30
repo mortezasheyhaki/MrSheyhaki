@@ -120,10 +120,11 @@
 })();
 window.ArcadeFX && (ArcadeFX.noMilestone = true);
 
-/* Negative going to · AEF 1 Unit 10B */
+/* Choose Are / Is — going to questions · AEF 1 Unit 10B */
 (function () {
   "use strict";
 
+  /* === Shared UI SFX === */
   (function () {
     if (window.__laUiSfx) return;
     var ctx = null;
@@ -173,61 +174,22 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     window.sfxCelebrate = sfxCelebrate;
   })();
 
-  var GAME_ID = "1-10b-going-to-negative";
+  var GAME_ID = "1-10b-choose-are-is";
 
-  // positive → preferred negative (+ accepted alternates)
   var ITEMS = [
-    {
-      positive: "I am going to watch TV.",
-      correct: "I'm not going to watch TV.",
-      alts: ["I am not going to watch TV.", "I am not going to watch TV"]
-    },
-    {
-      positive: "She is going to cook dinner.",
-      correct: "She isn't going to cook dinner.",
-      alts: ["She is not going to cook dinner.", "She's not going to cook dinner."]
-    },
-    {
-      positive: "They are going to play football.",
-      correct: "They aren't going to play football.",
-      alts: ["They are not going to play football.", "They're not going to play football."]
-    },
-    {
-      positive: "He is going to buy a car.",
-      correct: "He isn't going to buy a car.",
-      alts: ["He is not going to buy a car.", "He's not going to buy a car."]
-    },
-    {
-      positive: "We are going to travel next week.",
-      correct: "We aren't going to travel next week.",
-      alts: ["We are not going to travel next week.", "We're not going to travel next week."]
-    },
-    {
-      positive: "You are going to clean the house.",
-      correct: "You aren't going to clean the house.",
-      alts: ["You are not going to clean the house."]
-    },
-    {
-      positive: "My father is going to make dinner.",
-      correct: "My father isn't going to make dinner.",
-      alts: ["My father is not going to make dinner."]
-    },
-    {
-      positive: "The students are going to take a test.",
-      correct: "The students aren't going to take a test.",
-      alts: ["The students are not going to take a test."]
-    },
-    {
-      positive: "Anna is going to visit her grandmother.",
-      correct: "Anna isn't going to visit her grandmother.",
-      alts: ["Anna is not going to visit her grandmother."]
-    },
-    {
-      positive: "I am going to go shopping.",
-      correct: "I'm not going to go shopping.",
-      alts: ["I am not going to go shopping."]
-    }
+    { after: "you going to study tonight?", correct: "Are" },
+    { after: "she going to cook dinner?", correct: "Is" },
+    { after: "they going to play football?", correct: "Are" },
+    { after: "he going to buy a new phone?", correct: "Is" },
+    { after: "we going to watch a movie?", correct: "Are" },
+    { after: "your mother going to work tomorrow?", correct: "Is" },
+    { after: "Tom and Jack going to play tennis?", correct: "Are" },
+    { after: "Anna going to visit her friend?", correct: "Is" },
+    { after: "you going to clean your room?", correct: "Are" },
+    { after: "your parents going to travel next week?", correct: "Are" }
   ];
+
+  var OPTIONS = ["Are", "Is"];
 
   var app = document.getElementById("game-app");
   if (!app) return;
@@ -277,27 +239,6 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       .replace(/"/g, "&quot;");
   }
 
-  function normalize(s) {
-    return String(s || "")
-      .trim()
-      .toLowerCase()
-      .replace(/[’‘]/g, "'")
-      .replace(/\s+/g, " ")
-      .replace(/\.+$/, "")
-      .replace(/!+$/, "");
-  }
-
-  function isCorrect(input, item) {
-    var n = normalize(input);
-    if (!n) return false;
-    var list = [item.correct].concat(item.alts || []);
-    for (var i = 0; i < list.length; i++) {
-      if (normalize(list[i]) === n) return true;
-    }
-    // also accept "is not" / "isn't" swaps already in alts
-    return false;
-  }
-
   function showStart() {
     clearTimer();
     locked = false;
@@ -306,13 +247,12 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       '<a class="bia-back" href="../" aria-label="Back">←</a>' +
       '<div class="bia-title-wrap">' +
       '<div class="bia-kicker">Unit 10B · Grammar</div>' +
-      '<h1 class="bia-title">Negative going to</h1>' +
+      "<h1 class=\"bia-title\">Are / Is questions</h1>" +
       "</div></div>" +
       '<div class="bia-start">' +
-      '<div class="bia-hero" aria-hidden="true">🚫</div>' +
-      "<h1>Make it negative</h1>" +
-      "<p>Change each sentence. Use <strong>isn't / aren't / I'm not</strong> + going to.</p>" +
-      '<p style="font-size:0.9rem;color:#64748b;margin:0">Example: She is going to study. → She <strong>isn\'t</strong> going to study.</p>' +
+      '<div class="bia-hero" aria-hidden="true">❓</div>' +
+      "<h1>Choose Are / Is</h1>" +
+      "<p>Choose <strong>Are</strong> or <strong>Is</strong> to complete each question.</p>" +
       '<button type="button" class="bia-btn" id="startBtn">Start</button>' +
       "</div>";
     document.getElementById("startBtn").onclick = start;
@@ -344,7 +284,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       '<a class="bia-back" href="../" aria-label="Back">←</a>' +
       '<div class="bia-title-wrap">' +
       '<div class="bia-kicker">Unit 10B · Grammar</div>' +
-      '<h1 class="bia-title">Negative going to</h1>' +
+      "<h1 class=\"bia-title\">Are / Is</h1>" +
       "</div>" +
       '<div class="bia-stats">' +
       '<span class="bia-pill" id="scorePill">' + score + " / " + ITEMS.length + "</span>" +
@@ -356,10 +296,21 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       '<div class="bia-play">' +
       '<div class="bia-card enter" id="biaCard">' +
       '<div class="bia-q-num">Question ' + (index + 1) + " of " + ITEMS.length + "</div>" +
-      '<p class="bia-prompt">' + escapeHtml(item.positive) + "</p>" +
-      '<div class="bia-arrow">→ write the negative</div>' +
-      '<input class="bia-input" id="answerInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="true" placeholder="She isn\'t going to…" maxlength="120" />' +
-      '<button type="button" class="bia-check" id="checkBtn">Check</button>' +
+      '<p class="bia-sentence">' +
+      '<span class="bia-blank" id="blank">___</span> ' +
+      escapeHtml(item.after) +
+      "</p>" +
+      "</div>" +
+      '<div class="bia-chips" id="chips">' +
+      OPTIONS.map(function (opt) {
+        return (
+          '<button type="button" class="bia-chip" data-val="' +
+          opt +
+          '">' +
+          opt +
+          "</button>"
+        );
+      }).join("") +
       "</div>" +
       '<div class="bia-feedback" id="feedback"></div>' +
       "</div>";
@@ -369,40 +320,39 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       if (fill) fill.style.width = ((index + 1) / ITEMS.length) * 100 + "%";
     });
 
-    var input = document.getElementById("answerInput");
-    var checkBtn = document.getElementById("checkBtn");
-    input.focus();
-    checkBtn.onclick = submit;
-    input.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        submit();
-      }
+    var chips = document.getElementById("chips");
+    chips.querySelectorAll(".bia-chip").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        choose(btn.getAttribute("data-val"), btn);
+      });
     });
   }
 
-  function submit() {
+  function choose(val, btn) {
     if (locked) return;
-    var input = document.getElementById("answerInput");
-    var val = String(input.value || "").trim();
-    if (!val) {
-      input.focus();
-      sfx("wrong");
-      var fb0 = document.getElementById("feedback");
-      fb0.textContent = "Type the negative sentence.";
-      fb0.className = "bia-feedback bad show";
-      return;
-    }
-
     locked = true;
     var item = ITEMS[order[index]];
-    var ok = isCorrect(val, item);
+    var ok = val === item.correct;
     var card = document.getElementById("biaCard");
+    var blank = document.getElementById("blank");
     var feedback = document.getElementById("feedback");
-    var checkBtn = document.getElementById("checkBtn");
+    var chips = document.getElementById("chips");
 
-    input.disabled = true;
-    checkBtn.disabled = true;
+    chips.querySelectorAll(".bia-chip").forEach(function (b) {
+      b.disabled = true;
+      if (b.getAttribute("data-val") === item.correct) {
+        b.classList.add("is-correct");
+      } else if (b === btn && !ok) {
+        b.classList.add("is-wrong");
+      } else {
+        b.classList.add("is-dim");
+      }
+    });
+
+    if (blank) {
+      blank.textContent = ok ? val : val;
+      blank.classList.add(ok ? "filled-ok" : "filled-bad");
+    }
 
     if (ok) {
       score += 1;
@@ -410,24 +360,30 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       if (streak > bestStreak) bestStreak = streak;
       sfx("correct");
       if (card) card.classList.add("is-correct");
-      feedback.textContent = streak >= 3 ? "Correct! 🔥 Streak " + streak : "Correct!";
+      feedback.textContent = "Correct!";
       feedback.className = "bia-feedback ok show";
       document.getElementById("scorePill").textContent = score + " / " + ITEMS.length;
       var sp = document.getElementById("streakPill");
       sp.textContent = "🔥 " + streak;
       sp.className = "bia-pill streak" + (streak >= 3 ? " is-hot" : "");
-      advanceTimer = setTimeout(next, 800);
+      advanceTimer = setTimeout(next, 750);
     } else {
       streak = 0;
       sfx("wrong");
       if (card) card.classList.add("is-wrong");
-      feedback.innerHTML =
-        'Answer: <strong>' + escapeHtml(item.correct) + "</strong>";
+      if (blank) {
+        setTimeout(function () {
+          blank.textContent = item.correct;
+          blank.classList.remove("filled-bad");
+          blank.classList.add("filled-ok");
+        }, 500);
+      }
+      feedback.textContent = "Answer: " + item.correct;
       feedback.className = "bia-feedback bad show";
       var sp2 = document.getElementById("streakPill");
       sp2.textContent = "—";
       sp2.className = "bia-pill streak";
-      advanceTimer = setTimeout(next, 1600);
+      advanceTimer = setTimeout(next, 1300);
     }
   }
 
@@ -452,10 +408,10 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         LAStars.saveFromAccuracy(GAME_ID, Math.round((score / total) * 100));
       }
     } catch (_) {}
-
+    var timeMs = 0;
     try {
       if (window.LAFinish) {
-        var timeMs = LAFinish.stopTimer();
+        timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
           score: score,
@@ -475,7 +431,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       '<a class="bia-back" href="../" aria-label="Back">←</a>' +
       '<div class="bia-title-wrap">' +
       '<div class="bia-kicker">Unit 10B · Grammar</div>' +
-      '<h1 class="bia-title">Complete!</h1>' +
+      "<h1 class=\"bia-title\">Complete!</h1>" +
       "</div></div>" +
       '<div class="bia-done">' +
       '<div class="trophy" aria-hidden="true">🏆</div>' +

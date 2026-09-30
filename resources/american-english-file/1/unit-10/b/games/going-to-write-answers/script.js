@@ -120,7 +120,10 @@
 })();
 window.ArcadeFX && (ArcadeFX.noMilestone = true);
 
-/* Negative going to · AEF 1 Unit 10B */
+/* Going to — write your answers · AEF 1 Unit 10B
+   5 questions per round, one per time-expression bucket.
+   Alternates which item is used when a bucket has more than one question.
+*/
 (function () {
   "use strict";
 
@@ -173,72 +176,35 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     window.sfxCelebrate = sfxCelebrate;
   })();
 
-  var GAME_ID = "1-10b-going-to-negative";
+  var GAME_ID = "1-10b-going-to-write-answers";
+  var ROTATE_KEY = "la-1-10b-write-answers-rotate";
+  var SET_SIZE = 5;
 
-  // positive → preferred negative (+ accepted alternates)
-  var ITEMS = [
-    {
-      positive: "I am going to watch TV.",
-      correct: "I'm not going to watch TV.",
-      alts: ["I am not going to watch TV.", "I am not going to watch TV"]
-    },
-    {
-      positive: "She is going to cook dinner.",
-      correct: "She isn't going to cook dinner.",
-      alts: ["She is not going to cook dinner.", "She's not going to cook dinner."]
-    },
-    {
-      positive: "They are going to play football.",
-      correct: "They aren't going to play football.",
-      alts: ["They are not going to play football.", "They're not going to play football."]
-    },
-    {
-      positive: "He is going to buy a car.",
-      correct: "He isn't going to buy a car.",
-      alts: ["He is not going to buy a car.", "He's not going to buy a car."]
-    },
-    {
-      positive: "We are going to travel next week.",
-      correct: "We aren't going to travel next week.",
-      alts: ["We are not going to travel next week.", "We're not going to travel next week."]
-    },
-    {
-      positive: "You are going to clean the house.",
-      correct: "You aren't going to clean the house.",
-      alts: ["You are not going to clean the house."]
-    },
-    {
-      positive: "My father is going to make dinner.",
-      correct: "My father isn't going to make dinner.",
-      alts: ["My father is not going to make dinner."]
-    },
-    {
-      positive: "The students are going to take a test.",
-      correct: "The students aren't going to take a test.",
-      alts: ["The students are not going to take a test."]
-    },
-    {
-      positive: "Anna is going to visit her grandmother.",
-      correct: "Anna isn't going to visit her grandmother.",
-      alts: ["Anna is not going to visit her grandmother."]
-    },
-    {
-      positive: "I am going to go shopping.",
-      correct: "I'm not going to go shopping.",
-      alts: ["I am not going to go shopping."]
-    }
+  /* type: "open" requires I'm going to; "yesno" accepts yes/no short answers */
+  var BANK = [
+    { id: "t1", time: "tonight", type: "open", q: "What are you going to have for dinner tonight?", hint: "I'm going to have …" },
+    { id: "t2", time: "tonight", type: "open", q: "What time are you going to go to bed tonight?", hint: "I'm going to go to bed at …" },
+    { id: "d1", time: "today", type: "yesno", q: "Are you going to study English today?", hint: "Yes, I am. / No, I'm not." },
+    { id: "m1", time: "tomorrow", type: "open", q: "What time are you going to get up tomorrow?", hint: "I'm going to get up at …" },
+    { id: "m2", time: "tomorrow", type: "open", q: "Where are you going to have lunch tomorrow?", hint: "I'm going to have lunch …" },
+    { id: "m3", time: "tomorrow", type: "yesno", q: "Are you going to go to work or school tomorrow?", hint: "Yes, I am. / No, I'm not." },
+    { id: "e1", time: "this evening", type: "open", q: "What are you going to do this evening?", hint: "I'm going to …" },
+    { id: "w1", time: "next week", type: "yesno", q: "Are you going to go away next week? Where to?", hint: "Yes, I'm going to … / No, I'm not." },
+    { id: "s1", time: "Saturday night", type: "open", q: "What are you going to do on Saturday night?", hint: "I'm going to …" },
+    { id: "f1", time: "Friday night", type: "open", q: "What are you going to do on Friday night?", hint: "I'm going to …" }
   ];
 
   var app = document.getElementById("game-app");
   if (!app) return;
 
-  var order = [];
+  var items = [];
   var index = 0;
   var score = 0;
   var streak = 0;
   var bestStreak = 0;
   var locked = false;
   var advanceTimer = null;
+  var answersLog = [];
 
   function shuffle(arr) {
     var a = arr.slice();
@@ -277,54 +243,147 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       .replace(/"/g, "&quot;");
   }
 
+  function loadRotate() {
+    try {
+      var raw = localStorage.getItem(ROTATE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function saveRotate(map) {
+    try {
+      localStorage.setItem(ROTATE_KEY, JSON.stringify(map));
+    } catch (_) {}
+  }
+
+  /* Build a set of SET_SIZE items with unique time buckets.
+     For each time bucket, pick the least-recently-used question (rotate on replay). */
+  function buildSet() {
+    var byTime = {};
+    BANK.forEach(function (item) {
+      if (!byTime[item.time]) byTime[item.time] = [];
+      byTime[item.time].push(item);
+    });
+
+    var times = shuffle(Object.keys(byTime));
+    // Prefer buckets; take first SET_SIZE times
+    if (times.length > SET_SIZE) times = times.slice(0, SET_SIZE);
+
+    var rotate = loadRotate();
+    var chosen = [];
+
+    times.forEach(function (time) {
+      var pool = byTime[time];
+      // Sort pool so unused / lower count come first
+      var ranked = pool.slice().sort(function (a, b) {
+        var ca = rotate[a.id] || 0;
+        var cb = rotate[b.id] || 0;
+        if (ca !== cb) return ca - cb;
+        return Math.random() - 0.5;
+      });
+      var pick = ranked[0];
+      chosen.push(pick);
+      rotate[pick.id] = (rotate[pick.id] || 0) + 1;
+    });
+
+    saveRotate(rotate);
+    return shuffle(chosen);
+  }
+
   function normalize(s) {
     return String(s || "")
       .trim()
       .toLowerCase()
-      .replace(/[’‘]/g, "'")
-      .replace(/\s+/g, " ")
-      .replace(/\.+$/, "")
-      .replace(/!+$/, "");
+      .replace(/[’']/g, "'")
+      .replace(/\s+/g, " ");
   }
 
-  function isCorrect(input, item) {
-    var n = normalize(input);
-    if (!n) return false;
-    var list = [item.correct].concat(item.alts || []);
-    for (var i = 0; i < list.length; i++) {
-      if (normalize(list[i]) === n) return true;
+  function hasGoingTo(s) {
+    var n = normalize(s);
+    return (
+      n.indexOf("i'm going to") !== -1 ||
+      n.indexOf("i am going to") !== -1
+    );
+  }
+
+  function isYesNoOk(s) {
+    var n = normalize(s).replace(/\.+$/, "");
+    // short answers
+    var shorts = [
+      "yes", "yes i am", "yes, i am", "yes i'm", "yes, i'm",
+      "no", "no i'm not", "no, i'm not", "no i am not", "no, i am not",
+      "yes i am going to", "yes, i am going to", "yes i'm going to", "yes, i'm going to",
+      "no i'm not going to", "no, i'm not going to", "no i am not going to"
+    ];
+    for (var i = 0; i < shorts.length; i++) {
+      if (n === shorts[i]) return true;
     }
-    // also accept "is not" / "isn't" swaps already in alts
+    // yes/no + going to detail
+    if (/^(yes|no)\b/.test(n) && (hasGoingTo(n) || /i'?m not/.test(n))) return true;
+    if (hasGoingTo(n)) return true;
     return false;
+  }
+
+  function validate(item, raw) {
+    var n = normalize(raw);
+    if (!n || n.length < 2) {
+      return { ok: false, msg: "Please write an answer." };
+    }
+    if (item.type === "yesno") {
+      if (isYesNoOk(raw)) return { ok: true };
+      return {
+        ok: false,
+        msg: "Try a short answer: Yes, I am. / No, I'm not. (Or use I'm going to …)"
+      };
+    }
+    // open questions — must include I'm going to
+    if (!hasGoingTo(raw)) {
+      return {
+        ok: false,
+        msg: "Use I'm going to … in your answer."
+      };
+    }
+    // avoid answering with only the phrase
+    var stripped = n
+      .replace(/i'?m going to/g, "")
+      .replace(/i am going to/g, "")
+      .replace(/[.?!,]/g, "")
+      .trim();
+    if (stripped.length < 2) {
+      return {
+        ok: false,
+        msg: "Add more detail after I'm going to …"
+      };
+    }
+    return { ok: true };
   }
 
   function showStart() {
     clearTimer();
     locked = false;
     app.innerHTML =
-      '<div class="bia-top">' +
-      '<a class="bia-back" href="../" aria-label="Back">←</a>' +
-      '<div class="bia-title-wrap">' +
-      '<div class="bia-kicker">Unit 10B · Grammar</div>' +
-      '<h1 class="bia-title">Negative going to</h1>' +
-      "</div></div>" +
-      '<div class="bia-start">' +
-      '<div class="bia-hero" aria-hidden="true">🚫</div>' +
-      "<h1>Make it negative</h1>" +
-      "<p>Change each sentence. Use <strong>isn't / aren't / I'm not</strong> + going to.</p>" +
-      '<p style="font-size:0.9rem;color:#64748b;margin:0">Example: She is going to study. → She <strong>isn\'t</strong> going to study.</p>' +
-      '<button type="button" class="bia-btn" id="startBtn">Start</button>' +
+      '<div class="wgt-top">' +
+      '<a class="wgt-back" href="../" aria-label="Back">←</a>' +
+      "</div>" +
+      '<div class="wgt-start">' +
+      '<div class="wgt-hero" aria-hidden="true">✍️</div>' +
+      "<h1>Write Your Answers</h1>" +
+      "<p>Answer <strong>5 questions</strong> about your plans. Use <strong>I'm going to</strong> (except for Yes / No questions).</p>" +
+      '<button type="button" class="wgt-btn" id="startBtn">Start</button>' +
       "</div>";
     document.getElementById("startBtn").onclick = start;
   }
 
   function start() {
-    order = shuffle(ITEMS.map(function (_, i) { return i; }));
+    items = buildSet();
     index = 0;
     score = 0;
     streak = 0;
     bestStreak = 0;
     locked = false;
+    answersLog = [];
     clearTimer();
     try {
       if (window.LAFinish) LAFinish.startTimer();
@@ -333,40 +392,59 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     render();
   }
 
+  function topBar() {
+    var pct = (index / items.length) * 100;
+    return (
+      '<div class="wgt-top">' +
+      '<a class="wgt-back" href="../" aria-label="Back">←</a>' +
+      '<div class="wgt-progress"><span id="wgtFill" style="width:' + pct + '%"></span></div>' +
+      '<span class="wgt-mode-tag">' + (index + 1) + " / " + items.length + "</span>" +
+      '<span class="wgt-pill" id="scorePill">✓ ' + score + "</span>" +
+      "</div>"
+    );
+  }
+
+  function updatePills() {
+    var sp = document.getElementById("scorePill");
+    if (sp) sp.textContent = "✓ " + score;
+    var st = document.getElementById("streakPill");
+    if (st) {
+      st.textContent = streak > 0 ? "🔥 " + streak : "—";
+      st.className = "wgt-pill streak" + (streak >= 3 ? " is-hot" : "");
+    }
+  }
+
   function render() {
     clearTimer();
     locked = false;
-    var item = ITEMS[order[index]];
-    var pct = (index / ITEMS.length) * 100;
+    var item = items[index];
 
     app.innerHTML =
-      '<div class="bia-top">' +
-      '<a class="bia-back" href="../" aria-label="Back">←</a>' +
-      '<div class="bia-title-wrap">' +
-      '<div class="bia-kicker">Unit 10B · Grammar</div>' +
-      '<h1 class="bia-title">Negative going to</h1>' +
+      topBar() +
+      '<div class="wgt-play">' +
+      '<div class="wgt-phase">Question ' + (index + 1) + " of " + items.length +
+      ' · <span style="opacity:0.7">' + escapeHtml(item.time) + "</span></div>" +
+      '<div class="su-prompt" id="wgtCard">' +
+      '<div class="su-prompt-label">' +
+      (item.type === "yesno" ? "Yes / No · or write a full answer" : "Write your answer with I'm going to") +
       "</div>" +
-      '<div class="bia-stats">' +
-      '<span class="bia-pill" id="scorePill">' + score + " / " + ITEMS.length + "</span>" +
-      '<span class="bia-pill streak' + (streak >= 3 ? " is-hot" : "") + '" id="streakPill">' +
-      (streak > 0 ? "🔥 " + streak : "—") +
-      "</span>" +
-      "</div></div>" +
-      '<div class="bia-track"><div class="bia-fill" id="biaFill" style="width:' + pct + '%"></div></div>' +
-      '<div class="bia-play">' +
-      '<div class="bia-card enter" id="biaCard">' +
-      '<div class="bia-q-num">Question ' + (index + 1) + " of " + ITEMS.length + "</div>" +
-      '<p class="bia-prompt">' + escapeHtml(item.positive) + "</p>" +
-      '<div class="bia-arrow">→ write the negative</div>' +
-      '<input class="bia-input" id="answerInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="true" placeholder="She isn\'t going to…" maxlength="120" />' +
-      '<button type="button" class="bia-check" id="checkBtn">Check</button>' +
+      '<p class="wgt-sentence">' + escapeHtml(item.q) + "</p>" +
+      '<div class="wgt-hint" style="margin-top:10px;font-size:0.85rem;opacity:0.75">Hint: ' +
+      escapeHtml(item.hint) +
       "</div>" +
-      '<div class="bia-feedback" id="feedback"></div>' +
+      "</div>" +
+      '<div class="wgt-input-wrap">' +
+      '<input class="wgt-input" id="answerInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="true" placeholder="' +
+      escapeHtml(item.hint) +
+      '" maxlength="120" />' +
+      '<button type="button" class="wgt-check" id="checkBtn">Check</button>' +
+      "</div>" +
+      '<div class="wgt-feedback" id="feedback"></div>' +
       "</div>";
 
     requestAnimationFrame(function () {
-      var fill = document.getElementById("biaFill");
-      if (fill) fill.style.width = ((index + 1) / ITEMS.length) * 100 + "%";
+      var fill = document.getElementById("wgtFill");
+      if (fill) fill.style.width = ((index + 1) / items.length) * 100 + "%";
     });
 
     var input = document.getElementById("answerInput");
@@ -384,60 +462,60 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
   function submit() {
     if (locked) return;
     var input = document.getElementById("answerInput");
-    var val = String(input.value || "").trim();
-    if (!val) {
-      input.focus();
+    if (!input) return;
+    var val = input.value;
+    var item = items[index];
+    var result = validate(item, val);
+
+    if (!result.ok) {
+      // soft fail — stay on question, show tip, don't advance
       sfx("wrong");
-      var fb0 = document.getElementById("feedback");
-      fb0.textContent = "Type the negative sentence.";
-      fb0.className = "bia-feedback bad show";
+      var feedback = document.getElementById("feedback");
+      var card = document.getElementById("wgtCard");
+      if (feedback) {
+        feedback.textContent = result.msg;
+        feedback.className = "wgt-feedback bad show";
+      }
+      if (card) {
+        card.classList.remove("is-correct");
+        card.classList.add("is-wrong");
+        setTimeout(function () {
+          card.classList.remove("is-wrong");
+        }, 400);
+      }
+      input.focus();
       return;
     }
 
     locked = true;
-    var item = ITEMS[order[index]];
-    var ok = isCorrect(val, item);
-    var card = document.getElementById("biaCard");
-    var feedback = document.getElementById("feedback");
-    var checkBtn = document.getElementById("checkBtn");
-
     input.disabled = true;
-    checkBtn.disabled = true;
+    var checkBtn = document.getElementById("checkBtn");
+    if (checkBtn) checkBtn.disabled = true;
 
-    if (ok) {
-      score += 1;
-      streak += 1;
-      if (streak > bestStreak) bestStreak = streak;
-      sfx("correct");
-      if (card) card.classList.add("is-correct");
-      feedback.textContent = streak >= 3 ? "Correct! 🔥 Streak " + streak : "Correct!";
-      feedback.className = "bia-feedback ok show";
-      document.getElementById("scorePill").textContent = score + " / " + ITEMS.length;
-      var sp = document.getElementById("streakPill");
-      sp.textContent = "🔥 " + streak;
-      sp.className = "bia-pill streak" + (streak >= 3 ? " is-hot" : "");
-      advanceTimer = setTimeout(next, 800);
-    } else {
-      streak = 0;
-      sfx("wrong");
-      if (card) card.classList.add("is-wrong");
-      feedback.innerHTML =
-        'Answer: <strong>' + escapeHtml(item.correct) + "</strong>";
-      feedback.className = "bia-feedback bad show";
-      var sp2 = document.getElementById("streakPill");
-      sp2.textContent = "—";
-      sp2.className = "bia-pill streak";
-      advanceTimer = setTimeout(next, 1600);
+    score += 1;
+    streak += 1;
+    if (streak > bestStreak) bestStreak = streak;
+    answersLog.push({ q: item.q, a: val.trim() });
+    sfx("correct");
+
+    var card = document.getElementById("wgtCard");
+    var feedback = document.getElementById("feedback");
+    if (card) card.classList.add("is-correct");
+    if (feedback) {
+      feedback.textContent = streak >= 3 ? "Great! 🔥 " + streak : "Nice!";
+      feedback.className = "wgt-feedback ok show";
     }
+    updatePills();
+    advanceTimer = setTimeout(next, 750);
   }
 
   function next() {
     clearTimer();
-    if (index + 1 >= order.length) {
+    if (index + 1 >= items.length) {
       finish();
       return;
     }
-    if (window.ArcadeFX && order.length >= 8 && index + 1 === Math.floor(order.length / 2)) ArcadeFX.cheer(0, 2, "Halfway there — " + (index + 1) + " of " + order.length + " done");
+    if (window.ArcadeFX && items.length >= 8 && index + 1 === Math.floor(items.length / 2)) ArcadeFX.cheer(0, 2, "Halfway there — " + (index + 1) + " of " + items.length + " done");
     index += 1;
     render();
   }
@@ -445,14 +523,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
   function finish() {
     clearTimer();
     sfx("win");
-    var total = ITEMS.length;
-    try {
-      if (window.LAStars) {
-        LAStars.recordPlay(GAME_ID);
-        LAStars.saveFromAccuracy(GAME_ID, Math.round((score / total) * 100));
-      }
-    } catch (_) {}
-
+    var total = items.length;
     try {
       if (window.LAFinish) {
         var timeMs = LAFinish.stopTimer();
@@ -469,20 +540,23 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         return;
       }
     } catch (_) {}
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay(GAME_ID);
+        LAStars.saveFromAccuracy(GAME_ID, Math.round((score / total) * 100));
+      }
+    } catch (_) {}
 
     app.innerHTML =
-      '<div class="bia-top">' +
-      '<a class="bia-back" href="../" aria-label="Back">←</a>' +
-      '<div class="bia-title-wrap">' +
-      '<div class="bia-kicker">Unit 10B · Grammar</div>' +
-      '<h1 class="bia-title">Complete!</h1>' +
-      "</div></div>" +
-      '<div class="bia-done">' +
+      '<div class="wgt-top">' +
+      '<a class="wgt-back" href="../" aria-label="Back">←</a>' +
+      "</div>" +
+      '<div class="wgt-done">' +
       '<div class="trophy" aria-hidden="true">🏆</div>' +
       "<h1>Well done!</h1>" +
-      '<div class="bia-score-big">' + score + " / " + total + "</div>" +
+      '<div class="wgt-score-big">' + score + " / " + total + "</div>" +
       (bestStreak > 1 ? "<p>Best streak: " + bestStreak + "</p>" : "") +
-      '<button type="button" class="bia-btn" id="againBtn">Play again</button>' +
+      '<button type="button" class="wgt-btn" id="againBtn">Play again</button>' +
       "</div>";
     document.getElementById("againBtn").onclick = start;
   }

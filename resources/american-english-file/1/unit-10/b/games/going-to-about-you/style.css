@@ -1,4 +1,4 @@
-/* be + going to — 2-part · Part 1 layout matched to AEF Starter 5A Sentence Unscramble */
+/* Going to — About You (write or speak) · AEF 1 Unit 10B */
 .arcade-header-bar, .arcade-nav, .nav-profile, .profile-fab,
 [data-theme-toggle], .theme-toggle, body > header, .site-footer {
   display: none !important;
@@ -554,6 +554,69 @@ html[data-theme="dark"] .wgt-check {
 @media (max-height: 600px) {
   .su-prompt { min-height: 120px; padding: 14px; }
   .su-slots { min-height: 90px; }
+}
+
+/* Mic + input row */
+.wgt-answer-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+}
+.wgt-answer-row .wgt-input {
+  flex: 1;
+  min-width: 0;
+}
+.wgt-mic-btn {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #818cf8, #4f46e5);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+  transition: transform 0.12s, background 0.15s, box-shadow 0.15s;
+}
+.wgt-mic-btn svg { width: 24px; height: 24px; fill: currentColor; }
+.wgt-mic-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.wgt-mic-btn:active:not(:disabled) { transform: scale(0.96); }
+.wgt-mic-btn.is-listening {
+  background: linear-gradient(135deg, #f87171, #dc2626);
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.4);
+  animation: micPulse 1s ease-in-out infinite;
+}
+.wgt-mic-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+@keyframes micPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.45); }
+  50% { box-shadow: 0 0 0 12px rgba(220, 38, 38, 0); }
+}
+.wgt-heard {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  min-height: 1.3em;
+  margin-top: 4px;
+}
+.wgt-heard.is-listening { color: #dc2626; }
+.wgt-heard.is-ok { color: #16a34a; }
+html[data-theme="dark"] .wgt-heard { color: #94a3b8; }
+html[data-theme="dark"] .wgt-heard.is-listening { color: #f87171; }
+html[data-theme="dark"] .wgt-heard.is-ok { color: #4ade80; }
+
+@media (max-width: 420px) {
+  .wgt-mic-btn { width: 48px; height: 48px; border-radius: 12px; }
+  .wgt-mic-btn svg { width: 22px; height: 22px; }
 }
 
 /* ===== Arcade design refresh + polish (shared) ===== */

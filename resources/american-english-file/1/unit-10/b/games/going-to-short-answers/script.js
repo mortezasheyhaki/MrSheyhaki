@@ -120,7 +120,7 @@
 })();
 window.ArcadeFX && (ArcadeFX.noMilestone = true);
 
-/* Negative going to · AEF 1 Unit 10B */
+/* Going to short answers · AEF 1 Unit 10B */
 (function () {
   "use strict";
 
@@ -173,59 +173,69 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     window.sfxCelebrate = sfxCelebrate;
   })();
 
-  var GAME_ID = "1-10b-going-to-negative";
+  var GAME_ID = "1-10b-going-to-short-answers";
 
-  // positive → preferred negative (+ accepted alternates)
+  /* prompt shown; yesNo already on screen; accepts = valid short-answer tails */
   var ITEMS = [
     {
-      positive: "I am going to watch TV.",
-      correct: "I'm not going to watch TV.",
-      alts: ["I am not going to watch TV.", "I am not going to watch TV"]
+      q: "Are you going to visit your cousin this weekend?",
+      yesNo: "Yes,",
+      display: "I am.",
+      accepts: ["i am", "i am.", "i'm"]
     },
     {
-      positive: "She is going to cook dinner.",
-      correct: "She isn't going to cook dinner.",
-      alts: ["She is not going to cook dinner.", "She's not going to cook dinner."]
+      q: "Is David going to play basketball tomorrow?",
+      yesNo: "No,",
+      display: "he isn't.",
+      accepts: ["he isn't", "he isn't.", "he's not", "he's not.", "he is not", "he is not."]
     },
     {
-      positive: "They are going to play football.",
-      correct: "They aren't going to play football.",
-      alts: ["They are not going to play football.", "They're not going to play football."]
+      q: "Are Sara and Emma going to watch a movie tonight?",
+      yesNo: "Yes,",
+      display: "they are.",
+      accepts: ["they are", "they are."]
     },
     {
-      positive: "He is going to buy a car.",
-      correct: "He isn't going to buy a car.",
-      alts: ["He is not going to buy a car.", "He's not going to buy a car."]
+      q: "Is your mother going to go shopping tomorrow?",
+      yesNo: "No,",
+      display: "she isn't.",
+      accepts: ["she isn't", "she isn't.", "she's not", "she's not.", "she is not", "she is not."]
     },
     {
-      positive: "We are going to travel next week.",
-      correct: "We aren't going to travel next week.",
-      alts: ["We are not going to travel next week.", "We're not going to travel next week."]
+      q: "Are your classmates going to study for the test?",
+      yesNo: "Yes,",
+      display: "they are.",
+      accepts: ["they are", "they are."]
     },
     {
-      positive: "You are going to clean the house.",
-      correct: "You aren't going to clean the house.",
-      alts: ["You are not going to clean the house."]
+      q: "Is Jack going to make breakfast tomorrow?",
+      yesNo: "No,",
+      display: "he isn't.",
+      accepts: ["he isn't", "he isn't.", "he's not", "he's not.", "he is not", "he is not."]
     },
     {
-      positive: "My father is going to make dinner.",
-      correct: "My father isn't going to make dinner.",
-      alts: ["My father is not going to make dinner."]
+      q: "Are you going to clean your room this afternoon?",
+      yesNo: "Yes,",
+      display: "I am.",
+      accepts: ["i am", "i am.", "i'm"]
     },
     {
-      positive: "The students are going to take a test.",
-      correct: "The students aren't going to take a test.",
-      alts: ["The students are not going to take a test."]
+      q: "Is Maria going to buy a new jacket?",
+      yesNo: "No,",
+      display: "she isn't.",
+      accepts: ["she isn't", "she isn't.", "she's not", "she's not.", "she is not", "she is not."]
     },
     {
-      positive: "Anna is going to visit her grandmother.",
-      correct: "Anna isn't going to visit her grandmother.",
-      alts: ["Anna is not going to visit her grandmother."]
+      q: "Are your friends going to come to your house tonight?",
+      yesNo: "Yes,",
+      display: "they are.",
+      accepts: ["they are", "they are."]
     },
     {
-      positive: "I am going to go shopping.",
-      correct: "I'm not going to go shopping.",
-      alts: ["I am not going to go shopping."]
+      q: "Is your brother going to play computer games this evening?",
+      yesNo: "No,",
+      display: "he isn't.",
+      accepts: ["he isn't", "he isn't.", "he's not", "he's not.", "he is not", "he is not."]
     }
   ];
 
@@ -281,20 +291,17 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     return String(s || "")
       .trim()
       .toLowerCase()
-      .replace(/[’‘]/g, "'")
+      .replace(/[’']/g, "'")
       .replace(/\s+/g, " ")
-      .replace(/\.+$/, "")
-      .replace(/!+$/, "");
+      .replace(/\.+$/, "");
   }
 
-  function isCorrect(input, item) {
+  function isCorrect(input, accepts) {
     var n = normalize(input);
     if (!n) return false;
-    var list = [item.correct].concat(item.alts || []);
-    for (var i = 0; i < list.length; i++) {
-      if (normalize(list[i]) === n) return true;
+    for (var i = 0; i < accepts.length; i++) {
+      if (n === normalize(accepts[i])) return true;
     }
-    // also accept "is not" / "isn't" swaps already in alts
     return false;
   }
 
@@ -302,18 +309,14 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     clearTimer();
     locked = false;
     app.innerHTML =
-      '<div class="bia-top">' +
-      '<a class="bia-back" href="../" aria-label="Back">←</a>' +
-      '<div class="bia-title-wrap">' +
-      '<div class="bia-kicker">Unit 10B · Grammar</div>' +
-      '<h1 class="bia-title">Negative going to</h1>' +
-      "</div></div>" +
-      '<div class="bia-start">' +
-      '<div class="bia-hero" aria-hidden="true">🚫</div>' +
-      "<h1>Make it negative</h1>" +
-      "<p>Change each sentence. Use <strong>isn't / aren't / I'm not</strong> + going to.</p>" +
-      '<p style="font-size:0.9rem;color:#64748b;margin:0">Example: She is going to study. → She <strong>isn\'t</strong> going to study.</p>' +
-      '<button type="button" class="bia-btn" id="startBtn">Start</button>' +
+      '<div class="wgt-top">' +
+      '<a class="wgt-back" href="../" aria-label="Back">←</a>' +
+      "</div>" +
+      '<div class="wgt-start">' +
+      '<div class="wgt-hero" aria-hidden="true">💬</div>' +
+      "<h1>Going to Short Answers</h1>" +
+      "<p>Write the short answer. Example: <strong>Yes, I am.</strong> / <strong>No, he isn't.</strong></p>" +
+      '<button type="button" class="wgt-btn" id="startBtn">Start</button>' +
       "</div>";
     document.getElementById("startBtn").onclick = start;
   }
@@ -333,39 +336,54 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     render();
   }
 
+  function topBar() {
+    var pct = (index / ITEMS.length) * 100;
+    return (
+      '<div class="wgt-top">' +
+      '<a class="wgt-back" href="../" aria-label="Back">←</a>' +
+      '<div class="wgt-progress"><span id="wgtFill" style="width:' + pct + '%"></span></div>' +
+      '<span class="wgt-mode-tag">' + (index + 1) + " / " + ITEMS.length + "</span>" +
+      '<span class="wgt-pill" id="scorePill">' + score + " / " + ITEMS.length + "</span>" +
+      "</div>"
+    );
+  }
+
+  function updatePills() {
+    var sp = document.getElementById("scorePill");
+    if (sp) sp.textContent = score + " / " + ITEMS.length;
+    var st = document.getElementById("streakPill");
+    if (st) {
+      st.textContent = streak > 0 ? "🔥 " + streak : "—";
+      st.className = "wgt-pill streak" + (streak >= 3 ? " is-hot" : "");
+    }
+  }
+
   function render() {
     clearTimer();
     locked = false;
     var item = ITEMS[order[index]];
-    var pct = (index / ITEMS.length) * 100;
 
     app.innerHTML =
-      '<div class="bia-top">' +
-      '<a class="bia-back" href="../" aria-label="Back">←</a>' +
-      '<div class="bia-title-wrap">' +
-      '<div class="bia-kicker">Unit 10B · Grammar</div>' +
-      '<h1 class="bia-title">Negative going to</h1>' +
+      topBar() +
+      '<div class="wgt-play">' +
+      '<div class="wgt-phase">Question ' + (index + 1) + " of " + ITEMS.length + "</div>" +
+      '<div class="su-prompt" id="wgtCard">' +
+      '<div class="su-prompt-label">Write the short answer</div>' +
+      '<p class="wgt-sentence" style="margin-bottom:12px">' + escapeHtml(item.q) + "</p>" +
+      '<p class="wgt-sentence">' +
+      escapeHtml(item.yesNo) +
+      ' <span class="wgt-blank" id="blank">____________</span>' +
+      "</p>" +
       "</div>" +
-      '<div class="bia-stats">' +
-      '<span class="bia-pill" id="scorePill">' + score + " / " + ITEMS.length + "</span>" +
-      '<span class="bia-pill streak' + (streak >= 3 ? " is-hot" : "") + '" id="streakPill">' +
-      (streak > 0 ? "🔥 " + streak : "—") +
-      "</span>" +
-      "</div></div>" +
-      '<div class="bia-track"><div class="bia-fill" id="biaFill" style="width:' + pct + '%"></div></div>' +
-      '<div class="bia-play">' +
-      '<div class="bia-card enter" id="biaCard">' +
-      '<div class="bia-q-num">Question ' + (index + 1) + " of " + ITEMS.length + "</div>" +
-      '<p class="bia-prompt">' + escapeHtml(item.positive) + "</p>" +
-      '<div class="bia-arrow">→ write the negative</div>' +
-      '<input class="bia-input" id="answerInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="true" placeholder="She isn\'t going to…" maxlength="120" />' +
-      '<button type="button" class="bia-check" id="checkBtn">Check</button>' +
+      '<div class="wgt-input-wrap">' +
+      '<input class="wgt-input" id="answerInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. I am. / he isn\'t." maxlength="30" />' +
+      '<button type="button" class="wgt-check" id="checkBtn">Check</button>' +
       "</div>" +
-      '<div class="bia-feedback" id="feedback"></div>' +
+      '<div class="wgt-feedback" id="feedback"></div>' +
       "</div>";
 
     requestAnimationFrame(function () {
-      var fill = document.getElementById("biaFill");
+      var fill = document.getElementById("wgtFill");
       if (fill) fill.style.width = ((index + 1) / ITEMS.length) * 100 + "%";
     });
 
@@ -384,25 +402,22 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
   function submit() {
     if (locked) return;
     var input = document.getElementById("answerInput");
-    var val = String(input.value || "").trim();
-    if (!val) {
+    if (!input) return;
+    var val = input.value;
+    if (!String(val).trim()) {
       input.focus();
-      sfx("wrong");
-      var fb0 = document.getElementById("feedback");
-      fb0.textContent = "Type the negative sentence.";
-      fb0.className = "bia-feedback bad show";
       return;
     }
-
     locked = true;
     var item = ITEMS[order[index]];
-    var ok = isCorrect(val, item);
-    var card = document.getElementById("biaCard");
+    var ok = isCorrect(val, item.accepts);
+    var card = document.getElementById("wgtCard");
+    var blank = document.getElementById("blank");
     var feedback = document.getElementById("feedback");
     var checkBtn = document.getElementById("checkBtn");
 
     input.disabled = true;
-    checkBtn.disabled = true;
+    if (checkBtn) checkBtn.disabled = true;
 
     if (ok) {
       score += 1;
@@ -410,23 +425,30 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       if (streak > bestStreak) bestStreak = streak;
       sfx("correct");
       if (card) card.classList.add("is-correct");
-      feedback.textContent = streak >= 3 ? "Correct! 🔥 Streak " + streak : "Correct!";
-      feedback.className = "bia-feedback ok show";
-      document.getElementById("scorePill").textContent = score + " / " + ITEMS.length;
-      var sp = document.getElementById("streakPill");
-      sp.textContent = "🔥 " + streak;
-      sp.className = "bia-pill streak" + (streak >= 3 ? " is-hot" : "");
+      if (blank) {
+        blank.textContent = item.display;
+        blank.classList.add("ok");
+      }
+      feedback.textContent = streak >= 3 ? "Correct! 🔥 " + streak : "Correct!";
+      feedback.className = "wgt-feedback ok show";
+      updatePills();
       advanceTimer = setTimeout(next, 800);
     } else {
       streak = 0;
       sfx("wrong");
       if (card) card.classList.add("is-wrong");
-      feedback.innerHTML =
-        'Answer: <strong>' + escapeHtml(item.correct) + "</strong>";
-      feedback.className = "bia-feedback bad show";
-      var sp2 = document.getElementById("streakPill");
-      sp2.textContent = "—";
-      sp2.className = "bia-pill streak";
+      if (blank) {
+        blank.textContent = val.trim() || "—";
+        blank.classList.add("bad");
+        setTimeout(function () {
+          blank.textContent = item.display;
+          blank.classList.remove("bad");
+          blank.classList.add("ok");
+        }, 550);
+      }
+      feedback.innerHTML = "Answer: <strong>" + escapeHtml(item.yesNo + " " + item.display) + "</strong>";
+      feedback.className = "wgt-feedback bad show";
+      updatePills();
       advanceTimer = setTimeout(next, 1600);
     }
   }
@@ -447,13 +469,6 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     sfx("win");
     var total = ITEMS.length;
     try {
-      if (window.LAStars) {
-        LAStars.recordPlay(GAME_ID);
-        LAStars.saveFromAccuracy(GAME_ID, Math.round((score / total) * 100));
-      }
-    } catch (_) {}
-
-    try {
       if (window.LAFinish) {
         var timeMs = LAFinish.stopTimer();
         LAFinish.show({
@@ -469,20 +484,24 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         return;
       }
     } catch (_) {}
+    // Fallback when LAFinish is unavailable
+    try {
+      if (window.LAStars) {
+        LAStars.recordPlay(GAME_ID);
+        LAStars.saveFromAccuracy(GAME_ID, Math.round((score / total) * 100));
+      }
+    } catch (_) {}
 
     app.innerHTML =
-      '<div class="bia-top">' +
-      '<a class="bia-back" href="../" aria-label="Back">←</a>' +
-      '<div class="bia-title-wrap">' +
-      '<div class="bia-kicker">Unit 10B · Grammar</div>' +
-      '<h1 class="bia-title">Complete!</h1>' +
-      "</div></div>" +
-      '<div class="bia-done">' +
+      '<div class="wgt-top">' +
+      '<a class="wgt-back" href="../" aria-label="Back">←</a>' +
+      "</div>" +
+      '<div class="wgt-done">' +
       '<div class="trophy" aria-hidden="true">🏆</div>' +
       "<h1>Well done!</h1>" +
-      '<div class="bia-score-big">' + score + " / " + total + "</div>" +
+      '<div class="wgt-score-big">' + score + " / " + total + "</div>" +
       (bestStreak > 1 ? "<p>Best streak: " + bestStreak + "</p>" : "") +
-      '<button type="button" class="bia-btn" id="againBtn">Play again</button>' +
+      '<button type="button" class="wgt-btn" id="againBtn">Play again</button>' +
       "</div>";
     document.getElementById("againBtn").onclick = start;
   }

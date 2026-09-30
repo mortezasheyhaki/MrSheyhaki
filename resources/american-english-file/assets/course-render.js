@@ -115,6 +115,10 @@
   background: #0e7490 !important;
   box-shadow: 0 4px 12px rgba(14, 116, 144, 0.4) !important;
 }
+.resource-card--skill-writing .resource-card-footer .resource-button {
+  background: #059669 !important;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4) !important;
+}
 .resource-card--game:hover .resource-card-footer .resource-button {
   filter: brightness(1.08);
   transform: translateX(2px);
@@ -204,6 +208,9 @@ html[data-theme="dark"] .resource-card--game .game-plays-badge {
 .resource-card--skill-communication .resource-card-curve {
   background: rgba(8, 145, 178, 0.14);
 }
+.resource-card--skill-writing .resource-card-curve {
+  background: rgba(5, 150, 105, 0.18);
+}
 html[data-theme="dark"] .resource-card--game .resource-card-curve {
   background: rgba(167, 139, 250, 0.18);
 }
@@ -227,6 +234,9 @@ html[data-theme="dark"] .resource-card--skill-reading .resource-card-curve {
 }
 html[data-theme="dark"] .resource-card--skill-communication .resource-card-curve {
   background: rgba(34, 211, 238, 0.2);
+}
+html[data-theme="dark"] .resource-card--skill-writing .resource-card-curve {
+  background: rgba(52, 211, 153, 0.2);
 }
 .skill-badge--grammar {
   background: rgba(124, 58, 237, 0.12);
@@ -263,6 +273,11 @@ html[data-theme="dark"] .resource-card--skill-communication .resource-card-curve
   color: #0e7490;
   border: 1px solid rgba(8, 145, 178, 0.22);
 }
+.skill-badge--writing {
+  background: rgba(5, 150, 105, 0.12);
+  color: #047857;
+  border: 1px solid rgba(5, 150, 105, 0.22);
+}
 html[data-theme="dark"] .skill-badge--grammar {
   background: rgba(167, 139, 250, 0.18);
   color: #c4b5fd;
@@ -297,6 +312,11 @@ html[data-theme="dark"] .skill-badge--communication {
   background: rgba(34, 211, 238, 0.16);
   color: #67e8f9;
   border-color: rgba(34, 211, 238, 0.28);
+}
+html[data-theme="dark"] .skill-badge--writing {
+  background: rgba(52, 211, 153, 0.16);
+  color: #6ee7b7;
+  border-color: rgba(52, 211, 153, 0.28);
 }
 
 /* Light mode: colored outline + matching top bar by skill (white card fill) */
@@ -363,6 +383,15 @@ a.resource-card.resource-card--game.resource-card--skill-communication::before,
 .resource-card.resource-card--game.resource-card--skill-communication::before {
   background: linear-gradient(90deg, #67e8f9, #0891b2) !important;
 }
+a.resource-card.resource-card--game.resource-card--skill-writing,
+.resource-card.resource-card--game.resource-card--skill-writing {
+  border-color: rgba(5, 150, 105, 0.5) !important;
+  box-shadow: 0 8px 22px rgba(5, 150, 105, 0.06) !important;
+}
+a.resource-card.resource-card--game.resource-card--skill-writing::before,
+.resource-card.resource-card--game.resource-card--skill-writing::before {
+  background: linear-gradient(90deg, #34d399, #059669) !important;
+}
 
 /* Soft skill cards — dark mode (muted, not deep) */
 html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-grammar,
@@ -399,6 +428,11 @@ html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill
 html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-communication {
   background: linear-gradient(160deg, rgba(14, 116, 144, 0.28) 0%, rgba(15, 35, 45, 0.95) 100%) !important;
   border-color: rgba(34, 211, 238, 0.3) !important;
+}
+html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-writing,
+html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-writing {
+  background: linear-gradient(160deg, rgba(5, 150, 105, 0.28) 0%, rgba(15, 40, 30, 0.95) 100%) !important;
+  border-color: rgba(52, 211, 153, 0.3) !important;
 }
 
 @media (max-width: 640px) {
