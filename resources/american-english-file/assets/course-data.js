@@ -404,6 +404,15 @@ COURSE_DATA["american-english-file"].levels["1"].units[10].lessons.a.games = [
   { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
 ];
 
+// Level 1 – Unit 10B – be going to (plans)
+COURSE_DATA["american-english-file"].levels["1"].units[10].lessons.b.games = [
+  { title: "Choose am / is / are", url: "choose-am-is-are/", label: "Grammar" },
+  { title: "be + going to (2 parts)", url: "write-going-to/", label: "Grammar" },
+  { title: "Choose the verb", url: "choose-going-to-verb/", label: "Grammar" },
+  { title: "Negative going to", url: "going-to-negative/", label: "Grammar" },
+  { title: "Going to questions", url: "going-to-questions/", label: "Grammar" },
+];
+
 COURSE_DATA["american-english-file"].levels["1"].units[11].name = "Culture & experiences";
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.name = "Culture shock";
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.b.name = "Experiences or things?";

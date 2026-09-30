@@ -1,3 +1,105 @@
+/* ===== Arcade FX: progress bar, combo, milestone celebration ===== */
+(function () {
+  if (window.ArcadeFX) return;
+  var streak = 0, best = 0, count = 0, lastPct = 0, ctx = null;
+  var CHEERS = [["🌟","Awesome!","10 correct answers!"],["🚀","Superstar!","20 correct — unstoppable!"],["👑","Legend!","30 correct — the best of the best!"]];
+  function tone(f, d, type, v, when) {
+    try {
+      if (!ctx) { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; ctx = new AC(); }
+      if (ctx.state === "suspended") ctx.resume();
+      var t = ctx.currentTime + (when || 0), o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type || "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(v || 0.09, t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
+      o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + d + 0.03);
+    } catch (e) {}
+  }
+  function label(n) { return n >= 10 ? "UNSTOPPABLE" : n >= 7 ? "ON FIRE" : n >= 5 ? "HOT STREAK" : n >= 3 ? "NICE" : ""; }
+  function chip() {
+    var el = document.getElementById("afx-combo");
+    if (!el) { el = document.createElement("div"); el.id = "afx-combo"; el.className = "afx-combo"; document.body.appendChild(el); }
+    return el;
+  }
+  function place(el) {
+    el = el || document.getElementById("afx-combo");
+    var app = (document.getElementById("game-app") || document.getElementById("app"));
+    if (!el || !app) return;
+    var a = app.querySelector(".afx-bar") || app.querySelector("header") || app.firstElementChild;
+    if (!a) return;
+    if (a.offsetParent === null) a = app;
+    var r = a.getBoundingClientRect();
+    el.style.right = Math.max(8, document.documentElement.clientWidth - r.right) + "px";
+    el.style.top = Math.max(8, a === app ? r.top + 64 : r.bottom + 8) + "px";
+  }
+  function showCombo() {
+    var el = chip(); place(el);
+    el.className = "afx-combo is-on" + (streak >= 5 ? " is-hot" : "");
+    el.innerHTML = '<span class="afx-fire">🔥</span> x' + streak + " <em>" + label(streak) + "</em>";
+    void el.offsetWidth; el.classList.add("is-bump");
+  }
+  function celebrate(n) {
+    var c = CHEERS[Math.min(Math.floor(n / 10) - 1, 2)];
+    [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.22, "triangle", 0.1, i * 0.09); });
+    tone(1568, 0.6, "sine", 0.08, 0.5);
+    var ov = document.createElement("div"); ov.className = "afx-burst";
+    var cols = ["#f59e0b", "#ec4899", "#8b5cf6", "#22c55e", "#3b82f6", "#ef4444"], h = "";
+    for (var i = 0; i < 44; i++) h += '<i style="left:' + Math.random() * 100 + "%;background:" + cols[i % 6] + ";animation-delay:" + (Math.random() * 0.35).toFixed(2) + "s;animation-duration:" + (1.3 + Math.random() * 0.9).toFixed(2) + 's"></i>';
+    ov.innerHTML = h + '<div class="afx-card"><div class="afx-emoji">' + c[0] + '</div><div class="afx-title">' + c[1] + '</div><div class="afx-sub">' + c[2] + "</div></div>";
+    document.body.appendChild(ov);
+    setTimeout(function () { ov.classList.add("is-out"); }, 1900);
+    setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 2300);
+  }
+  function hookRestart() {
+    var L = window.LAFinish;
+    if (L && L.startTimer && !L.__afx) { var st = L.startTimer; L.__afx = 1; L.startTimer = function () { api.reset(); return st.apply(this, arguments); }; }
+  }
+  var api = window.ArcadeFX = {
+    ok: function () {
+      var nw = Date.now(); if (nw - (api._o || 0) < 90) return; api._o = nw;
+      hookRestart(); streak++; count++; if (streak > best) best = streak;
+      if (streak >= 2) { var b = 660 * Math.pow(1.0595, Math.min(streak, 12)); tone(b, 0.09, "triangle", 0.08, 0); tone(b * 1.5, 0.14, "triangle", 0.07, 0.07); showCombo(); }
+      if (count % 10 === 0) setTimeout(function () { celebrate(count); }, 250);
+    },
+    bad: function () {
+      var nw = Date.now(); if (nw - (api._b || 0) < 90) return; api._b = nw;
+      hookRestart();
+      if (streak >= 3) { tone(300, 0.12, "sawtooth", 0.05, 0); tone(200, 0.2, "sawtooth", 0.05, 0.09); }
+      if (streak >= 2) { var el = chip(); el.className = "afx-combo is-lost"; el.textContent = "Combo lost"; setTimeout(function () { el.className = "afx-combo"; }, 1200); }
+      streak = 0;
+    },
+    reset: function () { streak = 0; best = 0; count = 0; lastPct = 0; var el = document.getElementById("afx-combo"); if (el) el.className = "afx-combo"; }
+  };
+  function sync() {
+    var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
+    place();
+    var bar = app.querySelector(".afx-bar");
+    if (bar && bar.offsetParent === null) { bar.parentNode.removeChild(bar); bar = null; }
+    var badge = null, hasBar = false, els = app.querySelectorAll('[class*="-badge"],[class*="-progress"]');
+    for (var i = 0; i < els.length; i++) {
+      var t = els[i].textContent.trim(); if (els[i].offsetParent === null) continue;
+      if (/^\d+\s*\/\s*\d+$/.test(t)) { if (!badge) badge = els[i]; }
+      else if (!t && /progress/.test(els[i].className) && !els[i].classList.contains("afx-bar")) hasBar = true;
+    }
+    if (!badge || hasBar) return;
+    var m = badge.textContent.trim().match(/^(\d+)\s*\/\s*(\d+)$/), pct = Math.min(100, Math.round(m[1] / m[2] * 100));
+    if (!bar) {
+      var host = badge.closest("header") || badge.parentElement;
+      bar = document.createElement("div"); bar.className = "afx-bar"; bar.innerHTML = '<i style="width:' + lastPct + '%"></i>';
+      host.parentNode.insertBefore(bar, host.nextSibling);
+    }
+    var fill = bar.firstChild; lastPct = pct;
+    requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = pct + "%"; }); });
+  }
+  var q = 0;
+  function start() {
+    var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
+    new MutationObserver(function () { if (q) return; q = requestAnimationFrame(function () { q = 0; sync(); }); }).observe(app, { childList: true, subtree: true, characterData: true });
+    window.addEventListener("resize", function () { place(); });
+    window.addEventListener("scroll", function () { place(); }, { passive: true });
+    sync();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+})();
+
 /* Choose the Verb — simple present vs present continuous · Starter Unit 9B */
 (function () {
   "use strict";
@@ -33,12 +135,12 @@
     osc.stop(t0 + dur + 0.02);
   }
   function sfxTap() { tone(520, 0.06, "triangle", 0.08); }
-  function sfxCorrect() {
+  function sfxCorrect() { window.ArcadeFX && ArcadeFX.ok();
     tone(523, 0.1, "sine", 0.12, 0);
     tone(659, 0.12, "sine", 0.12, 0.08);
     tone(784, 0.18, "sine", 0.1, 0.16);
   }
-  function sfxWrong() {
+  function sfxWrong() { window.ArcadeFX && ArcadeFX.bad();
     tone(220, 0.14, "sawtooth", 0.07, 0);
     tone(180, 0.18, "sawtooth", 0.06, 0.1);
   }
@@ -130,84 +232,78 @@ const GAME_ID = "starter-9b-verb-choice";
       options: ["do", "are doing"],
       correct: "are doing",
     },
-    // —— book set (circle the correct form) ——
+    // —— book set (Student's Book p.57) ——
     {
-      before: "Hiro usually",
-      after: "to school in the morning.",
-      options: ["goes", "is going"],
-      correct: "goes",
-    },
-    {
-      before: "But today he",
-      after: "at home.",
-      options: ["studies", "'s studying"],
-      correct: "'s studying",
-    },
-    {
-      before: "B: No. I",
-      after: "at home today.",
-      options: ["work", "I'm working"],
-      correct: "I'm working",
-    },
-    {
-      before: "A: ",
-      after: "your homework?",
-      options: ["Do you do", "Are you doing"],
-      correct: "Are you doing",
-    },
-    {
-      before: "B: I don't have any homework today. I",
-      after: "a video game.",
-      options: ["play", "I'm playing"],
-      correct: "I'm playing",
-    },
-    {
-      before: "My wife is a nurse. She",
-      after: "in a children's hospital.",
-      options: ["works", "She's working"],
-      correct: "works",
-    },
-    {
-      before: "We're on vacation in Brazil. We",
-      after: "in a nice little hotel.",
-      options: ["stay", "We're staying"],
-      correct: "We're staying",
-    },
-    {
-      before: "A: Hi. Can you talk or",
-      after: "?",
-      options: ["are you driving", "do you drive"],
-      correct: "are you driving",
-    },
-    {
-      before: "B: I",
-      after: ", but I can't talk now.",
-      options: ["don't drive", "I'm not driving"],
-      correct: "I'm not driving",
-    },
-    {
-      before: "B: I",
-      after: "lunch with my boss.",
-      options: ["have", "I'm having"],
-      correct: "I'm having",
-    },
-    {
-      before: "It always",
-      after: "a lot here in the winter.",
+      before: "Oh no! It",
+      after: "and I don't have my umbrella.",
       options: ["rains", "is raining"],
-      correct: "rains",
+      correct: "is raining",
     },
     {
-      before: "I usually",
-      after: "toast for breakfast.",
+      before: "My father and I",
+      after: "dinner together every week.",
+      options: ["have", "are having"],
+      correct: "have",
+    },
+    {
+      before: "Maya and Jack are on vacation this week. They",
+      after: "in Canada.",
+      options: ["ski", "are skiing"],
+      correct: "are skiing",
+    },
+    {
+      before: "A: Hi, Sam.",
+      after: "the basketball game on TV?",
+      options: ["Do you watch", "Are you watching"],
+      correct: "Are you watching",
+    },
+    {
+      before: "B: No, I",
+      after: "my Spanish homework.",
+      options: ["do", "am doing"],
+      correct: "am doing",
+    },
+    {
+      before: "I always",
+      after: "late, and I never have time for breakfast.",
+      options: ["get up", "am getting up"],
+      correct: "get up",
+    },
+    {
+      before: "I always get up late, and I never",
+      after: "time for breakfast.",
       options: ["have", "am having"],
       correct: "have",
     },
     {
-      before: "But today I",
-      after: "cereal.",
-      options: ["have", "I'm having"],
-      correct: "I'm having",
+      before: "My sister",
+      after: "in Thailand right now.",
+      options: ["travels", "is traveling"],
+      correct: "is traveling",
+    },
+    {
+      before: "A: What time",
+      after: "to bed?",
+      options: ["do you usually go", "are you usually going"],
+      correct: "do you usually go",
+    },
+    {
+      before: "Look. That's my brother over there. Can you see him? He",
+      after: "a blue hat.",
+      options: ["wears", "is wearing"],
+      correct: "is wearing",
+    },
+    {
+      before: "A: Hello, Nick. Where",
+      after: "?",
+      options: ["do you go", "are you going"],
+      correct: "are you going",
+    },
+    {
+      before: "B: To the gym. I always",
+      after: "on Tuesdays.",
+      options: ["go", "am going"],
+      correct: "go",
     },
   ];
 

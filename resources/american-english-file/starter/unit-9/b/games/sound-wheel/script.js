@@ -1,3 +1,105 @@
+/* ===== Arcade FX: progress bar, combo, milestone celebration ===== */
+(function () {
+  if (window.ArcadeFX) return;
+  var streak = 0, best = 0, count = 0, lastPct = 0, ctx = null;
+  var CHEERS = [["🌟","Awesome!","10 correct answers!"],["🚀","Superstar!","20 correct — unstoppable!"],["👑","Legend!","30 correct — the best of the best!"]];
+  function tone(f, d, type, v, when) {
+    try {
+      if (!ctx) { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; ctx = new AC(); }
+      if (ctx.state === "suspended") ctx.resume();
+      var t = ctx.currentTime + (when || 0), o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type || "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(v || 0.09, t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
+      o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + d + 0.03);
+    } catch (e) {}
+  }
+  function label(n) { return n >= 10 ? "UNSTOPPABLE" : n >= 7 ? "ON FIRE" : n >= 5 ? "HOT STREAK" : n >= 3 ? "NICE" : ""; }
+  function chip() {
+    var el = document.getElementById("afx-combo");
+    if (!el) { el = document.createElement("div"); el.id = "afx-combo"; el.className = "afx-combo"; document.body.appendChild(el); }
+    return el;
+  }
+  function place(el) {
+    el = el || document.getElementById("afx-combo");
+    var app = (document.getElementById("game-app") || document.getElementById("app"));
+    if (!el || !app) return;
+    var a = app.querySelector(".afx-bar") || app.querySelector("header") || app.firstElementChild;
+    if (!a) return;
+    if (a.offsetParent === null) a = app;
+    var r = a.getBoundingClientRect();
+    el.style.right = Math.max(8, document.documentElement.clientWidth - r.right) + "px";
+    el.style.top = Math.max(8, a === app ? r.top + 64 : r.bottom + 8) + "px";
+  }
+  function showCombo() {
+    var el = chip(); place(el);
+    el.className = "afx-combo is-on" + (streak >= 5 ? " is-hot" : "");
+    el.innerHTML = '<span class="afx-fire">🔥</span> x' + streak + " <em>" + label(streak) + "</em>";
+    void el.offsetWidth; el.classList.add("is-bump");
+  }
+  function celebrate(n) {
+    var c = CHEERS[Math.min(Math.floor(n / 10) - 1, 2)];
+    [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.22, "triangle", 0.1, i * 0.09); });
+    tone(1568, 0.6, "sine", 0.08, 0.5);
+    var ov = document.createElement("div"); ov.className = "afx-burst";
+    var cols = ["#f59e0b", "#ec4899", "#8b5cf6", "#22c55e", "#3b82f6", "#ef4444"], h = "";
+    for (var i = 0; i < 44; i++) h += '<i style="left:' + Math.random() * 100 + "%;background:" + cols[i % 6] + ";animation-delay:" + (Math.random() * 0.35).toFixed(2) + "s;animation-duration:" + (1.3 + Math.random() * 0.9).toFixed(2) + 's"></i>';
+    ov.innerHTML = h + '<div class="afx-card"><div class="afx-emoji">' + c[0] + '</div><div class="afx-title">' + c[1] + '</div><div class="afx-sub">' + c[2] + "</div></div>";
+    document.body.appendChild(ov);
+    setTimeout(function () { ov.classList.add("is-out"); }, 1900);
+    setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 2300);
+  }
+  function hookRestart() {
+    var L = window.LAFinish;
+    if (L && L.startTimer && !L.__afx) { var st = L.startTimer; L.__afx = 1; L.startTimer = function () { api.reset(); return st.apply(this, arguments); }; }
+  }
+  var api = window.ArcadeFX = {
+    ok: function () {
+      var nw = Date.now(); if (nw - (api._o || 0) < 90) return; api._o = nw;
+      hookRestart(); streak++; count++; if (streak > best) best = streak;
+      if (streak >= 2) { var b = 660 * Math.pow(1.0595, Math.min(streak, 12)); tone(b, 0.09, "triangle", 0.08, 0); tone(b * 1.5, 0.14, "triangle", 0.07, 0.07); showCombo(); }
+      if (count % 10 === 0) setTimeout(function () { celebrate(count); }, 250);
+    },
+    bad: function () {
+      var nw = Date.now(); if (nw - (api._b || 0) < 90) return; api._b = nw;
+      hookRestart();
+      if (streak >= 3) { tone(300, 0.12, "sawtooth", 0.05, 0); tone(200, 0.2, "sawtooth", 0.05, 0.09); }
+      if (streak >= 2) { var el = chip(); el.className = "afx-combo is-lost"; el.textContent = "Combo lost"; setTimeout(function () { el.className = "afx-combo"; }, 1200); }
+      streak = 0;
+    },
+    reset: function () { streak = 0; best = 0; count = 0; lastPct = 0; var el = document.getElementById("afx-combo"); if (el) el.className = "afx-combo"; }
+  };
+  function sync() {
+    var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
+    place();
+    var bar = app.querySelector(".afx-bar");
+    if (bar && bar.offsetParent === null) { bar.parentNode.removeChild(bar); bar = null; }
+    var badge = null, hasBar = false, els = app.querySelectorAll('[class*="-badge"],[class*="-progress"]');
+    for (var i = 0; i < els.length; i++) {
+      var t = els[i].textContent.trim(); if (els[i].offsetParent === null) continue;
+      if (/^\d+\s*\/\s*\d+$/.test(t)) { if (!badge) badge = els[i]; }
+      else if (!t && /progress/.test(els[i].className) && !els[i].classList.contains("afx-bar")) hasBar = true;
+    }
+    if (!badge || hasBar) return;
+    var m = badge.textContent.trim().match(/^(\d+)\s*\/\s*(\d+)$/), pct = Math.min(100, Math.round(m[1] / m[2] * 100));
+    if (!bar) {
+      var host = badge.closest("header") || badge.parentElement;
+      bar = document.createElement("div"); bar.className = "afx-bar"; bar.innerHTML = '<i style="width:' + lastPct + '%"></i>';
+      host.parentNode.insertBefore(bar, host.nextSibling);
+    }
+    var fill = bar.firstChild; lastPct = pct;
+    requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = pct + "%"; }); });
+  }
+  var q = 0;
+  function start() {
+    var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
+    new MutationObserver(function () { if (q) return; q = requestAnimationFrame(function () { q = 0; sync(); }); }).observe(app, { childList: true, subtree: true, characterData: true });
+    window.addEventListener("resize", function () { place(); });
+    window.addEventListener("scroll", function () { place(); }, { passive: true });
+    sync();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+})();
+
 /* Sound Wheel — AEF Starter Unit 9B
  * Clothes vocabulary grouped by the five vowel sounds shown in the Student's Book.
  */
@@ -35,12 +137,12 @@
     osc.stop(t0 + dur + 0.02);
   }
   function sfxTap() { tone(520, 0.06, "triangle", 0.08); }
-  function sfxCorrect() {
+  function sfxCorrect() { window.ArcadeFX && ArcadeFX.ok();
     tone(523, 0.1, "sine", 0.12, 0);
     tone(659, 0.12, "sine", 0.12, 0.08);
     tone(784, 0.18, "sine", 0.1, 0.16);
   }
-  function sfxWrong() {
+  function sfxWrong() { window.ArcadeFX && ArcadeFX.bad();
     tone(220, 0.14, "sawtooth", 0.07, 0);
     tone(180, 0.18, "sawtooth", 0.06, 0.1);
   }
@@ -104,6 +206,7 @@ var GAME_ID = "starter-9b-sound-wheel";
   var pointerId = null;
   var startPoint = null;
   var moved = false;
+  var idx = 0, missed = false, misses = 0, firstTry = 0, prevPct = 0;
 
   function shuffle(arr) {
     var a = arr.slice();
@@ -121,6 +224,7 @@ var GAME_ID = "starter-9b-sound-wheel";
   }
 
   function sfx(name) {
+    if (window.ArcadeFX) { if (name === "good" || name === "correct") ArcadeFX.ok(); else if (name === "bad" || name === "wrong") ArcadeFX.bad(); }
     try {
       if (!window.LASfx) return;
       if (name === "good" && LASfx.correct) LASfx.correct();
@@ -135,6 +239,7 @@ var GAME_ID = "starter-9b-sound-wheel";
     order = shuffle(WORDS.map(function (_, i) { return i; }));
     solved = {};
     correct = 0;
+    idx = 0; missed = false; misses = 0; firstTry = 0; prevPct = 0;
     selectedSound = null;
     if (window.LAFinish) LAFinish.startTimer();
     render();
@@ -183,13 +288,25 @@ var GAME_ID = "starter-9b-sound-wheel";
       }
       sfx("good");
       setFeedback("✓ " + word.word + " goes with /" + soundById(targetSound).ipa + "/.", "good");
+      if (!missed) firstTry++;
+      missed = false; misses = 0;
+      idx++;
+      var scEl = document.getElementById("score");
+      if (scEl) scEl.textContent = correct + " / " + WORDS.length;
+      var fillEl = document.getElementById("swFill");
+      if (fillEl) { prevPct = Math.round((correct / WORDS.length) * 100); fillEl.style.width = prevPct + "%"; }
       if (correct === WORDS.length) {
         setTimeout(finishGame, 650);
+      } else {
+        var okMsg = "✓ " + word.word + " goes with /" + soundById(targetSound).ipa + "/.";
+        setTimeout(function () { if (phase === "play") { renderPlay(); setFeedback(okMsg, "good"); } }, 650);
       }
     } else {
       sourceEl.classList.remove("dragging");
       sourceEl.classList.add("wrong");
       sfx("bad");
+      missed = true; misses++;
+      if (misses >= 2) { var ht = document.querySelector('.sw-tab[data-sound="' + word.sound + '"]'); if (ht) ht.classList.add("hint"); }
       setFeedback("Try again — listen to the sound in the middle of the word.", "bad");
       setTimeout(function () { sourceEl.classList.remove("wrong"); }, 400);
     }
@@ -203,7 +320,7 @@ var GAME_ID = "starter-9b-sound-wheel";
       var timeMs = LAFinish.stopTimer();
       LAFinish.show({
         gameId: GAME_ID,
-        score: correct,
+        score: firstTry, // first-try answers only
         total: WORDS.length,
         timeMs: timeMs,
         onAgain: startGame,
@@ -216,7 +333,7 @@ var GAME_ID = "starter-9b-sound-wheel";
     try {
       if (window.LAStars) {
         LAStars.recordPlay(GAME_ID);
-        LAStars.saveFromAccuracy(GAME_ID, Math.round(correct / WORDS.length * 100));
+        LAStars.saveFromAccuracy(GAME_ID, Math.round(firstTry / WORDS.length * 100));
       }
     } catch (_) {}
     render();
@@ -237,7 +354,7 @@ var GAME_ID = "starter-9b-sound-wheel";
   }
 
   function renderPlay() {
-    var words = order.map(function (i) { return WORDS[i]; }).filter(function (w) { return !solved[w.id]; });
+    var words = idx < order.length ? [WORDS[order[idx]]] : []; // one word at a time
 
     app.innerHTML = '' +
       '<header class="sw-topbar">' +
@@ -245,7 +362,8 @@ var GAME_ID = "starter-9b-sound-wheel";
         '<div class="sw-heading"><span class="sw-eyebrow">Starter · Unit 9B</span><span class="sw-title">Sound Wheel</span></div>' +
         '<div class="sw-score" id="score">' + correct + ' / ' + WORDS.length + '</div>' +
       '</header>' +
-      '<p class="sw-instruction">Drag the words from the center to the correct sound. Click a tab to highlight it.</p>' +
+      '<div class="sw-progress"><div class="sw-progress-fill" id="swFill" style="width:' + prevPct + '%"></div></div>' +
+      '<p class="sw-instruction">Listen for the vowel sound in the middle of the word, then drag the word to its sound.</p>' +
       '<section class="sw-stage" aria-label="Sound selection wheel">' +
         '<div class="sw-wheel" id="wheel">' +
           SOUNDS.map(function (s, i) {
@@ -256,7 +374,7 @@ var GAME_ID = "starter-9b-sound-wheel";
             '</button>';
           }).join('') +
           '<div class="sw-center" id="center" aria-label="Words to sort">' +
-            '<span class="sw-center-label">Drag words</span>' +
+            '<span class="sw-center-label">Word ' + Math.min(idx + 1, WORDS.length) + ' of ' + WORDS.length + '</span>' +
             words.map(function (w) {
               return '<div class="sw-word" draggable="true" tabindex="0" data-word="' + escapeHtml(w.id) + '" role="button" aria-label="Drag ' + escapeHtml(w.word) + '">' + escapeHtml(w.word) + '</div>';
             }).join('') +
@@ -298,6 +416,11 @@ var GAME_ID = "starter-9b-sound-wheel";
       });
       bindPointerDrag(wordEl);
     });
+    var newPct = Math.round((correct / WORDS.length) * 100);
+    requestAnimationFrame(function () { requestAnimationFrame(function () {
+      var f = document.getElementById("swFill"); if (f) f.style.width = newPct + "%";
+    }); });
+    prevPct = newPct;
   }
 
   /* Pointer-based drag fallback makes the same game usable on touchscreens where
