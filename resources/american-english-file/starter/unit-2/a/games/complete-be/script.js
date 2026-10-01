@@ -75,7 +75,7 @@
 
   const PART_A = [
     {
-      img: "images/pic1.png",
+      img: "https://cdn.imgurl.ir/uploads/k12322_pic1.png",
       lines: [
         {
           parts: [
@@ -87,7 +87,7 @@
       ],
     },
     {
-      img: "images/pic2.png",
+      img: "https://cdn.imgurl.ir/uploads/z47314_pic2.png",
       lines: [
         {
           parts: [
@@ -105,7 +105,7 @@
       ],
     },
     {
-      img: "images/pic3.png",
+      img: "https://cdn.imgurl.ir/uploads/k65164_pic3.png",
       lines: [
         { parts: [{ t: "Are you Korean?" }] },
         {
@@ -120,7 +120,7 @@
       ],
     },
     {
-      img: "images/pic4.png",
+      img: "https://cdn.imgurl.ir/uploads/r844481_pic4.png",
       lines: [
         {
           parts: [
@@ -140,7 +140,7 @@
       ],
     },
     {
-      img: "images/pic5.png",
+      img: "https://cdn.imgurl.ir/uploads/m44276_pic5.png",
       lines: [
         {
           parts: [
@@ -158,7 +158,7 @@
       ],
     },
     {
-      img: "images/pic6.png",
+      img: "https://cdn.imgurl.ir/uploads/p2603_pic6.png",
       lines: [
         {
           parts: [
@@ -178,7 +178,7 @@
       ],
     },
     {
-      img: "images/pic7.png",
+      img: "https://cdn.imgurl.ir/uploads/z850495_pic7.png",
       lines: [
         {
           parts: [
@@ -197,7 +197,7 @@
       ],
     },
     {
-      img: "images/pic8.png",
+      img: "https://cdn.imgurl.ir/uploads/k300855_pic8.png",
       lines: [
         {
           parts: [
@@ -221,56 +221,56 @@
   // Part B: look at the picture → answer Yes / No (with short forms accepted)
   const PART_B = [
     {
-      img: "images/picc1.png",
+      img: "https://cdn.imgurl.ir/uploads/p526_picc1.png",
       q: "Are they in Mexico?",
       clue: "Look at the mountain and the city — where are they?",
       accept: ["no", "no they aren't", "no they are not", "no they aren't in mexico", "they aren't", "they're not"],
       model: "No, they aren't.",
     },
     {
-      img: "images/picc2.png",
+      img: "https://cdn.imgurl.ir/uploads/d886885_picc2.png",
       q: "Are the cars Spanish?",
       clue: "Look at the cars on the lot — where are they from?",
       accept: ["yes", "yes they are", "yes they are spanish", "they are", "they're spanish"],
       model: "Yes, they are.",
     },
     {
-      img: "images/picc3.png",
+      img: "https://cdn.imgurl.ir/uploads/i09193_picc3.png",
       q: "Are the women Korean?",
       clue: "Listen to what they say about their nationality.",
       accept: ["no", "no they aren't", "no they are not", "they aren't", "they're not", "no they're american"],
       model: "No, they aren't.",
     },
     {
-      img: "images/picc4.png",
+      img: "https://cdn.imgurl.ir/uploads/v910572_picc4.png",
       q: "Are they on business?",
       clue: "Look at the meeting — vacation or work?",
       accept: ["yes", "yes they are", "yes they are on business", "they are", "they're on business"],
       model: "Yes, they are.",
     },
     {
-      img: "images/picc5.png",
+      img: "https://cdn.imgurl.ir/uploads/d924940_picc5.png",
       q: "Are they from Turkey?",
       clue: "Look at the jewelry seller — where is he from?",
       accept: ["no", "no they aren't", "no he isn't", "no they are not", "they aren't", "they're saudi", "no they're saudi"],
       model: "No, they aren't.",
     },
     {
-      img: "images/picc6.png",
+      img: "https://cdn.imgurl.ir/uploads/d57050_picc6.png",
       q: "Are they in room 9?",
       clue: "Look at the hotel reception — which room?",
       accept: ["yes", "yes they are", "yes they are in room 9", "they are"],
       model: "Yes, they are.",
     },
     {
-      img: "images/picc7.png",
+      img: "https://cdn.imgurl.ir/uploads/n964430_picc7.png",
       q: "Are they late?",
       clue: "Look at the cinema — early or late?",
       accept: ["no", "no they aren't", "no they are not", "they aren't", "they're early", "no they're early"],
       model: "No, they aren't.",
     },
     {
-      img: "images/picc8.png",
+      img: "https://cdn.imgurl.ir/uploads/u58256_picc8.png",
       q: "Are they from Japan?",
       clue: "Look at the flags — which country?",
       accept: ["yes", "yes they are", "yes they are from japan", "yes they're japanese", "they are"],
