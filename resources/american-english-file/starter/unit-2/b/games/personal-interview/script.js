@@ -74,11 +74,11 @@
   const GAME_ID = "starter-2b-personal-interview";
 
   const IMAGES = {
-    greeting: "images/greeting.png",
-    thinking: "images/thinking2.png",
-    asking: "images/asking2.png",
-    writing: "images/writing.png",
-    thanks: "images/appreciating.png",
+    greeting: "https://cdn.imgurl.ir/uploads/m485132_greeting.png",
+    thinking: "https://cdn.imgurl.ir/uploads/b999241_thinking2.png",
+    asking: "https://cdn.imgurl.ir/uploads/b69410_asking2.png",
+    writing: "https://cdn.imgurl.ir/uploads/m11565_writing.png",
+    thanks: "https://cdn.imgurl.ir/uploads/u586421_appreciating.png",
   };
 
   const MODES = [
