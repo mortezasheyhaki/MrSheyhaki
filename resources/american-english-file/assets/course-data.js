@@ -155,6 +155,22 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.games = [
   { title: "Where from? · Dialogues", url: "where-from-dialogues/", label: "Grammar" },
 ];
 
+// Unit 2A – Audio (Are you on vacation?)
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.audio = [
+  { track: "2.01", url: "https://cdn.imgurl.ir/uploads/p666344_AEF3e_Starter_SB_2.01.mp3" },
+  { track: "2.02", url: "https://cdn.imgurl.ir/uploads/u449823_AEF3e_Starter_SB_2.02.mp3" },
+  { track: "2.03", url: "https://cdn.imgurl.ir/uploads/j881081_AEF3e_Starter_SB_2.03.mp3" },
+  { track: "2.04", url: "https://cdn.imgurl.ir/uploads/k50569_AEF3e_Starter_SB_2.04.mp3" },
+  { track: "2.05", url: "https://cdn.imgurl.ir/uploads/v941688_AEF3e_Starter_SB_2.05.mp3" },
+  { track: "2.06", url: "https://cdn.imgurl.ir/uploads/w563274_AEF3e_Starter_SB_2.06.mp3" },
+  { track: "2.07", url: "https://cdn.imgurl.ir/uploads/i21078_AEF3e_Starter_SB_2.07.mp3" },
+  { track: "2.08", url: "https://cdn.imgurl.ir/uploads/l364368_AEF3e_Starter_SB_2.08.mp3" },
+  { track: "2.09", url: "https://cdn.imgurl.ir/uploads/c295446_AEF3e_Starter_SB_2.09.mp3" },
+  { track: "2.10", url: "https://cdn.imgurl.ir/uploads/e272463_AEF3e_Starter_SB_2.10.mp3" },
+  { track: "2.11", url: "https://cdn.imgurl.ir/uploads/o21008_AEF3e_Starter_SB_2.11.mp3" },
+  { track: "2.12", url: "https://cdn.imgurl.ir/uploads/f62993_AEF3e_Starter_SB_2.12.mp3" },
+];
+
 // Unit 2A – Games (Are you on vacation?)
 COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.games = [
   { title: "Complete with be", url: "complete-be/", label: "Grammar" },
