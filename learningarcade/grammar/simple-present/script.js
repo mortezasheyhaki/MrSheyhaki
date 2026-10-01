@@ -2985,6 +2985,12 @@ function nextQuestion() {
 
 function laSubmitScore(gameId, gameName, correct, total) {
   try {
+    if (window.LAProgressSave) {
+      LAProgressSave({ gameId: gameId, gameName: gameName || gameId, category: "Grammar", unit: "Simple Present",
+        score: Number(correct) || 0, maxScore: Number(total) || 0, completed: true });
+    }
+  } catch (eP) {}
+  try {
     if (!window.LAScores || typeof LAScores.submit !== "function") return;
     var name = LAScores.getPlayerName ? LAScores.getPlayerName() : "";
     var code = LAScores.getClassCode ? LAScores.getClassCode() : "";

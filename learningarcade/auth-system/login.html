@@ -258,7 +258,7 @@
           tabLogin.classList.remove("is-on");
           tabRegister.classList.add("is-on");
           title.textContent = "Create account";
-          sub.textContent = "Register to keep your stars & progress";
+          sub.textContent = "Register to keep your stars & progress (password: " + LAAuth.MIN_PASSWORD + "+ characters)";
           submitBtn.textContent = "Register";
           displayField.classList.remove("hidden");
           passwordInput.autocomplete = "new-password";
@@ -270,8 +270,22 @@
 
       // If already logged in → redirect
       if (window.LAAuth && LAAuth.isLoggedIn()) {
-        window.location.href = returnUrl;
-        return;
+        LAAuth.verify().then(function (u) { if (u) window.location.href = returnUrl; });
+      }
+
+      // Old accounts with a short password must choose a new one once.
+      var upgrading = false;
+      function askNewPassword() {
+        upgrading = true;
+        if (!document.getElementById("newPasswordField")) {
+          var f = document.createElement("div");
+          f.className = "auth-field";
+          f.id = "newPasswordField";
+          f.innerHTML = '<label for="newPassword">New password (' + LAAuth.MIN_PASSWORD + '+ characters)</label>' +
+            '<input id="newPassword" type="password" maxlength="64" autocomplete="new-password" required />';
+          passwordInput.parentNode.insertAdjacentElement("afterend", f);
+        }
+        submitBtn.textContent = "Save new password";
       }
 
       form.onsubmit = async function (e) {
@@ -286,14 +300,17 @@
         var displayName = document.getElementById("displayName").value;
 
         var result;
-        if (mode === "login") {
+        if (upgrading) {
+          var np = document.getElementById("newPassword").value;
+          result = await LAAuth.upgradeLegacy(username, password, np);
+        } else if (mode === "login") {
           result = await LAAuth.login(username, password);
         } else {
           result = await LAAuth.register(username, password, displayName);
         }
 
         submitBtn.disabled = false;
-        submitBtn.textContent = mode === "login" ? "Login" : "Register";
+        submitBtn.textContent = upgrading ? "Save new password" : (mode === "login" ? "Login" : "Register");
 
         if (result.ok) {
           msg.className = "auth-error auth-success";
@@ -302,6 +319,7 @@
             window.location.href = returnUrl;
           }, 700);
         } else {
+          if (result.needsPasswordUpgrade) askNewPassword();
           msg.textContent = result.error || "Something went wrong";
         }
       };

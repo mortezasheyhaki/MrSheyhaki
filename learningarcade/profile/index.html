@@ -736,6 +736,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
   <script src="../firebase-scores.js"></script>
+  <script src="../auth-system/auth.js"></script>
+  <script src="../progress.js"></script>
   <script src="../la-stars.js"></script>
   <script src="../theme.js"></script>
   <script>
@@ -1161,11 +1163,57 @@
     }
   }
 
+  /* Logged-in students: show THEIR saved progress (private, per account). */
+  function loadMyProgress(scoresStatus, scoreList) {
+    window.LAProgress.getSummary().then(function (s) {
+      if (!s.gamesPlayed) {
+        scoresStatus.textContent = "";
+        scoreList.innerHTML =
+          '<div class="scores-empty">No saved progress yet.<br>Finish a game while logged in and it appears here.</div>';
+        return;
+      }
+      var mins = Math.round(s.totalTimeSeconds / 60);
+      scoresStatus.textContent =
+        s.gamesPlayed + " games played · " + s.gamesCompleted + " completed · " +
+        s.totalAttempts + " attempts · " + s.averageBestAccuracy + "% avg best" +
+        (mins ? " · " + mins + " min" : "");
+      var html = Object.keys(s.byCategory).map(function (k) {
+        var c = s.byCategory[k];
+        return '<div class="score-row"><div><strong>' + escapeHtml(k) + "</strong><small>" +
+          c.games + " game" + (c.games === 1 ? "" : "s") + " · " + c.completed + " completed · " +
+          c.attempts + " attempts</small></div><div class=\"score-val\">" + c.averageBestAccuracy + "%</div></div>";
+      }).join("");
+      scoreList.innerHTML = html;
+      window.LAProgress.getMine().then(function (rows) {
+        rows.sort(function (a, b) { return (b.lastPlayedAt || 0) - (a.lastPlayedAt || 0); });
+        scoreList.innerHTML = html + rows.map(function (r) {
+          var title = r.gameName || TITLES[r.gameId] || prettyTitle(r.gameId);
+          var best = r.bestMaxScore > 0 ? r.bestScore + "/" + r.bestMaxScore : r.bestScore;
+          var latest = r.latestMaxScore > 0 ? r.latestScore + "/" + r.latestMaxScore : r.latestScore;
+          var url = gameUrl(r.gameId);
+          var body = "<div><strong>" + escapeHtml(title) + "</strong><small>" +
+            "Best " + best + " · Latest " + latest + " · " + r.attempts + " play" + (r.attempts === 1 ? "" : "s") +
+            (r.unit ? " · " + escapeHtml(r.unit) : "") + " · " + formatDate(r.lastPlayedAt) +
+            '</small></div><div class="score-val">' + (r.bestAccuracy || 0) + "%</div>";
+          return url ? '<a class="score-row" href="' + url + '">' + body + "</a>" : '<div class="score-row">' + body + "</div>";
+        }).join("");
+      });
+    }).catch(function () {
+      scoresStatus.textContent = "";
+      scoreList.innerHTML = '<div class="scores-empty">Could not load your progress.<br>Local stars still work.</div>';
+    });
+  }
+
   function loadScores() {
     var scoresStatus = document.getElementById("scoresStatus");
     var scoreList = document.getElementById("scoreList");
     scoresStatus.textContent = "Loading…";
     scoreList.innerHTML = "";
+
+    if (window.LAAuth && LAAuth.isLoggedIn() && window.LAProgress) {
+      loadMyProgress(scoresStatus, scoreList);
+      return;
+    }
 
     if (!window.LAScores || !LAScores.myScores) {
       scoresStatus.textContent = "";

@@ -837,6 +837,12 @@
     var acc = roundTotal ? Math.round((correct / roundTotal) * 100) : 0;
     document.getElementById("finalAccuracy").textContent = acc + "%";
     try {
+      if (window.LAProgressSave) {
+        LAProgressSave({ gameId: "simple-past", gameName: "Simple Past", category: "Grammar", unit: "Simple Past",
+          score: correct, maxScore: roundTotal, accuracy: acc, completed: true });
+      }
+    } catch (eP) {}
+    try {
       if (window.LAStars) {
         LAStars.recordPlay("simple-past");
         LAStars.saveFromAccuracy("simple-past", acc);

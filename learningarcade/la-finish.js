@@ -453,6 +453,24 @@
       } catch (e2) {}
     }
 
+    // Per-student cloud progress (logged-in students only; guests are skipped silently)
+    if (save && gameId && typeof global.LAProgressSave === "function") {
+      try {
+        global.LAProgressSave({
+          gameId: gameId,
+          gameName: opts.gameName || undefined,
+          category: opts.category || undefined,
+          unit: opts.unit || undefined,
+          score: score,
+          maxScore: total,
+          accuracy: opts.accuracy != null || (score != null && total > 0) ? accuracy : undefined,
+          completed: opts.completed !== false,
+          timeSeconds: timeMs != null && timeMs > 0 ? timeMs / 1000 : 0,
+          stars: stars
+        });
+      } catch (e3) {}
+    }
+
     // Build / reuse overlay
     var overlay = document.getElementById(OVERLAY_ID);
     if (!overlay) {

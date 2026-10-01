@@ -263,13 +263,16 @@
       }
     });
     saveJSON(starsKey(), data);
+    fallbackProgress({ gameId: gameId, stars: stars, completed: true });
     return best;
   }
 
   function saveFromAccuracy(gameId, accuracyPercent) {
     var acc = Number(accuracyPercent) || 0;
     var stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 40 ? 1 : 0;
-    return save(gameId, stars);
+    var best = save(gameId, stars);
+    fallbackProgress({ gameId: gameId, accuracy: acc, stars: stars, completed: true });
+    return best;
   }
 
   function saveFromScore(gameId, score, thresholds) {
@@ -472,6 +475,81 @@
     document.head.appendChild(style);
   }
 
+  /* ---------- Cloud progress bridge (logged-in students only) ----------
+   * Games call LAProgressSave(payload) with real scores (LAFinish does this
+   * automatically). Older pages that only call LAStars.save/saveFromAccuracy
+   * are covered by a delayed fallback that is cancelled whenever a fuller
+   * LAProgressSave arrives for the same game. Guests do nothing, load nothing,
+   * and never see an error. progress.js + the Appwrite SDK load on demand. */
+  var PROGRESS_BASE = (function () {
+    try {
+      var cs = document.currentScript;
+      return cs && cs.src ? cs.src.replace(/[^\/]*$/, "") : "";
+    } catch (e) { return ""; }
+  })();
+  var progressLoad = null;
+  var pendingFallback = {};
+  var lastExplicit = {};
+
+  function maybeLoggedIn() {
+    try {
+      return !!(localStorage.getItem("cookieFallback") || localStorage.getItem("laAuthSession"));
+    } catch (e) { return false; }
+  }
+
+  function injectScript(src) {
+    return new Promise(function (resolve, reject) {
+      var el = document.createElement("script");
+      el.src = src;
+      el.async = true;
+      el.onload = resolve;
+      el.onerror = reject;
+      document.head.appendChild(el);
+    });
+  }
+
+  function loadProgress() {
+    if (global.LAProgress) return Promise.resolve(global.LAProgress);
+    if (!PROGRESS_BASE) return Promise.resolve(null);
+    if (!progressLoad) {
+      progressLoad = (typeof Appwrite !== "undefined"
+        ? Promise.resolve()
+        : injectScript("https://cdn.jsdelivr.net/npm/appwrite@26.2.0"))
+        .then(function () { return injectScript(PROGRESS_BASE + "progress.js"); })
+        .then(function () { return global.LAProgress || null; })
+        .catch(function () { progressLoad = null; return null; });
+    }
+    return progressLoad;
+  }
+
+  global.LAProgressSave = function (payload) {
+    try {
+      var id = payload && payload.gameId;
+      if (!id) return Promise.resolve({ ok: false, skipped: "missing-gameId" });
+      lastExplicit[id] = Date.now();
+      if (pendingFallback[id]) { clearTimeout(pendingFallback[id]); delete pendingFallback[id]; }
+      if (!maybeLoggedIn()) return Promise.resolve({ ok: false, skipped: "not-logged-in" });
+      return loadProgress()
+        .then(function (P) { return P ? P.save(payload) : { ok: false, skipped: "unavailable" }; })
+        .catch(function () { return { ok: false }; });
+    } catch (e) {
+      return Promise.resolve({ ok: false });
+    }
+  };
+
+  function fallbackProgress(payload) {
+    try {
+      var id = payload && payload.gameId;
+      if (!id || !maybeLoggedIn()) return;
+      if (pendingFallback[id]) clearTimeout(pendingFallback[id]);
+      pendingFallback[id] = setTimeout(function () {
+        delete pendingFallback[id];
+        if (Date.now() - (lastExplicit[id] || 0) < 8000) return; // a fuller save already happened
+        loadProgress().then(function (P) { if (P) P.save(payload); }).catch(function () {});
+      }, 1500);
+    } catch (e) {}
+  }
+
   global.LAStars = {
     KEY: STARS_KEY,
     PLAYS_KEY: PLAYS_KEY,
@@ -504,6 +582,7 @@
     var acc = t > 0 ? (s / t) * 100 : 0;
     recordPlay(gameId);
     saveFromAccuracy(gameId, acc);
+    if (t > 0) global.LAProgressSave({ gameId: gameId, score: s, maxScore: t, accuracy: acc, completed: true });
   };
 
   function boot() {

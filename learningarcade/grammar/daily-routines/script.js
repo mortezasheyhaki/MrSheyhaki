@@ -331,6 +331,12 @@
     }
     showScreen("result");
   
+  try {
+    if (window.LAProgressSave) {
+      LAProgressSave({ gameId: "daily-routines", gameName: "Daily Routines", category: "Grammar", unit: "Daily Routines",
+        score: correctCount, maxScore: TOTAL, completed: true });
+    }
+  } catch (eP) {}
   try { if(window.LAStars){LAStars.recordPlay("daily-routines");LAStars.save("daily-routines", typeof score!=="undefined"&&score>=8?3:typeof score!=="undefined"&&score>=5?2:1);} } catch (e) {}
   try {
     if (window.LAScores && LAScores.getPlayerName && LAScores.getPlayerName() && LAScores.getClassCode && LAScores.getClassCode()) {

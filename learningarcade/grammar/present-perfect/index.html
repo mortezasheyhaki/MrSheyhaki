@@ -1569,6 +1569,12 @@
     }
     function ppSubmitScore(correct, total, label) {
       try {
+        if (window.LAProgressSave) {
+          LAProgressSave({ gameId: PP_GAME_ID, gameName: label || "Present Perfect", category: "Grammar", unit: "Present Perfect",
+            score: Number(correct) || 0, maxScore: Number(total) || 0, completed: true });
+        }
+      } catch (eP) {}
+      try {
         if (!window.LAScores || !LAScores.getPlayerName || !LAScores.getPlayerName()) return;
         if (!LAScores.getClassCode || !LAScores.getClassCode()) return;
         LAScores.submit({
