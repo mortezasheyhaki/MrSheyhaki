@@ -76,7 +76,7 @@
   const PARTS = [
     {
       title: "1 · Meeting with the baby",
-      image: "images/1.png",
+      image: "https://cdn.imgurl.ir/uploads/z672370_1.png",
       lines: [
         { speaker: "Gill", text: "Hi Anna!" },
         { speaker: "Anna", text: "Hello Gill.", blank: 0 },
@@ -94,7 +94,7 @@
     },
     {
       title: "2 · At reception",
-      image: "images/2.png",
+      image: "https://cdn.imgurl.ir/uploads/w472027_2.png",
       lines: [
         { speaker: "Woman", text: "", blank: 0 },
         { speaker: "Boy", text: "Henry." },
@@ -115,7 +115,7 @@
     },
     {
       title: "3 · On the phone",
-      image: "images/3.png",
+      image: "https://cdn.imgurl.ir/uploads/866990_3.png",
       lines: [
         { speaker: "Woman 1", text: "", blank: 0 },
         { speaker: "Woman 2", text: "It's 72 Maple Street, Boston." },
