@@ -187,11 +187,11 @@
   ];
 
   const POSE = {
-    waiting: "images/waiting.png",
-    thinking: "images/thinking.png",
-    asking: "images/asking.png",
-    picking: "images/picking.png",
-    success: "images/success.png",
+    waiting: "https://cdn.imgurl.ir/uploads/a41577_waiting.png",
+    thinking: "https://cdn.imgurl.ir/uploads/l567467_thinking.png",
+    asking: "https://cdn.imgurl.ir/uploads/y384181_asking.png",
+    picking: "https://cdn.imgurl.ir/uploads/m599486_picking.png",
+    success: "https://cdn.imgurl.ir/uploads/q30412_success.png",
   };
 
   const app = document.getElementById("game-app");

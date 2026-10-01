@@ -103,7 +103,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.games = [
   { title: "Listen & Write the Numbers", url: "listen-write-numbers/", label: "Vocabulary" },
   { title: "Select the Day You Hear", url: "listen-select-day/", label: "Vocabulary" },
   { title: "Listen & Write (Days)", url: "listen-write-days/", label: "Vocabulary" },
-  { title: "Listen and Choose", url: "listen-choose/", label: "Listening" },
   { title: "Make Questions", url: "make-questions/", label: "Grammar" },
   { title: "Complete the Dialogues", url: "complete-dialogues/", label: "Grammar" },
   { title: "Order the Days", url: "order-days/", label: "Vocabulary" },
