@@ -271,7 +271,21 @@
     var acc = Number(accuracyPercent) || 0;
     var stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 40 ? 1 : 0;
     var best = save(gameId, stars);
-    fallbackProgress({ gameId: gameId, accuracy: acc, stars: stars, completed: true });
+    // Push to Appwrite progress for every game that records accuracy
+    try {
+      if (typeof global.LAProgressSave === "function") {
+        global.LAProgressSave({
+          gameId: gameId,
+          accuracy: acc,
+          stars: stars,
+          completed: true
+        });
+      } else {
+        fallbackProgress({ gameId: gameId, accuracy: acc, stars: stars, completed: true });
+      }
+    } catch (e) {
+      fallbackProgress({ gameId: gameId, accuracy: acc, stars: stars, completed: true });
+    }
     return best;
   }
 
@@ -281,7 +295,18 @@
     if (score >= thresholds[0]) stars = 3;
     else if (score >= thresholds[1]) stars = 2;
     else if (score >= thresholds[2]) stars = 1;
-    return save(gameId, stars);
+    var best = save(gameId, stars);
+    try {
+      if (typeof global.LAProgressSave === "function") {
+        global.LAProgressSave({
+          gameId: gameId,
+          score: Number(score) || 0,
+          stars: stars,
+          completed: true
+        });
+      }
+    } catch (e) {}
+    return best;
   }
 
   /** Increment times played for a game. Returns new total. */
