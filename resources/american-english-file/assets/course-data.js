@@ -98,9 +98,12 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.audio = [
 // Unit 1A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.games = [
   { title: "I am / I'm · You are / You're", url: "be-i-you/", label: "Grammar" },
+  { title: "Sentence Builder · be", url: "sentence-builder-be/", label: "Grammar" },
+  { title: "Type the Sentence · be", url: "type-sentences-be/", label: "Grammar" },
   { title: "Listen & Write the Numbers", url: "listen-write-numbers/", label: "Vocabulary" },
   { title: "Select the Day You Hear", url: "listen-select-day/", label: "Vocabulary" },
   { title: "Listen & Write (Days)", url: "listen-write-days/", label: "Vocabulary" },
+  { title: "Listen and Choose", url: "listen-choose/", label: "Listening" },
   { title: "Make Questions", url: "make-questions/", label: "Grammar" },
   { title: "Complete the Dialogues", url: "complete-dialogues/", label: "Grammar" },
   { title: "Order the Days", url: "order-days/", label: "Vocabulary" },
