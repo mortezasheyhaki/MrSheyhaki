@@ -76,28 +76,28 @@
   const GAME_ID = "starter-1b-is-he-she";
 
   const CELEBS = [
-    { id: 1,  name: "Salma Hayek",      country: "Mexico",            gender: "she", photo: "images/celebs-crop/1.png" },
-    { id: 2,  name: "Mark Zuckerberg",  country: "the United States",  gender: "he",  photo: "images/celebs-crop/2.png" },
-    { id: 3,  name: "Ken Watanabe",     country: "Japan",             gender: "he",  photo: "images/celebs-crop/3.png" },
-    { id: 4,  name: "Eugene Trinh",     country: "Vietnam",           gender: "he",  photo: "images/celebs-crop/4.png" },
-    { id: 5,  name: "Isabel Allende",   country: "Chile",             gender: "she", photo: "images/celebs-crop/5.png" },
-    { id: 6,  name: "Wang Hao",         country: "China",             gender: "he",  photo: "images/celebs-crop/6.png" },
-    { id: 7,  name: "Pedro Almodóvar",  country: "Spain",             gender: "he",  photo: "images/celebs-crop/7.png" },
-    { id: 8,  name: "Ryan Reynolds",    country: "Canada",            gender: "he",  photo: "images/celebs-crop/8.png" },
-    { id: 9,  name: "Chee-Yun",         country: "South Korea",       gender: "she", photo: "images/celebs-crop/9.png" },
-    { id: 10, name: "Emma Watson",      country: "England",           gender: "she", photo: "images/celebs-crop/10.png" },
-    { id: 11, name: "Orhan Pamuk",      country: "Turkey",            gender: "he",  photo: "images/celebs-crop/11.png" },
-    { id: 12, name: "Gisele Bündchen",  country: "Brazil",            gender: "she", photo: "images/celebs-crop/12.png" },
+    { id: 1,  name: "Salma Hayek",      country: "Mexico",            gender: "she", photo: "https://cdn.imgurl.ir/uploads/o40057_1.png", photoFull: "https://cdn.imgurl.ir/uploads/w489627_1.png" },
+    { id: 2,  name: "Mark Zuckerberg",  country: "the United States",  gender: "he",  photo: "https://cdn.imgurl.ir/uploads/d842558_2.png", photoFull: "https://cdn.imgurl.ir/uploads/j657300_2.png" },
+    { id: 3,  name: "Ken Watanabe",     country: "Japan",             gender: "he",  photo: "https://cdn.imgurl.ir/uploads/e283783_3.png", photoFull: "https://cdn.imgurl.ir/uploads/j70620_3.png" },
+    { id: 4,  name: "Eugene Trinh",     country: "Vietnam",           gender: "he",  photo: "https://cdn.imgurl.ir/uploads/h345371_4.png", photoFull: "https://cdn.imgurl.ir/uploads/p866735_4.png" },
+    { id: 5,  name: "Isabel Allende",   country: "Chile",             gender: "she", photo: "https://cdn.imgurl.ir/uploads/m976473_5.png", photoFull: "https://cdn.imgurl.ir/uploads/b105327_5.png" },
+    { id: 6,  name: "Wang Hao",         country: "China",             gender: "he",  photo: "https://cdn.imgurl.ir/uploads/k45244_6.png", photoFull: "https://cdn.imgurl.ir/uploads/h943399_6.png" },
+    { id: 7,  name: "Pedro Almodóvar",  country: "Spain",             gender: "he",  photo: "https://cdn.imgurl.ir/uploads/j61939_7.png", photoFull: "https://cdn.imgurl.ir/uploads/s222546_7.png" },
+    { id: 8,  name: "Ryan Reynolds",    country: "Canada",            gender: "he",  photo: "https://cdn.imgurl.ir/uploads/o53825_8.png", photoFull: "https://cdn.imgurl.ir/uploads/v646821_8.png" },
+    { id: 9,  name: "Chee-Yun",         country: "South Korea",       gender: "she", photo: "https://cdn.imgurl.ir/uploads/p291111_9.png", photoFull: "https://cdn.imgurl.ir/uploads/b91968_9.png" },
+    { id: 10, name: "Emma Watson",      country: "England",           gender: "she", photo: "https://cdn.imgurl.ir/uploads/l60550_10.png", photoFull: "https://cdn.imgurl.ir/uploads/i7872_10.png" },
+    { id: 11, name: "Orhan Pamuk",      country: "Turkey",            gender: "he",  photo: "https://cdn.imgurl.ir/uploads/x470214_11.png", photoFull: "https://cdn.imgurl.ir/uploads/s326902_11.png" },
+    { id: 12, name: "Gisele Bündchen",  country: "Brazil",            gender: "she", photo: "https://cdn.imgurl.ir/uploads/q981359_12.png", photoFull: "https://cdn.imgurl.ir/uploads/g29664_12.png" },
   ];
 
   const COUNTRIES = [...new Set(CELEBS.map(c => c.country))];
 
   const POSE = {
-    waiting:  "images/waiting.png",
-    thinking: "images/thinking.png",
-    asking:   "images/asking.png",
-    picking:  "images/picking.png",
-    success:  "images/success.png",
+    waiting:  "https://cdn.imgurl.ir/uploads/a41577_waiting.png",
+    thinking: "https://cdn.imgurl.ir/uploads/l567467_thinking.png",
+    asking:   "https://cdn.imgurl.ir/uploads/y384181_asking.png",
+    picking:  "https://cdn.imgurl.ir/uploads/m599486_picking.png",
+    success:  "https://cdn.imgurl.ir/uploads/q30412_success.png",
   };
 
   const app = document.getElementById("game-app");
@@ -358,7 +358,7 @@
             <button type="button" class="ish-pick" data-id="${c.id}">
               <div class="ish-pick-photo-wrap">
                 <span class="ish-card-num">${c.id}</span>
-                <img src="${c.photo}" alt="">
+                <img src="${c.photoFull || c.photo}" alt="">
               </div>
               <div class="ish-pick-info">
                 <strong>${escapeHtml(c.name)}</strong>
