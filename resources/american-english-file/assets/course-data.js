@@ -119,6 +119,26 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.worksheet
   { title: "Communicative · Are you…?", url: "1a-communicative-are-you.pdf" },
 ];
 
+// Unit 1B – Audio (World music)
+COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.audio = [
+  { track: "1.16", url: "https://cdn.imgurl.ir/uploads/n952521_AEF3e_Starter_SB_1.16.mp3" },
+  { track: "1.17", url: "https://cdn.imgurl.ir/uploads/k492163_AEF3e_Starter_SB_1.17.mp3" },
+  { track: "1.18", url: "https://cdn.imgurl.ir/uploads/p047886_AEF3e_Starter_SB_1.18.mp3" },
+  { track: "1.19", url: "https://cdn.imgurl.ir/uploads/e4847_AEF3e_Starter_SB_1.19.mp3" },
+  { track: "1.20", url: "https://cdn.imgurl.ir/uploads/b793850_AEF3e_Starter_SB_1.20.mp3" },
+  { track: "1.21", url: "https://cdn.imgurl.ir/uploads/v649303_AEF3e_Starter_SB_1.21.mp3" },
+  { track: "1.22", url: "https://cdn.imgurl.ir/uploads/l480825_AEF3e_Starter_SB_1.22.mp3" },
+  { track: "1.23", url: "https://cdn.imgurl.ir/uploads/q9154_AEF3e_Starter_SB_1.23.mp3" },
+  { track: "1.24", url: "https://cdn.imgurl.ir/uploads/l096219_AEF3e_Starter_SB_1.24.mp3" },
+  { track: "1.25", url: "https://cdn.imgurl.ir/uploads/d757857_AEF3e_Starter_SB_1.25.mp3" },
+  { track: "1.26", url: "https://cdn.imgurl.ir/uploads/i000553_AEF3e_Starter_SB_1.26.mp3" },
+  { track: "1.27", url: "https://cdn.imgurl.ir/uploads/q8379_AEF3e_Starter_SB_1.27.mp3" },
+  { track: "1.28", url: "https://cdn.imgurl.ir/uploads/d413480_AEF3e_Starter_SB_1.28.mp3" },
+  { track: "1.29", url: "https://cdn.imgurl.ir/uploads/r208663_AEF3e_Starter_SB_1.29.mp3" },
+  { track: "1.30", url: "https://cdn.imgurl.ir/uploads/g784419_AEF3e_Starter_SB_1.30.mp3" },
+  { track: "1.31", url: "https://cdn.imgurl.ir/uploads/l648651_AEF3e_Starter_SB_1.31.mp3" },
+];
+
 // Unit 1B – Games (World music)
 COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.games = [
   { title: "Match the Songs", url: "match-songs-countries/", label: "Vocabulary" },
