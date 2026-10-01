@@ -76,7 +76,7 @@
   // Part A: complete the question (Is/Are) + write the answer
   const PART_A = [
     {
-      img: "images/sushi.png",
+      img: "https://cdn.imgurl.ir/uploads/y7040_sushi.png",
       tip: "Negative · it",
       tipType: "neg",
       qParts: [
@@ -95,7 +95,7 @@
       answerModel: "No, it isn't. It's Japanese.",
     },
     {
-      img: "images/rolling-stones.png",
+      img: "https://cdn.imgurl.ir/uploads/s16299_rolling-stones.png",
       tip: "Negative · they",
       tipType: "neg",
       qParts: [
@@ -114,7 +114,7 @@
       answerModel: "No, they aren't. They're British.",
     },
     {
-      img: "images/mount-fuji.png",
+      img: "https://cdn.imgurl.ir/uploads/p656560_mount-fuji.png",
       tip: "Positive · it",
       tipType: "pos",
       qParts: [
@@ -132,7 +132,7 @@
       answerModel: "Yes, it is.",
     },
     {
-      img: "images/victoria-beckham.png",
+      img: "https://cdn.imgurl.ir/uploads/n245512_victoria-beckham.png",
       tip: "Negative · she",
       tipType: "neg",
       qParts: [
@@ -151,7 +151,7 @@
       answerModel: "No, she isn't. She's British.",
     },
     {
-      img: "images/machu-picchu.png",
+      img: "https://cdn.imgurl.ir/uploads/f30845_machu-picchu.png",
       tip: "Positive · it",
       tipType: "pos",
       qParts: [
@@ -173,7 +173,7 @@
   // Also accept Where ... from? forms
   const PART_B = [
     {
-      img: "images/gisele.png",
+      img: "https://cdn.imgurl.ir/uploads/s98443_gisele.png",
       name: "Gisele Bündchen",
       statement: "Gisele Bündchen is Brazilian.",
       accept: [
@@ -190,7 +190,7 @@
       model: "Is she Brazilian?",
     },
     {
-      img: "images/hyundai.png",
+      img: "https://cdn.imgurl.ir/uploads/e385348_hyundai.png",
       name: "Hyundai",
       statement: "Hyundai cars are Korean.",
       accept: [
@@ -204,7 +204,7 @@
       model: "Are they Korean?",
     },
     {
-      img: "images/tacos.png",
+      img: "https://cdn.imgurl.ir/uploads/i282290_tacos.png",
       name: "Tacos",
       statement: "Tacos are Mexican.",
       accept: [
@@ -216,7 +216,7 @@
       model: "Are they Mexican?",
     },
     {
-      img: "images/antonio-banderas.png",
+      img: "https://cdn.imgurl.ir/uploads/h672107_antonio-banderas.png",
       name: "Antonio Banderas",
       statement: "Antonio Banderas is Spanish.",
       accept: [
@@ -232,7 +232,7 @@
       model: "Is he Spanish?",
     },
     {
-      img: "images/coke-pepsi.png",
+      img: "https://cdn.imgurl.ir/uploads/i62187_coke-pepsi.png",
       name: "Coke and Pepsi",
       statement: "Coke and Pepsi are American.",
       accept: [

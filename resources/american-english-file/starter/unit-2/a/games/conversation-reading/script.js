@@ -194,7 +194,7 @@
   let readingOpen = true;
   let correctCount = 0;
   let currentAudio = null;
-  const AUDIO_SRC = "audio/conversation.mp3";
+  const AUDIO_SRC = "https://cdn.imgurl.ir/uploads/s88918_conversation.mp3";
 
   const app = document.getElementById("game-app");
 
