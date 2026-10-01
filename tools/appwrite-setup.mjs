@@ -9,7 +9,7 @@ import { Client, TablesDB, Permission, Role } from "node-appwrite";
 
 const ENDPOINT = "https://fra.cloud.appwrite.io/v1";
 const PROJECT_ID = "6aafc5370019ebd5da7c";
-const DATABASE_ID = "6aafc5ce007461d09d3";
+const DATABASE_ID = "6aafc5ce0007461d09d3";
 if (!process.env.APPWRITE_API_KEY) { console.error("Set APPWRITE_API_KEY first."); process.exit(1); }
 
 const db = new TablesDB(new Client().setEndpoint(ENDPOINT).setProject(PROJECT_ID).setKey(process.env.APPWRITE_API_KEY));
