@@ -61,7 +61,7 @@
   const ITEMS = [
     {
       id: "laptop",
-      image: "images/laptop.png",
+      image: "https://cdn.imgurl.ir/uploads/i65362_laptop.png",
       type: "singular",
       qAnswers: ["what is it", "what's it"],
       aAnswers: ["it's a laptop", "it is a laptop", "a laptop"],
@@ -70,7 +70,7 @@
     },
     {
       id: "watches",
-      image: "https://cdn.imgurl.ir/uploads/y08797_a_watch_1.png",
+      image: "https://cdn.imgurl.ir/uploads/c5210_watches.png",
       type: "plural",
       qAnswers: ["what are they"],
       aAnswers: ["they're watches", "they are watches", "watches"],
@@ -79,7 +79,7 @@
     },
     {
       id: "coat",
-      image: "images/coat.png",
+      image: "https://cdn.imgurl.ir/uploads/i1932_coat.png",
       type: "singular",
       qAnswers: ["what is it", "what's it"],
       aAnswers: ["it's a coat", "it is a coat", "a coat"],
@@ -88,7 +88,7 @@
     },
     {
       id: "keys",
-      image: "https://cdn.imgurl.ir/uploads/r0663_a_key_1.png",
+      image: "https://cdn.imgurl.ir/uploads/o0639_keys.png",
       type: "plural",
       qAnswers: ["what are they"],
       aAnswers: ["they're keys", "they are keys", "keys"],
@@ -97,7 +97,7 @@
     },
     {
       id: "umbrella",
-      image: "https://cdn.imgurl.ir/uploads/a45664_an_umbrella_1.png",
+      image: "https://cdn.imgurl.ir/uploads/h825990_umbrella.png",
       type: "singular",
       qAnswers: ["what is it", "what's it"],
       aAnswers: ["it's an umbrella", "it is an umbrella", "an umbrella", "it's a umbrella", "a umbrella"],
@@ -106,7 +106,7 @@
     },
     {
       id: "id-card",
-      image: "images/id-card.png",
+      image: "https://cdn.imgurl.ir/uploads/d612286_id-card.png",
       type: "singular",
       qAnswers: ["what is it", "what's it"],
       aAnswers: ["it's an id card", "it is an id card", "an id card", "it's a id card", "id card", "it's an identity card"],
@@ -115,7 +115,7 @@
     },
     {
       id: "charger",
-      image: "https://cdn.imgurl.ir/uploads/e590817_charger_1.png",
+      image: "https://cdn.imgurl.ir/uploads/n93189_charger.png",
       type: "singular",
       qAnswers: ["what is it", "what's it"],
       aAnswers: ["it's a charger", "it is a charger", "a charger"],
@@ -124,7 +124,7 @@
     },
     {
       id: "glasses",
-      image: "https://cdn.imgurl.ir/uploads/t135626_sungles_1.png",
+      image: "https://cdn.imgurl.ir/uploads/b197798_gles.png",
       type: "plural",
       qAnswers: ["what are they"],
       aAnswers: ["they're glasses", "they are glasses", "glasses"],
@@ -133,7 +133,7 @@
     },
     {
       id: "purse",
-      image: "images/purse.png",
+      image: "https://cdn.imgurl.ir/uploads/s138600_purse.png",
       type: "singular",
       qAnswers: ["what is it", "what's it"],
       aAnswers: ["it's a purse", "it is a purse", "a purse", "it's a bag", "a bag"],
@@ -142,7 +142,7 @@
     },
     {
       id: "books",
-      image: "images/books.png",
+      image: "https://cdn.imgurl.ir/uploads/i992666_books.png",
       type: "plural",
       qAnswers: ["what are they"],
       aAnswers: ["they're books", "they are books", "books"],
