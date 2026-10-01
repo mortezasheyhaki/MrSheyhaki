@@ -23,7 +23,7 @@
 
   var ENDPOINT = "https://fra.cloud.appwrite.io/v1";
   var PROJECT_ID = "6aafc5370019ebd5da7c";
-  var DATABASE_ID = "6aafc5ce007461d09d3";
+  var DATABASE_ID = "6aafc5ce0007461d09d3";
   var LEGACY_PLAYERS_TABLE = "6aafca9b002d3c88262e"; // old table, only read for one-time migration
   var EMAIL_DOMAIN = "players.mrsheyhaki.ir";
   var MIN_PASSWORD = 8; // Appwrite Auth minimum
