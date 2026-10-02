@@ -653,6 +653,9 @@ COURSE_DATA["teen2teen"].levels["1"].units[11].games = [
   { title: "Abilities Flashcards", url: "games/abilities-flashcards/", label: "Vocabulary" },
   { title: "Abilities Match", url: "games/abilities-match/", label: "Vocabulary" },
   { title: "Sound Match Picture · Abilities", url: "games/abilities-sound-match-picture/", label: "Listening" },
+  { title: "Abilities Bingo", url: "games/abilities-bingo/", label: "Listening" },
+  { title: "Unscramble Abilities", url: "games/abilities-unscramble/", label: "Vocabulary" },
+  { title: "Listen & Write", url: "games/abilities-listen-write/", label: "Listening" },
 ];
 
 // T2T2 Unit 1 – Present continuous
