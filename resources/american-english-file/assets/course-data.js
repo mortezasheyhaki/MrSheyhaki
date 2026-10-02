@@ -228,19 +228,39 @@ COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.games = [
   { title: "Word Order Questions", url: "word-order-questions/", label: "Grammar" },
 ];
 
-// Unit 3A – Games
+// Unit 3A – Games (Where are my keys?)
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
-  { title: "Pictures + Words Match", url: "pictures-words-match/" },
-  { title: "A or An Swipe", url: "a-an-swipe/" },
-  { title: "Plural -s Sound Match", url: "plural-s-sound-match/" },
-  { title: "What's in Your Bag?", url: "whats-in-your-bag/" },
+  { title: "Pictures + Words Match", url: "pictures-words-match/", label: "Vocabulary" },
+  { title: "A or An Swipe", url: "a-an-swipe/", label: "Grammar" },
+  { title: "Plural -s Sound Match", url: "plural-s-sound-match/", label: "Pronunciation" },
+  { title: "Plurals Match", url: "plural-match/", label: "Vocabulary" },
+  { title: "Singular ↔ Plural", url: "sing-plur-match/", label: "Vocabulary" },
+  { title: "Singular ↔ Plural Sentences", url: "sing-plur-sentences/", label: "Grammar" },
+  { title: "Make Plurals", url: "make-plurals/", label: "Grammar" },
+  { title: "What is it?", url: "what-is-it/", label: "Speaking" },
+  { title: "Ask & Answer", url: "q-and-a/", label: "Speaking" },
+  { title: "What's in Your Bag?", url: "whats-in-your-bag/", label: "Speaking" },
+  { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
+  { title: "Listen & Number", url: "listen-number/", label: "Listening" },
+  { title: "Listen and Say the Plural", url: "listen-say-plural/", label: "Speaking" },
+  { title: "Look & Listen Write", url: "look-listen-write/", label: "Listening" },
+  { title: "Unscramble", url: "unscramble/", label: "Vocabulary" },
 ];
 
-// Unit 3B – Games
+// Unit 3B – Games (Souvenirs)
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.games = [
-  { title: "Listen & Match", url: "listen-match/" },
-  { title: "Dialogue Completer", url: "dialogue-completer/" },
-  { title: "This / That Sentences", url: "this-that-sentences/" },
+  { title: "Listen & Match", url: "listen-match/", label: "Listening" },
+  { title: "Listen & Complete", url: "listen-complete/", label: "Listening" },
+  { title: "Dialogue Completer", url: "dialogue-completer/", label: "Grammar" },
+  { title: "This / That Sentences", url: "this-that-sentences/", label: "Grammar" },
+  { title: "This / That Mix", url: "this-that-mix/", label: "Grammar" },
+  { title: "Question Builder", url: "question-builder/", label: "Grammar" },
+  { title: "Sentence Unscramble", url: "sentence-unscramble/", label: "Grammar" },
+  { title: "Souvenirs Match", url: "souvenirs-match/", label: "Vocabulary" },
+  { title: "Souvenirs Listen & Choose", url: "souvenirs-listen-choose/", label: "Listening" },
+  { title: "Souvenirs Listen & Write", url: "souvenirs-listen-write/", label: "Listening" },
+  { title: "Souvenirs Unscramble", url: "souvenirs-unscramble/", label: "Vocabulary" },
+  { title: "Souvenirs Shop", url: "souvenirs-shop/", label: "Speaking" },
 ];
 
 // Unit 4A – People & Family / Possessives
