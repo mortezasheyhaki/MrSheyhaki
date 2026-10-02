@@ -74,11 +74,11 @@
       hintOpen: "Look at the items. Write a sentence starting with “I have…”",
       modeClass: "",
       items: [
-        { id: "notebook", label: "NOTEBOOK", name: "notebook", count: 1, aliases: ["notebook", "a notebook"], img: "item-notebook.png" },
-        { id: "pencil", label: "PENCIL", name: "pencil", count: 2, aliases: ["pencil", "pencils", "two pencils", "2 pencils"], imgs: ["item-pencil1.png", "item-pencil2.png"] },
-        { id: "book", label: "BOOK", name: "book", count: 1, aliases: ["book", "a book"], img: "item-book.png" },
-        { id: "pen", label: "PEN", name: "pen", count: 2, aliases: ["pen", "pens", "two pens", "2 pens"], imgs: ["item-pen1.png", "item-pen2.png"] },
-        { id: "phone", label: "PHONE", name: "phone", count: 1, aliases: ["phone", "a phone", "cell phone", "a cell phone", "mobile", "a mobile"], img: "item-phone.png" },
+        { id: "notebook", label: "NOTEBOOK", name: "notebook", count: 1, aliases: ["notebook", "a notebook"], img: "https://cdn.imgurl.ir/uploads/s0536_item-notebook.png" },
+        { id: "pencil", label: "PENCIL", name: "pencil", count: 2, aliases: ["pencil", "pencils", "two pencils", "2 pencils"], imgs: ["https://cdn.imgurl.ir/uploads/w116961_item-pencil1.png", "https://cdn.imgurl.ir/uploads/h610321_item-pencil2.png"] },
+        { id: "book", label: "BOOK", name: "book", count: 1, aliases: ["book", "a book"], img: "https://cdn.imgurl.ir/uploads/f7172_item-book.png" },
+        { id: "pen", label: "PEN", name: "pen", count: 2, aliases: ["pen", "pens", "two pens", "2 pens"], imgs: ["https://cdn.imgurl.ir/uploads/l420797_item-pen1.png", "https://cdn.imgurl.ir/uploads/a70699_item-pen2.png"] },
+        { id: "phone", label: "PHONE", name: "phone", count: 1, aliases: ["phone", "a phone", "cell phone", "a cell phone", "mobile", "a mobile"], img: "https://cdn.imgurl.ir/uploads/w519777_item-phone.png" },
       ],
     },
     {
@@ -101,7 +101,7 @@
             "card", "cards", "two cards", "2 cards",
             "debit card", "debit cards",
           ],
-          imgs: ["item-card1.png", "item-card2.png"],
+          imgs: ["https://cdn.imgurl.ir/uploads/q88003_item-card1.png", "https://cdn.imgurl.ir/uploads/z550_item-card2.png"],
         },
         {
           id: "id-card",
@@ -113,7 +113,7 @@
             "identity card", "an identity card",
             "id", "an id", "identification",
           ],
-          img: "item-id.png",
+          img: "https://cdn.imgurl.ir/uploads/g774052_item-id.png",
         },
         {
           id: "money",
@@ -126,7 +126,7 @@
             "dollars", "dollar bills", "bills",
             "100 dollars", "dollars",
           ],
-          img: "item-money.png",
+          img: "https://cdn.imgurl.ir/uploads/a239201_item-money.png",
         },
       ],
     },

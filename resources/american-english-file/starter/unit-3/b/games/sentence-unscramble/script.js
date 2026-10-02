@@ -74,29 +74,29 @@
   const GAME_ID = "starter-3b-sentence-unscramble";
 
   const SINGULAR = [
-    { id: "umbrella",  words: ["This", "is", "an", "umbrella"],  image: "images/this-is-an-umbrella.png" },
-    { id: "id-card",   words: ["That", "is", "an", "ID", "card"], image: "images/that-is-an-id-card.png" },
-    { id: "photo",     words: ["That", "is", "a", "photo"],      image: "images/that-is-a-photo.png" },
-    { id: "passport",  words: ["That", "is", "a", "passport"],   image: "images/that-is-a-passport.png" },
-    { id: "tv",        words: ["That", "is", "a", "TV"],         image: "images/that-is-a-tv.png" },
-    { id: "notebook",  words: ["That", "is", "a", "notebook"],   image: "images/that-is-a-notebook.png" },
-    { id: "laptop",    words: ["This", "is", "a", "laptop"],     image: "images/this-is-a-laptop.png" },
-    { id: "charger",   words: ["This", "is", "a", "charger"],    image: "images/this-is-a-charger.png" },
-    { id: "book",      words: ["This", "is", "a", "book"],       image: "images/this-is-a-book.png" },
-    { id: "key",       words: ["This", "is", "a", "key"],        image: "images/this-is-a-key.png" },
+    { id: "umbrella",  words: ["This", "is", "an", "umbrella"],  image: "https://cdn.imgurl.ir/uploads/s08749_this-is-an-umbrella.png" },
+    { id: "id-card",   words: ["That", "is", "an", "ID", "card"], image: "https://cdn.imgurl.ir/uploads/m885566_that-is-an-id-card.png" },
+    { id: "photo",     words: ["That", "is", "a", "photo"],      image: "https://cdn.imgurl.ir/uploads/g559250_that-is-a-photo.png" },
+    { id: "passport",  words: ["That", "is", "a", "passport"],   image: "https://cdn.imgurl.ir/uploads/b76248_that-is-a-pport.png" },
+    { id: "tv",        words: ["That", "is", "a", "TV"],         image: "https://cdn.imgurl.ir/uploads/y84190_that-is-a-tv.png" },
+    { id: "notebook",  words: ["That", "is", "a", "notebook"],   image: "https://cdn.imgurl.ir/uploads/a5415_that-is-a-notebook.png" },
+    { id: "laptop",    words: ["This", "is", "a", "laptop"],     image: "https://cdn.imgurl.ir/uploads/h406834_this-is-a-laptop.png" },
+    { id: "charger",   words: ["This", "is", "a", "charger"],    image: "https://cdn.imgurl.ir/uploads/r125090_this-is-a-charger.png" },
+    { id: "book",      words: ["This", "is", "a", "book"],       image: "https://cdn.imgurl.ir/uploads/u262021_this-is-a-book.png" },
+    { id: "key",       words: ["This", "is", "a", "key"],        image: "https://cdn.imgurl.ir/uploads/g910524_this-is-a-key.png" },
   ];
 
   const PLURAL = [
-    { id: "phones",    words: ["Those", "are", "phones"],     image: "images/those-are-phones.png" },
-    { id: "windows",   words: ["Those", "are", "windows"],    image: "images/those-are-windows.png" },
-    { id: "coats",     words: ["Those", "are", "coats"],      image: "images/those-are-coats.png" },
-    { id: "keys",      words: ["Those", "are", "keys"],       image: "images/those-are-keys.png" },
-    { id: "keychains", words: ["Those", "are", "keychains"],  image: "images/those-are-keychains.png" },
-    { id: "watches",   words: ["These", "are", "watches"],    image: "images/these-are-watches.png" },
-    { id: "tshirts",   words: ["These", "are", "T-shirts"],   image: "images/these-are-tshirts.png" },
-    { id: "chairs",    words: ["These", "are", "chairs"],     image: "images/these-are-chairs.png" },
-    { id: "mugs",      words: ["These", "are", "mugs"],       image: "images/these-are-mugs.png" },
-    { id: "glasses",   words: ["These", "are", "glasses"],    image: "images/these-are-glasses.png" },
+    { id: "phones",    words: ["Those", "are", "phones"],     image: "https://cdn.imgurl.ir/uploads/e146762_those-are-phones.png" },
+    { id: "windows",   words: ["Those", "are", "windows"],    image: "https://cdn.imgurl.ir/uploads/n6867_those-are-windows.png" },
+    { id: "coats",     words: ["Those", "are", "coats"],      image: "https://cdn.imgurl.ir/uploads/i46289_those-are-coats.png" },
+    { id: "keys",      words: ["Those", "are", "keys"],       image: "https://cdn.imgurl.ir/uploads/p705272_those-are-keys.png" },
+    { id: "keychains", words: ["Those", "are", "keychains"],  image: "https://cdn.imgurl.ir/uploads/q842406_those-are-keychains.png" },
+    { id: "watches",   words: ["These", "are", "watches"],    image: "https://cdn.imgurl.ir/uploads/u4525_these-are-watches.png" },
+    { id: "tshirts",   words: ["These", "are", "T-shirts"],   image: "https://cdn.imgurl.ir/uploads/g05266_these-are-tshirts.png" },
+    { id: "chairs",    words: ["These", "are", "chairs"],     image: "https://cdn.imgurl.ir/uploads/y290574_these-are-chairs.png" },
+    { id: "mugs",      words: ["These", "are", "mugs"],       image: "https://cdn.imgurl.ir/uploads/y509230_these-are-mugs.png" },
+    { id: "glasses",   words: ["These", "are", "glasses"],    image: "https://cdn.imgurl.ir/uploads/y65591_these-are-gles.png" },
   ];
 
   const MODES = [

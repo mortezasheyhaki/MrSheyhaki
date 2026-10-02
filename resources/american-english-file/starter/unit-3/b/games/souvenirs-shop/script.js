@@ -74,14 +74,14 @@
   const GAME_ID = "starter-3b-souvenirs-shop";
 
   const IMG = {
-    idle: "images/girl1.png",
-    help: "images/girl3.png",
-    lookA: "images/girl4.png", // caps, toys, maps, pens
-    lookB: "images/girl5.png", // t-shirt, mugs, notebooks
-    phone: "images/girl6.png", // keychains
-    phoneStart: "images/girl2.png", // after pressing Speak / listening
-    bag: "images/girl8.png",
-    money: "images/girl9.png",
+    idle: "https://cdn.imgurl.ir/uploads/a597587_girl1.png",
+    help: "https://cdn.imgurl.ir/uploads/b740984_girl3.png",
+    lookA: "https://cdn.imgurl.ir/uploads/a053056_girl4.png", // caps, toys, maps, pens
+    lookB: "https://cdn.imgurl.ir/uploads/u786417_girl5.png", // t-shirt, mugs, notebooks
+    phone: "https://cdn.imgurl.ir/uploads/u597936_girl6.png", // keychains
+    phoneStart: "https://cdn.imgurl.ir/uploads/y428429_girl2.png", // after pressing Speak / listening
+    bag: "https://cdn.imgurl.ir/uploads/s870033_girl8.png",
+    money: "https://cdn.imgurl.ir/uploads/6038_girl9.png",
   };
 
   const ITEMS = [

@@ -75,29 +75,29 @@
 
   const ITEMS = [
     // Singular – this
-    { id: "umbrella",  answer: "an umbrella",  question: "What is this?",  sentence: "This is an umbrella.",  image: "images/this-is-an-umbrella.png" },
-    { id: "laptop",    answer: "a laptop",     question: "What is this?",  sentence: "This is a laptop.",     image: "images/this-is-a-laptop.png" },
-    { id: "charger",   answer: "a charger",    question: "What is this?",  sentence: "This is a charger.",    image: "images/this-is-a-charger.png" },
-    { id: "book",      answer: "a book",       question: "What is this?",  sentence: "This is a book.",       image: "images/this-is-a-book.png" },
-    { id: "key",       answer: "a key",        question: "What is this?",  sentence: "This is a key.",        image: "images/this-is-a-key.png" },
+    { id: "umbrella",  answer: "an umbrella",  question: "What is this?",  sentence: "This is an umbrella.",  image: "https://cdn.imgurl.ir/uploads/s08749_this-is-an-umbrella.png" },
+    { id: "laptop",    answer: "a laptop",     question: "What is this?",  sentence: "This is a laptop.",     image: "https://cdn.imgurl.ir/uploads/h406834_this-is-a-laptop.png" },
+    { id: "charger",   answer: "a charger",    question: "What is this?",  sentence: "This is a charger.",    image: "https://cdn.imgurl.ir/uploads/r125090_this-is-a-charger.png" },
+    { id: "book",      answer: "a book",       question: "What is this?",  sentence: "This is a book.",       image: "https://cdn.imgurl.ir/uploads/u262021_this-is-a-book.png" },
+    { id: "key",       answer: "a key",        question: "What is this?",  sentence: "This is a key.",        image: "https://cdn.imgurl.ir/uploads/g910524_this-is-a-key.png" },
     // Singular – that
-    { id: "id-card",   answer: "an ID card",   question: "What is that?",  sentence: "That is an ID card.",   image: "images/that-is-an-id-card.png" },
-    { id: "photo",     answer: "a photo",      question: "What is that?",  sentence: "That is a photo.",      image: "images/that-is-a-photo.png" },
-    { id: "passport",  answer: "a passport",   question: "What is that?",  sentence: "That is a passport.",   image: "images/that-is-a-passport.png" },
-    { id: "tv",        answer: "a TV",         question: "What is that?",  sentence: "That is a TV.",         image: "images/that-is-a-tv.png" },
-    { id: "notebook",  answer: "a notebook",   question: "What is that?",  sentence: "That is a notebook.",   image: "images/that-is-a-notebook.png" },
+    { id: "id-card",   answer: "an ID card",   question: "What is that?",  sentence: "That is an ID card.",   image: "https://cdn.imgurl.ir/uploads/m885566_that-is-an-id-card.png" },
+    { id: "photo",     answer: "a photo",      question: "What is that?",  sentence: "That is a photo.",      image: "https://cdn.imgurl.ir/uploads/g559250_that-is-a-photo.png" },
+    { id: "passport",  answer: "a passport",   question: "What is that?",  sentence: "That is a passport.",   image: "https://cdn.imgurl.ir/uploads/b76248_that-is-a-pport.png" },
+    { id: "tv",        answer: "a TV",         question: "What is that?",  sentence: "That is a TV.",         image: "https://cdn.imgurl.ir/uploads/y84190_that-is-a-tv.png" },
+    { id: "notebook",  answer: "a notebook",   question: "What is that?",  sentence: "That is a notebook.",   image: "https://cdn.imgurl.ir/uploads/a5415_that-is-a-notebook.png" },
     // Plural – those
-    { id: "phones",    answer: "phones",       question: "What are those?", sentence: "Those are phones.",    image: "images/those-are-phones.png" },
-    { id: "windows",   answer: "windows",      question: "What are those?", sentence: "Those are windows.",   image: "images/those-are-windows.png" },
-    { id: "coats",     answer: "coats",        question: "What are those?", sentence: "Those are coats.",     image: "images/those-are-coats.png" },
-    { id: "keys",      answer: "keys",         question: "What are those?", sentence: "Those are keys.",      image: "images/those-are-keys.png" },
-    { id: "keychains", answer: "keychains",    question: "What are those?", sentence: "Those are keychains.", image: "images/those-are-keychains.png" },
+    { id: "phones",    answer: "phones",       question: "What are those?", sentence: "Those are phones.",    image: "https://cdn.imgurl.ir/uploads/e146762_those-are-phones.png" },
+    { id: "windows",   answer: "windows",      question: "What are those?", sentence: "Those are windows.",   image: "https://cdn.imgurl.ir/uploads/n6867_those-are-windows.png" },
+    { id: "coats",     answer: "coats",        question: "What are those?", sentence: "Those are coats.",     image: "https://cdn.imgurl.ir/uploads/i46289_those-are-coats.png" },
+    { id: "keys",      answer: "keys",         question: "What are those?", sentence: "Those are keys.",      image: "https://cdn.imgurl.ir/uploads/p705272_those-are-keys.png" },
+    { id: "keychains", answer: "keychains",    question: "What are those?", sentence: "Those are keychains.", image: "https://cdn.imgurl.ir/uploads/q842406_those-are-keychains.png" },
     // Plural – these
-    { id: "watches",   answer: "watches",      question: "What are these?", sentence: "These are watches.",   image: "images/these-are-watches.png" },
-    { id: "tshirts",   answer: "T-shirts",     question: "What are these?", sentence: "These are T-shirts.",  image: "images/these-are-tshirts.png" },
-    { id: "chairs",    answer: "chairs",       question: "What are these?", sentence: "These are chairs.",    image: "images/these-are-chairs.png" },
-    { id: "mugs",      answer: "mugs",         question: "What are these?", sentence: "These are mugs.",      image: "images/these-are-mugs.png" },
-    { id: "glasses",   answer: "glasses",      question: "What are these?", sentence: "These are glasses.",   image: "images/these-are-glasses.png" },
+    { id: "watches",   answer: "watches",      question: "What are these?", sentence: "These are watches.",   image: "https://cdn.imgurl.ir/uploads/u4525_these-are-watches.png" },
+    { id: "tshirts",   answer: "T-shirts",     question: "What are these?", sentence: "These are T-shirts.",  image: "https://cdn.imgurl.ir/uploads/g05266_these-are-tshirts.png" },
+    { id: "chairs",    answer: "chairs",       question: "What are these?", sentence: "These are chairs.",    image: "https://cdn.imgurl.ir/uploads/y290574_these-are-chairs.png" },
+    { id: "mugs",      answer: "mugs",         question: "What are these?", sentence: "These are mugs.",      image: "https://cdn.imgurl.ir/uploads/y509230_these-are-mugs.png" },
+    { id: "glasses",   answer: "glasses",      question: "What are these?", sentence: "These are glasses.",   image: "https://cdn.imgurl.ir/uploads/y65591_these-are-gles.png" },
   ];
 
   const app = document.getElementById("game-app");

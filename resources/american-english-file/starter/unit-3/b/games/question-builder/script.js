@@ -76,29 +76,29 @@
   // answer = what is shown under the picture
   // words = the question to build
   const SINGULAR = [
-    { id: "umbrella",  answer: "an umbrella",  words: ["What", "is", "this", "?"],  image: "images/this-is-an-umbrella.png" },
-    { id: "id-card",   answer: "an ID card",   words: ["What", "is", "that", "?"],  image: "images/that-is-an-id-card.png" },
-    { id: "photo",     answer: "a photo",      words: ["What", "is", "that", "?"],  image: "images/that-is-a-photo.png" },
-    { id: "passport",  answer: "a passport",   words: ["What", "is", "that", "?"],  image: "images/that-is-a-passport.png" },
-    { id: "tv",        answer: "a TV",         words: ["What", "is", "that", "?"],  image: "images/that-is-a-tv.png" },
-    { id: "notebook",  answer: "a notebook",   words: ["What", "is", "that", "?"],  image: "images/that-is-a-notebook.png" },
-    { id: "laptop",    answer: "a laptop",     words: ["What", "is", "this", "?"],  image: "images/this-is-a-laptop.png" },
-    { id: "charger",   answer: "a charger",    words: ["What", "is", "this", "?"],  image: "images/this-is-a-charger.png" },
-    { id: "book",      answer: "a book",       words: ["What", "is", "this", "?"],  image: "images/this-is-a-book.png" },
-    { id: "key",       answer: "a key",        words: ["What", "is", "this", "?"],  image: "images/this-is-a-key.png" },
+    { id: "umbrella",  answer: "an umbrella",  words: ["What", "is", "this", "?"],  image: "https://cdn.imgurl.ir/uploads/s08749_this-is-an-umbrella.png" },
+    { id: "id-card",   answer: "an ID card",   words: ["What", "is", "that", "?"],  image: "https://cdn.imgurl.ir/uploads/m885566_that-is-an-id-card.png" },
+    { id: "photo",     answer: "a photo",      words: ["What", "is", "that", "?"],  image: "https://cdn.imgurl.ir/uploads/g559250_that-is-a-photo.png" },
+    { id: "passport",  answer: "a passport",   words: ["What", "is", "that", "?"],  image: "https://cdn.imgurl.ir/uploads/b76248_that-is-a-pport.png" },
+    { id: "tv",        answer: "a TV",         words: ["What", "is", "that", "?"],  image: "https://cdn.imgurl.ir/uploads/y84190_that-is-a-tv.png" },
+    { id: "notebook",  answer: "a notebook",   words: ["What", "is", "that", "?"],  image: "https://cdn.imgurl.ir/uploads/a5415_that-is-a-notebook.png" },
+    { id: "laptop",    answer: "a laptop",     words: ["What", "is", "this", "?"],  image: "https://cdn.imgurl.ir/uploads/h406834_this-is-a-laptop.png" },
+    { id: "charger",   answer: "a charger",    words: ["What", "is", "this", "?"],  image: "https://cdn.imgurl.ir/uploads/r125090_this-is-a-charger.png" },
+    { id: "book",      answer: "a book",       words: ["What", "is", "this", "?"],  image: "https://cdn.imgurl.ir/uploads/u262021_this-is-a-book.png" },
+    { id: "key",       answer: "a key",        words: ["What", "is", "this", "?"],  image: "https://cdn.imgurl.ir/uploads/g910524_this-is-a-key.png" },
   ];
 
   const PLURAL = [
-    { id: "phones",    answer: "phones",     words: ["What", "are", "those", "?"], image: "images/those-are-phones.png" },
-    { id: "windows",   answer: "windows",    words: ["What", "are", "those", "?"], image: "images/those-are-windows.png" },
-    { id: "coats",     answer: "coats",      words: ["What", "are", "those", "?"], image: "images/those-are-coats.png" },
-    { id: "keys",      answer: "keys",       words: ["What", "are", "those", "?"], image: "images/those-are-keys.png" },
-    { id: "keychains", answer: "keychains",  words: ["What", "are", "those", "?"], image: "images/those-are-keychains.png" },
-    { id: "watches",   answer: "watches",    words: ["What", "are", "these", "?"], image: "images/these-are-watches.png" },
-    { id: "tshirts",   answer: "T-shirts",   words: ["What", "are", "these", "?"], image: "images/these-are-tshirts.png" },
-    { id: "chairs",    answer: "chairs",     words: ["What", "are", "these", "?"], image: "images/these-are-chairs.png" },
-    { id: "mugs",      answer: "mugs",       words: ["What", "are", "these", "?"], image: "images/these-are-mugs.png" },
-    { id: "glasses",   answer: "glasses",    words: ["What", "are", "these", "?"], image: "images/these-are-glasses.png" },
+    { id: "phones",    answer: "phones",     words: ["What", "are", "those", "?"], image: "https://cdn.imgurl.ir/uploads/e146762_those-are-phones.png" },
+    { id: "windows",   answer: "windows",    words: ["What", "are", "those", "?"], image: "https://cdn.imgurl.ir/uploads/n6867_those-are-windows.png" },
+    { id: "coats",     answer: "coats",      words: ["What", "are", "those", "?"], image: "https://cdn.imgurl.ir/uploads/i46289_those-are-coats.png" },
+    { id: "keys",      answer: "keys",       words: ["What", "are", "those", "?"], image: "https://cdn.imgurl.ir/uploads/p705272_those-are-keys.png" },
+    { id: "keychains", answer: "keychains",  words: ["What", "are", "those", "?"], image: "https://cdn.imgurl.ir/uploads/q842406_those-are-keychains.png" },
+    { id: "watches",   answer: "watches",    words: ["What", "are", "these", "?"], image: "https://cdn.imgurl.ir/uploads/u4525_these-are-watches.png" },
+    { id: "tshirts",   answer: "T-shirts",   words: ["What", "are", "these", "?"], image: "https://cdn.imgurl.ir/uploads/g05266_these-are-tshirts.png" },
+    { id: "chairs",    answer: "chairs",     words: ["What", "are", "these", "?"], image: "https://cdn.imgurl.ir/uploads/y290574_these-are-chairs.png" },
+    { id: "mugs",      answer: "mugs",       words: ["What", "are", "these", "?"], image: "https://cdn.imgurl.ir/uploads/y509230_these-are-mugs.png" },
+    { id: "glasses",   answer: "glasses",    words: ["What", "are", "these", "?"], image: "https://cdn.imgurl.ir/uploads/y65591_these-are-gles.png" },
   ];
 
   const MODES = [

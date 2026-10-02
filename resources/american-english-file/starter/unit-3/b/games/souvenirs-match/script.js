@@ -74,14 +74,14 @@
   const GAME_ID = "starter-3b-souvenirs-match";
 
   const ITEMS = [
-    { id: "cap",        label: "a cap",        short: "cap",        audio: "../../media/audio/cap.mp3",        image: "../../media/images/cap.png" },
-    { id: "t-shirt",    label: "a T-shirt",    short: "T-shirt",    audio: "../../media/audio/t-shirt.mp3",    image: "../../media/images/t-shirt.png" },
-    { id: "toy",        label: "a toy",        short: "toy",        audio: "../../media/audio/toy.mp3",        image: "../../media/images/toy.png" },
-    { id: "sunglasses", label: "sunglasses",   short: "sunglasses", audio: "../../media/audio/sunglasses.mp3", image: "../../media/images/sunglasses.png" },
-    { id: "mug",        label: "a mug",        short: "mug",        audio: "../../media/audio/mug.mp3",        image: "../../media/images/mug.png" },
-    { id: "keychain",   label: "a keychain",   short: "keychain",   audio: "../../media/audio/keychain.mp3",   image: "../../media/images/keychain.png" },
-    { id: "postcard",   label: "a postcard",   short: "postcard",   audio: "../../media/audio/postcard.mp3",   image: "../../media/images/postcard.png" },
-    { id: "map",        label: "a map",        short: "map",        audio: "../../media/audio/map.mp3",        image: "../../media/images/map.png" },
+    { id: "cap",        label: "a cap",        short: "cap",        audio: "https://cdn.imgurl.ir/uploads/f408677_cap.mp3",        image: "https://cdn.imgurl.ir/uploads/b848902_cap.png" },
+    { id: "t-shirt",    label: "a T-shirt",    short: "T-shirt",    audio: "https://cdn.imgurl.ir/uploads/x523740_t-shirt.mp3",    image: "https://cdn.imgurl.ir/uploads/h586522_t-shirt.png" },
+    { id: "toy",        label: "a toy",        short: "toy",        audio: "https://cdn.imgurl.ir/uploads/s060406_toy.mp3",        image: "https://cdn.imgurl.ir/uploads/n30089_toy.png" },
+    { id: "sunglasses", label: "sunglasses",   short: "sunglasses", audio: "https://cdn.imgurl.ir/uploads/g287156_sungles.mp3", image: "https://cdn.imgurl.ir/uploads/z32951_sungles.png" },
+    { id: "mug",        label: "a mug",        short: "mug",        audio: "https://cdn.imgurl.ir/uploads/m3215_mug.mp3",        image: "https://cdn.imgurl.ir/uploads/t707132_mug.png" },
+    { id: "keychain",   label: "a keychain",   short: "keychain",   audio: "https://cdn.imgurl.ir/uploads/t237725_keychain.mp3",   image: "https://cdn.imgurl.ir/uploads/s25362_keychain.png" },
+    { id: "postcard",   label: "a postcard",   short: "postcard",   audio: "https://cdn.imgurl.ir/uploads/f722062_postcard.mp3",   image: "https://cdn.imgurl.ir/uploads/q767980_postcard.png" },
+    { id: "map",        label: "a map",        short: "map",        audio: "https://cdn.imgurl.ir/uploads/r689142_map.mp3",        image: "https://cdn.imgurl.ir/uploads/d267007_map.png" },
   ];
 
   // Two sets of 4 (user requested two sets of 4×4-style grids)

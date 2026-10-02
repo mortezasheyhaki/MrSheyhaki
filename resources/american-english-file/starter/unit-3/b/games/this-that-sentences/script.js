@@ -74,18 +74,18 @@
 
 const GAME_ID = "starter-3b-this-that-sentences";
   const ITEMS = [
-    { img: "images/book.jpg", sentence: "This is a book.", words: ["This", "is", "a", "book."], opener: "This is", rest: "a book." },
-    { img: "images/tv.jpg", sentence: "That is a TV.", words: ["That", "is", "a", "TV."], opener: "That is", rest: "a TV." },
-    { img: "images/umbrella.jpg", sentence: "This is an umbrella.", words: ["This", "is", "an", "umbrella."], opener: "This is", rest: "an umbrella." },
-    { img: "images/apple.jpg", sentence: "That is an apple.", words: ["That", "is", "an", "apple."], opener: "That is", rest: "an apple." },
-    { img: "images/ice-cream.jpg", sentence: "This is an ice cream.", words: ["This", "is", "an", "ice", "cream."], opener: "This is", rest: "an ice cream." },
-    { img: "images/board.jpg", sentence: "That is a board.", words: ["That", "is", "a", "board."], opener: "That is", rest: "a board." },
-    { img: "images/keychains.jpg", sentence: "These are keychains.", words: ["These", "are", "keychains."], opener: "These are", rest: "keychains." },
-    { img: "images/cars.jpg", sentence: "Those are cars.", words: ["Those", "are", "cars."], opener: "Those are", rest: "cars." },
-    { img: "images/mugs.jpg", sentence: "These are mugs.", words: ["These", "are", "mugs."], opener: "These are", rest: "mugs." },
-    { img: "images/pictures.jpg", sentence: "Those are pictures.", words: ["Those", "are", "pictures."], opener: "Those are", rest: "pictures." },
-    { img: "images/pens.jpg", sentence: "These are pens.", words: ["These", "are", "pens."], opener: "These are", rest: "pens." },
-    { img: "images/birds.jpg", sentence: "Those are birds.", words: ["Those", "are", "birds."], opener: "Those are", rest: "birds." },
+    { img: "https://cdn.imgurl.ir/uploads/a67792_book.jpg", sentence: "This is a book.", words: ["This", "is", "a", "book."], opener: "This is", rest: "a book." },
+    { img: "https://cdn.imgurl.ir/uploads/g499489_tv.jpg", sentence: "That is a TV.", words: ["That", "is", "a", "TV."], opener: "That is", rest: "a TV." },
+    { img: "https://cdn.imgurl.ir/uploads/i816593_umbrella.jpg", sentence: "This is an umbrella.", words: ["This", "is", "an", "umbrella."], opener: "This is", rest: "an umbrella." },
+    { img: "https://cdn.imgurl.ir/uploads/e563489_ape.jpg", sentence: "That is an apple.", words: ["That", "is", "an", "apple."], opener: "That is", rest: "an apple." },
+    { img: "https://cdn.imgurl.ir/uploads/v667394_ice-cream.jpg", sentence: "This is an ice cream.", words: ["This", "is", "an", "ice", "cream."], opener: "This is", rest: "an ice cream." },
+    { img: "https://cdn.imgurl.ir/uploads/v10898_board.jpg", sentence: "That is a board.", words: ["That", "is", "a", "board."], opener: "That is", rest: "a board." },
+    { img: "https://cdn.imgurl.ir/uploads/a378405_keychains.jpg", sentence: "These are keychains.", words: ["These", "are", "keychains."], opener: "These are", rest: "keychains." },
+    { img: "https://cdn.imgurl.ir/uploads/m856014_cars.jpg", sentence: "Those are cars.", words: ["Those", "are", "cars."], opener: "Those are", rest: "cars." },
+    { img: "https://cdn.imgurl.ir/uploads/g88228_mugs.jpg", sentence: "These are mugs.", words: ["These", "are", "mugs."], opener: "These are", rest: "mugs." },
+    { img: "https://cdn.imgurl.ir/uploads/c819_pictures.jpg", sentence: "Those are pictures.", words: ["Those", "are", "pictures."], opener: "Those are", rest: "pictures." },
+    { img: "https://cdn.imgurl.ir/uploads/b818166_pens.jpg", sentence: "These are pens.", words: ["These", "are", "pens."], opener: "These are", rest: "pens." },
+    { img: "https://cdn.imgurl.ir/uploads/q136104_birds.jpg", sentence: "Those are birds.", words: ["Those", "are", "birds."], opener: "Those are", rest: "birds." },
   ];
 
   const LEVEL_HINTS = [

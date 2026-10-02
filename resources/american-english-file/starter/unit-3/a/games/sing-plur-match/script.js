@@ -59,16 +59,16 @@
   }
 
   const ITEMS = [
-    { id: "bag",          singular: "a bag",          plural: "bags", },
-    { id: "change-purse", singular: "a change purse", plural: "change purses", },
-    { id: "watch",        singular: "a watch",        plural: "watches", },
-    { id: "tablet",       singular: "a tablet",       plural: "tablets", },
-    { id: "passport",     singular: "a passport",     plural: "passports", },
-    { id: "coat",         singular: "a coat",         plural: "coats", },
-    { id: "book",         singular: "a book",         plural: "books", },
-    { id: "pen",          singular: "a pen",          plural: "pens", },
-    { id: "key",          singular: "a key",          plural: "keys", },
-    { id: "phone",        singular: "a phone",        plural: "phones", },
+    { id: "bag",          singular: "a bag",          plural: "bags",          image: "https://cdn.imgurl.ir/uploads/x20944_bags.png" },
+    { id: "change-purse", singular: "a change purse", plural: "change purses", image: "https://cdn.imgurl.ir/uploads/v229506_change-purses.png" },
+    { id: "watch",        singular: "a watch",        plural: "watches",       image: "https://cdn.imgurl.ir/uploads/y97471_watches.png" },
+    { id: "tablet",       singular: "a tablet",       plural: "tablets",       image: "https://cdn.imgurl.ir/uploads/z4134_tablets.png" },
+    { id: "passport",     singular: "a passport",     plural: "passports",     image: "https://cdn.imgurl.ir/uploads/q617804_pports.png" },
+    { id: "coat",         singular: "a coat",         plural: "coats",         image: "https://cdn.imgurl.ir/uploads/o465237_coats.png" },
+    { id: "book",         singular: "a book",         plural: "books",         image: "https://cdn.imgurl.ir/uploads/m43927_books.png" },
+    { id: "pen",          singular: "a pen",          plural: "pens",          image: "https://cdn.imgurl.ir/uploads/o169010_pens.png" },
+    { id: "key",          singular: "a key",          plural: "keys",          image: "https://cdn.imgurl.ir/uploads/i998013_keys.png" },
+    { id: "phone",        singular: "a phone",        plural: "phones",        image: "https://cdn.imgurl.ir/uploads/v603681_phones.png" },
   ];
 
   const SETS = [
@@ -231,8 +231,8 @@
         const ok = matched[id] ? " is-correct" : "";
         const sel = selectedLeft === i && !matched[id] ? " is-selected" : "";
         return `
-        <div class="mc-left-item mc-word-left${ok}${sel}" data-i="${i}">
-          <span class="mc-word-label">${c.singular}</span>
+        <div class="mc-left-item mc-pic-cell${ok}${sel}" data-i="${i}">
+          <img class="mc-thumb" src="${c.image}" alt="${c.singular}" draggable="false">
         </div>`;
       })
       .join("");
@@ -254,7 +254,7 @@
         <span class="mc-title">Singular ↔ Plural · Set ${setIndex + 1}/${SETS.length}</span>
         <span class="mc-progress" id="mc-progress">Set ${setIndex + 1}/${SETS.length} · ${correctCount()}/${SETS[setIndex].length}</span>
       </header>
-      <p class="mc-instruction" id="mc-hint">Match singular (left) with plural (right).</p>
+      <p class="mc-instruction" id="mc-hint">Match the picture (left) with the plural word (right).</p>
       <div class="mc-board is-entering" id="mc-board">
         <div class="mc-col mc-col-left">${left}</div>
         <div class="mc-col mc-col-right">${right}</div>
@@ -289,7 +289,7 @@
         <section class="mc-start">
           <div class="mc-hero" aria-hidden="true">🔢</div>
           <h1>Singular ↔ Plural</h1>
-          <p class="mc-desc">Match singular and plural · 10 pairs (2 sets)</p>
+          <p class="mc-desc">Match pictures to plural words · 10 pairs (2 sets)</p>
           <button type="button" class="mc-btn" id="sp-start">Start</button>
         </section>`;
       document.getElementById("sp-start").onclick = () => start();

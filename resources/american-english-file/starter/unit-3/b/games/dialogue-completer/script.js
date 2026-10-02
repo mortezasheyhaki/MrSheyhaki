@@ -77,7 +77,7 @@ const BANK = ["this", "that", "these", "those"];
 
   const SCENES = [
     {
-      img: "images/scene1.jpg",
+      img: "https://cdn.imgurl.ir/uploads/f860206_scene1.jpg",
       alt: "Office: colleagues with laptops and keys",
       lines: [
         { speaker: "David", parts: ["Sally, is ", { blank: 0, answer: "this" }, " your laptop?"] },
@@ -89,7 +89,7 @@ const BANK = ["this", "that", "these", "those"];
       ],
     },
     {
-      img: "images/scene2.jpg",
+      img: "https://cdn.imgurl.ir/uploads/e61814_scene2.jpg",
       alt: "Café: friends with mug, candies, and a picture",
       lines: [
         { speaker: "Paul", parts: ["Is ", { blank: 0, answer: "this" }, " mug from Turkey?"] },
@@ -99,7 +99,7 @@ const BANK = ["this", "that", "these", "those"];
       ],
     },
     {
-      img: "images/scene3.jpg",
+      img: "https://cdn.imgurl.ir/uploads/s12942_scene3.jpg",
       alt: "Bus station: driver and passenger with bags",
       lines: [
         { speaker: "Woman", parts: ["Excuse me. Is ", { blank: 0, answer: "this" }, " the bus to San Francisco?"] },

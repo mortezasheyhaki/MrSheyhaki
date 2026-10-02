@@ -150,7 +150,7 @@
 
   function playAudio() {
     if (!audio) {
-      audio = new Audio("audio/3.16.mp3");
+      audio = new Audio("https://cdn.imgurl.ir/uploads/t635839_3.16.mp3");
     }
     if (playing) {
       audio.pause();
