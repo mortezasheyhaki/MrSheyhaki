@@ -173,6 +173,9 @@ COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.audio = [
 
 // Unit 2A – Games (Are you on vacation?)
 COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.games = [
+  { title: "Sentence Builder · be + nationality", url: "sentence-builder-nationality/", label: "Grammar" },
+  { title: "Sentence Builder · be not + nationality", url: "sentence-builder-nationality-negative/", label: "Grammar" },
+  { title: "Question Builder · be", url: "sentence-builder-be-questions/", label: "Grammar" },
   { title: "Complete with be", url: "complete-be/", label: "Grammar" },
   { title: "Are you on vacation? · Reading", url: "conversation-reading/", label: "Reading" },
   { title: "I'm from…", url: "from-nationality/", label: "Vocabulary" },
