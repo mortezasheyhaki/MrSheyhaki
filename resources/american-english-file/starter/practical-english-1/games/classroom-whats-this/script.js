@@ -259,19 +259,63 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     return (str || "")
       .toLowerCase()
       .trim()
+      // unify apostrophes
+      .replace(/[’`´]/g, "'")
+      // strip trailing / surrounding punctuation (periods, commas, !, ?)
+      .replace(/[.,!?;:]+$/g, "")
+      .replace(/^[.,!?;:]+/g, "")
+      // remove leftover mid-sentence punctuation that doesn't change meaning
+      .replace(/[.,!?;:]/g, "")
       .replace(/\s+/g, " ")
-      .replace(/[’']/g, "'");
+      .trim();
   }
 
   function core(str) {
     return normalize(str).replace(/^(a|an|the)\s+/, "");
   }
 
+  /** Expand accepted name answers: a↔the, it's↔it is, optional article */
+  function expandNameAnswers(list) {
+    const out = {};
+    list.forEach((raw) => {
+      const base = normalize(raw);
+      if (!base) return;
+      const variants = [base];
+      // it's ↔ it is
+      if (base.indexOf("it's ") === 0) {
+        variants.push("it is " + base.slice(5));
+      } else if (base.indexOf("it is ") === 0) {
+        variants.push("it's " + base.slice(6));
+      }
+      // a ↔ the (and an)
+      variants.slice().forEach((v) => {
+        variants.push(v.replace(/\ba\b/g, "the"));
+        variants.push(v.replace(/\bthe\b/g, "a"));
+        variants.push(v.replace(/\ban\b/g, "the"));
+        variants.push(v.replace(/\bthe\b/g, "an"));
+      });
+      variants.forEach((v) => {
+        out[normalize(v)] = true;
+      });
+    });
+    return out;
+  }
+
   function isCorrect(userInput, item) {
     const n = normalize(userInput);
     if (!n) return false;
-    const list = step === "name" ? item.nameAnswers : item.spellAnswers;
-    return list.some((a) => normalize(a) === n);
+    if (step === "spell") {
+      const list = item.spellAnswers;
+      // letter boxes produce the bare word; also accept spaced "b o a r d"
+      const compact = n.replace(/\s+/g, "");
+      return list.some((a) => {
+        const na = normalize(a).replace(/\s+/g, "");
+        return na === n || na === compact;
+      });
+    }
+    // name step — must include "it's" / "it is"; a↔the and punctuation are flexible
+    const accepted = expandNameAnswers(item.nameAnswers);
+    return !!accepted[n];
   }
 
   function stopAudio() {

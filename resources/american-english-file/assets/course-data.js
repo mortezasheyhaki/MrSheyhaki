@@ -313,10 +313,13 @@ COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.b.games = [
 // Unit 6A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.games = [
   { title: "Jobs Flashcards", url: "jobs-flashcards/", label: "Vocabulary" },
+  { title: "Places of Work Flashcards", url: "places-flashcards/", label: "Vocabulary" },
   { title: "Jobs Match", url: "jobs-match/", label: "Vocabulary" },
   { title: "Sound Match Picture · Jobs", url: "jobs-sound-match-picture/", label: "Listening" },
   { title: "Listen & Write · Jobs", url: "jobs-listen-write/", label: "Listening" },
+  { title: "Listen & Write · Places of Work", url: "places-listen-write/", label: "Listening" },
   { title: "What does he / she do?", url: "what-does-he-she-do/", label: "Grammar" },
+  { title: "Where do they work?", url: "where-do-they-work/", label: "Grammar" },
   { title: "Listen & Complete", url: "listen-and-complete/", label: "Listening" },
 ];
 
