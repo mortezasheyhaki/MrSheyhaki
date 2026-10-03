@@ -317,6 +317,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.games = [
   { title: "Sound Match Picture · Jobs", url: "jobs-sound-match-picture/", label: "Listening" },
   { title: "Listen & Write · Jobs", url: "jobs-listen-write/", label: "Listening" },
   { title: "What does he / she do?", url: "what-does-he-she-do/", label: "Grammar" },
+  { title: "Listen & Complete", url: "listen-and-complete/", label: "Listening" },
 ];
 
 // Unit 7A – Games
