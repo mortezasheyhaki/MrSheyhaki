@@ -312,7 +312,11 @@ COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.b.games = [
 
 // Unit 6A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.games = [
-  { title: "Listen & Write", url: "listen-and-write/" },
+  { title: "Jobs Flashcards", url: "jobs-flashcards/", label: "Vocabulary" },
+  { title: "Jobs Match", url: "jobs-match/", label: "Vocabulary" },
+  { title: "Sound Match Picture · Jobs", url: "jobs-sound-match-picture/", label: "Listening" },
+  { title: "Listen & Write · Jobs", url: "jobs-listen-write/", label: "Listening" },
+  { title: "What does he / she do?", url: "what-does-he-she-do/", label: "Grammar" },
 ];
 
 // Unit 7A – Games
@@ -521,6 +525,10 @@ COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.b.name = "A
 COURSE_DATA["american-english-file"].levels.starter.units[6].name = "Reunions & daily routines";
 COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.name = "A school reunion";
 COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.b.name = "Good morning, goodnight";
+
+COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.b.games = [
+  { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
+];
 COURSE_DATA["american-english-file"].levels.starter.units[7].name = "Weekends & film";
 COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.name = "Have a nice weekend!";
 COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.name = "Lights, camera, action!";

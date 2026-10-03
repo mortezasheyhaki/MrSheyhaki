@@ -1,0 +1,615 @@
+/* Listen & Write · Jobs — AEF Starter Unit 6A
+   Part 1: Look & Write (picture, no audio)
+   Part 2: Listen & Write (audio, no picture) */
+(function () {
+  "use strict";
+
+  var GAME_ID = "starter-6a-jobs-listen-write";
+  var CDN = "https://cdn.imgurl.ir/uploads/";
+
+  var ITEMS = [
+    { id: "teacher", word: "a teacher", label: "a teacher",
+      answers: ["a teacher", "teacher"],
+      image: CDN + "y431285_1_teacher.png", audio: CDN + "e500251_1_a_teacher.mp3" },
+    { id: "doctor", word: "a doctor", label: "a doctor",
+      answers: ["a doctor", "doctor"],
+      image: CDN + "u765683_2_a_doctor.png", audio: CDN + "y03769_2_a_doctor.mp3" },
+    { id: "nurse", word: "a nurse", label: "a nurse",
+      answers: ["a nurse", "nurse"],
+      image: CDN + "o88045_3_a_nurse.png", audio: CDN + "h90124_3_a_nurse.mp3" },
+    { id: "journalist", word: "a journalist", label: "a journalist",
+      answers: ["a journalist", "journalist"],
+      image: CDN + "y033377_4_a_nurse.png", audio: CDN + "y108055_4_a_journalist.mp3" },
+    { id: "waiter", word: "a waiter", label: "a waiter",
+      answers: ["a waiter", "waiter"],
+      image: CDN + "j13538_5_a_waiter.png", audio: CDN + "i300299_5_a_waiter.mp3" },
+    { id: "waitress", word: "a waitress", label: "a waitress",
+      answers: ["a waitress", "waitress"],
+      image: CDN + "s032802_6_a_waitress.png", audio: CDN + "q243679_6_a_waitress.mp3" },
+    { id: "salesperson", word: "a salesperson", label: "a salesperson",
+      answers: ["a salesperson", "salesperson", "a sales person", "sales person"],
+      image: CDN + "p208694_7_a_salesperson.png", audio: CDN + "c70645_7_a_salesperson.mp3" },
+    { id: "receptionist", word: "a receptionist", label: "a receptionist",
+      answers: ["a receptionist", "receptionist"],
+      image: CDN + "z996638_8_a_receptionist.png", audio: CDN + "c29486_8_a_recptionist.mp3" },
+    { id: "policeman", word: "a policeman", label: "a policeman",
+      answers: ["a policeman", "policeman", "a police man", "police man"],
+      image: CDN + "d755786_9_a_policeman.png", audio: CDN + "k557960_9_a_policeman.mp3" },
+    { id: "policewoman", word: "a policewoman", label: "a policewoman",
+      answers: ["a policewoman", "policewoman", "a police woman", "police woman"],
+      image: CDN + "s982850_10_a_policeman.png", audio: CDN + "l328420_10_a_policeowman.mp3" },
+    { id: "factory-worker", word: "a factory worker", label: "a factory worker",
+      answers: ["a factory worker", "factory worker"],
+      image: CDN + "k96301_11_a_factory_worker.png", audio: CDN + "s79925_11_a_factory_worker.mp3" },
+    { id: "taxi-driver", word: "a taxi driver", label: "a taxi driver",
+      answers: ["a taxi driver", "taxi driver"],
+      image: CDN + "q003095_12_a_taxi_driver.png", audio: CDN + "c56441_12_a_taxi_driver.mp3" }
+  ];
+
+  var MODES = [
+    {
+      id: "look",
+      title: "Look & Write",
+      tip: "Look at the picture. Type the job.",
+      betweenTitle: "Great job!",
+      betweenText: "Now listen and write the words — no picture this time."
+    },
+    {
+      id: "listen",
+      title: "Listen & Write",
+      tip: "Listen, then type the job.",
+      betweenTitle: "",
+      betweenText: ""
+    }
+  ];
+
+  var app = document.getElementById("game-app");
+  if (!app) return;
+
+  var phase = "start"; // start | play | between | done
+  var modeIndex = 0;
+  var order = [];
+  var index = 0;
+  var score = 0;
+  var combo = 0;
+  var bestCombo = 0;
+  var locked = false;
+  var encourageTimer = null;
+
+  var ENCOURAGE = [
+    "Great job! 🌟",
+    "Awesome! 🔥",
+    "You're on fire! 🚀",
+    "Fantastic! ✨",
+    "Keep it up! 💪",
+    "Superb! 🎯",
+    "Brilliant! 🏆",
+    "Nice streak! 🌈"
+  ];
+  var currentAudio = null;
+  var sfxCtx = null;
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i];
+      a[i] = a[j];
+      a[j] = t;
+    }
+    return a;
+  }
+
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try {
+        sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) {
+        return null;
+      }
+    }
+    if (sfxCtx.state === "suspended") {
+      try {
+        sfxCtx.resume();
+      } catch (_) {}
+    }
+    return sfxCtx;
+  }
+
+  function tone(freq, dur, type, gain, delay) {
+    var ctx = getSfxCtx();
+    if (!ctx) return;
+    var t0 = ctx.currentTime + (delay || 0);
+    var o = ctx.createOscillator();
+    var g = ctx.createGain();
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.12), t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.start(t0);
+    o.stop(t0 + dur + 0.02);
+  }
+
+  function sfx(name) {
+    try {
+      if (window.LASfx) {
+        if (name === "correct" && LASfx.correct) LASfx.correct();
+        else if (name === "wrong" && LASfx.wrong) LASfx.wrong();
+        else if (name === "click" && LASfx.click) LASfx.click();
+        else if (name === "win" && LASfx.win) LASfx.win();
+      }
+    } catch (_) {}
+    try {
+      if (name === "click") {
+        tone(480, 0.04, "triangle", 0.08);
+      } else if (name === "correct") {
+        tone(523.25, 0.08, "triangle", 0.12);
+        tone(659.25, 0.1, "triangle", 0.11, 0.06);
+        tone(783.99, 0.12, "sine", 0.1, 0.12);
+      } else if (name === "wrong") {
+        tone(220, 0.1, "square", 0.07);
+        tone(165, 0.14, "square", 0.05, 0.05);
+      } else if (name === "win") {
+        tone(523.25, 0.12, "triangle", 0.12);
+        tone(659.25, 0.12, "triangle", 0.11, 0.08);
+        tone(783.99, 0.14, "triangle", 0.12, 0.16);
+        tone(1046.5, 0.22, "sine", 0.1, 0.26);
+      }
+    } catch (_) {}
+  }
+
+  function norm(s) {
+    return String(s || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ");
+  }
+
+  function isCorrect(user, item) {
+    var u = norm(user);
+    if (!u) return false;
+    return item.answers.some(function (a) {
+      return norm(a) === u;
+    });
+  }
+
+  function stopAudio() {
+    if (currentAudio) {
+      try {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      } catch (_) {}
+      currentAudio = null;
+    }
+    var btn = document.getElementById("lw-play");
+    if (btn) btn.classList.remove("is-playing");
+  }
+
+  function playAudio() {
+    var item = order[index];
+    if (!item || !item.audio) return;
+    stopAudio();
+    try {
+      currentAudio = new Audio(item.audio);
+      var btn = document.getElementById("lw-play");
+      if (btn) btn.classList.add("is-playing");
+      currentAudio.onended = function () {
+        if (btn) btn.classList.remove("is-playing");
+        currentAudio = null;
+      };
+      currentAudio.onerror = function () {
+        if (btn) btn.classList.remove("is-playing");
+      };
+      currentAudio.play().catch(function () {
+        if (btn) btn.classList.remove("is-playing");
+      });
+    } catch (_) {}
+  }
+
+  function currentMode() {
+    return MODES[modeIndex];
+  }
+
+  function totalRounds() {
+    return ITEMS.length * MODES.length;
+  }
+
+  function progressDone() {
+    return modeIndex * ITEMS.length + index;
+  }
+
+  function startGame() {
+    getSfxCtx();
+    if (window.LAFinish) LAFinish.startTimer();
+    modeIndex = 0;
+    score = 0;
+    combo = 0;
+    bestCombo = 0;
+    beginMode();
+  }
+
+  function beginMode() {
+    order = shuffle(ITEMS.slice());
+    index = 0;
+    locked = false;
+    phase = "play";
+    stopAudio();
+    render();
+    if (currentMode().id === "listen") {
+      setTimeout(playAudio, 400);
+    }
+  }
+
+  function afterCorrect() {
+    setTimeout(function () {
+      index += 1;
+      if (index >= order.length) {
+        if (modeIndex < MODES.length - 1) {
+          phase = "between";
+          stopAudio();
+          render();
+        } else {
+          finishGame();
+        }
+      } else {
+        locked = false;
+        render();
+        if (currentMode().id === "listen") {
+          setTimeout(playAudio, 300);
+        }
+        focusInput();
+      }
+    }, 700);
+  }
+
+  function afterWrong() {
+    setTimeout(function () {
+      index += 1;
+      if (index >= order.length) {
+        if (modeIndex < MODES.length - 1) {
+          phase = "between";
+          stopAudio();
+          render();
+        } else {
+          finishGame();
+        }
+      } else {
+        locked = false;
+        render();
+        if (currentMode().id === "listen") {
+          setTimeout(playAudio, 300);
+        }
+        focusInput();
+      }
+    }, 1400);
+  }
+
+  function checkAnswer() {
+    if (locked || phase !== "play") return;
+    var input = document.getElementById("lw-input");
+    if (!input) return;
+    var item = order[index];
+    var user = input.value;
+    if (!norm(user)) {
+      input.focus();
+      return;
+    }
+    locked = true;
+    input.disabled = true;
+    var checkBtn = document.getElementById("lw-check");
+    if (checkBtn) checkBtn.disabled = true;
+    var fb = document.getElementById("lw-fb");
+
+    if (isCorrect(user, item)) {
+      score += 1;
+      combo += 1;
+      if (combo > bestCombo) bestCombo = combo;
+      sfx("correct");
+      input.classList.add("ok");
+      if (fb) {
+        fb.textContent =
+          combo >= 3
+            ? "✓ " + item.label + "  ·  🔥 " + combo
+            : "✓ " + item.label;
+        fb.className = "lw-fb ok";
+      }
+      updateHudLive();
+      if (combo > 0 && combo % 4 === 0) {
+        showEncourage();
+      }
+      afterCorrect();
+    } else {
+      combo = 0;
+      sfx("wrong");
+      input.classList.add("bad");
+      if (fb) {
+        fb.textContent = "Answer: " + item.label;
+        fb.className = "lw-fb bad";
+      }
+      updateHudLive();
+      afterWrong();
+    }
+  }
+
+  function goNextMode() {
+    sfx("click");
+    modeIndex += 1;
+    beginMode();
+  }
+
+  function finishGame() {
+    stopAudio();
+    phase = "done";
+    sfx("win");
+    var total = totalRounds();
+    var stars =
+      score === total ? 3 : score >= total - 3 ? 2 : score >= Math.ceil(total / 2) ? 1 : 0;
+
+    if (window.LAFinish) {
+      try {
+        var timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: score,
+          total: total,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: startGame,
+          onModes: function () {
+            phase = "start";
+            render();
+          },
+          backHref: "../"
+        });
+        return;
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+    if (window.LAStars) {
+      try {
+        LAStars.recordPlay(GAME_ID);
+        if (stars > 0) LAStars.save(GAME_ID, stars);
+      } catch (_) {}
+    }
+    render();
+  }
+
+  function focusInput() {
+    setTimeout(function () {
+      var input = document.getElementById("lw-input");
+      if (input && !input.disabled) input.focus();
+    }, 80);
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function playBtnHtml() {
+    return (
+      '<button type="button" class="lw-play" id="lw-play" aria-label="Play audio">' +
+      '<span class="wave"></span><span class="wave"></span><span class="wave"></span>' +
+      '<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>' +
+      '<div class="eq"><span></span><span></span><span></span><span></span></div>' +
+      "</button>"
+    );
+  }
+
+
+  function updateHudLive() {
+    var fill = document.getElementById("lw-progress-fill");
+    if (fill) {
+      var done = progressDone() + (locked ? 1 : 0);
+      var total = totalRounds();
+      fill.style.width = Math.min(100, (done / total) * 100) + "%";
+    }
+    var comboEl = document.getElementById("lw-combo");
+    if (comboEl) {
+      if (combo > 0) {
+        comboEl.hidden = false;
+        comboEl.textContent = "🔥 " + combo;
+        comboEl.classList.toggle("is-hot", combo >= 3);
+      } else {
+        comboEl.hidden = true;
+        comboEl.classList.remove("is-hot");
+      }
+    }
+    var badge = document.getElementById("lw-badge");
+    if (badge) {
+      badge.textContent = index + 1 + "/" + order.length;
+    }
+  }
+
+  function showEncourage() {
+    var msg = ENCOURAGE[Math.floor(Math.random() * ENCOURAGE.length)];
+    var host = document.getElementById("lw-encourage");
+    if (!host) {
+      host = document.createElement("div");
+      host.id = "lw-encourage";
+      host.className = "lw-encourage";
+      host.setAttribute("aria-live", "polite");
+      app.appendChild(host);
+    }
+    host.textContent = msg;
+    host.classList.remove("show");
+    // reflow
+    void host.offsetWidth;
+    host.classList.add("show");
+    if (encourageTimer) clearTimeout(encourageTimer);
+    encourageTimer = setTimeout(function () {
+      host.classList.remove("show");
+    }, 1600);
+  }
+
+  function render() {
+    if (phase === "start") {
+      app.innerHTML =
+        '<header class="lw-topbar">' +
+        '<a class="lw-back" href="../" aria-label="Back">←</a>' +
+        '<div class="lw-topbar-center">' +
+        '<span class="lw-kicker">TEEN2TEEN 1 · UNIT 6A</span>' +
+        '<span class="lw-title">Listen &amp; Write</span>' +
+        "</div>" +
+        '<span class="lw-badge">' +
+        ITEMS.length * 2 +
+        "</span>" +
+        "</header>" +
+        '<section class="lw-start">' +
+        '<div class="lw-hero">✍️</div>' +
+        "<h1>Listen &amp; Write</h1>" +
+        '<p class="lw-desc">Two parts — first look at the picture, then listen and type the jobs.</p>' +
+        '<ol class="lw-steps">' +
+        '<li><span class="lw-step-num">1</span><span><strong>Look &amp; Write</strong> — see the picture, type the word (no audio).</span></li>' +
+        '<li><span class="lw-step-num">2</span><span><strong>Listen &amp; Write</strong> — hear the word, type it (no picture).</span></li>' +
+        "</ol>" +
+        '<button type="button" class="lw-btn lw-btn-full" id="lw-start">Start Part 1</button>' +
+        "</section>";
+      document.getElementById("lw-start").onclick = function () {
+        sfx("click");
+        startGame();
+      };
+      return;
+    }
+
+    if (phase === "between") {
+      var m = currentMode();
+      app.innerHTML =
+        '<header class="lw-topbar">' +
+        '<a class="lw-back" href="../" aria-label="Back">←</a>' +
+        '<div class="lw-topbar-center">' +
+        '<span class="lw-kicker">TEEN2TEEN 1 · UNIT 6A</span>' +
+        '<span class="lw-title">Listen &amp; Write</span>' +
+        "</div>" +
+        '<span class="lw-badge">Part 1 ✓</span>' +
+        "</header>" +
+        '<section class="lw-between">' +
+        "<h2>" +
+        escapeHtml(m.betweenTitle || "Nice work!") +
+        "</h2>" +
+        "<p>" +
+        escapeHtml(m.betweenText) +
+        "</p>" +
+        '<button type="button" class="lw-btn lw-btn-full" id="lw-next-mode">Start Part 2</button>' +
+        "</section>";
+      document.getElementById("lw-next-mode").onclick = goNextMode;
+      return;
+    }
+
+    if (phase === "done") {
+      app.innerHTML =
+        '<header class="lw-topbar">' +
+        '<a class="lw-back" href="../" aria-label="Back">←</a>' +
+        '<div class="lw-topbar-center">' +
+        '<span class="lw-kicker">TEEN2TEEN 1 · UNIT 6A</span>' +
+        '<span class="lw-title">Listen &amp; Write</span>' +
+        "</div></header>" +
+        '<section class="lw-start">' +
+        "<h1>Done!</h1>" +
+        "<p class=\"lw-desc\">" +
+        score +
+        " / " +
+        totalRounds() +
+        " correct</p>" +
+        '<button type="button" class="lw-btn" id="lw-again">Play again</button>' +
+        "</section>";
+      document.getElementById("lw-again").onclick = startGame;
+      return;
+    }
+
+    // play
+    var mode = currentMode();
+    var item = order[index];
+    var done = progressDone();
+    var total = totalRounds();
+    var pct = (done / total) * 100;
+    var isLook = mode.id === "look";
+
+    var promptHtml = isLook
+      ? '<div class="lw-card lw-photo-wrap">' +
+        '<img class="lw-photo" src="' +
+        item.image +
+        '" alt="" draggable="false" />' +
+        "</div>"
+      : '<div class="lw-card lw-listen-only">' +
+        playBtnHtml() +
+        '<span class="lw-listen-label">Tap to listen</span>' +
+        "</div>";
+
+    app.innerHTML =
+      '<header class="lw-topbar">' +
+      '<a class="lw-back" href="../" aria-label="Back">←</a>' +
+      '<div class="lw-topbar-center">' +
+      '<span class="lw-kicker">PART ' +
+      (modeIndex + 1) +
+      " / " +
+      MODES.length +
+      "</span>" +
+      '<span class="lw-title">' +
+      escapeHtml(mode.title) +
+      "</span>" +
+      "</div>" +
+      '<span class="lw-badge" id="lw-badge">' +
+      (index + 1) +
+      "/" +
+      order.length +
+      "</span>" +
+      "</header>" +
+      '<div class="lw-hud-row">' +
+      '<p class="lw-instruction">' +
+      escapeHtml(mode.tip) +
+      "</p>" +
+      '<span class="lw-combo' +
+      (combo >= 3 ? " is-hot" : "") +
+      '" id="lw-combo"' +
+      (combo > 0 ? "" : " hidden") +
+      ">" +
+      (combo > 0 ? "🔥 " + combo : "") +
+      "</span>" +
+      "</div>" +
+      '<div class="lw-progress" aria-hidden="true"><div class="lw-progress-fill" id="lw-progress-fill" style="width:' +
+      pct +
+      '%"></div></div>' +
+      promptHtml +
+      '<div class="lw-card lw-input-row">' +
+      '<input class="lw-input" id="lw-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="Type the word…" enterkeyhint="done" />' +
+      '<p class="lw-fb" id="lw-fb"></p>' +
+      '<button type="button" class="lw-btn lw-check" id="lw-check">Check</button>' +
+      "</div>";
+
+    var input = document.getElementById("lw-input");
+    var checkBtn = document.getElementById("lw-check");
+    checkBtn.onclick = function () {
+      sfx("click");
+      checkAnswer();
+    };
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        checkAnswer();
+      }
+    });
+    var play = document.getElementById("lw-play");
+    if (play) {
+      play.onclick = function () {
+        sfx("click");
+        playAudio();
+      };
+    }
+    focusInput();
+  }
+
+  ITEMS.forEach(function (it) {
+    var img = new Image();
+    img.src = it.image;
+  });
+
+  render();
+})();

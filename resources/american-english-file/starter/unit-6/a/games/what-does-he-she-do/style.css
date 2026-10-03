@@ -1,0 +1,287 @@
+/* What does he / she do? – Unit 6A */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0 !important;
+}
+body.game-page {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background:
+    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(167, 139, 250, 0.3) 0%, transparent 55%),
+    linear-gradient(165deg, #faf8ff 0%, #f0ebff 100%) !important;
+  color: #1e1b4b;
+}
+html[data-theme="dark"] body.game-page {
+  background:
+    radial-gradient(ellipse 100% 60% at 50% 0%, rgba(109, 40, 217, 0.28) 0%, transparent 50%),
+    #0f0b1a !important;
+  color: #f1f5f9;
+}
+.wd-game {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 12px 14px 24px;
+  min-height: 100dvh;
+  box-sizing: border-box;
+}
+.wd-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.wd-back {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background: #fff;
+  border: 1.5px solid rgba(91, 33, 182, 0.12);
+  color: #5b21b6;
+  font-size: 1.15rem;
+}
+html[data-theme="dark"] .wd-back {
+  background: rgba(255,255,255,0.07);
+  color: #c4b5fd;
+  border-color: rgba(255,255,255,0.1);
+}
+.wd-topbar-center {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.wd-kicker {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #7c3aed;
+  opacity: 0.85;
+}
+.wd-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1e1b4b;
+}
+html[data-theme="dark"] .wd-title { color: #f8fafc; }
+.wd-badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: #ede9fe;
+  color: #5b21b6;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+html[data-theme="dark"] .wd-badge {
+  background: rgba(124, 58, 237, 0.25);
+  color: #c4b5fd;
+}
+.wd-instruction {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+html[data-theme="dark"] .wd-instruction { color: #94a3b8; }
+.wd-progress {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(91, 33, 182, 0.12);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.wd-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #8b5cf6, #6d28d9);
+  transition: width 0.35s ease;
+}
+.wd-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 14px;
+  box-shadow: 0 10px 28px rgba(91, 33, 182, 0.08);
+  text-align: center;
+  margin-bottom: 14px;
+  position: relative;
+}
+html[data-theme="dark"] .wd-card {
+  background: rgba(255,255,255,0.05);
+  box-shadow: none;
+}
+.wd-photo {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border-radius: 14px;
+  display: block;
+  margin: 0 auto 10px;
+}
+.wd-question {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #4c1d95;
+}
+html[data-theme="dark"] .wd-question { color: #c4b5fd; }
+.wd-audio {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  background: #ede9fe;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.wd-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  min-height: 48px;
+}
+.wd-slot {
+  min-width: 52px;
+  height: 44px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+.wd-slot.empty {
+  border: 2px dashed #c4b5fd;
+  background: #faf8ff;
+  color: transparent;
+}
+.wd-slot.filled {
+  border: 2px solid #6d28d9;
+  background: #fff;
+  color: #1e1b4b;
+  cursor: pointer;
+}
+html[data-theme="dark"] .wd-slot.empty {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(167,139,250,0.45);
+}
+html[data-theme="dark"] .wd-slot.filled {
+  background: #2a2440;
+  border-color: #a78bfa;
+  color: #f8fafc;
+}
+.wd-pool {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.wd-chip {
+  appearance: none;
+  border: none;
+  background: #fff;
+  color: #1e1b4b;
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding: 10px 14px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(91, 33, 182, 0.1);
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.15s;
+}
+.wd-chip:active { transform: scale(0.95); }
+.wd-chip.used {
+  opacity: 0.35;
+  pointer-events: none;
+  box-shadow: none;
+  background: #f1f5f9;
+  color: #94a3b8;
+}
+html[data-theme="dark"] .wd-chip {
+  background: #2a2440;
+  color: #f8fafc;
+}
+html[data-theme="dark"] .wd-chip.used {
+  background: rgba(255,255,255,0.06);
+  color: #64748b;
+}
+.wd-fb {
+  text-align: center;
+  min-height: 1.4em;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 8px 0 0;
+}
+.wd-fb.ok { color: #16a34a; }
+.wd-fb.bad { color: #dc2626; }
+.wd-write { text-align: center; }
+.wd-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid #ddd6fe;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: center;
+  background: #fff;
+  color: #1e1b4b;
+}
+.wd-input:focus {
+  outline: none;
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+.wd-input.ok { border-color: #16a34a; background: #f0fdf4; }
+.wd-input.bad { border-color: #dc2626; background: #fef2f2; }
+html[data-theme="dark"] .wd-input {
+  background: #1e1b2e;
+  border-color: rgba(167,139,250,0.35);
+  color: #f8fafc;
+}
+.wd-btn {
+  appearance: none;
+  border: none;
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 14px 28px;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-top: 12px;
+  box-shadow: 0 8px 20px rgba(109, 40, 217, 0.3);
+}
+.wd-btn:active { transform: scale(0.97); }
+.wd-start {
+  text-align: center;
+  padding: 24px 12px;
+}
+.wd-hero { font-size: 3rem; margin-bottom: 8px; }
+.wd-start h1 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+}
+.wd-desc {
+  color: #64748b;
+  margin: 0 0 16px;
+}
+.wd-parts {
+  text-align: left;
+  max-width: 320px;
+  margin: 0 auto 20px;
+  padding-left: 1.2em;
+  line-height: 1.55;
+  color: #475569;
+}
+html[data-theme="dark"] .wd-desc,
+html[data-theme="dark"] .wd-parts { color: #94a3b8; }
