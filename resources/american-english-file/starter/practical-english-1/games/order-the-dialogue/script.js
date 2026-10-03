@@ -525,6 +525,12 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     });
   }
 
+  // id → text (so identical lines like both "W-A-L-K-E-R." are interchangeable)
+  const LINE_TEXT = {};
+  LINES.forEach((l) => {
+    LINE_TEXT[l.id] = l.text;
+  });
+
   function onCheck() {
     if (locked) return;
     locked = true;
@@ -533,7 +539,9 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     const list = document.getElementById("od-list");
     let correct = 0;
     order.forEach((id, i) => {
-      const ok = id === LINES[i].id;
+      // Match by text so duplicate lines (e.g. both W-A-L-K-E-R.) count as correct
+      // in either of their positions
+      const ok = LINE_TEXT[id] === LINES[i].text;
       if (ok) correct++;
       const li = list && list.querySelector(`.od-item[data-id="${id}"]`);
       if (li) {

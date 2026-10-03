@@ -313,11 +313,41 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     render();
   }
 
+  function spellTarget(item) {
+    // Primary word for letter boxes (no spaces)
+    return (item.spellAnswers[0] || "").replace(/\s+/g, "").toLowerCase();
+  }
+
+  function getSpellInput() {
+    const boxes = app.querySelectorAll(".wt-letter");
+    if (!boxes.length) return "";
+    let s = "";
+    boxes.forEach((b) => {
+      s += (b.value || "").toLowerCase();
+    });
+    return s;
+  }
+
+  function allSpellFilled() {
+    const boxes = app.querySelectorAll(".wt-letter");
+    if (!boxes.length) return false;
+    for (let i = 0; i < boxes.length; i++) {
+      if (!(boxes[i].value || "").trim()) return false;
+    }
+    return true;
+  }
+
   function checkAnswer() {
     if (answered) return;
-    const input = document.getElementById("wt-input");
-    const val = (input ? input.value : "").trim();
-    if (!val) return;
+    let val = "";
+    if (step === "spell") {
+      val = getSpellInput();
+      if (!val || !allSpellFilled()) return;
+    } else {
+      const input = document.getElementById("wt-input");
+      val = (input ? input.value : "").trim();
+      if (!val) return;
+    }
     lastUserInput = val;
     lastSkipped = false;
     const item = order[index];
@@ -326,9 +356,17 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     if (lastCorrect) correctCount += 1;
     answered = true;
     stopAudio();
-    if (input) {
-      input.classList.add(lastCorrect ? "wt-ok" : "wt-bad");
-      input.blur();
+    if (step === "spell") {
+      app.querySelectorAll(".wt-letter").forEach((b) => {
+        b.classList.add(lastCorrect ? "wt-ok" : "wt-bad");
+        b.disabled = true;
+      });
+    } else {
+      const input = document.getElementById("wt-input");
+      if (input) {
+        input.classList.add(lastCorrect ? "wt-ok" : "wt-bad");
+        input.blur();
+      }
     }
     const checkBtn = document.getElementById("wt-check");
     if (checkBtn) checkBtn.disabled = true;
@@ -469,8 +507,19 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     const item = order[index];
     const isName = step === "name";
     const question = isName ? "What's this?" : "How do you spell it?";
-    const tip = isName ? 'Answer with: It\'s a … / It\'s the …' : "Spell the word (letters only).";
-    const placeholder = isName ? "It's a …" : "Type the word…";
+    const tip = isName
+      ? "Answer with: It's a … / It's the …"
+      : "Put one letter in each box.";
+    const targetWord = spellTarget(item);
+    const letterBoxesHtml = isName
+      ? ""
+      : targetWord
+          .split("")
+          .map(
+            (_, i) =>
+              `<input type="text" class="wt-letter" data-i="${i}" maxlength="1" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" aria-label="Letter ${i + 1}">`
+          )
+          .join("");
 
     if (phase === "play") {
       app.innerHTML = `
@@ -486,11 +535,15 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
             <img class="wt-pic" src="${item.image}" alt="Classroom object" draggable="false">
           </div>
           <p class="wt-question">${question}</p>
-          <div class="wt-input-wrap">
+          ${
+            isName
+              ? `<div class="wt-input-wrap">
             <input type="text" id="wt-input" class="wt-input"
-              placeholder="${placeholder}"
+              placeholder="It's a …"
               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-          </div>
+          </div>`
+              : `<div class="wt-letters" id="wt-letters">${letterBoxesHtml}</div>`
+          }
           <div class="wt-actions">
             <button type="button" class="wt-btn" id="wt-check" disabled>Check</button>
             <button type="button" class="wt-skip" id="wt-skip">Skip →</button>
@@ -503,16 +556,71 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         phase = "menu";
         render();
       };
-      const input = document.getElementById("wt-input");
       const checkBtn = document.getElementById("wt-check");
-      input.focus();
       checkBtn.onclick = checkAnswer;
       document.getElementById("wt-skip").onclick = skipAnswer;
-      const sync = () => { checkBtn.disabled = !input.value.trim(); };
-      input.addEventListener("input", sync);
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") checkAnswer();
-      });
+
+      if (isName) {
+        const input = document.getElementById("wt-input");
+        input.focus();
+        const sync = () => {
+          checkBtn.disabled = !input.value.trim();
+        };
+        input.addEventListener("input", sync);
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") checkAnswer();
+        });
+      } else {
+        const boxes = Array.from(app.querySelectorAll(".wt-letter"));
+        const syncCheck = () => {
+          checkBtn.disabled = !allSpellFilled();
+        };
+        boxes.forEach((box, i) => {
+          box.addEventListener("input", (e) => {
+            let v = (box.value || "").replace(/[^a-zA-Z]/g, "");
+            if (v.length > 1) v = v.slice(-1);
+            box.value = v.toUpperCase();
+            if (v && i < boxes.length - 1) boxes[i + 1].focus();
+            syncCheck();
+          });
+          box.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace") {
+              if (!box.value && i > 0) {
+                e.preventDefault();
+                boxes[i - 1].focus();
+                boxes[i - 1].value = "";
+                syncCheck();
+              }
+            } else if (e.key === "ArrowLeft" && i > 0) {
+              e.preventDefault();
+              boxes[i - 1].focus();
+            } else if (e.key === "ArrowRight" && i < boxes.length - 1) {
+              e.preventDefault();
+              boxes[i + 1].focus();
+            } else if (e.key === "Enter") {
+              e.preventDefault();
+              checkAnswer();
+            }
+          });
+          // Paste support: fill consecutive boxes
+          box.addEventListener("paste", (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData)
+              .getData("text")
+              .replace(/[^a-zA-Z]/g, "")
+              .toUpperCase();
+            if (!text) return;
+            for (let j = 0; j < text.length && i + j < boxes.length; j++) {
+              boxes[i + j].value = text[j];
+            }
+            const next = Math.min(i + text.length, boxes.length - 1);
+            boxes[next].focus();
+            syncCheck();
+          });
+        });
+        if (boxes[0]) boxes[0].focus();
+        syncCheck();
+      }
       return;
     }
 
@@ -533,9 +641,21 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         <h2>${lastCorrect ? "Correct!" : lastSkipped ? "Skipped" : "Not quite"}</h2>
         <div class="wt-answer-card">
           <img class="wt-answer-img" src="${item.image}" alt="${item.label}">
-          <strong>${step === "name" ? (item.nameAnswers[0].charAt(0).toUpperCase() + item.nameAnswers[0].slice(1)) : item.spellAnswers[0]}</strong>
+          <strong>${
+            step === "name"
+              ? item.nameAnswers[0].charAt(0).toUpperCase() + item.nameAnswers[0].slice(1)
+              : spellTarget(item).toUpperCase().split("").join(" ")
+          }</strong>
         </div>
-        ${!lastSkipped ? `<p class="wt-your">You wrote: <em>${(lastUserInput || "—").trim() || "—"}</em></p>` : ""}
+        ${
+          !lastSkipped
+            ? `<p class="wt-your">You wrote: <em>${
+                step === "spell" && lastUserInput
+                  ? lastUserInput.toUpperCase().split("").join(" ")
+                  : (lastUserInput || "—").trim() || "—"
+              }</em></p>`
+            : ""
+        }
         <button type="button" class="wt-btn" id="wt-next">${nextLabel}</button>
       </section>`;
 
