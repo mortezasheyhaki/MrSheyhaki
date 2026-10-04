@@ -78,7 +78,7 @@
       id: 1,
       title: "1 · Phone number",
       hint: "Write the cell phone number.",
-      audio: "audio/01.mp3",
+      audio: "https://cdn.imgurl.ir/uploads/r812406_01.mp3",
       answers: ["3035550415", "30355504152"],
       display: "303-555-0415",
       render: "phone"
@@ -87,7 +87,7 @@
       id: 2,
       title: "2 · Address",
       hint: "Write the house number for Oak Street.",
-      audio: "audio/02.mp3",
+      audio: "https://cdn.imgurl.ir/uploads/f00361_02.mp3",
       answers: ["57"],
       display: "57 Oak Street",
       render: "address"
@@ -96,7 +96,7 @@
       id: 3,
       title: "3 · Age",
       hint: "How old is he?",
-      audio: "audio/03.mp3",
+      audio: "https://cdn.imgurl.ir/uploads/s780138_03.mp3",
       answers: ["39"],
       display: "39",
       render: "age"
@@ -105,7 +105,7 @@
       id: 4,
       title: "4 · Email",
       hint: "Write the numbers in the email address.",
-      audio: "audio/04.mp3",
+      audio: "https://cdn.imgurl.ir/uploads/q043695_04.mp3",
       answers: ["85"],
       display: "james85@gmail.com",
       render: "email"

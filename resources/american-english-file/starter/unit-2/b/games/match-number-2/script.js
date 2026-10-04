@@ -77,14 +77,14 @@
   const GAME_ID = "starter-2b-match-number-2";
 
   const ITEMS = [
-    { id: "30", num: "30", word: "thirty", audio: "audio/30.mp3" },
-    { id: "40", num: "40", word: "forty", audio: "audio/40.mp3" },
-    { id: "50", num: "50", word: "fifty", audio: "audio/50.mp3" },
-    { id: "60", num: "60", word: "sixty", audio: "audio/60.mp3" },
-    { id: "70", num: "70", word: "seventy", audio: "audio/70.mp3" },
-    { id: "80", num: "80", word: "eighty", audio: "audio/80.mp3" },
-    { id: "90", num: "90", word: "ninety", audio: "audio/90.mp3" },
-    { id: "100", num: "100", word: "a hundred", audio: "audio/100.mp3" },
+    { id: "30", num: "30", word: "thirty", audio: "https://cdn.imgurl.ir/uploads/p10946_30.mp3" },
+    { id: "40", num: "40", word: "forty", audio: "https://cdn.imgurl.ir/uploads/n25017_40.mp3" },
+    { id: "50", num: "50", word: "fifty", audio: "https://cdn.imgurl.ir/uploads/t431226_50.mp3" },
+    { id: "60", num: "60", word: "sixty", audio: "https://cdn.imgurl.ir/uploads/l198108_60.mp3" },
+    { id: "70", num: "70", word: "seventy", audio: "https://cdn.imgurl.ir/uploads/x326748_70.mp3" },
+    { id: "80", num: "80", word: "eighty", audio: "https://cdn.imgurl.ir/uploads/x153920_80.mp3" },
+    { id: "90", num: "90", word: "ninety", audio: "https://cdn.imgurl.ir/uploads/s491128_90.mp3" },
+    { id: "100", num: "100", word: "a hundred", audio: "https://cdn.imgurl.ir/uploads/r297360_100.mp3" },
   ];
 
   // 2 fixed sets of 4
