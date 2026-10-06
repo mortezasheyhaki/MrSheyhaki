@@ -443,6 +443,16 @@ COURSE_DATA["american-english-file"].levels["1"].units[11].name = "Culture & exp
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.name = "Culture shock";
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.b.name = "Experiences or things?";
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.c.name = "How smart is your phone?";
+
+// Level 1 – Unit 11A – Adjectives & adverbs
+COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.games = [
+  { title: "Adjectives → Adverbs Match", url: "adj-adv-match/", label: "Vocabulary" },
+  { title: "Adjective or Adverb?", url: "adj-adv-swipe/", label: "Vocabulary" },
+  { title: "Adverbs · Listen & Complete", url: "adverbs-listen-complete/", label: "Listening" },
+  { title: "Adverbs · Listen & Write", url: "adverbs-listen-write/", label: "Listening" },
+  { title: "Culture Shock · Listen & Complete", url: "culture-shock-listen-complete/", label: "Listening" },
+];
+
 COURSE_DATA["american-english-file"].levels["1"].units[12].name = "Entertainment & interview";
 COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.a.name = "I've seen it ten times!";
 COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.b.name = "He's been everywhere!";
