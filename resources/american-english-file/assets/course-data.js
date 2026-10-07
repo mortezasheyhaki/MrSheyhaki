@@ -338,9 +338,20 @@ COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.games = [
 // Unit 9A – Present continuous + travel + messages
 COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
   { title: "Travel Match", url: "travel-match/", label: "Vocabulary" },
-  { title: "Listen & Write", url: "listen-and-write/" },
+  { title: "Travel Phrase Chips", url: "travel-phrase/", label: "Vocabulary" },
+  { title: "What's he/she doing? · Travel", url: "travel-whats-doing/", label: "Grammar" },
+  { title: "Travel Conversations", url: "travel-conversations/", label: "Listening" },
+  { title: "Present Continuous +", url: "continuous-positive/", label: "Grammar" },
+  { title: "Present Continuous −", url: "continuous-negative/", label: "Grammar" },
+  { title: "Present Continuous ?", url: "continuous-questions/", label: "Grammar" },
+  { title: "Dialogue Complete", url: "continuous-dialogues/", label: "Grammar" },
+  { title: "Picture Sentences (write)", url: "continuous-pictures/", label: "Grammar" },
   { title: "Picture Sentences", url: "picture-sentences/", label: "Grammar" },
   { title: "Write the Sentences", url: "write-sentences/", label: "Grammar" },
+  { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
+  { title: "Listen & Repeat · Conversation", url: "listen-repeat-conversation/", label: "Pronunciation" },
+  { title: "Order the Messages", url: "order-the-messages/", label: "Grammar" },
+  { title: "Interactive Video", url: "video-listening/", label: "Listening" },
 ];
 
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="light">
+    <title>Interactive Video | Listening Practice</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="page">
+
+        <header class="page-header">
+            <div class="brand">Listening Practice</div>
+            <h1>Interactive Video Listening</h1>
+            <p>
+                A prompt appears 7 seconds early so you know what to listen for. Then answer the question.
+            </p>
+        </header>
+
+        <!-- VIDEO PLAYER -->
+        <section class="player-container">
+
+            <div id="videoWrapper" class="video-wrapper">
+
+                <video
+                    id="videoPlayer"
+                    controls
+                    playsinline
+                    webkit-playsinline
+                    preload="metadata"
+                    controlsList="nofullscreen noremoteplayback"
+                    disablepictureinpicture
+                >
+                    <source
+                        src="https://cdn.imgurl.ir/uploads/p67083_InShot_20261007_142604817.mp4"
+                        type="video/mp4"
+                    >
+                    Your browser does not support HTML video.
+                </video>
+
+                <div id="videoError" class="video-error hidden" role="alert">
+                    The video couldn't load. Check your connection and refresh the page.
+                </div>
+
+                <!-- QUESTION OVERLAY (desktop: over the video / mobile: panel below it) -->
+                <div id="questionOverlay" class="question-overlay hidden">
+
+                    <div class="question-card" aria-live="polite">
+
+                        <div id="questionNumber" class="question-number">Question 1</div>
+
+                        <!-- LISTEN PHASE: countdown -->
+                        <div id="listenTimer" class="listen-timer hidden">
+                            <div class="timer-circle">
+                                <span id="timerValue">7</span>
+                            </div>
+                            <div class="timer-label">Listen carefully…</div>
+                        </div>
+
+                        <h2 id="questionText">Question goes here</h2>
+
+                        <div id="answerOptions" class="answer-options"></div>
+
+                        <div id="feedback" class="feedback" aria-live="polite"></div>
+
+                        <button id="continueButton" class="continue-button hidden" type="button">
+                            Continue Watching ▶
+                        </button>
+
+                        <p class="key-hint">Tip: press 1–4 to answer, Enter to continue</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- PLAYER INFO -->
+            <div class="player-info">
+
+                <div class="progress-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+
+                <div class="time">
+                    <span id="currentTime">0:00</span>
+                    /
+                    <span id="duration">0:00</span>
+                </div>
+
+                <button id="fullscreenButton" class="fullscreen-button hidden" type="button">
+                    Fullscreen
+                </button>
+
+            </div>
+
+            <!-- SCORE -->
+            <div class="stats">
+                <div class="stat">
+                    ⭐ Score: <strong id="score">0</strong>
+                </div>
+                <div class="stat">
+                    Questions: <strong id="questionProgress">0 / 5</strong>
+                </div>
+                <div id="status" class="stat">Ready</div>
+            </div>
+
+        </section>
+
+        <!-- COMPLETION -->
+        <section id="completionScreen" class="completion-screen hidden">
+            <div class="completion-icon">🎉</div>
+            <h2>Great job!</h2>
+            <p>You completed the interactive listening practice.</p>
+            <div id="finalScore" class="final-score">Score: 0</div>
+            <p id="finalDetail" class="final-detail"></p>
+            <button id="restartButton" class="restart-button" type="button">Watch Again</button>
+        </section>
+
+        <footer>
+            <div>Listening Practice</div>
+            <div>Listen first → then choose the correct details</div>
+        </footer>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
