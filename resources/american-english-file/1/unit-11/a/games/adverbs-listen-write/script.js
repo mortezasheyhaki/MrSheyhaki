@@ -224,7 +224,7 @@
     btn.setAttribute("aria-label", "Continue");
     btn.title = "Continue";
     btn.innerHTML =
-      '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">' +
+      '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">' +
       '<path fill="currentColor" d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>';
     btn.onclick = function () {
       sfx("click");

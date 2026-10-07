@@ -285,7 +285,7 @@
     tryBtn.setAttribute("aria-label", "Try again");
     tryBtn.title = "Try again";
     tryBtn.innerHTML =
-      '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">' +
+      '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">' +
       '<path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>';
     tryBtn.onclick = function () {
       sfx("click");
@@ -299,7 +299,7 @@
     contBtn.setAttribute("aria-label", "Continue");
     contBtn.title = "Continue";
     contBtn.innerHTML =
-      '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">' +
+      '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">' +
       '<path fill="currentColor" d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>';
     contBtn.onclick = function () {
       sfx("click");

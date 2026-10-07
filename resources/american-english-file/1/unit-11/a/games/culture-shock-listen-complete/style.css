@@ -477,44 +477,6 @@ html[data-theme="dark"] .lc-link { color: #c4b5fd; }
   margin-top: 4px;
 }
 
-.lc-continue-btn {
-  display: block;
-  width: 100%;
-  max-width: 280px;
-  margin: 14px auto 0;
-  text-align: center;
-}
-
-.lc-wrong-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin: 14px auto 0;
-  max-width: 320px;
-}
-.lc-wrong-actions .lc-btn {
-  flex: 1 1 130px;
-  margin: 0;
-  text-align: center;
-}
-.lc-btn.secondary {
-  background: rgba(100, 116, 139, 0.15);
-  color: inherit;
-  box-shadow: none;
-}
-html[data-theme="dark"] .lc-btn.secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: #e2e8f0;
-}
-.lc-continue-btn {
-  display: block;
-  width: 100%;
-  max-width: 280px;
-  margin: 14px auto 0;
-  text-align: center;
-}
-
 /* Play button – same as Unit 6A Jobs Match */
 .mc-play {
   position: relative;
@@ -591,40 +553,54 @@ html[data-theme="dark"] .mc-play.playing {
   box-shadow: 0 0 0 5px rgba(129, 140, 248, 0.3);
 }
 
-
 /* Compact icon action buttons */
 .lc-wrong-actions {
   display: flex;
-  gap: 12px;
+  flex-direction: row;
+  gap: 16px;
   justify-content: center;
   align-items: center;
-  margin: 12px auto 0;
+  margin: 16px auto 0;
+  width: auto;
+  max-width: none;
 }
 .lc-icon-btn {
   appearance: none;
   border: none;
   cursor: pointer;
-  width: 44px;
-  height: 44px;
+  width: 52px !important;
+  height: 52px !important;
+  min-width: 52px;
+  max-width: 52px;
   border-radius: 50%;
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  padding: 0 !important;
+  margin: 0 !important;
+  flex: 0 0 52px !important;
   background: rgba(100, 116, 139, 0.14);
   color: #475569;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
   transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.lc-icon-btn svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
 }
 .lc-icon-btn:hover {
   transform: scale(1.06);
   background: rgba(100, 116, 139, 0.22);
 }
 .lc-icon-btn:active { transform: scale(0.94); }
-.lc-icon-btn.is-primary {
+.lc-icon-btn.is-primary,
+.lc-icon-btn.lc-continue-btn {
   background: linear-gradient(135deg, #8b5cf6, #6d28d9);
   color: #fff;
   box-shadow: 0 4px 12px rgba(109, 40, 217, 0.3);
+  width: 52px !important;
+  max-width: 52px !important;
 }
 .lc-icon-btn.is-primary:hover {
   background: linear-gradient(135deg, #7c3aed, #5b21b6);
@@ -636,8 +612,98 @@ html[data-theme="dark"] .lc-icon-btn {
 html[data-theme="dark"] .lc-icon-btn:hover {
   background: rgba(255, 255, 255, 0.16);
 }
-html[data-theme="dark"] .lc-icon-btn.is-primary {
+html[data-theme="dark"] .lc-icon-btn.is-primary,
+html[data-theme="dark"] .lc-icon-btn.lc-continue-btn {
   background: linear-gradient(135deg, #8b5cf6, #6d28d9);
   color: #fff;
 }
 
+/* Desktop – larger listening layout */
+@media (min-width: 768px) {
+  .lc-game {
+    max-width: 640px;
+    padding: 20px 24px 40px;
+  }
+  .lc-title {
+    font-size: 1.25rem;
+  }
+  .lc-instruction {
+    font-size: 1rem;
+    margin-bottom: 18px;
+  }
+  .mc-play {
+    width: 76px;
+    height: 76px;
+  }
+  .mc-play svg {
+    width: 32px;
+    height: 32px;
+  }
+  .mc-play .eq span {
+    width: 4px;
+    height: 16px;
+  }
+  .lc-slots {
+    gap: 12px;
+    padding: 16px 18px;
+    min-height: 72px;
+  }
+  .lc-slot {
+    font-size: 1.1rem;
+    padding: 12px 16px;
+    min-width: 72px;
+  }
+  .lc-pool {
+    gap: 12px;
+  }
+  .lc-chip {
+    font-size: 1.05rem;
+    padding: 12px 18px;
+  }
+  .lc-fb {
+    font-size: 1.05rem;
+  }
+  .lc-icon-btn {
+    width: 58px !important;
+    height: 58px !important;
+    min-width: 58px;
+    max-width: 58px;
+    flex: 0 0 58px !important;
+  }
+  .lc-icon-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+  .lc-wrong-actions {
+    gap: 18px;
+  }
+  /* listen-write card */
+  .lw-card {
+    padding: 28px 28px 24px;
+    border-radius: 26px;
+  }
+  .lw-sentence {
+    font-size: 1.35rem;
+  }
+  .lw-hint {
+    font-size: 0.95rem;
+    padding: 8px 16px;
+  }
+  .lc-type-input {
+    font-size: 1.25rem;
+    padding: 16px 18px;
+  }
+  .lc-check-btn {
+    font-size: 1.05rem;
+    padding: 16px;
+  }
+  .lc-start h1 {
+    font-size: 1.75rem;
+  }
+  .lc-desc {
+    font-size: 1.05rem;
+  }
+  .lc-hero {
+    font-size: 3.8rem;
+  }
+}
