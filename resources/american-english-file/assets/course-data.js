@@ -338,20 +338,9 @@ COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.games = [
 // Unit 9A – Present continuous + travel + messages
 COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
   { title: "Travel Match", url: "travel-match/", label: "Vocabulary" },
-  { title: "Travel Phrase Chips", url: "travel-phrase/", label: "Vocabulary" },
-  { title: "What's he/she doing? · Travel", url: "travel-whats-doing/", label: "Grammar" },
-  { title: "Travel Conversations", url: "travel-conversations/", label: "Listening" },
-  { title: "Present Continuous +", url: "continuous-positive/", label: "Grammar" },
-  { title: "Present Continuous −", url: "continuous-negative/", label: "Grammar" },
-  { title: "Present Continuous ?", url: "continuous-questions/", label: "Grammar" },
-  { title: "Dialogue Complete", url: "continuous-dialogues/", label: "Grammar" },
-  { title: "Picture Sentences (write)", url: "continuous-pictures/", label: "Grammar" },
+  { title: "Listen & Write", url: "listen-and-write/" },
   { title: "Picture Sentences", url: "picture-sentences/", label: "Grammar" },
   { title: "Write the Sentences", url: "write-sentences/", label: "Grammar" },
-  { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
-  { title: "Listen & Repeat · Conversation", url: "listen-repeat-conversation/", label: "Pronunciation" },
-  { title: "Order the Messages", url: "order-the-messages/", label: "Grammar" },
-  { title: "Interactive Video", url: "video-listening/", label: "Listening" },
 ];
 
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)
@@ -448,6 +437,7 @@ COURSE_DATA["american-english-file"].levels["1"].units[10].lessons.b.games = [
   { title: "Going to Short Answers", url: "going-to-short-answers/", label: "Grammar" },
   { title: "Write Your Answers", url: "going-to-write-answers/", label: "Writing" },
   { title: "Going to — About You", url: "going-to-about-you/", label: "Speaking" },
+  { title: "Hotel Email Challenge", url: "hotel-email-challenge/", label: "Writing" },
 ];
 
 COURSE_DATA["american-english-file"].levels["1"].units[11].name = "Culture & experiences";
@@ -455,15 +445,18 @@ COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.name = "Cul
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.b.name = "Experiences or things?";
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.c.name = "How smart is your phone?";
 
-// Level 1 – Unit 11A – Adjectives & adverbs
-COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.games = [
-  { title: "Adjectives → Adverbs Match", url: "adj-adv-match/", label: "Vocabulary" },
-  { title: "Adjective or Adverb?", url: "adj-adv-swipe/", label: "Vocabulary" },
-  { title: "Adverbs · Listen & Complete", url: "adverbs-listen-complete/", label: "Listening" },
-  { title: "Adverbs · Listen & Write", url: "adverbs-listen-write/", label: "Listening" },
-  { title: "Culture Shock · Listen & Complete", url: "culture-shock-listen-complete/", label: "Listening" },
+// Level 1 – Unit 11C – How smart is your phone?
+COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.c.games = [
+  { title: "Phone Interviews", url: "phone-interviews/", label: "Listening" },
+  { title: "The or No The", url: "the-or-no-the/", label: "Grammar" },
+  { title: "Circle the Article", url: "circle-the-article/", label: "Grammar" },
 ];
 
+
+// Level 1 – Unit 11A – Adjectives & adverbs
+COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.games = [
+  { title: "Adjectives → Adverbs Match", url: "adj-adv-match/", label: "Grammar" },
+];
 COURSE_DATA["american-english-file"].levels["1"].units[12].name = "Entertainment & interview";
 COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.a.name = "I've seen it ten times!";
 COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.b.name = "He's been everywhere!";
