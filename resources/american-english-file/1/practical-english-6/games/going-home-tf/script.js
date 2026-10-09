@@ -1,7 +1,8 @@
 /**
  * Going Home · True or False
  * AEF Level 1 · Practical English 6
- * All 5 sentences visible · watch video · mark T/F · check
+ * All 5 sentences · watch video · mark T/F · check
+ * Video is never re-created on answer clicks
  * LA stars + finish (save once)
  */
 (function () {
@@ -43,7 +44,7 @@
 
   var state = {
     screen: "start",
-    answers: {}, // index -> true | false
+    answers: {},
     checked: false,
     score: 0,
     started: false,
@@ -123,6 +124,7 @@
     }
   }
 
+  /* ── Shell (full page only on screen change) ── */
   function shell(bodyHtml, opts) {
     opts = opts || {};
     var pct = Math.round((answeredCount() / TOTAL) * 100);
@@ -136,11 +138,11 @@
       '<h1 class="gh-title">Going Home</h1>' +
       "</div>" +
       (opts.score !== false
-        ? '<div class="gh-score-pill" aria-live="polite">' +
-          '<span class="gh-score-label">' +
+        ? '<div class="gh-score-pill" id="gh-score-pill" aria-live="polite">' +
+          '<span class="gh-score-label" id="gh-score-label">' +
           (state.checked ? "Score" : "Done") +
           "</span>" +
-          '<span class="gh-score-value">' +
+          '<span class="gh-score-value" id="gh-score-value">' +
           (state.checked
             ? state.score + " / " + TOTAL
             : answeredCount() + " / " + TOTAL) +
@@ -148,10 +150,10 @@
         : "") +
       "</div>" +
       (opts.progress !== false
-        ? '<div class="gh-progress" role="progressbar" aria-valuenow="' +
+        ? '<div class="gh-progress" role="progressbar" id="gh-progress" aria-valuenow="' +
           pct +
           '" aria-valuemin="0" aria-valuemax="100">' +
-          '<div class="gh-progress-fill" style="width:' +
+          '<div class="gh-progress-fill" id="gh-progress-fill" style="width:' +
           pct +
           '%"></div></div>'
         : "") +
@@ -168,6 +170,23 @@
   function bindShell() {
     var r = document.getElementById("gh-restart");
     if (r) r.onclick = function () { resetGame(false); };
+  }
+
+  function updateHeaderStats() {
+    var label = document.getElementById("gh-score-label");
+    var value = document.getElementById("gh-score-value");
+    var fill = document.getElementById("gh-progress-fill");
+    var bar = document.getElementById("gh-progress");
+    if (label) label.textContent = state.checked ? "Score" : "Done";
+    if (value) {
+      value.textContent = state.checked
+        ? state.score + " / " + TOTAL
+        : answeredCount() + " / " + TOTAL;
+    }
+    var pct = Math.round((answeredCount() / TOTAL) * 100);
+    if (state.checked) pct = 100;
+    if (fill) fill.style.width = pct + "%";
+    if (bar) bar.setAttribute("aria-valuenow", String(pct));
   }
 
   function render() {
@@ -207,7 +226,7 @@
     };
   }
 
-  function tfBtn(idx, val, label, shortLabel) {
+  function tfBtnHtml(idx, val, shortLabel) {
     var chosen = state.answers[idx] === val;
     var locked = state.checked;
     var item = ITEMS[idx];
@@ -229,7 +248,7 @@
       ' aria-pressed="' +
       (chosen ? "true" : "false") +
       '" aria-label="' +
-      label +
+      (val ? "True" : "False") +
       '">' +
       '<span class="gh-tf-circle" aria-hidden="true">' +
       (chosen ? '<span class="gh-tf-tick">✓</span>' : "") +
@@ -240,17 +259,21 @@
     );
   }
 
-  function renderPlay() {
+  function listHtml() {
     var rows = "";
     ITEMS.forEach(function (item, idx) {
       var rowCls = "gh-row";
       if (state.checked) {
-        var ok = state.answers[idx] === item.answer;
-        rowCls += ok ? " is-correct-row" : " is-wrong-row";
+        rowCls +=
+          state.answers[idx] === item.answer
+            ? " is-correct-row"
+            : " is-wrong-row";
       }
       rows +=
         '<div class="' +
         rowCls +
+        '" data-row="' +
+        idx +
         '">' +
         '<div class="gh-row-num">' +
         (idx + 1) +
@@ -266,15 +289,15 @@
         '<div class="gh-tf-pair" role="group" aria-label="Sentence ' +
         (idx + 1) +
         '">' +
-        tfBtn(idx, true, "True", "T") +
-        tfBtn(idx, false, "False", "F") +
+        tfBtnHtml(idx, true, "T") +
+        tfBtnHtml(idx, false, "F") +
         "</div></div>";
     });
 
     var actions = "";
     if (!state.checked) {
       actions =
-        '<div class="gh-actions gh-actions-bar">' +
+        '<div class="gh-actions gh-actions-bar" id="gh-actions">' +
         '<button type="button" class="gh-btn gh-btn-primary" id="gh-check"' +
         (allAnswered() ? "" : " disabled") +
         ">Check answers</button>" +
@@ -282,13 +305,29 @@
         "</div>";
     } else {
       actions =
-        '<div class="gh-actions gh-actions-bar">' +
+        '<div class="gh-actions gh-actions-bar" id="gh-actions">' +
         '<button type="button" class="gh-btn gh-btn-success" id="gh-finish">Finish</button>' +
         "</div>";
     }
 
+    return (
+      '<div class="gh-card gh-list-card" id="gh-list-card">' +
+      '<div class="gh-list-head">' +
+      "<span>Mark T or F</span>" +
+      '<span class="gh-list-legend"><span class="gh-leg-t">T</span> True · <span class="gh-leg-f">F</span> False</span>' +
+      "</div>" +
+      '<div class="gh-list" id="gh-list">' +
+      rows +
+      "</div>" +
+      actions +
+      "</div>"
+    );
+  }
+
+  /* Full build of play screen (once) — video stays after this */
+  function renderPlay() {
     app.innerHTML = shell(
-      '<div class="gh-card gh-video-card">' +
+      '<div class="gh-card gh-video-card" id="gh-video-card">' +
         '<div class="gh-audio-label">Video · Jenny\'s last morning · PE6</div>' +
         '<div class="gh-video-wrap">' +
         '<video id="gh-video" class="gh-video" playsinline preload="metadata" controls ' +
@@ -298,32 +337,41 @@
         "Your browser does not support video." +
         "</video>" +
         "</div>" +
-        '<p class="gh-video-hint">Watch the video, then mark each sentence True (T) or False (F).</p>' +
         "</div>" +
-        '<div class="gh-card gh-list-card">' +
-        '<div class="gh-list-head">' +
-        "<span>Mark T or F</span>" +
-        '<span class="gh-list-legend"><span class="gh-leg-t">T</span> True · <span class="gh-leg-f">F</span> False</span>' +
-        "</div>" +
-        '<div class="gh-list">' +
-        rows +
-        "</div>" +
-        actions +
-        "</div>"
+        listHtml()
     );
-
     bindShell();
-    bindPlay();
+    bindVideoOnce();
+    bindList();
   }
 
-  function bindPlay() {
+  function bindVideoOnce() {
     var v = document.getElementById("gh-video");
-    if (v) {
-      v.addEventListener("play", function () {
-        startTimerOnce();
-      });
-    }
+    if (!v || v._ghBound) return;
+    v._ghBound = true;
+    v.addEventListener("play", function () {
+      startTimerOnce();
+    });
+  }
 
+  /* Update only the list + header — video node is left alone */
+  function refreshList() {
+    var listCard = document.getElementById("gh-list-card");
+    if (!listCard) {
+      renderPlay();
+      return;
+    }
+    var parent = listCard.parentNode;
+    var next = listCard.nextSibling;
+    var tmp = document.createElement("div");
+    tmp.innerHTML = listHtml();
+    var newCard = tmp.firstChild;
+    parent.replaceChild(newCard, listCard);
+    updateHeaderStats();
+    bindList();
+  }
+
+  function bindList() {
     if (!state.checked) {
       Array.prototype.forEach.call(
         document.querySelectorAll(".gh-tf-btn"),
@@ -334,7 +382,8 @@
             sfx("click");
             startTimerOnce();
             state.answers[idx] = val;
-            render();
+            // Do NOT call full render — only refresh list
+            refreshList();
           };
         }
       );
@@ -348,8 +397,14 @@
           for (var i = 0; i < TOTAL; i++) {
             if (state.answers[i] === ITEMS[i].answer) state.score += 1;
           }
-          sfx(state.score === TOTAL ? "win" : state.score > 0 ? "correct" : "wrong");
-          render();
+          sfx(
+            state.score === TOTAL
+              ? "win"
+              : state.score > 0
+                ? "correct"
+                : "wrong"
+          );
+          refreshList();
         };
       }
 
@@ -358,7 +413,7 @@
         clearBtn.onclick = function () {
           sfx("click");
           state.answers = {};
-          render();
+          refreshList();
         };
       }
     } else {

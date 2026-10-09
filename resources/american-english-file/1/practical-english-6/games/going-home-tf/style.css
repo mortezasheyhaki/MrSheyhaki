@@ -611,18 +611,19 @@ html[data-theme="dark"] .gh-feedback.is-wrong { color: #fca5a5; }
   animation: ghFade 0.25s ease;
 }
 
-/* All sentences list + T/F circle buttons */
+
+/* Compact sentence list — fits one screen */
 .gh-list-card {
-  padding: 14px 12px 16px;
+  padding: 10px 12px 12px;
 }
 
 .gh-list-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
-  font-size: 0.78rem;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -633,77 +634,104 @@ html[data-theme="dark"] .gh-feedback.is-wrong { color: #fca5a5; }
   font-weight: 600;
   text-transform: none;
   letter-spacing: 0;
-  font-size: 0.82rem;
+  font-size: 0.72rem;
 }
 
-.gh-leg-t {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--gh-indigo);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 800;
-  margin-right: 2px;
-}
-
+.gh-leg-t,
 .gh-leg-f {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: var(--gh-gray-500);
   color: #fff;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 800;
-  margin: 0 2px 0 6px;
 }
+
+.gh-leg-t { background: var(--gh-indigo); margin-right: 2px; }
+.gh-leg-f { background: var(--gh-gray-500); margin: 0 2px 0 4px; }
 
 .gh-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
 }
 
+/* Row: no card chrome — thin divider with faded ends */
 .gh-row {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 10px;
-  border-radius: 12px;
-  background: var(--gh-gray-50);
-  border: 1px solid var(--gh-gray-200);
-  transition: border-color 0.15s, background 0.15s;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 2px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  position: relative;
+}
+
+.gh-row + .gh-row {
+  border-top: none;
+}
+
+/* Soft horizontal rule under each row (except last) — ends fade out */
+.gh-row:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(148, 163, 184, 0.45) 12%,
+    rgba(148, 163, 184, 0.55) 50%,
+    rgba(148, 163, 184, 0.45) 88%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+html[data-theme="dark"] .gh-row:not(:last-child)::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(148, 163, 184, 0.28) 12%,
+    rgba(148, 163, 184, 0.38) 50%,
+    rgba(148, 163, 184, 0.28) 88%,
+    transparent 100%
+  );
 }
 
 .gh-row.is-correct-row {
-  border-color: #a7f3d0;
-  background: var(--gh-green-soft);
+  background: transparent;
+}
+.gh-row.is-wrong-row {
+  background: transparent;
 }
 
-.gh-row.is-wrong-row {
-  border-color: #fecaca;
-  background: var(--gh-red-soft);
-}
+.gh-row.is-correct-row .gh-row-text { color: var(--gh-green); }
+.gh-row.is-wrong-row .gh-row-text { color: var(--gh-red); }
 
 .gh-row-num {
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: var(--gh-indigo);
-  color: #fff;
-  font-size: 0.8rem;
+  background: rgba(79, 70, 229, 0.12);
+  color: var(--gh-indigo);
+  font-size: 0.72rem;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 2px;
+}
+
+html[data-theme="dark"] .gh-row-num {
+  background: rgba(129, 140, 248, 0.18);
+  color: #c7d2fe;
 }
 
 .gh-row-body {
@@ -713,22 +741,22 @@ html[data-theme="dark"] .gh-feedback.is-wrong { color: #fca5a5; }
 
 .gh-row-text {
   margin: 0;
-  font-size: 0.98rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--gh-navy);
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 .gh-row-explain {
-  margin: 6px 0 0;
-  font-size: 0.82rem;
+  margin: 3px 0 0;
+  font-size: 0.72rem;
   color: var(--gh-gray-600);
-  line-height: 1.35;
+  line-height: 1.3;
 }
 
 .gh-tf-pair {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
@@ -736,14 +764,14 @@ html[data-theme="dark"] .gh-feedback.is-wrong { color: #fca5a5; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 6px 8px;
+  gap: 2px;
+  padding: 4px 6px;
   border: none;
   background: transparent;
   cursor: pointer;
   font-family: inherit;
-  min-width: 44px;
-  border-radius: 10px;
+  min-width: 36px;
+  border-radius: 8px;
   transition: background 0.15s;
 }
 
@@ -753,18 +781,16 @@ html[data-theme="dark"] .gh-feedback.is-wrong { color: #fca5a5; }
 
 .gh-tf-btn:focus-visible {
   outline: 2px solid var(--gh-indigo);
-  outline-offset: 2px;
+  outline-offset: 1px;
 }
 
-.gh-tf-btn:disabled {
-  cursor: default;
-}
+.gh-tf-btn:disabled { cursor: default; }
 
 .gh-tf-circle {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  border: 2.5px solid var(--gh-gray-300);
+  border: 2px solid var(--gh-gray-300);
   background: #fff;
   display: flex;
   align-items: center;
@@ -778,72 +804,219 @@ html[data-theme="dark"] .gh-tf-circle {
 }
 
 .gh-tf-tick {
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   font-weight: 800;
   color: #fff;
   line-height: 1;
 }
 
 .gh-tf-label {
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   font-weight: 800;
   color: var(--gh-gray-500);
   letter-spacing: 0.02em;
 }
 
-/* Selected / on */
 .gh-tf-btn.is-on .gh-tf-circle {
   background: var(--gh-indigo);
   border-color: var(--gh-indigo);
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
-  transform: scale(1.06);
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+  transform: scale(1.05);
 }
 
-.gh-tf-btn.is-on .gh-tf-label {
-  color: var(--gh-indigo);
-}
+.gh-tf-btn.is-on .gh-tf-label { color: var(--gh-indigo); }
 
-/* After check: correct */
 .gh-tf-btn.is-correct .gh-tf-circle {
   background: var(--gh-green);
   border-color: var(--gh-green);
-  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.28);
 }
 
-.gh-tf-btn.is-correct .gh-tf-label {
-  color: var(--gh-green);
-}
+.gh-tf-btn.is-correct .gh-tf-label { color: var(--gh-green); }
 
-/* After check: wrong selection */
 .gh-tf-btn.is-wrong .gh-tf-circle {
   background: var(--gh-red);
   border-color: var(--gh-red);
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.28);
 }
 
-.gh-tf-btn.is-wrong .gh-tf-label {
-  color: var(--gh-red);
-}
+.gh-tf-btn.is-wrong .gh-tf-label { color: var(--gh-red); }
 
 .gh-actions-bar {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--gh-gray-200);
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: none;
+  position: relative;
+}
+
+/* Faded rule above actions */
+.gh-actions-bar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(148, 163, 184, 0.45) 12%,
+    rgba(148, 163, 184, 0.55) 50%,
+    rgba(148, 163, 184, 0.45) 88%,
+    transparent 100%
+  );
+}
+
+.gh-actions-bar .gh-btn {
+  padding: 10px 16px;
+  font-size: 0.9rem;
+}
+
+/* Slightly tighter video card so list fits */
+.gh-video-card {
+  padding: 12px 12px 10px !important;
+  margin-bottom: 8px !important;
+}
+
+.gh-video-hint {
+  margin: 6px 0 0 !important;
+  font-size: 0.75rem !important;
+}
+
+.gh-video-wrap {
+  aspect-ratio: 16 / 9;
+  max-height: 32vh;
 }
 
 @media (min-width: 700px) {
-  .gh-row-text { font-size: 1.05rem; }
-  .gh-tf-circle { width: 32px; height: 32px; }
-  .gh-tf-tick { font-size: 1.05rem; }
+  .gh-row-text { font-size: 0.95rem; }
+  .gh-tf-circle { width: 26px; height: 26px; }
+  .gh-row { padding: 9px 4px; }
+  .gh-video-wrap { max-height: 36vh; }
+}
+
+@media (max-width: 420px) {
+  .gh-row-text { font-size: 0.82rem; }
+  .gh-row { padding: 7px 0; gap: 6px; }
+  .gh-tf-btn { min-width: 32px; padding: 3px 4px; }
+  .gh-tf-circle { width: 22px; height: 22px; }
+}
+
+@media (max-height: 720px) {
+  .gh-video-wrap { max-height: 26vh; }
+  .gh-row { padding: 6px 2px; }
+  .gh-row-text { font-size: 0.82rem; }
+}
+
+
+
+/* ===== Compact list + normal video ===== */
+.gh-body {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+/* Video: keep natural 16:9, no forced tiny height */
+.gh-video-card {
+  flex: 0 0 auto !important;
+  padding: 10px 12px 8px !important;
+  margin-bottom: 0 !important;
+}
+
+.gh-video-wrap {
+  aspect-ratio: 16 / 9 !important;
+  max-height: none !important;
+  height: auto !important;
+  width: 100% !important;
+}
+
+.gh-video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
+.gh-video-hint {
+  display: none !important;
+}
+
+/* List: tight, not stretched */
+.gh-list-card {
+  flex: 0 0 auto !important;
+  padding: 8px 12px 10px !important;
+  margin-bottom: 0 !important;
+  overflow: visible !important;
+}
+
+.gh-list-head {
+  margin-bottom: 4px !important;
+}
+
+.gh-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  justify-content: flex-start !important; /* was space-evenly — caused huge gaps */
+  overflow: visible !important;
+}
+
+.gh-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px 2px !important;
+  flex: 0 0 auto !important;
+}
+
+.gh-row-num {
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 0.7rem !important;
+}
+
+.gh-row-text {
+  font-size: 0.88rem !important;
+  line-height: 1.3 !important;
+}
+
+.gh-row-explain {
+  font-size: 0.72rem !important;
+  margin-top: 2px !important;
+}
+
+.gh-tf-circle {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.gh-tf-btn {
+  min-width: 32px !important;
+  padding: 2px 4px !important;
+  gap: 1px !important;
+}
+
+.gh-tf-label {
+  font-size: 0.6rem !important;
+}
+
+.gh-actions-bar {
+  margin-top: 6px !important;
+  padding-top: 8px !important;
+}
+
+.gh-actions-bar .gh-btn {
+  padding: 9px 14px !important;
+  font-size: 0.88rem !important;
 }
 
 @media (max-width: 420px) {
   .gh-row {
-    flex-wrap: wrap;
+    padding: 6px 0 !important;
   }
-  .gh-tf-pair {
-    width: 100%;
-    justify-content: flex-end;
-    padding-left: 36px;
+  .gh-row-text {
+    font-size: 0.82rem !important;
   }
 }
