@@ -266,8 +266,8 @@
       score += 1;
       sfx("correct");
       if (fb) {
-        fb.textContent = "✓ " + item.full;
-        fb.className = "lc-fb ok";
+        fb.textContent = "";
+        fb.className = "lc-fb";
       }
       setTimeout(goNext, 900);
     } else {

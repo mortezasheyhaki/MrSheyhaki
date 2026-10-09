@@ -349,8 +349,13 @@
     var ok = chipsCorrect(item);
     var fb = document.getElementById("lc-fb");
     if (fb) {
-      fb.textContent = ok ? "✓ " + item.text : "Answer: " + item.text;
-      fb.className = "lc-fb " + (ok ? "ok" : "bad");
+      if (ok) {
+        fb.textContent = "";
+        fb.className = "lc-fb";
+      } else {
+        fb.textContent = "Answer: " + item.text;
+        fb.className = "lc-fb bad";
+      }
     }
     var slotsEl = document.getElementById("lc-slots");
     if (slotsEl) {
@@ -375,8 +380,13 @@
     }
     var fb = document.getElementById("lc-fb");
     if (fb) {
-      fb.textContent = ok ? "✓ " + item.text : "Answer: " + item.text;
-      fb.className = "lc-fb " + (ok ? "ok" : "bad");
+      if (ok) {
+        fb.textContent = "";
+        fb.className = "lc-fb";
+      } else {
+        fb.textContent = "Answer: " + item.text;
+        fb.className = "lc-fb bad";
+      }
     }
     afterAnswer(ok);
   }

@@ -446,6 +446,15 @@ COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.b.name = "Exp
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.c.name = "How smart is your phone?";
 
 // Level 1 – Unit 11C – How smart is your phone?
+COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.c.audio = [
+  { track: "11.09", url: "https://cdn.imgurl.ir/uploads/i132733_AEF3e_Level_1_SB_11.09.mp3", title: "How smart is your phone?", label: "Student's Book" },
+  { track: "11.10", url: "https://cdn.imgurl.ir/uploads/a776095_AEF3e_Level_1_SB_11.10.mp3", title: "Phone vocabulary", label: "Student's Book" },
+  { track: "11.11", url: "https://cdn.imgurl.ir/uploads/c6068_AEF3e_Level_1_SB_11.11.mp3", title: "Phone interviews · Speakers A–C", label: "Student's Book" },
+  { track: "11.12", url: "https://cdn.imgurl.ir/uploads/h92491_AEF3e_Level_1_SB_11.12.mp3", title: "Listening follow-up", label: "Student's Book" },
+  { track: "11.13", url: "https://cdn.imgurl.ir/uploads/s057558_AEF3e_Level_1_SB_11.13.mp3", title: "Pronunciation", label: "Student's Book" },
+  { track: "11.3", url: "https://cdn.imgurl.ir/uploads/q639609_AEF3e_Level_1_WB_11.3.mp3", title: "Unit 11 practice", label: "Workbook" },
+];
+
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.c.games = [
   { title: "Phone Interviews", url: "phone-interviews/", label: "Listening" },
   { title: "The or No The", url: "the-or-no-the/", label: "Grammar" },

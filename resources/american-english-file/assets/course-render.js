@@ -450,6 +450,95 @@ html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-
     document.head.appendChild(style);
   })();
 
+  // Audio book source badges (Student's Book / Workbook)
+  (function injectAudioBookBadgeStyles() {
+    if (document.getElementById("aef-audio-book-badge-css")) return;
+    const css = `
+/* Compact book-source chip (not full-width) */
+.audio-card .audio-book-badge {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: fit-content !important;
+  max-width: 100%;
+  margin: 6px 0 0 0 !important;
+  padding: 3px 10px !important;
+  border-radius: 999px !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.35px;
+  text-transform: uppercase;
+  line-height: 1.25;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+.audio-book-badge--student-s-book,
+.audio-book-badge--students-book {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.14), rgba(79, 70, 229, 0.1)) !important;
+  color: #4338ca !important;
+  border: 1px solid rgba(79, 70, 229, 0.28) !important;
+  box-shadow: 0 1px 2px rgba(79, 70, 229, 0.08);
+}
+.audio-book-badge--workbook {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(5, 150, 105, 0.1)) !important;
+  color: #047857 !important;
+  border: 1px solid rgba(5, 150, 105, 0.28) !important;
+  box-shadow: 0 1px 2px rgba(5, 150, 105, 0.08);
+}
+html[data-theme="dark"] .audio-book-badge--student-s-book,
+html[data-theme="dark"] .audio-book-badge--students-book {
+  background: rgba(129, 140, 248, 0.16) !important;
+  color: #c7d2fe !important;
+  border-color: rgba(129, 140, 248, 0.32) !important;
+}
+html[data-theme="dark"] .audio-book-badge--workbook {
+  background: rgba(52, 211, 153, 0.14) !important;
+  color: #6ee7b7 !important;
+  border-color: rgba(52, 211, 153, 0.3) !important;
+}
+.audio-card-sub {
+  margin: 8px 0 12px !important;
+  font-size: 0.88rem !important;
+  line-height: 1.4 !important;
+  color: var(--muted, #64748b) !important;
+  font-weight: 500 !important;
+}
+/* Subtle left accent by book type */
+.audio-card.audio-card--student-s-book,
+.audio-card.audio-card--students-book {
+  border-left: 3px solid #6366f1 !important;
+}
+.audio-card.audio-card--workbook {
+  border-left: 3px solid #10b981 !important;
+}
+html[data-theme="dark"] .audio-card.audio-card--student-s-book,
+html[data-theme="dark"] .audio-card.audio-card--students-book {
+  border-left-color: #818cf8 !important;
+}
+html[data-theme="dark"] .audio-card.audio-card--workbook {
+  border-left-color: #34d399 !important;
+}
+/* Keep badge under track title in header column */
+.audio-card-header-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  min-width: 0;
+}
+.audio-card-header-left .audio-label {
+  margin-bottom: 0;
+}
+.audio-card-header-left h3 {
+  margin: 0;
+}
+`;
+    const style = document.createElement("style");
+    style.id = "aef-audio-book-badge-css";
+    style.textContent = css;
+    document.head.appendChild(style);
+  })();
+
   function el(tag, attrs, children) {
     const node = document.createElement(tag);
     if (attrs) {
@@ -901,7 +990,7 @@ html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-
       el("section", { class: "arcade-intro" }, [
         backLink("../", "Back to " + label),
         el("h1", { text: label + " Audio" }),
-        el("p", { text: "Student Book listening tracks for " + label + "." }),
+        el("p", { text: "Student's Book and Workbook listening tracks for " + label + "." }),
       ])
     );
     main.appendChild(
@@ -924,15 +1013,34 @@ html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-
     const grid = el("section", { class: "content-grid audio-grid" });
     tracks.forEach((t, i) => {
       const audioId = "audio-" + i + "-" + t.track.replace(/\D/g, "");
-      const article = el("article", { class: "content-card audio-card" }, [
-        el("div", { class: "audio-card-header" }, [
-          el("div", {}, [
-            el("span", { class: "audio-label", text: "TRACK" }),
-            el("h3", { text: t.track }),
-          ]),
-          el("span", { class: "audio-icon", text: "🎧" }),
-        ]),
-        el("p", { text: label + " · Track " + t.track }),
+      // Book source badge: Student's Book / Workbook (from course-data label)
+      const bookLabel = t.label || "";
+      const bookSlug = bookLabel
+        ? bookLabel.toLowerCase().replace(/[^a-z]+/g, "-").replace(/-+$/g, "")
+        : "";
+      // Subtitle: prefer title, else Unit · Track
+      const subtitle = t.title
+        ? t.title
+        : label + " · Track " + t.track;
+      const leftKids = [
+        el("span", { class: "audio-label", text: "TRACK" }),
+        el("h3", { text: t.track }),
+      ];
+      if (bookLabel) {
+        leftKids.push(
+          el("span", {
+            class: "audio-book-badge audio-book-badge--" + bookSlug,
+            text: bookLabel,
+          })
+        );
+      }
+      const headerKids = [
+        el("div", { class: "audio-card-header-left" }, leftKids),
+        el("span", { class: "audio-icon", text: "🎧" }),
+      ];
+      const cardKids = [
+        el("div", { class: "audio-card-header" }, headerKids),
+        el("p", { class: "audio-card-sub", text: subtitle }),
         el("div", { class: "audio-player" }, [
           el("audio", {
             id: audioId,
@@ -953,7 +1061,10 @@ html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-
             text: "↓ Download",
           }),
         ]),
-      ]);
+      ];
+      const article = el("article", {
+        class: "content-card audio-card" + (bookSlug ? " audio-card--" + bookSlug : ""),
+      }, cardKids);
       const playBtn = article.querySelector(".audio-play-btn");
       const dlBtn = article.querySelector(".audio-download-btn");
       playBtn.addEventListener("click", () => window.toggleAudio(audioId, playBtn));
