@@ -363,44 +363,12 @@
     );
   }
 
-  /* ── Mobile fit: no scrolling on small screens ── */
-  var MOBILE_QUERY = "(max-width: 640px)";
-
-  function isMobile() {
-    return !!(window.matchMedia && window.matchMedia(MOBILE_QUERY).matches);
-  }
-
-  function contentOverflows() {
-    var body = app.querySelector(".tn-body");
-    return !!body && body.scrollHeight > body.clientHeight + 1;
-  }
-
-  function fitToScreen() {
-    app.classList.remove("is-compact", "is-tight");
-    if (!isMobile()) return;
-    if (contentOverflows()) app.classList.add("is-compact");
-    if (contentOverflows()) app.classList.add("is-tight");
-  }
-
-  var fitFrame = null;
-  function scheduleFit() {
-    if (fitFrame) cancelAnimationFrame(fitFrame);
-    fitFrame = requestAnimationFrame(function () {
-      fitFrame = null;
-      fitToScreen();
-    });
-  }
-
-  window.addEventListener("resize", scheduleFit);
-  window.addEventListener("orientationchange", scheduleFit);
-
   /* ── Screens ── */
   function render() {
     if (state.screen === "start") renderStart();
     else if (state.screen === "play") renderPlay();
     else if (state.screen === "review") renderMistakes();
     else renderDoneFallback();
-    fitToScreen();
   }
 
   function renderStart() {
