@@ -442,7 +442,27 @@ COURSE_DATA["american-english-file"].levels["1"].units[10].lessons.b.games = [
 
 COURSE_DATA["american-english-file"].levels["1"].units[11].name = "Culture & experiences";
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.name = "Culture shock";
+
+// Level 1 – Unit 11A – Culture shock
+COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.audio = [
+  { track: "11.01", url: "https://cdn.imgurl.ir/uploads/k589137_AEF3e_Level_1_SB_11.01.mp3", title: "Culture shock", label: "Student's Book" },
+  { track: "11.02", url: "https://cdn.imgurl.ir/uploads/k6920_AEF3e_Level_1_SB_11.02.mp3", title: "Listening", label: "Student's Book" },
+  { track: "11.03", url: "https://cdn.imgurl.ir/uploads/c80882_AEF3e_Level_1_SB_11.03.mp3", title: "Adverbs", label: "Student's Book" },
+  { track: "11.04", url: "https://cdn.imgurl.ir/uploads/j757917_AEF3e_Level_1_SB_11.04.mp3", title: "Pronunciation", label: "Student's Book" },
+  { track: "11.05", url: "https://cdn.imgurl.ir/uploads/i90352_AEF3e_Level_1_SB_11.05.mp3", title: "Practice", label: "Student's Book" },
+  { track: "11.1", url: "https://cdn.imgurl.ir/uploads/t40268_AEF3e_Level_1_WB_11.1.mp3", title: "Unit 11 practice", label: "Workbook" },
+];
+
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.b.name = "Experiences or things?";
+
+// Level 1 – Unit 11B – Experiences or things?
+COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.b.audio = [
+  { track: "11.06", url: "https://cdn.imgurl.ir/uploads/i042254_AEF3e_Level_1_SB_11.06.mp3", title: "Experiences or things?", label: "Student's Book" },
+  { track: "11.07", url: "https://cdn.imgurl.ir/uploads/w23463_AEF3e_Level_1_SB_11.07.mp3", title: "Listening", label: "Student's Book" },
+  { track: "11.08", url: "https://cdn.imgurl.ir/uploads/y13987_AEF3e_Level_1_SB_11.08.mp3", title: "Pronunciation / practice", label: "Student's Book" },
+  { track: "11.2", url: "https://cdn.imgurl.ir/uploads/w095815_AEF3e_Level_1_WB_11.2.mp3", title: "Unit 11 practice", label: "Workbook" },
+];
+
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.c.name = "How smart is your phone?";
 
 // Level 1 – Unit 11C – How smart is your phone?
@@ -463,9 +483,27 @@ COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.c.games = [
 ];
 
 
-// Level 1 – Unit 11A – Adjectives & adverbs
+// Level 1 – Practical English 6 – Going home
+COURSE_DATA["american-english-file"].levels["1"].practicalEnglish[6].name = "Going home";
+COURSE_DATA["american-english-file"].levels["1"].practicalEnglish[6].games = [
+  { title: "Going Home · True or False", url: "going-home-tf/", label: "Listening" },
+];
+COURSE_DATA["american-english-file"].levels["1"].practicalEnglish[6].audio = [
+  { track: "11.14", url: "https://cdn.imgurl.ir/uploads/l0144_AEF3e_Level_1_SB_11.14.mp3", title: "Practical English 6", label: "Student's Book" },
+  { track: "11.15", url: "https://cdn.imgurl.ir/uploads/o902523_AEF3e_Level_1_SB_11.15.mp3", title: "Listening", label: "Student's Book" },
+  { track: "11.16", url: "https://cdn.imgurl.ir/uploads/v39738_AEF3e_Level_1_SB_11.16.mp3", title: "Dialogue", label: "Student's Book" },
+  { track: "11.17", url: "https://cdn.imgurl.ir/uploads/j4353_AEF3e_Level_1_SB_11.17.mp3", title: "Practice", label: "Student's Book" },
+  { track: "11.18", url: "https://cdn.imgurl.ir/uploads/s956785_AEF3e_Level_1_SB_11.18.mp3", title: "Pronunciation", label: "Student's Book" },
+  { track: "11.19", url: "https://cdn.imgurl.ir/uploads/d77578_AEF3e_Level_1_SB_11.19.mp3", title: "Review", label: "Student's Book" },
+];
+
+// Level 1 – Unit 11A – Culture shock / Adjectives & adverbs
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.games = [
   { title: "Adjectives → Adverbs Match", url: "adj-adv-match/", label: "Grammar" },
+  { title: "Adjective or Adverb?", url: "adj-adv-swipe/", label: "Grammar" },
+  { title: "Adverbs · Listen & Complete", url: "adverbs-listen-complete/", label: "Listening" },
+  { title: "Adverbs · Listen & Write", url: "adverbs-listen-write/", label: "Listening" },
+  { title: "Culture Shock · Listen & Complete", url: "culture-shock-listen-complete/", label: "Listening" },
 ];
 COURSE_DATA["american-english-file"].levels["1"].units[12].name = "Entertainment & interview";
 COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.a.name = "I've seen it ten times!";
