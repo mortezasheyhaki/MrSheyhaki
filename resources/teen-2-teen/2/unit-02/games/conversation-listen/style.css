@@ -1,0 +1,473 @@
+/* Conversation Listen – Teen2Teen 2 Unit 2 */
+
+:root {
+  --cl-bg: #f3f0ff;
+  --cl-card: #ffffff;
+  --cl-text: #1e1b4b;
+  --cl-muted: #64748b;
+  --cl-accent: #7c3aed;
+  --cl-accent-soft: rgba(124, 58, 237, 0.12);
+  --cl-ok: #16a34a;
+  --cl-bad: #dc2626;
+  --cl-shadow: 0 10px 28px rgba(30, 27, 75, 0.08);
+  --cl-radius: 18px;
+}
+
+html[data-theme="dark"] {
+  --cl-bg: #0f1220;
+  --cl-card: #1a1f35;
+  --cl-text: #f1f5f9;
+  --cl-muted: #94a3b8;
+  --cl-accent: #a78bfa;
+  --cl-accent-soft: rgba(167, 139, 250, 0.18);
+  --cl-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--cl-bg);
+  color: var(--cl-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.cl-game {
+  max-width: 560px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  padding: 14px 16px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top bar */
+.cl-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.cl-back {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--cl-card);
+  color: var(--cl-text);
+  text-decoration: none;
+  font-size: 1.1rem;
+  box-shadow: var(--cl-shadow);
+  flex-shrink: 0;
+}
+
+.cl-topbar-center {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cl-kicker {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--cl-accent);
+  text-transform: uppercase;
+}
+
+.cl-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cl-muted);
+}
+
+.cl-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--cl-accent-soft);
+  color: var(--cl-accent);
+  white-space: nowrap;
+}
+
+.cl-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(124, 58, 237, 0.12);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.cl-progress i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #f472b6, #7c3aed);
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+/* Start / done */
+.cl-start {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  padding: 24px 8px;
+}
+
+.cl-hero {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.cl-start h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.cl-desc {
+  margin: 0;
+  color: var(--cl-muted);
+  line-height: 1.45;
+  max-width: 36ch;
+}
+
+.cl-muted {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--cl-muted);
+}
+
+.cl-stars {
+  font-size: 1.6rem;
+  letter-spacing: 0.15em;
+  margin: 4px 0;
+}
+
+.cl-link {
+  color: var(--cl-accent);
+  font-weight: 700;
+  text-decoration: none;
+  margin-top: 8px;
+}
+
+/* Listen panel */
+.cl-listen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.cl-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #38bdf8, #7c3aed);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.cl-play:hover {
+  filter: brightness(1.05);
+}
+
+.cl-play:active {
+  transform: scale(0.97);
+}
+
+.cl-play.is-playing {
+  animation: cl-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes cl-pulse {
+  0%,
+  100% {
+    box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
+  }
+  50% {
+    box-shadow: 0 8px 28px rgba(56, 189, 248, 0.55);
+  }
+}
+
+.cl-audio-note {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--cl-bad);
+  text-align: center;
+}
+
+/* Question card */
+.cl-card {
+  background: var(--cl-card);
+  border-radius: var(--cl-radius);
+  padding: 18px 16px 16px;
+  box-shadow: var(--cl-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cl-qnum {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cl-accent);
+}
+
+.cl-prompt {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.cl-hint {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--cl-muted);
+}
+
+/* Drop zone */
+.cl-drop {
+  min-height: 64px;
+  border: 2px dashed rgba(124, 58, 237, 0.35);
+  border-radius: 16px;
+  background: var(--cl-accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.cl-drop.is-over,
+.cl-drop.has-value {
+  border-style: solid;
+  border-color: var(--cl-accent);
+  background: var(--cl-card);
+}
+
+.cl-drop.is-ok {
+  border-color: var(--cl-ok);
+  background: rgba(22, 163, 74, 0.12);
+}
+
+.cl-drop.is-bad {
+  border-color: var(--cl-bad);
+  background: rgba(220, 38, 38, 0.1);
+  animation: cl-shake 0.4s ease;
+}
+
+@keyframes cl-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+.cl-drop-hint {
+  color: var(--cl-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.cl-drop-value {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--cl-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cl-drop-clear {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.15);
+  color: var(--cl-accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.cl-feedback {
+  margin: 0;
+  min-height: 1.2em;
+  font-weight: 800;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.cl-feedback.ok {
+  color: var(--cl-ok);
+}
+
+.cl-feedback.bad {
+  color: var(--cl-bad);
+}
+
+/* Option chips */
+.cl-pool {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.cl-chip {
+  border: 2px solid rgba(124, 58, 237, 0.22);
+  background: var(--cl-card);
+  color: var(--cl-text);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  line-height: 1.25;
+  cursor: grab;
+  box-shadow: 0 4px 0 rgba(124, 58, 237, 0.12);
+  transition: transform 0.14s, box-shadow 0.14s, opacity 0.15s;
+  touch-action: none;
+  max-width: 100%;
+  text-align: center;
+  font-family: inherit;
+}
+
+.cl-chip:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(124, 58, 237, 0.16);
+}
+
+.cl-chip:active:not(:disabled),
+.cl-chip.is-dragging {
+  cursor: grabbing;
+  transform: scale(1.03);
+  opacity: 0.95;
+}
+
+.cl-chip.is-placed,
+.cl-chip:disabled {
+  opacity: 0.35;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Buttons */
+.cl-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 14px 22px;
+  font-weight: 800;
+  font-size: 1rem;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(109, 40, 217, 0.3);
+  font-family: inherit;
+}
+
+.cl-btn:active {
+  transform: scale(0.98);
+}
+
+.cl-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.cl-check {
+  width: 100%;
+  margin-top: 4px;
+}
+
+@media (min-width: 900px) {
+  .cl-game {
+    max-width: 640px;
+    padding: 24px 24px 40px;
+  }
+  .cl-prompt {
+    font-size: 1.4rem;
+  }
+  .cl-chip {
+    font-size: 1rem;
+    padding: 12px 16px;
+  }
+  .cl-drop {
+    min-height: 72px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-play.is-playing,
+  .cl-drop.is-bad,
+  .cl-chip {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Multi-phrase chips inside the drop zone */
+.cl-drop {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cl-drop-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: var(--cl-accent-soft);
+  color: var(--cl-accent);
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.cl-drop-chip:hover {
+  filter: brightness(0.95);
+}
+
+html[data-theme="dark"] .cl-drop-chip {
+  background: rgba(167, 139, 250, 0.22);
+  color: #ddd6fe;
+}

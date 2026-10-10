@@ -8,9 +8,9 @@
   var CARDS = [
     { id: "babysit", label: "babysit my little brother", emoji: "👶", image: CDN + "m7207_babysit_my_little_brother.png", audio: CDN + "j07180_babysit_my_little_brother.mp3" },
     { id: "homework", label: "do homework", emoji: "📚", image: CDN + "q952971_do_homework_2.png", audio: CDN + "t69422_do_homework.mp3" },
-    { id: "breakfast", label: "have breakfast", emoji: "🍳", image: CDN + "w781607__breakfast.png", audio: CDN + "h90907__breakfast.mp3" },
-    { id: "dinner", label: "have dinner", emoji: "🍽️", image: CDN + "w4137__dinner.png", audio: CDN + "h990237__dinner.mp3" },
-    { id: "lunch", label: "have lunch", emoji: "🥗", image: CDN + "i005905__lunch.png", audio: CDN + "h01685__lunch.mp3" },
+    { id: "breakfast", label: "eat breakfast", emoji: "🍳", image: CDN + "w781607__breakfast.png", audio: CDN + "h90907__breakfast.mp3" },
+    { id: "dinner", label: "eat dinner", emoji: "🍽️", image: CDN + "w4137__dinner.png", audio: CDN + "h990237__dinner.mp3" },
+    { id: "lunch", label: "eat lunch", emoji: "🥗", image: CDN + "i005905__lunch.png", audio: CDN + "h01685__lunch.mp3" },
     { id: "help-mom", label: "help my mom", emoji: "🧺", image: CDN + "k787298_help_my_mom.png", audio: CDN + "h55057_help_my_mom.mp3" },
     { id: "music", label: "listen to music", emoji: "🎧", image: CDN + "p170331_listen_to_music_2.png", audio: CDN + "k631484_listen_to_music.mp3" },
     { id: "computer-games", label: "play computer games", emoji: "🎮", image: CDN + "x9833_ay_computer_games.png", audio: CDN + "m776279_ay_computer_games.mp3" },
@@ -22,6 +22,9 @@
 
   var app = document.getElementById("game-app");
   if (!app) return;
+
+  var K = window.UAKit;
+  function sfx(n) { if (K) K.sfx(n); }
 
   var deck = CARDS.slice();
   var index = 0;
@@ -78,6 +81,7 @@
       finish();
       return;
     }
+    sfx("next");
     stopAudio();
     flipped = false;
     index = next;
@@ -87,6 +91,7 @@
 
   function flip() {
     flipped = !flipped;
+    sfx("flip");
     var card = app.querySelector(".fc-card");
     if (card) card.classList.toggle("is-flipped", flipped);
   }
@@ -101,7 +106,7 @@
   }
 
   function restart() {
-    if (window.LAFinish) LAFinish.startTimer();
+    if (K) K.unlock();
     stopAudio();
     deck = shuffled ? shuffle(CARDS) : CARDS.slice();
     index = 0;
@@ -114,7 +119,12 @@
   function finish() {
     stopAudio();
     phase = "done";
+    try {
+      if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, 3); }
+    } catch (e) {}
+    sfx("win");
     render();
+    if (K) K.celebrate(app.querySelector(".ua-done"));
   }
 
   function bindSwipe(el) {
@@ -209,37 +219,18 @@
 
   function render() {
     if (phase === "done") {
-      // LAFinish.show already calls LAStars.recordPlay + save (default save: true)
-      if (window.LAFinish) {
-        try {
-          var timeMs = LAFinish.stopTimer();
-          LAFinish.show({
-            gameId: GAME_ID,
-            score: CARDS.length,
-            total: CARDS.length,
-            stars: 3,
-            timeMs: timeMs,
-            onAgain: restart,
-            onModes: restart,
-            backHref: "../"
-          });
-          return;
-        } catch (e) {
-          console.warn(e);
-        }
-      }
       app.innerHTML =
-        '<section class="fc-done">' +
-        '<div class="fc-trophy" aria-hidden="true">🏆</div>' +
-        "<h1>Done!</h1>" +
-        "<p>You reviewed all " +
-        CARDS.length +
-        " abilities cards.</p>" +
-        '<div class="fc-actions">' +
-        '<button type="button" class="fc-btn" id="fc-again">Play again</button>' +
-        '<a class="fc-btn secondary" href="../">Back to games</a>' +
-        "</div></section>";
-      document.getElementById("fc-again").onclick = restart;
+        K.topbar({ title: "Daily Activities Flashcards", count: CARDS.length + "/" + CARDS.length, pct: 100 }) +
+        '<div class="ua-screen">' +
+          K.done({
+            score: CARDS.length, total: CARDS.length, stars: 3,
+            message: "All cards reviewed!",
+            scoreText: "You reviewed all " + CARDS.length + " cards",
+            againId: "fc-again"
+          }) +
+        "</div>";
+      K.afterRender(app, "fc");
+      document.getElementById("fc-again").onclick = function () { sfx("tap"); restart(); };
       return;
     }
 
@@ -247,25 +238,19 @@
     var isFirst = index === 0;
     var isLast = index === deck.length - 1;
     var pct = ((index + 1) / deck.length) * 100;
+    var shuffleBtn =
+      '<button type="button" class="ua-icon-btn ua-fx-btn' + (shuffled ? " is-on" : "") +
+      '" id="fc-shuffle" aria-pressed="' + shuffled + '" aria-label="' +
+      (shuffled ? "Shuffle on" : "Shuffle off") + '" title="Shuffle cards">🔀</button>';
+
     app.innerHTML =
-      '<header class="fc-topbar">' +
-      '<a class="fc-back" href="../" aria-label="Back to games">←</a>' +
-      '<span class="fc-title">Daily Activities Flashcards</span>' +
-      '<button type="button" class="fc-shuffle' +
-      (shuffled ? " is-on" : "") +
-      '" id="fc-shuffle" aria-pressed="' +
-      shuffled +
-      '" aria-label="' +
-      (shuffled ? "Shuffle on" : "Shuffle off") +
-      '" title="Shuffle cards">🔀</button>' +
-      '<span class="fc-badge" aria-live="polite">' +
-      (index + 1) +
-      " / " +
-      deck.length +
-      "</span></header>" +
-      '<div class="fc-progress"><div class="fc-progress-fill" style="width:' +
-      pct +
-      '%"></div></div>' +
+      K.topbar({
+        title: "Daily Activities Flashcards",
+        extra: shuffleBtn,
+        count: (index + 1) + " / " + deck.length,
+        pct: pct
+      }) +
+      '<div class="ua-screen">' +
       '<div class="fc-stage">' +
       '<div class="fc-card fc-pop' +
       (flipped ? " is-flipped" : "") +
@@ -309,7 +294,8 @@
       '">' +
       (isLast ? "End" : "›") +
       "</button>" +
-      "</div>";
+      "</div></div>";
+    K.afterRender(app, "fc");
 
     var cardEl = document.getElementById("fc-card");
     if (cardEl) {
@@ -369,6 +355,5 @@
     }
   });
 
-  if (window.LAFinish) LAFinish.startTimer();
   render();
 })();

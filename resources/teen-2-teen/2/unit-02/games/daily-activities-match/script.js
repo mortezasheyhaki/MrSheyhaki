@@ -1,126 +1,3 @@
-/* ===== Arcade FX: progress bar, combo, milestone celebration ===== */
-(function () {
-  if (window.ArcadeFX) return;
-  var streak = 0, best = 0, count = 0, lastPct = 0, ctx = null;
-  var CHEERS = [["🌟","Awesome!","10 correct answers!"],["🚀","Superstar!","20 correct — unstoppable!"],["👑","Legend!","30 correct — the best of the best!"]];
-  function tone(f, d, type, v, when) {
-    try {
-      if (!ctx) { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; ctx = new AC(); }
-      if (ctx.state === "suspended") ctx.resume();
-      var t = ctx.currentTime + (when || 0), o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = type || "sine"; o.frequency.value = f;
-      g.gain.setValueAtTime(v || 0.09, t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
-      o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + d + 0.03);
-    } catch (e) {}
-  }
-  function label(n) { return n >= 10 ? "UNSTOPPABLE" : n >= 7 ? "ON FIRE" : n >= 5 ? "HOT STREAK" : n >= 3 ? "NICE" : ""; }
-  function chip() {
-    var el = document.getElementById("afx-combo");
-    if (!el) { el = document.createElement("div"); el.id = "afx-combo"; el.className = "afx-combo"; document.body.appendChild(el); }
-    return el;
-  }
-  function place(el) {
-    el = el || document.getElementById("afx-combo");
-    var app = (document.getElementById("game-app") || document.getElementById("app"));
-    if (!el || !app) return;
-    var a = app.querySelector(".afx-bar") || app.querySelector("header") || app.firstElementChild;
-    if (!a) return;
-    if (a.offsetParent === null) a = app;
-    var r = a.getBoundingClientRect();
-    el.style.right = Math.max(8, document.documentElement.clientWidth - r.right) + "px";
-    el.style.top = Math.max(8, a === app ? r.top + 64 : r.bottom + 8) + "px";
-  }
-  function showCombo() {
-    var el = chip(); place(el);
-    el.className = "afx-combo is-on" + (streak >= 5 ? " is-hot" : "");
-    el.innerHTML = '<span class="afx-fire">🔥</span> x' + streak + " <em>" + label(streak) + "</em>";
-    void el.offsetWidth; el.classList.add("is-bump");
-  }
-  function celebrate(n) { burst(CHEERS[Math.min(Math.floor(n / 10) - 1, 2)]); }
-  function burst(c) {
-    [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.22, "triangle", 0.1, i * 0.09); });
-    tone(1568, 0.6, "sine", 0.08, 0.5);
-    var ov = document.createElement("div"); ov.className = "afx-burst";
-    var cols = ["#f59e0b", "#ec4899", "#8b5cf6", "#22c55e", "#3b82f6", "#ef4444"], h = "";
-    for (var i = 0; i < 44; i++) h += '<i style="left:' + Math.random() * 100 + "%;background:" + cols[i % 6] + ";animation-delay:" + (Math.random() * 0.35).toFixed(2) + "s;animation-duration:" + (1.3 + Math.random() * 0.9).toFixed(2) + 's"></i>';
-    ov.innerHTML = h + '<div class="afx-card"><div class="afx-emoji">' + c[0] + '</div><div class="afx-title">' + c[1] + '</div><div class="afx-sub">' + c[2] + "</div></div>";
-    document.body.appendChild(ov);
-    setTimeout(function () { ov.classList.add("is-out"); }, 1900);
-    setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 2300);
-  }
-  function hookRestart() {
-    var L = window.LAFinish;
-    if (L && L.startTimer && !L.__afx) { var st = L.startTimer; L.__afx = 1; L.startTimer = function () { api.reset(); return st.apply(this, arguments); }; }
-  }
-  var api = window.ArcadeFX = {
-    track: null,
-    bar: function (pct) {
-      var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
-      var bar = app.querySelector(".afx-bar");
-      if (!bar) {
-        var anchor = app.querySelector('[id*="rogress"]') || app.querySelector("header"); if (!anchor) return;
-        var host = anchor.closest("header") || anchor.parentElement;
-        bar = document.createElement("div"); bar.className = "afx-bar"; bar.innerHTML = '<i style="width:' + lastPct + '%"></i>';
-        host.parentNode.insertBefore(bar, host.nextSibling);
-      }
-      var fill = bar.firstChild; lastPct = pct;
-      requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = pct + "%"; }); });
-    },
-    ok: function () {
-      var nw = Date.now(); if (nw - (api._o || 0) < 90) return; api._o = nw;
-      hookRestart(); streak++; count++; if (streak > best) best = streak;
-      if (streak >= 2) { var b = 660 * Math.pow(1.0595, Math.min(streak, 12)); tone(b, 0.09, "triangle", 0.08, 0); tone(b * 1.5, 0.14, "triangle", 0.07, 0.07); showCombo(); }
-      if (count % 10 === 0 && !api.noMilestone) setTimeout(function () { celebrate(count); }, 250);
-    },
-    bad: function () {
-      var nw = Date.now(); if (nw - (api._b || 0) < 90) return; api._b = nw;
-      hookRestart();
-      if (streak >= 3) { tone(300, 0.12, "sawtooth", 0.05, 0); tone(200, 0.2, "sawtooth", 0.05, 0.09); }
-      if (streak >= 2) { var el = chip(); el.className = "afx-combo is-lost"; el.textContent = "Combo lost"; setTimeout(function () { el.className = "afx-combo"; }, 1200); }
-      streak = 0;
-    },
-    cheer: function (i, n, sub) {
-      var T = [["🎉", "Great job!"], ["🌟", "Brilliant!"], ["🏆", "Champion!"]];
-      var c = T[i >= n - 1 && n > 1 ? 2 : Math.min(i, 1)];
-      burst([c[0], c[1], sub || ("Part " + (i + 1) + " of " + n + " complete")]);
-    },
-    reset: function () { streak = 0; best = 0; count = 0; lastPct = 0; var el = document.getElementById("afx-combo"); if (el) el.className = "afx-combo"; }
-  };
-  function sync() {
-    var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
-    place();
-    var bar = app.querySelector(".afx-bar");
-    if (bar && bar.offsetParent === null) { bar.parentNode.removeChild(bar); bar = null; }
-    var badge = null, hasBar = false, els = app.querySelectorAll('[class*="-badge"],[class*="-progress"],[id*="rogress"]');
-    for (var i = 0; i < els.length; i++) {
-      var t = els[i].textContent.trim(); if (els[i].offsetParent === null) continue;
-      if (/^(?:[A-Za-z]{1,9}\s*)?\d+\s*(?:\/|of)\s*\d+$/.test(t)) { if (!badge) badge = els[i]; }
-      else if (!t && /progress/.test(els[i].className) && !els[i].classList.contains("afx-bar")) hasBar = true;
-    }
-    if (app.querySelector('[class$="-bar"]:not(.afx-bar),[class*="-bar-fill"],[class*="-progress-fill"]')) return;
-    if (!badge && api.track) { try { api.bar(api.track()); } catch (e) {} return; }
-    if (!badge || hasBar) return;
-    var m = badge.textContent.trim().match(/^(?:[A-Za-z]{1,9}\s*)?(\d+)\s*(?:\/|of)\s*(\d+)$/), pct = Math.min(100, Math.round(m[1] / m[2] * 100));
-    if (!bar) {
-      var host = badge.closest("header") || badge.parentElement;
-      bar = document.createElement("div"); bar.className = "afx-bar"; bar.innerHTML = '<i style="width:' + lastPct + '%"></i>';
-      host.parentNode.insertBefore(bar, host.nextSibling);
-    }
-    var fill = bar.firstChild; lastPct = pct;
-    requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = pct + "%"; }); });
-  }
-  var q = 0;
-  function start() {
-    var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
-    new MutationObserver(function () { if (q) return; q = requestAnimationFrame(function () { q = 0; sync(); }); }).observe(app, { childList: true, subtree: true, characterData: true });
-    window.addEventListener("resize", function () { place(); });
-    window.addEventListener("scroll", function () { place(); }, { passive: true });
-    sync();
-  }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
-})();
-window.ArcadeFX && (ArcadeFX.noMilestone = true);
-
 /* Daily Activities Match – 3 sequential parts × 2 sets of 6 – Teen2Teen 2 Unit 2 */
 (function () {
   "use strict";
@@ -131,9 +8,9 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
   var ITEMS = [
     { id: "babysit", label: "babysit my little brother", emoji: "👶", image: CDN + "m7207_babysit_my_little_brother.png", audio: CDN + "j07180_babysit_my_little_brother.mp3" },
     { id: "homework", label: "do homework", emoji: "📚", image: CDN + "q952971_do_homework_2.png", audio: CDN + "t69422_do_homework.mp3" },
-    { id: "breakfast", label: "have breakfast", emoji: "🍳", image: CDN + "w781607__breakfast.png", audio: CDN + "h90907__breakfast.mp3" },
-    { id: "dinner", label: "have dinner", emoji: "🍽️", image: CDN + "w4137__dinner.png", audio: CDN + "h990237__dinner.mp3" },
-    { id: "lunch", label: "have lunch", emoji: "🥗", image: CDN + "i005905__lunch.png", audio: CDN + "h01685__lunch.mp3" },
+    { id: "breakfast", label: "eat breakfast", emoji: "🍳", image: CDN + "w781607__breakfast.png", audio: CDN + "h90907__breakfast.mp3" },
+    { id: "dinner", label: "eat dinner", emoji: "🍽️", image: CDN + "w4137__dinner.png", audio: CDN + "h990237__dinner.mp3" },
+    { id: "lunch", label: "eat lunch", emoji: "🥗", image: CDN + "i005905__lunch.png", audio: CDN + "h01685__lunch.mp3" },
     { id: "help-mom", label: "help my mom", emoji: "🧺", image: CDN + "k787298_help_my_mom.png", audio: CDN + "h55057_help_my_mom.mp3" },
     { id: "music", label: "listen to music", emoji: "🎧", image: CDN + "p170331_listen_to_music_2.png", audio: CDN + "k631484_listen_to_music.mp3" },
     { id: "computer-games", label: "play computer games", emoji: "🎮", image: CDN + "x9833_ay_computer_games.png", audio: CDN + "m776279_ay_computer_games.mp3" },
@@ -250,16 +127,12 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     return sfxCtx;
   }
 
+  var K = window.UAKit;
   function sfx(name) {
-    if (window.ArcadeFX) { if (name === "good" || name === "correct") ArcadeFX.ok(); else if (name === "bad" || name === "wrong") ArcadeFX.bad(); }
-    if (!window.LASfx) return;
-    try {
-      if (name === "correct" && LASfx.correct) LASfx.correct();
-      else if (name === "wrong" && LASfx.wrong) LASfx.wrong();
-      else if (name === "win" && LASfx.win) LASfx.win();
-      else if (name === "pop" && LASfx.pop) LASfx.pop();
-      else if (name === "click" && LASfx.click) LASfx.click();
-    } catch (_) {}
+    if (!K) return;
+    var map = { good: "correct", correct: "correct", bad: "wrong", wrong: "wrong",
+                win: "win", pop: "place", click: "tap" };
+    K.sfx(map[name] || name);
   }
 
   /** Heart-break SFX — short crack + descending tone */
@@ -350,7 +223,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
   }
 
   function startPart(mi) {
-    if (window.LAFinish && mi === 0) LAFinish.startTimer();
+    if (mi === 0 && K) K.unlock();
     modeIndex = mi;
     modeCorrect = 0;
     // Lives reset only when starting the full game (part 1)
@@ -543,12 +416,10 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
           } else if (modeIndex < MODES.length - 1) {
             // Part finished → pop-up, then straight into the next part
             sfx("win");
-            if (window.ArcadeFX) ArcadeFX.cheer(modeIndex, MODES.length);
             setTimeout(function () { startPart(modeIndex + 1); }, 1700);
           } else {
             // Last part finished → finish screen
             sfx("win");
-            if (window.ArcadeFX) ArcadeFX.cheer(modeIndex, MODES.length);
             phase = "done";
             render();
           }
@@ -570,37 +441,10 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
   }
 
   function updateProgress() {
-    var el = document.getElementById("mc-progress");
-    if (!el) return;
-    var full =
-      "Part " +
-      (modeIndex + 1) +
-      "/" +
-      MODES.length +
-      " · Set " +
-      (setIndex + 1) +
-      "/" +
-      SETS.length +
-      " · " +
-      correctCount() +
-      "/" + setSize();
-    var short =
-      (setIndex + 1) +
-      "/" +
-      SETS.length +
-      " · " +
-      correctCount() +
-      "/" + setSize();
-    var fullEl = el.querySelector(".mc-prog-full");
-    var shortEl = el.querySelector(".mc-prog-short");
-    if (fullEl && shortEl) {
-      fullEl.textContent = full;
-      shortEl.textContent = short;
-    } else {
-      el.textContent = full;
-    }
-    var fill = document.getElementById("mc-set-progress-fill");
-    if (fill) fill.style.width = Math.round((correctCount() / setSize()) * 100) + "%";
+    var pct = Math.round((correctCount() / setSize()) * 100);
+    var count = app.querySelector(".ua-count");
+    if (count) count.textContent = "Set " + (setIndex + 1) + "/" + SETS.length + " · " + correctCount() + "/" + setSize();
+    K.setProgress(app, pct);
   }
 
   function calcStars() {
@@ -717,34 +561,29 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     );
   }
 
+  function header(title) {
+    return K.topbar({ title: title, pct: 0 });
+  }
+
   function render() {
     if (phase === "menu") {
       app.innerHTML =
-        '<div class="mc-screen">' +
-        '<header class="mc-topbar">' +
-        '<a class="mc-back" href="../" aria-label="Back">←</a>' +
-        '<span class="mc-title">Daily Activities Match</span>' +
-        '<span class="mc-badge">Unit 10</span>' +
-        "</header>" +
-        '<section class="mc-start">' +
-        '<div class="mc-hero" aria-hidden="true">👕</div>' +
-        "<h1>Daily Activities Match</h1>" +
-        '<p class="mc-desc">3 parts · 10 items each · 3 hearts</p>' +
-        '<ol class="mc-part-list">' +
-        "<li><strong>Part 1</strong> — Words → Pictures</li>" +
-        "<li><strong>Part 2</strong> — Audio → Words</li>" +
-        "<li><strong>Part 3</strong> — Audio → Pictures</li>" +
-        "</ol>" +
-        '<button type="button" class="mc-btn mc-start-btn" id="mc-start">Start Part 1</button>' +
-        "</section>" +
-        "</div>";
+        header("Daily Activities Match") +
+        '<section class="mc-start ua-screen">' +
+          '<div class="mc-hero" aria-hidden="true">👕</div>' +
+          "<h1>Daily Activities Match</h1>" +
+          '<p class="mc-desc">3 parts · 10 items each · 3 hearts</p>' +
+          '<ol class="mc-part-list">' +
+            "<li><strong>Part 1</strong> — Words → Pictures</li>" +
+            "<li><strong>Part 2</strong> — Audio → Words</li>" +
+            "<li><strong>Part 3</strong> — Audio → Pictures</li>" +
+          "</ol>" +
+          '<button type="button" class="ua-btn" id="mc-start">Start Part 1</button>' +
+        "</section>";
+      K.afterRender(app, "mc");
       document.getElementById("mc-start").onclick = function () {
         sfx("click");
-        playExit(function () {
-          totalCorrect = 0;
-          wrongCount = 0;
-          startPart(0);
-        });
+        playExit(function () { totalCorrect = 0; wrongCount = 0; startPart(0); });
       };
       return;
     }
@@ -752,171 +591,81 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     if (phase === "between") {
       var finished = MODES[modeIndex];
       var next = MODES[modeIndex + 1];
+      sfx("win");
       app.innerHTML =
-        '<div class="mc-screen">' +
-        '<header class="mc-topbar">' +
-        '<a class="mc-back" href="../" aria-label="Back">←</a>' +
-        '<span class="mc-title">Daily Activities Match</span>' +
-        '<span class="mc-badge">Unit 10</span>' +
-        "</header>" +
-        '<section class="mc-start mc-between">' +
-        '<div class="mc-hero" aria-hidden="true">✨</div>' +
-        "<h1>Part " +
-        (modeIndex + 1) +
-        " complete!</h1>" +
-        '<p class="mc-desc">' +
-        finished.encourage +
-        "</p>" +
-        '<p class="mc-next-label">Up next:</p>' +
-        '<p class="mc-next-title"><strong>Part ' +
-        (modeIndex + 2) +
-        "</strong> — " +
-        next.title +
-        "</p>" +
-        '<button type="button" class="mc-btn mc-start-btn" id="mc-continue">Continue</button>' +
-        "</section>" +
-        "</div>";
+        K.topbar({ title: "Daily Activities Match", count: "Part " + (modeIndex + 1) + "/" + MODES.length, pct: ((modeIndex + 1) / MODES.length) * 100 }) +
+        '<section class="mc-start mc-between ua-screen">' +
+          '<div class="mc-hero" aria-hidden="true">✨</div>' +
+          "<h1>Part " + (modeIndex + 1) + " complete!</h1>" +
+          '<p class="mc-desc">' + finished.encourage + "</p>" +
+          '<p class="mc-next-label">Up next:</p>' +
+          '<p class="mc-next-title"><strong>Part ' + (modeIndex + 2) + "</strong> — " + next.title + "</p>" +
+          '<button type="button" class="ua-btn" id="mc-continue">Continue</button>' +
+        "</section>";
+      K.afterRender(app, "mc");
       document.getElementById("mc-continue").onclick = function () {
         sfx("click");
-        playExit(function () {
-          startPart(modeIndex + 1);
-        });
+        playExit(function () { startPart(modeIndex + 1); });
       };
       return;
     }
 
     if (phase === "done") {
       var stars = saveStars();
-      if (window.LAFinish) {
-        var timeMs = LAFinish.stopTimer();
-        LAFinish.show({
-          gameId: GAME_ID,
-          score: totalCorrect,
-          total: TOTAL_PAIRS,
-          stars: stars,
-          accuracy: Math.round((totalCorrect / Math.max(1, totalCorrect + wrongCount)) * 100),
-          timeMs: timeMs,
-          onAgain: function () {
-            playExit(function () {
-              totalCorrect = 0;
-              wrongCount = 0;
-              startPart(0);
-            });
-          },
-          onModes: function () {
-            playExit(function () {
-              phase = "menu";
-              render();
-            });
-          },
-          backHref: "../",
-          save: false
-        });
-        return;
-      }
+      sfx(stars >= 2 ? "win" : "lose");
       app.innerHTML =
-        '<div class="mc-screen">' +
-        '<section class="mc-done"><h1>Done!</h1>' +
-        "<p>You matched " +
-        totalCorrect +
-        "/" +
-        TOTAL_PAIRS +
-        ".</p>" +
-        '<button type="button" class="mc-btn" id="cm-again">Again</button></section>' +
+        K.topbar({ title: "Daily Activities Match", count: TOTAL_PAIRS + "/" + TOTAL_PAIRS, pct: 100 }) +
+        '<div class="ua-screen">' +
+          K.done({
+            score: totalCorrect, total: TOTAL_PAIRS, stars: stars,
+            scoreText: "You matched " + totalCorrect + " / " + TOTAL_PAIRS +
+              " · accuracy " + Math.round((totalCorrect / Math.max(1, totalCorrect + wrongCount)) * 100) + "%",
+            againId: "cm-again"
+          }) +
         "</div>";
+      K.afterRender(app, "mc");
       document.getElementById("cm-again").onclick = function () {
         sfx("click");
-        playExit(function () {
-          totalCorrect = 0;
-          wrongCount = 0;
-          startPart(0);
-        });
+        playExit(function () { totalCorrect = 0; wrongCount = 0; startPart(0); });
       };
+      K.celebrate(app.querySelector(".ua-done"));
       return;
     }
 
     // play
     var mode = MODES[modeIndex];
-    var left = leftOrder
-      .map(function (id, i) {
-        return leftCell(id, i, mode.left);
-      })
-      .join("");
-    var right = rightOrder
-      .map(function (id) {
-        return rightCell(id, mode.right);
-      })
-      .join("");
+    var left = leftOrder.map(function (id, i) { return leftCell(id, i, mode.left); }).join("");
+    var right = rightOrder.map(function (id) { return rightCell(id, mode.right); }).join("");
 
     var shortTitles = ["Words → Pics", "Audio → Words", "Audio → Pics"];
     var shortTitle = shortTitles[modeIndex] || mode.title;
-    var progressPct = Math.round((correctCount() / setSize()) * 100);
+
     app.innerHTML =
-      '<div class="mc-screen">' +
-      '<header class="mc-topbar">' +
-      '<a class="mc-back" href="../" aria-label="Back">←</a>' +
-      '<span class="mc-title" title="' +
-      mode.title +
-      '"><span class="mc-title-full">Part ' +
-      (modeIndex + 1) +
-      " · " +
-      mode.title +
-      '</span><span class="mc-title-short">P' +
-      (modeIndex + 1) +
-      " · " +
-      shortTitle +
-      "</span></span>" +
-      heartsHtml() +
-      '<span class="mc-progress" id="mc-progress">' +
-      '<span class="mc-prog-full">Part ' +
-      (modeIndex + 1) +
-      "/" +
-      MODES.length +
-      " · Set " +
-      (setIndex + 1) +
-      "/" +
-      SETS.length +
-      " · " +
-      correctCount() +
-      '/' + setSize() + '</span><span class="mc-prog-short">' +
-      (setIndex + 1) +
-      "/" +
-      SETS.length +
-      " · " +
-      correctCount() +
-      "/" + setSize() + "</span></span>" +
-      "</header>" +
-      '<p class="mc-instruction" id="mc-hint">' +
-      mode.tip +
-      "</p>" +
-      '<div class="mc-set-progress" aria-hidden="true">' +
-      '<span class="mc-set-progress-fill" id="mc-set-progress-fill" style="width:' +
-      progressPct +
-      '%"></span>' +
-      "</div>" +
-      '<div class="mc-board is-entering">' +
-      '<div class="mc-col mc-col-left">' +
-      left +
-      "</div>" +
-      '<div class="mc-col mc-col-right">' +
-      right +
-      "</div>" +
-      "</div>" +
-      '<div class="mc-actions">' +
-      '<button type="button" class="mc-btn secondary" id="mc-reset">Reset round</button>' +
-      "</div>" +
+      K.topbar({
+        title: "P" + (modeIndex + 1) + " · " + shortTitle,
+        extra: heartsHtml(),
+        count: "Set " + (setIndex + 1) + "/" + SETS.length + " · " + correctCount() + "/" + setSize(),
+        pct: Math.round((correctCount() / setSize()) * 100)
+      }) +
+      '<div class="ua-screen mc-screen">' +
+        '<p class="mc-instruction" id="mc-hint">' + mode.tip + "</p>" +
+        '<div class="mc-board is-entering">' +
+          '<div class="mc-col mc-col-left">' + left + "</div>" +
+          '<div class="mc-col mc-col-right">' + right + "</div>" +
+        "</div>" +
+        '<div class="mc-actions">' +
+          '<button type="button" class="ua-btn ua-btn--ghost mc-reset-btn" id="mc-reset">Reset round</button>' +
+        "</div>" +
       "</div>";
 
-    // clear enter animation class after it runs
+    K.afterRender(app, "mc");
     setTimeout(function () {
       var board = app.querySelector(".mc-board");
       if (board) board.classList.remove("is-entering");
     }, 500);
 
     app.querySelectorAll(".mc-left-item").forEach(function (el) {
-      el.onclick = function () {
-        selectLeft(+el.dataset.i);
-      };
+      el.onclick = function () { selectLeft(+el.dataset.i); };
     });
     app.querySelectorAll(".mc-play").forEach(function (btn) {
       btn.onclick = function (e) {
@@ -927,15 +676,11 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       };
     });
     app.querySelectorAll(".mc-right-item").forEach(function (btn) {
-      btn.onclick = function () {
-        selectRight(btn.dataset.id);
-      };
+      btn.onclick = function () { selectRight(btn.dataset.id); };
     });
     document.getElementById("mc-reset").onclick = function () {
       sfx("click");
-      playExit(function () {
-        startSet(setIndex);
-      });
+      playExit(function () { startSet(setIndex); });
     };
   }
 
