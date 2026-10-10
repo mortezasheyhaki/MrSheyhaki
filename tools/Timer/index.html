@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Timer | Tools | Mr. Sheyhaki</title>
+  <meta name="description" content="Editable countdown timer — set hours, minutes and seconds. Perfect for classroom activities and practice sessions.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="timer-page">
+
+  <!-- FLOATING ARCADE-STYLE HEADER (theme.js injects theme toggle + profile) -->
+  <header class="arcade-header-bar">
+    <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+      <a href="../../" class="nav-link" aria-label="Home" data-icon="🏠">
+        <span class="nav-ico" aria-hidden="true">🏠</span>
+        <span class="nav-text">Home</span>
+      </a>
+      <a href="../../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️">
+        <span class="nav-ico" aria-hidden="true">🕹️</span>
+        <span class="nav-text">Arcade</span>
+      </a>
+      <a href="../../resources/" class="nav-link" aria-label="Resources" data-icon="📚">
+        <span class="nav-ico" aria-hidden="true">📚</span>
+        <span class="nav-text">Resources</span>
+      </a>
+      <a href="../../about/" class="nav-link" aria-label="About" data-icon="ℹ️">
+        <span class="nav-ico" aria-hidden="true">ℹ️</span>
+        <span class="nav-text">About</span>
+      </a>
+      <a href="/learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤">
+        <span class="nav-ico" aria-hidden="true">👤</span>
+        <span class="nav-text">Profile</span>
+      </a>
+    </nav>
+  </header>
+
+  <main class="timer-main">
+
+    <section class="timer-hero" aria-label="Timer tool">
+      <p class="timer-kicker">CLASSROOM TOOL</p>
+      <h1 class="timer-title">Countdown Timer</h1>
+      <p class="timer-tagline">Set the time · Start · Focus · Ring when done</p>
+    </section>
+
+    <section class="timer-card" aria-label="Editable countdown timer">
+
+      <div class="time-display" id="display" aria-live="polite">00:00:00</div>
+
+      <div class="inputs" role="group" aria-label="Set timer duration">
+        <div class="input-group">
+          <label for="hours">Hours</label>
+          <input type="number" id="hours" min="0" max="99" value="0" inputmode="numeric">
+        </div>
+        <div class="input-group">
+          <label for="minutes">Minutes</label>
+          <input type="number" id="minutes" min="0" max="59" value="0" inputmode="numeric">
+        </div>
+        <div class="input-group">
+          <label for="seconds">Seconds</label>
+          <input type="number" id="seconds" min="0" max="59" value="30" inputmode="numeric">
+        </div>
+      </div>
+
+      <!-- Quick presets -->
+      <div class="presets" role="group" aria-label="Quick time presets">
+        <button type="button" class="preset-btn" data-seconds="60">1 min</button>
+        <button type="button" class="preset-btn" data-seconds="180">3 min</button>
+        <button type="button" class="preset-btn" data-seconds="300">5 min</button>
+        <button type="button" class="preset-btn" data-seconds="600">10 min</button>
+        <button type="button" class="preset-btn" data-seconds="900">15 min</button>
+        <button type="button" class="preset-btn" data-seconds="1500">25 min</button>
+      </div>
+
+      <div class="buttons">
+        <button class="btn btn-start" id="startBtn" type="button">Start</button>
+        <button class="btn btn-pause" id="pauseBtn" type="button" disabled>Pause</button>
+        <button class="btn btn-reset" id="resetBtn" type="button">Reset</button>
+      </div>
+
+      <div class="status" id="status">Set a time and press Start</div>
+
+      <!-- Progress bar -->
+      <div class="progress-wrap" aria-hidden="true">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+    </section>
+
+    <p class="timer-hint">
+      <span aria-hidden="true">✦</span>
+      Perfect for speaking activities, timed exercises &amp; classroom games
+      <span aria-hidden="true">✦</span>
+    </p>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="hub-copy">© <span id="year"></span> Mr. Sheyhaki · English Teacher</p>
+      <a class="hub-ig" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer" aria-label="Instagram — MrSheyhaki.ir" title="Instagram">
+        <svg class="hub-ig-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+        </svg>
+        <span class="hub-ig-text">MrSheyhaki.ir</span>
+      </a>
+    </div>
+  </footer>
+
+  <!-- Global theme (light/dark) — same as rest of site -->
+  <script src="../../theme.js"></script>
+  <!-- Timer logic -->
+  <script src="script.js"></script>
+</body>
+</html>
