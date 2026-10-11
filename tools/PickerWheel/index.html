@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Picker Wheel | Tools | Mr. Sheyhaki</title>
+  <meta name="description" content="Editable spinning picker wheel. Add names, words or anything — spin to choose one at random. Great for classrooms.">
+  <!-- Global site styles → floating arcade nav (top pill / mobile bottom dock) -->
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../../theme.css">
+  <!-- Page-specific styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="wheel-page">
+
+  <!-- Same floating header as Home / Arcade -->
+  <header class="arcade-header-bar">
+    <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+      <a href="../../" class="nav-link" aria-label="Home" data-icon="🏠">
+        <span class="nav-ico" aria-hidden="true">🏠</span>
+        <span class="nav-text">Home</span>
+      </a>
+      <a href="../../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️">
+        <span class="nav-ico" aria-hidden="true">🕹️</span>
+        <span class="nav-text">Arcade</span>
+      </a>
+      <a href="../../resources/" class="nav-link" aria-label="Resources" data-icon="📚">
+        <span class="nav-ico" aria-hidden="true">📚</span>
+        <span class="nav-text">Resources</span>
+      </a>
+      <a href="../../about/" class="nav-link" aria-label="About" data-icon="ℹ️">
+        <span class="nav-ico" aria-hidden="true">ℹ️</span>
+        <span class="nav-text">About</span>
+      </a>
+      <a href="../../learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤">
+        <span class="nav-ico" aria-hidden="true">👤</span>
+        <span class="nav-text">Profile</span>
+      </a>
+    </nav>
+  </header>
+
+  <main class="wheel-main">
+
+    <div class="wheel-topbar">
+      <a href="../" class="back-btn" aria-label="Back to Tools">
+        <span class="back-arrow" aria-hidden="true">←</span>
+        <span>Tools</span>
+      </a>
+    </div>
+
+    <section class="wheel-hero" aria-label="Picker Wheel">
+      <p class="wheel-kicker">CLASSROOM TOOL</p>
+      <h1 class="wheel-title">Picker Wheel</h1>
+      <p class="wheel-tagline">Add items · Edit names · Spin · Pick one at random</p>
+    </section>
+
+    <div class="wheel-layout">
+
+      <section class="wheel-stage" aria-label="Spinning wheel">
+        <div class="wheel-pointer" aria-hidden="true"></div>
+        <canvas id="wheelCanvas" width="420" height="420" role="img" aria-label="Picker wheel"></canvas>
+        <button type="button" class="spin-btn" id="spinBtn">SPIN</button>
+        <div class="result-banner" id="resultBanner" hidden>
+          <span class="result-label">Selected</span>
+          <span class="result-value" id="resultValue">—</span>
+        </div>
+      </section>
+
+      <section class="wheel-editor" aria-label="Edit wheel items">
+        <h2 class="editor-title">Edit Items</h2>
+        <p class="editor-hint">Add names, or click a name to rename it.</p>
+
+        <form class="add-form" id="addForm">
+          <input type="text" id="itemInput" placeholder="Type a name or item…" maxlength="40" autocomplete="off" aria-label="New item">
+          <button type="submit" class="btn-add" id="addBtn">Add</button>
+        </form>
+
+        <ul class="item-list" id="itemList" aria-label="Current items"></ul>
+
+        <div class="editor-actions">
+          <button type="button" class="btn-secondary" id="shuffleBtn">Shuffle</button>
+          <button type="button" class="btn-secondary" id="clearBtn">Clear all</button>
+        </div>
+
+        <div class="editor-footer-row">
+          <p class="editor-count"><span id="itemCount">0</span> items on the wheel</p>
+          <label class="sound-toggle" title="Toggle spin sounds">
+            <input type="checkbox" id="soundToggle" checked>
+            <span class="sound-ico" aria-hidden="true">🔊</span>
+            <span class="sound-label">Sound</span>
+          </label>
+        </div>
+      </section>
+
+    </div>
+
+    <p class="wheel-hint">
+      <span aria-hidden="true">✦</span>
+      Perfect for choosing who speaks, random vocabulary, teams &amp; classroom games
+      <span aria-hidden="true">✦</span>
+    </p>
+
+  </main>
+
+  <footer class="site-footer wheel-footer">
+    <div class="footer-inner">
+      <p class="hub-copy">© <span id="year"></span> Mr. Sheyhaki · English Teacher</p>
+      
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="../../swipe-nav.js"></script>
+  <script src="../../theme.js"></script>
+  <script>
+    (function () {
+      var y = document.getElementById("year");
+      if (y) y.textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>

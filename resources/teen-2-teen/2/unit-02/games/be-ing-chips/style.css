@@ -1,0 +1,739 @@
+/* Be + -ing Chips – Present Continuous – Teen2Teen 2 Unit 2
+   Fun, playful, mobile-first redesign */
+
+:root {
+  --bic-bg: #f5f3ff;
+  --bic-card: #ffffff;
+  --bic-text: #1e1b4b;
+  --bic-muted: #64748b;
+  --bic-accent: #6d28d9;
+  --bic-accent-2: #8b5cf6;
+  --bic-soft: #ede9fe;
+  --bic-ok: #16a34a;
+  --bic-ok-soft: rgba(22, 163, 74, 0.14);
+  --bic-bad: #dc2626;
+  --bic-bad-soft: rgba(220, 38, 38, 0.12);
+  --bic-timer: #f59e0b;
+  --bic-timer-low: #ef4444;
+  --bic-streak: #f97316;
+  --bic-shadow: 0 10px 28px rgba(30, 27, 75, 0.08);
+  --bic-line: rgba(109, 40, 217, 0.14);
+  --bic-pink: #ec4899;
+  --bic-cyan: #06b6d4;
+}
+
+html[data-theme="dark"] {
+  --bic-bg: #0f1220;
+  --bic-card: #1a1f35;
+  --bic-text: #f1f5f9;
+  --bic-muted: #94a3b8;
+  --bic-accent: #c4b5fd;
+  --bic-accent-2: #a78bfa;
+  --bic-soft: rgba(124, 58, 237, 0.18);
+  --bic-ok: #4ade80;
+  --bic-ok-soft: rgba(74, 222, 128, 0.16);
+  --bic-bad: #f87171;
+  --bic-bad-soft: rgba(248, 113, 113, 0.14);
+  --bic-timer: #fbbf24;
+  --bic-timer-low: #f87171;
+  --bic-streak: #fb923c;
+  --bic-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  --bic-line: rgba(167, 139, 250, 0.22);
+  --bic-pink: #f472b6;
+  --bic-cyan: #22d3ee;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bic-bg);
+  color: var(--bic-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+.bic-game {
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  padding: 14px 16px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ---------- Floating particles (fun layer) ---------- */
+.bic-fx {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+  overflow: hidden;
+}
+.bic-fx i {
+  position: absolute;
+  font-size: 1.4rem;
+  animation: bic-float-up 1.1s ease-out forwards;
+  opacity: 0;
+}
+
+/* ---------- Start & Done screens ---------- */
+.bic-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 8px;
+  animation: bic-in 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.bic-hero {
+  font-size: 3.6rem;
+  line-height: 1;
+  margin-bottom: 14px;
+  filter: drop-shadow(0 8px 16px rgba(109, 40, 217, 0.3));
+}
+
+.bic-screen h1 {
+  margin: 0 0 10px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--bic-accent), var(--bic-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bic-desc {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--bic-muted);
+  max-width: 360px;
+}
+
+.bic-meta {
+  margin: 0 0 24px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--bic-accent-2);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.bic-meta span {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--bic-soft);
+}
+
+.bic-screen .ua-btn {
+  min-width: 180px;
+  font-size: 1.05rem;
+  padding: 14px 28px;
+}
+
+/* ---------- Play area ---------- */
+.bic-play {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bic-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bic-timer-wrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--bic-card);
+  box-shadow: var(--bic-shadow);
+  border: 1px solid var(--bic-line);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.05rem;
+  color: var(--bic-timer);
+  transition: color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.bic-timer-wrap.is-low {
+  color: var(--bic-timer-low);
+  background: var(--bic-bad-soft);
+  border-color: transparent;
+  animation: bic-pulse 0.8s ease infinite;
+}
+
+.bic-timer-icon { font-size: 1.1rem; }
+
+.bic-score-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.bic-score-pill,
+.bic-streak-pill {
+  padding: 8px 13px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.bic-score-pill {
+  background: var(--bic-soft);
+  color: var(--bic-accent);
+}
+
+.bic-streak-pill {
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
+  color: var(--bic-streak);
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+html[data-theme="dark"] .bic-streak-pill {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(251, 146, 60, 0.12));
+}
+
+.bic-streak-pill.is-on {
+  opacity: 1;
+  transform: scale(1);
+  animation: bic-pop 0.4s ease;
+}
+
+.bic-streak-pill.is-hot {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #b45309;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.4);
+}
+
+html[data-theme="dark"] .bic-streak-pill.is-hot {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(251, 191, 36, 0.2));
+  color: #fbbf24;
+}
+
+/* Emoji context badge */
+.bic-emoji-badge {
+  font-size: 2.6rem;
+  line-height: 1;
+  margin-bottom: 6px;
+
+  display: inline-block;
+}
+
+/* Sentence card */
+.bic-card {
+  background: var(--bic-card);
+  border-radius: 22px;
+  padding: 20px 16px 18px;
+  box-shadow: var(--bic-shadow);
+  border: 1px solid var(--bic-line);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.bic-card.is-ok {
+  box-shadow: 0 0 0 3px var(--bic-ok), var(--bic-shadow);
+}
+
+.bic-card.is-bad {
+  animation: bic-shake 0.45s ease;
+}
+
+.bic-prompt {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bic-accent-2);
+  margin-bottom: 10px;
+}
+
+.bic-sentence {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 5px 3px;
+  font-size: 1.32rem;
+  font-weight: 700;
+  line-height: 1.55;
+  color: var(--bic-text);
+  min-height: 2.5em;
+}
+
+.bic-word {
+  display: inline-block;
+  padding: 2px 1px;
+}
+
+.bic-blank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4.3em;
+  height: 2.25em;
+  padding: 0 10px;
+  margin: 0 2px;
+  border-radius: 14px;
+  border: 2.5px dashed var(--bic-accent-2);
+  background: var(--bic-soft);
+  color: var(--bic-accent);
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  vertical-align: middle;
+}
+
+.bic-blank:empty::before {
+  content: "···";
+  opacity: 0.4;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.bic-blank.is-filled {
+  border-style: solid;
+  border-color: var(--bic-accent);
+  background: var(--bic-card);
+  box-shadow: 0 3px 10px rgba(109, 40, 217, 0.18);
+  /* no enter animation — avoids flicker on re-render */
+}
+
+.bic-blank.is-filled:hover { transform: scale(1.04); }
+
+.bic-blank.is-ok {
+  border-color: var(--bic-ok);
+  background: var(--bic-ok-soft);
+  color: var(--bic-ok);
+  animation: bic-pop 0.4s ease;
+}
+
+.bic-blank.is-bad {
+  border-color: var(--bic-bad);
+  background: var(--bic-bad-soft);
+  color: var(--bic-bad);
+  animation: bic-shake 0.4s ease;
+}
+
+/* Chips */
+.bic-chips-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--bic-muted);
+  text-align: center;
+  margin-top: 2px;
+}
+
+.bic-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 2px 0 6px;
+}
+
+.bic-chip {
+  appearance: none;
+  border: none;
+  padding: 13px 18px;
+  min-height: 50px;
+  min-width: 76px;
+  border-radius: 16px;
+  background: var(--bic-card);
+  color: var(--bic-text);
+  font-size: 1.08rem;
+  font-weight: 800;
+  box-shadow: var(--bic-shadow);
+  border: 1.5px solid var(--bic-line);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s, background 0.2s, opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  position: relative;
+}
+
+.bic-chip:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 14px 28px rgba(109, 40, 217, 0.2);
+}
+
+.bic-chip:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.bic-chip:disabled,
+.bic-chip.is-used {
+  opacity: 0.28;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.bic-chip.is-be {
+  background: linear-gradient(145deg, #f5f3ff, #fce7f3);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+html[data-theme="dark"] .bic-chip.is-be {
+  background: linear-gradient(145deg, rgba(124, 58, 237, 0.28), rgba(236, 72, 153, 0.18));
+}
+
+.bic-chip.is-ing {
+  background: linear-gradient(145deg, #e0f2fe, #dbeafe);
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+html[data-theme="dark"] .bic-chip.is-ing {
+  background: linear-gradient(145deg, rgba(59, 130, 246, 0.22), rgba(14, 165, 233, 0.15));
+}
+
+
+/* Feedback */
+.bic-feedback {
+  text-align: center;
+  min-height: 1.5em;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--bic-muted);
+  transition: color 0.2s, transform 0.2s;
+}
+
+.bic-feedback.is-ok {
+  color: var(--bic-ok);
+  animation: bic-pop 0.35s ease;
+}
+
+.bic-feedback.is-bad {
+  color: var(--bic-bad);
+  animation: bic-shake 0.35s ease;
+}
+
+/* Combo toast */
+.bic-combo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--bic-streak);
+  text-shadow: 0 2px 12px rgba(249, 115, 22, 0.4);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 5;
+}
+
+.bic-combo.is-show {
+  animation: bic-combo-burst 0.9s ease forwards;
+}
+
+/* Encouragement overlay */
+.bic-encourage {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 18, 32, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: bic-fade 0.25s ease;
+}
+
+.bic-encourage-card {
+  background: var(--bic-card);
+  border-radius: 28px;
+  padding: 36px 28px 30px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 28px 56px rgba(0, 0, 0, 0.3);
+  animation: bic-pop-in 0.45s cubic-bezier(0.34, 1.5, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.bic-encourage-card::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: -20%;
+  width: 140%;
+  height: 80%;
+  background: radial-gradient(ellipse, rgba(139, 92, 246, 0.15), transparent 70%);
+  pointer-events: none;
+}
+
+.bic-encourage-emoji {
+  font-size: 3.4rem;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.bic-encourage-card h2 {
+  margin: 0 0 8px;
+  font-size: 1.55rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--bic-accent), var(--bic-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bic-encourage-card p {
+  margin: 0 0 22px;
+  font-size: 1rem;
+  color: var(--bic-muted);
+  line-height: 1.5;
+}
+
+.bic-encourage-card .ua-btn {
+  width: 100%;
+  font-size: 1.05rem;
+  padding: 14px;
+}
+
+/* Done extras */
+.bic-done-stats {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 14px 0 20px;
+  flex-wrap: wrap;
+}
+
+.bic-done-stat {
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--bic-soft);
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--bic-accent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 90px;
+}
+
+.bic-done-stat small {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--bic-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bic-done-stat strong {
+  font-size: 1.25rem;
+}
+
+/* Animations */
+@keyframes bic-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bic-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+@keyframes bic-pop-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bic-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
+@keyframes bic-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.03); }
+}
+
+@keyframes bic-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bic-bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+
+@keyframes bic-chip-in {
+  from { transform: scale(0.7); opacity: 0.5; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bic-card-ok {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+@keyframes bic-combo-burst {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+  25% { opacity: 1; transform: translate(-50%, -55%) scale(1.15); }
+  70% { opacity: 1; transform: translate(-50%, -70%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -90%) scale(0.9); }
+}
+
+@keyframes bic-float-up {
+  0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translateY(-90px) scale(1.3) rotate(20deg); }
+}
+
+/* Mobile */
+@media (max-width: 420px) {
+  .bic-game { padding: 12px 12px 24px; }
+  .bic-sentence { font-size: 1.15rem; }
+  .bic-blank { min-width: 3.5em; height: 2em; font-size: 0.95rem; }
+  .bic-chip { padding: 12px 14px; min-height: 46px; font-size: 1rem; }
+  .bic-hero { font-size: 3rem; }
+  .bic-screen h1 { font-size: 1.4rem; }
+  .bic-emoji-badge { font-size: 2.2rem; }
+}
+
+@media (min-width: 560px) {
+  .bic-game {
+    padding: 20px 24px 36px;
+    gap: 16px;
+  }
+  .bic-sentence {
+    font-size: 1.55rem;
+    gap: 8px 6px;
+    min-height: 2.8em;
+  }
+  .bic-blank {
+    min-width: 5em;
+    height: 2.5em;
+    font-size: 1.2rem;
+    border-radius: 16px;
+    padding: 0 14px;
+  }
+  .bic-chip {
+    padding: 16px 24px;
+    min-height: 56px;
+    min-width: 92px;
+    font-size: 1.2rem;
+    border-radius: 18px;
+  }
+  .bic-card {
+    padding: 28px 24px 24px;
+    border-radius: 26px;
+  }
+  .bic-emoji-badge {
+    font-size: 3.2rem;
+    margin-bottom: 10px;
+  }
+  .bic-prompt {
+    font-size: 0.78rem;
+    margin-bottom: 14px;
+  }
+  .bic-chips-label {
+    font-size: 0.8rem;
+  }
+  .bic-feedback {
+    font-size: 1.15rem;
+  }
+  .bic-timer-wrap {
+    padding: 10px 16px;
+    font-size: 1.15rem;
+  }
+  .bic-score-pill,
+  .bic-streak-pill {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+  .bic-chips {
+    gap: 14px;
+  }
+}
+
+@media (min-width: 768px) {
+  .bic-game {
+    max-width: 780px;
+    padding: 24px 28px 40px;
+  }
+  .bic-sentence {
+    font-size: 1.7rem;
+  }
+  .bic-blank {
+    min-width: 5.4em;
+    height: 2.65em;
+    font-size: 1.28rem;
+  }
+  .bic-chip {
+    padding: 18px 28px;
+    min-height: 60px;
+    min-width: 100px;
+    font-size: 1.28rem;
+  }
+  .bic-emoji-badge {
+    font-size: 3.5rem;
+  }
+  .bic-screen h1 {
+    font-size: 1.85rem;
+  }
+  .bic-hero {
+    font-size: 4.2rem;
+  }
+  .bic-desc {
+    font-size: 1.08rem;
+    max-width: 420px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bic-screen, .bic-play, .bic-blank.is-ok, .bic-blank.is-bad,
+  .bic-encourage-card, .bic-timer-wrap.is-low, .bic-hero,
+  .bic-emoji-badge, .bic-combo, .bic-fx i {
+    animation: none !important;
+  }
+}

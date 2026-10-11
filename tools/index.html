@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Tools | Mr. Sheyhaki</title>
+  <meta name="description" content="Classroom tools for English teachers and learners — countdown timer, editable picker wheel, and more.">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../theme.css">
+  <style>
+    /* Tools hub page specific */
+    .tools-hero {
+      text-align: center;
+      padding: 20px 12px 28px;
+    }
+    .tools-kicker {
+      margin: 0 0 6px;
+      font-size: clamp(14px, 2vw, 16px);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--hub-muted, #64748b);
+    }
+    .tools-title {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      background: linear-gradient(100deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .tools-tagline {
+      margin: 12px 0 0;
+      font-size: clamp(14px, 2vw, 17px);
+      font-weight: 600;
+      color: var(--hub-muted, #64748b);
+    }
+    .tools-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 720px;
+      margin: 8px auto 24px;
+      padding: 0 8px;
+    }
+    @media (max-width: 640px) {
+      .tools-cards {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+    }
+    /* Reuse hub-card styles + slight overrides for this page */
+    .tools-cards .hub-card {
+      min-height: 240px;
+    }
+    /* Timer card — sky */
+    .hub-card--timer {
+      border-color: #bae6fd;
+      background: linear-gradient(165deg, #f0f9ff 0%, #ffffff 55%);
+    }
+    .hub-card--timer .hub-card-icon {
+      background: rgba(14, 165, 233, 0.12);
+      color: #0284c7;
+    }
+    .hub-card--timer .hub-card-rule { background: linear-gradient(90deg, #38bdf8, #0284c7); }
+    .hub-card--timer .hub-card-btn {
+      color: #fff !important;
+      border: none !important;
+      background: linear-gradient(180deg, #38bdf8, #0284c7) !important;
+      box-shadow: 0 4px 0 #0369a1, 0 8px 18px rgba(2, 132, 199, 0.3) !important;
+    }
+    .hub-card--timer:hover {
+      border-color: #7dd3fc;
+      box-shadow: 0 16px 40px rgba(14, 165, 233, 0.18);
+    }
+    /* Wheel card — violet */
+    .hub-card--wheel {
+      border-color: #ddd6fe;
+      background: linear-gradient(165deg, #f5f3ff 0%, #ffffff 55%);
+    }
+    .hub-card--wheel .hub-card-icon {
+      background: rgba(139, 92, 246, 0.12);
+      color: #7c3aed;
+    }
+    .hub-card--wheel .hub-card-rule { background: linear-gradient(90deg, #a78bfa, #7c3aed); }
+    .hub-card--wheel .hub-card-btn {
+      color: #fff !important;
+      border: none !important;
+      background: linear-gradient(180deg, #a78bfa, #7c3aed) !important;
+      box-shadow: 0 4px 0 #5b21b6, 0 8px 18px rgba(124, 58, 237, 0.3) !important;
+    }
+    .hub-card--wheel:hover {
+      border-color: #c4b5fd;
+      box-shadow: 0 16px 40px rgba(139, 92, 246, 0.18);
+    }
+    html[data-theme="dark"] .hub-card--timer {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: linear-gradient(165deg, rgba(14, 165, 233, 0.12), rgba(15, 18, 32, 0.92) 50%);
+    }
+    html[data-theme="dark"] .hub-card--timer .hub-card-icon { color: #7dd3fc; background: rgba(56, 189, 248, 0.15); }
+    html[data-theme="dark"] .hub-card--wheel {
+      border-color: rgba(167, 139, 250, 0.4);
+      background: linear-gradient(165deg, rgba(139, 92, 246, 0.12), rgba(15, 18, 32, 0.92) 50%);
+    }
+    html[data-theme="dark"] .hub-card--wheel .hub-card-icon { color: #c4b5fd; background: rgba(167, 139, 250, 0.15); }
+  </style>
+</head>
+<body class="home-page">
+
+  <header class="arcade-header-bar">
+    <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+      <a href="../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+      <a href="../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+      <a href="../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+      <a href="../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+      <a href="../learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+    </nav>
+  </header>
+
+  <main class="hub-main">
+
+    <section class="tools-hero" aria-label="Tools">
+      <p class="tools-kicker">CLASSROOM TOOLS</p>
+      <h1 class="tools-title">Tools</h1>
+      <p class="tools-tagline">Handy tools for lessons, activities &amp; games</p>
+    </section>
+
+    <section class="tools-cards" aria-label="Available tools">
+
+      <a href="Timer/" class="hub-card hub-card--timer">
+        <div class="hub-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="22"/><path d="M32 18v16l10 6"/><path d="M32 8v4M32 52v4M8 32h4M52 32h4"/></svg>
+        </div>
+        <h2>COUNTDOWN TIMER</h2>
+        <span class="hub-card-rule" aria-hidden="true"></span>
+        <p>Editable countdown timer with presets. Perfect for speaking tasks, timed exercises and classroom games.</p>
+        <span class="hub-card-btn">OPEN <span>→</span></span>
+      </a>
+
+      <a href="PickerWheel/" class="hub-card hub-card--wheel">
+        <div class="hub-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="32" cy="32" r="22"/>
+            <path d="M32 10v22l14 8"/>
+            <circle cx="32" cy="32" r="4"/>
+            <path d="M32 10l4 6M48 20l-5 4M54 32h-6M48 44l-5-4M32 54l4-6M16 44l5-4M10 32h6M16 20l5 4"/>
+          </svg>
+        </div>
+        <h2>PICKER WHEEL</h2>
+        <span class="hub-card-rule" aria-hidden="true"></span>
+        <p>Editable spinning wheel. Add names, words or anything you like — spin to pick one at random.</p>
+        <span class="hub-card-btn">OPEN <span>→</span></span>
+      </a>
+
+    </section>
+
+    <p class="hub-journey">
+      <span aria-hidden="true">✦</span>
+      More tools coming soon
+      <span aria-hidden="true">✦</span>
+    </p>
+
+  </main>
+
+  <footer class="site-footer hub-footer">
+    <div class="footer-inner">
+      <p class="hub-copy">© <span id="year"></span> Mr. Sheyhaki · English Teacher</p>
+      <a class="hub-ig" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer" aria-label="Instagram — MrSheyhaki.ir" title="Instagram">
+        <svg class="hub-ig-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+        </svg>
+        <span class="hub-ig-text">MrSheyhaki.ir</span>
+      </a>
+    </div>
+  </footer>
+
+  <script src="../script.js"></script>
+  <script src="../swipe-nav.js"></script>
+  <script src="../theme.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
+  <script src="../learningarcade/auth-system/auth.js"></script>
+  <script src="../learningarcade/auth-system/add-login-button.js"></script>
+  <script>
+    (function () {
+      var y = document.getElementById("year");
+      if (y) y.textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
