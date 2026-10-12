@@ -237,7 +237,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "A or An Swipe", url: "a-an-swipe/", label: "Grammar" },
   { title: "Plural -s Sound Match", url: "plural-s-sound-match/", label: "Pronunciation" },
   { title: "Plurals Match", url: "plural-match/", label: "Vocabulary" },
-  { title: "Singular ↔ Plural", url: "sing-plur-match/", label: "Vocabulary" },
   { title: "Singular ↔ Plural Sentences", url: "sing-plur-sentences/", label: "Grammar" },
   { title: "Make Plurals", url: "make-plurals/", label: "Grammar" },
   { title: "What is it?", url: "what-is-it/", label: "Speaking" },
