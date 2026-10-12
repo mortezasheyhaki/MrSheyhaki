@@ -350,13 +350,33 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     };
   }
 
-  function startPart(pi) {
+  function startGame() {
     if (window.LAFinish) LAFinish.startTimer();
+    partIndex = 0;
+    totalScore = 0;
+    totalItems = 0;
+    score = 0;
+    beginPart(0);
+  }
+
+  function beginPart(pi) {
     partIndex = pi;
     order = shuffle(PARTS[partIndex].items.slice());
     idx = 0;
     score = 0;
+    locked = false;
+    stopAudio();
+    stopListening();
+    phase = "play";
     loadItem();
+  }
+
+  function startPart(pi) {
+    // kept for finish-screen "Again" compatibility
+    if (window.LAFinish) LAFinish.startTimer();
+    totalScore = 0;
+    totalItems = 0;
+    beginPart(pi);
   }
 
   function loadItem() {
@@ -489,23 +509,32 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     // Play answer audio after submit, then advance
     playAudio(item.answerAudio, () => {
       setTimeout(() => {
+        totalItems += 1;
         if (idx < order.length - 1) {
-          if (window.ArcadeFX && order.length >= 8 && idx + 1 === Math.floor(order.length / 2)) ArcadeFX.cheer(0, 2, "Halfway there — " + (idx + 1) + " of " + order.length + " done");
           idx += 1;
           loadItem();
         } else {
-          phase = "done";
-          render();
+          // Finished this part
+          totalScore += score;
+          if (partIndex < PARTS.length - 1) {
+            // Bridge to next part
+            phase = "bridge";
+            render();
+          } else {
+            phase = "done";
+            render();
+          }
         }
       }, 500);
     });
   }
 
   function calcStars() {
-    const total = order.length;
-    if (score >= total) return 3;
-    if (score >= Math.ceil(total * 0.66)) return 2;
-    if (score >= Math.ceil(total * 0.33)) return 1;
+    const total = SINGULAR.length + PLURAL.length; // 8
+    const s = totalScore;
+    if (s >= total) return 3;
+    if (s >= Math.ceil(total * 0.66)) return 2;
+    if (s >= Math.ceil(total * 0.33)) return 1;
     return 0;
   }
 
@@ -529,43 +558,58 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         <section class="mc-start">
           <div class="mc-hero" aria-hidden="true">❓</div>
           <h1>What is it?</h1>
-          <p class="mc-desc">Look · Listen · Answer</p>
-          <div class="mc-mode-list">
-            ${PARTS.map((p, i) => `
-              <button type="button" class="mc-mode-card mc-mode-btn" data-part="${i}">
-                <span class="mc-mode-num">${i + 1}</span>
-                <div>
-                  <strong>${p.title}</strong>
-                  <p>${p.tip}</p>
-                </div>
-              </button>`).join("")}
-          </div>
+          <p class="mc-desc">Look · Listen · Write the full sentence</p>
+          <ul class="mp-rules wi-rules">
+            <li><b>Part 1</b> — What is it? → <b>It's a…</b></li>
+            <li><b>Part 2</b> — What are they? → <b>They're…</b></li>
+          </ul>
+          <p class="mc-desc wi-hint">Capital letters and full stops (.) are optional — but write the whole sentence.</p>
+          <button type="button" class="mc-btn" id="wi-start">Start</button>
         </section>`;
-      app.querySelectorAll(".mc-mode-btn").forEach((btn) => {
-        btn.onclick = () => startPart(+btn.dataset.part);
-      });
+      document.getElementById("wi-start").onclick = () => startGame();
+      return;
+    }
+
+    if (phase === "bridge") {
+      const next = PARTS[partIndex + 1];
+      app.innerHTML = `
+        <header class="mc-topbar">
+          <a class="mc-back" href="../" aria-label="Back">←</a>
+          <span class="mc-title">What is it?</span>
+          <span class="mc-badge">Part ${partIndex + 2}</span>
+        </header>
+        <section class="mc-start">
+          <div class="mc-hero" aria-hidden="true">➡️</div>
+          <h1>Part ${partIndex + 2}</h1>
+          <p class="mc-desc"><strong>${next.title}</strong></p>
+          <p class="mc-desc">${next.tip}</p>
+          <p class="mp-record">Score so far: <strong>${totalScore}</strong> / ${SINGULAR.length}</p>
+          <button type="button" class="mc-btn" id="wi-next-part">Continue</button>
+        </section>`;
+      document.getElementById("wi-next-part").onclick = () => beginPart(partIndex + 1);
       return;
     }
 
     if (phase === "done") {
       const stars = typeof saveStars === 'function' ? saveStars() : 0;
+      const grandTotal = SINGULAR.length + PLURAL.length;
       if (window.LAFinish) {
         const timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
-          score: score,
-          total: order.length,
+          score: totalScore,
+          total: grandTotal,
           stars: stars,
           timeMs: timeMs,
-          onAgain: () => startPart(partIndex),
+          onAgain: () => startGame(),
           onModes: () => { phase = 'menu'; render(); },
           backHref: "../",
           save: false,
         });
         return;
       }
-      app.innerHTML = `<p>Done</p><button type="button" id="u3a-again">Again</button>`;
-      document.getElementById("u3a-again").onclick = () => startPart(partIndex);
+      app.innerHTML = `<p>Done — ${totalScore} / ${grandTotal}</p><button type="button" id="u3a-again">Again</button>`;
+      document.getElementById("u3a-again").onclick = () => startGame();
       return;
     }
 
@@ -577,37 +621,117 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       <header class="mc-topbar">
         <a class="mc-back" href="../" aria-label="Back">←</a>
         <span class="mc-title">${part.title}</span>
-        <span class="mc-progress">${idx + 1} / ${order.length}</span>
+        <span class="mc-progress">${partIndex + 1}/2 · ${idx + 1}/${order.length}</span>
       </header>
       <div class="wi-stage">
-        <div class="wi-question">
-          <button type="button" class="mc-play wi-q-play" aria-label="Play question">
-            <span class="wave"></span><span class="wave"></span><span class="wave"></span>
-            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
-            <div class="eq"><span></span><span></span><span></span><span></span></div>
-          </button>
-          <span class="wi-q-text">${part.question}</span>
+        <div class="wi-card">
+          <div class="wi-question">
+            <button type="button" class="mc-play wi-q-play" aria-label="Play question">
+              <span class="wave"></span><span class="wave"></span><span class="wave"></span>
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+              <div class="eq"><span></span><span></span><span></span><span></span></div>
+            </button>
+            <div class="wi-q-copy">
+              <span class="wi-q-label">Listen & answer</span>
+              <span class="wi-q-text">${part.question}</span>
+            </div>
+          </div>
+          <div class="wi-pic-wrap">
+            <img class="wi-pic" src="${item.image}" alt="Look" draggable="false">
+          </div>
+          <div class="wi-answer">
+            <label class="wi-answer-label" for="wi-input">Your sentence</label>
+            <div class="wi-input-row">
+              <input type="text" id="wi-input" class="wi-input" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" placeholder="e.g. It's a key." enterkeyhint="done">
+              <button type="button" class="wi-mic" id="wi-mic" aria-label="Say the answer" title="Say the answer">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v4a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+              </button>
+            </div>
+            <p class="wi-feedback" id="wi-feedback">Write the full sentence, then Check</p>
+            <button type="button" class="mc-btn wi-check-btn" id="wi-check">Check answer</button>
+          </div>
         </div>
-        <div class="wi-pic-wrap">
-          <img class="wi-pic" src="${item.image}" alt="Look" draggable="false">
-        </div>
-        <div class="wi-input-row">
-          <input type="text" id="wi-input" class="wi-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer…" enterkeyhint="done">
-          <button type="button" class="wi-mic" id="wi-mic" aria-label="Say the answer" title="Say the answer">🎤</button>
-        </div>
-        <p class="wi-feedback" id="wi-feedback">Tap 🎤 or type, then Check</p>
-        <button type="button" class="mc-btn" id="wi-check">Check</button>
       </div>`;
 
     app.querySelector(".wi-q-play").onclick = () => playAudio(part.questionAudio);
     document.getElementById("wi-check").onclick = () => checkAnswer();
-    document.getElementById("wi-input").addEventListener("keydown", (e) => {
+    var inputEl = document.getElementById("wi-input");
+    inputEl.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
         checkAnswer();
       }
     });
+    // Mobile keyboard: keep input + Check visible above the keyboard
+    function ensureAnswerVisible() {
+      var row = app.querySelector(".wi-answer") || inputEl;
+      try {
+        row.scrollIntoView({ block: "center", behavior: "smooth" });
+      } catch (err) {
+        try { row.scrollIntoView(true); } catch (e2) {}
+      }
+      // Second pass after keyboard animation
+      setTimeout(function () {
+        try {
+          row.scrollIntoView({ block: "center", behavior: "smooth" });
+        } catch (err2) {}
+      }, 350);
+    }
+    inputEl.addEventListener("focus", ensureAnswerVisible);
+    inputEl.addEventListener("click", ensureAnswerVisible);
+    if (window.visualViewport) {
+      var vvHandler = function () {
+        if (document.activeElement === inputEl) ensureAnswerVisible();
+      };
+      window.visualViewport.addEventListener("resize", vvHandler);
+      window.visualViewport.addEventListener("scroll", vvHandler);
+    }
     document.getElementById("wi-mic").onclick = () => startListening();
+    // Autofocus on non-touch desktops only (avoid forcing keyboard on mobile)
+    if (!("ontouchstart" in window)) {
+      setTimeout(function () { try { inputEl.focus(); } catch (e) {} }, 80);
+    }
+  }
+
+
+  function ensureFieldVisible(el) {
+    if (!el) return;
+    var target = el.closest(".ll-card, .lsp-card, .sp-card, .qa-card, .wi-card, .lw-card, .ll-stage, .lsp-stage, .sp-stage, .qa-stage, .wi-stage") || el;
+    try { target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) { try { target.scrollIntoView(true); } catch (e2) {} }
+    setTimeout(function () {
+      try { target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e3) {}
+    }, 350);
+  }
+  function bindKeyboardFix(root) {
+    root = root || document;
+    var inputs = root.querySelectorAll('input[type="text"], input.ll-input, input.lsp-input, input.sp-input, input.qa-input, input.lw-input, input.wi-input');
+    inputs.forEach(function (inp) {
+      if (inp.dataset.kbFix) return;
+      inp.dataset.kbFix = "1";
+      inp.addEventListener("focus", function () { ensureFieldVisible(inp); });
+      inp.addEventListener("click", function () { ensureFieldVisible(inp); });
+    });
+    if (window.visualViewport && !window.__proKbVV) {
+      window.__proKbVV = true;
+      var onVV = function () {
+        var ae = document.activeElement;
+        if (ae && ae.tagName === "INPUT") ensureFieldVisible(ae);
+      };
+      window.visualViewport.addEventListener("resize", onVV);
+      window.visualViewport.addEventListener("scroll", onVV);
+    }
+  }
+
+  // Re-bind after UI paints
+  var _origRenderDone = true;
+  document.addEventListener('focusin', function (e) {
+    if (e.target && e.target.tagName === 'INPUT') ensureFieldVisible(e.target);
+  });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', function () {
+      var ae = document.activeElement;
+      if (ae && ae.tagName === 'INPUT') ensureFieldVisible(ae);
+    });
   }
 
   render();

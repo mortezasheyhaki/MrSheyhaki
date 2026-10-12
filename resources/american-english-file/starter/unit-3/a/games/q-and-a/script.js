@@ -492,5 +492,46 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     setTimeout(() => qEl.focus(), 80);
   }
 
+
+  function ensureFieldVisible(el) {
+    if (!el) return;
+    var target = el.closest(".ll-card, .lsp-card, .sp-card, .qa-card, .wi-card, .lw-card, .ll-stage, .lsp-stage, .sp-stage, .qa-stage, .wi-stage") || el;
+    try { target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) { try { target.scrollIntoView(true); } catch (e2) {} }
+    setTimeout(function () {
+      try { target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e3) {}
+    }, 350);
+  }
+  function bindKeyboardFix(root) {
+    root = root || document;
+    var inputs = root.querySelectorAll('input[type="text"], input.ll-input, input.lsp-input, input.sp-input, input.qa-input, input.lw-input, input.wi-input');
+    inputs.forEach(function (inp) {
+      if (inp.dataset.kbFix) return;
+      inp.dataset.kbFix = "1";
+      inp.addEventListener("focus", function () { ensureFieldVisible(inp); });
+      inp.addEventListener("click", function () { ensureFieldVisible(inp); });
+    });
+    if (window.visualViewport && !window.__proKbVV) {
+      window.__proKbVV = true;
+      var onVV = function () {
+        var ae = document.activeElement;
+        if (ae && ae.tagName === "INPUT") ensureFieldVisible(ae);
+      };
+      window.visualViewport.addEventListener("resize", onVV);
+      window.visualViewport.addEventListener("scroll", onVV);
+    }
+  }
+
+  // Re-bind after UI paints
+  var _origRenderDone = true;
+  document.addEventListener('focusin', function (e) {
+    if (e.target && e.target.tagName === 'INPUT') ensureFieldVisible(e.target);
+  });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', function () {
+      var ae = document.activeElement;
+      if (ae && ae.tagName === 'INPUT') ensureFieldVisible(ae);
+    });
+  }
+
   render();
 })();

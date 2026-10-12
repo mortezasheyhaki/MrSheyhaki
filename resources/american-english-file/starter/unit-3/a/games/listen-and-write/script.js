@@ -443,23 +443,23 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         </div>
       </div>
 
-      <p class="mc-instruction">Listen to the 5 conversations and write the thing you hear in each one.</p>
-
-      <div class="lw-audio">
-        <button type="button" class="mc-play" id="lw-play" aria-label="Play audio" ${listensLeft <= 0 ? "disabled" : ""}>
-          <span class="wave"></span><span class="wave"></span><span class="wave"></span>
-          <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
-          <div class="eq"><span></span><span></span><span></span><span></span></div>
-        </button>
-        <span class="lw-audio-hint">Tap to play · ${listensLeft} listen${listensLeft === 1 ? "" : "s"} left</span>
-      </div>
-
-      <div class="lw-boxes">${rows}</div>
-
-      <p class="lw-feedback"></p>
-
-      <div class="lw-actions">
-        <button type="button" class="mc-btn" id="lw-check" ${attemptsLeft <= 0 ? "disabled" : ""}>Check</button>
+      <div class="lw-stage">
+        <div class="lw-card">
+          <p class="mc-instruction">Listen to the 5 conversations and write the thing you hear in each one.</p>
+          <div class="lw-audio">
+            <button type="button" class="mc-play" id="lw-play" aria-label="Play audio" ${listensLeft <= 0 ? "disabled" : ""}>
+              <span class="wave"></span><span class="wave"></span><span class="wave"></span>
+              <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+              <div class="eq"><span></span><span></span><span></span><span></span></div>
+            </button>
+            <span class="lw-audio-hint">Tap to play · ${listensLeft} listen${listensLeft === 1 ? "" : "s"} left</span>
+          </div>
+          <div class="lw-boxes">${rows}</div>
+          <p class="lw-feedback"></p>
+          <div class="lw-actions">
+            <button type="button" class="mc-btn" id="lw-check" ${attemptsLeft <= 0 ? "disabled" : ""}>Check</button>
+          </div>
+        </div>
       </div>
     `;
 
@@ -553,4 +553,39 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
   setTimeout(() => {
     if (phase === "play" && listensLeft === MAX_LISTENS) playAudio();
   }, 500);
+})();
+
+/* keyboard fix */
+(function(){
+
+  function ensureFieldVisible(el) {
+    if (!el) return;
+    var target = el.closest(".ll-card, .lsp-card, .sp-card, .qa-card, .wi-card, .lw-card, .ll-stage, .lsp-stage, .sp-stage, .qa-stage, .wi-stage") || el;
+    try { target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) { try { target.scrollIntoView(true); } catch (e2) {} }
+    setTimeout(function () {
+      try { target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e3) {}
+    }, 350);
+  }
+  function bindKeyboardFix(root) {
+    root = root || document;
+    var inputs = root.querySelectorAll('input[type="text"], input.ll-input, input.lsp-input, input.sp-input, input.qa-input, input.lw-input, input.wi-input');
+    inputs.forEach(function (inp) {
+      if (inp.dataset.kbFix) return;
+      inp.dataset.kbFix = "1";
+      inp.addEventListener("focus", function () { ensureFieldVisible(inp); });
+      inp.addEventListener("click", function () { ensureFieldVisible(inp); });
+    });
+    if (window.visualViewport && !window.__proKbVV) {
+      window.__proKbVV = true;
+      var onVV = function () {
+        var ae = document.activeElement;
+        if (ae && ae.tagName === "INPUT") ensureFieldVisible(ae);
+      };
+      window.visualViewport.addEventListener("resize", onVV);
+      window.visualViewport.addEventListener("scroll", onVV);
+    }
+  }
+
+  document.addEventListener('focusin', function(e){ if(e.target && e.target.tagName==='INPUT') ensureFieldVisible(e.target); });
+  if(window.visualViewport){ window.visualViewport.addEventListener('resize', function(){ var ae=document.activeElement; if(ae&&ae.tagName==='INPUT') ensureFieldVisible(ae); }); }
 })();

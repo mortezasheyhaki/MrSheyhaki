@@ -675,24 +675,29 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       </header>
       <p class="mc-instruction" id="mc-hint">${mode.tip}</p>
       <div class="ll-stage">
-        ${mode.showPic ? `
-          <div class="ll-pic-wrap">
-            <img class="ll-pic" src="${item.image}" alt="What is this?" draggable="false">
-          </div>` : `
-          <div class="ll-audio-only">
-            <button type="button" class="mc-play ll-big-play" aria-label="Play audio">
-              <span class="wave"></span><span class="wave"></span><span class="wave"></span>
-              <svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
-              <div class="eq"><span></span><span></span><span></span><span></span></div>
-            </button>
-            <p class="ll-tap-hint">Tap to listen again</p>
-          </div>`}
-        <div class="ll-input-row">
-          <input type="text" id="ll-input" class="ll-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type or say the word…" enterkeyhint="done">
-          <button type="button" class="ll-mic" id="ll-mic" aria-label="Say the word" title="Say the word">🎤</button>
+        <div class="ll-card">
+          ${mode.showPic ? `
+            <div class="ll-pic-wrap">
+              <img class="ll-pic" src="${item.image}" alt="What is this?" draggable="false">
+            </div>` : `
+            <div class="ll-audio-only">
+              <button type="button" class="mc-play ll-big-play" aria-label="Play audio">
+                <span class="wave"></span><span class="wave"></span><span class="wave"></span>
+                <svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                <div class="eq"><span></span><span></span><span></span><span></span></div>
+              </button>
+              <p class="ll-tap-hint">Tap to listen again</p>
+            </div>`}
+          <div class="ll-answer">
+            <label class="ll-answer-label" for="ll-input">Your answer</label>
+            <div class="ll-input-row">
+              <input type="text" id="ll-input" class="ll-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type or say the word…" enterkeyhint="done">
+              <button type="button" class="ll-mic" id="ll-mic" aria-label="Say the word" title="Say the word">🎤</button>
+            </div>
+            <p class="ll-feedback" id="ll-feedback">Type or say the word, then Check</p>
+            <button type="button" class="mc-btn ll-check-btn" id="ll-check">Check answer</button>
+          </div>
         </div>
-        <p class="ll-feedback" id="ll-feedback">Tap 🎤 to speak, or type and Check</p>
-        <button type="button" class="mc-btn" id="ll-check">Check</button>
       </div>`;
 
     const input = document.getElementById("ll-input");
@@ -712,6 +717,47 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         playAudio(item.audio);
       };
     }
+  }
+
+
+  function ensureFieldVisible(el) {
+    if (!el) return;
+    var target = el.closest(".ll-card, .lsp-card, .sp-card, .qa-card, .wi-card, .lw-card, .ll-stage, .lsp-stage, .sp-stage, .qa-stage, .wi-stage") || el;
+    try { target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) { try { target.scrollIntoView(true); } catch (e2) {} }
+    setTimeout(function () {
+      try { target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e3) {}
+    }, 350);
+  }
+  function bindKeyboardFix(root) {
+    root = root || document;
+    var inputs = root.querySelectorAll('input[type="text"], input.ll-input, input.lsp-input, input.sp-input, input.qa-input, input.lw-input, input.wi-input');
+    inputs.forEach(function (inp) {
+      if (inp.dataset.kbFix) return;
+      inp.dataset.kbFix = "1";
+      inp.addEventListener("focus", function () { ensureFieldVisible(inp); });
+      inp.addEventListener("click", function () { ensureFieldVisible(inp); });
+    });
+    if (window.visualViewport && !window.__proKbVV) {
+      window.__proKbVV = true;
+      var onVV = function () {
+        var ae = document.activeElement;
+        if (ae && ae.tagName === "INPUT") ensureFieldVisible(ae);
+      };
+      window.visualViewport.addEventListener("resize", onVV);
+      window.visualViewport.addEventListener("scroll", onVV);
+    }
+  }
+
+  // Re-bind after UI paints
+  var _origRenderDone = true;
+  document.addEventListener('focusin', function (e) {
+    if (e.target && e.target.tagName === 'INPUT') ensureFieldVisible(e.target);
+  });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', function () {
+      var ae = document.activeElement;
+      if (ae && ae.tagName === 'INPUT') ensureFieldVisible(ae);
+    });
   }
 
   render();
