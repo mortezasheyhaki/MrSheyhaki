@@ -640,16 +640,16 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     });
     main.appendChild(grid);
 
-    // Quiz section
+    // Quiz & Tests section
     main.appendChild(
       el("section", { class: "section-heading" }, [
         el("div", {}, [
-          el("h2", { text: "Quiz" }),
+          el("h2", { text: "Quiz & Tests" }),
           el("p", { text: "Test your grammar and vocabulary from Units 1–12." }),
         ]),
       ])
     );
-    const quizGrid = el("section", { class: "level-grid level-grid--hub", "aria-label": "Quizzes" });
+    const quizGrid = el("section", { class: "level-grid level-grid--hub", "aria-label": "Quizzes and Tests" });
     quizGrid.appendChild(
       el(
         "a",
@@ -658,6 +658,18 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
           el("span", { class: "level-badge", text: "QUIZ" }),
           el("h3", { text: "Multiple Choice" }),
           el("p", { text: "40 questions per unit · Grammar & Vocabulary." }),
+          el("span", { class: "level-arrow", "aria-hidden": "true", text: "→" }),
+        ]
+      )
+    );
+    quizGrid.appendChild(
+      el(
+        "a",
+        { class: "level-card level-card--hub level-card--quiz", href: "tests/" },
+        [
+          el("span", { class: "level-badge", text: "TESTS" }),
+          el("h3", { text: "Tests & Exams" }),
+          el("p", { text: "Progress tests, listening exams, and exam-style games." }),
           el("span", { class: "level-arrow", "aria-hidden": "true", text: "→" }),
         ]
       )

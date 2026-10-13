@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unit 11 · Articles | Mr. Sheyhaki</title>
+<style>
+:root{--p:#7c3aed;--pd:#5b21b6;--ok:#059669;--bad:#dc2626;--m:#64748b;--t:#0f172a;--b:#e2e8f0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:linear-gradient(180deg,#f5f3ff,#eef2ff);color:var(--t);min-height:100vh;line-height:1.55}
+.header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--b);padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
+.back{color:var(--m);text-decoration:none;font-size:.9rem;font-weight:500;padding:.4rem .75rem;border-radius:999px}
+.back:hover{background:#f1f5f9;color:var(--p)}
+.badge{background:linear-gradient(135deg,#7c3aed,#6366f1);color:#fff;font-size:.7rem;font-weight:700;padding:.25rem .65rem;border-radius:999px}
+main{max-width:640px;margin:0 auto;padding:1.75rem 1.25rem 4rem}
+h1{font-size:1.5rem;font-weight:800;margin-bottom:.4rem}
+.intro{color:var(--m);margin-bottom:1rem}
+.ex{background:#f5f3ff;border-left:4px solid var(--p);padding:.65rem 1rem;border-radius:0 .5rem .5rem 0;margin-bottom:1.25rem;font-size:.95rem}
+.ex b{color:var(--pd);text-decoration:underline}
+.card{background:#fff;border-radius:1.2rem;border:1px solid var(--b);box-shadow:0 8px 28px rgba(99,102,241,.08);padding:1.4rem;margin-bottom:1.4rem}
+.item{margin-bottom:1rem;font-size:1.05rem;line-height:1.7}
+.num{font-weight:700;color:var(--pd);margin-right:.3rem}
+input{width:4.5rem;padding:.3rem .4rem;font-size:1rem;font-family:inherit;border:2px solid #c4b5fd;border-radius:.45rem;background:#f5f3ff;outline:none;text-align:center}
+input:focus{border-color:var(--p);background:#fff;box-shadow:0 0 0 3px rgba(124,58,237,.15)}
+input.correct{border-color:var(--ok);background:#ecfdf5;color:#065f46}
+input.wrong{border-color:var(--bad);background:#fef2f2;color:#991b1b}
+.hint{font-size:.8rem;color:var(--m);margin-left:.3rem}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1.4rem}
+.btn{padding:.6rem 1.3rem;border-radius:999px;font-size:.95rem;font-weight:600;border:none;cursor:pointer}
+.bp{background:linear-gradient(135deg,#7c3aed,#6366f1);color:#fff}
+.bs{background:#f1f5f9;color:var(--t)}
+.result{display:none;background:#fff;border-radius:1.1rem;padding:1.4rem;border:1px solid var(--b);text-align:center}
+.result.show{display:block}
+.result.perfect{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:#6ee7b7}
+.score{font-size:1.9rem;font-weight:800;color:var(--p);margin-bottom:.4rem}
+.alist{text-align:left;background:#f8fafc;border-radius:.7rem;padding:1rem 1.2rem;margin-top:1rem;font-size:.95rem}
+.alist li{list-style:none;margin-bottom:.35rem}
+.ok{color:var(--ok);font-weight:600}.no{color:var(--bad)}
+footer{text-align:center;padding:1.5rem;color:var(--m);font-size:.85rem}
+</style><link rel="stylesheet" href="../../assets/tests-ui.css">
+</head>
+<body>
+<header class="header"><a href="../" class="back">← Unit 11 Games</a><span style="font-weight:700;font-size:.95rem">Unit 11 · Articles</span><span class="badge">GRAMMAR</span></header>
+<main>
+<h1>the or – (no article)</h1>
+<p class="intro">Complete the sentences with <strong>the</strong> or leave blank (–).</p>
+<div class="ex">Example: My grandmother can't use <b>the</b> computer.</div>
+<div class="card">
+<div class="item"><span class="num">1</span> Sara is <input data-a="the" data-n="1" autocomplete="off" placeholder="the / –"> best swimmer in the club.</div>
+<div class="item"><span class="num">2</span> Marta is <input data-a="a|the|-" data-n="2" data-prefer="a" autocomplete="off" placeholder="the / –"> nurse in my family. <span class="hint">(a / the / –)</span></div>
+<div class="item"><span class="num">3</span> We had <input data-a="-|–|no article|" data-n="3" autocomplete="off" placeholder="the / –"> breakfast in a hotel today.</div>
+<div class="item"><span class="num">4</span> Did Tom eat all of <input data-a="the" data-n="4" autocomplete="off" placeholder="the / –"> cookies you made?</div>
+<div class="item"><span class="num">5</span> I never drink <input data-a="-|–|no article|" data-n="5" autocomplete="off" placeholder="the / –"> coffee because it makes me nervous.</div>
+<div class="item"><span class="num">6</span> Can you name <input data-a="the" data-n="6" autocomplete="off" placeholder="the / –"> months of the year in English?</div>
+</div>
+<div class="actions"><button class="btn bp" id="check">Check answers</button><button class="btn bs" id="show">Show answers</button><button class="btn bs" id="reset">Try again</button></div>
+<div class="result" id="result"><div class="score" id="score"></div><h2 id="rt"></h2><p id="rm"></p><ul class="alist" id="al"></ul></div>
+</main>
+<footer>© <span id="y"></span> Mr. Sheyhaki · Unit 11</footer>
+<script>
+document.getElementById("y").textContent=new Date().getFullYear();
+const inputs=[...document.querySelectorAll("input")];
+const ans={1:"the",2:"a",3:"–",4:"the",5:"–",6:"the"};
+// Accept empty, -, –, "no article" for no-article answers
+function normalize(v,n){
+  v=v.trim().toLowerCase();
+  if(n===2) return v==="a"||v==="the"?v:"a"; // prefer a teacher
+  if([3,5].includes(n)) return (v===""||v==="-"||v==="–"||v==="no article"||v==="nothing")?"–":v;
+  return v;
+}
+function isOk(inp){
+  const n=+inp.dataset.n; const v=normalize(inp.value,n);
+  if([3,5].includes(n)) return v==="–";
+  if(n===2) return v==="a"; // "a teacher"
+  return v===ans[n];
+}
+function best(n){return ans[n];}
+document.getElementById("check").onclick=()=>{
+  let c=0; const al=document.getElementById("al"); al.innerHTML="";
+  inputs.forEach(inp=>{
+    const n=+inp.dataset.n; const ok=isOk(inp);
+    inp.classList.toggle("correct",ok); inp.classList.toggle("wrong",!ok); if(ok)c++;
+    const li=document.createElement("li");
+    const show=inp.value.trim()||"(blank)";
+    li.innerHTML=ok?`<span class="ok">✓ ${n}. ${show==="(blank)"?"–":show}</span>`:`<span class="no">✗ ${n}. "${show}"</span> → <span class="ok">${best(n)}</span>`;
+    al.appendChild(li);
+  });
+  const r=document.getElementById("result"); r.classList.add("show"); r.classList.toggle("perfect",c===inputs.length);
+  document.getElementById("score").textContent="You got "+c+" of "+inputs.length;
+  document.getElementById("rt").textContent=c===inputs.length?"Wonderful work!":c>=4?"Nice work!":"Good effort — let's take another look!";
+  document.getElementById("rm").textContent=c===inputs.length?"Every answer is correct. Great job!":"Look at the answers below, then try again whenever you like.";
+  r.scrollIntoView({behavior:"smooth",block:"nearest"});
+};
+document.getElementById("show").onclick=()=>{inputs.forEach(i=>{i.value=best(+i.dataset.n)==="–"?"":best(+i.dataset.n);i.classList.remove("wrong");i.classList.add("correct");});document.getElementById("result").classList.remove("show");};
+document.getElementById("reset").onclick=()=>{inputs.forEach(i=>{i.value="";i.classList.remove("correct","wrong");});document.getElementById("result").classList.remove("show");};
+inputs.forEach((inp,i)=>inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();if(i<inputs.length-1)inputs[i+1].focus();else document.getElementById("check").click();}}));
+</script>
+<script src="../../assets/tests-ui.js"></script>
+</body></html>

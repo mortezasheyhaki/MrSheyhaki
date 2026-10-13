@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unit 11 · Same Sound Match | Mr. Sheyhaki</title>
+<style>
+:root{--p:#db2777;--pd:#be185d;--ok:#059669;--bad:#dc2626;--m:#64748b;--t:#0f172a;--b:#e2e8f0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:linear-gradient(180deg,#fdf2f8,#fce7f3);color:var(--t);min-height:100vh;line-height:1.55}
+.header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--b);padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
+.back{color:var(--m);text-decoration:none;font-size:.9rem;font-weight:500;padding:.4rem .75rem;border-radius:999px}
+.back:hover{background:#f1f5f9;color:var(--p)}
+.badge{background:linear-gradient(135deg,#db2777,#f472b6);color:#fff;font-size:.7rem;font-weight:700;padding:.25rem .65rem;border-radius:999px}
+main{max-width:620px;margin:0 auto;padding:1.75rem 1.25rem 4rem}
+h1{font-size:1.5rem;font-weight:800;margin-bottom:.4rem}
+.intro{color:var(--m);margin-bottom:1rem}
+.box{display:flex;flex-wrap:wrap;gap:.5rem;background:#fff;border:2px solid #f9a8d4;border-radius:.75rem;padding:.75rem 1rem;margin-bottom:1.25rem}
+.box span{background:#fce7f3;color:var(--pd);font-weight:600;padding:.25rem .65rem;border-radius:999px;font-size:.9rem}
+.ex{background:#fce7f3;border-left:4px solid var(--p);padding:.65rem 1rem;border-radius:0 .5rem .5rem 0;margin-bottom:1.25rem;font-size:.95rem}
+.ex b{color:var(--pd);text-decoration:underline}
+.card{background:#fff;border-radius:1.2rem;border:1px solid var(--b);box-shadow:0 8px 28px rgba(219,39,119,.08);padding:1.4rem;margin-bottom:1.4rem}
+.item{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;font-size:1.05rem;flex-wrap:wrap}
+.item:last-child{margin-bottom:0}
+.num{font-weight:700;color:var(--pd);min-width:1.3rem}
+.word{font-weight:600;min-width:5rem}
+input{width:9rem;padding:.3rem .5rem;font-size:1rem;font-family:inherit;border:2px solid #f9a8d4;border-radius:.45rem;background:#fdf2f8;outline:none}
+input:focus{border-color:var(--p);background:#fff;box-shadow:0 0 0 3px rgba(219,39,119,.15)}
+input.correct{border-color:var(--ok);background:#ecfdf5;color:#065f46}
+input.wrong{border-color:var(--bad);background:#fef2f2;color:#991b1b}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1.4rem}
+.btn{padding:.6rem 1.3rem;border-radius:999px;font-size:.95rem;font-weight:600;border:none;cursor:pointer}
+.bp{background:linear-gradient(135deg,#db2777,#f472b6);color:#fff}.bs{background:#f1f5f9;color:var(--t)}
+.result{display:none;background:#fff;border-radius:1.1rem;padding:1.4rem;border:1px solid var(--b);text-align:center}
+.result.show{display:block}.result.perfect{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:#6ee7b7}
+.score{font-size:1.9rem;font-weight:800;color:var(--p);margin-bottom:.4rem}
+.alist{text-align:left;background:#f8fafc;border-radius:.7rem;padding:1rem 1.2rem;margin-top:1rem;font-size:.95rem}
+.alist li{list-style:none;margin-bottom:.35rem}.ok{color:var(--ok);font-weight:600}.no{color:var(--bad)}
+footer{text-align:center;padding:1.5rem;color:var(--m);font-size:.85rem}
+</style><link rel="stylesheet" href="../../assets/tests-ui.css">
+</head>
+<body>
+<header class="header"><a href="../" class="back">← Unit 11 Games</a><span style="font-weight:700;font-size:.95rem">Unit 11 · Sounds</span><span class="badge">PRONUNCIATION</span></header>
+<main>
+<h1>Match the same sound</h1>
+<p class="intro">Match each word with a word from the box that has the <strong>same stressed sound</strong>.</p>
+<div class="box"><span>tweet</span><span>information</span><span>attachment</span><span>log in</span><span>upload</span><span>Skype</span></div>
+<div class="ex">Example: media → <b>tweet</b></div>
+<div class="card">
+<div class="item"><span class="num">1</span><span class="word">website</span><input data-a="Skype|skype" data-n="1" autocomplete="off" placeholder="________"></div>
+<div class="item"><span class="num">2</span><span class="word">app</span><input data-a="attachment" data-n="2" autocomplete="off" placeholder="________"></div>
+<div class="item"><span class="num">3</span><span class="word">post</span><input data-a="upload" data-n="3" autocomplete="off" placeholder="________"></div>
+<div class="item"><span class="num">4</span><span class="word">email</span><input data-a="tweet" data-n="4" autocomplete="off" placeholder="________"></div>
+<div class="item"><span class="num">5</span><span class="word">online</span><input data-a="log in|login" data-n="5" autocomplete="off" placeholder="________"></div>
+</div>
+<div class="actions"><button class="btn bp" id="check">Check answers</button><button class="btn bs" id="show">Show answers</button><button class="btn bs" id="reset">Try again</button></div>
+<div class="result" id="result"><div class="score" id="score"></div><h2 id="rt"></h2><p id="rm"></p><ul class="alist" id="al"></ul></div>
+</main>
+<footer>© <span id="y"></span> Mr. Sheyhaki · Unit 11</footer>
+<script>
+document.getElementById("y").textContent=new Date().getFullYear();
+const inputs=[...document.querySelectorAll("input")];
+function n(s){return s.trim().toLowerCase().replace(/\s+/g," ");}
+function ok(inp){return inp.dataset.a.split("|").map(n).includes(n(inp.value));}
+document.getElementById("check").onclick=()=>{let c=0;const al=document.getElementById("al");al.innerHTML="";
+inputs.forEach(inp=>{const good=ok(inp);inp.classList.toggle("correct",good);inp.classList.toggle("wrong",!good);if(good)c++;
+const li=document.createElement("li");const best=inp.dataset.a.split("|")[0];
+li.innerHTML=good?`<span class="ok">✓ ${inp.dataset.n}. ${inp.value.trim()||best}</span>`:`<span class="no">✗ ${inp.dataset.n}. "${inp.value.trim()||"—"}"</span> → <span class="ok">${best}</span>`;al.appendChild(li);});
+const r=document.getElementById("result");r.classList.add("show");r.classList.toggle("perfect",c===inputs.length);
+document.getElementById("score").textContent="You got "+c+" of "+inputs.length;
+document.getElementById("rt").textContent=c===inputs.length?"Wonderful work!":c>=3?"Nice work!":"Good effort — let's take another look!";
+document.getElementById("rm").textContent=c===inputs.length?"Every answer is correct. Great job!":"Look at the answers below, then try again whenever you like.";
+r.scrollIntoView({behavior:"smooth",block:"nearest"});};
+document.getElementById("show").onclick=()=>{inputs.forEach(i=>{i.value=i.dataset.a.split("|")[0];i.classList.remove("wrong");i.classList.add("correct");});document.getElementById("result").classList.remove("show");};
+document.getElementById("reset").onclick=()=>{inputs.forEach(i=>{i.value="";i.classList.remove("correct","wrong");});document.getElementById("result").classList.remove("show");};
+inputs.forEach((inp,i)=>inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();if(i<inputs.length-1)inputs[i+1].focus();else document.getElementById("check").click();}}));
+</script>
+<script src="../../assets/tests-ui.js"></script>
+</body></html>

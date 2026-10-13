@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unit 11 · Adverbs Choose | Mr. Sheyhaki</title>
+<style>
+:root{--p:#2563eb;--pd:#1d4ed8;--ok:#059669;--bad:#dc2626;--m:#64748b;--t:#0f172a;--b:#e2e8f0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:linear-gradient(180deg,#eff6ff,#dbeafe);color:var(--t);min-height:100vh;line-height:1.55}
+.header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--b);padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
+.back{color:var(--m);text-decoration:none;font-size:.9rem;font-weight:500;padding:.4rem .75rem;border-radius:999px}
+.back:hover{background:#f1f5f9;color:var(--p)}
+.badge{background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-size:.7rem;font-weight:700;padding:.25rem .65rem;border-radius:999px}
+main{max-width:680px;margin:0 auto;padding:1.75rem 1.25rem 4rem}
+h1{font-size:1.5rem;font-weight:800;margin-bottom:.4rem}
+.intro{color:var(--m);margin-bottom:1rem}
+.ex{background:#dbeafe;border-left:4px solid var(--p);padding:.65rem 1rem;border-radius:0 .5rem .5rem 0;margin-bottom:1.25rem;font-size:.95rem}
+.ex b{color:var(--pd);text-decoration:underline}
+.card{background:#fff;border-radius:1.2rem;border:1px solid var(--b);box-shadow:0 8px 28px rgba(37,99,235,.08);padding:1.4rem;margin-bottom:1.4rem}
+.item{margin-bottom:1.25rem;font-size:1.05rem;line-height:1.6}
+.num{font-weight:700;color:var(--pd);margin-right:.3rem}
+.opts{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem}
+.opts button{padding:.35rem .8rem;border:2px solid #93c5fd;border-radius:999px;background:#eff6ff;font-size:.95rem;cursor:pointer;font-family:inherit}
+.opts button:hover{border-color:var(--p)}
+.opts button.selected{background:var(--p);color:#fff;border-color:var(--p)}
+.opts button.correct{background:#ecfdf5;color:#065f46;border-color:var(--ok)}
+.opts button.wrong{background:#fef2f2;color:#991b1b;border-color:var(--bad)}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1.4rem}
+.btn{padding:.6rem 1.3rem;border-radius:999px;font-size:.95rem;font-weight:600;border:none;cursor:pointer}
+.bp{background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff}.bs{background:#f1f5f9;color:var(--t)}
+.result{display:none;background:#fff;border-radius:1.1rem;padding:1.4rem;border:1px solid var(--b);text-align:center}
+.result.show{display:block}.result.perfect{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:#6ee7b7}
+.score{font-size:1.9rem;font-weight:800;color:var(--p);margin-bottom:.4rem}
+.alist{text-align:left;background:#f8fafc;border-radius:.7rem;padding:1rem 1.2rem;margin-top:1rem;font-size:.95rem}
+.alist li{list-style:none;margin-bottom:.35rem}.ok{color:var(--ok);font-weight:600}.no{color:var(--bad)}
+footer{text-align:center;padding:1.5rem;color:var(--m);font-size:.85rem}
+</style><link rel="stylesheet" href="../../assets/tests-ui.css">
+</head>
+<body>
+<header class="header"><a href="../" class="back">← Unit 11 Games</a><span style="font-weight:700;font-size:.95rem">Unit 11 · Adverbs</span><span class="badge">VOCABULARY</span></header>
+<main>
+<h1>Choose the correct adverb</h1>
+<p class="intro">Select the best word for each sentence.</p>
+<div class="ex">Example: Akiko can't understand you when you speak <b>fast</b>.</div>
+<div class="card" id="card"></div>
+<div class="actions"><button class="btn bp" id="check">Check answers</button><button class="btn bs" id="show">Show answers</button><button class="btn bs" id="reset">Try again</button></div>
+<div class="result" id="result"><div class="score" id="score"></div><h2 id="rt"></h2><p id="rm"></p><ul class="alist" id="al"></ul></div>
+</main>
+<footer>© <span id="y"></span> Mr. Sheyhaki · Unit 11</footer>
+<script>
+document.getElementById("y").textContent=new Date().getFullYear();
+const qs=[
+  {n:1, text:"Our neighbours play their music ______ every night.", opts:["fluently","dangerously","loudly"], ans:"loudly"},
+  {n:2, text:"Sabrina eats ______ – she has crisps and chocolate every day.", opts:["unhealthily","hard","really"], ans:"unhealthily"},
+  {n:3, text:"The children waited ______ for the bus.", opts:["possibly","casually","patiently"], ans:"patiently"},
+  {n:4, text:"Simon says he is a terrible dancer but I think he dances quite ______.", opts:["well","fluently","badly"], ans:"well"},
+  {n:5, text:"She isn't a very good driver – sometimes she drives ______.", opts:["carefully","dangerously","well"], ans:"dangerously"},
+  {n:6, text:"Manuela can speak 3 languages ______.", opts:["fluently","hard","casually"], ans:"fluently"},
+  {n:7, text:"People in my country work hard and take life ______.", opts:["politely","seriously","really"], ans:"seriously"},
+];
+const card=document.getElementById("card"); const choices={};
+qs.forEach(q=>{
+  const div=document.createElement("div"); div.className="item";
+  div.innerHTML=`<span class="num">${q.n}</span> ${q.text}<div class="opts" data-n="${q.n}"></div>`;
+  const opts=div.querySelector(".opts");
+  q.opts.forEach(o=>{const b=document.createElement("button");b.type="button";b.textContent=o;b.dataset.val=o;
+    b.onclick=()=>{opts.querySelectorAll("button").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");choices[q.n]=o;};
+    opts.appendChild(b);});
+  card.appendChild(div);
+});
+document.getElementById("check").onclick=()=>{
+  let c=0;const al=document.getElementById("al");al.innerHTML="";
+  qs.forEach(q=>{
+    const sel=choices[q.n];const ok=sel===q.ans;if(ok)c++;
+    const opts=card.querySelector(`.opts[data-n="${q.n}"]`);
+    opts.querySelectorAll("button").forEach(b=>{b.classList.remove("correct","wrong");if(b.dataset.val===q.ans)b.classList.add("correct");else if(b.classList.contains("selected"))b.classList.add("wrong");});
+    const li=document.createElement("li");
+    li.innerHTML=ok?`<span class="ok">✓ ${q.n}. ${q.ans}</span>`:`<span class="no">✗ ${q.n}. "${sel||"—"}"</span> → <span class="ok">${q.ans}</span>`;
+    al.appendChild(li);
+  });
+  const r=document.getElementById("result");r.classList.add("show");r.classList.toggle("perfect",c===qs.length);
+  document.getElementById("score").textContent="You got "+c+" of "+qs.length;
+  document.getElementById("rt").textContent=c===qs.length?"Wonderful work!":c>=5?"Nice work!":"Good effort — let's take another look!";
+  document.getElementById("rm").textContent=c===qs.length?"Every answer is correct. Great job!":"Look at the answers below, then try again whenever you like.";
+  r.scrollIntoView({behavior:"smooth",block:"nearest"});
+};
+document.getElementById("show").onclick=()=>{qs.forEach(q=>{choices[q.n]=q.ans;const opts=card.querySelector(`.opts[data-n="${q.n}"]`);opts.querySelectorAll("button").forEach(b=>{b.classList.remove("selected","wrong");b.classList.toggle("correct",b.dataset.val===q.ans);b.classList.toggle("selected",b.dataset.val===q.ans);});});document.getElementById("result").classList.remove("show");};
+document.getElementById("reset").onclick=()=>{Object.keys(choices).forEach(k=>delete choices[k]);card.querySelectorAll("button").forEach(b=>b.classList.remove("selected","correct","wrong"));document.getElementById("result").classList.remove("show");};
+</script>
+<script src="../../assets/tests-ui.js"></script>
+</body></html>
