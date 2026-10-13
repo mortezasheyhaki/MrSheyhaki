@@ -4312,82 +4312,187 @@ html[data-theme="dark"] .hub-card--tools .hub-card-btn {
   }
 }
 
-/* Mobile: single column, list-style rows for easy scrolling */
-@media (max-width: 640px) {
-  .hub-cards--2col {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    max-width: 100%;
+/* =========================================================
+   MOBILE HOME — fixed no-scroll, 2×2 square icon cards
+   ========================================================= */
+@media (max-width: 700px) {
+
+  /* Strict fixed viewport */
+  html:has(body.home-page),
+  body.home-page {
+    overflow: hidden !important;
+    height: 100% !important;
+    max-height: 100dvh !important;
+    position: fixed;
+    width: 100%;
+    inset: 0;
   }
 
-  /* Reset centering rule so About spans full width like the others */
-  .hub-cards--2col .hub-card:last-child:nth-child(odd) {
-    grid-column: auto;
-    max-width: none;
-    justify-self: stretch;
+  body.home-page {
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
-  .hub-cards--2col .hub-card {
-    display: grid;
-    grid-template-columns: 52px 1fr auto;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      "icon title btn"
-      "icon desc  btn";
+  /* Main area fills available space between top safe area and bottom nav */
+  body.home-page .hub-main {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    column-gap: 14px;
-    row-gap: 4px;
-    text-align: left;
-    min-height: 0;
-    padding: 16px 14px;
-    border-radius: 18px;
-  }
-
-  .hub-cards--2col .hub-card-icon {
-    grid-area: icon;
-    width: 52px;
-    height: 52px;
+    width: 100%;
+    max-width: 100%;
     margin: 0;
-    border-radius: 16px;
-  }
-  .hub-cards--2col .hub-card-icon svg {
-    width: 28px;
-    height: 28px;
-  }
-
-  .hub-cards--2col .hub-card h2 {
-    grid-area: title;
-    margin: 0;
-    font-size: 0.95rem;
-    letter-spacing: 0.04em;
-  }
-
-  .hub-cards--2col .hub-card-rule {
-    display: none;
-  }
-
-  .hub-cards--2col .hub-card p {
-    grid-area: desc;
-    margin: 0;
-    font-size: 0.82rem;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    padding: max(8px, env(safe-area-inset-top)) 14px max(78px, calc(64px + env(safe-area-inset-bottom)));
     overflow: hidden;
+    box-sizing: border-box;
   }
 
-  .hub-cards--2col .hub-card-btn {
-    grid-area: btn;
-    align-self: center;
-    padding: 10px 14px;
-    font-size: 0.72rem;
-    min-height: 40px;
-    white-space: nowrap;
+  /* Compact hero */
+  body.home-page .hub-hero {
+    padding: 4px 8px 8px;
+    flex-shrink: 0;
+  }
+
+  body.home-page .hub-hero-deco {
+    opacity: 0.35;
+  }
+  body.home-page .hub-hero-deco .hub-float {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  body.home-page .hub-character {
+    display: none; /* free vertical space */
+  }
+
+  body.home-page .hub-kicker {
+    font-size: 0.62rem !important;
+    margin-bottom: 2px !important;
+    letter-spacing: 0.12em;
+  }
+
+  body.home-page .hub-title {
+    font-size: clamp(1.35rem, 7vw, 1.7rem) !important;
+    line-height: 1.05 !important;
+    margin: 0 !important;
+  }
+
+  body.home-page .hub-tagline {
+    font-size: 0.68rem !important;
+    margin: 4px 0 0 !important;
+  }
+
+  body.home-page .hub-underline {
+    width: 72px;
+    height: 2px;
+    margin: 8px auto 0;
+  }
+
+  /* 2×2 square cards */
+  body.home-page .hub-cards--2col {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    max-width: min(340px, calc(100vw - 28px));
+    margin: 10px auto 0 !important;
+    padding: 0 !important;
+    flex: 0 0 auto;
+  }
+
+  /* Reset the odd-last-child centering */
+  body.home-page .hub-cards--2col .hub-card:last-child:nth-child(odd) {
+    grid-column: auto !important;
+    max-width: none !important;
+    justify-self: stretch !important;
+    width: auto !important;
+  }
+
+  body.home-page .hub-cards--2col .hub-card {
+    aspect-ratio: 1 / 1;
+    min-height: 0 !important;
+    max-height: none;
+    padding: 12px 10px 10px !important;
+    border-radius: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 4px;
+    grid-template-columns: none !important;
+    grid-template-areas: none !important;
+  }
+
+  body.home-page .hub-cards--2col .hub-card-icon {
+    width: 48px !important;
+    height: 48px !important;
+    margin: 0 0 2px !important;
+    border-radius: 14px !important;
+    flex-shrink: 0;
+  }
+
+  body.home-page .hub-cards--2col .hub-card-icon svg {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  body.home-page .hub-cards--2col .hub-card h2 {
+    font-size: 0.72rem !important;
+    letter-spacing: 0.04em !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+  }
+
+  body.home-page .hub-cards--2col .hub-card-rule {
+    display: none !important;
+  }
+
+  body.home-page .hub-cards--2col .hub-card p {
+    display: none !important; /* keep squares clean */
+  }
+
+  body.home-page .hub-cards--2col .hub-card-btn {
+    margin-top: 2px !important;
+    padding: 5px 10px !important;
+    font-size: 0.58rem !important;
+    min-height: 0 !important;
+    border-radius: 999px !important;
+    letter-spacing: 0.03em;
+  }
+
+  /* Journey line */
+  body.home-page .hub-journey {
+    font-size: 0.62rem !important;
+    margin: 10px 0 0 !important;
+    flex-shrink: 0;
+  }
+
+  /* Footer compact */
+  body.home-page .hub-footer,
+  body.home-page .site-footer {
+    flex-shrink: 0;
+    padding: 6px 12px max(8px, env(safe-area-inset-bottom)) !important;
+    font-size: 0.6rem;
+  }
+  body.home-page .hub-footer .footer-inner {
+    gap: 6px;
+  }
+  body.home-page .hub-ig-text {
+    display: none; /* icon only on tiny screens */
+  }
+
+  /* Press feedback */
+  body.home-page .hub-card:active {
+    transform: scale(0.96) translateY(1px);
+    transition: transform 0.12s ease;
   }
 }
 
-/* Ensure main area allows natural page scroll */
+/* Ensure main area allows natural page scroll on larger screens */
 .hub-main {
   overflow: visible;
 }
