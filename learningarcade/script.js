@@ -149,6 +149,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // When the browser restores this page from the back/forward cache, the
+  // "pt-exit" class set before the last navigation is still on <html>, which
+  // leaves the body faded out and unclickable. Reset it on every pageshow.
+  window.addEventListener("pageshow", function () {
+    document.documentElement.classList.remove("pt-exit");
+    document.documentElement.classList.add("pt-enter");
+  });
   function sameOrigin(href) {
     try {
       const url = new URL(href, window.location.href);
