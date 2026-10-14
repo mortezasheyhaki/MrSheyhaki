@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tactics For Listening | Resources | Mr. Sheyhaki</title>
+<meta name="description" content="Tactics For Listening — Basic, Developing, and Expanding levels with interactive listening games.">
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../../theme.css">
+<style>
+  :root {
+    --tfl-blue: #2563eb;
+    --tfl-blue-light: #dbeafe;
+    --tfl-blue-border: #93c5fd;
+    --tfl-soft: #eff6ff;
+  }
+  html[data-theme="dark"] {
+    --tfl-blue: #60a5fa;
+    --tfl-blue-light: rgba(96, 165, 250, 0.14);
+    --tfl-blue-border: rgba(96, 165, 250, 0.28);
+    --tfl-soft: rgba(37, 99, 235, 0.12);
+  }
+  .arcade-intro .eyebrow { color: var(--tfl-blue) !important; }
+  .back-link { color: var(--tfl-blue); font-weight: 800; text-decoration: none; font-size: 13px; }
+  .level-grid {
+    width: min(calc(100% - 48px), var(--container, 1180px));
+    margin: 0 auto 48px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .tfl-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 22px 20px 18px;
+    border-radius: 18px;
+    border: 1.5px solid var(--border, #e7e9ef);
+    background: #fff;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 8px 24px rgba(32,38,54,.05);
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    overflow: hidden;
+  }
+  html[data-theme="dark"] .tfl-card {
+    background: rgba(30, 32, 40, 0.92);
+    border-color: rgba(255,255,255,0.08);
+  }
+  .tfl-card:hover:not(.is-locked) {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(37, 99, 235, 0.12);
+    border-color: var(--tfl-blue-border);
+  }
+  .tfl-card .tfl-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: grid; place-items: center;
+    font-size: 22px;
+    background: var(--tfl-blue-light);
+  }
+  .tfl-card h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .tfl-card p {
+    margin: 0;
+    color: var(--muted, #687184);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .tfl-card .tfl-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 6px;
+  }
+  .tfl-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--tfl-soft);
+    color: var(--tfl-blue);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+  .tfl-link {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--tfl-blue);
+  }
+  .tfl-card.is-locked {
+    cursor: default;
+    opacity: 0.78;
+    border-style: dashed;
+    background: #fafbfd;
+  }
+  html[data-theme="dark"] .tfl-card.is-locked {
+    background: rgba(20, 22, 28, 0.7);
+  }
+  .tfl-card.is-locked:hover {
+    transform: none;
+    box-shadow: 0 8px 24px rgba(32,38,54,.05);
+    border-color: var(--border, #e7e9ef);
+  }
+  .tfl-card.is-locked .tfl-icon {
+    background: #eef0f4;
+    filter: grayscale(0.4);
+  }
+  .lock-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #eef0f4;
+    color: #838ba0;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  html[data-theme="dark"] .lock-pill {
+    background: rgba(255,255,255,0.08);
+    color: #9ca3af;
+  }
+  .tfl-card .shine {
+    position: absolute;
+    top: 0; left: -120%;
+    width: 55%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.22), transparent);
+    transform: skewX(-18deg);
+    pointer-events: none;
+  }
+  .tfl-card:hover:not(.is-locked) .shine {
+    animation: tfl-shine 0.7s ease forwards;
+  }
+  @keyframes tfl-shine {
+    from { left: -120%; }
+    to { left: 140%; }
+  }
+</style>
+</head>
+<body class="page-calm">
+
+<header class="arcade-header-bar">
+<nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+  <a href="../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+  <a href="../../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+  <a href="../" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+  <a href="../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+  <a href="../../learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+</nav>
+</header>
+
+<main>
+  <section class="arcade-intro">
+    <p style="margin:0 0 12px"><a href="../" class="back-link">← Resources</a></p>
+    <span class="eyebrow">COURSEBOOK · LISTENING</span>
+    <h1>Tactics For Listening</h1>
+    <p>Three carefully staged levels of listening practice — from first conversations to expanded real-world tasks.</p>
+  </section>
+
+  <section class="section-heading">
+    <div>
+      <h2>Levels</h2>
+      <p>Start with Basic · 24 units of everyday conversations</p>
+    </div>
+  </section>
+
+  <section class="level-grid" aria-label="Tactics For Listening levels">
+    <a class="tfl-card" href="basic/">
+      <span class="shine" aria-hidden="true"></span>
+      <div class="tfl-icon" aria-hidden="true">🎧</div>
+      <h3>Basic</h3>
+      <p>First conversations, names, numbers, greetings, and everyday exchanges. Perfect for true beginners.</p>
+      <div class="tfl-meta">
+        <span class="tfl-tag">24 Units</span>
+        <span class="tfl-link">Open →</span>
+      </div>
+    </a>
+
+    <div class="tfl-card is-locked" aria-disabled="true">
+      <div class="tfl-icon" aria-hidden="true">📡</div>
+      <h3>Developing</h3>
+      <p>Longer dialogues, more detail, and slightly faster speech. Builds confidence step by step.</p>
+      <div class="tfl-meta">
+        <span class="lock-pill">🔒 Coming soon</span>
+      </div>
+    </div>
+
+    <div class="tfl-card is-locked" aria-disabled="true">
+      <div class="tfl-icon" aria-hidden="true">🎙️</div>
+      <h3>Expanding</h3>
+      <p>Real-world listening tasks, multi-speaker talks, and extended comprehension challenges.</p>
+      <div class="tfl-meta">
+        <span class="lock-pill">🔒 Coming soon</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Resources</p></footer>
+<script src="../../script.js"></script>
+<script src="../../theme.js"></script>
+<script src="../../swipe-nav.js"></script>
+</body>
+</html>

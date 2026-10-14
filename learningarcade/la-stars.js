@@ -42,6 +42,8 @@
  *     starter-4b-listen-and-write, starter-4b-adjective-sentences
  *   Teen2Teen
  *     t2t1-u10-clothes-flashcards, t2t1-u10-clothes-match
+ *   Tactics For Listening
+ *     tfl-basic-u1-conversation-match, tfl-basic-u1-listen-choose
  */
 (function (global) {
   "use strict";
@@ -194,7 +196,11 @@
     "starter-3b-this-that-sentences": "starter-3b-this-that-sentences",
     "starter-3b-this-that-mix": "starter-3b-this-that-mix",
     "starter-3b-question-builder": "starter-3b-question-builder",
-    "starter-3b-dialogue-completer": "starter-3b-dialogue-completer"
+    "starter-3b-dialogue-completer": "starter-3b-dialogue-completer",
+
+    // Tactics For Listening
+    "tfl-basic-u1-conversation-match": "tfl-basic-u1-conversation-match",
+    "tfl-basic-u1-listen-choose": "tfl-basic-u1-listen-choose"
   };
 
   function loadJSON(key) {
