@@ -178,6 +178,8 @@ const GAME_ID = "starter-3b-this-that-sentences";
     const item = currentItem();
     sceneImg.src = item.img;
     sceneImg.alt = item.sentence;
+    window.__sgWords = item.words.slice();
+    window.__sgSentence = item.sentence;
 
     if (level === 0) {
       level1UI.hidden = false;

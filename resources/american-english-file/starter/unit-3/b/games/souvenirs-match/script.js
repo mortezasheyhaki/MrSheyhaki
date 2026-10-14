@@ -31,11 +31,13 @@
   }
   function sfxTap() { tone(520, 0.06, "triangle", 0.08); }
   function sfxCorrect() {
+    if (window.ArcadeFX) ArcadeFX.ok();
     tone(523, 0.1, "sine", 0.12, 0);
     tone(659, 0.12, "sine", 0.12, 0.08);
     tone(784, 0.18, "sine", 0.1, 0.16);
   }
   function sfxWrong() {
+    if (window.ArcadeFX) ArcadeFX.bad();
     tone(220, 0.14, "sawtooth", 0.07, 0);
     tone(180, 0.18, "sawtooth", 0.06, 0.1);
   }
@@ -160,11 +162,24 @@
     playSrc(c.audio, btn);
   }
 
-  function startMode(mi) {
+  // Play all three parts in order: Pictures → Words, Audio → Words, Audio → Pictures
+  function startAll() {
     if (window.LAFinish) LAFinish.startTimer();
-    modeIndex = mi;
+    modeIndex = 0;
     modeCorrect = 0;
     startSet(0);
+  }
+
+  const PART_TEXT = [
+    { emoji: "🎉", title: "Great job!", text: "You matched every picture to its word. Now let's listen and find the words!" },
+    { emoji: "👏", title: "Well done!", text: "You found every word by listening. Last part: listen and match the picture!" },
+  ];
+
+  function finishSet() {
+    if (setIndex < SETS.length - 1) { startSet(setIndex + 1); return; }
+    if (modeIndex < MODES.length - 1) { phase = "between"; stopAudio(); render(); return; }
+    phase = "done";
+    render();
   }
 
   function startSet(si) {
@@ -255,12 +270,7 @@
       updateProgress();
       if (correctCount() === SETS[setIndex].length) {
         setTimeout(() => {
-          if (setIndex < SETS.length - 1) {
-            startSet(setIndex + 1);
-          } else {
-            phase = "done";
-            render();
-          }
+          finishSet();
         }, 700);
       }
     } else {
@@ -298,7 +308,7 @@
     // picture
     return `
       <div class="mc-left-item mc-pic-cell${ok}${sel}" data-i="${i}">
-        <img src="${c.image}" alt="${c.label}" draggable="false" />
+        <img class="mc-thumb" src="${c.image}" alt="${c.label}" draggable="false" />
       </div>`;
   }
 
@@ -307,8 +317,8 @@
     const used = Object.keys(locked).some((li) => matches[li] === id);
     if (opts && opts.rightIsPicture) {
       return `
-        <button type="button" class="mc-right-item mc-pic-right${used ? " is-correct is-used" : ""}" data-id="${id}" ${used ? "disabled" : ""}>
-          <img src="${c.image}" alt="${c.label}" draggable="false" />
+        <button type="button" class="mc-right-item mc-pic-btn${used ? " is-correct is-used" : ""}" data-id="${id}" ${used ? "disabled" : ""}>
+          <img class="mc-thumb" src="${c.image}" alt="${c.label}" draggable="false" />
         </button>`;
     }
     if (opts && opts.rightIsAudio) {
@@ -328,7 +338,7 @@
   }
 
   function calcStars() {
-    const total = ITEMS.length;
+    const total = ITEMS.length * MODES.length;
     if (modeCorrect >= total) return 3;
     if (modeCorrect >= Math.ceil(total * 0.7)) return 2;
     if (modeCorrect >= Math.ceil(total * 0.4)) return 1;
@@ -355,21 +365,15 @@
         <section class="mc-start">
           <div class="mc-hero" aria-hidden="true">🎁</div>
           <h1>Souvenirs Match</h1>
-          <p class="mc-desc">Match the souvenirs · 8 items (2 sets of 4)</p>
-          <div class="mc-mode-list">
-            ${MODES.map((m, i) => `
-              <button type="button" class="mc-mode-card mc-mode-btn" data-mode="${i}">
-                <span class="mc-mode-num">${i + 1}</span>
-                <div>
-                  <strong>${m.title}</strong>
-                  <p>${m.tip}</p>
-                </div>
-              </button>`).join("")}
-          </div>
+          <p class="mc-desc">8 souvenirs · 3 parts in a row</p>
+          <ol class="sm-parts">
+            <li><strong>1.</strong> Pictures → Words</li>
+            <li><strong>2.</strong> Audio → Words</li>
+            <li><strong>3.</strong> Audio → Pictures</li>
+          </ol>
+          <button type="button" class="mc-btn" id="sm-start">Start</button>
         </section>`;
-      app.querySelectorAll(".mc-mode-btn").forEach((btn) => {
-        btn.onclick = () => startMode(+btn.dataset.mode);
-      });
+      document.getElementById("sm-start").onclick = () => startAll();
       return;
     }
 
@@ -379,9 +383,9 @@
         LAFinish.show({
           gameId: GAME_ID,
           score: modeCorrect,
-          total: SETS.reduce((n,s)=>n+s.length,0),
+          total: SETS.reduce((n,s)=>n+s.length,0) * MODES.length,
           timeMs: timeMs,
-          onAgain: () => startMode(modeIndex),
+          onAgain: () => startAll(),
           onModes: () => { phase = 'menu'; render(); },
           backHref: "../",
           save: false,
@@ -407,11 +411,11 @@
             </div>
           </div>
           <h1>${stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practicing!"}</h1>
-          <p><strong>${m.title}</strong><br>You matched <strong>${modeCorrect} / ${ITEMS.length}</strong> souvenirs.</p>
+          <p><strong>All 3 parts</strong><br>You matched <strong>${modeCorrect} / ${ITEMS.length * MODES.length}</strong> matches.</p>
           <button type="button" class="mc-btn" id="mc-again">Play again</button>
           <button type="button" class="mc-btn secondary" id="mc-menu">All modes</button>
         </section>`;
-      document.getElementById("mc-again").onclick = () => startMode(modeIndex);
+      document.getElementById("mc-again").onclick = () => startAll();
       document.getElementById("mc-menu").onclick = () => {
         phase = "menu";
         render();
@@ -464,6 +468,26 @@
       };
     });
     document.getElementById("mc-reset").onclick = () => startSet(setIndex);
+
+    if (phase === "between") {
+      const cur = PART_TEXT[modeIndex] || PART_TEXT[PART_TEXT.length - 1];
+      const nxt = MODES[modeIndex + 1];
+      app.insertAdjacentHTML("beforeend", `
+        <div class="sm-pop" role="dialog" aria-modal="true" aria-live="polite">
+          <div class="sm-card">
+            <div class="sm-emoji" aria-hidden="true">${cur.emoji}</div>
+            <h2>${cur.title}</h2>
+            <p>${cur.text}</p>
+            <p class="sm-next">Next: <strong>${nxt.title}</strong></p>
+            <button type="button" class="mc-btn" id="sm-continue">Continue →</button>
+          </div>
+        </div>`);
+      try { if (window.sfxCelebrate) window.sfxCelebrate(); } catch (e) {}
+      document.getElementById("sm-continue").onclick = () => {
+        modeIndex += 1;
+        startSet(0);
+      };
+    }
   }
 
   render();

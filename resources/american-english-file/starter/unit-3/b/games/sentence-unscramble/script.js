@@ -166,6 +166,8 @@
   function setupItem() {
     const items = MODES[modeIndex].items;
     const item = items[order[current]];
+    window.__sgWords = item.words.slice();
+    window.__sgSentence = item.words.join(" ");
     tiles = scrambleWords(item.words);
     slots = Array(item.words.length).fill(null);
     locked = false;
@@ -243,7 +245,7 @@
     if (phase === "menu") {
       app.innerHTML = `
         <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back">←</a>
+          <a class="mc-back" href="../" aria-label="Back to games"><span aria-hidden="true">←</span><span class="mc-back-text">Games</span></a>
           <span class="mc-title">Sentence Unscramble</span>
           <span class="mc-progress">3B</span>
         </header>
@@ -288,7 +290,7 @@
       const stars = correctCount >= total ? 3 : correctCount >= Math.ceil(total * 0.6) ? 2 : correctCount >= 1 ? 1 : 0;
       app.innerHTML = `
         <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back">←</a>
+          <a class="mc-back" href="../" aria-label="Back to games"><span aria-hidden="true">←</span><span class="mc-back-text">Games</span></a>
           <span class="mc-title">Sentence Unscramble</span>
           <span class="mc-progress">3B</span>
         </header>
@@ -319,7 +321,7 @@
 
     app.innerHTML = `
       <header class="mc-topbar">
-        <a class="mc-back" href="../" aria-label="Back">←</a>
+        <a class="mc-back" href="../" aria-label="Back to games"><span aria-hidden="true">←</span><span class="mc-back-text">Games</span></a>
         <span class="mc-title">${MODES[modeIndex].title}</span>
         <span class="mc-progress">${progress}</span>
       </header>
