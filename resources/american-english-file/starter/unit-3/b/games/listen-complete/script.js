@@ -139,13 +139,11 @@
   function updateStars() {
     if (!window.LAStars) return;
     const stars = correctCount >= 5 ? 3 : correctCount >= 3 ? 2 : correctCount >= 1 ? 1 : 0;
-    if (stars > 0) {
-      if (!playRecorded) {
-        LAStars.recordPlay(GAME_ID);
-        playRecorded = true;
-      }
-      LAStars.save(GAME_ID, stars);
+    if (!playRecorded) {
+      LAStars.recordPlay(GAME_ID);
+      playRecorded = true;
     }
+    LAStars.save(GAME_ID, stars);
   }
 
   function playAudio() {

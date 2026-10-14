@@ -29,6 +29,11 @@
  *     starter-3a-a-an-swipe, starter-3a-plural-s-sound-match, starter-3a-whats-in-your-bag, starter-3a-unscramble, starter-3a-look-listen-write, starter-3a-listen-number,
  *     starter-3a-plural-match, starter-3a-sing-plur-match, starter-3a-sing-plur-sentences, starter-3a-make-plurals,
  *     starter-3a-listen-say-plural, starter-3a-listen-and-write, starter-3a-what-is-it, starter-3a-q-and-a
+ *   AEF Starter Unit 3B (Souvenirs / this-that)
+ *     starter-3b-souvenirs-match, starter-3b-souvenirs-listen-choose, starter-3b-souvenirs-unscramble,
+ *     starter-3b-souvenirs-listen-write, starter-3b-souvenirs-shop, starter-3b-listen-match,
+ *     starter-3b-listen-complete, starter-3b-sentence-unscramble, starter-3b-this-that-sentences,
+ *     starter-3b-this-that-mix, starter-3b-question-builder, starter-3b-dialogue-completer
  *   AEF Starter Unit 4B (Adjectives / The perfect car)
  *     starter-4b-where-is-it-from, starter-4b-perfect-car, starter-4b-car-adjectives,
  *     starter-4b-opposite-snap, starter-4b-match-adjectives, starter-4b-sound-match-picture,
@@ -177,10 +182,19 @@
     "starter-3a-what-is-it": "starter-3a-what-is-it",
     "starter-3a-q-and-a": "starter-3a-q-and-a",
     "starter-3a-ask-answer": "starter-3a-q-and-a",
+    // Unit 3B – Souvenirs / this-that / questions
     "starter-3b-souvenirs-match": "starter-3b-souvenirs-match",
     "starter-3b-souvenirs-listen-choose": "starter-3b-souvenirs-listen-choose",
     "starter-3b-souvenirs-unscramble": "starter-3b-souvenirs-unscramble",
-    "starter-3b-souvenirs-listen-write": "starter-3b-souvenirs-listen-write"
+    "starter-3b-souvenirs-listen-write": "starter-3b-souvenirs-listen-write",
+    "starter-3b-souvenirs-shop": "starter-3b-souvenirs-shop",
+    "starter-3b-listen-match": "starter-3b-listen-match",
+    "starter-3b-listen-complete": "starter-3b-listen-complete",
+    "starter-3b-sentence-unscramble": "starter-3b-sentence-unscramble",
+    "starter-3b-this-that-sentences": "starter-3b-this-that-sentences",
+    "starter-3b-this-that-mix": "starter-3b-this-that-mix",
+    "starter-3b-question-builder": "starter-3b-question-builder",
+    "starter-3b-dialogue-completer": "starter-3b-dialogue-completer"
   };
 
   function loadJSON(key) {

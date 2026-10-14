@@ -190,13 +190,11 @@
     if (!window.LAStars) return;
     const n = askedItems.size + (buying ? 1 : 0) + (paid ? 1 : 0);
     const stars = n >= 4 ? 3 : n >= 2 ? 2 : n >= 1 ? 1 : 0;
-    if (stars > 0) {
-      if (!playRecorded) {
-        LAStars.recordPlay(GAME_ID);
-        playRecorded = true;
-      }
-      LAStars.save(GAME_ID, stars);
+    if (!playRecorded) {
+      LAStars.recordPlay(GAME_ID);
+      playRecorded = true;
     }
+    LAStars.save(GAME_ID, stars);
   }
 
   function findItem(text) {
