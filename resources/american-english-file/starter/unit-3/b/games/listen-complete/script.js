@@ -214,9 +214,10 @@
 
   function render() {
     if (phase === "done") {
+      updateStars();
+      const stars = correctCount >= 5 ? 3 : correctCount >= 3 ? 2 : correctCount >= 1 ? 1 : 0;
       if (window.LAFinish) {
         const timeMs = LAFinish.stopTimer();
-        const stars = typeof calcStars === "function" ? calcStars() : undefined;
         LAFinish.show({
           gameId: GAME_ID,
           score: correctCount,
@@ -228,6 +229,7 @@
             listensLeft = 3;
             attempts = 0;
             correctCount = 0;
+            playRecorded = false;
             if (window.LAFinish) LAFinish.startTimer();
             render();
           },
@@ -238,7 +240,6 @@
         return;
       }
 
-      const stars = correctCount >= 5 ? 3 : correctCount >= 3 ? 2 : correctCount >= 1 ? 1 : 0;
       app.innerHTML = `
         <header class="mc-topbar">
           <a class="mc-back" href="../" aria-label="Back">←</a>

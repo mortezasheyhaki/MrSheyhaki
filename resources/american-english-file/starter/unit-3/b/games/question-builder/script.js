@@ -268,12 +268,16 @@
     }
 
     if (phase === "done") {
+      updateStars();
+      const total = order.length;
+      const stars = correctCount >= total ? 3 : correctCount >= Math.ceil(total * 0.6) ? 2 : correctCount >= 1 ? 1 : 0;
       if (window.LAFinish) {
         const timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
           score: correctCount,
           total: order.length,
+          stars: stars,
           timeMs: timeMs,
           onAgain: () => startMode(modeIndex),
           onModes: () => { phase = 'menu'; render(); },
@@ -283,8 +287,6 @@
         return;
       }
 
-      const total = order.length;
-      const stars = correctCount >= total ? 3 : correctCount >= Math.ceil(total * 0.6) ? 2 : correctCount >= 1 ? 1 : 0;
       app.innerHTML = `
         <header class="mc-topbar">
           <a class="mc-back" href="../" aria-label="Back to games"><span aria-hidden="true">←</span><span class="mc-back-text">Games</span></a>

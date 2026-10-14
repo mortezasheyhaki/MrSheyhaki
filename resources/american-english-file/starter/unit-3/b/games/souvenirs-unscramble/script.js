@@ -314,12 +314,14 @@
     }
 
     if (phase === "done") {
+      const stars = saveStars();
       if (window.LAFinish) {
         const timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
           score: correctCount,
           total: ITEMS.length,
+          stars: stars,
           timeMs: timeMs,
           onAgain: () => start(),
           onModes: () => { phase = 'menu'; render(); },
@@ -329,7 +331,6 @@
         return;
       }
 
-      const stars = saveStars();
       app.innerHTML = `
         <header class="mc-topbar">
           <a class="mc-back" href="../" aria-label="Back">←</a>

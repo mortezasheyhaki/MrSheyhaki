@@ -470,13 +470,16 @@
   if (window.LAFinish) LAFinish.startTimer();
 
   function finishShop() {
+    updateStars();
     if (!window.LAFinish) return;
     const timeMs = LAFinish.stopTimer();
     const n = askedItems.size + (buying ? 1 : 0) + (paid ? 1 : 0);
+    const stars = n >= 4 ? 3 : n >= 2 ? 2 : n >= 1 ? 1 : 0;
     LAFinish.show({
       gameId: GAME_ID,
       score: n,
       total: 6,
+      stars: stars,
       timeMs: timeMs,
       onAgain: () => location.reload(),
       onModes: () => { location.href = "../"; },

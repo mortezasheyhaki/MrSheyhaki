@@ -378,12 +378,14 @@
     }
 
     if (phase === "done") {
+      const stars = saveStars();
       if (window.LAFinish) {
         const timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
           score: modeCorrect,
           total: SETS.reduce((n,s)=>n+s.length,0) * MODES.length,
+          stars: stars,
           timeMs: timeMs,
           onAgain: () => startAll(),
           onModes: () => { phase = 'menu'; render(); },
@@ -393,7 +395,6 @@
         return;
       }
 
-      const stars = saveStars();
       const m = MODES[modeIndex];
       app.innerHTML = `
         <header class="mc-topbar">
