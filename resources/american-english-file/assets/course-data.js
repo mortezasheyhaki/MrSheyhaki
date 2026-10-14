@@ -251,17 +251,17 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
 
 // Unit 3B – Games (Souvenirs)
 COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.games = [
-  { title: "Listen & Match", url: "listen-match/", label: "Listening" },
-  { title: "Listen & Complete", url: "listen-complete/", label: "Listening" },
-  { title: "Dialogue Completer", url: "dialogue-completer/", label: "Grammar" },
-  { title: "This / That Sentences", url: "this-that-sentences/", label: "Grammar" },
-  { title: "This / That Mix", url: "this-that-mix/", label: "Grammar" },
-  { title: "Question Builder", url: "question-builder/", label: "Grammar" },
-  { title: "Sentence Unscramble", url: "sentence-unscramble/", label: "Grammar" },
   { title: "Souvenirs Match", url: "souvenirs-match/", label: "Vocabulary" },
   { title: "Souvenirs Listen & Choose", url: "souvenirs-listen-choose/", label: "Listening" },
   { title: "Souvenirs Listen & Write", url: "souvenirs-listen-write/", label: "Listening" },
   { title: "Souvenirs Unscramble", url: "souvenirs-unscramble/", label: "Vocabulary" },
+  { title: "Listen & Match", url: "listen-match/", label: "Listening" },
+  { title: "Sentence Unscramble", url: "sentence-unscramble/", label: "Grammar" },
+  { title: "This / That Sentences", url: "this-that-sentences/", label: "Grammar" },
+  { title: "Question Builder", url: "question-builder/", label: "Grammar" },
+  { title: "This / That Mix", url: "this-that-mix/", label: "Grammar" },
+  { title: "Dialogue Completer", url: "dialogue-completer/", label: "Grammar" },
+  { title: "Listen & Complete", url: "listen-complete/", label: "Listening" },
   { title: "Souvenirs Shop", url: "souvenirs-shop/", label: "Speaking" },
 ];
 
