@@ -204,7 +204,9 @@
     "tfl-basic-u1-listen-number-pictures": "tfl-basic-u1-listen-number-pictures",
     "tfl-basic-u1-listen-predict": "tfl-basic-u1-listen-predict",
     "tfl-basic-u1-listen-spell-names": "tfl-basic-u1-listen-spell-names",
-    "tfl-basic-u1-listen-how-know": "tfl-basic-u1-listen-how-know"
+    "tfl-basic-u1-listen-how-know": "tfl-basic-u1-listen-how-know",
+    "tfl-basic-u1-sentence-chips": "tfl-basic-u1-sentence-chips",
+    "tfl-basic-u1-listen-gap-fill": "tfl-basic-u1-listen-gap-fill"
   };
 
   function loadJSON(key) {
