@@ -43,7 +43,7 @@
  *   Teen2Teen
  *     t2t1-u10-clothes-flashcards, t2t1-u10-clothes-match
  *   Tactics For Listening
- *     tfl-basic-u1-conversation-match, tfl-basic-u1-listen-choose
+ *     tfl-basic-u1-conversation-match, tfl-basic-u1-listen-choose, tfl-basic-u1-listen-number-pictures, tfl-basic-u1-listen-predict
  */
 (function (global) {
   "use strict";
@@ -200,7 +200,11 @@
 
     // Tactics For Listening
     "tfl-basic-u1-conversation-match": "tfl-basic-u1-conversation-match",
-    "tfl-basic-u1-listen-choose": "tfl-basic-u1-listen-choose"
+    "tfl-basic-u1-listen-choose": "tfl-basic-u1-listen-choose",
+    "tfl-basic-u1-listen-number-pictures": "tfl-basic-u1-listen-number-pictures",
+    "tfl-basic-u1-listen-predict": "tfl-basic-u1-listen-predict",
+    "tfl-basic-u1-listen-spell-names": "tfl-basic-u1-listen-spell-names",
+    "tfl-basic-u1-listen-how-know": "tfl-basic-u1-listen-how-know"
   };
 
   function loadJSON(key) {
