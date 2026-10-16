@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Developing · Tactics For Listening | Mr. Sheyhaki</title>
-<meta name="description" content="Tactics For Listening Developing — coming soon.">
+<meta name="description" content="Tactics For Listening Developing — 24 units of longer dialogues and everyday conversations.">
 <link rel="stylesheet" href="../../../style.css">
 <link rel="stylesheet" href="../../style.css">
 <link rel="stylesheet" href="../../../theme.css">
@@ -25,22 +25,46 @@
 <main>
   <section class="tfl-hero">
     <a href="../" class="tfl-back">← Tactics For Listening</a>
-    <div style="margin-top:14px"><span class="tfl-eyebrow">Level · Coming soon</span></div>
+    <div style="margin-top:14px"><span class="tfl-eyebrow">Developing · 24 units</span></div>
     <h1>Developing</h1>
     <p>Longer dialogues, more detail, and slightly faster speech. Builds confidence step by step.</p>
   </section>
 
-  <section class="tfl-locked">
-    <div class="tfl-level-art" aria-hidden="true">📡</div>
-    <h2>Coming soon</h2>
-    <p>This level is being built. Units will appear here once they're ready.</p>
-    <span class="tfl-lock">🔒 Not yet open</span>
+  <section class="tfl-section">
+    <div>
+      <h2>Units</h2>
+      <p>Unit 1 is ready · more coming soon</p>
+    </div>
+    <span class="tfl-count">1 of 24 ready</span>
   </section>
+
+  <section class="tfl-units" id="unitGrid" aria-label="Developing units"></section>
 </main>
 
 <footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Resources</p></footer>
 <script src="../../../script.js"></script>
 <script src="../../../theme.js"></script>
 <script src="../../../swipe-nav.js"></script>
+<script>
+(function () {
+  var titles = { 1: "The weekend" };
+  var grid = document.getElementById("unitGrid");
+  for (var i = 1; i <= 24; i++) {
+    var n = String(i).padStart(2, "0");
+    var ready = i === 1;
+    var el = document.createElement(ready ? "a" : "div");
+    el.className = "tfl-unit " + (ready ? "is-ready" : "is-soon");
+    if (ready) el.href = "unit-" + n + "/";
+    if (!ready) el.setAttribute("aria-disabled", "true");
+    el.innerHTML =
+      '<span class="tfl-unit-no">Unit</span>' +
+      '<span class="tfl-unit-num">' + n + '</span>' +
+      (ready
+        ? '<h3 class="tfl-unit-title">' + titles[i] + '</h3>'
+        : '<p class="tfl-unit-soon">Coming soon</p><span class="tfl-unit-lock" aria-hidden="true">🔒</span>');
+    grid.appendChild(el);
+  }
+})();
+</script>
 </body>
 </html>
