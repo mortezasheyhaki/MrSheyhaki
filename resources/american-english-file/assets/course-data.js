@@ -247,6 +247,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "Listen and Say the Plural", url: "listen-say-plural/", label: "Speaking" },
   { title: "Look & Listen Write", url: "look-listen-write/", label: "Listening" },
   { title: "Unscramble", url: "unscramble/", label: "Vocabulary" },
+  { title: "Singular ↔ Plural", url: "sing-plur-match/", label: "Vocabulary" }
 ];
 
 // Unit 3B – Games (Souvenirs)
@@ -278,6 +279,17 @@ COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.games = [
   { title: "Family Tree", url: "family-tree/" },
   { title: "Family Match Rush", url: "match-rush/" },
   { title: "People Words", url: "people-words/" },
+  { title: "Family Roleplay", url: "family-roleplay/", label: "Speaking" },
+  { title: "Flashcards", url: "flashcards/", label: "Vocabulary" },
+  { title: "It's or Its", url: "its-or-its/", label: "Vocabulary" },
+  { title: "Kayla's Family", url: "kaylas-family/", label: "Vocabulary" },
+  { title: "Possessive Match", url: "possessive-match/", label: "Vocabulary" },
+  { title: "Possessive 's", url: "possessive-s/", label: "Vocabulary" },
+  { title: "Possessive Sentences", url: "possessive-sentences/", label: "Writing" },
+  { title: "Possessive Sentences 2", url: "possessive-sentences-2/", label: "Writing" },
+  { title: "Possessives", url: "possessives/", label: "Vocabulary" },
+  { title: "Unscramble", url: "unscramble/", label: "Writing" },
+  { title: "Who are the people?", url: "who-are-the-people/", label: "Vocabulary" }
 ];
 
 // Unit 5A – Games (A big breakfast? · food vocabulary)
@@ -294,7 +306,8 @@ COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.games = [
   { title: "Favorite Meals", url: "favorite-meals-listen/", label: "Listening" },
   { title: "Breakfast Builder", url: "breakfast-builder/", label: "Grammar" },
   { title: "Sentence Unscramble", url: "breakfast-sentence-unscramble/", label: "Grammar" },
-  { title: "Listen & Write", url: "breakfast-listen-write/", label: "Listening" }
+  { title: "Listen & Write", url: "breakfast-listen-write/", label: "Listening" },
+  { title: "Food & Drinks Sort", url: "food-drinks-sort/", label: "Vocabulary" }
 ];
 
 // Unit 5B – Games (A very long flight · verb phrases)
@@ -320,6 +333,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.games = [
   { title: "What does he / she do?", url: "what-does-he-she-do/", label: "Grammar" },
   { title: "Where do they work?", url: "where-do-they-work/", label: "Grammar" },
   { title: "Listen & Complete", url: "listen-and-complete/", label: "Listening" },
+  { title: "Listen & Write", url: "listen-and-write/", label: "Listening" }
 ];
 
 // Unit 7A – Games
@@ -327,6 +341,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.games = [
   { title: "Question Builder", url: "question-builder/" },
   { title: "Build the Question", url: "build-the-question/" },
   { title: "Amelia's Days", url: "amelias-days/" },
+  { title: "Wh- Answer Challenge", url: "wh-answer-challenge/", label: "Vocabulary" }
 ];
 
 // Unit 7B – Games
@@ -340,6 +355,17 @@ COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.games = [
   { title: "Listen & Write", url: "listen-and-write/" },
   { title: "Picture Sentences", url: "picture-sentences/", label: "Grammar" },
   { title: "Write the Sentences", url: "write-sentences/", label: "Grammar" },
+  { title: "Dialogue Complete", url: "continuous-dialogues/", label: "Vocabulary" },
+  { title: "Present Continuous −", url: "continuous-negative/", label: "Vocabulary" },
+  { title: "Picture Sentences", url: "continuous-pictures/", label: "Vocabulary" },
+  { title: "Present Continuous +", url: "continuous-positive/", label: "Vocabulary" },
+  { title: "Present Continuous ?", url: "continuous-questions/", label: "Vocabulary" },
+  { title: "Listen & Repeat", url: "listen-repeat-conversation/", label: "Listening" },
+  { title: "Order the Messages", url: "order-the-messages/", label: "Vocabulary" },
+  { title: "Travel Conversations", url: "travel-conversations/", label: "Vocabulary" },
+  { title: "Travel Phrase Chips", url: "travel-phrase/", label: "Vocabulary" },
+  { title: "What's he/she doing?", url: "travel-whats-doing/", label: "Vocabulary" },
+  { title: "Interactive Video", url: "video-listening/", label: "Listening" }
 ];
 
 // Unit 4B – Adjectives (moved from Vocabulary Arcade)
@@ -349,6 +375,15 @@ COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.games = [
   { title: "Sound Match Picture", url: "sound-match-picture/" },
   { title: "Listen and Write", url: "listen-and-write/" },
   { title: "Adjective Sentences", url: "adjective-sentences/" },
+  { title: "Car Adjectives", url: "car-adjectives/", label: "Vocabulary" },
+  { title: "Listen & Say", url: "listen-and-say/", label: "Listening" },
+  { title: "Listen & Write Adjectives", url: "listen-write-adjectives/", label: "Listening" },
+  { title: "Listen & Write the Plural", url: "listen-write-plural/", label: "Listening" },
+  { title: "The Perfect Car", url: "perfect-car/", label: "Vocabulary" },
+  { title: "Sentence Builder", url: "sentence-builder/", label: "Writing" },
+  { title: "Two Sounds Match", url: "two-sounds-match/", label: "Listening" },
+  { title: "Unscramble Adjectives", url: "unscramble-adjectives/", label: "Writing" },
+  { title: "Where is it from?", url: "where-is-it-from/", label: "Vocabulary" }
 ];
 
 // Level 1 – Unit 9A – Food games (from Vocabulary Arcade)
@@ -603,10 +638,33 @@ COURSE_DATA["american-english-file"].levels.starter.units[8].lessons.a.name = "C
 COURSE_DATA["american-english-file"].levels.starter.units[8].lessons.b.name = "I ❤️ cooking";
 COURSE_DATA["american-english-file"].levels.starter.units[9].name = "Problems & work";
 COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.name = "Everything's fine!";
+
+COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.b.games = [
+  { title: "Clothes Bingo", url: "clothes-bingo/", label: "Vocabulary" },
+  { title: "Clothes Flashcards", url: "clothes-flashcards/", label: "Vocabulary" },
+  { title: "Clothes Match", url: "clothes-match/", label: "Vocabulary" },
+  { title: "Clothes Sentence Challenge", url: "clothes-sentence-challenge/", label: "Writing" },
+  { title: "Communication Time", url: "communication-time/", label: "Vocabulary" },
+  { title: "Fix the Mistake", url: "fix-the-mistake/", label: "Vocabulary" },
+  { title: "Sentence Speaking", url: "sentence-speaking/", label: "Speaking" },
+  { title: "Sound Match Picture", url: "sound-match-picture/", label: "Listening" },
+  { title: "Sound Wheel", url: "sound-wheel/", label: "Listening" },
+  { title: "Unscramble Clothes", url: "unscramble-clothes/", label: "Writing" },
+  { title: "Choose the Verb", url: "verb-choice/", label: "Vocabulary" },
+  { title: "Write the Clothes", url: "write-the-clothes/", label: "Writing" },
+  { title: "Write the Verb", url: "write-the-verb/", label: "Writing" }
+];
 COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.b.name = "Working undercover";
 COURSE_DATA["american-english-file"].levels.starter.units[10].name = "Hotels & the past";
 COURSE_DATA["american-english-file"].levels.starter.units[10].lessons.a.name = "A room with a view";
 COURSE_DATA["american-english-file"].levels.starter.units[10].lessons.b.name = "Where were you?";
+COURSE_DATA["american-english-file"].levels.starter.units[10].lessons.a.games = [
+  { title: "Hotel Flashcards", url: "hotel-flashcards/", label: "Vocabulary" },
+  { title: "Match Hotel", url: "match-hotel/", label: "Vocabulary" },
+  { title: "Sound Match Picture", url: "sound-match-picture/", label: "Listening" },
+  { title: "Unscramble Hotel Room", url: "unscramble-hotel-room/", label: "Writing" }
+];
+
 COURSE_DATA["american-english-file"].levels.starter.units[11].name = "Life in the US & daily life";
 COURSE_DATA["american-english-file"].levels.starter.units[11].lessons.a.name = "A new life in the US";
 COURSE_DATA["american-english-file"].levels.starter.units[11].lessons.b.name = "How was your day?";
@@ -634,9 +692,22 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].games = 
   { title: "Hotel Role-Play", url: "hotel-roleplay/", label: "Speaking" },
   { title: "Restaurant Role-Play", url: "restaurant-roleplay/", label: "Speaking" },
   { title: "Restaurant Booking", url: "restaurant-booking/", label: "Listening" },
-
-  { title: "Word Wheel Match", url: "word-wheel-match/", label: "Vocabulary" },
+  { title: "Word Wheel Match", url: "word-wheel-match/", label: "Vocabulary" }
 ];
+
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].name = "How much is it?";
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].games = [
+  { title: "Be Rob", url: "be-rob/", label: "Vocabulary" },
+  { title: "How much is it?", url: "how-much-is-it/", label: "Vocabulary" },
+  { title: "What do they buy?", url: "jenny-amy-buy/", label: "Vocabulary" },
+  { title: "Jenny's Lunch", url: "jennys-lunch/", label: "Vocabulary" },
+  { title: "Listen & Complete", url: "listen-complete/", label: "Listening" },
+  { title: "Money Flashcards", url: "money-flashcards/", label: "Vocabulary" },
+  { title: "Price Match", url: "price-match/", label: "Vocabulary" },
+  { title: "What does Rob order?", url: "rob-orders/", label: "Vocabulary" },
+  { title: "Three Sounds Match", url: "three-sounds-match/", label: "Listening" }
+];
+
 
 
 // ============================================================

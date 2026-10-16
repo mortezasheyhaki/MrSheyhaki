@@ -458,7 +458,22 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].games = 
   { title: "Alphabet Flashcards", url: "alphabet-flashcards/", label: "Vocabulary" },
   { title: "Listen & Choose", url: "listen-choose/", label: "Vocabulary" },
   { title: "Match Classroom Objects", url: "match-classroom-objects/", label: "Vocabulary" },
+
+  { title: "Word Wheel Match", url: "word-wheel-match/", label: "Vocabulary" }
 ];
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].name = "How much is it?";
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].games = [
+  { title: "Be Rob", url: "be-rob/", label: "Vocabulary" },
+  { title: "How much is it?", url: "how-much-is-it/", label: "Vocabulary" },
+  { title: "What do they buy?", url: "jenny-amy-buy/", label: "Vocabulary" },
+  { title: "Jenny's Lunch", url: "jennys-lunch/", label: "Vocabulary" },
+  { title: "Listen & Complete", url: "listen-complete/", label: "Listening" },
+  { title: "Money Flashcards", url: "money-flashcards/", label: "Vocabulary" },
+  { title: "Price Match", url: "price-match/", label: "Vocabulary" },
+  { title: "What does Rob order?", url: "rob-orders/", label: "Vocabulary" },
+  { title: "Three Sounds Match", url: "three-sounds-match/", label: "Listening" }
+];
+
 
 
 // ============================================================
