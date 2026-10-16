@@ -137,6 +137,8 @@
     "starter-pe1-alphabet-flashcards": "starter-pe1-alphabet-flashcards",
     "starter-pe1-listen-choose": "starter-pe1-listen-choose",
     "starter-pe1-match-classroom-objects": "starter-pe1-match-classroom-objects",
+    "starter-pe1-word-wheel-match": "starter-pe1-word-wheel-match",
+    "starter-word-wheel-match": "starter-pe1-word-wheel-match",
     "starter-pe1-classroom-flashcards": "starter-pe1-classroom-flashcards",
     "starter-pe1-classroom-write": "starter-pe1-classroom-write",
     "starter-pe1-classroom-whats-this": "starter-pe1-classroom-whats-this",
@@ -205,8 +207,7 @@
     "tfl-basic-u1-listen-predict": "tfl-basic-u1-listen-predict",
     "tfl-basic-u1-listen-spell-names": "tfl-basic-u1-listen-spell-names",
     "tfl-basic-u1-listen-how-know": "tfl-basic-u1-listen-how-know",
-    "tfl-basic-u1-sentence-chips": "tfl-basic-u1-sentence-chips",
-    "tfl-basic-u1-listen-gap-fill": "tfl-basic-u1-listen-gap-fill"
+    "tfl-basic-u1-sentence-chips": "tfl-basic-u1-sentence-chips"
   };
 
   function loadJSON(key) {

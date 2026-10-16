@@ -634,6 +634,8 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].games = 
   { title: "Hotel Role-Play", url: "hotel-roleplay/", label: "Speaking" },
   { title: "Restaurant Role-Play", url: "restaurant-roleplay/", label: "Speaking" },
   { title: "Restaurant Booking", url: "restaurant-booking/", label: "Listening" },
+
+  { title: "Word Wheel Match", url: "word-wheel-match/", label: "Vocabulary" },
 ];
 
 
