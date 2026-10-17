@@ -1,42 +1,56 @@
-/* Missing Words · game-specific styles (base UI comes from ../shared/listen.css) */
+/* Missing Words · game-specific styles (base UI comes from ../shared/listen.css)
+ * No-scroll layout: dialogue scrolls internally; bank stays pinned.
+ */
 
-.gf-card {
+.gf-app .lc-card.gf-card {
   align-items: stretch;
-  padding: 22px 18px 20px;
+  padding: 14px 14px 12px;
   gap: 0;
 }
-@media (min-width: 720px) { .gf-card { padding: 30px 36px 28px; } }
+@media (min-width: 720px) {
+  .gf-app .lc-card.gf-card { padding: 20px 24px 16px; }
+}
 
 /* progress text under the bar */
 .gf-status {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--lc-muted);
-  margin: -8px 0 16px;
+  margin: 0 0 10px;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
-/* audio button sits centred above the dialogue */
-.gf-card .lc-play { align-self: center; }
+/* audio button */
+.gf-card .lc-play {
+  align-self: center;
+  margin-bottom: 12px;
+}
 
-/* dialogue */
+/* dialogue — internal scroll only if content overflows */
 .gf-dialogue {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  font-size: 15.5px;
-  line-height: 1.7;
-  padding: 4px 2px 0;
+  gap: 8px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  padding: 2px 0 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
-.gf-line { display: flex; gap: 10px; align-items: flex-start; }
+.gf-line { display: flex; gap: 8px; align-items: flex-start; }
 .gf-speaker {
   flex-shrink: 0;
-  width: 30px; height: 30px;
-  border-radius: 10px;
+  width: 26px; height: 26px;
+  border-radius: 8px;
   display: grid; place-items: center;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 900;
   background: var(--lc-blue-soft);
   color: var(--lc-blue);
@@ -53,16 +67,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 34px;
-  min-width: 96px;
-  margin: 2px 2px;
-  padding: 4px 12px;
-  border-radius: 10px;
+  min-height: 30px;
+  min-width: 84px;
+  margin: 1px 1px;
+  padding: 3px 10px;
+  border-radius: 9px;
   border: 1.5px dashed var(--lc-blue-mid);
   background: var(--lc-blue-soft);
   color: var(--lc-muted);
   font: inherit;
-  font-size: 14.5px;
+  font-size: 13.5px;
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
@@ -100,63 +114,64 @@
 }
 .gf-blank small {
   display: block;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
-  margin-top: 2px;
+  margin-top: 1px;
   opacity: .9;
 }
 .gf-blank:disabled { cursor: default; }
 
-/* word bank */
+/* word bank — pinned at bottom of card */
 .gf-bank-wrap {
-  margin-top: 22px;
-  padding-top: 18px;
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 1px solid var(--lc-border);
+  flex-shrink: 0;
 }
 .gf-bank-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: .05em;
   text-transform: uppercase;
   color: var(--lc-muted);
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   text-align: center;
 }
 .gf-bank {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
 }
 .gf-chip {
-  min-height: 44px;
-  padding: 8px 14px;
-  border-radius: 12px;
+  min-height: 38px;
+  padding: 6px 12px;
+  border-radius: 10px;
   border: 1.5px solid var(--lc-border);
   background: var(--lc-card);
   color: var(--lc-text);
   font: inherit;
-  font-size: 14.5px;
+  font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 3px 0 var(--lc-border);
+  box-shadow: 0 2px 0 var(--lc-border);
   transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
 @media (hover: hover) { .gf-chip:hover { border-color: var(--lc-blue-mid); } }
-.gf-chip:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--lc-border); }
+.gf-chip:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--lc-border); }
 .gf-chip:focus-visible { outline: none; box-shadow: var(--lc-ring); }
 .gf-chip.is-selected {
   background: var(--lc-blue);
   border-color: var(--lc-blue);
   color: #fff;
-  box-shadow: 0 3px 0 #2f48b8;
+  box-shadow: 0 2px 0 #2f48b8;
 }
-html[data-theme="dark"] .gf-chip.is-selected { box-shadow: 0 3px 0 #3d55c2; }
+html[data-theme="dark"] .gf-chip.is-selected { box-shadow: 0 2px 0 #3d55c2; }
 
 .gf-empty {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--lc-muted);
   text-align: center;
   margin: 0;
@@ -166,30 +181,33 @@ html[data-theme="dark"] .gf-chip.is-selected { box-shadow: 0 3px 0 #3d55c2; }
 .gf-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 6px;
+  margin-top: 10px;
+  flex-shrink: 0;
 }
-.gf-actions .lc-btn { width: 100%; }
+.gf-actions .lc-btn { width: 100%; min-height: 44px; }
 .gf-hint-line {
   margin: 0;
-  font-size: 12.5px;
+  font-size: 11.5px;
   color: var(--lc-muted);
   text-align: center;
 }
 
-/* on phones, keep the word bank within thumb reach while scrolling the dialogue */
-@media (max-width: 719px) {
-  .gf-bank-wrap {
-    position: sticky;
-    bottom: 0;
-    z-index: 10;
-    margin: 22px -18px -20px;
-    padding: 14px 18px calc(16px + env(safe-area-inset-bottom, 0px));
-    background: var(--lc-card);
-    border-radius: 0 0 var(--lc-radius) var(--lc-radius);
-    box-shadow: 0 -8px 18px rgba(16,24,40,.06);
-  }
-}
-
-/* result tones on the card when checked */
+/* result tones */
 .gf-card.is-checked .gf-bank-wrap { opacity: .6; }
+
+/* short screens */
+@media (max-height: 700px) {
+  .gf-dialogue { font-size: 13.5px; gap: 6px; }
+  .gf-chip { min-height: 34px; padding: 5px 10px; font-size: 13px; }
+  .gf-blank { min-height: 28px; min-width: 76px; font-size: 13px; }
+  .gf-bank-wrap { margin-top: 8px; padding-top: 8px; }
+  .gf-actions { margin-top: 8px; }
+  .gf-actions .lc-btn { min-height: 40px; }
+}
+@media (max-height: 600px) {
+  .gf-dialogue { font-size: 13px; gap: 5px; }
+  .gf-speaker { width: 22px; height: 22px; font-size: 11px; }
+  .gf-chip { min-height: 30px; font-size: 12.5px; padding: 4px 8px; }
+  .gf-status { font-size: 11px; margin-bottom: 6px; }
+}
