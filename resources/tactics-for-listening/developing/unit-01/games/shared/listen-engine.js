@@ -3,6 +3,7 @@
  *   ListenEngine.mount({ gameId, gameName, unitLabel, icon, intro, tips,
  *                        letters, stars: { two, one }, items: [...] });
  * Each item: { prompt, stem, audio, options: [...], correct: index }
+ * Flow: select option → Check (✓) → Next (→)
  * Hooks used if present: LAStars, LAFinish, LASfx, LAProgressSave.
  */
 (function () {
@@ -36,15 +37,14 @@
     var phase = "start"; // start | play | done
     var current = 0;
     var correctCount = 0;
-    var locked = false;
-    var chosen = null;
-    var entering = false; // animate the card only when a new item appears
+    var locked = false; // true after Check
+    var chosen = null; // selected option index (before or after check)
+    var entering = false;
     var playRecorded = false;
     var audio = null;
     var playing = false;
     var listened = false;
     var audioError = false;
-    var advanceTimer = null;
 
     /* ---------- scoring & saving ---------- */
 
@@ -132,15 +132,7 @@
 
     /* ---------- flow ---------- */
 
-    function clearAdvance() {
-      if (advanceTimer) {
-        clearTimeout(advanceTimer);
-        advanceTimer = null;
-      }
-    }
-
     function startGame() {
-      clearAdvance();
       if (window.LAFinish) LAFinish.startTimer();
       current = 0;
       correctCount = 0;
@@ -155,12 +147,20 @@
       render();
     }
 
-    function choose(i) {
+    /* Select an option (does not score yet) */
+    function select(i) {
       if (locked || phase !== "play") return;
-      locked = true;
       chosen = i;
+      sfx("click");
+      renderPlayView();
+    }
+
+    /* Confirm selection with Check (✓) */
+    function check() {
+      if (locked || phase !== "play" || chosen === null) return;
+      locked = true;
       stopAudio();
-      var ok = i === items[current].correct;
+      var ok = chosen === items[current].correct;
       if (ok) {
         correctCount++;
         sfx("correct");
@@ -168,11 +168,9 @@
         sfx("wrong");
       }
       renderPlayView();
-      advanceTimer = setTimeout(next, ok ? 1500 : 2300);
     }
 
     function next() {
-      clearAdvance();
       if (!locked) return;
       if (current + 1 >= TOTAL) {
         finish();
@@ -189,7 +187,6 @@
     }
 
     function finish() {
-      clearAdvance();
       stopAudio();
       var stars = calcStars();
       saveProgress(stars);
@@ -272,10 +269,12 @@
       var optsHtml = item.options
         .map(function (text, i) {
           var cls = "lc-opt";
-          if (chosen !== null) {
+          if (locked) {
             if (i === item.correct) cls += " is-correct";
             else if (i === chosen) cls += " is-wrong";
             else cls += " is-dim";
+          } else if (chosen === i) {
+            cls += " is-selected";
           }
           return (
             '<button type="button" class="' + cls + '" data-opt="' + i + '"' +
@@ -287,20 +286,36 @@
         })
         .join("");
 
-      var feedback = "";
-      if (locked) {
+      /* Stem: hide when empty or identical to prompt (avoids duplicate question) */
+      var stemText = (item.stem || "").trim();
+      var promptText = (item.prompt || "").trim();
+      var showStem = stemText && stemText.toLowerCase() !== promptText.toLowerCase();
+
+      var actionsHtml = "";
+      if (!locked) {
+        actionsHtml =
+          '<div class="lc-actions">' +
+          '<button type="button" class="lc-icon-btn lc-check" id="lc-check" aria-label="Check answer"' +
+          (chosen === null ? " disabled" : "") + ">" +
+          '<span aria-hidden="true">✓</span>' +
+          "</button>" +
+          "</div>";
+      } else {
         var ok = chosen === item.correct;
-        feedback =
+        actionsHtml =
+          '<div class="lc-actions">' +
           '<div class="lc-feedback ' + (ok ? "is-ok" : "is-bad") + '">' +
-          '<div class="lc-feedback-text">' +
+          '<span class="lc-feedback-text">' +
           (ok
             ? "Correct! ✓"
-            : "Not quite — the answer is " +
+            : "Not quite — " +
               esc(LETTERS[item.correct]) +
               ": “" + esc(item.options[item.correct]) + "”") +
+          "</span>" +
           "</div>" +
-          '<button type="button" class="lc-next" id="lc-next">' +
-          (last ? "See results →" : "Next →") +
+          '<button type="button" class="lc-icon-btn lc-next" id="lc-next" aria-label="' +
+          (last ? "See results" : "Next") + '">' +
+          '<span aria-hidden="true">→</span>' +
           "</button>" +
           "</div>";
       }
@@ -312,8 +327,8 @@
         '<div class="lc-progress-bar" aria-hidden="true"><div class="lc-progress-fill" style="width:' +
         pctDone + '%"></div></div>' +
         '<section class="lc-card' + (entering ? " is-enter" : "") + '">' +
-        '<p class="lc-prompt">' + esc(item.prompt) + "</p>" +
-        '<p class="lc-stem">' + esc(item.stem) + "</p>" +
+        (promptText ? '<p class="lc-prompt">' + esc(promptText) + "</p>" : "") +
+        (showStem ? '<p class="lc-stem">' + esc(stemText) + "</p>" : "") +
         '<button type="button" class="' + playCls + '" id="lc-play" aria-label="' +
         esc(playLabel) + '"' + (audioError ? " disabled" : "") + ">" +
         '<span class="lc-play-visual" aria-hidden="true">' +
@@ -324,20 +339,22 @@
         '<span class="lc-play-label">' + esc(playLabel) + "</span>" +
         "</button>" +
         '<div class="lc-opts ' + cols + '">' + optsHtml + "</div>" +
-        feedback +
+        actionsHtml +
         "</section>" +
         '<p class="lc-hint"><kbd>A</kbd> <kbd>B</kbd>' +
         (item.options.length > 2 ? " <kbd>C</kbd>" : "") +
-        " choose · <kbd>Space</kbd> play · <kbd>Enter</kbd> next</p>";
+        " choose · <kbd>Space</kbd> play · <kbd>Enter</kbd> check/next</p>";
 
       entering = false;
 
       document.getElementById("lc-play").onclick = playAudio;
       root.querySelectorAll("[data-opt]").forEach(function (btn) {
         btn.onclick = function () {
-          choose(+btn.getAttribute("data-opt"));
+          select(+btn.getAttribute("data-opt"));
         };
       });
+      var checkBtn = document.getElementById("lc-check");
+      if (checkBtn) checkBtn.onclick = check;
       var nextBtn = document.getElementById("lc-next");
       if (nextBtn) nextBtn.onclick = next;
     }
@@ -388,9 +405,10 @@
         playAudio();
         return;
       }
-      if (k === "Enter" && locked) {
+      if (k === "Enter") {
         e.preventDefault();
-        next();
+        if (locked) next();
+        else if (chosen !== null) check();
         return;
       }
       if (locked) return;
@@ -401,7 +419,7 @@
       else if (/^[1-9]$/.test(k)) idx = +k - 1;
       if (idx > -1 && idx < items[current].options.length) {
         e.preventDefault();
-        choose(idx);
+        select(idx);
       }
     });
 
@@ -409,7 +427,7 @@
     document.addEventListener("visibilitychange", function () {
       if (document.hidden) {
         stopAudio();
-        render();
+        if (phase === "play") renderPlayView();
       }
     });
 
