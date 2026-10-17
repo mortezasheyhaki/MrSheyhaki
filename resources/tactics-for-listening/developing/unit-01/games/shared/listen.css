@@ -88,9 +88,9 @@ body.game-page {
   min-height: 0;
 }
 
-@media (min-width: 720px) {
+@media (min-width: 720px) and (max-width: 767px) {
   .lc-app {
-    max-width: 720px;
+    max-width: 640px;
     padding-left: 24px;
     padding-right: 24px;
   }
@@ -186,8 +186,8 @@ body.game-page {
   to   { opacity: 1; transform: none; }
 }
 
-@media (min-width: 720px) {
-  .lc-card { padding: 22px 28px 18px; }
+@media (min-width: 720px) and (max-width: 767px) {
+  .lc-card { padding: 20px 24px 16px; }
 }
 
 .lc-prompt {
@@ -285,12 +285,9 @@ body.game-page {
   align-content: start;
   overflow: hidden;
 }
-@media (min-width: 560px) {
-  .lc-opts.cols-2, .lc-opts.cols-3 { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 720px) {
-  .lc-opts.cols-3 { grid-template-columns: repeat(3, 1fr); }
-  .lc-opts.cols-2 { grid-template-columns: repeat(2, 1fr); }
+/* Options stay single-column on phone/tablet; desktop split layout handles side-by-side */
+@media (min-width: 560px) and (max-width: 767px) {
+  .lc-opts.cols-2, .lc-opts.cols-3 { grid-template-columns: 1fr; }
 }
 
 .lc-opt {
@@ -640,4 +637,171 @@ body.game-page {
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
   }
+}
+
+/* ============================================================
+   DESKTOP LAYOUT (≥768px) — wider, two-column play card
+   Mobile layout above is unchanged.
+   ============================================================ */
+@media (min-width: 768px) {
+  .lc-app {
+    max-width: min(980px, 100%) !important;
+    width: 100%;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  .lc-top {
+    grid-template-columns: 48px 1fr 48px;
+    padding: 14px 0 10px;
+  }
+  .lc-back, .lc-top-spacer { width: 48px; height: 48px; border-radius: 14px; font-size: 18px; }
+  .lc-eyebrow { font-size: 11px; }
+  .lc-top-center strong { font-size: 16px; }
+
+  .lc-progress-bar {
+    height: 6px;
+    margin: 4px 0 16px;
+  }
+
+  /* Play card (MC games only — gap-fill has its own desktop rules) */
+  .lc-card:not(.gf-card) {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.9fr) 1.15fr;
+    grid-template-rows: auto auto 1fr auto;
+    column-gap: 28px;
+    row-gap: 8px;
+    align-items: start;
+    padding: 28px 32px 24px;
+    border-radius: 20px;
+    width: 100%;
+  }
+  .lc-card.gf-card {
+    padding: 28px 32px 24px;
+    border-radius: 20px;
+  }
+
+  .lc-card:not(.gf-card) .lc-prompt {
+    grid-column: 1 / -1;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+  .lc-card:not(.gf-card) .lc-stem {
+    grid-column: 1 / -1;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .lc-card:not(.gf-card) .lc-play {
+    grid-column: 1;
+    grid-row: 3;
+    align-self: center;
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
+    min-height: 64px;
+    padding: 14px 20px;
+    margin-bottom: 0;
+    border-radius: 16px;
+    gap: 14px;
+  }
+  .lc-play-visual { width: 44px; height: 44px; }
+  .lc-play-ico { font-size: 16px; }
+  .lc-play-label { font-size: 16px; }
+  .lc-bars { height: 20px; }
+
+  .lc-card:not(.gf-card) .lc-opts {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: stretch;
+    gap: 12px;
+    align-content: center;
+  }
+  .lc-opts.cols-2,
+  .lc-opts.cols-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .lc-opt {
+    min-height: 60px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    gap: 14px;
+  }
+  .lc-letter {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    font-size: 14px;
+  }
+  .lc-opt-text { font-size: 16px; }
+
+  .lc-card:not(.gf-card) .lc-actions {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    margin-top: 16px;
+  }
+  .lc-icon-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    font-size: 24px;
+  }
+  .lc-feedback { font-size: 15px; }
+
+  .lc-hint {
+    margin-top: 12px;
+    font-size: 12px;
+  }
+
+  /* Start / done */
+  .lc-hero, .lc-done {
+    max-width: 520px;
+    padding: 20px 12px 28px;
+  }
+  .lc-hero-icon {
+    width: 88px;
+    height: 88px;
+    border-radius: 26px;
+    font-size: 40px;
+    margin-bottom: 20px;
+  }
+  .lc-hero h1, .lc-done h1 { font-size: 28px; margin-bottom: 10px; }
+  .lc-hero > p, .lc-done > p { font-size: 16px; margin-bottom: 22px; }
+  .lc-tips { gap: 10px; margin-bottom: 24px; }
+  .lc-tips li { padding: 14px 16px; font-size: 15px; border-radius: 14px; }
+  .tip-num { width: 30px; height: 30px; font-size: 13px; border-radius: 10px; }
+  .lc-btn {
+    min-height: 54px;
+    padding: 0 32px;
+    font-size: 16px;
+    border-radius: 14px;
+  }
+  .lc-trophy-emoji { font-size: 64px; }
+  .lc-star-row .star { font-size: 32px; }
+}
+
+/* Wide desktop (≥1200px) */
+@media (min-width: 1200px) {
+  .lc-app {
+    max-width: min(1080px, 100%) !important;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  .lc-card:not(.gf-card) {
+    grid-template-columns: minmax(260px, 0.85fr) 1.2fr;
+    column-gap: 40px;
+    padding: 32px 40px 28px;
+  }
+  .lc-card:not(.gf-card) .lc-stem { font-size: 22px; }
+  .lc-card:not(.gf-card) .lc-play { min-height: 72px; }
+  .lc-opt { min-height: 64px; padding: 16px 20px; }
+  .lc-opt-text { font-size: 17px; }
+  .lc-opts { gap: 14px; }
+}
+
+/* 3-option games: on very wide screens, options can sit in 1 col still (clearer)
+   or use 2 cols if preferred — keep 1 col for readability next to audio */
+@media (min-width: 768px) {
+  .lc-opts.cols-3 { grid-template-columns: 1fr; }
 }
