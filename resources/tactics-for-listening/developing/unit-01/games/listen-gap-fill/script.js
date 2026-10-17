@@ -1,5 +1,5 @@
 /* Missing Words · Tactics For Listening Developing Unit 1
- * Listen → tap a blank, then a word (or word, then blank) → check.
+ * Listen → tap a blank, then a word (or a word, then a blank) → check.
  * Tap a filled blank with nothing selected to take the word back out.
  * Uses LAStars + LAFinish + LASfx when present.
  */
@@ -7,9 +7,10 @@
   "use strict";
 
   var GAME_ID = "tfl-developing-u1-listen-gap-fill";
+  var UNIT = "Unit 1 · Developing";
   var AUDIO = "https://cdn.imgurl.ir/uploads/y734629_06_Unit_1_mp3cut_net.mp3";
+  var BACK = "../../";
 
-  // Dialogue with {gap: id} markers
   var LINES = [
     { speaker: "A", parts: ["Hi, Amy. What did you do this weekend?"] },
     { speaker: "B", parts: ["Oh, not much. I ", { gap: 0 }, " home and ", { gap: 1 }, " on a project."] },
@@ -25,12 +26,12 @@
 
   var app = document.getElementById("game-app");
   var phase = "start";
-  var fills = {};          // gapId -> word text
-  var bank = [];           // { text, id, used }
+  var fills = {};
+  var bank = [];
   var selectedGap = null;
   var selectedWord = null;
   var checked = false;
-  var feedback = {};       // gapId -> "ok" | "bad"
+  var feedback = {};
   var playRecorded = false;
   var audio = null;
   var playing = false;
@@ -60,8 +61,7 @@
   /* ---------- state ---------- */
 
   function setupBank() {
-    var words = ANSWERS.concat(DISTRACTORS);
-    bank = shuffle(words).map(function (w, i) {
+    bank = shuffle(ANSWERS.concat(DISTRACTORS)).map(function (w, i) {
       return { text: w, id: "w" + i, used: false };
     });
     fills = {};
@@ -77,9 +77,7 @@
     return n;
   }
 
-  function allFilled() {
-    return filledCount() === ANSWERS.length;
-  }
+  function allFilled() { return filledCount() === ANSWERS.length; }
 
   function countCorrect() {
     var n = 0;
@@ -96,10 +94,7 @@
 
   function releaseWord(text) {
     for (var i = 0; i < bank.length; i++) {
-      if (bank[i].used && bank[i].text === text) {
-        bank[i].used = false;
-        return;
-      }
+      if (bank[i].used && bank[i].text === text) { bank[i].used = false; return; }
     }
   }
 
@@ -125,14 +120,8 @@
 
   function onBlank(gapId) {
     if (checked) return;
-    if (selectedWord != null) {
-      placeWordInGap(selectedWord, gapId);
-      return;
-    }
-    if (selectedGap === null && fills[gapId]) {
-      clearGap(gapId);
-      return;
-    }
+    if (selectedWord != null) { placeWordInGap(selectedWord, gapId); return; }
+    if (selectedGap === null && fills[gapId]) { clearGap(gapId); return; }
     selectedGap = selectedGap === gapId ? null : gapId;
     sfx("click");
     render();
@@ -142,10 +131,7 @@
     if (checked) return;
     var chip = bank.find(function (b) { return b.id === wordId; });
     if (!chip || chip.used) return;
-    if (selectedGap !== null) {
-      placeWordInGap(wordId, selectedGap);
-      return;
-    }
+    if (selectedGap !== null) { placeWordInGap(wordId, selectedGap); return; }
     selectedWord = selectedWord === wordId ? null : wordId;
     sfx("click");
     render();
@@ -161,24 +147,20 @@
   }
 
   function playAudio() {
+    if (audioError) return;
     sfx("click");
-    if (playing) {
-      stopAudio();
-      renderPlayArea();
-      return;
-    }
+    if (playing) { stopAudio(); renderListenStrip(); return; }
     stopAudio();
-    audioError = false;
     audio = new Audio(AUDIO);
     audio.preload = "auto";
     playing = true;
     listened = true;
-    renderPlayArea();
-    audio.onended = function () { playing = false; renderPlayArea(); };
-    audio.onerror = function () { playing = false; audioError = true; renderPlayArea(); };
+    renderListenStrip();
+    audio.onended = function () { playing = false; renderListenStrip(); };
+    audio.onerror = function () { playing = false; audioError = true; renderListenStrip(); };
     var p = audio.play();
     if (p && p.catch) {
-      p.catch(function () { playing = false; audioError = true; renderPlayArea(); });
+      p.catch(function () { playing = false; audioError = true; renderListenStrip(); });
     }
   }
 
@@ -186,10 +168,7 @@
 
   function saveProgress(stars, correct) {
     if (!window.LAStars) return;
-    if (!playRecorded) {
-      LAStars.recordPlay(GAME_ID);
-      playRecorded = true;
-    }
+    if (!playRecorded) { LAStars.recordPlay(GAME_ID); playRecorded = true; }
     LAStars.save(GAME_ID, stars);
     try {
       if (typeof window.LAProgressSave === "function") {
@@ -252,41 +231,58 @@
           timeMs: timeMs,
           onAgain: startGame,
           onModes: function () { phase = "start"; render(); },
-          backHref: "../../",
+          backHref: BACK,
           save: false,
         });
       } else {
         phase = "done";
         render();
       }
-    }, 1500);
+    }, 1600);
   }
 
   /* ---------- views ---------- */
 
-  function topBar(eyebrow, title) {
+  function topBar(counter) {
     return (
       '<header class="lc-top">' +
-      '<a class="lc-back" href="../../" aria-label="Back to unit">←</a>' +
-      '<div class="lc-top-center"><span class="lc-eyebrow">' + esc(eyebrow) + "</span><strong>" + esc(title) + "</strong></div>" +
-      '<span class="lc-top-spacer" aria-hidden="true"></span>' +
+      '<a class="lc-back" href="' + BACK + '" aria-label="Back to unit">←<span>Unit</span></a>' +
+      '<div class="lc-top-center"><span class="lc-eyebrow">' + esc(UNIT) + "</span>" +
+      "<strong>Missing Words</strong></div>" +
+      '<span class="lc-counter">' + (counter || "") + "</span>" +
       "</header>"
+    );
+  }
+
+  function segmentsHtml() {
+    return (
+      '<div class="lc-seg" role="img" aria-label="' + filledCount() + " of " + ANSWERS.length + ' gaps filled">' +
+      ANSWERS.map(function (_, i) {
+        var cls = "";
+        if (feedback[i] === "ok") cls = " is-right";
+        else if (feedback[i] === "bad") cls = " is-wrong";
+        else if (fills[i]) cls = " is-done";
+        return '<i class="' + cls.trim() + '"></i>';
+      }).join("") +
+      "</div>"
     );
   }
 
   function renderStart() {
     app.innerHTML =
-      topBar("Unit 1 · Developing", "Missing Words") +
-      '<section class="lc-hero">' +
+      topBar("") +
+      '<section class="lc-intro">' +
+      '<div class="lc-intro-main">' +
       '<div class="lc-hero-icon" aria-hidden="true">📝</div>' +
       "<h1>Missing Words</h1>" +
-      "<p>Listen to the conversation and fill in the missing words from the word bank.</p>" +
-      '<ul class="lc-tips">' +
+      '<p class="lc-intro-lede">Listen to the conversation and fill in the missing words from the word bank.</p>' +
+      '<div class="lc-start-row"><button type="button" class="lc-btn primary" id="gf-start">Start listening →</button></div>' +
+      "</div>" +
+      '<ol class="lc-steps">' +
       '<li><span class="tip-num">1</span><span>Tap <strong>Play</strong> to hear the dialogue</span></li>' +
-      '<li><span class="tip-num">2</span><span>Tap a blank, then a word (or a word, then a blank)</span></li>' +
-      '<li><span class="tip-num">3</span><span><strong>6</strong> gaps to fill</span></li>' +
-      "</ul>" +
-      '<button type="button" class="lc-btn primary" id="gf-start">Start listening</button>' +
+      '<li><span class="tip-num">2</span><span>Tap a blank, then a word. You can also go word first.</span></li>' +
+      '<li><span class="tip-num">3</span><span><strong>6</strong> gaps to fill, then check</span></li>' +
+      "</ol>" +
       "</section>";
     document.getElementById("gf-start").onclick = startGame;
   }
@@ -305,9 +301,8 @@
       inner = filled ? esc(filled) : "______";
     }
     return (
-      '<button type="button" class="' + cls + '" data-gap="' + gid + '"' +
-      (checked ? " disabled" : "") +
-      ' aria-label="' + esc("Gap " + (gid + 1) + (filled ? ": " + filled : " (empty)")) + '">' +
+      '<button type="button" class="' + cls + '" data-gap="' + gid + '"' + (checked ? " disabled" : "") +
+      ' aria-label="' + esc("Gap " + (gid + 1) + (filled ? ": " + filled : ", empty")) + '">' +
       inner + "</button>"
     );
   }
@@ -319,43 +314,50 @@
       }).join("");
       return (
         '<div class="gf-line"><span class="gf-speaker" aria-hidden="true">' + line.speaker + "</span>" +
-        '<span class="gf-text">' + parts + "</span></div>"
+        '<p class="gf-text">' + parts + "</p></div>"
       );
     }).join("");
   }
 
   function bankHtml() {
-    var chips = bank
-      .filter(function (c) { return !c.used; })
-      .map(function (c) {
-        return (
-          '<button type="button" class="gf-chip' + (selectedWord === c.id ? " is-selected" : "") +
-          '" data-word="' + c.id + '"' + (checked ? " disabled" : "") + ">" + esc(c.text) + "</button>"
-        );
-      })
-      .join("");
-    return chips || '<p class="gf-empty">All words placed — tap a blank to take one back.</p>';
+    var chips = bank.filter(function (c) { return !c.used; }).map(function (c) {
+      return (
+        '<button type="button" class="gf-chip' + (selectedWord === c.id ? " is-selected" : "") +
+        '" data-word="' + c.id + '"' + (checked ? " disabled" : "") + ">" + esc(c.text) + "</button>"
+      );
+    }).join("");
+    return chips || '<p class="gf-empty">All words placed. Tap a blank to take one back.</p>';
   }
 
-  function playAreaHtml() {
-    var playCls = "lc-play" + (playing ? " is-playing" : "") + (listened && !playing ? " has-played" : "") + (audioError ? " is-error" : "");
-    var label = audioError ? "Audio unavailable" : playing ? "Playing… tap to stop" : listened ? "Play again" : "Play audio";
+  function listenStripHtml() {
+    var cls = "lc-play";
+    if (playing) cls += " is-playing";
+    if (audioError) cls += " is-error";
+    var label = audioError ? "Audio unavailable" : playing ? "Stop" : listened ? "Play again" : "Play audio";
+    var status = audioError
+      ? "This clip could not load. Check your connection."
+      : playing ? "Playing… tap to stop"
+      : listened ? "Tap to hear it again"
+      : "Listen first, then fill the blanks";
     return (
-      '<button type="button" class="' + playCls + '" id="gf-play" aria-label="' + esc(label) + '"' +
-      (audioError ? " disabled" : "") + ">" +
-      '<span class="lc-play-visual" aria-hidden="true">' +
-      (playing ? '<span class="lc-bars"><i></i><i></i><i></i><i></i><i></i></span>' : '<span class="lc-play-ico">▶</span>') +
-      "</span>" +
-      '<span class="lc-play-label">' + esc(label) + "</span></button>"
+      '<div class="gf-listen">' +
+      '<button type="button" class="' + cls + '" id="gf-play" aria-label="' + esc(label) + '"' + (audioError ? " disabled" : "") + ">" +
+      (playing
+        ? '<span class="lc-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>'
+        : '<span class="lc-play-ico" aria-hidden="true">▶</span>') +
+      '<span class="lc-play-label">' + esc(label) + "</span></button>" +
+      '<div class="gf-listen-text"><strong>' + esc(label) + "</strong><span>" + esc(status) + "</span></div>" +
+      '<span class="gf-count">' + filledCount() + " / " + ANSWERS.length + " filled</span>" +
+      "</div>"
     );
   }
 
-  function renderPlayArea() {
-    var holder = document.getElementById("gf-play-holder");
-    if (holder) {
-      holder.innerHTML = playAreaHtml();
-      bindPlay();
-    }
+  /* partial re-render that keeps the page still while audio plays */
+  function renderListenStrip() {
+    var strip = document.querySelector(".gf-listen");
+    if (!strip) return;
+    strip.outerHTML = listenStripHtml();
+    bindPlay();
   }
 
   function bindPlay() {
@@ -365,29 +367,28 @@
 
   function renderPlay() {
     var filled = filledCount();
-    var statusText = checked
-      ? countCorrect() + " / " + ANSWERS.length + " correct"
-      : filled + " / " + ANSWERS.length + " filled";
-    var pct = (filled / ANSWERS.length) * 100;
     var canCheck = allFilled() && !checked;
+    var counter = checked ? countCorrect() + " / " + ANSWERS.length + " right" : filled + " / " + ANSWERS.length;
 
     app.innerHTML =
-      topBar("Missing Words", "Fill the gaps") +
-      '<div class="lc-progress-bar" aria-hidden="true"><div class="lc-progress-fill" style="width:' + pct + '%"></div></div>' +
-      '<section class="lc-card gf-card' + (checked ? " is-checked" : "") + '">' +
-      '<div class="gf-status"><span>Listen, then fill the blanks</span><span>' + statusText + "</span></div>" +
-      '<div id="gf-play-holder">' + playAreaHtml() + "</div>" +
+      topBar(counter) +
+      segmentsHtml() +
+      '<main class="lc-main gf-main">' +
+      "<div>" +
+      listenStripHtml() +
+      '<section class="gf-sheet">' +
+      '<div class="gf-sheet-head"><span>Dialogue</span><span>Tap a blank to fill it</span></div>' +
       '<div class="gf-dialogue">' + dialogueHtml() + "</div>" +
-      '<div class="gf-bank-wrap">' +
-      '<p class="gf-bank-label">Word bank</p>' +
+      "</section>" +
+      "</div>" +
+      '<aside class="gf-tray" aria-label="Word bank">' +
+      '<div class="gf-tray-head"><h2>Word bank</h2><span>' + bank.filter(function (c) { return !c.used; }).length + " left</span></div>" +
       '<div class="gf-bank">' + bankHtml() + "</div>" +
-      "</div>" +
-      '<div class="gf-actions">' +
-      '<button type="button" class="lc-btn primary" id="gf-check"' + (canCheck ? "" : " disabled") + ">" +
+      '<button type="button" class="gf-check" id="gf-check"' + (canCheck ? "" : " disabled") + ">" +
       (checked ? "Checking…" : "Check answers") + "</button>" +
-      (canCheck || checked ? "" : '<p class="gf-hint-line">Fill all six gaps to check.</p>') +
-      "</div>" +
-      "</section>";
+      (canCheck || checked ? "" : '<p class="gf-hint">Fill all six gaps to check.</p>') +
+      "</aside>" +
+      "</main>";
 
     bindPlay();
     app.querySelectorAll("[data-gap]").forEach(function (btn) {
@@ -403,22 +404,24 @@
   function renderDone() {
     var correct = countCorrect();
     var stars = calcStars(correct);
+    var p = Math.round((correct / ANSWERS.length) * 100);
     app.innerHTML =
-      topBar("Unit 1 · Developing", "Done!") +
-      '<section class="lc-done">' +
-      '<div class="lc-trophy' + (stars === 3 ? " perfect" : "") + '" aria-hidden="true">' +
-      '<div class="lc-trophy-emoji">🏆</div>' +
-      '<div class="lc-star-row">' +
+      topBar("") +
+      '<section class="lc-done"><div class="lc-result">' +
+      '<div class="lc-ring" style="--p:' + p + '" aria-hidden="true"><div class="lc-ring-inner">' +
+      '<span class="lc-ring-score">' + correct + "</span>" +
+      '<span class="lc-ring-of">of ' + ANSWERS.length + "</span></div></div>" +
+      '<div class="lc-star-row" aria-label="' + stars + ' of 3 stars">' +
       '<span class="star' + (stars >= 1 ? " filled" : "") + '">★</span>' +
       '<span class="star' + (stars >= 2 ? " filled" : "") + '">★</span>' +
       '<span class="star' + (stars >= 3 ? " filled" : "") + '">★</span>' +
-      "</div></div>" +
+      "</div>" +
       "<h1>" + (stars === 3 ? "Perfect!" : stars >= 1 ? "Great job!" : "Keep practising!") + "</h1>" +
-      "<p>You got <strong>" + correct + " / " + ANSWERS.length + "</strong> gaps right</p>" +
+      "<p>You got " + correct + " out of " + ANSWERS.length + " gaps right.</p>" +
       '<div class="lc-done-actions">' +
       '<button type="button" class="lc-btn primary" id="gf-again">Play again</button>' +
-      '<a class="lc-btn secondary" href="../../">Back to unit</a>' +
-      "</div></section>";
+      '<a class="lc-btn secondary" href="' + BACK + '">Back to unit</a>' +
+      "</div></div></section>";
     document.getElementById("gf-again").onclick = startGame;
   }
 
@@ -429,10 +432,7 @@
   }
 
   document.addEventListener("visibilitychange", function () {
-    if (document.hidden && playing) {
-      stopAudio();
-      renderPlayArea();
-    }
+    if (document.hidden && playing) { stopAudio(); renderListenStrip(); }
   });
 
   if (document.readyState === "loading") {
