@@ -175,6 +175,7 @@ const GAME_ID = "starter-4a-possessives";
 
     const item = ITEMS[index];
     sceneImg.src = item.img;
+    sceneImg.onerror = function(){ this.style.display="none"; this.parentElement.classList.add("no-img"); };
     sceneImg.alt = "Scene " + item.n;
     qNum.textContent = String(item.n);
     qProgress.textContent = (index + 1) + "/" + ITEMS.length;

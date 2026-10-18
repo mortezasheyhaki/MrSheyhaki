@@ -268,9 +268,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.games = [
 
 // Unit 4A – People & Family / Possessives
 COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.games = [
-  { title: "Good Babysitter?", url: "good-babysitter/", label: "Listening" },
   { title: "Possessives Chart", url: "possessives-chart/", label: "Grammar" },
-  { title: "Who is Sarah?", url: "who-is-sarah/", label: "Listening" },
   { title: "Three Sounds Match", url: "three-sounds-match/", label: "Pronunciation" },
   { title: "Parents & Grandparents", url: "parents-grandparents/", label: "Vocabulary" },
   { title: "Listen & Write / Say", url: "listen-write-say/", label: "Vocabulary" },
@@ -288,7 +286,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.games = [
   { title: "Possessive Sentences", url: "possessive-sentences/", label: "Writing" },
   { title: "Possessive Sentences 2", url: "possessive-sentences-2/", label: "Writing" },
   { title: "Possessives", url: "possessives/", label: "Vocabulary" },
-  { title: "Unscramble", url: "unscramble/", label: "Writing" },
   { title: "Who are the people?", url: "who-are-the-people/", label: "Vocabulary" }
 ];
 
