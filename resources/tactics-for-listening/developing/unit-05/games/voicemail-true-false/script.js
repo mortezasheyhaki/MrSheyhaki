@@ -30,6 +30,7 @@
   var phase = "start";
   var current = 0;
   var choice = [];          // per item: true | false | null
+  var checked = [];         // per item: locked after Check
   var score = 0;
   var playing = false;
   var played = false;
@@ -80,6 +81,7 @@
 
   function setupGame() {
     choice = ITEMS.map(function () { return null; });
+    checked = ITEMS.map(function () { return false; });
     current = 0;
     score = 0;
     played = false;
@@ -122,16 +124,22 @@
   /* ---------- interaction ---------- */
 
   function pick(value) {
-    if (choice[current] !== null) return;
+    if (checked[current]) return;
     choice[current] = value;
-    var ok = value === ITEMS[current].answer;
+    renderPlay();
+  }
+
+  function checkAnswer() {
+    if (checked[current] || choice[current] === null) return;
+    checked[current] = true;
+    var ok = choice[current] === ITEMS[current].answer;
     if (ok) { score++; sfx("correct"); } else { sfx("wrong"); }
     stopAudio();
     renderPlay();
   }
 
   function next() {
-    if (choice[current] === null) return;
+    if (!checked[current]) return;
     if (current + 1 >= TOTAL) { finish(); return; }
     current++;
     played = false;
@@ -178,7 +186,7 @@
       '<div class="lc-seg" role="img" aria-label="Statement ' + (current + 1) + " of " + TOTAL + '">' +
       ITEMS.map(function (_, i) {
         var cls = i < current ? "is-done" : i === current ? "is-current" : "";
-        if (choice[i] !== null) cls = choice[i] === ITEMS[i].answer ? "is-right" : "is-wrong";
+        if (checked[i]) cls = choice[i] === ITEMS[i].answer ? "is-right" : "is-wrong";
         return '<i class="' + cls + '"></i>';
       }).join("") + "</div>"
     );
@@ -189,19 +197,27 @@
     var mine = choice[current];
     var cls = "al-opt";
     var tick = "";
-    if (mine !== null) {
+    if (checked[current]) {
       if (value === it.answer) { cls += " is-correct"; tick = '<span class="al-tick" aria-hidden="true">✓</span>'; }
       else if (value === mine) { cls += " is-wrong"; tick = '<span class="al-tick" aria-hidden="true">✕</span>'; }
+    } else if (value === mine) {
+      cls += " is-picked";
     }
     return (
       '<button type="button" class="' + cls + '" data-value="' + value + '"' +
-      (mine !== null ? " disabled" : "") + ">" + label + tick + "</button>"
+      (checked[current] ? " disabled" : "") + ">" + label + tick + "</button>"
     );
   }
 
   function footHtml() {
     var last = current + 1 >= TOTAL;
-    if (choice[current] !== null) {
+    if (choice[current] !== null && !checked[current]) {
+      return (
+        '<div class="al-foot"><span class="al-foot-text">You can change your answer, then Check.</span>' +
+        '<button type="button" class="al-next" id="__check_btn">Check ✓</button></div>'
+      );
+    }
+    if (checked[current]) {
       var ok = choice[current] === ITEMS[current].answer;
       var msg = ok ? "Correct!" : "Not quite. The statement is " + (ITEMS[current].answer ? "true" : "false") + ".";
       return (
@@ -273,6 +289,8 @@
     });
     var n = document.getElementById("tf-next");
     if (n) n.onclick = next;
+    var ck = document.getElementById("__check_btn");
+    if (ck) ck.onclick = checkAnswer;
   }
 
   function renderDone() {

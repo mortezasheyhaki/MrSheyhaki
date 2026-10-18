@@ -142,7 +142,7 @@
   /* ---------- interaction ---------- */
 
   function pick(set, text) {
-    if (checked || picks[current + "-" + set] !== undefined) return;
+    if (checked) return;
     picks[current + "-" + set] = text;
     sfx("click");
     renderPlay();
@@ -230,7 +230,7 @@
     }
     return (
       '<button type="button" class="' + cls + '" data-set="' + set + '" data-text="' + esc(text) + '"' +
-      (checked || pickedText !== undefined ? " disabled" : "") + ">" +
+      (checked ? " disabled" : "") + ">" +
       esc(text) + tick + "</button>"
     );
   }
