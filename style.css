@@ -289,9 +289,14 @@ body.game-page .profile-fab {
   display: none;
 }
 
-/* Page offset for floating nav */
-body:not(.cabinet-body):not(.wh-body):not(.light-mode):not(.game-page):not([data-type="game"]) {
+/* Page offset for floating nav
+   game-page / tfl-page: own chrome or bottom dock — no top reserve */
+body:not(.cabinet-body):not(.wh-body):not(.light-mode):not(.game-page):not([data-type="game"]):not(.tfl-page) {
   padding-top: 72px;
+  padding-bottom: 24px;
+}
+body.tfl-page {
+  padding-top: 12px;
   padding-bottom: 24px;
 }
 
@@ -306,9 +311,13 @@ body:not(.cabinet-body):not(.wh-body):not(.light-mode):not(.game-page):not([data
 }
 
 @media (max-width: 700px) {
-  body:not(.cabinet-body):not(.wh-body):not(.light-mode):not(.game-page):not([data-type="game"]) {
+  body:not(.cabinet-body):not(.wh-body):not(.light-mode):not(.game-page):not([data-type="game"]):not(.tfl-page) {
     padding-top: 12px;
     padding-bottom: 72px;
+  }
+  body.tfl-page {
+    padding-top: max(8px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px)));
   }
 
   .arcade-nav {
@@ -2113,8 +2122,12 @@ body:not(.cabinet-body):not(.wh-body):not(.light-mode):not(.game-page):not([data
     height: 56px !important;
     min-height: 56px !important;
   }
+  /* Mobile: floating nav is a bottom dock — do not reserve a top header band */
   body:not(.cabinet-body):not(.wh-body):not(.light-mode):not(.game-page):not([data-type="game"]) {
-    padding-top: calc(56px + env(safe-area-inset-top, 0px)) !important;
+    padding-top: max(10px, env(safe-area-inset-top, 0px)) !important;
+  }
+  body.tfl-page {
+    padding-top: max(8px, env(safe-area-inset-top, 0px)) !important;
   }
 
   /* Theme toggle + menu: round icon buttons */

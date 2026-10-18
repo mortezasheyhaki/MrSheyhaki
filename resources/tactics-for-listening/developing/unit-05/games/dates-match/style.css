@@ -1,65 +1,105 @@
-/* Match the dates · layout
- * Fixed sizes everywhere: every card, badge slot and the status line keep the
- * same size in every state, so the board never jumps while you match.
- * Two wide columns on all screen sizes (written left, spoken right).
- */
+/* Match the dates · equal-height cards, full spoken text, no scroll */
 
 .mt-app {
-  max-width: 1040px;
-  padding: 0 20px;
+  max-width: 960px;
+  padding: 0 12px;
+  height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
 }
 @media (min-width: 900px) {
-  .mt-app { padding: 0 32px; }
+  .mt-app { padding: 0 28px; }
 }
 
-/* top help line: fixed height */
+.mt-app .lc-top {
+  flex-shrink: 0;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) 0 6px;
+  gap: 10px;
+}
+.mt-app .lc-back { height: 34px; font-size: 13px; padding: 0 11px 0 8px; }
+.mt-app .lc-top-center strong { font-size: 15px; }
+.mt-app .lc-counter { font-size: 13px; min-width: 40px; }
+
+.mt-app .lc-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  overflow: hidden;
+}
+
+/* help line */
 .mt-help {
-  height: 24px;
-  margin: 4px 0 18px;
-  font-size: 15px;
-  line-height: 24px;
+  flex-shrink: 0;
+  height: 20px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 20px;
   color: var(--lc-muted);
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-@media (min-width: 900px) { .mt-help { font-size: 16px; } }
-
-/* the board: two columns of identical fixed-height cards */
-.mt-app .lc-main { display: flex; flex-direction: column; padding-bottom: 0; }
-.mt-board {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  column-gap: 20px;
-  align-items: start;
+@media (min-width: 900px) {
+  .mt-help { font-size: 15px; height: 22px; margin-bottom: 14px; }
 }
-@media (min-width: 900px) { .mt-board { column-gap: 40px; } }
 
-.mt-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+/* board fills remaining space */
+.mt-board {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.15fr);
+  column-gap: 10px;
+  align-items: stretch;
+  overflow: hidden;
+}
+@media (min-width: 900px) {
+  .mt-board { column-gap: 28px; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+}
+
+.mt-col {
+  display: grid;
+  grid-template-rows: auto repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+@media (min-width: 900px) {
+  .mt-col { gap: 10px; }
+}
+
 .mt-col-head {
-  height: 20px;
-  margin: 0 4px 2px;
-  font-size: 12px;
-  line-height: 20px;
+  height: 16px;
+  margin: 0 2px;
+  font-size: 10px;
+  line-height: 16px;
   font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--lc-muted);
 }
+@media (min-width: 900px) {
+  .mt-col-head { height: 18px; font-size: 12px; }
+}
 
-/* one card: fixed height, fixed columns, nothing changes size */
+/* equal-height cards in both columns */
 .mt-item {
   position: relative;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  grid-template-columns: 28px minmax(0, 1fr) 28px;
   align-items: center;
-  column-gap: 12px;
+  column-gap: 8px;
   width: 100%;
-  height: 80px;
-  padding: 0 14px;
-  border-radius: 18px;
+  min-height: 0;
+  height: 100%;
+  padding: 6px 8px;
+  border-radius: 14px;
   border: 1.5px solid var(--lc-line);
   background: var(--lc-card);
   color: var(--lc-ink);
@@ -72,7 +112,12 @@
   user-select: none;
 }
 @media (min-width: 900px) {
-  .mt-item { height: 88px; padding: 0 18px; grid-template-columns: 44px minmax(0, 1fr) 44px; }
+  .mt-item {
+    grid-template-columns: 36px minmax(0, 1fr) 36px;
+    column-gap: 12px;
+    padding: 10px 14px;
+    border-radius: 16px;
+  }
 }
 .mt-item:focus-visible { outline: none; box-shadow: var(--lc-ring); }
 .mt-item:disabled { cursor: default; }
@@ -80,41 +125,58 @@
   .mt-item:hover:not(:disabled) { border-color: var(--lc-accent-line); }
 }
 
-/* badge column: always present, same width in every state */
 .mt-badge {
-  width: 40px; height: 40px;
-  border-radius: 12px;
-  display: grid; place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
   background: var(--lc-accent-soft);
   color: var(--lc-accent);
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 900;
+  flex-shrink: 0;
 }
-@media (min-width: 900px) { .mt-badge { width: 44px; height: 44px; } }
+@media (min-width: 900px) {
+  .mt-badge { width: 36px; height: 36px; font-size: 15px; border-radius: 11px; }
+}
 
+/* full text, no clamp — sized to fit equal card rows */
 .mt-text {
   min-width: 0;
-  font-size: 17px;
+  font-size: 12.5px;
   font-weight: 700;
   line-height: 1.25;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  overflow: visible;
   overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
 }
-@media (min-width: 900px) { .mt-text { font-size: 19px; } }
-.mt-left .mt-text { font-variant-numeric: tabular-nums; }
+.mt-left .mt-text {
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+@media (min-width: 600px) {
+  .mt-text { font-size: 14px; }
+  .mt-left .mt-text { font-size: 17px; }
+}
+@media (min-width: 900px) {
+  .mt-text { font-size: 15.5px; line-height: 1.3; }
+  .mt-left .mt-text { font-size: 18px; }
+}
 
-/* the right-hand status cell: a placeholder when empty, so width never changes */
 .mt-state {
-  width: 40px; height: 40px;
-  border-radius: 12px;
-  display: grid; place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
   border: 1.5px dashed var(--lc-accent-line);
   color: var(--lc-accent);
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 900;
+  flex-shrink: 0;
 }
 .mt-state.is-filled {
   border-style: solid;
@@ -122,76 +184,94 @@
   background: var(--lc-ok);
   color: #fff;
 }
-@media (min-width: 900px) { .mt-state { width: 44px; height: 44px; } }
-
-/* left (written) cards */
-.mt-left.is-selected {
-  border-color: var(--lc-accent);
-  background: var(--lc-accent-soft);
-  box-shadow: 0 0 0 4px rgba(92,124,250,.18);
+@media (min-width: 900px) {
+  .mt-state { width: 36px; height: 36px; font-size: 15px; border-radius: 11px; }
 }
-.mt-left.is-matched { border-color: var(--lc-ok); background: var(--lc-ok-soft); }
-.mt-left.is-matched .mt-badge { background: var(--lc-ok); color: #fff; }
 
-/* right (spoken) cards */
+/* selection / match states */
+.mt-left.is-selected,
 .mt-right.is-selected {
   border-color: var(--lc-accent);
   background: var(--lc-accent-soft);
-  box-shadow: 0 0 0 4px rgba(92,124,250,.18);
+  box-shadow: 0 0 0 3px rgba(92,124,250,.18);
 }
-.mt-right.is-matched { border-color: var(--lc-ok); background: var(--lc-ok-soft); }
-.mt-right.is-matched .mt-badge { background: var(--lc-ok); color: #fff; }
+.mt-left.is-matched,
+.mt-right.is-matched {
+  border-color: var(--lc-ok);
+  background: var(--lc-ok-soft);
+}
+.mt-left.is-matched .mt-badge,
+.mt-right.is-matched .mt-badge {
+  background: var(--lc-ok);
+  color: #fff;
+}
 .mt-right.is-matched .mt-text { color: var(--lc-ok-ink); }
 
-/* example row (pre-matched, not scored) */
 .mt-left.is-example { border-color: var(--lc-ok); }
 .mt-example-tag {
   position: absolute;
-  top: -10px; right: 14px;
-  padding: 2px 9px;
+  top: -8px;
+  right: 10px;
+  padding: 1px 8px;
   border-radius: 999px;
   background: var(--lc-ok);
   color: #fff;
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 800;
   letter-spacing: .05em;
   text-transform: uppercase;
   line-height: 1.4;
+  z-index: 1;
 }
 
-/* wrong pair: shake, no layout change */
 .mt-item.is-shake {
   border-color: var(--lc-bad);
   background: var(--lc-bad-soft);
   animation: mt-shake .36s ease;
 }
 @keyframes mt-shake {
-  0%,100% { transform: translateX(0); }
+  0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-5px); }
   75% { transform: translateX(5px); }
 }
 
-/* status line: fixed height, always two lines tall, never moves the board */
+/* status */
 .mt-status {
+  flex-shrink: 0;
   box-sizing: border-box;
-  height: 60px;
-  margin: 22px 0 0;
-  padding: 10px 16px;
-  border-radius: 14px;
+  height: 44px;
+  margin: 10px 0 0;
+  padding: 6px 12px;
+  border-radius: 12px;
   background: var(--lc-card);
   border: 1px solid var(--lc-line);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.3;
   color: var(--lc-muted);
   overflow: hidden;
 }
 .mt-status.is-ok { color: var(--lc-ok-ink); border-color: var(--lc-ok); background: var(--lc-ok-soft); }
 .mt-status.is-bad { color: var(--lc-bad-ink); border-color: var(--lc-bad); background: var(--lc-bad-soft); }
+@media (min-width: 900px) {
+  .mt-status { height: 52px; margin-top: 14px; font-size: 15px; }
+}
 
-/* progress segments keep their height */
-.lc-seg { height: 6px; }
+.lc-seg { height: 5px; }
+
+/* very short phones */
+@media (max-height: 640px) {
+  .mt-help { display: none; }
+  .mt-col { gap: 4px; }
+  .mt-item { padding: 4px 6px; border-radius: 12px; }
+  .mt-badge, .mt-state { width: 24px; height: 24px; font-size: 11px; border-radius: 8px; }
+  .mt-item { grid-template-columns: 24px minmax(0, 1fr) 24px; column-gap: 6px; }
+  .mt-text { font-size: 11.5px; line-height: 1.2; }
+  .mt-left .mt-text { font-size: 13.5px; }
+  .mt-status { height: 36px; margin-top: 6px; font-size: 12px; }
+  .mt-app .lc-top { padding-top: calc(4px + env(safe-area-inset-top, 0px)); }
+}

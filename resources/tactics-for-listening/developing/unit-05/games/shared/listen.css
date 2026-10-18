@@ -51,12 +51,70 @@ html[data-theme="dark"] {
 
 .game-page {
   margin: 0;
+  height: 100%;
+  height: 100dvh;
   min-height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
   background: var(--lc-page);
   color: var(--lc-ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
+  position: relative;
+  isolation: isolate;
+}
+/* Soft blob ambient background (پس‌زمینه لکه‌ای) */
+.game-page::before,
+.game-page::after {
+  content: "";
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(64px);
+  opacity: 0.9;
+}
+.game-page::before {
+  width: min(72vw, 560px);
+  height: min(72vw, 560px);
+  top: -14%;
+  left: -18%;
+  background:
+    radial-gradient(circle at 42% 40%, rgba(99, 102, 241, 0.42), transparent 64%),
+    radial-gradient(circle at 72% 58%, rgba(56, 189, 248, 0.3), transparent 60%);
+}
+.game-page::after {
+  width: min(68vw, 500px);
+  height: min(68vw, 500px);
+  bottom: -12%;
+  right: -14%;
+  background:
+    radial-gradient(circle at 48% 48%, rgba(167, 139, 250, 0.36), transparent 62%),
+    radial-gradient(circle at 28% 72%, rgba(244, 114, 182, 0.2), transparent 56%);
+}
+html[data-theme="dark"] .game-page::before {
+  opacity: 0.75;
+  background:
+    radial-gradient(circle at 42% 40%, rgba(99, 102, 241, 0.5), transparent 64%),
+    radial-gradient(circle at 72% 58%, rgba(56, 189, 248, 0.25), transparent 60%);
+}
+html[data-theme="dark"] .game-page::after {
+  opacity: 0.7;
+  background:
+    radial-gradient(circle at 48% 48%, rgba(139, 92, 246, 0.45), transparent 62%),
+    radial-gradient(circle at 28% 72%, rgba(236, 72, 153, 0.2), transparent 56%);
+}
+/* Keep app content above blobs */
+.game-page > .lc-app,
+.game-page > main {
+  position: relative;
+  z-index: 1;
+}
+html {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 /* ---------- shell ---------- */
@@ -65,9 +123,13 @@ html[data-theme="dark"] {
   max-width: 1120px;
   margin: 0 auto;
   padding: 0 16px;
-  min-height: 100dvh;
+  height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 @media (min-width: 900px) {
   .lc-app { padding: 0 36px; }
@@ -608,4 +670,56 @@ html[data-theme="dark"] {
   display: grid;
   place-items: center;
   line-height: 1;
+}
+
+
+/* Intro start screen — richer blob field */
+.lc-intro {
+  position: relative;
+  isolation: isolate;
+}
+.lc-intro::before,
+.lc-intro::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(48px);
+}
+.lc-intro::before {
+  width: min(42vw, 280px);
+  height: min(42vw, 280px);
+  top: 8%;
+  right: 4%;
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.35), transparent 68%);
+}
+.lc-intro::after {
+  width: min(38vw, 240px);
+  height: min(38vw, 240px);
+  bottom: 6%;
+  left: 2%;
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.22), transparent 68%);
+}
+html[data-theme="dark"] .lc-intro::before {
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.4), transparent 68%);
+}
+html[data-theme="dark"] .lc-intro::after {
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.18), transparent 68%);
+}
+
+/* Glass-like step cards on start screen */
+.lc-steps li {
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 28px rgba(59, 91, 219, 0.06);
+}
+html[data-theme="dark"] .lc-steps li {
+  background: rgba(24, 27, 35, 0.72) !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+}
+.lc-hero-icon {
+  box-shadow: 0 12px 32px rgba(99, 102, 241, 0.18);
+  background: linear-gradient(145deg, rgba(99, 102, 241, 0.18), rgba(56, 189, 248, 0.12)) !important;
 }
