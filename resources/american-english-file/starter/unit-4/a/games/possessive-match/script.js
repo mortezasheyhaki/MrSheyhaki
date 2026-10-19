@@ -244,7 +244,7 @@
           onAgain: () => startGame(),
           onModes: () => { phase = 'menu'; if (typeof render === 'function') render(); else location.href = '../'; },
           backHref: "../",
-          save: false,
+          save: true,
         });
         return;
       }

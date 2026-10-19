@@ -171,7 +171,7 @@
           render();
         },
         backHref: "../",
-        save: false,
+        save: true,
       });
       return;
     }

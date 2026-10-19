@@ -1194,7 +1194,32 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     }
     var existing = document.querySelector('script[data-la-stars]');
     if (existing) {
-      existing.addEventListener("load", function () { cb && cb(); });
+      // Script tag already present — if LAStars is ready, apply now;
+      // otherwise wait for load (and also poll briefly for cached scripts
+      // where the load event already fired).
+      if (window.LAStars && typeof window.LAStars.apply === "function") {
+        cb && cb();
+        return;
+      }
+      var done = false;
+      function once() {
+        if (done) return;
+        done = true;
+        cb && cb();
+      }
+      existing.addEventListener("load", once);
+      // Fallback for already-loaded / cached scripts
+      var tries = 0;
+      var poll = setInterval(function () {
+        tries++;
+        if (window.LAStars && typeof window.LAStars.apply === "function") {
+          clearInterval(poll);
+          once();
+        } else if (tries > 40) {
+          clearInterval(poll);
+          once();
+        }
+      }, 50);
       return;
     }
     var s = document.createElement("script");

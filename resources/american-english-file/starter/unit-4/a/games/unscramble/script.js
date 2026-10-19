@@ -463,7 +463,7 @@
       onAgain: () => location.reload(),
       onModes: () => { location.href = '../'; },
       backHref: "../",
-      save: false,
+      save: true,
     });
     return true;
   }

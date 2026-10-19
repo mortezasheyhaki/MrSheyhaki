@@ -76,6 +76,8 @@
   } catch (e) {}
 })();
 
+const GAME_ID = "starter-4a-possessives-2";
+
 const ALL_PAIRS = {
     adjectives: [
       { id: "i",     left: "I",     right: "my" },
@@ -361,8 +363,9 @@ const ALL_PAIRS = {
     });
 
     try {
-      if (window.LAStars && typeof window.LAStars.set === "function") {
-        window.LAStars.set("grammar-possessives-match", stars);
+      if (window.LAStars) {
+        LAStars.recordPlay(GAME_ID);
+        LAStars.save(GAME_ID, stars);
       }
     } catch (e) {}
 

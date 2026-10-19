@@ -36,7 +36,7 @@
   var phase = "start";
   var current = 0;
   var rounds = [];         // per clip: { picks: {key: "liked"|"dislike"|undefined}, checked, rightRows }
-  var score = 0;           // rows right, across all clips
+  var score = 0;           // recordings answered fully right (one point each)
   var playing = false;
   var played = false;
   var audio = null;
@@ -110,7 +110,7 @@
         window.LAProgressSave({
           gameId: GAME_ID, gameName: "Opinions",
           category: "tactics-for-listening", unit: "developing-16",
-          score: score, maxScore: TOTAL * ROWS,
+          score: score, maxScore: TOTAL,
           accuracy: pct, completed: true, stars: stars,
         });
       }
@@ -147,7 +147,7 @@
     r.checked = true;
     var clip = CLIPS[current];
     var right = ASPECTS.filter(function (a) { return rowCorrect(r, clip, a.key); }).length;
-    score += right;
+    if (right === ROWS) score++;
     sfx(right === ROWS ? "correct" : "wrong");
     stopAudio();
     renderPlay();
@@ -165,7 +165,7 @@
 
   function finish() {
     stopAudio();
-    var max = TOTAL * ROWS;
+    var max = TOTAL;
     var pct = Math.round((score / max) * 100);
     var stars = calcStars(pct);
     saveProgress(stars, pct);
@@ -339,7 +339,7 @@
   }
 
   function renderDone() {
-    var max = TOTAL * ROWS;
+    var max = TOTAL;
     var pct = Math.round((score / max) * 100);
     var stars = calcStars(pct);
     var headline = stars === 3 ? "Perfect!" : stars >= 2 ? "Great job!" : "Keep practising!";
@@ -355,7 +355,7 @@
       '<span class="star' + (stars >= 3 ? " filled" : "") + '">★</span>' +
       "</div>" +
       "<h1>" + headline + "</h1>" +
-      "<p>You got " + score + " of " + max + " parts right.</p>" +
+      "<p>You got " + score + " of " + max + " recordings completely right.</p>" +
       '<div class="lc-done-actions">' +
       '<button type="button" class="lc-btn primary" id="op-again">Play again</button>' +
       '<a class="lc-btn secondary" href="' + BACK + '">Back to unit</a>' +

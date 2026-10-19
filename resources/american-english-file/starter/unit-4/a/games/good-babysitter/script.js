@@ -207,12 +207,16 @@
     }
 
     if (phase === "done") {
+      var stars = correct ? 3 : 1;
+      // already saved on answer; ensure display is correct
       if (window.LAFinish) {
         const timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: typeof GAME_ID !== "undefined" ? GAME_ID : "starter-4a-game",
-          score: 0,
-          total: 10,
+          score: correct ? 1 : 0,
+          total: 1,
+          stars: stars,
+          accuracy: correct ? 100 : 0,
           timeMs: timeMs,
           onAgain: () => startGame(),
           onModes: () => { phase = 'menu'; if (typeof render === 'function') render(); else location.href = '../'; },
@@ -222,7 +226,6 @@
         return;
       }
 
-      var stars = correct ? 3 : 1;
       app.innerHTML =
         '<header class="gb-topbar">' +
         '<a class="gb-back" href="../" aria-label="Back">←</a>' +

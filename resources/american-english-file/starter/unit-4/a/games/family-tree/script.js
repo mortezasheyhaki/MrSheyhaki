@@ -327,7 +327,7 @@ const GAME_ID = "starter-4a-family-tree";
           onAgain: () => location.reload(),
           onModes: () => { location.href = '../'; },
           backHref: "../",
-          save: false,
+          save: true,
         });
         return;
       }

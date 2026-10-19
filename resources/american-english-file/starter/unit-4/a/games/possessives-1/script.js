@@ -76,7 +76,7 @@
   } catch (e) {}
 })();
 
-const GAME_ID = "starter-4a-possessives";
+const GAME_ID = "starter-4a-possessives-1";
 
   const OPTIONS = ["my", "your", "his", "her", "its", "our", "their"];
 
@@ -267,7 +267,7 @@ const GAME_ID = "starter-4a-possessives";
           onAgain: () => location.reload(),
           onModes: () => { location.href = '../'; },
           backHref: "../",
-          save: false,
+          save: true,
         });
         return;
       }

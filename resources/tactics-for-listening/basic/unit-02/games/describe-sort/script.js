@@ -1,6 +1,6 @@
-/* Describe people · Tactics For Listening Basic Unit 2
- * Drag each word into Age, Height or Hair. Tap a word, then a column, works too.
- * "curly" is the example and is already placed. A wrong drop bounces back.
+/* Describe People · Tactics For Listening Basic Unit 2
+ * One word at a time. Tap Age, Height or Hair for the word.
+ * A right answer moves on; a wrong one shakes and you try again.
  * Uses LAStars + LAFinish + LASfx when present.
  */
 (function () {
@@ -16,8 +16,7 @@
     { id: "hair",   label: "Hair" },
   ];
 
-  var EXAMPLE = { w: "curly", cat: "hair" };
-
+  // the words from the list (curly is the example, so it is left out of the game)
   var WORDS = [
     { w: "about 22", cat: "age" },
     { w: "19 years old", cat: "age" },
@@ -39,15 +38,15 @@
 
   var app = document.getElementById("game-app");
   var phase = "start";
-  var items = [];        // { id, w, cat, placed }
-  var selectedId = null;
+  var order = [];
+  var idx = 0;
   var mistakes = 0;
-  var placedCount = 0;
+  var locked = false;
   var status = { text: "", kind: "" };
-  var flashCat = null;
-  var drag = null;       // active drag state
+  var wrongCat = null;
+  var rightCat = null;
+  var nextTimer = null;
   var playRecorded = false;
-  var finished = false;
 
   function esc(s) {
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -63,20 +62,9 @@
     }
     return a;
   }
-
-  /* ---------- state ---------- */
-
-  function setupGame() {
-    items = shuffle(WORDS).map(function (x, i) {
-      return { id: "w" + i, w: x.w, cat: x.cat, placed: false };
-    });
-    selectedId = null;
-    mistakes = 0;
-    placedCount = 0;
-    status = { text: "Drag a word into a column, or tap a word and then a column.", kind: "" };
-    flashCat = null;
-    drag = null;
-    finished = false;
+  function catLabel(id) {
+    for (var i = 0; i < CATS.length; i++) if (CATS[i].id === id) return CATS[i].label;
+    return id;
   }
 
   function calcStars() {
@@ -90,243 +78,82 @@
     if (!window.LAStars) return;
     if (!playRecorded) { LAStars.recordPlay(GAME_ID); playRecorded = true; }
     LAStars.save(GAME_ID, stars);
+    var right = Math.max(0, WORDS.length - mistakes);
     try {
       if (typeof window.LAProgressSave === "function") {
         window.LAProgressSave({
-          gameId: GAME_ID, gameName: "Describe people",
+          gameId: GAME_ID, gameName: "Describe People",
           category: "tactics-for-listening", unit: "basic-2",
-          score: WORDS.length - mistakes, maxScore: WORDS.length,
-          accuracy: Math.max(0, Math.round(((WORDS.length - mistakes) / WORDS.length) * 100)),
+          score: right, maxScore: WORDS.length,
+          accuracy: Math.round((right / WORDS.length) * 100),
           completed: true, stars: stars,
         });
       }
     } catch (e) {}
   }
 
+  function clearNext() {
+    if (nextTimer) { clearTimeout(nextTimer); nextTimer = null; }
+  }
+
   function startGame() {
+    clearNext();
     if (window.LAFinish) LAFinish.startTimer();
-    setupGame();
+    order = shuffle(WORDS);
+    idx = 0;
+    mistakes = 0;
+    locked = false;
+    wrongCat = null;
+    rightCat = null;
+    status = { text: "Tap the word's group.", kind: "" };
     playRecorded = false;
     phase = "play";
     render();
   }
 
-  /* ---------- placing ---------- */
-
-  function findItem(id) {
-    for (var i = 0; i < items.length; i++) if (items[i].id === id) return items[i];
-    return null;
-  }
-
-  function tryPlace(id, cat) {
-    var it = findItem(id);
-    if (!it || it.placed || finished) return;
-    if (it.cat === cat) {
-      it.placed = true;
-      placedCount++;
-      selectedId = null;
-      flashCat = null;
-      sfx("pop");
-      var left = items.length - placedCount;
-      status = left
-        ? { text: "Yes! “" + it.w + "” goes in " + catLabel(cat) + ". " + left + " to go.", kind: "is-ok" }
-        : { text: "All done!", kind: "is-ok" };
-      if (left === 0) { render(); setTimeout(finish, 900); return; }
+  function answer(cat) {
+    if (locked || phase !== "play") return;
+    var item = order[idx];
+    if (cat === item.cat) {
+      locked = true;
+      wrongCat = null;
+      rightCat = cat;
+      sfx("correct");
+      status = { text: "Yes! " + item.w + " is " + catLabel(cat).toLowerCase() + ".", kind: "is-ok" };
+      render();
+      nextTimer = setTimeout(next, 900);
     } else {
       mistakes++;
       sfx("wrong");
-      selectedId = null;
-      flashCat = cat;
-      status = { text: "Not quite. Try another column.", kind: "is-bad" };
-      setTimeout(function () { flashCat = null; render(); }, 380);
+      wrongCat = cat;
+      status = { text: "Not quite. Try again.", kind: "is-bad" };
+      render();
+      setTimeout(function () { wrongCat = null; if (phase === "play" && !locked) render(); }, 380);
     }
+  }
+
+  function next() {
+    nextTimer = null;
+    if (idx + 1 >= order.length) { finish(); return; }
+    idx++;
+    locked = false;
+    wrongCat = null;
+    rightCat = null;
+    status = { text: "Tap the word's group.", kind: "" };
     render();
-  }
-
-  function catLabel(id) {
-    for (var i = 0; i < CATS.length; i++) if (CATS[i].id === id) return CATS[i].label;
-    return id;
-  }
-
-  function tapWord(id) {
-    if (finished) return;
-    var it = findItem(id);
-    if (!it || it.placed) return;
-    selectedId = selectedId === id ? null : id;
-    status = selectedId
-      ? { text: "Now tap a column for “" + it.w + "”.", kind: "" }
-      : { text: "Drag a word into a column, or tap a word and then a column.", kind: "" };
-    sfx("click");
-    render();
-  }
-
-  function tapColumn(cat) {
-    if (finished) return;
-    if (selectedId) { tryPlace(selectedId, cat); }
-  }
-
-  /* ---------- drag (mouse, pen and touch via pointer events) ---------- */
-
-  function columnAt(x, y) {
-    var el = document.elementFromPoint(x, y);
-    while (el && el !== document.body) {
-      if (el.classList && el.classList.contains("ws-col")) return el;
-      el = el.parentNode;
-    }
-    return null;
-  }
-
-  function onPointerDown(e, id, el) {
-    if (finished) return;
-    var it = findItem(id);
-    if (!it || it.placed) return;
-    e.preventDefault();
-    var ghost = el.cloneNode(true);
-    ghost.classList.add("ws-ghost");
-    ghost.removeAttribute("data-id");
-    document.body.appendChild(ghost);
-    drag = { id: id, el: el, ghost: ghost, startX: e.clientX, startY: e.clientY, moved: false, over: null };
-    el.classList.add("is-dragging");
-    moveGhost(e.clientX, e.clientY);
-    window.addEventListener("pointermove", onPointerMove);
-    window.addEventListener("pointerup", onPointerUp);
-    window.addEventListener("pointercancel", onPointerCancel);
-  }
-
-  function moveGhost(x, y) {
-    if (!drag) return;
-    drag.ghost.style.left = x + "px";
-    drag.ghost.style.top = y + "px";
-  }
-
-  function setOver(col) {
-    if (drag.over === col) return;
-    if (drag.over) drag.over.classList.remove("is-over");
-    drag.over = col;
-    if (col) col.classList.add("is-over");
-  }
-
-  function onPointerMove(e) {
-    if (!drag) return;
-    var dx = e.clientX - drag.startX, dy = e.clientY - drag.startY;
-    if (!drag.moved && Math.abs(dx) + Math.abs(dy) > 8) drag.moved = true;
-    moveGhost(e.clientX, e.clientY);
-    setOver(columnAt(e.clientX, e.clientY));
-  }
-
-  function endDrag() {
-    window.removeEventListener("pointermove", onPointerMove);
-    window.removeEventListener("pointerup", onPointerUp);
-    window.removeEventListener("pointercancel", onPointerCancel);
-    if (drag) {
-      if (drag.ghost && drag.ghost.parentNode) drag.ghost.parentNode.removeChild(drag.ghost);
-      if (drag.el) drag.el.classList.remove("is-dragging");
-      if (drag.over) drag.over.classList.remove("is-over");
-    }
-    drag = null;
-  }
-
-  function onPointerUp(e) {
-    if (!drag) return;
-    var d = drag;
-    var col = columnAt(e.clientX, e.clientY);
-    endDrag();
-    if (!d.moved) { tapWord(d.id); return; }   // a tap, not a drag
-    if (col) { tryPlace(d.id, col.getAttribute("data-cat")); }
-  }
-
-  function onPointerCancel() { endDrag(); render(); }
-
-  /* ---------- views ---------- */
-
-  function topBar(counter) {
-    return (
-      '<header class="lc-top">' +
-      '<a class="lc-back" href="' + BACK + '" aria-label="Back to unit">←<span>Unit</span></a>' +
-      '<div class="lc-top-center"><span class="lc-eyebrow">' + esc(UNIT) + "</span>" +
-      "<strong>Describe people</strong></div>" +
-      '<span class="lc-counter">' + esc(counter || "") + "</span>" +
-      "</header>"
-    );
-  }
-
-  function chipHtml(it) {
-    var cls = "ws-chip" + (selectedId === it.id ? " is-selected" : "");
-    return '<button type="button" class="' + cls + '" data-id="' + it.id + '">' + esc(it.w) + "</button>";
-  }
-
-  function render() {
-    document.querySelectorAll(".ws-ghost").forEach(function (g) { g.parentNode && g.parentNode.removeChild(g); });
-    if (phase === "start") return renderStart();
-    if (phase === "done") return renderDone();
-    var bank = items.filter(function (it) { return !it.placed; });
-    var counter = placedCount + " / " + items.length;
-
-    var cols = CATS.map(function (c) {
-      var cls = "ws-col" + (flashCat === c.id ? " is-bad" : "");
-      var placed = items.filter(function (it) { return it.placed && it.cat === c.id; });
-      var list = (c.id === "hair" ? '<div class="ws-chip is-example">' + esc(EXAMPLE.w) + "</div>" : "") +
-        placed.map(function (it) { return '<div class="ws-chip is-placed">' + esc(it.w) + "</div>"; }).join("");
-      return (
-        '<section class="' + cls + '" data-cat="' + c.id + '" aria-label="' + c.label + ' column">' +
-        '<h2 class="ws-col-head">' + c.label + "</h2>" +
-        '<div class="ws-list">' + list + "</div></section>"
-      );
-    }).join("");
-
-    app.innerHTML =
-      topBar(counter) +
-      '<main class="lc-main"><div class="ws-wrap">' +
-      '<p class="ws-hint">Put each word in the right column.</p>' +
-      '<div class="ws-bank" id="ws-bank">' + bank.map(chipHtml).join("") + "</div>" +
-      '<div class="ws-cols">' + cols + "</div>" +
-      '<p class="ws-status ' + status.kind + '" aria-live="polite">' + esc(status.text) + "</p>" +
-      "</div></main>";
-
-    bind();
-  }
-
-  function bind() {
-    app.querySelectorAll(".ws-chip[data-id]").forEach(function (el) {
-      var id = el.getAttribute("data-id");
-      el.addEventListener("pointerdown", function (e) { onPointerDown(e, id, el); });
-      el.addEventListener("dragstart", function (e) { e.preventDefault(); });
-    });
-    app.querySelectorAll(".ws-col").forEach(function (col) {
-      col.addEventListener("click", function () { tapColumn(col.getAttribute("data-cat")); });
-    });
-  }
-
-  function renderStart() {
-    app.innerHTML =
-      topBar("") +
-      '<section class="lc-intro">' +
-      '<div class="lc-intro-main">' +
-      '<div class="lc-hero-icon" aria-hidden="true">🧑</div>' +
-      "<h1>Describe people</h1>" +
-      '<p class="lc-intro-lede">Sort the words into Age, Height and Hair. “Curly” is already done for you.</p>' +
-      '<div class="lc-start-row"><button type="button" class="lc-btn primary" id="ws-start">Start →</button></div>' +
-      "</div>" +
-      '<ol class="lc-steps">' +
-      '<li><span class="tip-num">1</span><span><strong>Drag</strong> a word into a column, or tap a word and then a column</span></li>' +
-      '<li><span class="tip-num">2</span><span>Wrong columns bounce the word back</span></li>' +
-      '<li><span class="tip-num">3</span><span>Place all the words to finish</span></li>' +
-      "</ol></section>";
-    document.getElementById("ws-start").onclick = startGame;
   }
 
   function finish() {
-    if (finished) return;
-    finished = true;
     var stars = calcStars();
     saveProgress(stars);
     phase = "done";
     sfx("win");
+    var right = Math.max(0, WORDS.length - mistakes);
     if (window.LAFinish) {
       var timeMs = LAFinish.stopTimer ? LAFinish.stopTimer() : 0;
       LAFinish.show({
-        gameId: GAME_ID, score: WORDS.length - mistakes, total: WORDS.length, stars: stars,
-        accuracy: Math.max(0, Math.round(((WORDS.length - mistakes) / WORDS.length) * 100)), timeMs: timeMs,
+        gameId: GAME_ID, score: right, total: WORDS.length, stars: stars,
+        accuracy: Math.round((right / WORDS.length) * 100), timeMs: timeMs,
         onAgain: startGame,
         onModes: function () { phase = "start"; render(); },
         backHref: BACK, save: false,
@@ -336,29 +163,106 @@
     render();
   }
 
+  function topBar(counter) {
+    return (
+      '<header class="lc-top">' +
+      '<a class="lc-back" href="' + BACK + '" aria-label="Back to unit">←<span>Unit</span></a>' +
+      '<div class="lc-top-center"><span class="lc-eyebrow">' + esc(UNIT) + "</span>" +
+      "<strong>Describe People</strong></div>" +
+      '<span class="lc-counter">' + esc(counter || "") + "</span>" +
+      "</header>"
+    );
+  }
+
+  function segments() {
+    return (
+      '<div class="lc-seg" role="img" aria-label="Word ' + (idx + 1) + " of " + order.length + '">' +
+      order.map(function (_, i) {
+        var cls = i < idx ? "is-done" : i === idx ? "is-current" : "";
+        return '<i class="' + cls + '"></i>';
+      }).join("") + "</div>"
+    );
+  }
+
+  function btnHtml(c) {
+    var cls = "ds-btn";
+    if (rightCat === c.id) cls += " is-right";
+    if (wrongCat === c.id) cls += " is-wrong";
+    return (
+      '<button type="button" class="' + cls + '" data-cat="' + c.id + '"' + (locked ? " disabled" : "") + ">" +
+      esc(c.label) + "</button>"
+    );
+  }
+
+  function renderPlay() {
+    var item = order[idx];
+    app.innerHTML =
+      topBar((idx + 1) + " / " + order.length) +
+      segments() +
+      '<main class="lc-main"><div class="ds-wrap">' +
+      '<section class="ds-card" aria-live="polite">' +
+      '<p class="ds-prompt">Which group does this word belong to?</p>' +
+      '<p class="ds-word">' + esc(item.w) + "</p>" +
+      "</section>" +
+      '<p class="ds-status ' + status.kind + '">' + esc(status.text) + "</p>" +
+      '<div class="ds-btns">' + CATS.map(btnHtml).join("") + "</div>" +
+      "</div></main>";
+    bind();
+  }
+
+  function bind() {
+    app.querySelectorAll(".ds-btn").forEach(function (b) {
+      b.onclick = function () { answer(b.getAttribute("data-cat")); };
+    });
+  }
+
+  function renderStart() {
+    app.innerHTML =
+      topBar("") +
+      '<section class="lc-intro">' +
+      '<div class="lc-intro-main">' +
+      '<div class="lc-hero-icon" aria-hidden="true">🧑</div>' +
+      "<h1>Describe People</h1>" +
+      '<p class="lc-intro-lede">Read each word and tap the group it belongs to: Age, Height or Hair.</p>' +
+      '<div class="lc-start-row"><button type="button" class="lc-btn primary" id="ds-start">Start →</button></div>' +
+      "</div>" +
+      '<ol class="lc-steps">' +
+      '<li><span class="tip-num">1</span><span>Read the word</span></li>' +
+      '<li><span class="tip-num">2</span><span>Tap <strong>Age</strong>, <strong>Height</strong> or <strong>Hair</strong></span></li>' +
+      '<li><span class="tip-num">3</span><span>A wrong group shakes, so try another</span></li>' +
+      "</ol></section>";
+    document.getElementById("ds-start").onclick = startGame;
+  }
+
   function renderDone() {
     var stars = calcStars();
-    var right = WORDS.length - mistakes;
-    var pct = Math.max(0, Math.round((right / WORDS.length) * 100));
+    var right = Math.max(0, WORDS.length - mistakes);
+    var pct = Math.round((right / WORDS.length) * 100);
     var headline = stars === 3 ? "Perfect!" : stars >= 2 ? "Great job!" : "Keep practising!";
     app.innerHTML =
       topBar("") +
       '<section class="lc-done"><div class="lc-result">' +
       '<div class="lc-ring" style="--p:' + pct + '" aria-hidden="true"><div class="lc-ring-inner">' +
       '<span class="lc-ring-score">' + WORDS.length + "</span>" +
-      '<span class="lc-ring-of">placed</span></div></div>' +
+      '<span class="lc-ring-of">words</span></div></div>' +
       '<div class="lc-star-row" aria-label="' + stars + ' of 3 stars">' +
       '<span class="star' + (stars >= 1 ? " filled" : "") + '">★</span>' +
       '<span class="star' + (stars >= 2 ? " filled" : "") + '">★</span>' +
       '<span class="star' + (stars >= 3 ? " filled" : "") + '">★</span>' +
       "</div>" +
       "<h1>" + headline + "</h1>" +
-      "<p>All words placed with " + mistakes + (mistakes === 1 ? " mistake." : " mistakes.") + "</p>" +
+      "<p>All words done with " + mistakes + (mistakes === 1 ? " mistake." : " mistakes.") + "</p>" +
       '<div class="lc-done-actions">' +
-      '<button type="button" class="lc-btn primary" id="ws-again">Play again</button>' +
+      '<button type="button" class="lc-btn primary" id="ds-again">Play again</button>' +
       '<a class="lc-btn secondary" href="' + BACK + '">Back to unit</a>' +
       "</div></div></section>";
-    document.getElementById("ws-again").onclick = startGame;
+    document.getElementById("ds-again").onclick = startGame;
+  }
+
+  function render() {
+    if (phase === "start") renderStart();
+    else if (phase === "play") renderPlay();
+    else renderDone();
   }
 
   if (document.readyState === "loading") {

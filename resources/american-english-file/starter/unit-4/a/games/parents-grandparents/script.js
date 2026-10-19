@@ -456,22 +456,26 @@
     }
 
     if (phase === "done") {
+      const stars = saveStars();
       if (window.LAFinish) {
         const timeMs = LAFinish.stopTimer();
+        const total = WORDS.length;
+        const correct = total; // all words were eventually placed
         LAFinish.show({
           gameId: typeof GAME_ID !== "undefined" ? GAME_ID : "starter-4a-game",
-          score: 0,
-          total: WORDS.length,
+          score: correct,
+          total: total,
+          stars: stars,
+          accuracy: stars === 3 ? 100 : stars === 2 ? 80 : stars === 1 ? 50 : 0,
           timeMs: timeMs,
           onAgain: () => startGame(),
           onModes: () => { phase = 'menu'; if (typeof render === 'function') render(); else location.href = '../'; },
           backHref: "../",
-          save: false,
+          save: false, // already saved via saveStars()
         });
         return;
       }
 
-      const stars = saveStars();
       app.innerHTML =
         '<header class="pg-topbar">' +
         '<a class="pg-back" href="../" aria-label="Back">←</a>' +

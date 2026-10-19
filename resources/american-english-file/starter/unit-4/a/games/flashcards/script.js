@@ -480,7 +480,7 @@
       onAgain: () => startMode(typeof modeIndex !== 'undefined' ? modeIndex : 0),
       onModes: () => { location.href = '../'; },
       backHref: "../",
-      save: false,
+      save: true,
     });
     return true;
   }

@@ -84,6 +84,35 @@
     // School subjects
     "vocab-school-subjects": "vocab-school-subjects",
 
+    // Unit 4A – People & Family / Possessives (hub ids used by course-render: starter-4a-*)
+    "starter-4a-good-babysitter": "starter-4a-good-babysitter",
+    "starter-4a-who-is-sarah": "starter-4a-who-is-sarah",
+    "starter-4a-possessives-chart": "starter-4a-possessives-chart",
+    "starter-4a-three-sounds-match": "starter-4a-three-sounds-match",
+    "starter-4a-parents-grandparents": "starter-4a-parents-grandparents",
+    "starter-4a-listen-write-say": "starter-4a-listen-write-say",
+    "starter-4a-possessives-1": "starter-4a-possessives-1",
+    "starter-4a-possessives-2": "starter-4a-possessives-2",
+    "starter-4a-family-tree": "starter-4a-family-tree",
+    "starter-4a-match-rush": "starter-4a-match-rush",
+    "starter-4a-people-words": "starter-4a-people-words",
+    "starter-4a-family-roleplay": "starter-4a-family-roleplay",
+    "starter-4a-flashcards": "starter-4a-flashcards",
+    "starter-4a-its-or-its": "starter-4a-its-or-its",
+    "starter-4a-kaylas-family": "starter-4a-kaylas-family",
+    "starter-4a-possessive-match": "starter-4a-possessive-match",
+    "starter-4a-possessive-s": "starter-4a-possessive-s",
+    "starter-4a-possessive-sentences": "starter-4a-possessive-sentences",
+    "starter-4a-possessive-sentences-2": "starter-4a-possessive-sentences-2",
+    "starter-4a-possessives": "starter-4a-possessives",
+    "starter-4a-who-are-the-people": "starter-4a-who-are-the-people",
+    "starter-4a-unscramble": "starter-4a-unscramble",
+    // Mode variants for Possessive 's
+    "starter-4a-possessive-s-choose": "starter-4a-possessive-s",
+    "starter-4a-possessive-s-build": "starter-4a-possessive-s",
+    // legacy / wrong id used by older possessives-2 builds
+    "grammar-possessives-match": "starter-4a-possessives-2",
+
     // Unit 4B – Adjectives / The perfect car (hub ids used by course-render: starter-4b-*)
     // Short / legacy ids → canonical
     "adj-sentences": "starter-4b-adjective-sentences",

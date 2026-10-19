@@ -1,5 +1,17 @@
 (function () {
   "use strict";
+  const GAME_ID = "starter-4a-possessives-chart";
+  // Practice chart — record 1 star on first interaction
+  let recorded = false;
+  function recordOnce() {
+    if (recorded || !window.LAStars) return;
+    recorded = true;
+    try {
+      LAStars.recordPlay(GAME_ID);
+      LAStars.save(GAME_ID, 1);
+    } catch (e) {}
+  }
+
   const ROWS = [
     { subj: "I", poss: "my", ex: "This is my book." },
     { subj: "you", poss: "your", ex: "Is this your bag?" },
@@ -16,11 +28,13 @@
   const detailEx = document.getElementById("detailEx");
   const closeBtn = document.getElementById("closeDetail");
   ROWS.forEach(function (row) {
+    // will record on first open
     const card = document.createElement("button");
     card.type = "button";
     card.className = "chart-card";
     card.innerHTML = '<span class="subj">' + row.subj + '</span><span class="poss">' + row.poss + '</span><span class="label">possessive</span>';
     card.addEventListener("click", function () {
+      recordOnce();
       detailSubj.textContent = row.subj;
       detailPoss.textContent = row.poss;
       detailEx.textContent = row.ex;

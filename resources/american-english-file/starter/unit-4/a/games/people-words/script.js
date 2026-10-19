@@ -278,7 +278,7 @@ const GAME_ID = "starter-4a-people-words";
           onAgain: () => location.reload(),
           onModes: () => { location.href = '../'; },
           backHref: "../",
-          save: false,
+          save: true,
         });
         return;
       }

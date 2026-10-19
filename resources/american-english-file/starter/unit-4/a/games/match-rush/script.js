@@ -282,15 +282,18 @@ const GAME_ID = "starter-4a-match-rush";
   function finish() {
       if (window.LAFinish) {
         const timeMs = LAFinish.stopTimer();
+        const maxPts = WORDS.length * 10;
+        const acc = maxPts > 0 ? Math.round((score / maxPts) * 100) : 0;
         LAFinish.show({
           gameId: typeof GAME_ID !== "undefined" ? GAME_ID : "starter-4a-game",
           score: score,
-          total: WORDS.length,
+          total: maxPts,
+          accuracy: acc,
           timeMs: timeMs,
           onAgain: () => startGame(),
           onModes: () => { location.href = '../'; },
           backHref: "../",
-          save: false,
+          save: true,
         });
         return;
       }

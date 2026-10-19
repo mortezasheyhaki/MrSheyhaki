@@ -320,12 +320,15 @@
     }
 
     if (phase === "done") {
+      const stars = (typeof saveStars === "function") ? saveStars() : 0;
       if (window.LAFinish) {
         const timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: typeof GAME_ID !== "undefined" ? GAME_ID : "starter-4a-game",
-          score: 0,
+          score: typeof correct !== "undefined" ? correct : stars,
           total: ITEMS.length,
+          stars: stars,
+
           timeMs: timeMs,
           onAgain: () => startMode(typeof modeIndex !== 'undefined' ? modeIndex : 0),
           onModes: () => { phase = 'menu'; if (typeof render === 'function') render(); else location.href = '../'; },
