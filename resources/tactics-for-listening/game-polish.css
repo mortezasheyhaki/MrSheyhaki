@@ -1,0 +1,85 @@
+/* Shared game style for all Tactics For Listening games.
+   Soft background, raised cards, coloured answer buttons, and a footer bar. */
+
+body.game-page {
+  background: linear-gradient(160deg, #eef2ff 0%, #f5f0ff 60%, #fdf2f8 100%);
+  min-height: 100dvh;
+}
+.lc-app { padding-bottom: 32px; }
+.lc-app .lc-main { gap: 16px; padding-top: 6px; }
+
+/* listen panel */
+.al-listen,
+.lc-stage {
+  background: #ffffff; border: 1px solid #e4e8f7; border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(42, 27, 107, 0.08);
+}
+.al-listen { padding: 18px 22px; gap: 18px; }
+.al-play { box-shadow: 0 8px 20px rgba(24, 95, 165, 0.3); }
+.al-listen-title { font-weight: 900; color: #2a1b6b; }
+.al-listen-sub { color: #6b6890; }
+
+/* question card */
+.al-set,
+.dd-convo {
+  background: #ffffff; border: 1px solid #e4e8f7; border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(42, 27, 107, 0.08);
+}
+.al-set { padding: 22px 20px 24px; }
+.al-set .tf-statement { text-align: center; font-size: 22px; font-weight: 900; color: #2a1b6b; margin: 0 0 6px; }
+.al-set .st-hint { text-align: center; font-size: 15px; color: #5a5480; margin: 0 0 16px; }
+.dd-convo { padding: 18px 20px; }
+
+/* answer buttons */
+.al-opts { gap: 12px; }
+.al-opt {
+  min-height: 74px; border-radius: 18px; border: 2px solid #dfe4f5;
+  background: linear-gradient(180deg, #ffffff, #f6f7ff); color: #2a1b6b;
+  font-size: 19px; font-weight: 800; box-shadow: 0 4px 0 #dfe4f5;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .15s, background .15s;
+}
+.al-opt:hover:not(:disabled) { transform: translateY(-2px); border-color: #9aa8e6; box-shadow: 0 6px 0 #c9d1f0; }
+.al-opt:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 #c9d1f0; }
+.al-opt.is-picked { border-color: #4c6ef5; background: linear-gradient(180deg, #eef2ff, #e0e7ff); box-shadow: 0 4px 0 #4c6ef5; color: #1e3a8a; }
+.al-opt.is-correct { border-color: #2f9e62; background: linear-gradient(180deg, #e8f8ef, #d4f1e2); color: #14532d; box-shadow: 0 4px 0 #2f9e62; }
+.al-opt.is-wrong { border-color: #d64545; background: linear-gradient(180deg, #fdecec, #fbd9d9); color: #7f1d1d; box-shadow: 0 4px 0 #d64545; }
+.al-opt:disabled { cursor: default; }
+.al-opt.is-missed { border-style: dashed; border-color: #2f9e62; color: #14532d; }
+
+/* footer bar */
+.al-foot {
+  background: #ffffff; border: 1px solid #e4e8f7; border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(42, 27, 107, 0.07);
+  padding: 14px 18px; justify-content: space-between; gap: 14px;
+}
+.al-foot-text { font-size: 15px; font-weight: 700; color: #5a5480; }
+.al-foot-text.is-ok { color: #14532d; }
+.al-foot-text.is-bad { color: #7f1d1d; }
+.al-next {
+  border-radius: 14px; padding: 12px 22px; font-weight: 900; font-size: 16px;
+  background: linear-gradient(180deg, #ffe36a, #ffb020); color: #3a1d00; border: none;
+  box-shadow: 0 4px 0 #b06e00; cursor: pointer; white-space: nowrap;
+}
+.al-next:active { transform: translateY(3px); box-shadow: 0 1px 0 #b06e00; }
+.al-next:disabled { opacity: .45; cursor: default; box-shadow: none; }
+
+/* other answer styles used by the games */
+.rc-choice {
+  border-radius: 18px; border: 2px solid #dfe4f5; background: linear-gradient(180deg, #ffffff, #f6f7ff);
+  box-shadow: 0 4px 0 #dfe4f5; color: #2a1b6b; font-weight: 800;
+}
+.rc-choice.is-on { border-color: #4c6ef5; background: linear-gradient(180deg, #eef2ff, #e0e7ff); box-shadow: 0 4px 0 #4c6ef5; }
+.op-cell { border-radius: 12px; border: 2px solid #dfe4f5; background: #ffffff; }
+.op-cell.is-on { border-color: #4c6ef5; background: #eef2ff; }
+.op-grid { border-radius: 18px; border: 1px solid #e4e8f7; box-shadow: 0 10px 30px rgba(42, 27, 107, 0.08); background: #ffffff; }
+.dd-input { border-radius: 10px; border: 2px solid #c9d1f0; background: #ffffff; }
+.dd-input:focus { outline: none; border-color: #4c6ef5; box-shadow: 0 0 0 3px rgba(76, 110, 245, 0.2); }
+.mt-item { border-radius: 16px; }
+.lc-btn.primary { border-radius: 16px; box-shadow: 0 5px 0 #185FA5; }
+
+@media (max-width: 480px) {
+  .al-set { padding: 18px 14px 20px; }
+  .al-opt { font-size: 17px; min-height: 66px; }
+  .al-set .tf-statement { font-size: 19px; }
+  .al-foot { flex-direction: column; text-align: center; }
+}

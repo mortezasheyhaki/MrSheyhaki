@@ -136,15 +136,21 @@
 
     function choose(i) {
       if (locked || phase !== "play") return;
-      locked = true;
       chosen = i;
+      sfx("click");
+      renderPlayView();
+    }
+
+    function check() {
+      if (locked || phase !== "play" || chosen === null) return;
+      clearAdvance();
+      locked = true;
       stopAudio();
-      var ok = i === items[current].correct;
+      var ok = chosen === items[current].correct;
       results[current] = ok;
       if (ok) { correctCount++; sfx("correct"); }
       else sfx("wrong");
       renderPlayView();
-      advanceTimer = setTimeout(next, ok ? 1600 : 2400);
     }
 
     function next() {
@@ -237,38 +243,37 @@
     function renderPlayView() {
       var item = items[current];
       var last = current + 1 >= TOTAL;
+      var HAS_AUDIO = typeof window.Audio === "function";
 
-      var label = audioError
-        ? "Audio unavailable"
-        : playing ? "Stop" : listened ? "Play again" : "Play audio";
-      var status = audioError
-        ? "This clip could not load. Check your connection."
+      var playCls = "al-play" + (playing ? " is-playing" : "") + (audioError ? " is-error" : "");
+      var listenTitle = audioError ? "Audio unavailable"
         : playing ? "Playing… tap to stop"
-        : listened ? "Tap to hear it again"
-        : "Tap to listen";
-
-      var playCls = "lc-play";
-      if (playing) playCls += " is-playing";
-      if (audioError) playCls += " is-error";
-
-      var discInner = playing
-        ? '<span class="lc-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>'
-        : '<span class="lc-play-ico" aria-hidden="true">▶</span>';
+        : listened ? "Play again" : "Play the recording";
+      var listenSub = !HAS_AUDIO ? "Audio is not supported in this browser."
+        : audioError ? "This recording could not load. Check your connection."
+        : playing ? "Tap the square to stop."
+        : listened ? "You can play it again before you answer."
+        : "Question " + (current + 1) + " of " + TOTAL;
+      var playIcon = audioError
+        ? '<span class="al-play-alert" aria-hidden="true">!</span>'
+        : playing
+          ? '<span class="al-play-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>'
+          : '<span class="al-play-tri" aria-hidden="true"></span>';
 
       var optsHtml = item.options.map(function (text, i) {
-        var cls = "lc-opt";
-        if (chosen !== null) {
-          if (i === item.correct) cls += " is-correct";
-          else if (i === chosen) cls += " is-wrong";
-          else cls += " is-dim";
+        var letter = LETTERS[i];
+        var cls = "al-opt";
+        var tick = "";
+        if (locked) {
+          if (i === item.correct) { cls += " is-correct"; tick = '<span class="al-tick" aria-hidden="true">✓</span>'; }
+          else if (i === chosen) { cls += " is-wrong"; tick = '<span class="al-tick" aria-hidden="true">✕</span>'; }
+        } else if (i === chosen) {
+          cls += " is-picked";
         }
         return (
           '<button type="button" class="' + cls + '" data-opt="' + i + '"' +
           (locked ? " disabled" : "") + ">" +
-          '<span class="lc-key">' + esc(LETTERS[i]) + "</span>" +
-          '<span class="lc-opt-text">' + esc(text) + "</span>" +
-          '<span class="lc-tick" aria-hidden="true"></span>' +
-          "</button>"
+          esc(letter) + ". " + esc(text) + tick + "</button>"
         );
       }).join("");
 
@@ -276,44 +281,37 @@
       if (locked) {
         var ok = chosen === item.correct;
         foot =
-          '<div class="lc-foot is-locked ' + (ok ? "is-ok" : "is-bad") + '">' +
-          '<div class="lc-foot-text">' +
-          (ok
-            ? "Correct!"
-            : "Not quite. The answer is " + esc(LETTERS[item.correct]) +
-              ": “" + esc(item.options[item.correct]) + "”") +
-          "</div>" +
-          '<button type="button" class="lc-next" id="lc-next">' + (last ? "See results" : "Next →") + "</button>" +
-          "</div>";
+          '<div class="al-foot"><span class="al-foot-text ' + (ok ? "is-ok" : "is-bad") + '">' +
+          (ok ? "Correct!" : "Not quite. The answer is " + esc(LETTERS[item.correct]) + ". " + esc(item.options[item.correct])) +
+          "</span>" +
+          '<button type="button" class="al-next" id="lc-next">' + (last ? "See results →" : "Next →") + "</button></div>";
+      } else if (chosen !== null) {
+        foot =
+          '<div class="al-foot"><span class="al-foot-text">Check your answer.</span>' +
+          '<button type="button" class="al-next" id="lc-check">Check ✓</button></div>';
       } else {
         foot =
-          '<div class="lc-foot">' +
-          '<div class="lc-foot-text lc-foot-idle">' +
-          (TOUCH ? "Tap an answer" : 'Choose an answer <span class="lc-kbd"><kbd>' +
-            LETTERS.map(function (l) { return l.toUpperCase(); }).join("</kbd><kbd>") +
-            "</kbd> · <kbd>Space</kbd> replay</span>") +
-          "</div>" +
-          "</div>";
+          '<div class="al-foot"><span class="al-foot-text">' +
+          (listened ? "Choose an answer." : "Tap play to listen first.") +
+          "</span></div>";
       }
 
       root.innerHTML =
         topBar(UNIT, cfg.gameName, (current + 1) + " / " + TOTAL) +
         segmentsHtml() +
         '<main class="lc-main">' +
-        '<section class="lc-stage' + (entering ? " is-enter" : "") + '">' +
-        '<span class="lc-qnum">Question ' + (current + 1) + "</span>" +
-        '<p class="lc-prompt">' + esc(item.prompt) + "</p>" +
-        (item.stem ? '<p class="lc-stem">' + esc(item.stem) + "</p>" : '<p class="lc-stem"></p>') +
-        '<button type="button" class="' + playCls + '" id="lc-play" aria-label="' + esc(label) + '"' +
-        (audioError ? " disabled" : "") + ">" + discInner +
-        '<span class="lc-play-label">' + esc(label) + "</span></button>" +
-        '<span class="lc-play-status" aria-live="polite">' + esc(status) + "</span>" +
+        '<div class="al-listen">' +
+        '<button type="button" class="' + playCls + '" id="lc-play" aria-label="' + esc(listenTitle) + '"' +
+        (HAS_AUDIO ? "" : " disabled") + ">" + playIcon + "</button>" +
+        '<div class="al-listen-text"><p class="al-listen-title">' + esc(listenTitle) + "</p>" +
+        '<p class="al-listen-sub">' + esc(listenSub) + "</p></div>" +
+        "</div>" +
+        '<section class="al-set' + (entering ? " is-enter" : "") + '" aria-label="Answers">' +
+        '<p class="tf-statement">' + esc(item.prompt) + "</p>" +
+        (item.stem ? '<p class="st-hint">' + esc(item.stem) + "</p>" : "") +
+        '<div class="al-opts' + (item.options.length === 3 ? ' is-tri' : '') + '">' + optsHtml + "</div>" +
         "</section>" +
-        '<section class="lc-answers" aria-label="Answers">' +
-        '<p class="lc-answers-label">Choose one</p>' +
-        '<div class="lc-opts ' + (item.options.length === 2 ? "cols-2" : "cols-3") + '">' + optsHtml + "</div>" +
         foot +
-        "</section>" +
         "</main>";
 
       entering = false;
@@ -322,6 +320,8 @@
       root.querySelectorAll("[data-opt]").forEach(function (btn) {
         btn.onclick = function () { choose(+btn.getAttribute("data-opt")); };
       });
+      var checkBtn = document.getElementById("lc-check");
+      if (checkBtn) checkBtn.onclick = check;
       var nextBtn = document.getElementById("lc-next");
       if (nextBtn) nextBtn.onclick = next;
     }
@@ -372,9 +372,10 @@
         playAudio();
         return;
       }
-      if (k === "Enter" && locked) {
+      if (k === "Enter") {
         e.preventDefault();
-        next();
+        if (locked) next();
+        else if (chosen !== null) check();
         return;
       }
       if (locked) return;
