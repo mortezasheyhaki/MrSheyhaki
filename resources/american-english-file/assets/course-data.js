@@ -267,13 +267,11 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.games = [
 ];
 
 // Unit 4A – People & Family / Possessives
-COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.games = [
+COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.games = [ 
   { title: "Possessives Chart", url: "possessives-chart/", label: "Grammar" },
   { title: "Three Sounds Match", url: "three-sounds-match/", label: "Pronunciation" },
   { title: "Parents & Grandparents", url: "parents-grandparents/", label: "Vocabulary" },
   { title: "Listen & Write / Say", url: "listen-write-say/", label: "Vocabulary" },
-  { title: "Possessives 1", url: "possessives-1/" },
-  { title: "Possessives 2", url: "possessives-2/" },
   { title: "Family Tree", url: "family-tree/" },
   { title: "Family Match Rush", url: "match-rush/" },
   { title: "People Words", url: "people-words/" },
@@ -285,7 +283,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.games = [
   { title: "Possessive 's", url: "possessive-s/", label: "Vocabulary" },
   { title: "Possessive Sentences", url: "possessive-sentences/", label: "Writing" },
   { title: "Possessive Sentences 2", url: "possessive-sentences-2/", label: "Writing" },
-  { title: "Possessives", url: "possessives/", label: "Vocabulary" },
   { title: "Who are the people?", url: "who-are-the-people/", label: "Vocabulary" }
 ];
 
