@@ -473,34 +473,34 @@ COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.name = "Cul
 
 // Level 1 – Unit 11A – Culture shock
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.a.audio = [
-  { track: "11.01", url: "https://cdn.imgurl.ir/uploads/k589137_AEF3e_Level_1_SB_11.01.mp3", title: "Culture shock", label: "Student's Book" },
-  { track: "11.02", url: "https://cdn.imgurl.ir/uploads/k6920_AEF3e_Level_1_SB_11.02.mp3", title: "Listening", label: "Student's Book" },
-  { track: "11.03", url: "https://cdn.imgurl.ir/uploads/c80882_AEF3e_Level_1_SB_11.03.mp3", title: "Adverbs", label: "Student's Book" },
-  { track: "11.04", url: "https://cdn.imgurl.ir/uploads/j757917_AEF3e_Level_1_SB_11.04.mp3", title: "Pronunciation", label: "Student's Book" },
-  { track: "11.05", url: "https://cdn.imgurl.ir/uploads/i90352_AEF3e_Level_1_SB_11.05.mp3", title: "Practice", label: "Student's Book" },
-  { track: "11.1", url: "https://cdn.imgurl.ir/uploads/t40268_AEF3e_Level_1_WB_11.1.mp3", title: "Unit 11 practice", label: "Workbook" },
+  { track: "11.01", url: "https://cdn.imgurl.ir/uploads/h08708_AEF3e_Level_1_SB_11.01.mp3", label: "Student's Book" },
+  { track: "11.02", url: "https://cdn.imgurl.ir/uploads/z64004_AEF3e_Level_1_SB_11.02.mp3", label: "Student's Book" },
+  { track: "11.03", url: "https://cdn.imgurl.ir/uploads/s785321_AEF3e_Level_1_SB_11.03.mp3", label: "Student's Book" },
+  { track: "11.04", url: "https://cdn.imgurl.ir/uploads/i950917_AEF3e_Level_1_SB_11.04.mp3", label: "Student's Book" },
+  { track: "11.05", url: "https://cdn.imgurl.ir/uploads/r85575_AEF3e_Level_1_SB_11.05.mp3", label: "Student's Book" },
+  { track: "11.1", url: "https://cdn.imgurl.ir/uploads/c208844_AEF3e_Level_1_WB_11.1.mp3", title: "Unit 11 practice", label: "Workbook" },
 ];
 
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.b.name = "Experiences or things?";
 
 // Level 1 – Unit 11B – Experiences or things?
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.b.audio = [
-  { track: "11.06", url: "https://cdn.imgurl.ir/uploads/i042254_AEF3e_Level_1_SB_11.06.mp3", title: "Experiences or things?", label: "Student's Book" },
-  { track: "11.07", url: "https://cdn.imgurl.ir/uploads/w23463_AEF3e_Level_1_SB_11.07.mp3", title: "Listening", label: "Student's Book" },
-  { track: "11.08", url: "https://cdn.imgurl.ir/uploads/y13987_AEF3e_Level_1_SB_11.08.mp3", title: "Pronunciation / practice", label: "Student's Book" },
-  { track: "11.2", url: "https://cdn.imgurl.ir/uploads/w095815_AEF3e_Level_1_WB_11.2.mp3", title: "Unit 11 practice", label: "Workbook" },
+  { track: "11.06", url: "https://cdn.imgurl.ir/uploads/n19745_AEF3e_Level_1_SB_11.06.mp3", label: "Student's Book" },
+  { track: "11.07", url: "https://cdn.imgurl.ir/uploads/j22192_AEF3e_Level_1_SB_11.07.mp3", label: "Student's Book" },
+  { track: "11.08", url: "https://cdn.imgurl.ir/uploads/z19050_AEF3e_Level_1_SB_11.08.mp3", label: "Student's Book" },
+  { track: "11.09", url: "https://cdn.imgurl.ir/uploads/q686456_AEF3e_Level_1_SB_11.09.mp3", label: "Student's Book" },
+  { track: "11.10", url: "https://cdn.imgurl.ir/uploads/m690584_AEF3e_Level_1_SB_11.10.mp3", label: "Student's Book" },
+  { track: "11.2", url: "https://cdn.imgurl.ir/uploads/b66219_AEF3e_Level_1_WB_11.2.mp3", title: "Unit 11 practice", label: "Workbook" },
 ];
 
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.c.name = "How smart is your phone?";
 
 // Level 1 – Unit 11C – How smart is your phone?
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.c.audio = [
-  { track: "11.09", url: "https://cdn.imgurl.ir/uploads/i132733_AEF3e_Level_1_SB_11.09.mp3", title: "How smart is your phone?", label: "Student's Book" },
-  { track: "11.10", url: "https://cdn.imgurl.ir/uploads/a776095_AEF3e_Level_1_SB_11.10.mp3", title: "Phone vocabulary", label: "Student's Book" },
-  { track: "11.11", url: "https://cdn.imgurl.ir/uploads/c6068_AEF3e_Level_1_SB_11.11.mp3", title: "Phone interviews · Speakers A–C", label: "Student's Book" },
-  { track: "11.12", url: "https://cdn.imgurl.ir/uploads/h92491_AEF3e_Level_1_SB_11.12.mp3", title: "Listening follow-up", label: "Student's Book" },
-  { track: "11.13", url: "https://cdn.imgurl.ir/uploads/s057558_AEF3e_Level_1_SB_11.13.mp3", title: "Pronunciation", label: "Student's Book" },
-  { track: "11.3", url: "https://cdn.imgurl.ir/uploads/q639609_AEF3e_Level_1_WB_11.3.mp3", title: "Unit 11 practice", label: "Workbook" },
+  { track: "11.11", url: "https://cdn.imgurl.ir/uploads/d68507_AEF3e_Level_1_SB_11.11.mp3", label: "Student's Book" },
+  { track: "11.12", url: "https://cdn.imgurl.ir/uploads/n93832_AEF3e_Level_1_SB_11.12.mp3", label: "Student's Book" },
+  { track: "11.13", url: "https://cdn.imgurl.ir/uploads/c15797_AEF3e_Level_1_SB_11.13.mp3", label: "Student's Book" },
+  { track: "11.3", url: "https://cdn.imgurl.ir/uploads/k20768_AEF3e_Level_1_WB_11.3.mp3", title: "Unit 11 practice", label: "Workbook" },
 ];
 
 COURSE_DATA["american-english-file"].levels["1"].units[11].lessons.c.games = [
@@ -538,6 +538,37 @@ COURSE_DATA["american-english-file"].levels["1"].units[12].name = "Entertainment
 COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.a.name = "I've seen it ten times!";
 COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.b.name = "He's been everywhere!";
 COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.c.name = "The American English File interview";
+
+// Level 1 – Unit 12A – I've seen it ten times!
+COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.a.audio = [
+  { track: "12.01", url: "https://cdn.imgurl.ir/uploads/s22203_AEF3e_Level_1_SB_12.01.mp3", label: "Student's Book" },
+  { track: "12.02", url: "https://cdn.imgurl.ir/uploads/w718535_AEF3e_Level_1_SB_12.02.mp3", label: "Student's Book" },
+  { track: "12.03", url: "https://cdn.imgurl.ir/uploads/q484679_AEF3e_Level_1_SB_12.03.mp3", label: "Student's Book" },
+  { track: "12.04", url: "https://cdn.imgurl.ir/uploads/m838894_AEF3e_Level_1_SB_12.04.mp3", label: "Student's Book" },
+  { track: "12.05", url: "https://cdn.imgurl.ir/uploads/w94323_AEF3e_Level_1_SB_12.05.mp3", label: "Student's Book" },
+  { track: "12.06", url: "https://cdn.imgurl.ir/uploads/g694939_AEF3e_Level_1_SB_12.06.mp3", label: "Student's Book" },
+  { track: "12.1", url: "https://cdn.imgurl.ir/uploads/b837800_AEF3e_Level_1_WB_12.1.mp3", title: "Unit 12 practice", label: "Workbook" },
+  { track: "12.2", url: "https://cdn.imgurl.ir/uploads/g657520_AEF3e_Level_1_WB_12.2.mp3", title: "Unit 12 practice", label: "Workbook" },
+];
+
+// Level 1 – Unit 12B – He's been everywhere!
+COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.b.audio = [
+  { track: "12.07", url: "https://cdn.imgurl.ir/uploads/h10008_AEF3e_Level_1_SB_12.07.mp3", label: "Student's Book" },
+  { track: "12.08", url: "https://cdn.imgurl.ir/uploads/p36690_AEF3e_Level_1_SB_12.08.mp3", label: "Student's Book" },
+  { track: "12.09", url: "https://cdn.imgurl.ir/uploads/z30892_AEF3e_Level_1_SB_12.09.mp3", label: "Student's Book" },
+  { track: "12.10", url: "https://cdn.imgurl.ir/uploads/i16499_AEF3e_Level_1_SB_12.10.mp3", label: "Student's Book" },
+  { track: "12.11", url: "https://cdn.imgurl.ir/uploads/w72368_AEF3e_Level_1_SB_12.11.mp3", label: "Student's Book" },
+  { track: "12.12", url: "https://cdn.imgurl.ir/uploads/o832458_AEF3e_Level_1_SB_12.12.mp3", label: "Student's Book" },
+  { track: "12.3", url: "https://cdn.imgurl.ir/uploads/x686396_AEF3e_Level_1_WB_12.3.mp3", title: "Unit 12 practice", label: "Workbook" },
+];
+
+// Level 1 – Unit 12C – The American English File interview
+COURSE_DATA["american-english-file"].levels["1"].units[12].lessons.c.audio = [
+  { track: "12.13", url: "https://cdn.imgurl.ir/uploads/b947326_AEF3e_Level_1_SB_12.13.mp3", label: "Student's Book" },
+  { track: "12.14", url: "https://cdn.imgurl.ir/uploads/g367289_AEF3e_Level_1_SB_12.14.mp3", label: "Student's Book" },
+  { track: "12.4", url: "https://cdn.imgurl.ir/uploads/r11411_AEF3e_Level_1_WB_12.4.mp3", title: "Unit 12 practice", label: "Workbook" },
+  { track: "12.5", url: "https://cdn.imgurl.ir/uploads/c917352_AEF3e_Level_1_WB_12.5.mp3", title: "Unit 12 practice", label: "Workbook" },
+];
 
 
 // Level 1 – Unit 3A – Match the Sounds (verb phrases)
