@@ -2,7 +2,10 @@
  * Sandra describes eight people in the lineup. For each clip the player listens
  * and taps the letter of the person being described.
  *  - one clip at a time, played automatically
- *  - after a letter is picked, its chip mutes (cannot be picked again) and the next clip plays
+ *  - a correct letter locks (each letter is the answer to exactly one clip) and the next clip plays
+ *  - a wrong letter is marked for this clip only, the correct answer is NOT revealed,
+ *    and the player keeps choosing until they find it; the letter is available again next clip
+ *  - a clip scores only if it was right on the first try
  *  - no names are shown
  * Uses LAStars, LAFinish and LASfx when present.
  */
@@ -30,16 +33,17 @@
   var ANSWERS = ["H", "D", "G", "E", "C", "B", "F", "A"];
 
   var ENC_OK = ["Correct! Great listening.", "Yes, that's the one!", "Nice work!", "You heard it!", "Excellent!"];
-  var ENC_BAD = ["Not this one — listen for the clothes.", "Close! Listen to the next one carefully.", "No worries, keep listening."];
+  var ENC_BAD = ["Not this one — listen again and try another letter.", "Close! Listen for the clothes and try again.", "No worries, keep listening and choose again."];
 
   var app = document.getElementById("game-app");
   if (!app) return;
 
   var phase = "start";   // start | play | done
   var q = 0;             // current question index
-  var picks = [];        // picked letter for each question
-  var used = {};         // letters already picked (chips muted)
-  var lastFeedback = { type: "", text: "", revealLetter: "" };
+  var firstTry = [];     // true/false per question: was it right on the first pick?
+  var used = {};         // letters already answered correctly (locked for the rest of the game)
+  var wrongNow = {};     // wrong letters tried on the current clip only
+  var lastFeedback = { type: "", text: "" };
   var busy = false;      // true while the next clip is about to start
   var nextTimer = null;
   var audio = new Audio();
@@ -58,7 +62,7 @@
   }
   function correctCount() {
     var n = 0;
-    for (var i = 0; i < picks.length; i++) if (picks[i] === ANSWERS[i]) n++;
+    for (var i = 0; i < firstTry.length; i++) if (firstTry[i]) n++;
     return n;
   }
   function pct() { return Math.round((q / AUDIO.length) * 100); }
@@ -104,24 +108,23 @@
       '<div class="wt-emoji" aria-hidden="true">🎧</div>' +
       '<h1>What Are They Wearing?</h1>' +
       '<p>Look at the picture of eight people. Each clip describes one person. Listen, then tap the letter of the person Sandra is describing.</p>' +
-      '<p>Each letter can be used once, so choose carefully.</p>' +
+      '<p>If you choose the wrong letter, listen again and try another. Each letter is the right answer once.</p>' +
       '<button type="button" class="wt-btn" id="wt-start">Start ▶</button>' +
       '</section>';
     document.getElementById("wt-start").onclick = startGame;
   }
 
   function chipClass(letter) {
-    // a picked letter is muted (dimmed, disabled) and keeps its result colour
-    if (used[letter]) return "is-used " + used[letter];   // "is-used is-ok" | "is-used is-bad"
+    if (used[letter]) return "is-used is-ok";   // answered correctly earlier: locked
+    if (wrongNow[letter]) return "is-bad";      // wrong for this clip only
     return "";
   }
 
   function renderPlay() {
     var chips = LETTERS.map(function (L) {
       var cls = chipClass(L);
-      var extra = lastFeedback.revealLetter === L ? " is-reveal" : "";
-      var dis = used[L] ? "disabled" : "";
-      return '<button type="button" class="wt-chip ' + cls + extra + '" data-letter="' + L + '" ' + dis +
+      var dis = (used[L] || wrongNow[L]) ? "disabled" : "";
+      return '<button type="button" class="wt-chip ' + cls + '" data-letter="' + L + '" ' + dis +
         ' aria-label="Letter ' + L + '">' + L + '</button>';
     }).join("");
 
@@ -147,8 +150,9 @@
     });
     // restore the status line for the current state
     if (!audio.paused) setStatus("Listening…", true);
-    else if (lastFeedback.type === "" ) setStatus("Listen to the clip", false);
-    else setStatus("Choose the next letter", false);
+    else if (lastFeedback.type === "") setStatus("Listen to the clip", false);
+    else if (lastFeedback.type === "bad") setStatus("Try another letter", false);
+    else setStatus("Next clip…", false);
   }
 
   /* ---------- logic ---------- */
@@ -158,38 +162,46 @@
     startedAt = Date.now();
     phase = "play";
     q = 0;
-    picks = [];
+    firstTry = [];
     used = {};
-    lastFeedback = { type: "", text: "", revealLetter: "" };
+    wrongNow = {};
+    lastFeedback = { type: "", text: "" };
     busy = false;
     render();
     playClip();   // the Start tap is the user gesture that lets audio play
   }
 
   function onPick(letter) {
-    if (phase !== "play" || busy || used[letter]) return;
-    var correct = ANSWERS[q];
-    var ok = letter === correct;
-    picks.push(letter);
-    used[letter] = ok ? "is-ok" : "is-bad";
-    busy = true;
-    sfx(ok ? "correct" : "wrong");
-    lastFeedback = ok
-      ? { type: "ok", text: pick(ENC_OK), revealLetter: "" }
-      : { type: "bad", text: pick(ENC_BAD) + " The answer was " + correct + ".", revealLetter: correct };
-    // the chip for the letter just picked is now muted, so it cannot be picked again
-    var chipEl = app.querySelector('.wt-chip[data-letter="' + letter + '"]');
-    if (chipEl) { chipEl.disabled = true; chipEl.classList.add("is-used", ok ? "is-ok" : "is-bad"); }
-    audio.pause();
+    if (phase !== "play" || busy || used[letter] || wrongNow[letter]) return;
+    var ok = letter === ANSWERS[q];
+
+    if (ok) {
+      // first pick on this clip decides whether it scores
+      if (firstTry[q] === undefined) firstTry[q] = Object.keys(wrongNow).length === 0;
+      used[letter] = "is-ok";
+      busy = true;
+      sfx("correct");
+      lastFeedback = { type: "ok", text: pick(ENC_OK) };
+      audio.pause();
+      render();
+      nextTimer = setTimeout(nextQuestion, 800);
+      return;
+    }
+
+    // wrong: mark it for this clip only, do not reveal the answer, let the player choose again
+    if (firstTry[q] === undefined) firstTry[q] = false;
+    wrongNow[letter] = true;
+    sfx("wrong");
+    lastFeedback = { type: "bad", text: pick(ENC_BAD) };
     render();
-    nextTimer = setTimeout(nextQuestion, ok ? 800 : 1500);
   }
 
   function nextQuestion() {
     nextTimer = null;
     busy = false;
     q += 1;
-    lastFeedback = { type: "", text: "", revealLetter: "" };
+    wrongNow = {};
+    lastFeedback = { type: "", text: "" };
     if (q >= AUDIO.length) return finishGame();
     render();
     playClip();           // the next clip plays automatically

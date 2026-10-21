@@ -149,7 +149,7 @@
       var it = items[i];
       var st = pickClass("word", i);
       return '<button type="button" class="mm-tile ' + st.cls + '" data-side="word" data-i="' + i + '" ' + st.dis + '>' +
-        '<span class="mm-word">' + esc(it.word) + '</span>' +
+        '<span class="mm-word' + (it.word.length >= 9 && it.word.indexOf(" ") < 0 ? " is-long" : "") + '">' + esc(it.word) + '</span>' +
         '</button>';
     }).join("");
 
@@ -192,7 +192,10 @@
       '<span class="mm-stat">' + setFirstTry + ' of 6 right first time</span>' +
       '<button type="button" class="mm-btn" id="mm-next">' + (last ? "See my results ▶" : "Next set ▶") + '</button>' +
       '</section>';
-    document.getElementById("mm-next").onclick = function () {
+    var nextBtn = document.getElementById("mm-next");
+    nextBtn.onclick = function () {
+      if (phase !== "setdone") return;   // already moved on: ignore repeat taps
+      nextBtn.disabled = true;
       if (setIdx === SETS.length - 1) finishGame();
       else startSet(setIdx + 1);
     };
@@ -316,6 +319,7 @@
   }
 
   function finishGame() {
+    if (phase === "done") return;   // never save or show the result twice
     phase = "done";
     var total = ITEMS.length;
     var pct = Math.round((firstTryTotal / total) * 100);
