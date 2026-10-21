@@ -936,3 +936,165 @@ html[data-theme="dark"] .ps-line-fb.bad { color: #f87171; }
     padding: 7px 9px;
   }
 }
+
+/* =====================================================================
+   WRITE SCREEN — fluid, fits one screen, no scrolling (desktop + mobile)
+   ===================================================================== */
+#game-app .ps-play-write {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: clamp(4px, 1.2vh, 14px) !important;
+  padding: clamp(4px, 1vh, 12px) clamp(12px, 3vw, 36px) clamp(6px, 1.2vh, 14px) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* Picture: as large as the height allows, never taller than ~38% of the screen */
+#game-app .ps-pic-tree {
+  flex: 0 1 auto !important;
+  min-height: 0 !important;
+  width: fit-content !important;
+  max-width: min(640px, 92vw) !important;
+  margin: 0 auto !important;
+}
+#game-app .ps-pic-tree .ps-pic {
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: clamp(90px, 36vh, 420px) !important;
+  object-fit: contain !important;
+  margin: 0 auto !important;
+}
+
+#game-app .ps-hint {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 0 12px !important;
+  text-align: center !important;
+  font-size: clamp(0.82rem, 1.9vh, 1.1rem) !important;
+  line-height: 1.3 !important;
+}
+
+/* The list takes the remaining height and shares it between the rows */
+#game-app .ps-write-list {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  max-width: min(820px, 100%) !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: clamp(3px, 0.9vh, 10px) !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#game-app .ps-write-line {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  max-height: clamp(34px, 8.2vh, 68px) !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: clamp(8px, 1.2vw, 16px) !important;
+  margin: 0 !important;
+}
+
+#game-app .ps-pair-label {
+  flex: 0 0 clamp(96px, 17vw, 170px) !important;
+  text-align: right !important;
+  margin: 0 !important;
+  font-size: clamp(0.82rem, 2vh, 1.15rem) !important;
+  white-space: nowrap !important;
+}
+
+#game-app .ps-input-wrap {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  max-height: 68px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: clamp(8px, 1vw, 14px) !important;
+}
+
+#game-app .ps-input {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  width: auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 60px !important;
+  box-sizing: border-box !important;
+  padding: 0 clamp(10px, 1.4vw, 18px) !important;
+  font-size: clamp(0.92rem, 2.2vh, 1.2rem) !important;
+  border-radius: clamp(10px, 1.6vh, 16px) !important;
+}
+
+#game-app .ps-line-fb {
+  flex: 0 0 auto !important;
+  max-width: 46% !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  font-size: clamp(0.7rem, 1.7vh, 0.95rem) !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+  white-space: normal !important;
+}
+
+#game-app .ps-result {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  text-align: center !important;
+  font-size: clamp(0.85rem, 2vh, 1.05rem) !important;
+}
+
+#game-app .ps-write-actions {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+#game-app .ps-write-actions .ps-btn {
+  padding: clamp(7px, 1.2vh, 12px) clamp(18px, 2.5vw, 30px) !important;
+  font-size: clamp(0.9rem, 2vh, 1.1rem) !important;
+}
+
+/* Phones / narrow portrait: after checking, the correction goes under its box */
+@media (max-width: 600px) {
+  #game-app .ps-write-line { flex-wrap: nowrap !important; }
+  #game-app .ps-pair-label { flex: 0 0 118px !important; width: 118px !important; font-size: 0.76rem !important; }
+  #game-app .ps-input-wrap { flex-direction: column !important; align-items: stretch !important; justify-content: center !important; gap: 2px !important; }
+  #game-app .ps-input { flex: 0 0 auto !important; height: clamp(30px, 5.5vh, 46px) !important; }
+  #game-app .ps-line-fb { max-width: 100% !important; font-size: 0.72rem !important; }
+  #game-app .ps-pic-tree .ps-pic { max-height: 24vh !important; }
+}
+
+/* After checking (any screen): the picture is no longer needed, so the rows get the room for corrections */
+#game-app .ps-play-write:has(.ps-line-fb.ok, .ps-line-fb.bad) .ps-pic-tree { display: none !important; }
+
+/* Wide screens with many rows: keep rows generous but never taller than needed */
+@media (min-width: 1100px) {
+  #game-app .ps-write-list { max-width: 880px !important; }
+  #game-app .ps-pair-label { flex-basis: 190px !important; }
+}
+
+/* Very short screens: shrink the picture first */
+@media (max-height: 460px) {
+  #game-app .ps-pic-tree .ps-pic { max-height: 20vh !important; }
+}
+@media (max-width: 600px) {
+  #game-app .ps-play-write:has(.ps-line-fb.ok, .ps-line-fb.bad) .ps-hint { display: none !important; }
+}

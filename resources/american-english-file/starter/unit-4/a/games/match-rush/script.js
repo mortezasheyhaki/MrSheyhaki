@@ -315,13 +315,4 @@ const GAME_ID = "starter-4a-match-rush";
   $("backToStart").addEventListener("click", () => { stopAudio(); show("start"); });
   $("playAgainBtn").addEventListener("click", () => show("start"));
 
-  const backBtn = $("backBtn");
-  if (backBtn) {
-    backBtn.addEventListener("click", (e) => {
-      if (history.length > 1) {
-        e.preventDefault();
-        history.back();
-      }
-    });
-  }
 })();

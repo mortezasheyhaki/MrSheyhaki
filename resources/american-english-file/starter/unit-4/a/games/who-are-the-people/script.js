@@ -403,7 +403,6 @@
         return;
       }
 
-      var stars = saveStars();
       var total = 4 + PART2.length;
       var got = part1Correct + part2Correct;
       app.innerHTML =

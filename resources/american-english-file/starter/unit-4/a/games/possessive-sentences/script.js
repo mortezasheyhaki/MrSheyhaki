@@ -216,7 +216,6 @@
         return;
       }
 
-      const stars = saveStars();
       app.innerHTML =
         '<header class="ps-topbar">' +
         '<a class="ps-back" href="../" aria-label="Back">←</a>' +

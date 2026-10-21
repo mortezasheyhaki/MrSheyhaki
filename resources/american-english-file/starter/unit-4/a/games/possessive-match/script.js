@@ -202,9 +202,10 @@
   }
 
   function calcStars() {
-    if (correctCount >= PAIRS.length) return 3;
-    if (correctCount >= 5) return 2;
-    if (correctCount >= 3) return 1;
+    const total = PAIRS.length;
+    if (correctCount >= total) return 3;
+    if (correctCount >= Math.ceil(total * 0.7)) return 2;
+    if (correctCount >= Math.ceil(total * 0.4)) return 1;
     return 0;
   }
 

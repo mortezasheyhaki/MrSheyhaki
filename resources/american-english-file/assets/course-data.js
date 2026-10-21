@@ -219,7 +219,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.games = [
   { title: "Match Conversations", url: "match-conversations/", label: "Listening" },
   { title: "Match Number 1", url: "match-number-1/", label: "Vocabulary" },
   { title: "Match Number 2", url: "match-number-2/", label: "Vocabulary" },
-  { title: "Match Numbers", url: "match-numbers/", label: "Vocabulary" },
   { title: "Number Flashcards", url: "number-flashcards/", label: "Vocabulary" },
   { title: "Numbers Practice", url: "numbers-practice/", label: "Vocabulary" },
   { title: "Personal Info", url: "personal-info/", label: "Speaking" },
@@ -341,6 +340,8 @@ COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.games = [
 // Unit 7B – Games
 COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.games = [
   { title: "Subject vs Object Pronouns", url: "subject-object-pronouns/" },
+  { title: "Subject vs Object · Sentences", url: "subject-object-pronouns/sentences/", label: "Grammar" },
+  { title: "Subject vs Object · Words", url: "subject-object-pronouns/words/", label: "Grammar" },
 ];
 
 // Unit 9A – Present continuous + travel + messages
@@ -731,6 +732,13 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].games = 
   { title: "Price Match", url: "price-match/", label: "Vocabulary" },
   { title: "What does Rob order?", url: "rob-orders/", label: "Vocabulary" },
   { title: "Three Sounds Match", url: "three-sounds-match/", label: "Listening" }
+];
+
+// Practical English 6 – Starter
+// Both games sit at practical-english-6/<game>/, one level above games/, hence "../".
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[6].games = [
+  { title: "Bob's City Directions", url: "../bob-city/", label: "Speaking" },
+  { title: "Where Is It?", url: "../where-is-it/", label: "Speaking" }
 ];
 
 

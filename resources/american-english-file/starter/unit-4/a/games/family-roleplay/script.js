@@ -361,7 +361,6 @@
         return;
       }
 
-      const stars = saveStars();
       app.innerHTML =
         '<header class="fr-topbar">' +
         '<a class="fr-back" href="../" aria-label="Back">←</a>' +
