@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEF Starter · Tests & Exams | Mr. Sheyhaki</title>
+<meta name="description" content="Unit quizzes and tests for American English File Starter.">
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../theme.css">
+<link rel="stylesheet" href="../../../style.css">
+<style>
+  .tests-page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 4rem;
+  }
+  .tests-page .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+    transition: color 0.2s;
+  }
+  .tests-page .back-link:hover { color: #0d9488; }
+  .tests-page .page-badge {
+    display: inline-block;
+    background: #ccfbf1;
+    color: #0f766e;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    margin-bottom: 0.9rem;
+  }
+  .tests-page h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.3rem;
+    color: #0f172a;
+  }
+  .tests-page .subtitle {
+    color: #64748b;
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+  }
+  .units-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.1rem;
+  }
+  @media (max-width: 900px) {
+    .units-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 520px) {
+    .units-grid { grid-template-columns: 1fr; }
+  }
+  .unit-card {
+    border-radius: 1.15rem;
+    padding: 1.35rem 1.25rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+  }
+  .unit-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.18);
+  }
+  .unit-card .arrow {
+    position: absolute;
+    top: 0.95rem;
+    right: 0.95rem;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    backdrop-filter: blur(4px);
+  }
+  .unit-card .unit-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    opacity: 0.92;
+    margin-bottom: 0.2rem;
+  }
+  .unit-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    color: #fff;
+  }
+  .unit-card p {
+    font-size: 0.82rem;
+    opacity: 0.88;
+    margin: 0;
+    line-height: 1.4;
+    color: #fff;
+  }
+  .unit-card::after {
+    content: "";
+    position: absolute;
+    bottom: -30px;
+    right: -30px;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+  }
+  .unit-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.65rem;
+  }
+  .unit-chips span {
+    font-size: 0.68rem;
+    font-weight: 600;
+    background: rgba(255,255,255,0.18);
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+  }
+  .section-title { font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0 0 .85rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+  .section-title small { font-size: .75rem; font-weight: 600; color: #64748b; }
+  .tests-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.1rem; margin-bottom: 2.25rem; }
+  .test-card {
+    display: block; text-decoration: none; color: #fff; position: relative; overflow: hidden;
+    border-radius: 1.15rem; padding: 1.35rem 1.25rem; min-height: 150px;
+    background: linear-gradient(145deg, #0f766e 0%, #0d9488 50%, #14b8a6 100%);
+    box-shadow: 0 8px 24px rgba(13,148,136,.2); transition: transform .22s, box-shadow .22s;
+  }
+  .test-card:hover { transform: translateY(-4px); box-shadow: 0 14px 32px rgba(13,148,136,.28); }
+  .test-card .t-badge { font-size: .68rem; font-weight: 700; letter-spacing: .06em; opacity: .92; margin-bottom: .35rem; }
+  .test-card h3 { font-size: 1.15rem; font-weight: 800; margin: 0 0 .3rem; color: #fff; padding-right: 4.5rem; }
+  .test-card p { font-size: .85rem; opacity: .92; margin: 0; line-height: 1.4; color: #fff; }
+  .test-card .arrow {
+    position: absolute; top: .9rem; right: .9rem; width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; font-size: .9rem;
+  }
+  .test-card .unit-chips { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .65rem; }
+  .test-card .unit-chips span { font-size: .68rem; font-weight: 600; background: rgba(255,255,255,.2); padding: .2rem .5rem; border-radius: 999px; }
+  [data-theme="dark"] .section-title, body.dark .section-title { color: #f1f5f9; }
+  .u-purple { background: linear-gradient(145deg, #3b0764 0%, #5b21b6 50%, #6d28d9 100%); }
+  .u-teal   { background: linear-gradient(145deg, #115e59 0%, #0d9488 50%, #14b8a6 100%); }
+  .u-orange { background: linear-gradient(145deg, #7c2d12 0%, #c2410c 50%, #ea580c 100%); }
+  .u-blue   { background: linear-gradient(145deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%); }
+  .unit-card.is-empty {
+    opacity: 0.72;
+    cursor: default;
+  }
+  .unit-card.is-empty:hover {
+    transform: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+  .coming-note {
+    margin-top: 1.5rem;
+    padding: 1rem 1.15rem;
+    border-radius: 0.9rem;
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    color: #0f766e;
+    font-size: 0.95rem;
+  }
+  [data-theme="dark"] .tests-page h1,
+  body.dark .tests-page h1 { color: #f1f5f9; }
+  [data-theme="dark"] .tests-page .subtitle,
+  body.dark .tests-page .subtitle { color: #94a3b8; }
+  [data-theme="dark"] .tests-page .back-link,
+  body.dark .tests-page .back-link { color: #94a3b8; }
+  [data-theme="dark"] .coming-note,
+  body.dark .coming-note {
+    background: rgba(15, 118, 110, 0.15);
+    border-color: rgba(20, 184, 166, 0.35);
+    color: #5eead4;
+  }
+</style>
+<link rel="stylesheet" href="../assets/tests-ui.css">
+</head>
+<body>
+
+<header class="arcade-header-bar">
+<nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+      <a href="../../../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+      <a href="../../../../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+      <a href="../../../" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+      <a href="../../../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+      <a href="../../../../learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+    </nav>
+</header>
+
+<main class="tests-page">
+  <a href="../" class="back-link">← Back to Tests &amp; Exams</a>
+
+  <div class="page-badge">AEF STARTER · TESTS</div>
+  <h1>American English File Starter</h1>
+  <p class="subtitle">Unit tests and practice activities will appear here as they are added.</p>
+
+  <h2 class="section-title">Tests <small>Finish a test to earn 1 star ★</small></h2>
+  <div class="tests-grid" id="testsGrid">
+    <a class="test-card" href="unit-4/tick-correct-sentence/">
+      <span class="ts-star ts-corner" data-star="starter-u4-tick-sentence" role="img">☆</span>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="t-badge">UNIT 04 · GRAMMAR</div>
+      <h3>Tick the correct sentence</h3>
+      <p>Adjective order, possessives, nationalities</p>
+      <div class="unit-chips"><span>10 items</span><span>A or B</span></div>
+    </a>
+    <a class="test-card" href="unit-4/possessive-adjectives/">
+      <span class="ts-star ts-corner" data-star="starter-u4-possessive-adjectives" role="img">☆</span>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="t-badge">UNIT 04 · GRAMMAR</div>
+      <h3>Possessive adjectives</h3>
+      <p>my, your, his, her, its, our, their</p>
+      <div class="unit-chips"><span>15 items</span><span>Choose a word</span></div>
+    </a>
+    <a class="test-card" href="unit-4/tick-correct-answer/">
+      <span class="ts-star ts-corner" data-star="starter-u4-tick-correct-answer" role="img">☆</span>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="t-badge">UNIT 04 · VOCABULARY</div>
+      <h3>Tick the correct answer</h3>
+      <p>Adjectives · choose the best reply</p>
+      <div class="unit-chips"><span>5 items</span><span>A or B</span></div>
+    </a>
+  </div>
+
+  <h2 class="section-title">Units</h2>
+  <div class="units-grid" id="unitsGrid"></div>
+
+  <p class="coming-note">Unit 4 is ready. More Starter units will appear here as they are added.</p>
+</main>
+
+<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Resources</p></footer>
+
+<script src="../../../script.js"></script>
+<script src="../../../../theme.js"></script>
+<script src="../../../../swipe-nav.js"></script>
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  function colorFor(n) {
+    if ([1, 5, 9].includes(n)) return "u-purple";
+    if ([2, 6, 10].includes(n)) return "u-teal";
+    if ([3, 7, 11].includes(n)) return "u-orange";
+    return "u-blue";
+  }
+
+  const grid = document.getElementById("unitsGrid");
+  const READY = {
+    4: { href: "unit-4/", label: "Practice activities", chips: ["3 activities", "Grammar"] }
+  };
+  for (let i = 1; i <= 12; i++) {
+    const info = READY[i];
+    if (info) {
+      const a = document.createElement("a");
+      a.href = info.href;
+      a.className = "unit-card " + colorFor(i);
+      a.dataset.num = String(i).padStart(2, "0");
+      a.style.setProperty("--i", i - 1);
+      const chips = info.chips.map(t => `<span>${t}</span>`).join("");
+      a.innerHTML = `
+        <span class="ts-star ts-corner" data-star-all="starter-u${i}-tick-sentence,starter-u${i}-possessive-adjectives,starter-u${i}-tick-correct-answer" role="img">☆</span>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="unit-label">UNIT ${String(i).padStart(2, "0")}</div>
+        <h3>Unit ${i}</h3>
+        <p>${info.label}</p>
+        <div class="unit-chips">${chips}</div>
+      `;
+      grid.appendChild(a);
+    } else {
+      const a = document.createElement("div");
+      a.className = "unit-card is-empty " + colorFor(i);
+      a.dataset.num = String(i).padStart(2, "0");
+      a.style.setProperty("--i", i - 1);
+      a.setAttribute("aria-disabled", "true");
+      a.innerHTML = `
+        <span class="arrow" aria-hidden="true">·</span>
+        <div class="unit-label">UNIT ${String(i).padStart(2, "0")}</div>
+        <h3>Unit ${i}</h3>
+        <p>Coming soon</p>
+        <div class="unit-chips"><span>Soon</span></div>
+      `;
+      grid.appendChild(a);
+    }
+  }
+</script>
+<script src="../assets/tests-stars.js"></script>
+<script src="../assets/tests-ui.js"></script>
+</body>
+</html>
