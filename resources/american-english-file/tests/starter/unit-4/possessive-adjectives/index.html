@@ -138,13 +138,14 @@ main.tq {
 /* ---------- Sentence with a blank ---------- */
 .tq-sentence {
   background: #f0fdfa; border: 2px dashed #99f6e4; border-radius: 1.1rem;
-  padding: clamp(.65rem, 2vh, 1.35rem) clamp(.75rem, 2.4vw, 1.4rem);
-  display: flex; flex-direction: column; justify-content: center; gap: .5rem;
+  padding: clamp(.7rem, 2vh, 1.35rem) clamp(.8rem, 2.4vw, 1.4rem);
+  display: flex; flex-direction: column; justify-content: center; gap: .55rem;
   min-height: 0;
-  flex: 0 1 auto;
-  font-size: clamp(1.05rem, 3.6vw, 1.4rem); font-weight: 650; line-height: 1.45;
+  flex: 0 0 auto;
+  font-size: clamp(1.05rem, 3.4vw, 1.35rem); font-weight: 650; line-height: 1.5;
   position: relative;
   z-index: 1;
+  margin-top: .15rem;
 }
 .tq-line {
   display: flex;
@@ -152,21 +153,28 @@ main.tq {
   gap: .5rem;
   width: 100%;
 }
-.tq-line > span:not(.tq-who) {
+.tq-text {
   flex: 1 1 auto;
   min-width: 0;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  /* wrap at spaces only — avoid breaking mid-word */
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: none;
 }
 .tq-who {
   flex: 0 0 auto; font-weight: 800; font-size: .78em; color: var(--pd);
   background: var(--pl); border-radius: .45rem; padding: .12rem .45rem;
   line-height: 1.35; margin-top: .08rem;
 }
+.tq-blank-group {
+  display: inline;
+  white-space: nowrap; /* blank + next word stay together */
+}
 .tq-blank {
-  display: inline-block; min-width: 3.2em; text-align: center; margin: 0 .12em;
-  border-bottom: 3px solid var(--p); color: var(--pd); font-weight: 800; padding: 0 .15em;
+  display: inline-block; min-width: 3.4em; text-align: center; margin: 0 .15em;
+  border-bottom: 3px solid var(--p); color: var(--pd); font-weight: 800; padding: 0 .2em;
   transition: color .15s, border-color .15s, background .15s;
+  vertical-align: baseline;
 }
 .tq-blank.ok { color: var(--ok); border-color: var(--ok); background: var(--okbg); border-radius: .3em .3em 0 0; }
 
@@ -359,9 +367,10 @@ footer.tq-footer p { margin: 0; }
     gap: .65rem;
   }
   .tq-sentence {
-    font-size: 1.05rem;
-    padding: .7rem .8rem;
-    gap: .45rem;
+    font-size: 1.02rem;
+    padding: .75rem .85rem;
+    gap: .5rem;
+    margin-top: .25rem;
   }
   .tq-prompt {
     font-size: 1.02rem;
@@ -525,18 +534,36 @@ function renderSentence(q) {
   blankEl = null; cap = false;
   q.lines.forEach(function (ln) {
     var row = document.createElement("div"); row.className = "tq-line";
-    if (ln.who) { var w = document.createElement("span"); w.className = "tq-who"; w.textContent = ln.who; row.appendChild(w); }
-    var p = ln.t.split("___");
+    if (ln.who) {
+      var w = document.createElement("span");
+      w.className = "tq-who";
+      w.textContent = ln.who;
+      row.appendChild(w);
+    }
+    var parts = ln.t.split("___");
     var span = document.createElement("span");
-    span.appendChild(document.createTextNode(p[0]));
-    if (p.length > 1) {
-      var before = p[0].trim();
+    span.className = "tq-text";
+    span.appendChild(document.createTextNode(parts[0]));
+    if (parts.length > 1) {
+      var before = parts[0].trim();
       cap = before === "" || /[.!?]$/.test(before);
+      // Keep blank + first following word on one line (no awkward split)
+      var group = document.createElement("span");
+      group.className = "tq-blank-group";
       blankEl = document.createElement("span");
       blankEl.className = "tq-blank";
       blankEl.innerHTML = "&nbsp;";
-      span.appendChild(blankEl);
-      span.appendChild(document.createTextNode(p[1]));
+      group.appendChild(blankEl);
+      var after = parts[1] || "";
+      var m = after.match(/^(\s*\S+)([\s\S]*)$/);
+      if (m) {
+        group.appendChild(document.createTextNode(m[1]));
+        span.appendChild(group);
+        if (m[2]) span.appendChild(document.createTextNode(m[2]));
+      } else {
+        group.appendChild(document.createTextNode(after));
+        span.appendChild(group);
+      }
     }
     row.appendChild(span);
     sentenceEl.appendChild(row);
