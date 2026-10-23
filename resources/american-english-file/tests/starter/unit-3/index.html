@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 3 · Tests | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Tests and practice activities for American English File Starter Unit 3.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+  body {
+    margin: 0; min-height: 100vh;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background:
+      radial-gradient(50rem 28rem at 100% -10%, rgba(45,212,191,.2), transparent 55%),
+      linear-gradient(180deg, #f0fdfa 0%, #f8fafc 100%);
+    color: #0f172a;
+  }
+  .tests-page { max-width: 980px; margin: 0 auto; padding: 1.35rem 1.15rem 3.5rem; }
+  .top-row { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin-bottom: 1.25rem; }
+  .back-link {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .5rem 1.05rem; border-radius: 999px; background: #fff;
+    border: 1.5px solid #e2e8f0; color: #475569 !important; text-decoration: none !important;
+    font-size: .9rem; font-weight: 650;
+    box-shadow: 0 2px 8px rgba(15,23,42,.05);
+  }
+  .back-link:hover { color: #0f766e !important; border-color: #99f6e4; }
+  .page-badge {
+    display: inline-flex; background: linear-gradient(135deg, #ccfbf1, #a5f3fc);
+    color: #0f766e; font-size: .68rem; font-weight: 800; letter-spacing: .06em;
+    padding: .35rem .9rem; border-radius: 999px; border: 1px solid rgba(13,148,136,.15);
+  }
+  h1 { font-size: clamp(1.55rem, 4vw, 2rem); font-weight: 850; margin: 0 0 .35rem; }
+  .subtitle { color: #64748b; margin: 0 0 1.5rem; font-size: .98rem; }
+  .games-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.1rem;
+  }
+  .game-card {
+    display: flex; flex-direction: column; text-decoration: none; color: #fff;
+    border-radius: 1.35rem; padding: 1.4rem 1.3rem 1.25rem;
+    position: relative; overflow: hidden; min-height: 160px;
+    background: linear-gradient(145deg, #0f766e 0%, #0d9488 45%, #2dd4bf 100%);
+    box-shadow: 0 12px 28px rgba(15,23,42,.12);
+    border: 1px solid rgba(255,255,255,.18);
+    transition: transform .22s, box-shadow .22s;
+  }
+  .game-card::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(18rem 12rem at 110% -20%, rgba(255,255,255,.28), transparent 55%);
+    pointer-events: none;
+  }
+  .game-card:hover { transform: translateY(-5px); box-shadow: 0 18px 36px rgba(15,23,42,.18); }
+  .game-card .g-badge { position: relative; z-index: 1; font-size: .65rem; font-weight: 800; letter-spacing: .08em; opacity: .92; margin-bottom: .45rem; }
+  .game-card h3 { position: relative; z-index: 1; font-size: 1.18rem; font-weight: 800; margin: 0 0 .35rem; color: #fff; }
+  .game-card p { position: relative; z-index: 1; font-size: .86rem; opacity: .92; margin: 0; line-height: 1.4; color: #fff; flex: 1; }
+  .game-card .arrow {
+    position: absolute; top: 1rem; right: 1rem; z-index: 2;
+    width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.22);
+    display: flex; align-items: center; justify-content: center; font-size: .9rem;
+  }
+  .chips { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .9rem; }
+  .chips span {
+    font-size: .68rem; font-weight: 700; background: rgba(255,255,255,.2);
+    padding: .22rem .55rem; border-radius: 999px;
+  }
+  .ts-star.ts-corner {
+    position: absolute; top: 1rem; right: 3.1rem; z-index: 2;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.2); font-size: 1rem;
+  }
+  .ts-star.ts-corner.on {
+    background: linear-gradient(145deg, #fde68a, #f59e0b); color: #fff;
+    box-shadow: 0 4px 12px rgba(245,158,11,.45);
+  }
+  footer.site-footer { text-align: center; padding: 1rem; color: #64748b; font-size: .85rem; }
+  [data-theme="dark"] body, body.dark {
+    background: linear-gradient(180deg, #0b1220, #0f172a); color: #f1f5f9;
+  }
+  [data-theme="dark"] h1, body.dark h1 { color: #f8fafc; }
+  [data-theme="dark"] .subtitle, body.dark .subtitle { color: #94a3b8; }
+  [data-theme="dark"] .back-link, body.dark .back-link {
+    background: #1e293b !important; border-color: #334155 !important; color: #e2e8f0 !important;
+  }
+</style>
+<link rel="stylesheet" href="../../assets/tests-ui.css">
+</head>
+<body>
+<header class="arcade-header-bar">
+  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+    <a href="/" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+    <a href="/learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+    <a href="/resources/" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+    <a href="/about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+    <a href="/learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+  </nav>
+</header>
+<main class="tests-page">
+  <div class="top-row">
+    <a href="../" class="back-link">← Back to AEF Starter</a>
+    <span class="page-badge">AEF STARTER · UNIT 3</span>
+  </div>
+  <h1>Unit 3 · Tests</h1>
+  <p class="subtitle">Practice activities for this unit — no timers, no rankings.</p>
+  <div class="games-grid">
+    <a class="game-card" href="choose-correct-word/">
+      <span class="ts-star ts-corner" data-star="starter-u3-choose-correct-word" role="img">☆</span>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="g-badge">GRAMMAR</div>
+      <h3>Choose the correct word</h3>
+      <p>Singular / plural and a / an — one sentence at a time</p>
+      <div class="chips"><span>7 items</span><span>A or B</span><span>Grammar</span></div>
+    </a>
+  
+    <a class="game-card" href="words-in-the-box/" style="background:linear-gradient(145deg,#1e3a8a 0%,#2563eb 50%,#60a5fa 100%)">
+      <span class="ts-star ts-corner" data-star="starter-u3-words-in-the-box" role="img">☆</span>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="g-badge">VOCABULARY</div>
+      <h3>Words in the box</h3>
+      <p>photo, passport, sunglasses, phone, bag, key</p>
+      <div class="chips"><span>5 items</span><span>Word bank</span><span>Vocabulary</span></div>
+    </a>
+  
+    <a class="game-card" href="odd-one-out/" style="background:linear-gradient(145deg,#5b21b6 0%,#7c3aed 50%,#a78bfa 100%)">
+      <span class="ts-star ts-corner" data-star="starter-u3-odd-one-out" role="img">☆</span>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="g-badge">VOCABULARY</div>
+      <h3>Odd one out</h3>
+      <p>Choose the word that doesn’t belong</p>
+      <div class="chips"><span>5 items</span><span>A B C D</span><span>Vocabulary</span></div>
+    </a>
+  </div>
+</main>
+<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · AEF Starter</p></footer>
+<script src="/theme.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+<script src="../../assets/tests-stars.js"></script>
+<script src="../../assets/tests-ui.js"></script>
+</body>
+</html>

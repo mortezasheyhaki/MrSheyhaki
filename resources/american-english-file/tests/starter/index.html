@@ -334,7 +334,8 @@
 
   const grid = document.getElementById("unitsGrid");
   const READY = {
-    4: { href: "unit-4/", label: "6 practice activities ready", chips: ["Grammar", "Listening", "Writing"] }
+    3: { href: "unit-3/", label: "3 practice activities ready", chips: ["Grammar", "Vocabulary"], stars: ["starter-u3-choose-correct-word","starter-u3-words-in-the-box","starter-u3-odd-one-out"] },
+    4: { href: "unit-4/", label: "6 practice activities ready", chips: ["Grammar", "Listening", "Writing"], stars: ["starter-u4-tick-sentence","starter-u4-possessive-adjectives","starter-u4-man-woman-child","starter-u4-tick-correct-answer","starter-u4-family-questions","starter-u4-who-are-the-people-tf"] }
   };
   for (let i = 1; i <= 12; i++) {
     const info = READY[i];
@@ -345,8 +346,9 @@
       a.className = "unit-card is-ready";
       a.dataset.num = num;
       const chips = info.chips.map(t => `<span>${t}</span>`).join("");
+      const starIds = (info.stars || []).join(",") || ("starter-u" + i + "-main");
       a.innerHTML = `
-        <span class="ts-star ts-corner" data-star-all="starter-u${i}-tick-sentence,starter-u${i}-possessive-adjectives,starter-u${i}-man-woman-child,starter-u${i}-tick-correct-answer,starter-u${i}-family-questions,starter-u${i}-who-are-the-people-tf" role="img">☆</span>
+        <span class="ts-star ts-corner" data-star-all="${starIds}" role="img">☆</span>
         <span class="arrow" aria-hidden="true">→</span>
         <div class="unit-label">UNIT ${num}</div>
         <h3>Unit ${i}</h3>

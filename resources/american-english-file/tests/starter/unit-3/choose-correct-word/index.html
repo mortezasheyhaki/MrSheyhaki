@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 3 · Choose the correct word | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Choose the correct word — singular/plural and a/an. American English File Starter Unit 3.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="../../../assets/tests-ui.css">
+<style>
+:root {
+  --p: #0d9488; --pd: #0f766e; --pl: #ccfbf1;
+  --ok: #059669; --okbg: #ecfdf5;
+  --bad: #d97706; --badbg: #fffbeb;
+  --m: #64748b; --t: #0f172a; --b: #e2e8f0;
+  --pad: clamp(.35rem, 1.2vh, .9rem);
+  --gap: clamp(.3rem, 1.1vh, .75rem);
+}
+* { box-sizing: border-box; }
+html { height: 100%; overflow: hidden; }
+body.tq-body {
+  margin: 0; height: 100vh; height: 100dvh; overflow: hidden;
+  display: flex; flex-direction: column;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--t); line-height: 1.35;
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, rgba(45,212,191,.2), transparent 60%),
+    radial-gradient(50rem 28rem at -10% 110%, rgba(34,211,238,.14), transparent 60%),
+    linear-gradient(180deg, #f0fdfa, #ecfeff);
+}
+body.tq-body > header { flex: 0 0 auto; }
+main.tq {
+  flex: 1 1 auto; min-height: 0; width: 100%; max-width: 720px;
+  margin: 0 auto;
+  padding: var(--pad) clamp(.65rem, 2.5vw, 1.5rem) calc(var(--pad) + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; gap: var(--gap);
+  overflow: hidden;
+}
+.tq-top { display: flex; align-items: center; gap: .45rem; flex: 0 0 auto; }
+.tq-back {
+  display: inline-flex; align-items: center; gap: .3rem;
+  color: var(--m); text-decoration: none; font-size: .85rem; font-weight: 600; white-space: nowrap;
+  padding: .4rem .85rem; border-radius: 999px; background: #fff;
+  border: 1px solid var(--b); box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.tq-back:hover { color: var(--p); border-color: #99f6e4; }
+.tq-badge {
+  background: var(--pl); color: var(--pd);
+  font-size: .65rem; font-weight: 800; letter-spacing: .05em;
+  padding: .28rem .65rem; border-radius: 999px; white-space: nowrap;
+}
+.tq-score-pill {
+  margin-left: auto; background: #fff; border: 1px solid var(--b);
+  padding: .28rem .65rem; border-radius: 999px; font-size: .78rem; font-weight: 700; color: var(--pd);
+}
+.tq-title { flex: 0 0 auto; }
+.tq-title h1 { margin: 0; font-size: clamp(1.1rem, .65rem + 1.5vh, 1.45rem); font-weight: 800; }
+.tq-title p { margin: .1rem 0 0; color: var(--m); font-size: .88rem; }
+#quizView { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--gap); overflow: hidden; }
+.tq-progress { flex: 0 0 auto; }
+.tq-progress-meta {
+  display: flex; justify-content: space-between; font-size: .8rem; font-weight: 600; color: var(--m); margin-bottom: .25rem;
+}
+.tq-segs { display: flex; gap: 3px; }
+.tq-seg { flex: 1; height: 6px; border-radius: 999px; background: #ccfbf1; }
+.tq-seg.on { background: linear-gradient(90deg, #0d9488, #14b8a6); }
+.tq-seg.ok { background: #059669; }
+.tq-seg.bad { background: #d97706; }
+.tq-card {
+  flex: 1 1 auto; min-height: 0;
+  background: #fff; border: 1px solid var(--b); border-radius: 1.25rem;
+  box-shadow: 0 8px 28px rgba(13,148,136,.1);
+  padding: clamp(.75rem, 2vh, 1.35rem) clamp(.8rem, 2.5vw, 1.4rem);
+  display: flex; flex-direction: column; gap: clamp(.45rem, 1.3vh, .9rem);
+  overflow: hidden;
+}
+.tq-head { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem .5rem; flex: 0 0 auto; }
+.tq-chip {
+  background: var(--pl); color: var(--pd); font-size: .7rem; font-weight: 800;
+  letter-spacing: .04em; text-transform: uppercase; padding: .22rem .55rem; border-radius: 999px;
+}
+.tq-topic { font-size: .82rem; font-weight: 600; color: var(--m); }
+.tq-example {
+  flex: 0 0 auto;
+  font-size: .82rem; color: var(--m); background: #f0fdfa;
+  border-left: 3px solid var(--p); border-radius: .55rem; padding: .4rem .65rem;
+}
+.tq-example strong { color: var(--pd); }
+.tq-prompt {
+  flex: 0 0 auto; margin: 0;
+  font-size: clamp(.95rem, .55rem + 1.1vh, 1.2rem); font-weight: 800; line-height: 1.25;
+}
+.tq-sentence {
+  flex: 0 0 auto;
+  background: #f0fdfa; border: 2px dashed #99f6e4; border-radius: 1rem;
+  padding: .75rem .9rem;
+  font-size: clamp(1.05rem, 3.4vw, 1.3rem); font-weight: 650; line-height: 1.45;
+  color: var(--t);
+}
+.tq-sentence .blank-slot {
+  display: inline-block; min-width: 4.5em; text-align: center;
+  border-bottom: 3px solid var(--p); color: var(--pd); font-weight: 800;
+  margin: 0 .15em; padding: 0 .2em;
+}
+.tq-sentence .blank-slot.filled { border-bottom-color: var(--pd); }
+.tq-sentence .blank-slot.ok { color: var(--ok); border-bottom-color: var(--ok); background: var(--okbg); border-radius: .25em .25em 0 0; }
+.tq-opts {
+  display: grid; grid-template-columns: 1fr 1fr; gap: .55rem;
+  flex: 0 0 auto;
+  margin-top: .15rem;
+}
+.tq-opt {
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+  width: 100%; min-height: 3.2rem; padding: .55rem .75rem;
+  font-family: inherit; font-size: 1.15rem; font-weight: 750; color: var(--t);
+  background: #fff; border: 2.5px solid #5eead4; border-radius: 1rem; cursor: pointer;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.tq-opt:hover:not(:disabled) { border-color: var(--p); background: #f0fdfa; }
+.tq-opt.selected { border-color: var(--p); background: var(--pl); box-shadow: 0 0 0 3px rgba(13,148,136,.2); }
+.tq-opt.correct { border-color: var(--ok); background: var(--okbg); }
+.tq-opt.wrong { border-color: var(--bad); background: var(--badbg); }
+.tq-opt:disabled { cursor: default; }
+.tq-opt:disabled:not(.correct):not(.wrong) { opacity: .45; }
+.tq-letter {
+  flex: 0 0 auto; width: 1.7rem; height: 1.7rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; font-weight: 800; background: var(--pl); color: var(--pd);
+}
+.tq-opt.selected .tq-letter { background: var(--p); color: #fff; }
+.tq-opt.correct .tq-letter { background: var(--ok); color: #fff; }
+.tq-opt.wrong .tq-letter { background: var(--bad); color: #fff; }
+.tq-foot {
+  display: flex; align-items: center; gap: .5rem;
+  min-height: 2.6rem; flex: 0 0 auto;
+  margin-top: auto;
+}
+.tq-feedback {
+  flex: 1; font-size: .9rem; font-weight: 700; padding: .4rem .65rem; border-radius: .65rem;
+  visibility: hidden;
+}
+.tq-feedback.show { visibility: visible; }
+.tq-feedback.ok { background: var(--okbg); color: #065f46; }
+.tq-feedback.bad { background: var(--badbg); color: #92400e; }
+.tq-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: .6rem 1.2rem; border: 0; border-radius: 999px; font-family: inherit;
+  font-size: .95rem; font-weight: 700; cursor: pointer; text-decoration: none; white-space: nowrap;
+}
+.tq-primary { background: linear-gradient(135deg, #0d9488, #14b8a6); color: #fff; box-shadow: 0 3px 12px rgba(13,148,136,.28); }
+.tq-primary:disabled { background: #cbd5e1; color: #64748b; box-shadow: none; cursor: not-allowed; }
+.tq-ghost { background: #f1f5f9; color: var(--t); }
+.tq-result {
+  display: none; flex: 1 1 auto; min-height: 0;
+  flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  gap: .5rem; background: #fff; border: 1px solid var(--b); border-radius: 1.25rem;
+  box-shadow: 0 8px 28px rgba(13,148,136,.1); padding: 1rem; overflow: hidden;
+}
+.tq-result.show { display: flex; }
+.tq-result.perfect { background: var(--okbg); border-color: #6ee7b7; }
+.tq-big { font-size: 1.8rem; font-weight: 800; color: var(--pd); }
+.tq-result h2 { margin: 0; font-size: 1.15rem; }
+.tq-result .tq-msg { margin: 0; color: var(--m); font-size: .9rem; }
+.tq-review {
+  list-style: none; margin: 0; padding: 0; width: 100%; max-width: 24rem; text-align: left;
+  max-height: 28vh; overflow-y: auto; font-size: .82rem;
+}
+.tq-review li { padding: .22rem 0; border-bottom: 1px solid #f1f5f9; }
+.ok { color: #065f46; font-weight: 600; }
+.no { color: #92400e; font-weight: 600; }
+.tq-actions { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+footer.tq-footer { flex: 0 0 auto; text-align: center; padding: .25rem; color: var(--m); font-size: .75rem; }
+@media (max-width: 520px) {
+  .tq-badge { display: none; }
+  .tq-title p { display: none; }
+  .tq-long { display: none; }
+  main.tq { padding: .4rem .6rem .45rem; gap: .3rem; }
+  .tq-card { padding: .65rem .7rem; gap: .45rem; }
+  .tq-example { display: none; }
+  .tq-opt { min-height: 2.85rem; font-size: 1.05rem; }
+  footer.tq-footer { display: none; }
+}
+@media (max-height: 700px) {
+  .tq-title p, .tq-example, footer.tq-footer { display: none; }
+}
+@media (max-height: 620px) {
+  .tq-title { display: none; }
+  .tq-prompt { font-size: .95rem; }
+  .tq-opt { min-height: 2.55rem; }
+}
+</style>
+</head>
+<body class="tq-body">
+
+<header class="arcade-header-bar">
+  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+    <a href="/" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+    <a href="/learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+    <a href="/resources/" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+    <a href="/about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+    <a href="/learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+  </nav>
+</header>
+
+<main class="tq">
+  <div class="tq-top">
+    <a class="tq-back" href="../">← <span class="tq-long">Back to </span>Unit 3</a>
+    <span class="tq-badge">AEF STARTER · UNIT 3</span>
+    <span class="tq-score-pill" id="scoreLive">0 correct</span>
+  </div>
+  <div class="tq-title">
+    <h1>Choose the correct word</h1>
+    <p>Tap A or B, then press Check. Singular / plural and a / an.</p>
+  </div>
+
+  <div id="quizView">
+    <div class="tq-progress">
+      <div class="tq-progress-meta">
+        <span id="progLabel">Question 1 of 7</span>
+        <span id="progPart">Grammar</span>
+      </div>
+      <div class="tq-segs" id="segs"></div>
+    </div>
+    <div class="tq-card">
+      <div class="tq-head">
+        <span class="tq-chip" id="chip">1 / 7</span>
+        <span class="tq-topic" id="topic">Singular or plural</span>
+      </div>
+      <div class="tq-example" id="example">
+        <strong>Example:</strong> It’s a <u>book</u> / books.
+      </div>
+      <p class="tq-prompt">Which word is correct?</p>
+      <div class="tq-sentence" id="sentence"></div>
+      <div class="tq-opts" id="opts" role="group" aria-label="Choose a word"></div>
+      <div class="tq-foot">
+        <div class="tq-feedback" id="feedback" role="status"></div>
+        <button type="button" class="tq-btn tq-primary" id="checkBtn" disabled>Check ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tq-result" id="result">
+    <div class="tq-big" id="scoreText">0 / 7</div>
+    <h2 id="resultTitle">Nice work!</h2>
+    <p class="tq-msg" id="resultMsg"></p>
+    <ul class="tq-review" id="review"></ul>
+    <div class="tq-actions">
+      <button type="button" class="tq-btn tq-primary" id="retryBtn">Try again</button>
+      <a class="tq-btn tq-ghost" href="../">← Unit 3</a>
+    </div>
+  </div>
+</main>
+<footer class="tq-footer">© <span id="year"></span> Mr. Sheyhaki · AEF Starter · Unit 3</footer>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+/* Unique items only (duplicates across the two worksheets removed) */
+var QUESTIONS = [
+  { topic: "Singular or plural", before: "They’re his ", a: "book", b: "books", ans: "B", after: "." },
+  { topic: "Singular or plural", before: "It’s not my ", a: "coat", b: "coats", ans: "A", after: "." },
+  { topic: "Spelling · plural", before: "They’re ", a: "watchs", b: "watches", ans: "B", after: "." },
+  { topic: "Singular or plural", before: "Where are the ", a: "dictionary", b: "dictionaries", ans: "B", after: "?" },
+  { topic: "a / an", before: "It’s ", a: "an", b: "a", ans: "A", after: " ID card." },
+  { topic: "a / an", before: "It’s ", a: "an", b: "a", ans: "A", after: " umbrella." },
+  { topic: "Singular or plural", before: "They’re his ", a: "bag", b: "bags", ans: "B", after: "." }
+];
+
+var idx = 0;
+var picks = [];
+var results = [];
+var selected = null;
+
+var $ = function (id) { return document.getElementById(id); };
+
+function buildSegs() {
+  var box = $("segs");
+  box.innerHTML = "";
+  QUESTIONS.forEach(function (_, i) {
+    var s = document.createElement("div");
+    s.className = "tq-seg" + (i === idx ? " on" : "");
+    if (results[i] === true) s.classList.add("ok");
+    if (results[i] === false) s.classList.add("bad");
+    box.appendChild(s);
+  });
+}
+
+function showQ() {
+  selected = null;
+  var q = QUESTIONS[idx];
+  $("progLabel").textContent = "Question " + (idx + 1) + " of " + QUESTIONS.length;
+  $("chip").textContent = (idx + 1) + " / " + QUESTIONS.length;
+  $("topic").textContent = q.topic;
+  $("sentence").innerHTML = q.before + '<span class="blank-slot" id="blank">&nbsp;</span>' + q.after;
+  $("feedback").className = "tq-feedback";
+  $("feedback").textContent = "";
+  $("checkBtn").disabled = true;
+  $("checkBtn").textContent = "Check ✓";
+  $("checkBtn").onclick = check;
+
+  var opts = $("opts");
+  opts.innerHTML = "";
+  [
+    { key: "A", word: q.a },
+    { key: "B", word: q.b }
+  ].forEach(function (o) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "tq-opt";
+    btn.dataset.key = o.key;
+    btn.innerHTML = '<span class="tq-letter">' + o.key + "</span><span>" + o.word + "</span>";
+    btn.addEventListener("click", function () {
+      if (results[idx] !== undefined) return;
+      selected = o.key;
+      opts.querySelectorAll(".tq-opt").forEach(function (b) {
+        b.classList.toggle("selected", b.dataset.key === o.key);
+      });
+      var blank = $("blank");
+      blank.textContent = o.word;
+      blank.classList.add("filled");
+      $("checkBtn").disabled = false;
+      if (window.TestsSound) TestsSound.tap && TestsSound.tap();
+    });
+    opts.appendChild(btn);
+  });
+  buildSegs();
+  $("scoreLive").textContent = results.filter(Boolean).length + " correct";
+}
+
+function check() {
+  if (!selected) return;
+  var q = QUESTIONS[idx];
+  var ok = selected === q.ans;
+  results[idx] = ok;
+  picks[idx] = selected;
+
+  $("opts").querySelectorAll(".tq-opt").forEach(function (b) {
+    b.disabled = true;
+    if (b.dataset.key === q.ans) b.classList.add("correct");
+    else if (b.dataset.key === selected && !ok) b.classList.add("wrong");
+  });
+  var blank = $("blank");
+  blank.textContent = q.ans === "A" ? q.a : q.b;
+  if (ok) blank.classList.add("ok");
+
+  $("feedback").className = "tq-feedback show " + (ok ? "ok" : "bad");
+  $("feedback").textContent = ok
+    ? "✓ Correct!"
+    : "✗ " + (q.ans === "A" ? q.a : q.b) + " is correct.";
+  $("scoreLive").textContent = results.filter(Boolean).length + " correct";
+  buildSegs();
+
+  if (window.TestsSound) {
+    if (ok) TestsSound.ok && TestsSound.ok();
+    else TestsSound.soft && TestsSound.soft();
+  }
+
+  if (idx < QUESTIONS.length - 1) {
+    $("checkBtn").textContent = "Next →";
+    $("checkBtn").disabled = false;
+    $("checkBtn").onclick = function () {
+      idx++;
+      showQ();
+    };
+  } else {
+    $("checkBtn").textContent = "See results →";
+    $("checkBtn").disabled = false;
+    $("checkBtn").onclick = finish;
+  }
+}
+
+function finish() {
+  var correct = results.filter(Boolean).length;
+  var total = QUESTIONS.length;
+  $("quizView").style.display = "none";
+  var r = $("result");
+  r.classList.add("show");
+  r.classList.toggle("perfect", correct === total);
+  $("scoreText").textContent = correct + " / " + total;
+  $("resultTitle").textContent =
+    correct === total ? "Perfect!" : correct >= Math.ceil(total * 0.6) ? "Nice work!" : "Keep practicing!";
+  $("resultMsg").textContent =
+    correct === total ? "You chose every word correctly." : "Review the answers below.";
+
+  var ul = $("review");
+  ul.innerHTML = "";
+  QUESTIONS.forEach(function (q, i) {
+    var ok = results[i];
+    var right = q.ans === "A" ? q.a : q.b;
+    var chose = picks[i] === "A" ? q.a : q.b;
+    var li = document.createElement("li");
+    if (ok) {
+      li.innerHTML = '<span class="ok">✓ ' + (i + 1) + ". " + q.before + right + q.after + "</span>";
+    } else {
+      li.innerHTML = '<span class="no">✗ ' + (i + 1) + ". " + chose +
+        '</span> → <span class="ok">' + right + "</span>";
+    }
+    ul.appendChild(li);
+  });
+
+  var gameId = "starter-u3-choose-correct-word";
+  try {
+    if (window.TestStars && typeof TestStars.award === "function") TestStars.award(gameId);
+  } catch (e0) {}
+  try {
+    if (window.LAFinish && typeof LAFinish.show === "function") {
+      LAFinish.show({
+        gameId: gameId,
+        gameName: "Choose the correct word",
+        score: correct,
+        total: total,
+        title: "Choose the correct word",
+        backHref: "../",
+        onAgain: function () { $("retryBtn").click(); },
+        category: "tests",
+        unit: "starter-3"
+      });
+    } else if (window.LAStars) {
+      if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(gameId);
+      if (typeof LAStars.saveFromAccuracy === "function") {
+        LAStars.saveFromAccuracy(gameId, Math.round((correct / total) * 100));
+      }
+    }
+  } catch (e) {}
+}
+
+$("retryBtn").addEventListener("click", function () {
+  idx = 0; picks = []; results = [];
+  $("result").classList.remove("show");
+  $("quizView").style.display = "flex";
+  showQ();
+});
+
+showQ();
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="../../../assets/tests-stars.js"></script>
+<script src="../../../assets/tests-ui.js"></script>
+</body>
+</html>
