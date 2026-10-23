@@ -109,7 +109,10 @@ main.tq {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: clamp(.5rem, 1.8vh, 1.1rem);
+  gap: clamp(.45rem, 1.6vh, 1rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .tq-head { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem .65rem; }
 .tq-chip {
@@ -122,30 +125,62 @@ main.tq {
   border-left: 3px solid var(--p); border-radius: .6rem; padding: .45rem .75rem;
 }
 .tq-example strong { color: var(--pd); }
-.tq-prompt { margin: 0; font-size: clamp(1.05rem, .6rem + 1.5vh, 1.5rem); font-weight: 800; }
+.tq-prompt {
+  margin: 0 0 .1rem;
+  font-size: clamp(1rem, .55rem + 1.2vh, 1.3rem);
+  font-weight: 800;
+  line-height: 1.3;
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+}
 
 /* ---------- Sentence with a blank ---------- */
 .tq-sentence {
   background: #f0fdfa; border: 2px dashed #99f6e4; border-radius: 1.1rem;
-  padding: clamp(.7rem, 2.2vh, 1.6rem) clamp(.8rem, 2.4vw, 1.6rem);
-  display: flex; flex-direction: column; justify-content: center; gap: .35rem;
-  min-height: clamp(4.6rem, 14vh, 9rem);
-  font-size: clamp(1.15rem, 4.6vw, 1.5rem); font-weight: 650; line-height: 1.5;
+  padding: clamp(.65rem, 2vh, 1.35rem) clamp(.75rem, 2.4vw, 1.4rem);
+  display: flex; flex-direction: column; justify-content: center; gap: .5rem;
+  min-height: 0;
+  flex: 0 1 auto;
+  font-size: clamp(1.05rem, 3.6vw, 1.4rem); font-weight: 650; line-height: 1.45;
+  position: relative;
+  z-index: 1;
 }
-.tq-line { display: flex; align-items: baseline; gap: .6rem; }
+.tq-line {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  width: 100%;
+}
+.tq-line > span:not(.tq-who) {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
 .tq-who {
-  flex: 0 0 auto; font-weight: 800; font-size: .8em; color: var(--pd);
-  background: var(--pl); border-radius: .45rem; padding: 0 .5rem;
+  flex: 0 0 auto; font-weight: 800; font-size: .78em; color: var(--pd);
+  background: var(--pl); border-radius: .45rem; padding: .12rem .45rem;
+  line-height: 1.35; margin-top: .08rem;
 }
 .tq-blank {
-  display: inline-block; min-width: 3.4em; text-align: center; margin: 0 .12em;
-  border-bottom: 3px solid var(--p); color: var(--pd); font-weight: 800; padding: 0 .2em;
+  display: inline-block; min-width: 3.2em; text-align: center; margin: 0 .12em;
+  border-bottom: 3px solid var(--p); color: var(--pd); font-weight: 800; padding: 0 .15em;
   transition: color .15s, border-color .15s, background .15s;
 }
 .tq-blank.ok { color: var(--ok); border-color: var(--ok); background: var(--okbg); border-radius: .3em .3em 0 0; }
 
 /* ---------- Word choices (7 possessive adjectives) ---------- */
-.tq-opts { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(.45rem, 1.4vh, .9rem); }
+.tq-opts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(.4rem, 1.2vh, .8rem);
+  flex: 0 0 auto;
+}
+@media (max-width: 520px) {
+  .tq-opts { grid-template-columns: repeat(2, 1fr); }
+  .tq-opt { min-height: 3rem !important; font-size: 1.08rem !important; }
+}
 .tq-opt {
   display: flex; align-items: center; justify-content: center;
   width: 100%; font-family: inherit; text-align: center;
@@ -273,7 +308,9 @@ footer.tq-footer p { margin: 0; }
   .tq-title { display: none; }
 }
 @media (max-height: 740px) and (max-width: 719px) {
-  .tq-sentence { font-size: 1.08rem; min-height: 0; }
+  .tq-sentence { font-size: 1.05rem; min-height: 0; }
+  .tq-card { justify-content: flex-start; }
+  .tq-example { font-size: .82rem; }
 }
 @media (max-height: 620px) and (max-width: 599px) {
   .tq-result .tq-msg { display: none; }
@@ -293,13 +330,15 @@ footer.tq-footer p { margin: 0; }
   .tq-title { display: none; }
   .tq-badge { display: none; }
   .tq-prompt { display: none; }
-  .tq-opt { min-height: 2.6rem; font-size: 1rem; padding: .3rem .4rem; }
-  .tq-sentence { min-height: 0; padding: .5rem .8rem; font-size: 1.2rem; }
+  .tq-example { display: none; }
+  .tq-opt { min-height: 2.7rem; font-size: 1rem; padding: .3rem .4rem; }
+  .tq-sentence { padding: .55rem .7rem; font-size: 1.05rem; gap: .4rem; }
   .tq-foot { min-height: 2.6rem; }
   .tq-btn { padding: .55rem 1.2rem; }
   .tq-dot { width: 1.6rem; height: 1.6rem; font-size: .72rem; }
   .tq-starbig { width: 2.6rem; height: 2.6rem; font-size: 1.5rem; }
   .tq-starcap { display: none; }
+  .tq-card { justify-content: flex-start; gap: .55rem; }
 }
 
 /* ================= Narrow phones ================= */
@@ -314,12 +353,42 @@ footer.tq-footer p { margin: 0; }
   .tq-dots { gap: .22rem; }
   .tq-dot { width: 1.4rem; height: 1.4rem; font-size: .68rem; }
   .tq-dot.sp { margin-left: .35rem; }
+  .tq-card {
+    justify-content: flex-start;
+    padding: .85rem .85rem 1rem;
+    gap: .65rem;
+  }
+  .tq-sentence {
+    font-size: 1.05rem;
+    padding: .7rem .8rem;
+    gap: .45rem;
+  }
+  .tq-prompt {
+    font-size: 1.02rem;
+    margin-bottom: 0;
+  }
+  .tq-example {
+    font-size: .82rem;
+    padding: .4rem .6rem;
+  }
+  /* Keep A/B dialogue readable */
+  .tq-line { gap: .4rem; }
+  .tq-who { font-size: .75em; padding: .12rem .4rem; }
 }
 @media (max-width: 420px) {
   .tq-back { padding: .4rem .8rem; font-size: .85rem; }
-  .tq-opt { font-size: 1.02rem; border-width: 2px; }
+  .tq-opt { font-size: 1.05rem; border-width: 2px; min-height: 2.9rem; }
   .tq-btn { padding: .65rem 1.2rem; font-size: .95rem; }
   .tq-feedback { font-size: .92rem; padding: .5rem .7rem; }
+  .tq-title h1 { font-size: 1.2rem; }
+  main.tq { padding-left: .7rem; padding-right: .7rem; }
+}
+
+/* Phones in portrait: prevent prompt/sentence collision */
+@media (max-width: 600px) {
+  .tq-card > * { flex-shrink: 0; }
+  .tq-sentence { flex-shrink: 1; }
+  .tq-head, .tq-example, .tq-prompt, .tq-opts, .tq-foot { position: relative; z-index: 1; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
