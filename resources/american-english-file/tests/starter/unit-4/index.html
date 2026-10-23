@@ -8,150 +8,223 @@
 <link rel="stylesheet" href="/style.css">
 <link rel="stylesheet" href="/theme.css">
 <style>
-  .tests-page { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+  /* Hide site chrome on this tests hub */
+  header.arcade-header-bar { display: none !important; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background:
+      radial-gradient(50rem 28rem at 100% -10%, rgba(45,212,191,.2), transparent 55%),
+      radial-gradient(40rem 24rem at -5% 100%, rgba(99,102,241,.12), transparent 50%),
+      linear-gradient(180deg, #f0fdfa 0%, #f8fafc 50%, #eef2ff 100%);
+    color: #0f172a;
+  }
+
+  .tests-page { max-width: 980px; margin: 0 auto; padding: 1.35rem 1.15rem 3.5rem; }
+
+  .top-row {
+    display: flex; flex-wrap: wrap; align-items: center; gap: .55rem;
+    margin-bottom: 1.25rem;
+  }
   .back-link {
     display: inline-flex; align-items: center; gap: .4rem;
-    color: #64748b; text-decoration: none; font-size: .9rem; margin-bottom: 1.15rem;
+    padding: .5rem 1.05rem;
+    border-radius: 999px;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    color: #475569 !important;
+    text-decoration: none !important;
+    font-size: .9rem; font-weight: 650;
+    box-shadow: 0 2px 8px rgba(15,23,42,.05);
+    transition: border-color .15s, color .15s, box-shadow .15s, transform .15s;
   }
-  .back-link:hover { color: #0d9488; }
+  .back-link:hover {
+    color: #0f766e !important;
+    border-color: #99f6e4;
+    box-shadow: 0 4px 14px rgba(13,148,136,.12);
+    transform: translateY(-1px);
+  }
   .page-badge {
-    display: inline-block; background: #ccfbf1; color: #0f766e;
-    font-size: .7rem; font-weight: 700; letter-spacing: .05em;
-    padding: .3rem .85rem; border-radius: 999px; margin-bottom: .85rem;
+    display: inline-flex; align-items: center;
+    background: linear-gradient(135deg, #ccfbf1, #a5f3fc);
+    color: #0f766e;
+    font-size: .68rem; font-weight: 800; letter-spacing: .06em;
+    padding: .35rem .9rem; border-radius: 999px;
+    border: 1px solid rgba(13,148,136,.15);
   }
-  h1 { font-size: 1.85rem; font-weight: 800; margin-bottom: .3rem; color: #0f172a; }
-  .subtitle { color: #64748b; margin-bottom: 1.5rem; }
+
+  h1 {
+    font-size: clamp(1.55rem, 4vw, 2rem); font-weight: 850;
+    letter-spacing: -.02em; margin: 0 0 .35rem;
+  }
+  .subtitle { color: #64748b; margin: 0 0 1.5rem; font-size: .98rem; }
+
   .games-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.1rem;
   }
+
   .game-card {
-    display: block; text-decoration: none; color: #fff;
-    border-radius: 1.15rem; padding: 1.35rem 1.25rem;
-    background: linear-gradient(145deg, #0f766e 0%, #0d9488 50%, #14b8a6 100%);
-    box-shadow: 0 8px 24px rgba(13,148,136,.18);
-    transition: transform .2s, box-shadow .2s;
-    min-height: 130px; position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+    text-decoration: none; color: #fff;
+    border-radius: 1.35rem;
+    padding: 1.4rem 1.3rem 1.25rem;
+    position: relative; overflow: hidden;
+    min-height: 168px;
+    box-shadow: 0 12px 28px rgba(15,23,42,.12);
+    transition: transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s;
+    border: 1px solid rgba(255,255,255,.18);
   }
-  .game-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(13,148,136,.25); }
+  .game-card::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(18rem 12rem at 110% -20%, rgba(255,255,255,.28), transparent 55%);
+    pointer-events: none;
+  }
+  .game-card::after {
+    content: ""; position: absolute; width: 7rem; height: 7rem; border-radius: 50%;
+    background: rgba(255,255,255,.08); bottom: -2.5rem; left: -2rem; pointer-events: none;
+  }
+  .game-card:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 18px 36px rgba(15,23,42,.18);
+  }
+  .game-card:active { transform: translateY(-2px) scale(1); }
+
+  .g-grammar { background: linear-gradient(145deg, #0f766e 0%, #0d9488 45%, #2dd4bf 100%); }
+  .g-vocab   { background: linear-gradient(145deg, #1e3a8a 0%, #2563eb 50%, #60a5fa 100%); }
+  .g-speak   { background: linear-gradient(145deg, #5b21b6 0%, #7c3aed 50%, #a78bfa 100%); }
+  .g-listen  { background: linear-gradient(145deg, #9a3412 0%, #ea580c 50%, #fb923c 100%); }
+
   .game-card .g-badge {
-    font-size: .68rem; font-weight: 700; letter-spacing: .06em; opacity: .9; margin-bottom: .35rem;
+    position: relative; z-index: 1;
+    font-size: .65rem; font-weight: 800; letter-spacing: .08em;
+    opacity: .92; margin-bottom: .45rem;
   }
-  .game-card h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: .3rem; color: #fff; }
-  .game-card p { font-size: .85rem; opacity: .92; margin: 0; line-height: 1.4; color: #fff; }
+  .game-card h3 {
+    position: relative; z-index: 1;
+    font-size: 1.18rem; font-weight: 800; margin: 0 0 .35rem; color: #fff;
+    letter-spacing: -.01em; line-height: 1.25;
+  }
+  .game-card p {
+    position: relative; z-index: 1;
+    font-size: .86rem; opacity: .92; margin: 0; line-height: 1.4; color: #fff;
+    flex: 1;
+  }
   .game-card .arrow {
-    position: absolute; top: .9rem; right: .9rem;
-    width: 28px; height: 28px; border-radius: 50%;
-    background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center;
-    font-size: .85rem;
+    position: absolute; top: 1rem; right: 1rem; z-index: 2;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(255,255,255,.22);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem; font-weight: 700;
+    transition: background .15s, transform .15s;
   }
-  .chips { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .7rem; }
+  .game-card:hover .arrow { background: rgba(255,255,255,.35); transform: translateX(2px); }
+
+  .chips {
+    position: relative; z-index: 1;
+    display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .9rem;
+  }
   .chips span {
-    font-size: .68rem; font-weight: 600;
-    background: rgba(255,255,255,.2); padding: .18rem .5rem; border-radius: 999px;
+    font-size: .68rem; font-weight: 700;
+    background: rgba(255,255,255,.2);
+    padding: .22rem .55rem; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.15);
   }
-  [data-theme="dark"] h1, body.dark h1 { color: #f1f5f9; }
-  [data-theme="dark"] .subtitle, body.dark .subtitle { color: #94a3b8; }
+
+  .ts-star.ts-corner {
+    position: absolute; top: 1rem; right: 3.1rem; z-index: 2;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.2);
+    font-size: 1rem; line-height: 1;
+  }
+  .ts-star.ts-corner.on {
+    background: linear-gradient(145deg, #fde68a, #f59e0b);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(245,158,11,.45);
+  }
+
+  footer.site-footer {
+    text-align: center; padding: 1rem; color: #64748b; font-size: .85rem;
+  }
+
+  @media (max-width: 520px) {
+    .tests-page { padding: 1rem .85rem 3rem; }
+    .games-grid { grid-template-columns: 1fr; gap: .85rem; }
+    .game-card { min-height: 148px; padding: 1.2rem 1.1rem; }
+  }
 </style>
 <link rel="stylesheet" href="../../assets/tests-ui.css">
 </head>
 <body>
 
-<header class="arcade-header-bar">
-  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
-    <a href="/" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
-    <a href="/learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
-    <a href="/resources/" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-    <a href="/about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
-    <a href="/learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
-  </nav>
-</header>
-
 <main class="tests-page">
-  <a href="../" class="back-link">← Back to AEF Starter</a>
-  <div class="page-badge">AEF STARTER · UNIT 4</div>
+  <div class="top-row">
+    <a href="../" class="back-link">← Back to AEF Starter</a>
+    <span class="page-badge">AEF STARTER · UNIT 4</span>
+  </div>
+
   <h1>Unit 4 · Tests</h1>
   <p class="subtitle">Practice activities for this unit — no timers, no rankings.</p>
 
   <div class="games-grid">
-    <a class="game-card" href="tick-correct-sentence/">
+    <a class="game-card g-grammar" href="tick-correct-sentence/">
       <span class="ts-star ts-corner" data-star="starter-u4-tick-sentence" role="img">☆</span>
       <span class="arrow" aria-hidden="true">→</span>
       <div class="g-badge">GRAMMAR</div>
       <h3>Tick the correct sentence</h3>
       <p>Parts 1 &amp; 2 · Adjective order, possessives, nationalities</p>
-      <div class="chips">
-        <span>10 items</span>
-        <span>A or B</span>
-        <span>Grammar</span>
-      </div>
+      <div class="chips"><span>10 items</span><span>A or B</span><span>Grammar</span></div>
     </a>
 
-    <a class="game-card" href="possessive-adjectives/">
+    <a class="game-card g-grammar" href="possessive-adjectives/">
       <span class="ts-star ts-corner" data-star="starter-u4-possessive-adjectives" role="img">☆</span>
       <span class="arrow" aria-hidden="true">→</span>
       <div class="g-badge">GRAMMAR</div>
       <h3>Possessive adjectives</h3>
       <p>my, your, his, her, its, our, their</p>
-      <div class="chips">
-        <span>15 items</span>
-        <span>Choose a word</span>
-        <span>Grammar</span>
-      </div>
+      <div class="chips"><span>15 items</span><span>Choose a word</span><span>Grammar</span></div>
     </a>
 
-    <a class="game-card" href="man-woman-child/">
+    <a class="game-card g-grammar" href="man-woman-child/">
       <span class="ts-star ts-corner" data-star="starter-u4-man-woman-child" role="img">☆</span>
       <span class="arrow" aria-hidden="true">→</span>
       <div class="g-badge">GRAMMAR</div>
       <h3>Man, men, woman, women, child, children</h3>
       <p>People and family · one sentence at a time</p>
-      <div class="chips">
-        <span>8 items</span>
-        <span>Choose a word</span>
-        <span>Grammar</span>
-      </div>
+      <div class="chips"><span>8 items</span><span>Choose a word</span><span>Grammar</span></div>
     </a>
 
-    <a class="game-card" href="tick-correct-answer/">
+    <a class="game-card g-vocab" href="tick-correct-answer/">
       <span class="ts-star ts-corner" data-star="starter-u4-tick-correct-answer" role="img">☆</span>
       <span class="arrow" aria-hidden="true">→</span>
       <div class="g-badge">VOCABULARY</div>
       <h3>Tick the correct answer</h3>
       <p>Adjectives · choose the best reply to each question</p>
-      <div class="chips">
-        <span>5 items</span>
-        <span>A or B</span>
-        <span>Adjectives</span>
-      </div>
+      <div class="chips"><span>5 items</span><span>A or B</span><span>Adjectives</span></div>
     </a>
 
-
-    <a class="game-card" href="family-questions/">
+    <a class="game-card g-speak" href="family-questions/">
       <span class="ts-star ts-corner" data-star="starter-u4-family-questions" role="img">☆</span>
       <span class="arrow" aria-hidden="true">→</span>
       <div class="g-badge">SPEAKING · WRITING</div>
       <h3>Family questions</h3>
       <p>Parts 1 &amp; 2 · Answer about a man and a woman in your family</p>
-      <div class="chips">
-        <span>10 items</span>
-        <span>Type</span>
-        <span>Family</span>
-      </div>
+      <div class="chips"><span>10 items</span><span>Type</span><span>Family</span></div>
     </a>
 
-    <a class="game-card" href="who-are-the-people/">
+    <a class="game-card g-listen" href="who-are-the-people/">
       <span class="ts-star ts-corner" data-star="starter-u4-who-are-the-people-tf" role="img">☆</span>
       <span class="arrow" aria-hidden="true">→</span>
       <div class="g-badge">LISTENING</div>
       <h3>Who are the people?</h3>
       <p>Listen · True or False · Unit 4A audio</p>
-      <div class="chips">
-        <span>5 items</span>
-        <span>True / False</span>
-        <span>Listening</span>
-      </div>
+      <div class="chips"><span>5 items</span><span>True / False</span><span>Listening</span></div>
     </a>
-
   </div>
 </main>
 
