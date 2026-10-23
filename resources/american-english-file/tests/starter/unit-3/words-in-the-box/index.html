@@ -95,9 +95,16 @@ main.tq {
 .blank {
   display: inline-block; min-width: 4.8em; text-align: center; margin: 0 .12em;
   border-bottom: 3px solid var(--p); color: var(--pd); font-weight: 800; padding: 0 .15em;
+  min-height: 1.35em; vertical-align: baseline;
+  transition: background .15s, box-shadow .15s, border-color .15s;
 }
 .blank.filled { color: var(--pd); }
 .blank.ok { color: var(--ok); border-bottom-color: var(--ok); background: var(--okbg); border-radius: .25em .25em 0 0; }
+.blank.drag-over {
+  background: var(--pl); border-bottom-color: var(--pd);
+  box-shadow: 0 0 0 3px rgba(13,148,136,.25); border-radius: .25em .25em 0 0;
+}
+.blank.drop-ready { cursor: copy; }
 .bank-label {
   flex: 0 0 auto; font-size: .72rem; font-weight: 800; letter-spacing: .04em;
   text-transform: uppercase; color: var(--pd); margin-top: .15rem;
@@ -110,16 +117,20 @@ main.tq {
   display: flex; align-items: center; justify-content: center;
   min-height: 2.7rem; padding: .35rem .4rem;
   font-family: inherit; font-size: .98rem; font-weight: 750; color: var(--t);
-  background: #fff; border: 2.5px solid #5eead4; border-radius: .85rem; cursor: pointer;
-  transition: border-color .15s, background .15s, box-shadow .15s, opacity .15s;
+  background: #fff; border: 2.5px solid #5eead4; border-radius: .85rem; cursor: grab;
+  transition: border-color .15s, background .15s, box-shadow .15s, opacity .15s, transform .12s;
   -webkit-tap-highlight-color: transparent;
+  user-select: none; -webkit-user-select: none;
+  touch-action: manipulation;
 }
 .tq-opt:hover:not(:disabled) { border-color: var(--p); background: #f0fdfa; }
 .tq-opt.selected { border-color: var(--p); background: var(--pl); box-shadow: 0 0 0 3px rgba(13,148,136,.2); }
 .tq-opt.correct { border-color: var(--ok); background: var(--okbg); }
 .tq-opt.wrong { border-color: var(--bad); background: var(--badbg); }
-.tq-opt.used:not(.selected):not(.correct):not(.wrong) { opacity: .4; }
+.tq-opt.used:not(.selected):not(.correct):not(.wrong) { opacity: .4; cursor: default; }
 .tq-opt:disabled { cursor: default; }
+.tq-opt.dragging { opacity: .45; transform: scale(.96); cursor: grabbing; }
+.tq-opt:active:not(:disabled) { cursor: grabbing; }
 .tq-foot {
   display: flex; align-items: center; gap: .5rem; min-height: 2.5rem; flex: 0 0 auto; margin-top: auto;
 }
@@ -223,6 +234,10 @@ body.dark.tq-body {
 [data-theme="dark"] .blank.ok, body.dark .blank.ok {
   color: #6ee7b7; border-bottom-color: #10b981; background: rgba(5,150,105,.2);
 }
+[data-theme="dark"] .blank.drag-over, body.dark .blank.drag-over {
+  background: rgba(13,148,136,.3); border-bottom-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45,212,191,.3);
+}
 [data-theme="dark"] .bank-label, body.dark .bank-label { color: #5eead4; }
 [data-theme="dark"] .tq-opt, body.dark .tq-opt {
   background: #0f172a; border-color: #2dd4bf; color: #f1f5f9;
@@ -270,7 +285,7 @@ body.dark.tq-body {
   </div>
   <div class="tq-title">
     <h1>Words in the box</h1>
-    <p>Complete each sentence. Tap a word, then press Check.</p>
+    <p>Drag or tap a word into the blank, then press Check.</p>
   </div>
   <div id="quizView">
     <div class="tq-progress">
@@ -364,6 +379,46 @@ function buildSegs() {
   });
 }
 
+function selectWord(w) {
+  if (results[idx] !== undefined) return;
+  if (usedWords[w] && selected !== w) return;
+  selected = w;
+  var blank = document.getElementById("blank");
+  if (blank) {
+    blank.textContent = w;
+    blank.classList.add("filled");
+    blank.classList.remove("drag-over");
+  }
+  var opts = $("opts");
+  opts.querySelectorAll(".tq-opt").forEach(function (b) {
+    b.classList.toggle("selected", b.dataset.word === w);
+  });
+  $("checkBtn").disabled = false;
+  if (window.TestsSound) TestsSound.tap && TestsSound.tap();
+}
+
+function attachBlankDrop(blank) {
+  if (!blank || blank._dropReady) return;
+  blank._dropReady = true;
+  blank.classList.add("drop-ready");
+  blank.addEventListener("dragover", function (e) {
+    if (results[idx] !== undefined) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+    blank.classList.add("drag-over");
+  });
+  blank.addEventListener("dragleave", function () {
+    blank.classList.remove("drag-over");
+  });
+  blank.addEventListener("drop", function (e) {
+    e.preventDefault();
+    blank.classList.remove("drag-over");
+    if (results[idx] !== undefined) return;
+    var w = e.dataTransfer.getData("text/plain");
+    if (w && WORDS.indexOf(w) !== -1) selectWord(w);
+  });
+}
+
 function showQ() {
   selected = null;
   var q = QUESTIONS[idx];
@@ -380,6 +435,9 @@ function showQ() {
     dlg.appendChild(d);
   });
 
+  var blank = document.getElementById("blank");
+  if (blank) attachBlankDrop(blank);
+
   renderBank();
   buildSegs();
   $("scoreLive").textContent = results.filter(Boolean).length + " correct";
@@ -390,20 +448,25 @@ function renderBank() {
   WORDS.forEach(function (w) {
     var btn = document.createElement("button");
     btn.type = "button"; btn.className = "tq-opt"; btn.textContent = w; btn.dataset.word = w;
+    btn.setAttribute("draggable", "true");
     if (usedWords[w] && selected !== w) btn.classList.add("used");
     if (selected === w) btn.classList.add("selected");
     btn.addEventListener("click", function () {
-      if (results[idx] !== undefined) return;
-      // allow re-select even if "used" from previous wrong assumption - used only after correct
-      if (usedWords[w] && selected !== w) return;
-      selected = w;
+      selectWord(w);
+    });
+    btn.addEventListener("dragstart", function (e) {
+      if (results[idx] !== undefined || (usedWords[w] && selected !== w)) {
+        e.preventDefault();
+        return;
+      }
+      e.dataTransfer.setData("text/plain", w);
+      e.dataTransfer.effectAllowed = "copy";
+      btn.classList.add("dragging");
+    });
+    btn.addEventListener("dragend", function () {
+      btn.classList.remove("dragging");
       var blank = document.getElementById("blank");
-      if (blank) { blank.textContent = w; blank.classList.add("filled"); }
-      opts.querySelectorAll(".tq-opt").forEach(function (b) {
-        b.classList.toggle("selected", b.dataset.word === w);
-      });
-      $("checkBtn").disabled = false;
-      if (window.TestsSound) TestsSound.tap && TestsSound.tap();
+      if (blank) blank.classList.remove("drag-over");
     });
     opts.appendChild(btn);
   });

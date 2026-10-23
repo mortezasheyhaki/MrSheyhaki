@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 3 · Café dialogue | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Complete the café dialogue. Drag or tap the words into the blanks. AEF Starter Unit 3.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="../../../assets/tests-ui.css">
+<style>
+:root {
+  --p: #0d9488; --pd: #0f766e; --pl: #ccfbf1;
+  --ok: #059669; --okbg: #ecfdf5;
+  --bad: #d97706; --badbg: #fffbeb;
+  --m: #64748b; --t: #0f172a; --b: #e2e8f0;
+  --pad: clamp(.35rem, 1.2vh, .9rem);
+  --gap: clamp(.3rem, 1.1vh, .75rem);
+}
+* { box-sizing: border-box; }
+html { height: 100%; overflow: hidden; }
+body.tq-body {
+  margin: 0; height: 100vh; height: 100dvh; overflow: hidden;
+  display: flex; flex-direction: column;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--t); line-height: 1.35;
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, rgba(45,212,191,.2), transparent 60%),
+    linear-gradient(180deg, #f0fdfa, #ecfeff);
+}
+body.tq-body > header { flex: 0 0 auto; }
+main.tq {
+  flex: 1 1 auto; min-height: 0; width: 100%; max-width: 720px; margin: 0 auto;
+  padding: var(--pad) clamp(.65rem, 2.5vw, 1.5rem) calc(var(--pad) + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; gap: var(--gap); overflow: hidden;
+}
+.tq-top { display: flex; align-items: center; gap: .45rem; flex: 0 0 auto; }
+.tq-back {
+  display: inline-flex; align-items: center; gap: .3rem;
+  color: var(--m); text-decoration: none; font-size: .85rem; font-weight: 600; white-space: nowrap;
+  padding: .4rem .85rem; border-radius: 999px; background: #fff;
+  border: 1px solid var(--b); box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.tq-back:hover { color: var(--p); border-color: #99f6e4; }
+.tq-badge {
+  background: var(--pl); color: var(--pd);
+  font-size: .65rem; font-weight: 800; letter-spacing: .05em;
+  padding: .28rem .65rem; border-radius: 999px; white-space: nowrap;
+}
+.tq-score-pill {
+  margin-left: auto; background: #fff; border: 1px solid var(--b);
+  padding: .28rem .65rem; border-radius: 999px; font-size: .78rem; font-weight: 700; color: var(--pd);
+}
+.tq-title { flex: 0 0 auto; }
+.tq-title h1 { margin: 0; font-size: clamp(1.1rem, .65rem + 1.5vh, 1.4rem); font-weight: 800; }
+.tq-title p { margin: .1rem 0 0; color: var(--m); font-size: .88rem; }
+#quizView { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--gap); overflow: hidden; }
+.tq-card {
+  flex: 1 1 auto; min-height: 0; background: #fff; border: 1px solid var(--b); border-radius: 1.25rem;
+  box-shadow: 0 8px 28px rgba(13,148,136,.1);
+  padding: clamp(.7rem, 1.8vh, 1.25rem) clamp(.75rem, 2.5vw, 1.35rem);
+  display: flex; flex-direction: column; gap: clamp(.4rem, 1.2vh, .85rem); overflow: hidden;
+}
+.tq-head { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem .5rem; flex: 0 0 auto; }
+.tq-chip {
+  background: var(--pl); color: var(--pd); font-size: .7rem; font-weight: 800;
+  letter-spacing: .04em; text-transform: uppercase; padding: .22rem .55rem; border-radius: 999px;
+}
+.tq-topic { font-size: .82rem; font-weight: 600; color: var(--m); }
+.tq-prompt { flex: 0 0 auto; margin: 0; font-size: clamp(.95rem, .55rem + 1.1vh, 1.15rem); font-weight: 800; }
+
+/* Dialogue */
+.dialogue {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  display: flex; flex-direction: column; gap: .45rem;
+  padding-right: .15rem;
+}
+.line {
+  background: #f0fdfa; border: 2px solid #99f6e4; border-radius: .9rem;
+  padding: .55rem .75rem; font-size: clamp(.95rem, 2.8vw, 1.12rem); font-weight: 650; line-height: 1.45;
+  display: flex; gap: .5rem; align-items: flex-start;
+}
+.line .who {
+  flex: 0 0 auto; font-size: .72em; font-weight: 800; color: var(--pd);
+  background: var(--pl); border-radius: .4rem; padding: .15rem .4rem; min-width: 3.6em; text-align: center;
+}
+.line .text { flex: 1 1 auto; }
+.blank {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 4.6em; min-height: 1.45em; text-align: center; margin: 0 .1em;
+  border-bottom: 3px solid var(--p); color: var(--pd); font-weight: 800; padding: 0 .2em;
+  vertical-align: baseline; border-radius: .2em .2em 0 0;
+  transition: background .15s, box-shadow .15s, border-color .15s;
+  cursor: pointer;
+}
+.blank.filled { color: var(--pd); background: #f0fdfa; }
+.blank.ok { color: var(--ok); border-bottom-color: var(--ok); background: var(--okbg); }
+.blank.wrong { color: #b45309; border-bottom-color: var(--bad); background: var(--badbg); }
+.blank.drag-over {
+  background: var(--pl); border-bottom-color: var(--pd);
+  box-shadow: 0 0 0 3px rgba(13,148,136,.25);
+}
+.blank .num {
+  font-size: .7em; font-weight: 800; color: var(--m); margin-right: .15em; opacity: .7;
+}
+.blank.filled .num { display: none; }
+
+/* Word bank */
+.bank-label {
+  flex: 0 0 auto; font-size: .72rem; font-weight: 800; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--pd); margin-top: .1rem;
+}
+.tq-opts {
+  display: flex; flex-wrap: wrap; gap: .4rem; justify-content: center;
+  flex: 0 0 auto;
+}
+.tq-opt {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 2.55rem; padding: .35rem .7rem;
+  font-family: inherit; font-size: .98rem; font-weight: 750; color: var(--t);
+  background: #fff; border: 2.5px solid #5eead4; border-radius: .85rem; cursor: grab;
+  transition: border-color .15s, background .15s, box-shadow .15s, opacity .15s, transform .12s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none; -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.tq-opt:hover:not(:disabled):not(.used) { border-color: var(--p); background: #f0fdfa; }
+.tq-opt.selected { border-color: var(--p); background: var(--pl); box-shadow: 0 0 0 3px rgba(13,148,136,.2); }
+.tq-opt.used { opacity: .35; cursor: default; pointer-events: none; }
+.tq-opt.dragging { opacity: .45; transform: scale(.96); cursor: grabbing; }
+.tq-opt:active:not(:disabled):not(.used) { cursor: grabbing; }
+.tq-opt:disabled { cursor: default; }
+
+.tq-foot {
+  display: flex; align-items: center; gap: .5rem; min-height: 2.5rem; flex: 0 0 auto; margin-top: auto;
+}
+.tq-feedback {
+  flex: 1; font-size: .88rem; font-weight: 700; padding: .35rem .6rem; border-radius: .6rem; visibility: hidden;
+}
+.tq-feedback.show { visibility: visible; }
+.tq-feedback.ok { background: var(--okbg); color: #065f46; }
+.tq-feedback.bad { background: var(--badbg); color: #92400e; }
+.tq-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: .55rem 1.15rem; border: 0; border-radius: 999px; font-family: inherit;
+  font-size: .92rem; font-weight: 700; cursor: pointer; text-decoration: none; white-space: nowrap;
+}
+.tq-primary { background: linear-gradient(135deg, #0d9488, #14b8a6); color: #fff; box-shadow: 0 3px 12px rgba(13,148,136,.28); }
+.tq-primary:disabled { background: #cbd5e1; color: #64748b; box-shadow: none; cursor: not-allowed; }
+.tq-ghost { background: #f1f5f9; color: var(--t); }
+
+/* Result */
+.tq-result {
+  display: none; flex: 1 1 auto; min-height: 0; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: .5rem; background: #fff; border: 1px solid var(--b); border-radius: 1.25rem;
+  box-shadow: 0 8px 28px rgba(13,148,136,.1); padding: 1rem; overflow: hidden;
+}
+.tq-result.show { display: flex; }
+.tq-result.perfect { background: var(--okbg); border-color: #6ee7b7; }
+.tq-big { font-size: 1.8rem; font-weight: 800; color: var(--pd); }
+.tq-result h2 { margin: 0; font-size: 1.15rem; }
+.tq-result .tq-msg { margin: 0; color: var(--m); font-size: .9rem; }
+.tq-review {
+  list-style: none; margin: 0; padding: 0; width: 100%; max-width: 28rem; text-align: left;
+  max-height: 32vh; overflow-y: auto; font-size: .84rem;
+}
+.tq-review li { padding: .28rem 0; border-bottom: 1px solid #f1f5f9; }
+.ok { color: #065f46; font-weight: 600; }
+.no { color: #92400e; font-weight: 600; }
+.tq-actions { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+footer.tq-footer { flex: 0 0 auto; text-align: center; padding: .2rem; color: var(--m); font-size: .75rem; }
+
+@media (max-width: 520px) {
+  .tq-badge, .tq-title p, .tq-long { display: none; }
+  main.tq { padding: .35rem .55rem .4rem; gap: .28rem; }
+  .tq-card { padding: .6rem .65rem; gap: .35rem; }
+  .tq-opt { min-height: 2.35rem; font-size: .9rem; padding: .3rem .55rem; }
+  .line { font-size: .92rem; padding: .45rem .6rem; }
+  footer.tq-footer { display: none; }
+}
+@media (max-height: 680px) {
+  .tq-title p, footer.tq-footer { display: none; }
+}
+@media (max-height: 600px) {
+  .tq-title { display: none; }
+}
+
+/* Dark mode */
+[data-theme="dark"] body.tq-body,
+body.dark.tq-body {
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, rgba(45,212,191,.1), transparent 60%),
+    linear-gradient(180deg, #0b1220, #0f172a);
+  color: #e2e8f0;
+}
+[data-theme="dark"] .tq-title h1, body.dark .tq-title h1 { color: #f8fafc; }
+[data-theme="dark"] .tq-title p, body.dark .tq-title p { color: #94a3b8; }
+[data-theme="dark"] .tq-back, body.dark .tq-back,
+[data-theme="dark"] .tq-score-pill, body.dark .tq-score-pill {
+  background: #1e293b; border-color: #334155; color: #e2e8f0;
+}
+[data-theme="dark"] .tq-badge, body.dark .tq-badge {
+  background: rgba(13,148,136,.3); color: #5eead4;
+}
+[data-theme="dark"] .tq-card, body.dark .tq-card,
+[data-theme="dark"] .tq-result, body.dark .tq-result {
+  background: #1e293b; border-color: #334155;
+  box-shadow: 0 12px 32px rgba(0,0,0,.4);
+}
+[data-theme="dark"] .tq-chip, body.dark .tq-chip {
+  background: rgba(13,148,136,.3); color: #5eead4;
+}
+[data-theme="dark"] .tq-topic, body.dark .tq-topic { color: #94a3b8; }
+[data-theme="dark"] .line, body.dark .line {
+  background: #162032; border-color: #0d9488; color: #f1f5f9;
+}
+[data-theme="dark"] .line .who, body.dark .line .who {
+  background: rgba(13,148,136,.35); color: #5eead4;
+}
+[data-theme="dark"] .blank, body.dark .blank {
+  border-bottom-color: #2dd4bf; color: #5eead4;
+}
+[data-theme="dark"] .blank.filled, body.dark .blank.filled { background: rgba(13,148,136,.15); }
+[data-theme="dark"] .blank.ok, body.dark .blank.ok {
+  color: #6ee7b7; border-bottom-color: #10b981; background: rgba(5,150,105,.2);
+}
+[data-theme="dark"] .blank.wrong, body.dark .blank.wrong {
+  color: #fbbf24; border-bottom-color: #d97706; background: rgba(217,119,6,.15);
+}
+[data-theme="dark"] .blank.drag-over, body.dark .blank.drag-over {
+  background: rgba(13,148,136,.3); border-bottom-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45,212,191,.3);
+}
+[data-theme="dark"] .bank-label, body.dark .bank-label { color: #5eead4; }
+[data-theme="dark"] .tq-opt, body.dark .tq-opt {
+  background: #0f172a; border-color: #2dd4bf; color: #f1f5f9;
+}
+[data-theme="dark"] .tq-opt:hover:not(:disabled):not(.used), body.dark .tq-opt:hover:not(:disabled):not(.used) {
+  background: rgba(13,148,136,.2); border-color: #14b8a6;
+}
+[data-theme="dark"] .tq-opt.selected, body.dark .tq-opt.selected {
+  background: rgba(13,148,136,.35); border-color: #14b8a6; color: #f8fafc;
+  box-shadow: 0 0 0 3px rgba(20,184,166,.25);
+}
+[data-theme="dark"] .tq-ghost, body.dark .tq-ghost { background: #334155; color: #e2e8f0; }
+[data-theme="dark"] .tq-review li, body.dark .tq-review li { border-bottom-color: #334155; }
+[data-theme="dark"] footer.tq-footer, body.dark footer.tq-footer { color: #64748b; }
+</style>
+</head>
+<body class="tq-body">
+<header class="arcade-header-bar">
+  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+    <a href="/" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+    <a href="/learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+    <a href="/resources/" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+    <a href="/about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+    <a href="/learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+  </nav>
+</header>
+<main class="tq">
+  <div class="tq-top">
+    <a class="tq-back" href="../">← <span class="tq-long">Back to </span>Unit 3</a>
+    <span class="tq-badge">AEF STARTER · UNIT 3</span>
+    <span class="tq-score-pill" id="scoreLive">0 / 5 filled</span>
+  </div>
+  <div class="tq-title">
+    <h1>Café dialogue</h1>
+    <p>Drag or tap a word into each blank, then press Check.</p>
+  </div>
+  <div id="quizView">
+    <div class="tq-card">
+      <div class="tq-head">
+        <span class="tq-chip">VOCABULARY</span>
+        <span class="tq-topic">At the café · Practical English</span>
+      </div>
+      <p class="tq-prompt">Complete the dialogue</p>
+      <div class="dialogue" id="dialogue" role="group" aria-label="Dialogue with blanks"></div>
+      <div class="bank-label">Words in the box</div>
+      <div class="tq-opts" id="opts" role="group" aria-label="Word bank"></div>
+      <div class="tq-foot">
+        <div class="tq-feedback" id="feedback" role="status"></div>
+        <button type="button" class="tq-btn tq-primary" id="checkBtn" disabled>Check ✓</button>
+      </div>
+    </div>
+  </div>
+  <div class="tq-result" id="result">
+    <div class="tq-big" id="scoreText">0 / 5</div>
+    <h2 id="resultTitle">Nice work!</h2>
+    <p class="tq-msg" id="resultMsg"></p>
+    <ul class="tq-review" id="review"></ul>
+    <div class="tq-actions">
+      <button type="button" class="tq-btn tq-primary" id="retryBtn">Try again</button>
+      <a class="tq-btn tq-ghost" href="../">← Unit 3</a>
+    </div>
+  </div>
+</main>
+<footer class="tq-footer">© <span id="year"></span> Mr. Sheyhaki · AEF Starter · Unit 3</footer>
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+var WORDS = ["much", "else", "please", "pounds", "Here"];
+var ANSWERS = {
+  1: "please",
+  2: "else",
+  3: "much",
+  4: "pounds",
+  5: "Here"
+};
+var LINES = [
+  { who: "Waiter", parts: ["Hi. Welcome to Emma’s Café."] },
+  { who: "Woman",  parts: ["Hi. A tuna sandwich, ", { blank: 1 }, "."] },
+  { who: "Waiter", parts: ["Anything ", { blank: 2 }, "?"] },
+  { who: "Woman",  parts: ["No, thanks. How ", { blank: 3 }, " is it?"] },
+  { who: "Waiter", parts: ["It’s two ", { blank: 4 }, " and 75 pence, please."] },
+  { who: "Woman",  parts: [{ blank: 5 }, " you are."] }
+];
+
+var fills = {};          // blankId -> word
+var usedWords = {};      // word -> true
+var selectedWord = null; // for tap-to-place mode
+var checked = false;
+var $ = function (id) { return document.getElementById(id); };
+
+function updateScorePill() {
+  var n = Object.keys(fills).length;
+  $("scoreLive").textContent = n + " / 5 filled";
+  $("checkBtn").disabled = n < 5 || checked;
+}
+
+function placeWord(blankId, word) {
+  if (checked) return;
+  // remove word from previous blank if already used
+  Object.keys(fills).forEach(function (id) {
+    if (fills[id] === word) {
+      delete fills[id];
+      var oldEl = document.querySelector('.blank[data-id="' + id + '"]');
+      if (oldEl) {
+        oldEl.classList.remove("filled");
+        oldEl.innerHTML = '<span class="num">' + id + "</span>";
+      }
+    }
+  });
+  // free previous word that was in this blank
+  if (fills[blankId]) {
+    usedWords[fills[blankId]] = false;
+  }
+  fills[blankId] = word;
+  usedWords[word] = true;
+  selectedWord = null;
+  renderBank();
+  renderDialogue();
+  updateScorePill();
+  if (window.TestsSound) TestsSound.tap && TestsSound.tap();
+}
+
+function clearBlank(blankId) {
+  if (checked || !fills[blankId]) return;
+  usedWords[fills[blankId]] = false;
+  delete fills[blankId];
+  selectedWord = null;
+  renderBank();
+  renderDialogue();
+  updateScorePill();
+}
+
+function renderDialogue() {
+  var dlg = $("dialogue");
+  dlg.innerHTML = "";
+  LINES.forEach(function (ln) {
+    var div = document.createElement("div");
+    div.className = "line";
+    var who = document.createElement("span");
+    who.className = "who";
+    who.textContent = ln.who;
+    div.appendChild(who);
+    var text = document.createElement("span");
+    text.className = "text";
+    ln.parts.forEach(function (p) {
+      if (typeof p === "string") {
+        text.appendChild(document.createTextNode(p));
+      } else {
+        var span = document.createElement("span");
+        span.className = "blank";
+        span.dataset.id = p.blank;
+        if (fills[p.blank]) {
+          span.classList.add("filled");
+          span.textContent = fills[p.blank];
+        } else {
+          span.innerHTML = '<span class="num">' + p.blank + "</span>";
+        }
+        // click blank: place selected word, or clear if already filled
+        span.addEventListener("click", function () {
+          if (checked) return;
+          if (selectedWord) {
+            placeWord(p.blank, selectedWord);
+          } else if (fills[p.blank]) {
+            clearBlank(p.blank);
+          }
+        });
+        // drop target
+        span.addEventListener("dragover", function (e) {
+          if (checked) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "copy";
+          span.classList.add("drag-over");
+        });
+        span.addEventListener("dragleave", function () {
+          span.classList.remove("drag-over");
+        });
+        span.addEventListener("drop", function (e) {
+          e.preventDefault();
+          span.classList.remove("drag-over");
+          if (checked) return;
+          var w = e.dataTransfer.getData("text/plain");
+          if (w && WORDS.indexOf(w) !== -1) placeWord(p.blank, w);
+        });
+        text.appendChild(span);
+      }
+    });
+    div.appendChild(text);
+    dlg.appendChild(div);
+  });
+}
+
+function renderBank() {
+  var opts = $("opts");
+  opts.innerHTML = "";
+  WORDS.forEach(function (w) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "tq-opt";
+    btn.textContent = w;
+    btn.dataset.word = w;
+    btn.setAttribute("draggable", usedWords[w] ? "false" : "true");
+    if (usedWords[w]) btn.classList.add("used");
+    if (selectedWord === w) btn.classList.add("selected");
+    btn.addEventListener("click", function () {
+      if (checked || usedWords[w]) return;
+      // toggle selection for tap-to-place
+      if (selectedWord === w) {
+        selectedWord = null;
+        btn.classList.remove("selected");
+      } else {
+        selectedWord = w;
+        opts.querySelectorAll(".tq-opt").forEach(function (b) {
+          b.classList.toggle("selected", b.dataset.word === w);
+        });
+      }
+      if (window.TestsSound) TestsSound.tap && TestsSound.tap();
+    });
+    btn.addEventListener("dragstart", function (e) {
+      if (checked || usedWords[w]) {
+        e.preventDefault();
+        return;
+      }
+      e.dataTransfer.setData("text/plain", w);
+      e.dataTransfer.effectAllowed = "copy";
+      btn.classList.add("dragging");
+      selectedWord = null;
+      opts.querySelectorAll(".tq-opt").forEach(function (b) { b.classList.remove("selected"); });
+    });
+    btn.addEventListener("dragend", function () {
+      btn.classList.remove("dragging");
+      document.querySelectorAll(".blank.drag-over").forEach(function (el) {
+        el.classList.remove("drag-over");
+      });
+    });
+    opts.appendChild(btn);
+  });
+}
+
+function check() {
+  if (Object.keys(fills).length < 5 || checked) return;
+  checked = true;
+  var correct = 0;
+  var review = [];
+  Object.keys(ANSWERS).forEach(function (id) {
+    var ans = ANSWERS[id];
+    var got = fills[id];
+    var ok = got === ans;
+    if (ok) correct++;
+    var el = document.querySelector('.blank[data-id="' + id + '"]');
+    if (el) {
+      el.classList.remove("filled");
+      el.classList.add(ok ? "ok" : "wrong");
+      el.textContent = got;
+    }
+    review.push({ id: id, got: got, ans: ans, ok: ok });
+  });
+  $("opts").querySelectorAll(".tq-opt").forEach(function (b) { b.disabled = true; });
+  $("checkBtn").disabled = true;
+  $("feedback").className = "tq-feedback show " + (correct === 5 ? "ok" : "bad");
+  $("feedback").textContent = correct === 5 ? "✓ Perfect!" : "✗ " + correct + " of 5 correct.";
+  $("scoreLive").textContent = correct + " / 5 correct";
+  if (window.TestsSound) {
+    if (correct === 5) TestsSound.ok && TestsSound.ok();
+    else TestsSound.soft && TestsSound.soft();
+  }
+  // short delay then show result
+  setTimeout(function () {
+    showResult(correct, review);
+  }, 900);
+}
+
+function showResult(correct, review) {
+  $("quizView").style.display = "none";
+  var res = $("result");
+  res.classList.add("show");
+  if (correct === 5) res.classList.add("perfect");
+  $("scoreText").textContent = correct + " / 5";
+  $("resultTitle").textContent = correct === 5 ? "Excellent!" : correct >= 3 ? "Good try!" : "Keep practising!";
+  $("resultMsg").textContent = correct === 5
+    ? "You completed the café dialogue perfectly."
+    : "Review the answers below.";
+  var ul = $("review");
+  ul.innerHTML = "";
+  review.forEach(function (r) {
+    var li = document.createElement("li");
+    if (r.ok) {
+      li.innerHTML = '<span class="ok">✓ ' + r.id + ". " + r.ans + "</span>";
+    } else {
+      li.innerHTML = '<span class="no">✗ ' + r.id + ". " + r.got + "</span> → <strong>" + r.ans + "</strong>";
+    }
+    ul.appendChild(li);
+  });
+  var gameId = "starter-u3-cafe-dialogue";
+  var total = 5;
+  try { if (window.TestStars) TestStars.award(gameId); } catch (e0) {}
+  try {
+    if (window.LAFinish && LAFinish.show) {
+      LAFinish.show({
+        gameId: gameId,
+        gameName: "Café dialogue",
+        score: correct,
+        total: total,
+        title: "Café dialogue",
+        backHref: "../",
+        onAgain: function () { $("retryBtn").click(); },
+        category: "tests",
+        unit: "starter-3"
+      });
+    } else if (window.LAStars) {
+      if (LAStars.recordPlay) LAStars.recordPlay(gameId);
+      if (LAStars.saveFromAccuracy) LAStars.saveFromAccuracy(gameId, Math.round((correct / total) * 100));
+    }
+  } catch (e) {}
+  try {
+    if (window.TestsStars) TestsStars.set(gameId, correct === total);
+  } catch (e2) {}
+}
+
+function reset() {
+  fills = {};
+  usedWords = {};
+  selectedWord = null;
+  checked = false;
+  $("quizView").style.display = "";
+  $("result").classList.remove("show", "perfect");
+  $("feedback").className = "tq-feedback";
+  $("feedback").textContent = "";
+  $("checkBtn").disabled = true;
+  $("checkBtn").textContent = "Check ✓";
+  renderDialogue();
+  renderBank();
+  updateScorePill();
+}
+
+$("checkBtn").onclick = check;
+$("retryBtn").onclick = reset;
+
+// init
+renderDialogue();
+renderBank();
+updateScorePill();
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="../../../assets/tests-stars.js"></script>
+<script src="../../../assets/tests-ui.js"></script>
+</body>
+</html>
