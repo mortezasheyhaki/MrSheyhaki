@@ -1,33 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+(function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+document.documentElement.setAttribute("data-theme","dark");
+else document.documentElement.setAttribute("data-theme","light");
+}catch(e){}})();
+</script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Quiz | American English File | Mr. Sheyhaki</title>
-<meta name="description" content="Multiple choice quizzes for American English File.">
+<meta name="description" content="Multiple choice quizzes for American English File — Units 1–12.">
 <link rel="stylesheet" href="../../../style.css">
 <link rel="stylesheet" href="../../../theme.css">
-<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="style.css">
 </head>
-<body data-course="american-english-file" data-type="quiz">
+<body class="quiz-page" data-course="american-english-file" data-type="quiz">
 
-<header class="arcade-header-bar">
-<nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
-      <a href="../../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
-      <a href="../../../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
-      <a href="../../" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-      <a href="../../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
-      <a href="../../../learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
-    </nav>
+<header class="top-bar">
+  <a href="../" class="back-button" aria-label="Back to American English File">← Back</a>
+  <div class="game-title">
+    <span class="game-icon" aria-hidden="true">📝</span>
+    <div>
+      <h1>AEF Quiz</h1>
+      <p>Multiple choice · Units 1–12</p>
+    </div>
+  </div>
+  <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌓</button>
 </header>
 
-<main id="app"></main>
+<div class="game-container">
 
-<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Resources</p></footer>
-<script src="../../script.js"></script>
+  <!-- UNIT PICKER -->
+  <section id="unitScreen" class="screen">
+    <div class="intro">
+      <span class="eyebrow">AMERICAN ENGLISH FILE</span>
+      <h2>Choose a unit</h2>
+      <p>40 questions per unit · grammar &amp; vocabulary</p>
+    </div>
+    <div id="unitGrid" class="unit-grid" role="list"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quizScreen" class="screen hidden">
+    <div class="quiz-header">
+      <div class="quiz-unit">
+        <span class="small-label">Unit</span>
+        <strong id="currentUnit">—</strong>
+      </div>
+      <div class="question-counter">
+        <span id="questionNumber">1</span> / <span id="totalQuestions">40</span>
+      </div>
+      <div class="quiz-score">
+        <span class="small-label">Score</span>
+        <strong id="score">0</strong>
+      </div>
+    </div>
+
+    <div class="progress-container" aria-hidden="true">
+      <div id="progressBar" class="progress-bar" style="width:0%"></div>
+    </div>
+
+    <div class="question-card">
+      <span id="questionType" class="question-type">GRAMMAR</span>
+      <p id="questionText" class="question-text"></p>
+      <div id="questionImage" class="question-image hidden"></div>
+      <div id="answers" class="answers" role="group" aria-label="Answer choices"></div>
+      <div id="feedback" class="feedback hidden" role="status" aria-live="polite"></div>
+      <div class="quiz-actions">
+        <button type="button" id="quitButton" class="secondary-button">Quit</button>
+        <button type="button" id="nextButton" class="primary-button hidden">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="resultScreen" class="screen hidden">
+    <div class="result-card">
+      <div class="result-icon" aria-hidden="true">🏆</div>
+      <h2>Quiz complete!</h2>
+      <p class="result-unit">Unit <span id="resultUnit">—</span></p>
+      <div class="final-score">
+        <span>Your score</span>
+        <strong id="finalScore">0%</strong>
+      </div>
+      <div class="result-stats">
+        <div class="result-stat">
+          <strong id="correctAnswers">0</strong>
+          <span>Correct</span>
+        </div>
+        <div class="result-stat">
+          <strong id="wrongAnswers">0</strong>
+          <span>Wrong</span>
+        </div>
+        <div class="result-stat">
+          <strong id="earnedXP">+0</strong>
+          <span>XP</span>
+        </div>
+      </div>
+      <div class="result-buttons">
+        <button type="button" id="retryButton" class="primary-button">Try again</button>
+        <button type="button" id="unitsButton" class="secondary-button">Choose unit</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
 <script src="../../../theme.js"></script>
-<script src="../assets/course-data.js"></script>
-<script src="../assets/course-render.js"></script>
-<script src="../../../swipe-nav.js"></script>
+<script src="quiz-data.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
