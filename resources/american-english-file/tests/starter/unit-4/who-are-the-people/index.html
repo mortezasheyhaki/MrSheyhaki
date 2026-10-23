@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 4 · Who are the people? | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Listen and choose True or False. American English File Starter Unit 4A.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="../../../assets/tests-ui.css">
+<style>
+:root {
+  --p: #0d9488; --pd: #0f766e; --pl: #ccfbf1;
+  --ok: #059669; --okbg: #ecfdf5;
+  --bad: #d97706; --badbg: #fffbeb;
+  --m: #64748b; --t: #0f172a; --b: #e2e8f0;
+  --pad: clamp(.35rem, 1.2vh, .85rem);
+  --gap: clamp(.3rem, 1vh, .7rem);
+}
+* { box-sizing: border-box; }
+html { height: 100%; overflow: hidden; }
+body.tq-body {
+  margin: 0; height: 100vh; height: 100dvh; overflow: hidden;
+  display: flex; flex-direction: column;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--t); line-height: 1.35;
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, rgba(45,212,191,.2), transparent 60%),
+    radial-gradient(50rem 28rem at -10% 110%, rgba(34,211,238,.15), transparent 60%),
+    linear-gradient(180deg, #f0fdfa, #ecfeff);
+}
+body.tq-body > header { flex: 0 0 auto; }
+
+main.tq {
+  flex: 1 1 auto; min-height: 0; width: 100%; max-width: 720px;
+  margin: 0 auto;
+  padding: var(--pad) clamp(.65rem, 2.5vw, 1.4rem) calc(var(--pad) + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; gap: var(--gap);
+  overflow: hidden;
+}
+
+.tq-top { display: flex; align-items: center; gap: .45rem; flex: 0 0 auto; }
+.tq-back {
+  display: inline-flex; align-items: center; gap: .3rem;
+  color: var(--m); text-decoration: none; font-size: .85rem; font-weight: 600; white-space: nowrap;
+  padding: .4rem .85rem; border-radius: 999px; background: #fff;
+  border: 1px solid var(--b); box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.tq-back:hover { color: var(--p); border-color: #99f6e4; }
+.tq-badge {
+  background: var(--pl); color: var(--pd);
+  font-size: .65rem; font-weight: 800; letter-spacing: .05em;
+  padding: .28rem .65rem; border-radius: 999px; white-space: nowrap;
+}
+.tq-score-pill {
+  margin-left: auto; background: #fff; border: 1px solid var(--b);
+  padding: .28rem .65rem; border-radius: 999px; font-size: .78rem; font-weight: 700; color: var(--pd);
+}
+
+.tq-title { flex: 0 0 auto; }
+.tq-title h1 { margin: 0; font-size: clamp(1.1rem, .65rem + 1.5vh, 1.4rem); font-weight: 800; }
+.tq-title p { margin: .1rem 0 0; color: var(--m); font-size: .85rem; }
+
+#quizView { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--gap); overflow: hidden; }
+
+/* ---- Audio player ---- */
+.audio-bar {
+  flex: 0 0 auto;
+  display: flex; align-items: center; gap: .75rem;
+  background: #fff; border: 1px solid var(--b); border-radius: 1.25rem;
+  padding: .55rem .75rem .55rem .55rem;
+  box-shadow: 0 6px 20px rgba(13,148,136,.1);
+}
+.play-btn {
+  flex: 0 0 auto;
+  width: 3.4rem; height: 3.4rem; border-radius: 50%; border: 0; cursor: pointer;
+  background: linear-gradient(145deg, #14b8a6, #0d9488);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  box-shadow:
+    0 6px 16px rgba(13,148,136,.4),
+    inset 0 -2px 0 rgba(0,0,0,.12),
+    inset 0 2px 0 rgba(255,255,255,.25);
+  transition: transform .15s, box-shadow .15s;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+.play-btn:hover { transform: scale(1.05); }
+.play-btn:active { transform: scale(.96); }
+.play-btn.playing {
+  background: linear-gradient(145deg, #f59e0b, #d97706);
+  box-shadow: 0 6px 16px rgba(217,119,6,.4), inset 0 -2px 0 rgba(0,0,0,.12);
+}
+.play-btn svg { width: 1.35rem; height: 1.35rem; fill: currentColor; }
+.play-btn .icon-pause { display: none; }
+.play-btn.playing .icon-play { display: none; }
+.play-btn.playing .icon-pause { display: block; }
+.play-btn.playing::after {
+  content: ""; position: absolute; inset: -4px; border-radius: 50%;
+  border: 2px solid rgba(245,158,11,.45);
+  animation: pulse 1.4s ease-out infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity: .8; }
+  100% { transform: scale(1.25); opacity: 0; }
+}
+.audio-meta { flex: 1 1 auto; min-width: 0; }
+.audio-meta .label {
+  font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--pd); margin-bottom: .15rem;
+}
+.audio-track {
+  height: 6px; border-radius: 999px; background: #ccfbf1; overflow: hidden; cursor: pointer;
+}
+.audio-fill {
+  height: 100%; width: 0%; border-radius: 999px;
+  background: linear-gradient(90deg, #0d9488, #14b8a6);
+  transition: width .1s linear;
+}
+.audio-time {
+  display: flex; justify-content: space-between;
+  font-size: .7rem; color: var(--m); font-weight: 600; margin-top: .2rem;
+}
+
+/* ---- Card with 5 statements ---- */
+.tq-card {
+  flex: 1 1 auto; min-height: 0;
+  background: #fff; border: 1px solid var(--b); border-radius: 1.25rem;
+  box-shadow: 0 8px 28px rgba(13,148,136,.1);
+  padding: clamp(.55rem, 1.5vh, 1rem) clamp(.65rem, 2vw, 1.15rem);
+  display: flex; flex-direction: column; gap: .4rem;
+  overflow: hidden;
+}
+.statements {
+  flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column; gap: .35rem;
+  justify-content: space-evenly;
+}
+.stmt {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: .5rem .6rem;
+  padding: .4rem .5rem;
+  border-radius: .85rem;
+  border: 2px solid transparent;
+  background: #f8fafc;
+  transition: background .15s, border-color .15s;
+}
+.stmt.ok { background: var(--okbg); border-color: #6ee7b7; }
+.stmt.bad { background: var(--badbg); border-color: #fcd34d; }
+.stmt-num {
+  width: 1.6rem; height: 1.6rem; border-radius: 50%;
+  background: var(--pl); color: var(--pd);
+  font-size: .75rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 auto;
+}
+.stmt-text {
+  font-size: clamp(.88rem, 2.6vw, 1.02rem); font-weight: 600; color: var(--t);
+  line-height: 1.3; min-width: 0;
+}
+.stmt-note {
+  grid-column: 2 / -1;
+  font-size: .78rem; color: #92400e; font-weight: 600;
+  display: none; margin-top: -.15rem;
+}
+.stmt.bad .stmt-note { display: block; }
+
+.tf-pair {
+  display: flex; gap: .3rem; flex: 0 0 auto;
+}
+.tf-btn {
+  min-width: 2.6rem; height: 2.35rem; padding: 0 .45rem;
+  border-radius: .65rem; border: 2px solid #99f6e4;
+  background: #fff; color: var(--pd);
+  font-size: .78rem; font-weight: 800; font-family: inherit;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background .12s, border-color .12s, color .12s, transform .1s;
+}
+.tf-btn:hover:not(:disabled) { border-color: var(--p); background: #f0fdfa; }
+.tf-btn:active:not(:disabled) { transform: scale(.96); }
+.tf-btn.selected {
+  background: var(--p); border-color: var(--p); color: #fff;
+  box-shadow: 0 0 0 3px rgba(13,148,136,.2);
+}
+.tf-btn.correct { background: var(--ok); border-color: var(--ok); color: #fff; }
+.tf-btn.wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
+.tf-btn:disabled { cursor: default; }
+.tf-btn:disabled:not(.correct):not(.wrong):not(.selected) { opacity: .4; }
+
+.tq-foot {
+  display: flex; align-items: center; gap: .5rem;
+  min-height: 2.5rem; flex: 0 0 auto;
+}
+.tq-feedback {
+  flex: 1; font-size: .88rem; font-weight: 700; padding: .35rem .6rem; border-radius: .6rem;
+  visibility: hidden;
+}
+.tq-feedback.show { visibility: visible; }
+.tq-feedback.ok { background: var(--okbg); color: #065f46; }
+.tq-feedback.bad { background: var(--badbg); color: #92400e; }
+.tq-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: .55rem 1.15rem; border: 0; border-radius: 999px; font-family: inherit;
+  font-size: .92rem; font-weight: 700; cursor: pointer; text-decoration: none; white-space: nowrap;
+}
+.tq-primary {
+  background: linear-gradient(135deg, #0d9488, #14b8a6); color: #fff;
+  box-shadow: 0 3px 12px rgba(13,148,136,.28);
+}
+.tq-primary:disabled { background: #cbd5e1; color: #64748b; box-shadow: none; cursor: not-allowed; }
+.tq-ghost { background: #f1f5f9; color: var(--t); }
+
+.tq-result {
+  display: none; flex: 1 1 auto; min-height: 0;
+  flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  gap: .45rem; background: #fff; border: 1px solid var(--b); border-radius: 1.25rem;
+  box-shadow: 0 8px 28px rgba(13,148,136,.1); padding: 1rem; overflow: hidden;
+}
+.tq-result.show { display: flex; }
+.tq-result.perfect { background: var(--okbg); border-color: #6ee7b7; }
+.tq-big { font-size: 1.8rem; font-weight: 800; color: var(--pd); }
+.tq-result h2 { margin: 0; font-size: 1.15rem; }
+.tq-result .tq-msg { margin: 0; color: var(--m); font-size: .9rem; }
+.tq-review {
+  list-style: none; margin: 0; padding: 0; width: 100%; max-width: 26rem; text-align: left;
+  max-height: 28vh; overflow-y: auto; font-size: .82rem;
+}
+.tq-review li { padding: .25rem 0; border-bottom: 1px solid #f1f5f9; }
+.ok { color: #065f46; font-weight: 600; }
+.no { color: #92400e; font-weight: 600; }
+.tq-actions { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+footer.tq-footer { flex: 0 0 auto; text-align: center; padding: .2rem; color: var(--m); font-size: .72rem; }
+
+@media (max-width: 520px) {
+  .tq-badge { display: none; }
+  .tq-title p { display: none; }
+  .tq-long { display: none; }
+  main.tq { padding: .35rem .55rem .4rem; gap: .3rem; }
+  .audio-bar { padding: .4rem .55rem .4rem .4rem; gap: .55rem; }
+  .play-btn { width: 3rem; height: 3rem; }
+  .stmt {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+  }
+  .tf-pair { grid-column: 2; justify-self: end; }
+  .stmt-text { font-size: .9rem; }
+  .tf-btn { min-width: 2.4rem; height: 2.15rem; font-size: .72rem; }
+  footer.tq-footer { display: none; }
+}
+@media (max-height: 700px) {
+  .tq-title p, footer.tq-footer { display: none; }
+  .audio-meta .label { display: none; }
+}
+@media (max-height: 620px) {
+  .tq-title { display: none; }
+  .play-btn { width: 2.7rem; height: 2.7rem; }
+  .stmt { padding: .28rem .4rem; }
+  .stmt-text { font-size: .85rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .play-btn.playing::after { animation: none; }
+}
+</style>
+</head>
+<body class="tq-body">
+
+<header class="arcade-header-bar">
+  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+    <a href="/" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+    <a href="/learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+    <a href="/resources/" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+    <a href="/about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+    <a href="/learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+  </nav>
+</header>
+
+<main class="tq">
+  <div class="tq-top">
+    <a class="tq-back" href="../">← <span class="tq-long">Back to </span>Unit 4</a>
+    <span class="tq-badge">AEF STARTER · UNIT 4A</span>
+    <span class="tq-score-pill" id="scoreLive">0 / 5</span>
+  </div>
+
+  <div class="tq-title">
+    <h1>Who are the people?</h1>
+    <p>Listen, then mark each sentence True or False.</p>
+  </div>
+
+  <div id="quizView">
+    <div class="audio-bar">
+      <button type="button" class="play-btn" id="playBtn" aria-label="Play audio">
+        <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+      </button>
+      <div class="audio-meta">
+        <div class="label">Listening · Unit 4A</div>
+        <div class="audio-track" id="track" role="slider" aria-label="Seek">
+          <div class="audio-fill" id="fill"></div>
+        </div>
+        <div class="audio-time"><span id="cur">0:00</span><span id="dur">0:00</span></div>
+      </div>
+    </div>
+    <audio id="audio" preload="metadata" src="https://cdn.imgurl.ir/uploads/p0482_AEF3e_Starter_SB_4_mp3cut_net2.mp3"></audio>
+
+    <div class="tq-card">
+      <div class="statements" id="statements"></div>
+      <div class="tq-foot">
+        <div class="tq-feedback" id="feedback" role="status" aria-live="polite"></div>
+        <button type="button" class="tq-btn tq-primary" id="checkBtn" disabled>Check ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tq-result" id="result">
+    <div class="tq-big" id="scoreText">0 / 5</div>
+    <h2 id="resultTitle">Nice work!</h2>
+    <p class="tq-msg" id="resultMsg"></p>
+    <ul class="tq-review" id="review"></ul>
+    <div class="tq-actions">
+      <button type="button" class="tq-btn tq-primary" id="retryBtn">Try again</button>
+      <a class="tq-btn tq-ghost" href="../">← Unit 4</a>
+    </div>
+  </div>
+</main>
+
+<footer class="tq-footer">© <span id="year"></span> Mr. Sheyhaki · AEF Starter · Unit 4</footer>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+var AUDIO_URL = "https://cdn.imgurl.ir/uploads/p0482_AEF3e_Starter_SB_4_mp3cut_net2.mp3";
+var ITEMS = [
+  {
+    text: "Paul is Carly’s brother, and he is thirty years old.",
+    ans: true,
+    note: null
+  },
+  {
+    text: "Hayley is Paul’s wife.",
+    ans: false,
+    note: "Hayley is Paul’s girlfriend."
+  },
+  {
+    text: "Shira is Carly’s sister.",
+    ans: false,
+    note: "Shira is Jerry’s wife."
+  },
+  {
+    text: "Nicole and John are married.",
+    ans: false,
+    note: "John is Nicole’s boyfriend."
+  },
+  {
+    text: "Buddy is Carly’s dog.",
+    ans: true,
+    note: null
+  }
+];
+
+var picks = new Array(ITEMS.length).fill(null); // true / false / null
+var $ = function (id) { return document.getElementById(id); };
+
+/* ---- Audio player ---- */
+var audio = $("audio");
+var playBtn = $("playBtn");
+var fill = $("fill");
+var curEl = $("cur");
+var durEl = $("dur");
+
+function fmt(s) {
+  s = Math.max(0, Math.floor(s || 0));
+  return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+}
+audio.addEventListener("loadedmetadata", function () { durEl.textContent = fmt(audio.duration); });
+audio.addEventListener("timeupdate", function () {
+  curEl.textContent = fmt(audio.currentTime);
+  if (audio.duration) fill.style.width = (audio.currentTime / audio.duration * 100) + "%";
+});
+audio.addEventListener("ended", function () {
+  playBtn.classList.remove("playing");
+  playBtn.setAttribute("aria-label", "Play audio");
+});
+playBtn.addEventListener("click", function () {
+  if (audio.paused) {
+    audio.play().catch(function () {});
+    playBtn.classList.add("playing");
+    playBtn.setAttribute("aria-label", "Pause audio");
+    if (window.TestsSound) TestsSound.tap && TestsSound.tap();
+  } else {
+    audio.pause();
+    playBtn.classList.remove("playing");
+    playBtn.setAttribute("aria-label", "Play audio");
+  }
+});
+$("track").addEventListener("click", function (e) {
+  if (!audio.duration) return;
+  var r = this.getBoundingClientRect();
+  var p = (e.clientX - r.left) / r.width;
+  audio.currentTime = p * audio.duration;
+});
+
+/* ---- Statements ---- */
+function build() {
+  var box = $("statements");
+  box.innerHTML = "";
+  ITEMS.forEach(function (item, i) {
+    var row = document.createElement("div");
+    row.className = "stmt";
+    row.dataset.i = i;
+    row.innerHTML =
+      '<span class="stmt-num">' + (i + 1) + "</span>" +
+      '<div class="stmt-text">' + item.text + "</div>" +
+      '<div class="tf-pair">' +
+        '<button type="button" class="tf-btn" data-i="' + i + '" data-v="true">True</button>' +
+        '<button type="button" class="tf-btn" data-i="' + i + '" data-v="false">False</button>' +
+      "</div>" +
+      '<div class="stmt-note"></div>';
+    box.appendChild(row);
+  });
+  box.addEventListener("click", function (e) {
+    var btn = e.target.closest(".tf-btn");
+    if (!btn || btn.disabled) return;
+    var i = +btn.dataset.i;
+    var v = btn.dataset.v === "true";
+    picks[i] = v;
+    var row = box.querySelector('.stmt[data-i="' + i + '"]');
+    row.querySelectorAll(".tf-btn").forEach(function (b) {
+      b.classList.toggle("selected", b.dataset.v === btn.dataset.v);
+    });
+    updateCheck();
+    if (window.TestsSound) TestsSound.tap && TestsSound.tap();
+  });
+}
+
+function updateCheck() {
+  var all = picks.every(function (p) { return p !== null; });
+  $("checkBtn").disabled = !all;
+  var answered = picks.filter(function (p) { return p !== null; }).length;
+  $("scoreLive").textContent = answered + " / " + ITEMS.length;
+}
+
+function check() {
+  var correct = 0;
+  var box = $("statements");
+  ITEMS.forEach(function (item, i) {
+    var ok = picks[i] === item.ans;
+    if (ok) correct++;
+    var row = box.querySelector('.stmt[data-i="' + i + '"]');
+    row.classList.add(ok ? "ok" : "bad");
+    row.querySelectorAll(".tf-btn").forEach(function (b) {
+      b.disabled = true;
+      var v = b.dataset.v === "true";
+      if (v === item.ans) b.classList.add("correct");
+      else if (v === picks[i] && !ok) b.classList.add("wrong");
+    });
+    if (!ok && item.note) {
+      row.querySelector(".stmt-note").textContent = "✗ " + item.note;
+    }
+  });
+  $("checkBtn").disabled = true;
+  $("scoreLive").textContent = correct + " / " + ITEMS.length;
+  $("feedback").className = "tq-feedback show " + (correct === ITEMS.length ? "ok" : "bad");
+  $("feedback").textContent =
+    correct === ITEMS.length ? "✓ Perfect!" : correct + " correct — see the notes.";
+
+  if (window.TestsSound) {
+    if (correct === ITEMS.length) TestsSound.done && TestsSound.done();
+    else TestsSound.soft && TestsSound.soft();
+  }
+
+  // Show results panel after brief moment
+  setTimeout(function () { finish(correct); }, correct === ITEMS.length ? 700 : 1200);
+}
+
+function finish(correct) {
+  audio.pause();
+  playBtn.classList.remove("playing");
+  $("quizView").style.display = "none";
+  var r = $("result");
+  r.classList.add("show");
+  r.classList.toggle("perfect", correct === ITEMS.length);
+  $("scoreText").textContent = correct + " / " + ITEMS.length;
+  $("resultTitle").textContent =
+    correct === ITEMS.length ? "Wonderful work!" :
+    correct >= 3 ? "Nice work!" : "Good effort!";
+  $("resultMsg").textContent =
+    correct === ITEMS.length
+      ? "You understood the listening perfectly."
+      : "Listen again and check the false sentences.";
+  var ul = $("review");
+  ul.innerHTML = "";
+  ITEMS.forEach(function (item, i) {
+    var ok = picks[i] === item.ans;
+    var li = document.createElement("li");
+    if (ok) {
+      li.innerHTML = '<span class="ok">✓ ' + (i + 1) + ". " + (item.ans ? "True" : "False") + "</span>";
+    } else {
+      li.innerHTML = '<span class="no">✗ ' + (i + 1) + ". " + (picks[i] ? "True" : "False") +
+        "</span> → <span class="ok">" + (item.ans ? "True" : "False") +
+        (item.note ? " — " + item.note : "") + "</span>";
+    }
+    ul.appendChild(li);
+  });
+
+  try {
+    if (window.LAFinish && typeof LAFinish.show === "function") {
+      LAFinish.show({
+        gameId: "starter-u4-who-are-the-people-tf",
+        gameName: "Who are the people?",
+        score: correct,
+        total: ITEMS.length,
+        title: "Who are the people?",
+        backHref: "../",
+        onAgain: function () { $("retryBtn").click(); },
+        category: "tests",
+        unit: "starter-4"
+      });
+    }
+  } catch (e) {}
+}
+
+$("checkBtn").addEventListener("click", check);
+$("retryBtn").addEventListener("click", function () {
+  picks = new Array(ITEMS.length).fill(null);
+  $("result").classList.remove("show");
+  $("quizView").style.display = "flex";
+  $("feedback").className = "tq-feedback";
+  $("feedback").textContent = "";
+  build();
+  updateCheck();
+  audio.currentTime = 0;
+  fill.style.width = "0%";
+  curEl.textContent = "0:00";
+});
+
+build();
+updateCheck();
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="../../../assets/tests-stars.js"></script>
+<script src="../../../assets/tests-ui.js"></script>
+</body>
+</html>
