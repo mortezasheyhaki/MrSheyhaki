@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 4 · Family Questions | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Answer questions about a man and a woman in your family. American English File Starter Unit 4.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="../../../assets/tests-ui.css">
+<style>
+
+:root {
+  --p: #0d9488;
+  --pd: #0f766e;
+  --pl: #ccfbf1;
+  --ok: #059669;
+  --okbg: #ecfdf5;
+  --bad: #d97706;
+  --badbg: #fffbeb;
+  --m: #64748b;
+  --t: #0f172a;
+  --b: #e2e8f0;
+  --pad: clamp(.5rem, 1.6vh, 1.1rem);
+  --gap: clamp(.45rem, 1.5vh, 1rem);
+}
+* { box-sizing: border-box; }
+html { height: 100%; overflow: hidden; }
+
+/* ---------- Page shell: always exactly one screen, never scrolls ---------- */
+body.tq-body {
+  margin: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--t);
+  line-height: 1.4;
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, rgba(45,212,191,.22), transparent 60%),
+    radial-gradient(50rem 28rem at -10% 110%, rgba(34,211,238,.18), transparent 60%),
+    linear-gradient(180deg, #f0fdfa, #ecfeff);
+}
+body.tq-body > header { flex: 0 0 auto; }
+
+main.tq {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--pad) clamp(.75rem, 3vw, 2rem) calc(var(--pad) + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+/* ---------- Top row ---------- */
+.tq-top { display: flex; align-items: center; gap: .55rem; flex: 0 0 auto; }
+.tq-back {
+  display: inline-flex; align-items: center; gap: .35rem;
+  color: var(--m); text-decoration: none; font-size: .9rem; font-weight: 600; white-space: nowrap; flex: 0 0 auto;
+  padding: .45rem .95rem; border-radius: 999px; background: #fff;
+  border: 1px solid var(--b); box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  transition: color .15s, border-color .15s;
+}
+.tq-back:hover { color: var(--p); border-color: #99f6e4; }
+.tq-badge {
+  background: var(--pl); color: var(--pd);
+  font-size: .7rem; font-weight: 800; letter-spacing: .06em;
+  padding: .35rem .8rem; border-radius: 999px; white-space: nowrap;
+}
+.tq-score-pill {
+  margin-left: auto; font-size: .9rem; font-weight: 700; color: var(--pd);
+  background: #fff; border: 1px solid var(--b); border-radius: 999px; padding: .4rem .9rem;
+  white-space: nowrap;
+}
+
+/* ---------- Title ---------- */
+.tq-title { flex: 0 0 auto; }
+.tq-title h1 { margin: 0; font-size: clamp(1.2rem, .7rem + 1.9vh, 1.9rem); font-weight: 800; letter-spacing: -.01em; }
+.tq-title p { margin: .15rem 0 0; color: var(--m); font-size: clamp(.88rem, .6rem + .8vh, 1.05rem); }
+
+/* ---------- Quiz view ---------- */
+#quizView { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--gap); }
+
+.tq-progress { flex: 0 0 auto; }
+.tq-progress-meta {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: .85rem; font-weight: 700; color: var(--m); margin-bottom: .4rem;
+}
+.tq-segs { display: flex; gap: 4px; }
+.tq-seg { flex: 1; height: 8px; border-radius: 999px; background: #b6efe6; transition: background .25s; }
+.tq-seg.cur { background: var(--p); }
+.tq-seg.ok { background: var(--ok); }
+.tq-seg.no { background: var(--bad); }
+.tq-seg.gap { margin-left: 6px; }
+
+.tq-card {
+  flex: 1 1 auto;
+  min-height: 0;
+  background: #fff;
+  border: 1px solid var(--b);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 34px rgba(13,148,136,.10);
+  padding: clamp(.85rem, 2.6vh, 2rem) clamp(.85rem, 3vw, 2.25rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(.5rem, 1.8vh, 1.1rem);
+}
+.tq-head { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem .65rem; }
+.tq-chip {
+  background: var(--pl); color: var(--pd); font-size: .75rem; font-weight: 800;
+  letter-spacing: .05em; text-transform: uppercase; padding: .28rem .7rem; border-radius: 999px;
+}
+.tq-topic { font-size: .9rem; font-weight: 600; color: var(--m); }
+.tq-example {
+  font-size: .88rem; color: var(--m); background: #f0fdfa;
+  border-left: 3px solid var(--p); border-radius: .6rem; padding: .45rem .75rem;
+}
+.tq-example strong { color: var(--pd); }
+.tq-prompt { margin: 0; font-size: clamp(1.05rem, .6rem + 1.5vh, 1.5rem); font-weight: 800; }
+
+/* ---------- Options ---------- */
+.tq-opts { display: grid; grid-template-columns: 1fr; gap: clamp(.55rem, 1.6vh, 1.1rem); }
+.tq-opt {
+  display: flex; align-items: center; gap: .85rem;
+  width: 100%; text-align: left; font-family: inherit;
+  padding: clamp(.7rem, 1.9vh, 1.3rem) 1rem;
+  min-height: 3.6rem;
+  font-size: 1.12rem; font-weight: 650; color: var(--t);
+  background: #fff;
+  border: 3px solid #5eead4;
+  border-radius: 1.15rem;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, opacity .15s, box-shadow .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.tq-opt:hover:not(:disabled) { border-color: var(--p); background: #f0fdfa; box-shadow: 0 6px 18px rgba(13,148,136,.14); }
+.tq-opt:active:not(:disabled) { background: var(--pl); }
+.tq-opt:focus-visible { outline: 3px solid rgba(13,148,136,.4); outline-offset: 2px; }
+.tq-letter {
+  flex: 0 0 auto; width: 2.3rem; height: 2.3rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.05rem; font-weight: 800; color: var(--pd);
+  background: var(--pl); border: 3px solid #2dd4bf; transition: all .15s;
+}
+.tq-txt { flex: 1; line-height: 1.3; }
+.tq-opt.selected.correct, .tq-opt.correct { border-color: var(--ok); background: var(--okbg); box-shadow: 0 0 0 4px rgba(5,150,105,.16); }
+.tq-opt.selected.correct .tq-letter, .tq-opt.correct .tq-letter { background: var(--ok); border-color: var(--ok); color: #fff; }
+.tq-opt.selected.wrong, .tq-opt.wrong { border-color: var(--bad); background: var(--badbg); box-shadow: 0 0 0 4px rgba(217,119,6,.16); }
+.tq-opt.selected.wrong .tq-letter, .tq-opt.wrong .tq-letter { background: var(--bad); border-color: var(--bad); color: #fff; }
+.tq-opt:disabled { cursor: default; }
+.tq-opt:disabled:not(.correct):not(.wrong) { opacity: .5; }
+
+/* ---------- Feedback + Next (space is always reserved: no jumping) ---------- */
+.tq-foot { display: flex; align-items: center; gap: .75rem; min-height: 3rem; }
+.tq-feedback {
+  flex: 1; font-size: 1rem; font-weight: 700; padding: .55rem .9rem; border-radius: .8rem;
+  visibility: hidden;
+}
+.tq-feedback.show { visibility: visible; }
+.tq-feedback.ok { background: var(--okbg); color: #065f46; }
+.tq-feedback.bad { background: var(--badbg); color: #92400e; }
+
+.tq-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+  padding: .75rem 1.5rem; border: 0; border-radius: 999px; font-family: inherit;
+  font-size: 1rem; font-weight: 700; cursor: pointer; text-decoration: none; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent; transition: transform .1s;
+}
+.tq-btn:active { transform: scale(.97); }
+.tq-btn:focus-visible { outline: 3px solid rgba(13,148,136,.4); outline-offset: 2px; }
+.tq-primary { background: linear-gradient(135deg, #0d9488, #14b8a6); color: #fff; box-shadow: 0 4px 14px rgba(13,148,136,.32); }
+.tq-ghost { background: #f1f5f9; color: var(--t); }
+#nextBtn:disabled { background: #cbd5e1; color: #64748b; box-shadow: none; cursor: not-allowed; }
+.tq-opt.selected { border-color: var(--p); background: var(--pl); box-shadow: 0 0 0 4px rgba(13,148,136,.2); }
+.tq-opt.selected .tq-letter { background: var(--p); border-color: var(--p); color: #fff; }
+
+/* ---------- Result view ---------- */
+.tq-result {
+  display: none; flex: 1 1 auto; min-height: 0;
+  flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  gap: clamp(.45rem, 1.6vh, 1rem);
+  background: #fff; border: 1px solid var(--b); border-radius: 1.5rem;
+  box-shadow: 0 10px 34px rgba(13,148,136,.10);
+  padding: clamp(.85rem, 2.6vh, 2rem) clamp(.85rem, 3vw, 2.25rem);
+}
+.tq-result.show { display: flex; }
+.tq-result.perfect { background: var(--okbg); border-color: #6ee7b7; }
+.tq-starwrap { display: flex; flex-direction: column; align-items: center; gap: .2rem; }
+.tq-starbig {
+  width: clamp(3rem, 4rem + 2vh, 5.5rem); height: clamp(3rem, 4rem + 2vh, 5.5rem);
+  display: flex; align-items: center; justify-content: center; border-radius: 50%;
+  background: linear-gradient(145deg, #fde68a, #fbbf24); color: #fff;
+  font-size: clamp(1.9rem, 2.4rem + 1.4vh, 3.4rem); line-height: 1;
+  box-shadow: 0 6px 18px rgba(245,158,11,.45), inset 0 -3px 0 rgba(180,83,9,.25);
+  text-shadow: 0 2px 0 rgba(180,83,9,.35);
+  animation: tqPop .6s cubic-bezier(.2,1.6,.4,1) both;
+}
+.tq-starcap { font-size: .85rem; font-weight: 800; color: #a16207; }
+@keyframes tqPop { 0% { transform: scale(0) rotate(-40deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+.tq-big { font-size: clamp(2rem, 1rem + 5vh, 3.6rem); font-weight: 900; line-height: 1; color: var(--pd); }
+.tq-result h2 { margin: 0; font-size: clamp(1.15rem, .8rem + 1.6vh, 1.7rem); }
+.tq-result .tq-msg { margin: 0; color: var(--m); font-size: clamp(.9rem, .7rem + .7vh, 1.05rem); }
+.tq-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: .35rem; }
+.tq-dot {
+  width: 1.9rem; height: 1.9rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; font-weight: 800; color: #fff;
+}
+.tq-dot.ok { background: var(--ok); }
+.tq-dot.no { background: var(--bad); }
+.tq-dot.sp { margin-left: .6rem; }
+.tq-review {
+  list-style: none; margin: 0; padding: 0; width: 100%; max-width: 40rem; text-align: left;
+  font-size: clamp(.85rem, .65rem + .6vh, 1rem);
+  flex: 0 1 auto; min-height: 0; overflow-y: auto; /* safety net only; normally everything fits */
+}
+.tq-review li { display: flex; align-items: center; gap: .6rem; padding: .22rem .2rem; border-bottom: 1px solid #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tq-review .n { flex: 0 0 auto; width: 1.45rem; height: 1.45rem; border-radius: 50%; background: var(--bad); color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.tq-review .good { color: #065f46; font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
+.tq-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; flex: 0 0 auto; }
+
+main.tq.done .tq-title { display: none; }
+footer.tq-footer { flex: 0 0 auto; text-align: center; padding: .4rem; color: var(--m); font-size: .78rem; }
+footer.tq-footer p { margin: 0; }
+
+/* ================= Desktop / tablet: bigger, options side by side ================= */
+@media (min-width: 720px) {
+  .tq-opts { grid-template-columns: 1fr 1fr; }
+  .tq-opt {
+    flex-direction: column; align-items: flex-start; justify-content: center;
+    gap: .9rem; padding: clamp(1rem, 3vh, 2rem) clamp(1rem, 2vw, 1.75rem);
+    min-height: clamp(7.5rem, 28vh, 18rem);
+    font-size: clamp(1.35rem, .7rem + 1.9vw, 2.35rem);
+    border-radius: 1.4rem;
+  }
+  .tq-letter { width: clamp(2.9rem, 5vh, 3.6rem); height: clamp(2.9rem, 5vh, 3.6rem); font-size: 1.3rem; }
+  .tq-prompt { font-size: clamp(1.2rem, .6rem + 2vh, 1.9rem); }
+  .tq-chip { font-size: .85rem; }
+  .tq-topic { font-size: 1.05rem; }
+  .tq-example { font-size: 1rem; }
+  .tq-btn { padding: .9rem 2.1rem; font-size: 1.1rem; }
+  .tq-feedback { font-size: 1.1rem; }
+  .tq-back { font-size: 1rem; }
+  .tq-progress-meta { font-size: .95rem; }
+  .tq-seg { height: 10px; }
+  .tq-dot { width: 2.2rem; height: 2.2rem; font-size: .9rem; }
+}
+@media (min-width: 1100px) and (min-height: 820px) {
+  main.tq { max-width: 1280px; }
+  .tq-btn { padding: 1rem 2.4rem; font-size: 1.2rem; }
+}
+
+/* ================= Short screens: drop non-essentials, keep everything on one screen ================= */
+@media (max-height: 780px) {
+  .tq-title p { display: none; }
+  footer.tq-footer { display: none; }
+}
+@media (max-height: 680px) {
+  .tq-example { display: none; }
+  .tq-prompt { display: none; }
+  .tq-title h1 { font-size: 1.1rem; }
+}
+@media (max-height: 620px) {
+  .tq-title { display: none; }
+}
+@media (max-height: 620px) and (max-width: 599px) {
+  .tq-result .tq-msg { display: none; }
+  .tq-starbig { width: 2.4rem; height: 2.4rem; font-size: 1.4rem; }
+}
+@media (max-height: 560px) and (min-width: 600px) {
+  .tq-result { display: none; }
+  .tq-result.show { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: min-content; align-content: center; column-gap: 1.5rem; row-gap: .4rem; text-align: left; justify-items: start; }
+  .tq-result .tq-starwrap, .tq-result .tq-big, .tq-result h2, .tq-result .tq-msg, .tq-result .tq-dots { grid-column: 1; }
+  .tq-result .tq-review { grid-column: 2; grid-row: 1 / span 5; max-height: none; align-self: center; }
+  .tq-result .tq-actions { grid-column: 1 / -1; justify-self: center; }
+}
+@media (max-height: 560px) {
+  .tq-title { display: none; }
+  .tq-badge { display: none; }
+  .tq-prompt { display: none; }
+  .tq-opts { grid-template-columns: 1fr 1fr; }
+  .tq-opt { flex-direction: row; min-height: 3rem; font-size: 1rem; padding: .55rem .8rem; }
+  .tq-letter { width: 2rem; height: 2rem; font-size: .95rem; }
+  .tq-foot { min-height: 2.6rem; }
+  .tq-btn { padding: .55rem 1.2rem; }
+  .tq-dot { width: 1.6rem; height: 1.6rem; font-size: .72rem; }
+  .tq-starbig { width: 2.6rem; height: 2.6rem; font-size: 1.5rem; }
+  .tq-starcap { display: none; }
+}
+
+/* ================= Narrow phones ================= */
+@media (max-width: 520px) and (max-height: 700px) {
+  .tq-review li { padding: .12rem .2rem; }
+  .tq-big { font-size: 2rem; }
+  .tq-starbig { width: 2.8rem; height: 2.8rem; font-size: 1.6rem; }
+  .tq-starcap { display: none; }
+}
+@media (max-width: 520px) {
+  .tq-badge { display: none; }
+  .tq-dots { gap: .22rem; }
+  .tq-dot { width: 1.55rem; height: 1.55rem; font-size: .72rem; }
+  .tq-dot.sp { margin-left: .35rem; }
+}
+@media (max-width: 420px) {
+  .tq-back { padding: .4rem .8rem; font-size: .85rem; }
+  .tq-opt { min-height: 3.2rem; }
+  .tq-opt { font-size: 1.05rem; gap: .7rem; }
+  .tq-letter { width: 2.1rem; height: 2.1rem; font-size: .95rem; }
+  .tq-btn { padding: .65rem 1.2rem; font-size: .95rem; }
+  .tq-feedback { font-size: .92rem; padding: .5rem .7rem; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+
+/* ---------- Typing input (family questions) ---------- */
+.tq-opts { display: block; } /* reuse container */
+.tq-input {
+  width: 100%;
+  min-height: clamp(3.4rem, 8vh, 4.6rem);
+  padding: clamp(.85rem, 2vh, 1.2rem) 1.15rem;
+  font-size: clamp(1.05rem, .75rem + 1.2vh, 1.25rem);
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--t);
+  background: #f0fdfa;
+  border: 3px solid #5eead4;
+  border-radius: 1.1rem;
+  outline: 3px solid transparent;
+  outline-offset: 2px;
+  transition: border-color .15s, background .15s, outline-color .15s;
+  box-sizing: border-box;
+}
+.tq-input::placeholder {
+  color: #94a3b8;
+  font-weight: 500;
+  opacity: 1;
+}
+.tq-input:focus {
+  border-color: var(--p);
+  background: #fff;
+  outline-color: rgba(13,148,136,.28);
+}
+.tq-input.ok {
+  border-color: var(--ok);
+  background: var(--okbg);
+  outline-color: rgba(5,150,105,.2);
+}
+.tq-input.bad {
+  border-color: var(--bad);
+  background: var(--badbg);
+  outline-color: rgba(217,119,6,.18);
+}
+.tq-input:disabled { cursor: default; }
+.tq-hint {
+  margin: .45rem 0 0;
+  font-size: clamp(.78rem, .65rem + .5vh, .9rem);
+  color: var(--m);
+  font-weight: 500;
+}
+
+</style>
+</head>
+<body class="tq-body">
+
+<header class="arcade-header-bar">
+  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+    <a href="/" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+    <a href="/learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+    <a href="/resources/" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+    <a href="/about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+    <a href="/learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+  </nav>
+</header>
+
+<main class="tq">
+  <div class="tq-top">
+    <a class="tq-back" href="../" id="backBtn">← <span class="tq-long">Back to </span>Unit 4</a>
+    <span class="tq-badge">AEF STARTER · UNIT 4</span>
+    <span class="tq-score-pill" id="scoreLive">0 correct</span>
+  </div>
+
+  <div class="tq-title">
+    <h1>Family questions</h1>
+    <p>Type your answer. Grey text is a model — change the personal details.</p>
+  </div>
+
+  <div id="quizView">
+    <div class="tq-progress">
+      <div class="tq-progress-meta"><span id="progressLabel">Question 1 of 10</span></div>
+      <div class="tq-segs" id="segs" aria-hidden="true"></div>
+    </div>
+
+    <div class="tq-card">
+      <div class="tq-head">
+        <span class="tq-chip" id="partChip">Part 1</span>
+        <span class="tq-topic" id="qLabel"></span>
+      </div>
+      <div class="tq-example" id="exMini"></div>
+      <p class="tq-prompt" id="qNum"></p>
+      <div class="tq-opts" id="opts">
+        <input class="tq-input" id="answer" type="text" autocomplete="off" autocapitalize="sentences" spellcheck="true" />
+        <p class="tq-hint" id="hint"></p>
+      </div>
+      <div class="tq-foot">
+        <div class="tq-feedback" id="feedback" role="status" aria-live="polite"></div>
+        <button type="button" class="tq-btn tq-primary" id="checkBtn">Check ✓</button>
+        <button type="button" class="tq-btn tq-primary" id="nextBtn" style="display:none">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tq-result" id="result">
+    <div class="tq-starwrap" id="starWrap">
+      <div class="tq-starbig" aria-hidden="true">★</div>
+      <div class="tq-starcap" id="starCap">1 star earned!</div>
+    </div>
+    <div class="tq-big" id="scoreText"></div>
+    <h2 id="resultTitle"></h2>
+    <p class="tq-msg" id="resultMsg"></p>
+    <div class="tq-dots" id="dots" aria-label="Your answers"></div>
+    <ul class="tq-review" id="answersList"></ul>
+    <div class="tq-actions">
+      <button type="button" class="tq-btn tq-primary" id="retryBtn">Try again</button>
+      <a class="tq-btn tq-ghost" href="../">← Unit 4</a>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer tq-footer"><p>© <span id="year"></span> Mr. Sheyhaki · AEF Starter · Unit 4</p></footer>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+var QUESTIONS = [
+  { part: 1, n: 1, label: "Family word",
+    q: "Who is he?",
+    example: "Example: He’s my brother / father / husband / son. His name is…",
+    shadow: "He’s my brother.",
+    hint: "He’s my + family word (brother, father, husband, son…)",
+    test: function (s) { return /^he['’]?s\s+my\s+(brother|father|husband|son|uncle|grandfather|grandpa|dad|granddad|cousin)\.?$/i.test(s); },
+    model: "He’s my brother." },
+  { part: 1, n: 2, label: "Name",
+    q: "What’s his name?",
+    example: "Example: He’s my brother / father / husband / son. His name is…",
+    shadow: "His name is …",
+    hint: "His name is + a name (your answer)",
+    test: function (s) { return /^his\s+name\s+is\s+\S+/i.test(s); },
+    model: "His name is …" },
+  { part: 1, n: 3, label: "Place",
+    q: "Where is he from?",
+    example: "Example: He’s my brother / father / husband / son. His name is…",
+    shadow: "He’s from …",
+    hint: "He’s from + a place (your answer)",
+    test: function (s) { return /^he['’]?s\s+from\s+\S+/i.test(s); },
+    model: "He’s from …" },
+  { part: 1, n: 4, label: "Age",
+    q: "How old is he?",
+    example: "Example: He’s my brother / father / husband / son. His name is…",
+    shadow: "He’s … years old.",
+    hint: "He’s + number + years old (your answer)",
+    test: function (s) { return /^he['’]?s\s+\d{1,3}(\s+years?\s+old)?\.?$/i.test(s); },
+    model: "He’s 40 years old." },
+  { part: 1, n: 5, label: "Married?",
+    q: "Is he married?",
+    example: "Example: He’s my brother / father / husband / son. His name is…",
+    shadow: "Yes, he is. / No, he isn’t.",
+    hint: "Yes, he is.   or   No, he isn’t.",
+    test: function (s) { return /^(yes,?\s*he\s+is|no,?\s*he\s+isn['’]?t)\.?$/i.test(s); },
+    model: "Yes, he is. / No, he isn’t." },
+  { part: 2, n: 1, label: "Family word",
+    q: "Who is she?",
+    example: "Example: She’s my sister / mother / wife / daughter. Her name is…",
+    shadow: "She’s my sister.",
+    hint: "She’s my + family word (sister, mother, wife, daughter…)",
+    test: function (s) { return /^she['’]?s\s+my\s+(sister|mother|wife|daughter|aunt|grandmother|grandma|mom|mum|cousin)\.?$/i.test(s); },
+    model: "She’s my sister." },
+  { part: 2, n: 6, label: "Name",
+    q: "What’s her name?",
+    example: "Example: She’s my sister / mother / wife / daughter. Her name is…",
+    shadow: "Her name is …",
+    hint: "Her name is + a name (your answer)",
+    test: function (s) { return /^her\s+name\s+is\s+\S+/i.test(s); },
+    model: "Her name is …" },
+  { part: 2, n: 7, label: "Place",
+    q: "Where is she from?",
+    example: "Example: She’s my sister / mother / wife / daughter. Her name is…",
+    shadow: "She’s from …",
+    hint: "She’s from + a place (your answer)",
+    test: function (s) { return /^she['’]?s\s+from\s+\S+/i.test(s); },
+    model: "She’s from …" },
+  { part: 2, n: 8, label: "Age",
+    q: "How old is she?",
+    example: "Example: She’s my sister / mother / wife / daughter. Her name is…",
+    shadow: "She’s … years old.",
+    hint: "She’s + number + years old (your answer)",
+    test: function (s) { return /^she['’]?s\s+\d{1,3}(\s+years?\s+old)?\.?$/i.test(s); },
+    model: "She’s 35 years old." },
+  { part: 2, n: 9, label: "Married?",
+    q: "Is she married?",
+    example: "Example: She’s my sister / mother / wife / daughter. Her name is…",
+    shadow: "Yes, she is. / No, she isn’t.",
+    hint: "Yes, she is.   or   No, she isn’t.",
+    test: function (s) { return /^(yes,?\s*she\s+is|no,?\s*she\s+isn['’]?t)\.?$/i.test(s); },
+    model: "Yes, she is. / No, she isn’t." }
+];
+
+/* fix part 2 numbering to 1-5 display via n field - use sequential display */
+QUESTIONS[5].n = 1; QUESTIONS[6].n = 2; QUESTIONS[7].n = 3; QUESTIONS[8].n = 4; QUESTIONS[9].n = 5;
+
+var idx = 0, correctCount = 0, answers = [];
+var $ = function (id) { return document.getElementById(id); };
+
+function norm(s) {
+  return String(s || "").trim().replace(/\s+/g, " ").replace(/[’]/g, "'").replace(/\.+$/, "");
+}
+
+function buildSegs() {
+  var box = $("segs"); box.innerHTML = "";
+  QUESTIONS.forEach(function (q, i) {
+    var d = document.createElement("div");
+    d.className = "tq-seg" + (i === 5 ? " gap" : "");
+    box.appendChild(d);
+  });
+}
+
+function paintSegs() {
+  var nodes = $("segs").children;
+  for (var i = 0; i < nodes.length; i++) {
+    nodes[i].classList.remove("on", "ok", "bad");
+    if (answers[i]) nodes[i].classList.add(answers[i].ok ? "ok" : "bad");
+    else if (i === idx) nodes[i].classList.add("on");
+  }
+}
+
+function showQuestion() {
+  var q = QUESTIONS[idx];
+  $("progressLabel").textContent = "Question " + (idx + 1) + " of " + QUESTIONS.length;
+  $("partChip").textContent = "Part " + q.part;
+  $("qLabel").textContent = q.label;
+  $("exMini").innerHTML = "<strong>Example:</strong> " + q.example;
+  $("qNum").textContent = q.n + ". " + q.q;
+  $("hint").textContent = q.hint;
+  var inp = $("answer");
+  inp.value = "";
+  inp.placeholder = q.shadow;
+  inp.className = "tq-input";
+  inp.disabled = false;
+  $("feedback").className = "tq-feedback";
+  $("feedback").textContent = "";
+  $("checkBtn").style.display = "";
+  $("checkBtn").disabled = false;
+  $("nextBtn").style.display = "none";
+  $("scoreLive").textContent = correctCount + " correct";
+  paintSegs();
+  setTimeout(function () { inp.focus(); }, 40);
+}
+
+function check() {
+  var q = QUESTIONS[idx];
+  var raw = $("answer").value;
+  var s = norm(raw);
+  if (!s) {
+    $("feedback").className = "tq-feedback show bad";
+    $("feedback").textContent = "Type your answer first.";
+    if (window.TestsSound) TestsSound.soft && TestsSound.soft();
+    return;
+  }
+  var ok = q.test(s);
+  answers[idx] = { text: raw.trim(), ok: ok };
+  if (ok) correctCount++;
+  var inp = $("answer");
+  inp.classList.add(ok ? "ok" : "bad");
+  inp.disabled = true;
+  $("checkBtn").style.display = "none";
+  $("nextBtn").style.display = "";
+  $("nextBtn").textContent = idx < QUESTIONS.length - 1 ? "Next →" : "See results →";
+  $("feedback").className = "tq-feedback show " + (ok ? "ok" : "bad");
+  $("feedback").textContent = ok ? "✓ Good!" : ("✗ Pattern: " + q.model);
+  $("scoreLive").textContent = correctCount + " correct";
+  paintSegs();
+  if (window.TestsSound) {
+    if (ok) TestsSound.good && TestsSound.good();
+    else TestsSound.soft && TestsSound.soft();
+  }
+}
+
+function next() {
+  if (idx < QUESTIONS.length - 1) {
+    idx++;
+    showQuestion();
+    if (window.TestsSound) TestsSound.tap && TestsSound.tap();
+  } else finish();
+}
+
+function starsFromAcc(acc) {
+  if (acc >= 90) return 3;
+  if (acc >= 70) return 2;
+  if (acc >= 40) return 1;
+  return 0;
+}
+
+function finish() {
+  $("quizView").style.display = "none";
+  document.querySelector("main.tq").classList.add("done");
+  var total = QUESTIONS.length;
+  var acc = Math.round((correctCount / total) * 100);
+  var stars = starsFromAcc(acc);
+  var r = $("result");
+  r.classList.add("show");
+  r.classList.toggle("perfect", correctCount === total);
+  $("scoreText").textContent = correctCount + " / " + total;
+  $("resultTitle").textContent =
+    correctCount === total ? "Wonderful work!" :
+    correctCount >= total - 2 ? "Nice work!" : "Good effort!";
+  $("resultMsg").textContent =
+    correctCount === total
+      ? "Every answer follows the right pattern."
+      : "Check the models below, then try again if you like.";
+  $("starCap").textContent = stars + (stars === 1 ? " star earned!" : " stars earned!");
+  $("starWrap").style.opacity = stars ? "1" : ".55";
+
+  var dots = $("dots"); dots.innerHTML = "";
+  QUESTIONS.forEach(function (q, i) {
+    var d = document.createElement("span");
+    d.className = "tq-dot" + (answers[i] && answers[i].ok ? " ok" : " bad") + (i === 5 ? " sp" : "");
+    d.textContent = answers[i] && answers[i].ok ? "✓" : "·";
+    dots.appendChild(d);
+  });
+
+  var ul = $("answersList"); ul.innerHTML = "";
+  QUESTIONS.forEach(function (q, i) {
+    var a = answers[i] || {};
+    var li = document.createElement("li");
+    if (a.ok) li.innerHTML = '<span class="ok">✓ Part ' + q.part + ' · ' + q.n + '. ' + (a.text || "") + "</span>";
+    else li.innerHTML = '<span class="no">✗ Part ' + q.part + ' · ' + q.n + '. "' + (a.text || "—") + '"</span> → <span class="ok">' + q.model + "</span>";
+    ul.appendChild(li);
+  });
+
+  try {
+    if (window.LAFinish && typeof LAFinish.show === "function") {
+      LAFinish.show({
+        gameId: "starter-u4-family-questions",
+        gameName: "Family questions",
+        score: correctCount,
+        total: total,
+        title: "Family questions",
+        backHref: "../",
+        onAgain: function () { $("retryBtn").click(); },
+        category: "tests",
+        unit: "starter-4"
+      });
+    }
+  } catch (e) {}
+}
+
+$("checkBtn").addEventListener("click", check);
+$("nextBtn").addEventListener("click", next);
+$("answer").addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    if ($("checkBtn").style.display !== "none") check();
+    else if ($("nextBtn").style.display !== "none") next();
+  }
+});
+$("retryBtn").addEventListener("click", function () {
+  idx = 0; correctCount = 0; answers = [];
+  $("result").classList.remove("show");
+  document.querySelector("main.tq").classList.remove("done");
+  $("quizView").style.display = "flex";
+  showQuestion();
+});
+
+buildSegs();
+showQuestion();
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="../../../assets/tests-stars.js"></script>
+<script src="../../../assets/tests-ui.js"></script>
+</body>
+</html>
