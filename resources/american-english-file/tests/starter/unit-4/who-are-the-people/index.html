@@ -130,6 +130,8 @@ main.tq {
   display: flex; flex-direction: column; gap: .4rem;
   overflow: hidden;
 }
+.tq-foot { flex-shrink: 0; }
+.statements { overflow: hidden; }
 .statements {
   flex: 1 1 auto; min-height: 0;
   display: flex; flex-direction: column; gap: .35rem;
@@ -259,31 +261,90 @@ footer.tq-footer { flex: 0 0 auto; text-align: center; padding: .2rem; color: va
   .tq-badge { display: none; }
   .tq-title p { display: none; }
   .tq-long { display: none; }
-  main.tq { padding: .35rem .55rem .4rem; gap: .3rem; }
-  .audio-bar { padding: .4rem .55rem .4rem .4rem; gap: .55rem; }
-  .play-btn { width: 3rem; height: 3rem; }
-  .stmt {
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto;
+  main.tq { padding: .3rem .55rem .35rem; gap: .28rem; }
+  .audio-bar { padding: .35rem .5rem .35rem .35rem; gap: .5rem; border-radius: 1rem; }
+  .play-btn { width: 2.85rem; height: 2.85rem; }
+  .play-btn svg { width: 1.15rem; height: 1.15rem; }
+  .tq-card {
+    padding: .45rem .5rem .5rem;
+    gap: .3rem;
+    border-radius: 1rem;
   }
-  .tf-pair { grid-column: 2; justify-self: end; }
-  .stmt-text { font-size: .9rem; }
-  .tf-btn { min-width: 3.3rem; width: 3.3rem; height: 2.2rem; font-size: .75rem; }
+  .statements { gap: .28rem; justify-content: flex-start; }
+  .stmt {
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: .35rem .4rem;
+    padding: .35rem .4rem;
+  }
+  .stmt-text { font-size: .84rem; line-height: 1.25; }
+  .stmt-num { width: 1.4rem; height: 1.4rem; font-size: .68rem; }
+  .tf-pair { gap: .25rem; }
+  .tf-btn {
+    min-width: 3.1rem; width: 3.1rem; height: 2rem;
+    font-size: .72rem; border-radius: .55rem;
+  }
+  .tq-foot {
+    min-height: 2.3rem;
+    padding-top: .15rem;
+    border-top: 1px solid #e2e8f0;
+    margin-top: .15rem;
+  }
+  .tq-btn { padding: .5rem 1rem; font-size: .88rem; }
   footer.tq-footer { display: none; }
 }
-@media (max-height: 700px) {
+@media (max-height: 780px) {
   .tq-title p, footer.tq-footer { display: none; }
   .audio-meta .label { display: none; }
 }
-@media (max-height: 620px) {
+@media (max-height: 700px) {
   .tq-title { display: none; }
-  .play-btn { width: 2.7rem; height: 2.7rem; }
-  .stmt { padding: .28rem .4rem; }
-  .stmt-text { font-size: .85rem; }
+  .play-btn { width: 2.6rem; height: 2.6rem; }
+  .stmt { padding: .28rem .35rem; }
+  .stmt-text { font-size: .8rem; }
+  .tf-btn { min-width: 2.9rem; width: 2.9rem; height: 1.9rem; font-size: .7rem; }
+  .audio-time { display: none; }
+}
+@media (max-height: 620px) {
+  .stmt-text { font-size: .76rem; }
+  .statements { gap: .2rem; }
+  .tq-card { padding: .35rem .4rem; }
+  .tf-btn { min-width: 2.7rem; width: 2.7rem; height: 1.8rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .play-btn.playing::after { animation: none; }
 }
+
+/* Dark theme */
+[data-theme="dark"] body.tq-body, body.dark.tq-body {
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, rgba(45,212,191,.12), transparent 60%),
+    linear-gradient(180deg, #0b1220, #0f172a);
+  color: #f1f5f9;
+}
+[data-theme="dark"] .tq-title h1, body.dark .tq-title h1 { color: #f8fafc; }
+[data-theme="dark"] .tq-title p, body.dark .tq-title p { color: #94a3b8; }
+[data-theme="dark"] .tq-back, body.dark .tq-back,
+[data-theme="dark"] .tq-score-pill, body.dark .tq-score-pill {
+  background: #1e293b; border-color: #334155; color: #e2e8f0;
+}
+[data-theme="dark"] .audio-bar, body.dark .audio-bar,
+[data-theme="dark"] .tq-card, body.dark .tq-card,
+[data-theme="dark"] .tq-result, body.dark .tq-result {
+  background: #1e293b; border-color: #334155;
+  box-shadow: 0 8px 28px rgba(0,0,0,.35);
+}
+[data-theme="dark"] .stmt, body.dark .stmt { background: #0f172a; }
+[data-theme="dark"] .stmt-text, body.dark .stmt-text { color: #e2e8f0; }
+[data-theme="dark"] .tf-btn, body.dark .tf-btn {
+  background: #0f172a; border-color: #2dd4bf; color: #5eead4;
+}
+[data-theme="dark"] .tf-btn.selected, body.dark .tf-btn.selected {
+  background: #0d9488; border-color: #0d9488; color: #fff;
+}
+[data-theme="dark"] .audio-track, body.dark .audio-track { background: #134e4a; }
+[data-theme="dark"] .tq-foot, body.dark .tq-foot { border-color: #334155 !important; }
+
 </style>
 </head>
 <body class="tq-body">
