@@ -170,18 +170,41 @@ main.tq {
   display: flex; gap: .3rem; flex: 0 0 auto;
 }
 .tf-btn {
-  min-width: 2.6rem; height: 2.35rem; padding: 0 .45rem;
-  border-radius: .65rem; border: 2px solid #99f6e4;
-  background: #fff; color: var(--pd);
-  font-size: .78rem; font-weight: 800; font-family: inherit;
-  cursor: pointer; -webkit-tap-highlight-color: transparent;
-  transition: background .12s, border-color .12s, color .12s, transform .1s;
+  min-width: 3.6rem;
+  width: 3.6rem;
+  height: 2.4rem;
+  padding: 0;
+  border-radius: .7rem;
+  border: 2px solid #5eead4;
+  background: #fff;
+  color: var(--pd);
+  font-size: .8rem;
+  font-weight: 800;
+  font-family: inherit;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: visible;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  transition: background .12s, border-color .12s, color .12s;
 }
-.tf-btn:hover:not(:disabled) { border-color: var(--p); background: #f0fdfa; }
-.tf-btn:active:not(:disabled) { transform: scale(.96); }
+.tf-btn:hover:not(:disabled) {
+  border-color: var(--p);
+  background: #ccfbf1;
+  color: var(--pd);
+}
+.tf-btn:active:not(:disabled) { background: #99f6e4; }
 .tf-btn.selected {
-  background: var(--p); border-color: var(--p); color: #fff;
-  box-shadow: 0 0 0 3px rgba(13,148,136,.2);
+  background: var(--p);
+  border-color: var(--p);
+  color: #fff;
+  box-shadow: 0 0 0 3px rgba(13,148,136,.22);
+}
+.tf-btn.selected:hover:not(:disabled) {
+  background: var(--pd);
+  border-color: var(--pd);
+  color: #fff;
 }
 .tf-btn.correct { background: var(--ok); border-color: var(--ok); color: #fff; }
 .tf-btn.wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
@@ -245,7 +268,7 @@ footer.tq-footer { flex: 0 0 auto; text-align: center; padding: .2rem; color: va
   }
   .tf-pair { grid-column: 2; justify-self: end; }
   .stmt-text { font-size: .9rem; }
-  .tf-btn { min-width: 2.4rem; height: 2.15rem; font-size: .72rem; }
+  .tf-btn { min-width: 3.3rem; width: 3.3rem; height: 2.2rem; font-size: .75rem; }
   footer.tq-footer { display: none; }
 }
 @media (max-height: 700px) {
@@ -505,19 +528,34 @@ function finish(correct) {
     ul.appendChild(li);
   });
 
+  var total = ITEMS.length;
+  var gameId = "starter-u4-who-are-the-people-tf";
+
+  /* Unit Tests star (hub ★) — one star when finished */
+  try {
+    if (window.TestStars && typeof TestStars.award === "function") {
+      TestStars.award(gameId);
+    }
+  } catch (e0) {}
+
   try {
     if (window.LAFinish && typeof LAFinish.show === "function") {
       LAFinish.show({
-        gameId: "starter-u4-who-are-the-people-tf",
+        gameId: gameId,
         gameName: "Who are the people?",
         score: correct,
-        total: ITEMS.length,
+        total: total,
         title: "Who are the people?",
         backHref: "../",
         onAgain: function () { $("retryBtn").click(); },
         category: "tests",
         unit: "starter-4"
       });
+    } else if (window.LAStars) {
+      if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(gameId);
+      if (typeof LAStars.saveFromAccuracy === "function") {
+        LAStars.saveFromAccuracy(gameId, Math.round((correct / total) * 100));
+      }
     }
   } catch (e) {}
 }
