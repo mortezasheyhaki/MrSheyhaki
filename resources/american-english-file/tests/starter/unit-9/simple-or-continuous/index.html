@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 9 · Simple or Continuous 1 | Unit 9 | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Underline the correct verb form: simple present or present continuous. American English File Starter Unit 9.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+/* Every rule is scoped to body.pst so the site's theme CSS cannot override it. */
+body.pst{
+  --bg:#f7f4ee; --card:#ffffff; --ink:#1d2430; --mut:#6b7280; --line:#e6e0d4;
+  --acc:#0f766e; --acc-d:#0b5c56; --acc-two:#14b8a6; --acc-soft:rgba(15,118,110,.10); --btn-ink:#ffffff;
+  --ok:#15803d; --ok-bg:#dcfce7; --warn:#b91c1c; --warn-bg:#fee2e2;
+  --ghost:#ffffff; --btn-off:#cfd6dc; --shadow:rgba(29,36,48,.07);
+  --pos:#15803d; --pos-bg:rgba(34,197,94,.14); --neg:#b91c1c; --neg-bg:rgba(239,68,68,.12);
+  --app-bg:radial-gradient(900px 520px at 8% -12%, rgba(20,184,166,.20), transparent 60%), radial-gradient(760px 480px at 100% 0%, rgba(124,58,237,.11), transparent 58%), radial-gradient(720px 520px at 50% 115%, rgba(15,118,110,.16), transparent 62%), linear-gradient(180deg, #f0fdfa 0%, #eef4ff 100%);
+}
+html[data-theme="dark"] body.pst{
+  --bg:#0f1420; --card:#171e2d; --ink:#e8edf6; --mut:#9aa6b8; --line:#2a3447;
+  --acc:#2dd4bf; --acc-d:#0f8a7b; --acc-two:#5eead4; --acc-soft:rgba(45,212,191,.14); --btn-ink:#062b27;
+  --ok:#4ade80; --ok-bg:rgba(74,222,128,.14); --warn:#f87171; --warn-bg:rgba(248,113,113,.14);
+  --ghost:#1d2638; --btn-off:#2a3447; --shadow:rgba(0,0,0,.35);
+  --pos:#4ade80; --pos-bg:rgba(74,222,128,.16); --neg:#f87171; --neg-bg:rgba(248,113,113,.16);
+  --app-bg:radial-gradient(900px 520px at 8% -12%, rgba(45,212,191,.16), transparent 60%), radial-gradient(760px 480px at 100% 0%, rgba(124,58,237,.18), transparent 58%), radial-gradient(720px 520px at 50% 115%, rgba(20,184,166,.12), transparent 62%), linear-gradient(180deg, #0c1a1f 0%, #0f1420 100%);
+}
+html, html[data-theme="dark"]{ background:var(--bg); }
+html[data-theme="dark"] body.pst{ background:var(--app-bg) fixed !important; }
+html, body.pst{ margin:0; padding:0; height:100%; overflow:hidden; }
+body.pst{
+  position:fixed; inset:0; overflow:hidden; box-sizing:border-box;
+  background:var(--app-bg) fixed; color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+body.pst *, body.pst *::before, body.pst *::after{ box-sizing:border-box; }
+
+body.pst .app{
+  position:fixed; top:0; right:0; bottom:0; left:0;
+  display:flex; flex-direction:column;
+  width:100%; max-width:680px; margin:0 auto;
+  padding:max(12px,env(safe-area-inset-top)) 16px max(22px,env(safe-area-inset-bottom));
+  overflow:hidden;
+}
+body.pst .app > *{ margin:0; }
+body.pst .bg{ position:fixed; inset:0; z-index:0; background:var(--app-bg); }
+body.pst .app{ z-index:1; }
+
+/* top bar: same back pill and sound circle as the other Tests & Exams games */
+body.pst .top{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; flex:0 0 auto;
+  background:none; border:0; box-shadow:none; padding:0; height:auto; position:static;
+}
+body.pst .back-btn{
+  display:inline-flex; align-items:center; gap:.35rem; min-height:40px; padding:.4rem .9rem;
+  border-radius:999px; background:#fff; border:2px solid rgba(124,58,237,.16); color:#5b21b6;
+  font-weight:700; font-size:.92rem; text-decoration:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s, box-shadow .15s;
+}
+body.pst .back-btn:hover{ background:#fff; transform:translateY(-1px); }
+body.pst .back-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(124,58,237,.12); }
+body.pst .count{ margin-left:auto; font-weight:700; font-size:.92rem; color:var(--mut); font-variant-numeric:tabular-nums; }
+body.pst .tui-sound{
+  appearance:none; border:2px solid rgba(124,58,237,.16); background:#fff;
+  width:40px; height:40px; border-radius:50%; font-size:1.05rem; cursor:pointer; flex:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s; padding:0;
+  display:inline-grid; place-items:center; position:static; margin-left:8px;
+}
+body.pst .tui-sound:active{ transform:translateY(2px); }
+
+/* question area: centred, so the sentence and answers sit together */
+body.pst .stage{
+  flex:1 1 auto; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:8px 0;
+}
+body.pst .stage.hide{ display:none; }
+body.pst .kind{
+  display:inline-block; padding:7px 12px; border-radius:20px;
+  background:var(--acc-soft); color:var(--acc);
+  font-size:11px; font-weight:700; letter-spacing:.6px; text-transform:uppercase;
+}
+/* fixed-height sentence area: it starts in the same place whether it wraps or not */
+body.pst .sentence{
+  margin:14px 0 0; max-width:720px; width:100%; min-height:3.6em;
+  display:flex; align-items:center; justify-content:center;
+  font-size:clamp(24px, 4vw + 8px, 38px); font-weight:700; line-height:1.35; color:var(--ink);
+}
+body.pst .sline{ display:block; text-align:center; overflow-wrap:anywhere; }
+body.pst .gap{
+  display:inline-block; min-width:4.5ch; height:1em; margin:0 .12em;
+  border-bottom:3px solid var(--acc); vertical-align:baseline; user-select:none;
+}
+body.pst .hint{ margin:10px 0 0; font-size:13px; color:var(--mut); min-height:1.4em; }
+
+/* answer cards */
+body.pst .answers{
+  margin-top:22px; width:100%; max-width:640px;
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(0,1fr)); gap:12px;
+}
+body.pst .ans{
+  appearance:none; position:relative; min-height:96px; padding:14px 10px; cursor:pointer;
+  border:2px solid var(--line); border-radius:17px; background:var(--card); color:var(--ink);
+  font:inherit; font-size:clamp(16px, 2.6vw, 19px); font-weight:700; line-height:1.3; overflow-wrap:anywhere;
+  box-shadow:0 2px 0 var(--line); transition:transform .15s, border-color .15s, background .15s, box-shadow .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+body.pst .ans:hover:not(:disabled){ transform:translateY(-3px); border-color:var(--acc-two); }
+body.pst .ans:active:not(:disabled){ transform:translateY(1px); box-shadow:0 1px 0 var(--line); }
+body.pst .ans:disabled{ cursor:default; }
+body.pst .ans:disabled:not(.correct):not(.wrong):not(.reveal){ opacity:.5; }
+body.pst .ans.correct, body.pst .ans.reveal{ border-color:var(--ok); background:var(--ok-bg); color:var(--ok); box-shadow:0 4px 0 rgba(21,128,61,.25); }
+body.pst .ans.wrong{ border-color:var(--warn); background:var(--warn-bg); color:var(--warn); box-shadow:0 4px 0 rgba(185,28,28,.2); }
+body.pst .ans.correct::after, body.pst .ans.wrong::after{
+  position:absolute; top:6px; right:10px; font-size:14px; font-weight:900;
+}
+body.pst .ans.correct::after{ content:"✓"; }
+body.pst .ans.wrong::after{ content:"✕"; }
+
+body.pst .fb{ min-height:34px; margin-top:14px; font-size:14px; font-weight:800; color:var(--mut); }
+body.pst .fb.ok{ color:var(--ok); }
+body.pst .fb.bad{ color:var(--warn); }
+body.pst .example{ margin-top:10px; font-size:12.5px; color:var(--mut); line-height:1.45; max-width:46ch; }
+body.pst .example b{ color:var(--acc); font-weight:700; text-decoration:underline; text-underline-offset:3px; }
+
+/* battle-style progress */
+body.pst .progress{ flex:0 0 auto; width:100%; max-width:640px; margin:0 auto; }
+body.pst .progress-label{ display:flex; justify-content:space-between; font-size:9px; letter-spacing:1px; color:var(--mut); }
+body.pst .progress-bar{ height:7px; margin-top:8px; overflow:hidden; border-radius:20px; background:rgba(127,127,127,.13); }
+body.pst .progress-fill{ width:0; height:100%; border-radius:20px; background:linear-gradient(90deg,var(--acc),var(--acc-two)); transition:width .35s ease; }
+
+/* bottom action: always keeps its space so nothing moves */
+body.pst .actions{ flex:0 0 auto; display:flex; gap:10px; margin-top:12px; width:100%; max-width:640px; margin-left:auto; margin-right:auto; }
+body.pst .btn{
+  flex:1 1 auto; min-height:52px; border:0; border-radius:16px; cursor:pointer;
+  font:inherit; font-size:1rem; font-weight:800; color:var(--btn-ink); background:var(--acc);
+  box-shadow:0 4px 0 var(--acc-d); text-decoration:none; display:inline-flex;
+  align-items:center; justify-content:center; text-align:center;
+  transition:transform .1s, box-shadow .1s, opacity .2s; -webkit-tap-highlight-color:transparent;
+}
+body.pst .btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--acc-d); }
+body.pst .btn:disabled{ background:var(--btn-off); box-shadow:0 4px 0 var(--line); cursor:default; color:var(--mut); }
+body.pst .btn.ghost{ background:var(--ghost); color:var(--ink); border:1px solid var(--line); box-shadow:0 4px 0 var(--line); }
+body.pst .btn.hidden{ visibility:hidden; }
+
+/* result */
+body.pst .result{
+  display:none; flex:1 1 auto; min-height:0; width:100%; max-width:640px; margin:0 auto;
+  flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  background:var(--card); border:1px solid var(--line); border-radius:24px;
+  padding:14px; box-shadow:0 10px 30px var(--shadow); text-align:center; overflow:hidden;
+}
+body.pst .result.show{ display:flex; }
+body.pst .big{ font-size:clamp(2rem, 7vw, 3rem); font-weight:900; color:var(--acc); line-height:1; font-variant-numeric:tabular-nums; }
+body.pst .result h2{ margin:0; font-size:1.2rem; font-weight:800; color:var(--ink); }
+body.pst .result .msg{ margin:0; font-size:.9rem; color:var(--mut); max-width:30ch; }
+body.pst .review{
+  list-style:none; margin:2px 0 0; padding:0; width:100%; max-width:520px;
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px;
+}
+body.pst .review li{
+  border-radius:12px; padding:6px 7px; font-size:.78rem; line-height:1.25; text-align:left;
+  background:var(--ghost); color:var(--ink); overflow-wrap:anywhere;
+}
+body.pst .review li.ok{ background:var(--ok-bg); color:var(--ok); }
+body.pst .review li.no{ background:var(--warn-bg); color:var(--warn); }
+body.pst .review .n{ font-weight:800; margin-right:3px; }
+body.pst .review .was{ display:block; font-weight:700; }
+body.pst .review .right{ display:block; font-weight:800; }
+body.pst .resultActions{ display:none; }
+
+body.pst .ans.sel{ border-color:var(--acc); background:var(--acc-soft); color:var(--acc); box-shadow:0 2px 0 var(--acc); }
+body.pst .kind.pos{ background:var(--pos-bg); color:var(--pos); }
+body.pst .kind.neg{ background:var(--neg-bg); color:var(--neg); }
+/* phones: smaller cards and sentence, so everything fits without scrolling */
+@media (max-width:420px){
+  body.pst .answers{ gap:8px; }
+  body.pst .ans{ min-height:84px; padding:10px 6px; font-size:15px; }
+  body.pst .sentence{ min-height:3.6em; }
+}
+@media (max-height:700px){
+  body.pst .example{ display:none; }
+  body.pst .sentence{ margin-top:8px; }
+  body.pst .answers{ margin-top:16px; }
+  body.pst .ans{ min-height:76px; }
+}
+@media (max-height:560px){
+  body.pst .hint{ display:none; }
+  body.pst .top .back-btn{ min-height:36px; padding:.3rem .8rem; }
+  body.pst .ans{ min-height:64px; }
+  body.pst .fb{ margin-top:6px; min-height:24px; }
+  body.pst .btn{ min-height:46px; }
+}
+@media (prefers-reduced-motion:reduce){ body.pst *{ transition:none !important; } }
+</style>
+</head>
+<body class="pst">
+<div class="bg" aria-hidden="true"></div>
+<div class="app">
+  <div class="top header">
+    <a class="back-btn" href="../">← Unit 9</a>
+    <span class="count" id="count">1 / 5</span>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="kind" id="kind" aria-live="polite"></div>
+    <div class="sentence" id="sentence"></div>
+    <p class="hint" id="hint"></p>
+    <div class="answers" id="opts" role="group" aria-label="Answer choices"></div>
+    <div class="fb" id="fb" role="status" aria-live="polite"></div>
+    <div class="example">We usually <b>watch</b> / are watching TV in the evening.</div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="big" id="score">0 / 5</div>
+    <h2 id="resultTitle"></h2>
+    <p class="msg" id="resultMsg"></p>
+    <ul class="review" id="review"></ul>
+  </div>
+
+  <div class="progress">
+    <div class="progress-label"><span>BATTLE PROGRESS</span><span id="progressText">0 / 5</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="actions" id="actions">
+    <button type="button" class="btn" id="mainBtn" disabled>Check</button>
+  </div>
+  <div class="actions" id="resultActions" style="display:none">
+    <button type="button" class="btn" id="retryBtn">Try again</button>
+    <a class="btn ghost" href="../">← Unit 9</a>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+var ITEMS = [
+  { before: "We always", after: "on Friday nights.", ans: "go out", opts: ["go out", "are going out"] },
+  { before: "Jorge", after: "for his flight right now.", ans: "is waiting", opts: ["waits", "is waiting"] },
+  { before: "Angela sometimes", after: "in a restaurant.", ans: "works", opts: ["works", "is working"] },
+  { before: "That’s my sister over there. She", after: "a blue sweater.", ans: "is wearing", opts: ["wears", "is wearing"] },
+  { before: "Roberto", after: "an email to his sister right now.", ans: "is writing", opts: ["writes", "is writing"] }
+];
+var TOTAL = ITEMS.length;
+var idx = 0, correct = 0, answers = [], answered = false, shown = [];
+var $ = function (id) { return document.getElementById(id); };
+
+function shuffle(a) {
+  var b = a.slice();
+  for (var i = b.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1)); var t = b[i]; b[i] = b[j]; b[j] = t;
+  }
+  return b;
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+function kindLabel(item) { return "SIMPLE OR CONTINUOUS"; }
+function hintText(item) { return item.hint || "Underline the correct verb form."; }
+
+function render() {
+  var item = ITEMS[idx];
+  answered = false;
+  shown = shuffle(item.opts);
+  $("count").textContent = (idx + 1) + " / " + TOTAL;
+  $("progressText").textContent = idx + " / " + TOTAL;
+  $("progressFill").style.width = (idx / TOTAL * 100) + "%";
+  $("kind").textContent = kindLabel(item) + "  ·  " + (idx + 1) + " / " + TOTAL;
+  $("kind").className = "kind " + (item.neg === true ? "neg" : item.neg === false ? "pos" : "");
+  $("sentence").innerHTML =
+    '<span class="sline">' + escapeHtml(item.before) +
+    '<span class="gap" aria-label="gap ' + (idx + 1) + '"></span>' + escapeHtml(item.after) + '</span>';
+  $("hint").textContent = hintText(item);
+  $("fb").className = "fb";
+  $("fb").textContent = "";
+
+  var box = $("opts");
+  box.innerHTML = "";
+  shown.forEach(function (v) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "ans";
+    b.setAttribute("data-v", v);
+    b.textContent = v;
+    b.addEventListener("click", function () { choose(v); });
+    box.appendChild(b);
+  });
+  sel = null;
+  $("mainBtn").textContent = "Check";
+  $("mainBtn").disabled = true;
+}
+
+var sel = null;
+/* tapping an option only selects it; Check reveals the answer */
+function choose(v) {
+  if (answered) return;
+  sel = v;
+  Array.prototype.forEach.call(document.querySelectorAll("#opts .ans"), function (b) {
+    b.classList.toggle("sel", b.getAttribute("data-v") === v);
+  });
+  $("mainBtn").disabled = false;
+}
+
+function check() {
+  if (answered || sel === null) return;
+  answered = true;
+  var item = ITEMS[idx];
+  var ok = sel === item.ans;
+  answers[idx] = { ok: ok, text: sel };
+  if (ok) correct++;
+  Array.prototype.forEach.call(document.querySelectorAll("#opts .ans"), function (b) {
+    var bv = b.getAttribute("data-v");
+    b.disabled = true;
+    b.classList.remove("sel");
+    if (bv === item.ans) b.classList.add(ok ? "correct" : "reveal");
+    else if (bv === sel) b.classList.add("wrong");
+  });
+  $("fb").className = "fb " + (ok ? "ok" : "bad");
+  $("fb").textContent = ok ? "Correct!" : "→ " + item.ans;
+  $("progressText").textContent = (idx + 1) + " / " + TOTAL;
+  $("progressFill").style.width = ((idx + 1) / TOTAL * 100) + "%";
+  $("mainBtn").textContent = idx === TOTAL - 1 ? "See results" : "Next";
+}
+
+function onMain() {
+  if (!answered) check(); else next();
+}
+
+function next() {
+  idx++;
+  if (idx >= TOTAL) finish(); else render();
+}
+
+function finish() {
+  $("progressFill").style.width = "100%";
+  $("progressText").textContent = TOTAL + " / " + TOTAL;
+  $("stage").classList.add("hide");
+  $("actions").style.display = "none";
+  $("resultActions").style.display = "flex";
+  $("result").classList.add("show");
+  $("score").textContent = correct + " / " + TOTAL;
+  $("resultTitle").textContent =
+    correct === TOTAL ? "Wonderful work!" : correct >= TOTAL - 2 ? "Nice work!" : "Good effort!";
+  $("resultMsg").textContent =
+    correct === TOTAL ? "Every answer is correct." : "Check the answers below, then try again if you like.";
+
+  var ul = $("review");
+  ul.innerHTML = "";
+  ITEMS.forEach(function (item, i) {
+    var a = answers[i] || {};
+    var li = document.createElement("li");
+    if (a.ok) {
+      li.className = "ok";
+      li.innerHTML = '<span class="n">' + (i + 1) + '</span>' + escapeHtml(a.text);
+    } else {
+      li.className = "no";
+      li.innerHTML = '<span class="n">' + (i + 1) + '</span><span class="was">' +
+        escapeHtml(a.text || "—") + '</span><span class="right">' + escapeHtml(item.ans) + '</span>';
+    }
+    ul.appendChild(li);
+  });
+
+  var gameId = "starter-u9-simple-or-continuous";
+  try {
+    if (window.TestStars && typeof TestStars.award === "function") TestStars.award(gameId);
+  } catch (e0) {}
+  try {
+    if (window.LAFinish && typeof LAFinish.show === "function") {
+      LAFinish.show({
+        gameId: gameId, gameName: "Simple or Continuous · Version 1", score: correct, total: TOTAL,
+        title: "Simple or Continuous · Version 1", backHref: "../",
+        onAgain: function () { $("retryBtn").click(); },
+        category: "tests", unit: "starter-12"
+      });
+    } else if (window.LAStars) {
+      if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(gameId);
+      if (typeof LAStars.saveFromAccuracy === "function") {
+        LAStars.saveFromAccuracy(gameId, Math.round((correct / TOTAL) * 100));
+      }
+    }
+  } catch (e) {}
+}
+
+/* keyboard: 1/2/3 choose, Enter goes to the next item */
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    if (!$("stage").classList.contains("hide")) onMain();
+    return;
+  }
+  if (!answered && /^[123]$/.test(e.key)) {
+    var b = document.querySelectorAll("#opts .ans")[parseInt(e.key, 10) - 1];
+    if (b) choose(b.getAttribute("data-v"));
+  }
+});
+
+$("mainBtn").addEventListener("click", onMain);
+$("retryBtn").addEventListener("click", function () {
+  idx = 0; correct = 0; answers = []; answered = false; sel = null;
+  $("result").classList.remove("show");
+  $("resultActions").style.display = "none";
+  $("actions").style.display = "flex";
+  $("stage").classList.remove("hide");
+  render();
+});
+
+render();
+});
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="../../../assets/tests-stars.js"></script>
+<script src="../../../assets/tests-ui.js"></script>
+</body>
+</html>
