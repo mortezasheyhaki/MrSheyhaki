@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 12 · Dialogue | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Complete the dialogue with the correct past tense forms from the box. American English File Starter Unit 12.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+/* Every rule is scoped to body.pst so the site's theme CSS cannot override it. */
+body.pst{
+  --bg:#f7f4ee; --card:#ffffff; --ink:#1d2430; --mut:#6b7280; --line:#e6e0d4;
+  --acc:#0f766e; --acc-d:#0b5c56; --acc-soft:#e6f4f1; --btn-ink:#ffffff;
+  --ok:#15803d; --ok-bg:#dcfce7; --warn:#b45309; --warn-bg:#fef3c7;
+  --num-bg:#1d2430; --num-ink:#ffffff; --ghost:#ffffff; --ghost-ink:#1d2430; --btn-off:#cfd6dc;
+  --shadow:rgba(29,36,48,.07);
+}
+html[data-theme="dark"] body.pst{
+  --bg:#0f1420; --card:#171e2d; --ink:#e8edf6; --mut:#9aa6b8; --line:#2a3447;
+  --acc:#2dd4bf; --acc-d:#0f8a7b; --acc-soft:rgba(45,212,191,.14); --btn-ink:#062b27;
+  --ok:#4ade80; --ok-bg:rgba(74,222,128,.14); --warn:#fbbf24; --warn-bg:rgba(251,191,36,.14);
+  --num-bg:#e8edf6; --num-ink:#0f1420; --ghost:#1d2638; --ghost-ink:#e8edf6; --btn-off:#2a3447;
+  --shadow:rgba(0,0,0,.35);
+}
+html, html[data-theme="dark"]{ background:var(--bg); }
+html[data-theme="dark"] body.pst{ background:var(--bg) !important; }
+html, body.pst{ margin:0; padding:0; height:100%; overflow:hidden; }
+body.pst{
+  position:fixed; inset:0; overflow:hidden; box-sizing:border-box;
+  background:var(--bg); color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+body.pst *, body.pst *::before, body.pst *::after{ box-sizing:border-box; }
+
+body.pst .app{
+  position:fixed; top:0; right:0; bottom:0; left:0;
+  display:flex; flex-direction:column; gap:10px;
+  width:100%; max-width:680px; margin:0 auto;
+  padding:max(12px,env(safe-area-inset-top)) 16px max(14px,env(safe-area-inset-bottom));
+  overflow:hidden;
+}
+body.pst .app > *{ margin:0; }
+
+/* top bar: same back pill and sound circle as the other Tests & Exams games */
+body.pst .top{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; flex:0 0 auto;
+  background:none; border:0; box-shadow:none; padding:0; height:auto; position:static;
+}
+body.pst .back-btn{
+  display:inline-flex; align-items:center; gap:.35rem; min-height:40px; padding:.4rem .9rem;
+  border-radius:999px; background:#fff; border:2px solid rgba(124,58,237,.16); color:#5b21b6;
+  font-weight:700; font-size:.92rem; text-decoration:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s, box-shadow .15s;
+}
+body.pst .back-btn:hover{ background:#fff; transform:translateY(-1px); }
+body.pst .back-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(124,58,237,.12); }
+body.pst .top .count{ margin-left:auto; font-weight:700; font-size:.92rem; color:var(--mut); font-variant-numeric:tabular-nums; }
+body.pst .tui-sound{
+  appearance:none; border:2px solid rgba(124,58,237,.16); background:#fff;
+  width:40px; height:40px; border-radius:50%; font-size:1.05rem; cursor:pointer; flex:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s; padding:0;
+  display:inline-grid; place-items:center; position:static; margin-left:8px;
+}
+body.pst .tui-sound:active{ transform:translateY(2px); }
+
+body.pst .head{ flex:0 0 auto; }
+body.pst .head h1{ margin:0; font-size:1.2rem; font-weight:800; letter-spacing:-.01em; color:var(--ink); }
+body.pst .head p{ margin:2px 0 0; font-size:.9rem; color:var(--mut); }
+body.pst .bar{ height:6px; border-radius:999px; background:var(--line); overflow:hidden; flex:0 0 auto; }
+body.pst .bar i{ display:block; height:100%; width:0; background:var(--acc); border-radius:999px; transition:width .35s ease; }
+
+/* the word box, copied from the exercise */
+body.pst .bank{
+  flex:0 0 auto; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px;
+  background:var(--card); border:1px solid var(--line); border-radius:18px; padding:10px 12px;
+  min-height:62px; box-shadow:0 6px 18px var(--shadow);
+}
+body.pst .chip{
+  appearance:none; touch-action:none; user-select:none; -webkit-user-select:none;
+  min-height:44px; min-width:64px; padding:6px 14px; border-radius:14px; cursor:grab;
+  border:2px solid var(--line); background:var(--ghost); color:var(--ghost-ink);
+  font:inherit; font-size:1.02rem; font-weight:800; box-shadow:0 3px 0 var(--line);
+  -webkit-tap-highlight-color:transparent; transition:transform .08s, border-color .15s, background .15s;
+}
+body.pst .chip:active{ transform:translateY(2px); box-shadow:0 1px 0 var(--line); }
+body.pst .chip.sel{ border-color:var(--acc); background:var(--acc-soft); color:var(--acc); }
+body.pst .chip.used{ visibility:hidden; }
+body.pst .chip.dragging{ opacity:.35; }
+body.pst .struck{
+  display:inline-flex; align-items:center; justify-content:center; min-height:44px; min-width:64px;
+  padding:6px 14px; border-radius:14px; border:2px dashed var(--line); color:var(--mut);
+  font-size:1.02rem; font-weight:800; text-decoration:line-through; text-decoration-thickness:2px;
+}
+
+/* dialogue card */
+body.pst .stage{
+  flex:1 1 auto; min-height:0; display:flex; flex-direction:column; justify-content:center;
+  background:var(--card); border:1px solid var(--line); border-radius:24px;
+  padding:14px 16px; box-shadow:0 10px 30px var(--shadow); overflow:hidden;
+}
+body.pst .dline{
+  display:grid; grid-template-columns:4.6rem minmax(0,1fr); gap:8px; align-items:start;
+  font-size:clamp(.98rem, 2.6vw + .5rem, 1.18rem); line-height:1.95; padding:2px 0; color:var(--ink);
+}
+body.pst .who{ font-weight:800; color:var(--acc); }
+body.pst .gap{
+  display:inline-flex; align-items:center; justify-content:center; vertical-align:baseline;
+  position:relative; min-width:6.4em; height:1.9em; margin:0 .2em; padding:0 .45em;
+  border-bottom:2.5px solid var(--acc); border-radius:8px 8px 0 0; font-weight:800; font-size:.96em;
+  color:var(--acc); background:transparent; cursor:pointer; line-height:1; white-space:nowrap;
+  transition:background .15s, border-color .15s;
+}
+body.pst .gap.empty{ background:var(--acc-soft); }
+body.pst .gap.filled{ background:var(--acc-soft); border:2px solid var(--acc); border-radius:12px; }
+body.pst .gap.hover{ background:var(--acc-soft); outline:2px dashed var(--acc); outline-offset:2px; }
+body.pst .gap.ok{ color:var(--ok); border-color:var(--ok); background:var(--ok-bg); }
+body.pst .gap.bad{ color:var(--warn); border-color:var(--warn); background:var(--warn-bg); }
+body.pst .num{
+  position:absolute; top:-.55em; right:-.25em; display:inline-grid; place-items:center;
+  width:1.25em; height:1.25em; border-radius:50%; background:var(--num-bg); color:var(--num-ink);
+  font-size:.62rem; font-weight:800; line-height:1;
+}
+body.pst .gapHint{ font-size:.9rem; color:var(--mut); font-weight:600; }
+
+/* feedback + result */
+body.pst .fb{ min-height:1.5em; font-size:.94rem; font-weight:700; color:var(--mut); text-align:center; }
+body.pst .fb.ok{ color:var(--ok); }
+body.pst .fb.bad{ color:var(--warn); }
+body.pst .result{
+  display:none; flex:0 0 auto; align-items:center; justify-content:center; gap:4px;
+  background:var(--card); border:1px solid var(--line); border-radius:18px; padding:10px 14px;
+  box-shadow:0 6px 18px var(--shadow); text-align:center;
+}
+body.pst .result.show{ display:flex; }
+body.pst .big{ font-size:1.7rem; font-weight:900; color:var(--acc); line-height:1; font-variant-numeric:tabular-nums; }
+body.pst .result h2{ margin:0; font-size:1.1rem; font-weight:800; color:var(--ink); }
+body.pst .result .msg{ margin:0; font-size:.88rem; color:var(--mut); }
+
+/* bottom actions */
+body.pst .actions{ flex:0 0 auto; display:flex; gap:10px; }
+body.pst .btn{
+  flex:1 1 auto; min-height:54px; border:0; border-radius:16px; cursor:pointer;
+  font:inherit; font-size:1.02rem; font-weight:800; color:var(--btn-ink); background:var(--acc);
+  box-shadow:0 4px 0 var(--acc-d); text-decoration:none; display:inline-flex;
+  align-items:center; justify-content:center; text-align:center;
+  transition:transform .1s, box-shadow .1s, opacity .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+body.pst .btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--acc-d); }
+body.pst .btn:disabled{ background:var(--btn-off); box-shadow:0 4px 0 var(--line); cursor:default; color:var(--mut); }
+body.pst .btn.ghost{ background:var(--ghost); color:var(--ghost-ink); border:1px solid var(--line); box-shadow:0 4px 0 var(--line); }
+
+/* drag ghost follows the finger/mouse */
+.pst-ghost{
+  position:fixed; z-index:200; pointer-events:none; transform:translate(-50%,-50%) scale(1.06);
+  min-height:44px; padding:6px 14px; border-radius:14px; background:var(--acc); color:var(--btn-ink);
+  font:inherit; font-size:1.02rem; font-weight:800; box-shadow:0 10px 24px rgba(0,0,0,.25);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+
+/* change-to-past bar: fixed height so the layout never shifts */
+body.pst .choice{
+  flex:0 0 auto; min-height:58px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+  background:var(--card); border:1px solid var(--line); border-radius:18px; padding:8px 12px; box-shadow:0 6px 18px var(--shadow);
+}
+body.pst .choice .lbl{ font-size:.86rem; font-weight:700; color:var(--mut); text-align:center; }
+body.pst .choice .row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+body.pst .choice button{
+  appearance:none; min-height:40px; min-width:84px; padding:4px 12px; border-radius:12px; cursor:pointer;
+  border:2px solid var(--line); background:var(--ghost); color:var(--ghost-ink);
+  font:inherit; font-size:.98rem; font-weight:800; box-shadow:0 3px 0 var(--line);
+  -webkit-tap-highlight-color:transparent;
+}
+body.pst .choice button:active{ transform:translateY(2px); box-shadow:0 1px 0 var(--line); }
+body.pst .choice button.back{ min-width:auto; color:var(--mut); }
+body.pst .gap.toPast{ border-style:dashed; }
+body.pst .gap.active{ outline:2px solid var(--acc); outline-offset:3px; }
+body.pst .gap.done{ background:var(--acc-soft); border:2px solid var(--acc); border-radius:12px; }
+body.pst .gap .arrow{ color:var(--mut); font-weight:600; margin:0 .25em; }
+
+/* short screens: tighten everything so nothing scrolls */
+@media (max-height:700px){
+  body.pst .head p{ display:none; }
+  body.pst .dline{ line-height:1.7; }
+  body.pst .app{ gap:8px; }
+}
+@media (max-height:520px){
+  body.pst .head{ display:none; }
+  body.pst .chip, body.pst .struck{ min-height:38px; padding:4px 10px; }
+  body.pst .dline{ font-size:.92rem; line-height:1.6; grid-template-columns:3.8rem minmax(0,1fr); }
+  body.pst .stage{ padding:10px 12px; }
+  body.pst .btn{ min-height:46px; }
+}
+@media (max-width:380px){
+  body.pst .dline{ grid-template-columns:3.6rem minmax(0,1fr); }
+  body.pst .gap{ min-width:5.2em; }
+}
+@media (prefers-reduced-motion:reduce){ body.pst *{ transition:none !important; } }
+</style>
+</head>
+<body class="pst">
+<div class="app">
+  <div class="top header">
+    <a class="back-btn" href="../">← Unit 12</a>
+    <span class="count" id="count">0 / 5</span>
+  </div>
+
+  <div class="head">
+    <h1>Dialogue · Past verbs</h1>
+    <p>Drag each verb into a gap, then change it to the past tense.</p>
+  </div>
+
+  <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+
+  <div class="bank" id="bank" aria-label="Word box"></div>
+
+  <div class="stage" id="stage">
+    <div class="dline"><span class="who">Helen</span><span>Hi Mark! How <em>was</em> your holiday?</span></div>
+    <div class="dline"><span class="who">Mark</span><span>It was fantastic! We <span class="gap empty" data-n="1"><span class="num">1</span></span> to Turkey.</span></div>
+    <div class="dline"><span class="who">Helen</span><span>Turkey! That sounds amazing.</span></div>
+    <div class="dline"><span class="who">Mark</span><span>Yes, it was. We <span class="gap empty" data-n="2"><span class="num">2</span></span> a great time. The first week we <span class="gap empty" data-n="3"><span class="num">3</span></span> at a lovely hotel near the beach and then we <span class="gap empty" data-n="4"><span class="num">4</span></span> some friends in the south of the country.</span></div>
+    <div class="dline"><span class="who">Helen</span><span>Lucky you!</span></div>
+    <div class="dline"><span class="who">Mark</span><span>Oh, I <span class="gap empty" data-n="5"><span class="num">5</span></span> you a souvenir. Now, where is it?</span></div>
+  </div>
+
+  <div class="choice" id="choice"><div class="lbl" id="choiceLbl"></div><div class="row" id="choiceRow"></div></div>
+  <div class="fb" id="fb" role="status" aria-live="polite"></div>
+
+  <div class="result" id="result">
+    <div class="big" id="score">0 / 5</div>
+    <h2 id="resultTitle"></h2>
+    <p class="msg" id="resultMsg"></p>
+  </div>
+
+  <div class="actions" id="actions">
+    <button type="button" class="btn" id="mainBtn" disabled>Check</button>
+  </div>
+  <div class="actions" id="resultActions" style="display:none">
+    <button type="button" class="btn" id="retryBtn">Try again</button>
+    <a class="btn ghost" href="../">← Unit 12</a>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+var ANSWERS = { 1: "went", 2: "had", 3: "stayed", 4: "visited", 5: "bought" };
+var BASE    = { 1: "go",  2: "have", 3: "stay",   4: "visit",   5: "buy" };
+var WRONG   = { 1: "goed", 2: "haved", 3: "staied", 4: "visitted", 5: "buyed" };
+var TOTAL = 5;
+var $ = function (id) { return document.getElementById(id); };
+var gaps = Array.prototype.slice.call(document.querySelectorAll(".gap"));
+var selected = null;   /* tap-to-select chip (touch fallback) */
+var active = null;     /* gap whose past form is being chosen */
+var drag = null;
+var checked = false;
+
+function shuffle(a) {
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+/* ---- word box ---- */
+function buildBank() {
+  var bank = $("bank");
+  bank.innerHTML = "";
+  var struck = document.createElement("span");
+  struck.className = "struck";
+  struck.textContent = "be";
+  struck.setAttribute("aria-hidden", "true");
+  bank.appendChild(struck);
+  shuffle(Object.keys(BASE).map(function (k) { return BASE[k]; })).forEach(function (w) {
+    var c = document.createElement("button");
+    c.type = "button";
+    c.className = "chip";
+    c.setAttribute("data-word", w);
+    c.textContent = w;
+    c.addEventListener("pointerdown", onDown);
+    bank.appendChild(c);
+  });
+}
+function chipFor(word) { return document.querySelector('.chip[data-word="' + word + '"]'); }
+
+/* ---- gap rendering: base verb until the past form is chosen ---- */
+function paint(gap) {
+  var n = gap.getAttribute("data-n");
+  var past = gap.getAttribute("data-past");
+  var word = gap.getAttribute("data-word");
+  gap.className = "gap";
+  if (word && past) {
+    gap.classList.add("done");
+    gap.innerHTML = '<span class="num">' + n + '</span>' + past;
+  } else if (word) {
+    gap.classList.add("filled", "toPast");
+    gap.innerHTML = '<span class="num">' + n + '</span>' + word + '<span class="arrow">→ past?</span>';
+  } else {
+    gap.classList.add("empty");
+    gap.innerHTML = '<span class="num">' + n + '</span>';
+  }
+  if (active === gap) gap.classList.add("active");
+}
+
+function filledCount() {
+  return gaps.filter(function (g) { return g.getAttribute("data-word"); }).length;
+}
+function pastCount() {
+  return gaps.filter(function (g) { return g.getAttribute("data-past"); }).length;
+}
+function update() {
+  var done = pastCount();
+  $("count").textContent = done + " / " + TOTAL;
+  $("barFill").style.width = (done / TOTAL * 100) + "%";
+  $("mainBtn").disabled = done < TOTAL || checked;
+  var f = $("fb");
+  f.className = "fb";
+  if (!checked) {
+    if (filledCount() < TOTAL) f.textContent = "Drag a verb into each gap.";
+    else if (done < TOTAL) f.textContent = "Now change each verb to the past tense.";
+    else f.textContent = "";
+  }
+}
+
+/* ---- the change-to-past bar ---- */
+function showChoice(gap) {
+  if (checked) return;
+  active = gap;
+  gaps.forEach(function (g) { paint(g); });
+  var n = gap.getAttribute("data-n");
+  var word = gap.getAttribute("data-word");
+  $("choiceLbl").textContent = "Gap " + n + ": change “" + word + "” to the past tense";
+  var row = $("choiceRow");
+  row.innerHTML = "";
+  shuffle([ANSWERS[n], BASE[n], WRONG[n]]).forEach(function (v) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = v;
+    b.addEventListener("click", function () { pickPast(gap, v); });
+    row.appendChild(b);
+  });
+  var back = document.createElement("button");
+  back.type = "button";
+  back.className = "back";
+  back.textContent = "↩ box";
+  back.addEventListener("click", function () { unplace(gap); });
+  row.appendChild(back);
+}
+function clearChoice() {
+  active = null;
+  $("choiceLbl").textContent = "";
+  $("choiceRow").innerHTML = "";
+}
+function pickPast(gap, v) {
+  if (checked) return;
+  gap.setAttribute("data-past", v);
+  clearChoice();
+  gaps.forEach(function (g) { paint(g); });
+  update();
+}
+
+/* ---- placing and returning words ---- */
+function place(gap, word) {
+  if (checked || gap.getAttribute("data-word")) return;
+  var chip = chipFor(word);
+  if (!chip || chip.classList.contains("used")) return;
+  gap.setAttribute("data-word", word);
+  gap.removeAttribute("data-past");
+  chip.classList.add("used");
+  chip.classList.remove("sel");
+  selected = null;
+  showChoice(gap);
+  update();
+}
+function unplace(gap) {
+  if (checked) return;
+  var word = gap.getAttribute("data-word");
+  var chip = chipFor(word);
+  if (chip) chip.classList.remove("used");
+  gap.removeAttribute("data-word");
+  gap.removeAttribute("data-past");
+  if (active === gap) clearChoice();
+  paint(gap);
+  gaps.forEach(function (g) { paint(g); });
+  update();
+}
+
+/* ---- pointer: drag with mouse/finger, or tap to select then tap a gap ---- */
+function onDown(e) {
+  if (checked) return;
+  var chip = e.currentTarget;
+  if (chip.classList.contains("used")) return;
+  drag = { chip: chip, x: e.clientX, y: e.clientY, moved: false, id: e.pointerId, ghost: null };
+  try { chip.setPointerCapture(e.pointerId); } catch (err) {}
+  document.addEventListener("pointermove", onMove);
+  document.addEventListener("pointerup", onUp);
+  document.addEventListener("pointercancel", onCancel);
+}
+function makeGhost(chip, x, y) {
+  var g = document.createElement("div");
+  g.className = "pst-ghost";
+  g.textContent = chip.getAttribute("data-word");
+  g.style.left = x + "px"; g.style.top = y + "px";
+  document.body.appendChild(g);
+  chip.classList.add("dragging");
+  return g;
+}
+function gapAt(x, y) {
+  var el = document.elementFromPoint(x, y);
+  return el && el.closest ? el.closest(".gap") : null;
+}
+function onMove(e) {
+  if (!drag || e.pointerId !== drag.id) return;
+  var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (!drag.moved && Math.sqrt(dx * dx + dy * dy) > 8) {
+    drag.moved = true;
+    drag.ghost = makeGhost(drag.chip, e.clientX, e.clientY);
+  }
+  if (drag.moved) {
+    drag.ghost.style.left = e.clientX + "px";
+    drag.ghost.style.top = e.clientY + "px";
+    gaps.forEach(function (g) { g.classList.remove("hover"); });
+    var over = gapAt(e.clientX, e.clientY);
+    if (over && !over.getAttribute("data-word")) over.classList.add("hover");
+  }
+}
+function onUp(e) {
+  if (!drag || e.pointerId !== drag.id) return;
+  var d = drag; cleanupDrag();
+  var word = d.chip.getAttribute("data-word");
+  if (d.moved) {
+    var target = gapAt(e.clientX, e.clientY);
+    if (target && target.classList.contains("gap") && !target.getAttribute("data-word")) place(target, word);
+    d.chip.classList.remove("dragging");
+    return;
+  }
+  selected = (selected === word) ? null : word;
+  Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (c) {
+    c.classList.toggle("sel", c.getAttribute("data-word") === selected);
+  });
+}
+function onCancel(e) {
+  if (!drag || e.pointerId !== drag.id) return;
+  cleanupDrag();
+}
+function cleanupDrag() {
+  if (drag && drag.ghost) drag.ghost.remove();
+  if (drag) drag.chip.classList.remove("dragging");
+  gaps.forEach(function (g) { g.classList.remove("hover"); });
+  document.removeEventListener("pointermove", onMove);
+  document.removeEventListener("pointerup", onUp);
+  document.removeEventListener("pointercancel", onCancel);
+  drag = null;
+}
+
+/* tap a gap: place the selected word, or reopen the past-form choice */
+gaps.forEach(function (g) {
+  g.addEventListener("click", function () {
+    if (checked) return;
+    if (g.getAttribute("data-word")) { showChoice(g); return; }
+    if (selected) place(g, selected);
+  });
+});
+
+/* ---- check ---- */
+function check() {
+  if (checked || pastCount() < TOTAL) return;
+  checked = true;
+  clearChoice();
+  var correct = 0, fixes = [];
+  gaps.forEach(function (g) {
+    var n = g.getAttribute("data-n"), v = g.getAttribute("data-past");
+    var ok = v === ANSWERS[n];
+    if (ok) correct++;
+    g.className = "gap " + (ok ? "ok" : "bad");
+    if (!ok) fixes.push(n + ". " + ANSWERS[n]);
+    g.innerHTML = '<span class="num">' + n + '</span>' + (ok ? v : ANSWERS[n]);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (c) { c.disabled = true; });
+  $("count").textContent = correct + " / " + TOTAL;
+  $("barFill").style.width = "100%";
+  $("fb").className = "fb " + (correct === TOTAL ? "ok" : "bad");
+  $("fb").textContent = correct === TOTAL ? "Correct!" : "Corrections: " + fixes.join(" · ");
+  $("mainBtn").style.display = "none";
+  $("actions").style.display = "none";
+  $("resultActions").style.display = "flex";
+  $("result").classList.add("show");
+  $("score").textContent = correct + " / " + TOTAL;
+  $("resultTitle").textContent = correct === TOTAL ? "Wonderful work!" : correct >= TOTAL - 1 ? "Nice work!" : "Good effort!";
+  $("resultMsg").textContent = correct === TOTAL ? "Every verb is in the right past tense." : "Check the corrections, then try again if you like.";
+  finish(correct);
+}
+
+function finish(correct) {
+  var gameId = "starter-u12-dialogue-verbs";
+  try {
+    if (window.TestStars && typeof TestStars.award === "function") TestStars.award(gameId);
+  } catch (e0) {}
+  try {
+    if (window.LAFinish && typeof LAFinish.show === "function") {
+      LAFinish.show({
+        gameId: gameId, gameName: "Dialogue · Past verbs", score: correct, total: TOTAL,
+        title: "Dialogue · Past verbs", backHref: "../",
+        onAgain: function () { $("retryBtn").click(); },
+        category: "tests", unit: "starter-12"
+      });
+    } else if (window.LAStars) {
+      if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(gameId);
+      if (typeof LAStars.saveFromAccuracy === "function") {
+        LAStars.saveFromAccuracy(gameId, Math.round((correct / TOTAL) * 100));
+      }
+    }
+  } catch (e) {}
+}
+
+function reset() {
+  checked = false; selected = null; active = null; drag = null;
+  gaps.forEach(function (g) {
+    g.removeAttribute("data-word");
+    g.removeAttribute("data-past");
+    paint(g);
+  });
+  clearChoice();
+  $("result").classList.remove("show");
+  $("resultActions").style.display = "none";
+  $("actions").style.display = "flex";
+  $("mainBtn").style.display = "";
+  buildBank();
+  update();
+}
+
+$("mainBtn").addEventListener("click", check);
+$("retryBtn").addEventListener("click", reset);
+
+gaps.forEach(function (g) { paint(g); });
+buildBank();
+update();
+});
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="../../../assets/tests-stars.js"></script>
+<script src="../../../assets/tests-ui.js"></script>
+</body>
+</html>
