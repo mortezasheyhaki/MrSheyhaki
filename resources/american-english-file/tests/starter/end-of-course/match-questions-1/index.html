@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>End of Course · Match Questions · Set 1 | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Match each question with its answer. American English File Starter end of course.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+body.pst{ margin:0; min-height:100%; height:100%; overflow:hidden; background:#f0f4ff; color:#1d2430; font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
+body.pst *{ box-sizing:border-box; }
+.app{ position:fixed; inset:0; display:flex; flex-direction:column; gap:10px; max-width:720px; margin:0 auto; padding:max(12px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom)); }
+.top{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.back-btn{ display:inline-flex; align-items:center; min-height:40px; padding:.4rem .9rem; border-radius:999px; background:#fff; border:2px solid rgba(124,58,237,.16); color:#5b21b6; font-weight:700; font-size:.92rem; text-decoration:none; box-shadow:0 3px 0 rgba(124,58,237,.12); }
+.count{ font-weight:700; font-size:.92rem; color:#6b7280; }
+h1{ margin:0; font-size:1.15rem; font-weight:800; }
+.hint{ margin:0; font-size:.9rem; color:#6b7280; }
+.cols{ flex:1 1 auto; min-height:0; display:grid; grid-template-columns:1fr 1fr; gap:10px; align-content:start; }
+.col{ display:flex; flex-direction:column; gap:8px; }
+.card-btn{ appearance:none; width:100%; min-height:54px; padding:8px 10px; border-radius:14px; border:2px solid #e6e0d4; background:#fff; color:#1d2430; font:inherit; font-size:14px; font-weight:700; line-height:1.25; text-align:left; cursor:pointer; box-shadow:0 3px 0 #e6e0d4; }
+.card-btn.sel{ border-color:#0f766e; background:#e6f4f1; color:#0f766e; }
+.card-btn.matched{ border-color:#0f766e; }
+.card-btn .tag{ display:inline-grid; place-items:center; min-width:22px; height:22px; margin-right:6px; padding:0 4px; border-radius:6px; background:#e6f4f1; color:#0f766e; font-size:12px; font-weight:800; }
+.card-btn.ok{ border-color:#15803d; background:#dcfce7; color:#15803d; }
+.card-btn.bad{ border-color:#b45309; background:#fef3c7; color:#b45309; }
+.card-btn:disabled{ cursor:default; }
+.fb{ min-height:1.4em; text-align:center; font-weight:800; font-size:.95rem; color:#6b7280; }
+.fb.ok{ color:#15803d; } .fb.bad{ color:#b45309; }
+.progress{ height:7px; border-radius:20px; background:rgba(127,127,127,.15); overflow:hidden; }
+.progress-fill{ height:100%; width:0; background:linear-gradient(90deg,#0f766e,#14b8a6); transition:width .3s; }
+.btn{ min-height:52px; border:0; border-radius:16px; background:#0f766e; color:#fff; font:inherit; font-size:1rem; font-weight:800; box-shadow:0 4px 0 #0b5c56; cursor:pointer; }
+.btn:disabled{ background:#cfd6dc; box-shadow:0 4px 0 #e6e0d4; color:#6b7280; cursor:default; }
+.result{ display:none; text-align:center; font-weight:800; font-size:1.1rem; }
+@media (max-width:420px){ .card-btn{ font-size:12.5px; min-height:50px; padding:6px 7px; } .cols{ gap:7px; } }
+@media (max-height:700px){ .card-btn{ min-height:46px; } }
+</style>
+</head>
+<body class="pst">
+<div class="app">
+  <div class="top">
+    <a class="back-btn" href="../">← End of Course</a>
+    <span class="count" id="count">0 / 5</span>
+  </div>
+  <div>
+    <h1>Match the questions with the answers</h1>
+    <p class="hint">Tap a question, then tap its answer.</p>
+  </div>
+  <div class="progress"><div class="progress-fill" id="prog"></div></div>
+  <div class="cols">
+    <div class="col" id="qs"></div>
+    <div class="col" id="as"></div>
+  </div>
+  <div class="fb" id="fb" role="status" aria-live="polite"></div>
+  <button type="button" class="btn" id="check" disabled>Check</button>
+  <div class="result" id="result"></div>
+  <button type="button" class="btn" id="again" style="display:none">Try again</button>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var PAIRS = [["How can I help you?", "c"], ["Can I have a soda, please?", "h"], ["How much is it?", "k"], ["Excuse me. What time is it?", "f"], ["Sorry, am I late?", "d"]];   /* [question, answer letter] */
+  var TEXT = {"c": "I have a reservation for eight o’clock.", "d": "Yes, but don’t worry.", "f": "It’s a quarter after nine.", "h": "With ice?", "k": "That’s $6.75, please."};     /* letter -> answer text */
+  var GAME_ID = "starter-eoc-match-questions-1";
+  var TOTAL = PAIRS.length;
+  var $ = function (id) { return document.getElementById(id); };
+  var matched = {}, selQ = null, checked = false;
+  var answerOrder = [];
+
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function sfx(n) { try { if (window.LASfx && typeof LASfx[n] === "function") LASfx[n](); } catch (e) {} }
+  function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function letterOfQ(qi) { return matched[qi] || null; }
+  function usedLetters() { return Object.keys(matched).map(function (k) { return matched[k]; }); }
+
+  function render() {
+    var qs = $("qs"), as = $("as");
+    qs.innerHTML = ""; as.innerHTML = "";
+    PAIRS.forEach(function (p, qi) {
+      var b = document.createElement("button");
+      b.type = "button";
+      var cls = "card-btn" + (selQ === qi ? " sel" : "") + (matched[qi] ? " matched" : "");
+      if (checked) cls += (matched[qi] === PAIRS[qi][1] ? " ok" : " bad");
+      b.className = cls;
+      b.disabled = checked;
+      b.innerHTML = (matched[qi] ? '<span class="tag">' + matched[qi] + '</span>' : '') + esc(p[0]);
+      b.addEventListener("click", function () { pickQ(qi); });
+      qs.appendChild(b);
+    });
+    answerOrder.forEach(function (L) {
+      var b = document.createElement("button");
+      b.type = "button";
+      var used = usedLetters().indexOf(L) !== -1;
+      b.className = "card-btn" + (used ? " matched" : "");
+      b.disabled = checked || used;
+      b.innerHTML = '<span class="tag">' + L + '</span>' + esc(TEXT[L]);
+      b.addEventListener("click", function () { pickA(L); });
+      as.appendChild(b);
+    });
+    var n = Object.keys(matched).length;
+    $("count").textContent = n + " / " + TOTAL;
+    $("prog").style.width = (n / TOTAL * 100) + "%";
+    $("check").disabled = checked || n < TOTAL;
+    if (!checked) $("fb").textContent = n < TOTAL ? "Match all the questions." : "";
+  }
+  function pickQ(qi) {
+    if (checked) return;
+    sfx("click");
+    if (matched[qi]) { delete matched[qi]; selQ = null; render(); return; }
+    selQ = (selQ === qi) ? null : qi;
+    render();
+  }
+  function pickA(L) {
+    if (checked || selQ === null) return;
+    sfx("click");
+    matched[selQ] = L;
+    selQ = null;
+    render();
+  }
+  function check() {
+    if (checked || Object.keys(matched).length < TOTAL) return;
+    checked = true;
+    var score = 0, fixes = [];
+    PAIRS.forEach(function (p, qi) {
+      if (matched[qi] === p[1]) score++;
+      else fixes.push(p[1] + " → " + p[0]);
+    });
+    render();
+    $("fb").className = "fb " + (score === TOTAL ? "ok" : "bad");
+    $("fb").textContent = score === TOTAL ? "Correct!" : "Correct answers: " + fixes.join(" · ");
+    $("result").style.display = "block";
+    $("result").textContent = score + " / " + TOTAL + " correct";
+    $("check").style.display = "none";
+    $("again").style.display = "block";
+    sfx(score === TOTAL ? "win" : "wrong");
+    try { if (window.TestStars && typeof TestStars.award === "function") TestStars.award(GAME_ID); } catch (e) {}
+    try { if (window.LAStars) { if (LAStars.recordPlay) LAStars.recordPlay(GAME_ID); if (LAStars.saveFromAccuracy) LAStars.saveFromAccuracy(GAME_ID, Math.round(score / TOTAL * 100)); } } catch (e) {}
+  }
+  function reset() {
+    matched = {}; selQ = null; checked = false;
+    answerOrder = shuffle(Object.keys(TEXT));
+    $("result").style.display = "none";
+    $("check").style.display = ""; $("again").style.display = "none";
+    render();
+  }
+  $("check").addEventListener("click", check);
+  $("again").addEventListener("click", reset);
+  reset();
+});
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-sfx.js"></script>
+<script src="../../../assets/tests-stars.js"></script>
+</body>
+</html>
