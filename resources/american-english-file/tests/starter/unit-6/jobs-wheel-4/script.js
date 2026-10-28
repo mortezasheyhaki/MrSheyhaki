@@ -153,7 +153,7 @@
     try {
       if (typeof window.LAProgressSave === "function") {
         window.LAProgressSave({
-          gameId: GAME_ID, gameName: "Jobs Wheel · 4",
+          gameId: GAME_ID, gameName: "Jobs Wheel",
           category: "tests", unit: "starter-7",
           score: correct, maxScore: ROUNDS, accuracy: pct,
           completed: true, stars: stars
@@ -174,7 +174,7 @@
     if (window.LAFinish) {
       var timeMs = LAFinish.stopTimer ? LAFinish.stopTimer() : 0;
       LAFinish.show({
-        gameId: GAME_ID, gameName: "Jobs Wheel · 4",
+        gameId: GAME_ID, gameName: "Jobs Wheel",
         score: correct, total: ROUNDS, stars: stars,
         accuracy: pct, timeMs: timeMs, save: false,
         onAgain: start,
