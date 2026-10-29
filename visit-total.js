@@ -5,7 +5,7 @@
   "use strict";
   var ENDPOINT = "https://fra.cloud.appwrite.io/v1";
   var PROJECT_ID = "6aafc5370019ebd5da7c";
-  var FUNCTION_ID = "visit-total";
+  var FUNCTION_ID = "6ae329620012092ee097";
   var SDK = "https://cdn.jsdelivr.net/npm/appwrite@26.2.0";
 
   function loadSdk() {
@@ -30,6 +30,12 @@
     var data = JSON.parse(exec.responseBody || "{}");
     if (typeof data.total === "number") {
       show(data.total.toLocaleString() + " visits");
+    } else {
+      console.error("[visit-total] unexpected reply:", exec.responseBody);
+      show("unavailable");
     }
-  }).catch(function () { /* keep the page working if the count is unavailable */ });
+  }).catch(function (err) {
+    console.error("[visit-total] could not load the count:", err);
+    show("unavailable");
+  });
 })();
