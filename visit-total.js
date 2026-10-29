@@ -29,7 +29,7 @@
   }).then(function (exec) {
     var data = JSON.parse(exec.responseBody || "{}");
     if (typeof data.total === "number") {
-      show(data.total.toLocaleString() + " visits");
+      show(data.total.toLocaleString());
     } else {
       console.error("[visit-total] unexpected reply:", exec.responseBody);
       show("unavailable");

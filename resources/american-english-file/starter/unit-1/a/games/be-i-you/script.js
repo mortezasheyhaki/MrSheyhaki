@@ -426,7 +426,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       btn.type = "button";
       btn.dataset.idx = f.idx;
       btn.dataset.side = "full";
-      btn.innerHTML = '<span class="be-form-emoji">' + f.emoji + '</span><span class="be-form-text">' + f.full + '</span>';
+      btn.innerHTML = '<span class="be-form-text">' + f.full + '</span>';
       if (!matchedPairs.has(f.idx)) {
         btn.addEventListener("click", () => onFormSelect(btn, "full", f.idx));
       }
@@ -439,7 +439,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       btn.type = "button";
       btn.dataset.idx = f.idx;
       btn.dataset.side = "short";
-      btn.innerHTML = '<span class="be-form-emoji">' + f.emoji + '</span><span class="be-form-text">' + f.short + '</span>';
+      btn.innerHTML = '<span class="be-form-text">' + f.short + '</span>';
       if (!matchedPairs.has(f.idx)) {
         btn.addEventListener("click", () => onFormSelect(btn, "short", f.idx));
       }
@@ -492,7 +492,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
             showFormsDone();
           }
           // else: keep board as-is — matched cards stay green, no flicker
-        }, 700);
+        }, 280);
       } else {
         formsMistakes++;
         fullBtn.classList.add("wrong");
@@ -508,7 +508,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
           locked = false;
           feedback.textContent = "";
           feedback.className = "be-feedback";
-        }, 700);
+        }, 380);
       }
     }
   }
