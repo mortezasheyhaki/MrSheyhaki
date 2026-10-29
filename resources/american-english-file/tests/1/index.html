@@ -185,18 +185,27 @@
     return "u-blue";
   }
 
+  const BG = {
+    "u-purple": "linear-gradient(145deg,#3b0764 0%,#5b21b6 50%,#6d28d9 100%)",
+    "u-teal": "linear-gradient(145deg,#115e59 0%,#0d9488 50%,#14b8a6 100%)",
+    "u-orange": "linear-gradient(145deg,#7c2d12 0%,#c2410c 50%,#ea580c 100%)",
+    "u-blue": "linear-gradient(145deg,#1e3a8a 0%,#2563eb 50%,#93c5fd 100%)"
+  };
   const grid = document.getElementById("unitsGrid");
   // Existing activities live under tests/unit-10 and tests/unit-11
   const INFO = {
+    5: ["11 activities", "Grammar 6", "Listening 4", "Vocabulary 1"],
     10: ["6 activities", "Grammar 3", "Vocabulary 3"],
     11: ["7 activities", "Grammar 4", "Vocabulary 2", "Sounds 1"]
   };
   for (let i = 1; i <= 12; i++) {
     const a = document.createElement("a");
-    if (i === 10) a.href = "../unit-10/";
+    if (i === 5) a.href = "../../1/unit-5/tests/";
+    else if (i === 10) a.href = "../unit-10/";
     else if (i === 11) a.href = "../unit-11/";
     else a.href = "../../quiz/"; // general quiz until unit-specific tests exist
-    a.className = "unit-card " + colorFor(i);
+    a.className = "unit-card is-ready " + colorFor(i);
+    a.style.setProperty("background", BG[colorFor(i)], "important");
     a.dataset.num = String(i).padStart(2, "0");
     a.style.setProperty("--i", i - 1);
     const info = INFO[i];
@@ -212,5 +221,6 @@
   }
 </script>
 <script src="../assets/tests-ui.js"></script>
+<script src="/visit-counter.js" defer></script>
 </body>
 </html>
