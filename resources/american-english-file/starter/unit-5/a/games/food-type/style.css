@@ -1163,3 +1163,97 @@ html[data-theme="dark"] .afx-card{background:#1a1f35;color:#f1f5f9}
 @keyframes afx-zoom{from{transform:scale(.2) rotate(-8deg);opacity:0}}
 @keyframes afx-spin{from{transform:scale(0) rotate(-360deg)}}
 @media (prefers-reduced-motion:reduce){#game-app *,#game-app,.afx-burst i,.afx-fire,.afx-bar i{animation:none!important;transition:none!important}}
+
+
+/* ===== Start orb · round play button (Unit 5A polish) ===== */
+html body button.start-orb {
+  --orb-a: #a78bfa;
+  --orb-b: #6d28d9;
+  --orb-glow: rgba(109, 40, 217, .42);
+  --orb-ring: rgba(139, 92, 246, .18);
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 112px;
+  height: 112px;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  margin: 28px auto 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, .5) 0, rgba(255, 255, 255, 0) 42%),
+    linear-gradient(155deg, var(--orb-a) 0%, var(--orb-b) 100%);
+  box-shadow:
+    0 0 0 8px var(--orb-ring),
+    0 16px 32px var(--orb-glow),
+    inset 0 3px 0 rgba(255, 255, 255, .38),
+    inset 0 -6px 0 rgba(0, 0, 0, .14);
+  transition: transform .18s cubic-bezier(.22, .9, .3, 1), box-shadow .18s ease, filter .18s ease;
+}
+html body button.start-orb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 50%;
+  border: 3px solid var(--orb-a);
+  opacity: 0;
+  pointer-events: none;
+  animation: start-orb-pulse 2.4s cubic-bezier(.2, .6, .3, 1) infinite;
+}
+html body button.start-orb::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .28);
+  pointer-events: none;
+}
+html body button.start-orb svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 46px;
+  height: 46px;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .28));
+}
+html body button.start-orb:hover {
+  transform: translateY(-3px) scale(1.05);
+  filter: brightness(1.07);
+  box-shadow:
+    0 0 0 10px var(--orb-ring),
+    0 22px 40px var(--orb-glow),
+    inset 0 3px 0 rgba(255, 255, 255, .42),
+    inset 0 -6px 0 rgba(0, 0, 0, .14);
+}
+html body button.start-orb:active {
+  transform: translateY(2px) scale(.96);
+  box-shadow:
+    0 0 0 6px var(--orb-ring),
+    0 8px 16px var(--orb-glow),
+    inset 0 4px 8px rgba(0, 0, 0, .2);
+}
+html body button.start-orb:focus-visible {
+  outline: 4px solid var(--orb-a);
+  outline-offset: 7px;
+}
+@keyframes start-orb-pulse {
+  0%   { transform: scale(1);    opacity: .55; }
+  70%, 100% { transform: scale(1.55); opacity: 0; }
+}
+@media (max-width: 380px) {
+  html body button.start-orb { width: 96px; height: 96px; }
+  html body button.start-orb svg { width: 40px; height: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body button.start-orb { transition: none; }
+  html body button.start-orb::before { animation: none; }
+}

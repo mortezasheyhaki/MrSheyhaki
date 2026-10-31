@@ -491,7 +491,7 @@ var GAME_ID = "starter-5a-breakfast-listen";
         '<div class="bl-hero" aria-hidden="true">🎧</div>' +
         "<h1>What do they have?</h1>" +
         '<p class="bl-sub">Listen to four people. Select the food and drinks you hear.</p>' +
-        '<button type="button" class="bl-btn" id="bl-start">Start</button>' +
+        '<button type="button" class="start-orb" id="bl-start" aria-label="Start" title="Start"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></button>' +
         "</section>";
       document.getElementById("bl-start").onclick = startGame;
       return;

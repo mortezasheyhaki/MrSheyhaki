@@ -601,7 +601,7 @@ var GAME_ID = "starter-5a-breakfast-sentence-unscramble";
         '<div class="su-hero" aria-hidden="true">🔤</div>' +
         "<h1>Sentence Unscramble</h1>" +
         "<p>Unscramble the breakfast sentences, then listen to each one.</p>" +
-        '<button type="button" class="su-btn su-btn-primary" id="su-start" style="max-width:280px;width:100%;margin:0 auto;display:block;">Start</button>' +
+        '<button type="button" class="start-orb" id="su-start" aria-label="Start" title="Start"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></button>' +
         "</div>";
       document.getElementById("su-start").onclick = startGame;
       return;

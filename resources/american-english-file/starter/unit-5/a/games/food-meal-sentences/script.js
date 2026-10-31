@@ -585,7 +585,7 @@ var GAME_ID = "starter-5a-food-meal-sentences";
         '<div class="ms-hero" aria-hidden="true">🍽️</div>' +
         "<h1>Meal Sentences</h1>" +
         '<p class="ms-sub">Complete positive and negative sentences for breakfast, lunch and dinner.</p>' +
-        '<button type="button" class="ms-btn" id="ms-start">Start</button>' +
+        '<button type="button" class="start-orb" id="ms-start" aria-label="Start" title="Start"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></button>' +
         "</section>";
       document.getElementById("ms-start").onclick = startGame;
       return;

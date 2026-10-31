@@ -1208,27 +1208,102 @@ html[data-theme="dark"] .fm-mode-end-card p { color: #9aa6b8; }
   font-size: 0.95rem; line-height: 1.6; color: #475569;
 }
 .fm-info strong { color: #5b21b6; }
-.fm-play {
-  display: block; margin: 18px auto 0; min-width: 200px; min-height: 52px; padding: 12px 32px;
-  border: 0; border-radius: 16px; background: #0f766e; color: #fff;
-  font: inherit; font-size: 1.05rem; font-weight: 800; cursor: pointer;
-  box-shadow: 0 5px 0 #0b5c56;
-}
-.fm-play:active { transform: translateY(3px); box-shadow: 0 2px 0 #0b5c56; }
 html[data-theme="dark"] .fm-info { color: #9aa6b8; }
 html[data-theme="dark"] .fm-info strong { color: #c4b5fd; }
 
 
-/* ---- menu: one round Play button ---- */
-.fm-play {
-  width: 96px !important; height: 96px !important; min-width: 0 !important; min-height: 0 !important;
-  padding: 0 0 0 6px !important; margin: 26px auto 0 !important; border-radius: 50% !important;
-  display: flex !important; align-items: center; justify-content: center;
-  background: linear-gradient(145deg, #2dd4bf 0%, #0f766e 100%) !important; color: #fff !important;
-  border: 0 !important; box-shadow: 0 12px 28px rgba(15, 118, 110, 0.35), inset 0 -4px 0 rgba(0,0,0,0.12) !important;
-  cursor: pointer; transition: transform 0.12s ease, box-shadow 0.12s ease;
-}
-.fm-play:hover { transform: translateY(-2px); }
-.fm-play:active { transform: translateY(2px); box-shadow: 0 6px 14px rgba(15, 118, 110, 0.3) !important; }
-.fm-play:focus-visible { outline: 3px solid #5eead4; outline-offset: 4px; }
 .fm-info { margin-top: 10px !important; }
+
+
+/* ===== Start orb · round play button (Unit 5A polish) ===== */
+html body button.start-orb {
+  --orb-a: #2dd4bf;
+  --orb-b: #0f766e;
+  --orb-glow: rgba(15, 118, 110, .42);
+  --orb-ring: rgba(45, 212, 191, .20);
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 112px;
+  height: 112px;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  margin: 28px auto 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, .5) 0, rgba(255, 255, 255, 0) 42%),
+    linear-gradient(155deg, var(--orb-a) 0%, var(--orb-b) 100%);
+  box-shadow:
+    0 0 0 8px var(--orb-ring),
+    0 16px 32px var(--orb-glow),
+    inset 0 3px 0 rgba(255, 255, 255, .38),
+    inset 0 -6px 0 rgba(0, 0, 0, .14);
+  transition: transform .18s cubic-bezier(.22, .9, .3, 1), box-shadow .18s ease, filter .18s ease;
+}
+html body button.start-orb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 50%;
+  border: 3px solid var(--orb-a);
+  opacity: 0;
+  pointer-events: none;
+  animation: start-orb-pulse 2.4s cubic-bezier(.2, .6, .3, 1) infinite;
+}
+html body button.start-orb::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .28);
+  pointer-events: none;
+}
+html body button.start-orb svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 46px;
+  height: 46px;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .28));
+}
+html body button.start-orb:hover {
+  transform: translateY(-3px) scale(1.05);
+  filter: brightness(1.07);
+  box-shadow:
+    0 0 0 10px var(--orb-ring),
+    0 22px 40px var(--orb-glow),
+    inset 0 3px 0 rgba(255, 255, 255, .42),
+    inset 0 -6px 0 rgba(0, 0, 0, .14);
+}
+html body button.start-orb:active {
+  transform: translateY(2px) scale(.96);
+  box-shadow:
+    0 0 0 6px var(--orb-ring),
+    0 8px 16px var(--orb-glow),
+    inset 0 4px 8px rgba(0, 0, 0, .2);
+}
+html body button.start-orb:focus-visible {
+  outline: 4px solid var(--orb-a);
+  outline-offset: 7px;
+}
+@keyframes start-orb-pulse {
+  0%   { transform: scale(1);    opacity: .55; }
+  70%, 100% { transform: scale(1.55); opacity: 0; }
+}
+@media (max-width: 380px) {
+  html body button.start-orb { width: 96px; height: 96px; }
+  html body button.start-orb svg { width: 40px; height: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body button.start-orb { transition: none; }
+  html body button.start-orb::before { animation: none; }
+}

@@ -316,7 +316,7 @@
       '<div class="bb-rule"><span class="bb-rule-badge but">BUT</span><span class="bb-rule-text">shows a contrast</span></div>' +
       '</div>' +
       '<p class="bb-best">Best Score: <strong>' + formatScore(state.highScore) + '</strong></p>' +
-      '<button type="button" class="bb-btn" id="bb-start">START GAME</button>' +
+      '<button type="button" class="start-orb" id="bb-start" aria-label="Start" title="Start"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></button>' +
       '</section>';
     document.getElementById("bb-start").onclick = startGame;
   }

@@ -767,9 +767,7 @@ var GAME_ID = "starter-5a-food-match";
         '<p class="fm-info">This game has <strong>3 modes</strong>: pictures → words, audio → words and audio → pictures. ' +
         "Match all " + totalPairs() + " foods &amp; drinks in each mode, in " + SETS.length + " sets. " +
         "Each mode starts after the one before it, and the stars show your accuracy.</p>" +
-        '<button type="button" class="fm-play" id="fm-play" aria-label="Play">' +
-        '<svg viewBox="0 0 24 24" width="38" height="38" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>' +
-        '</button>' +
+        '<button type="button" class="start-orb" id="fm-play" aria-label="Start" title="Start"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></button>' +
         "</div></section>";
 
       var playBtn = document.getElementById("fm-play");
