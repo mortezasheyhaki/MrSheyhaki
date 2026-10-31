@@ -1155,3 +1155,80 @@ html[data-theme="dark"] .afx-card{background:#1a1f35;color:#f1f5f9}
 @keyframes afx-zoom{from{transform:scale(.2) rotate(-8deg);opacity:0}}
 @keyframes afx-spin{from{transform:scale(0) rotate(-360deg)}}
 @media (prefers-reduced-motion:reduce){#game-app *,#game-app,.afx-burst i,.afx-fire,.afx-bar i{animation:none!important;transition:none!important}}
+
+
+/* ---- menu: the three modes sit in one row ---- */
+.mc-start { max-width: 860px !important; width: 100%; }
+.mc-mode-list {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  width: 100%;
+}
+.mc-mode-card {
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  gap: 8px !important;
+  padding: 18px 14px !important;
+  height: 100%;
+}
+.mc-mode-card > div { width: 100%; }
+.mc-mode-card strong { font-size: 1rem !important; }
+.mc-mode-card p { font-size: 0.82rem !important; }
+@media (max-width: 560px) {
+  .mc-mode-list { gap: 8px !important; }
+  .mc-mode-card { padding: 12px 8px !important; }
+  .mc-mode-card strong { font-size: 0.82rem !important; }
+  .mc-mode-card p { font-size: 0.72rem !important; line-height: 1.3; }
+}
+
+
+/* ---- encouraging card between modes (no animation) ---- */
+.fm-mode-end {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(15, 23, 42, 0.35);
+  padding: 16px;
+}
+.fm-mode-end-card {
+  background: #fff; border-radius: 22px; padding: 28px 34px; text-align: center;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25); min-width: 240px; max-width: 360px; width: 100%;
+}
+.fm-mode-end-card h2 { margin: 0 0 6px; font-size: 1.7rem; font-weight: 900; color: #5b21b6; }
+.fm-mode-end-card p { margin: 0; font-size: 0.95rem; color: #475569; font-weight: 600; }
+html[data-theme="dark"] .fm-mode-end-card { background: #171e2d; }
+html[data-theme="dark"] .fm-mode-end-card h2 { color: #c4b5fd; }
+html[data-theme="dark"] .fm-mode-end-card p { color: #9aa6b8; }
+
+
+/* ---- menu: game info and the Play button ---- */
+.fm-info {
+  max-width: 620px; margin: 6px auto 0; text-align: center;
+  font-size: 0.95rem; line-height: 1.6; color: #475569;
+}
+.fm-info strong { color: #5b21b6; }
+.fm-play {
+  display: block; margin: 18px auto 0; min-width: 200px; min-height: 52px; padding: 12px 32px;
+  border: 0; border-radius: 16px; background: #0f766e; color: #fff;
+  font: inherit; font-size: 1.05rem; font-weight: 800; cursor: pointer;
+  box-shadow: 0 5px 0 #0b5c56;
+}
+.fm-play:active { transform: translateY(3px); box-shadow: 0 2px 0 #0b5c56; }
+html[data-theme="dark"] .fm-info { color: #9aa6b8; }
+html[data-theme="dark"] .fm-info strong { color: #c4b5fd; }
+
+
+/* ---- menu: one round Play button ---- */
+.fm-play {
+  width: 96px !important; height: 96px !important; min-width: 0 !important; min-height: 0 !important;
+  padding: 0 0 0 6px !important; margin: 26px auto 0 !important; border-radius: 50% !important;
+  display: flex !important; align-items: center; justify-content: center;
+  background: linear-gradient(145deg, #2dd4bf 0%, #0f766e 100%) !important; color: #fff !important;
+  border: 0 !important; box-shadow: 0 12px 28px rgba(15, 118, 110, 0.35), inset 0 -4px 0 rgba(0,0,0,0.12) !important;
+  cursor: pointer; transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.fm-play:hover { transform: translateY(-2px); }
+.fm-play:active { transform: translateY(2px); box-shadow: 0 6px 14px rgba(15, 118, 110, 0.3) !important; }
+.fm-play:focus-visible { outline: 3px solid #5eead4; outline-offset: 4px; }
+.fm-info { margin-top: 10px !important; }

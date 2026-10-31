@@ -212,11 +212,11 @@ var GAME_ID = "starter-5a-food-match";
 
   var MODES = [
     {
-      id: "word-pic",
-      title: "Words → Pictures",
-      left: "word",
-      right: "picture",
-      tip: "Tap a word, then the matching picture."
+      id: "pic-word",
+      title: "Pictures → Words",
+      left: "picture",
+      right: "word",
+      tip: "Tap a picture, then the matching word."
     },
     {
       id: "audio-word",
@@ -248,6 +248,8 @@ var GAME_ID = "starter-5a-food-match";
   var modeCorrect = 0;
   var lives = 3;
   var wrongCount = 0; // wrong matches, used for accuracy stars
+  var runCorrect = 0; // matches from the modes already finished
+  var runWrong = 0;
   var promptAudio = null;
   var matchAudio = null; // never cut on set change
   var busy = false;
@@ -394,9 +396,16 @@ var GAME_ID = "starter-5a-food-match";
     playPromptAudio(c.audio, leftIndex);
   }
 
-  function startMode(mi) {
+  function startMode(mi, carryOn) {
     getSfxCtx();
-    if (window.LAFinish) LAFinish.startTimer();
+    if (!carryOn) {
+      if (window.LAFinish) LAFinish.startTimer();
+      runCorrect = 0;
+      runWrong = 0;
+    } else {
+      runCorrect += modeCorrect;
+      runWrong += wrongCount;
+    }
     modeIndex = mi;
     modeCorrect = 0;
     wrongCount = 0;
@@ -544,8 +553,8 @@ var GAME_ID = "starter-5a-food-match";
     modeCorrect += 1;
 
     var item = byId(leftId);
-    // Words → Pictures: play audio after a match (do not cut on next set)
-    if (MODES[modeIndex].id === "word-pic" && item) {
+    // Pictures → Words: play the word after a match (do not cut on next set)
+    if (MODES[modeIndex].id === "pic-word" && item) {
       playMatchAudio(item.audio);
     }
 
@@ -586,6 +595,9 @@ var GAME_ID = "starter-5a-food-match";
           setTimeout(function () { startSet(setIndex + 1); }, 1500);
         } else if (setIndex < SETS.length - 1) {
           startSet(setIndex + 1);
+        } else if (modeIndex < MODES.length - 1) {
+          // a mode is done: short encouraging card, then the next mode
+          showModeEnd(modeIndex + 1);
         } else {
           if (window.ArcadeFX) ArcadeFX.cheer(1, 2, "All " + SETS.length + " sets done");
           finishMode();
@@ -596,11 +608,28 @@ var GAME_ID = "starter-5a-food-match";
     }
   }
 
+  var MODE_END_TEXT = ["Good job!", "Excellent!"];
+  function showModeEnd(nextIndex) {
+    var card = document.createElement("div");
+    card.className = "fm-mode-end";
+    card.innerHTML =
+      '<div class="fm-mode-end-card">' +
+      "<h2>" + MODE_END_TEXT[Math.floor(Math.random() * MODE_END_TEXT.length)] + "</h2>" +
+      "<p>Now: " + escapeHtml(MODES[nextIndex].title) + "</p>" +
+      "</div>";
+    document.body.appendChild(card);
+    setTimeout(function () {
+      if (card.parentNode) card.parentNode.removeChild(card);
+      startMode(nextIndex, true);
+    }, 1600);
+  }
+
   function calcStars() {
-    // Stars come from accuracy: correct matches / all match attempts
-    var attempts = modeCorrect + wrongCount;
-    if (modeCorrect < totalPairs() || attempts === 0) return 0;
-    var acc = modeCorrect / attempts;
+    // Stars come from accuracy over all three modes
+    var allCorrect = runCorrect + modeCorrect;
+    var attempts = allCorrect + runWrong + wrongCount;
+    if (allCorrect < totalPairs() * MODES.length || attempts === 0) return 0;
+    var acc = allCorrect / attempts;
     return acc >= 0.9 ? 3 : acc >= 0.7 ? 2 : 1;
   }
 
@@ -608,7 +637,9 @@ var GAME_ID = "starter-5a-food-match";
     phase = "done";
     stopPromptAudio();
     busy = true;
-    var total = totalPairs();
+    var total = totalPairs() * MODES.length;
+    var allCorrect = runCorrect + modeCorrect;
+    var allWrong = runWrong + wrongCount;
     // Stars = hearts remaining (0–3)
     var stars = calcStars();
 
@@ -617,13 +648,13 @@ var GAME_ID = "starter-5a-food-match";
         var timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
-          score: modeCorrect,
+          score: allCorrect,
           total: total,
           stars: stars,
-          accuracy: Math.round((modeCorrect / Math.max(1, modeCorrect + wrongCount)) * 100),
+          accuracy: Math.round((allCorrect / Math.max(1, allCorrect + allWrong)) * 100),
           timeMs: timeMs,
           onAgain: function () {
-            startMode(modeIndex);
+            startMode(0);
           },
           onModes: function () {
             phase = "menu";
@@ -662,6 +693,14 @@ var GAME_ID = "starter-5a-food-match";
         '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>' +
         '<div class="eq"><span></span><span></span><span></span><span></span></div>' +
         "</button></div>"
+      );
+    }
+
+    if (kind === "picture") {
+      return (
+        '<div class="mc-left-item mc-pic' + ok + sel + '" data-i="' + i + '">' +
+        '<img src="' + c.image + '" alt="" draggable="false" loading="lazy" />' +
+        "</div>"
       );
     }
 
@@ -725,22 +764,16 @@ var GAME_ID = "starter-5a-food-match";
         '<div class="mc-hero" aria-hidden="true">🍽️</div>' +
         "<h1>Food Match</h1>" +
         '<p class="mc-desc">Choose a mode · ' + totalPairs() + ' foods &amp; drinks (' + SETS.length + ' sets)</p>' +
-        '<div class="mc-mode-list">' +
-        MODES.map(function (m, i) {
-          return (
-            '<button type="button" class="mc-mode-card mc-mode-btn" data-mode="' + i + '">' +
-            '<span class="mc-mode-num">' + (i + 1) + "</span>" +
-            "<div><strong>" + escapeHtml(m.title) + "</strong><p>" + escapeHtml(m.tip) + "</p></div>" +
-            "</button>"
-          );
-        }).join("") +
+        '<p class="fm-info">This game has <strong>3 modes</strong>: pictures → words, audio → words and audio → pictures. ' +
+        "Match all " + totalPairs() + " foods &amp; drinks in each mode, in " + SETS.length + " sets. " +
+        "Each mode starts after the one before it, and the stars show your accuracy.</p>" +
+        '<button type="button" class="fm-play" id="fm-play" aria-label="Play">' +
+        '<svg viewBox="0 0 24 24" width="38" height="38" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>' +
+        '</button>' +
         "</div></section>";
 
-      app.querySelectorAll(".mc-mode-btn").forEach(function (btn) {
-        btn.onclick = function () {
-          startMode(+btn.dataset.mode);
-        };
-      });
+      var playBtn = document.getElementById("fm-play");
+      if (playBtn) playBtn.onclick = function () { startMode(0); };
       return;
     }
 

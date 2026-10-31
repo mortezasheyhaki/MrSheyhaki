@@ -29,13 +29,13 @@
     el.style.right = Math.max(8, document.documentElement.clientWidth - r.right) + "px";
     el.style.top = Math.max(8, r.bottom + 8) + "px";
   }
-  function showCombo() {
+  function showCombo() { return;
     var el = chip(); place(el);
     el.className = "afx-combo is-on" + (streak >= 5 ? " is-hot" : "");
     el.innerHTML = '<span class="afx-fire">🔥</span> x' + streak + " <em>" + label(streak) + "</em>";
     void el.offsetWidth; el.classList.add("is-bump");
   }
-  function celebrate(n) {
+  function celebrate(n) { return;
     var c = CHEERS[Math.min(Math.floor(n / 10) - 1, 2)];
     [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.22, "triangle", 0.1, i * 0.09); });
     tone(1568, 0.6, "sine", 0.08, 0.5);
@@ -331,7 +331,7 @@
 
   /* ---------- SCREENS ---------- */
 
-  function showStart() {
+  function showStartUnused() {
     mode = null;
     const allDone = modeDone.positive && modeDone.negative && modeDone.questions;
     app.innerHTML = `
@@ -378,7 +378,6 @@
     totalCount = totalItemsInMode(m);
     selected = [];
     locked = false;
-    if (window.LAFinish) LAFinish.startTimer();
     renderItem();
   }
 
@@ -415,7 +414,7 @@
 
     app.innerHTML = `
       <div class="sb-top">
-        <a class="sb-back" href="#" id="sb-back-modes" aria-label="Modes">←</a>
+        <a class="sb-back" href="../" id="sb-back-modes" aria-label="Back">←</a>
         <div class="sb-progress"><span style="width:${progressPct()}%"></span></div>
         <span class="sb-mode-tag">${DATA[mode].label}</span>
       </div>
@@ -440,11 +439,6 @@
           <button type="button" class="sb-btn sb-btn-primary" id="sb-check" disabled>Check ✓</button>
         </div>
       </div>`;
-
-    document.getElementById("sb-back-modes").addEventListener("click", (e) => {
-      e.preventDefault();
-      showStart();
-    });
     document.getElementById("sb-clear").addEventListener("click", () => {
       if (locked) return;
       selected = [];
@@ -534,6 +528,9 @@
     }
   }
 
+  const SETS = ["positive", "negative", "questions"];
+  const SET_END = ["Good job!", "Excellent!"];
+
   function advance() {
     itemIndex++;
     const phase = currentPhase();
@@ -541,28 +538,33 @@
       renderItem();
       return;
     }
-    // phase complete
+    // phase complete (full form -> short form): carry on with no message
     phaseIndex++;
     itemIndex = 0;
     if (phaseIndex < DATA[mode].phases.length) {
-      showCelebrate(praise(), `Now try the ${DATA[mode].phases[phaseIndex].name.toLowerCase()}!`, () => {
-        renderItem();
-      });
+      renderItem();
       return;
     }
-    // mode complete
+    // whole set complete
     modeDone[mode] = true;
-    const remaining = ["positive", "negative", "questions"].filter((k) => !modeDone[k]);
-    if (remaining.length === 0) {
+    const next = SETS[SETS.indexOf(mode) + 1];
+    if (!next) {
       showFinalFinish();
       return;
     }
-    showCelebrate(
-      praise(),
-      `${DATA[mode].label} complete! Try another mode.`,
-      () => showStart(),
-      remaining[0]
-    );
+    const card = document.createElement("div");
+    card.className = "sb-celebrate";
+    card.innerHTML = `
+      <div class="sb-celebrate-card">
+        <h2>${escapeHtml(SET_END[Math.floor(Math.random() * SET_END.length)])}</h2>
+        <p>Now the ${escapeHtml(DATA[next].label.toLowerCase())} sentences.</p>
+      </div>`;
+    document.body.appendChild(card);
+    sfxCelebrate();
+    setTimeout(() => {
+      card.remove();
+      startMode(next);
+    }, 1600);
   }
 
   function showCelebrate(title, subtitle, onContinue, nextMode) {
@@ -578,7 +580,6 @@
       </div>`;
     document.body.appendChild(card);
     sfxCelebrate();
-    spawnSparkles(card.querySelector(".sb-celebrate-card"));
     document.getElementById("sb-cont").addEventListener("click", () => {
       card.remove();
       onContinue();
@@ -612,11 +613,11 @@
         timeMs: timeMs,
         onAgain: () => {
           modeDone = { positive: false, negative: false, questions: false };
-          showStart();
+          restartAll();
         },
         onModes: () => {
           modeDone = { positive: false, negative: false, questions: false };
-          showStart();
+          restartAll();
         },
         backHref: "../",
       });
@@ -635,8 +636,13 @@
       </div>`;
     document.getElementById("sb-again").addEventListener("click", () => {
       modeDone = { positive: false, negative: false, questions: false };
-      showStart();
+      restartAll();
     });
+  }
+
+  function restartAll() {
+    modeDone = { positive: false, negative: false, questions: false };
+    startMode("positive");
   }
 
   function escapeHtml(s) {
@@ -650,5 +656,6 @@
     return escapeHtml(s).replace(/'/g, "&#39;");
   }
 
-  showStart();
+  if (window.LAFinish) LAFinish.startTimer();
+  startMode("positive");
 })();

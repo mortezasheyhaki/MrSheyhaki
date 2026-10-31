@@ -286,6 +286,21 @@ COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.games = [
 ];
 
 // Unit 5A – Games (A big breakfast? · food vocabulary)
+// Unit 5A – Audio (Student's Book and Workbook)
+COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.audio = [
+  { track: "5.1", url: "https://cdn.imgurl.ir/uploads/s622_.mp3" },
+  { track: "5.2", url: "https://cdn.imgurl.ir/uploads/u23436_.mp3" },
+  { track: "5.3", url: "https://cdn.imgurl.ir/uploads/m53336_.mp3" },
+  { track: "5.4", url: "https://cdn.imgurl.ir/uploads/34864_.mp3" },
+  { track: "5.5", url: "https://cdn.imgurl.ir/uploads/y698933_.mp3" },
+  { track: "5.6", url: "https://cdn.imgurl.ir/uploads/l139995_.mp3" },
+  { track: "5.7", url: "https://cdn.imgurl.ir/uploads/i79875_.mp3" },
+  { track: "5.8", url: "https://cdn.imgurl.ir/uploads/o89533_.mp3" },
+  { track: "5.9", url: "https://cdn.imgurl.ir/uploads/k203368_.mp3" },
+  { track: "5.1", url: "https://cdn.imgurl.ir/uploads/r623170_.mp3", title: "Unit 5 practice", label: "Workbook" },
+  { track: "5.2", url: "https://cdn.imgurl.ir/uploads/j335165_.mp3", title: "Unit 5 practice", label: "Workbook" },
+];
+
 COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.a.games = [
   { title: "Food Flashcards", url: "food-flashcards/", label: "Vocabulary" },
   { title: "Food Verb Match", url: "food-verb-match/", label: "Vocabulary" },
