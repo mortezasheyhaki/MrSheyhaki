@@ -1,517 +1,693 @@
+/* Match Rush – 3 parts × 2 sets of 5 – AEF 1 Unit 3A
+   Each play: shuffle all 15 phrases → pick 10 → 2 sets of 5
+*/
 (function () {
-  const GAME_ID = "1-3a-match-rush";
+  "use strict";
 
-  // Shared Learning Arcade finish screen. Stars/plays are already saved above,
-  // so LAFinish is told not to save again (save: false).
-  function showFinish(score, total, again) {
-    if (!window.LAFinish) return;
-    LAFinish.show({
-      gameId: GAME_ID,
-      score: score,
-      total: total,
-      save: false,
-      onAgain: again || function () { location.reload(); },
-      backHref: "../"
+  var GAME_ID = "1-3a-match-rush";
+  var ITEMS = [
+    { id: "cook-dinner", label: "cook dinner", image: "https://cdn.imgurl.ir/uploads/j357273_.png", audio: "https://cdn.imgurl.ir/uploads/o673860_.mp3" },
+    { id: "do-homework", label: "do homework", image: "https://cdn.imgurl.ir/uploads/m94348_.png", audio: "https://cdn.imgurl.ir/uploads/p09599_.mp3" },
+    { id: "do-housework", label: "do housework", image: "https://cdn.imgurl.ir/uploads/08745_.png", audio: "https://cdn.imgurl.ir/uploads/o80603_.mp3" },
+    { id: "do-yoga", label: "do yoga", image: "https://cdn.imgurl.ir/uploads/j0493_.png", audio: "https://cdn.imgurl.ir/uploads/u74460_.mp3" },
+    { id: "drink-water", label: "drink water", image: "https://cdn.imgurl.ir/uploads/n11539_.png", audio: "https://cdn.imgurl.ir/uploads/e95233_.mp3" },
+    { id: "drive-a-car", label: "drive a car", image: "https://cdn.imgurl.ir/uploads/m63077_.png", audio: "https://cdn.imgurl.ir/uploads/e808976_.mp3" },
+    { id: "eat-vegetables", label: "eat vegetables", image: "https://cdn.imgurl.ir/uploads/c15380_.png", audio: "https://cdn.imgurl.ir/uploads/k804902_.mp3" },
+    { id: "go-to-the-movies", label: "go to the movies", image: "https://cdn.imgurl.ir/uploads/h931390_.png", audio: "https://cdn.imgurl.ir/uploads/e24429_.mp3" },
+    { id: "have-a-garden", label: "have a garden", image: "https://cdn.imgurl.ir/uploads/d740384_.png", audio: "https://cdn.imgurl.ir/uploads/m64217_.mp3" },
+    { id: "like-animals", label: "like animals", image: "https://cdn.imgurl.ir/uploads/r75951_.png", audio: "https://cdn.imgurl.ir/uploads/n22603_.mp3" },
+    { id: "listen-to-music", label: "listen to music", image: "https://cdn.imgurl.ir/uploads/l733951_.png", audio: "https://cdn.imgurl.ir/uploads/m558203_.mp3" },
+    { id: "live-in-an-apartment", label: "live in an apartment", image: "https://cdn.imgurl.ir/uploads/62296_.png", audio: "https://cdn.imgurl.ir/uploads/k443109_.mp3" },
+    { id: "need-a-new-phone", label: "need a new phone", image: "https://cdn.imgurl.ir/uploads/v13976_.png", audio: "https://cdn.imgurl.ir/uploads/q430686_.mp3" },
+    { id: "play-tennis", label: "play tennis", image: "https://cdn.imgurl.ir/uploads/y879_.png", audio: "https://cdn.imgurl.ir/uploads/x185579_.mp3" },
+    { id: "play-the-guitar", label: "play the guitar", image: "https://cdn.imgurl.ir/uploads/j469440_.png", audio: "https://cdn.imgurl.ir/uploads/p690767_.mp3" },
+    { id: "read-a-book", label: "read a book", image: "https://cdn.imgurl.ir/uploads/z09542_.png", audio: "https://cdn.imgurl.ir/uploads/x041368_.mp3" },
+    { id: "say-sorry", label: "say sorry", image: "https://cdn.imgurl.ir/uploads/m86105_.png", audio: "https://cdn.imgurl.ir/uploads/n903104_.mp3" },
+    { id: "speak-german", label: "speak German", image: "https://cdn.imgurl.ir/uploads/b78021_.png", audio: "https://cdn.imgurl.ir/uploads/s391734_.mp3" },
+    { id: "study-history", label: "study history", image: "https://cdn.imgurl.ir/uploads/y054248_.png", audio: "https://cdn.imgurl.ir/uploads/q43071_.mp3" },
+    { id: "take-an-umbrella", label: "take an umbrella", image: "https://cdn.imgurl.ir/uploads/b478986_.png", audio: "https://cdn.imgurl.ir/uploads/f29577_.mp3" },
+    { id: "want-a-coffee", label: "want a coffee", image: "https://cdn.imgurl.ir/uploads/q14407_.png", audio: "https://cdn.imgurl.ir/uploads/d50989_.mp3" },
+    { id: "watch-tv", label: "watch TV", image: "https://cdn.imgurl.ir/uploads/g207116_.png", audio: "https://cdn.imgurl.ir/uploads/c92596_.mp3" },
+    { id: "wear-glasses", label: "wear glasses", image: "https://cdn.imgurl.ir/uploads/f90075_.png", audio: "https://cdn.imgurl.ir/uploads/s37443_.mp3" },
+    { id: "work-in-an-office", label: "work in an office", image: "https://cdn.imgurl.ir/uploads/z444646_.png", audio: "https://cdn.imgurl.ir/uploads/z267_.mp3" }
+  ]
+
+  // Built fresh each game from shuffled pool (2 sets of 5)
+  var SETS = [];
+
+  var MODES = [
+    {
+      id: "word-pic",
+      title: "Words → Pictures",
+      left: "word",
+      right: "pic",
+      tip: "Tap a word, then match the picture.",
+      encourage: "Awesome matching! 🌟 You finished Words → Pictures."
+    },
+    {
+      id: "audio-word",
+      title: "Audio → Words",
+      left: "audio",
+      right: "word",
+      tip: "Listen, then match the word.",
+      encourage: "Great listening! 🎧 You finished Audio → Words."
+    },
+    {
+      id: "audio-pic",
+      title: "Audio → Pictures",
+      left: "audio",
+      right: "pic",
+      tip: "Listen, then match the picture.",
+      encourage: "Amazing work! 🎉 You finished all the parts."
+    }
+  ];
+
+  var TOTAL_PAIRS = 30; // 3 parts × 2 sets × 5
+  var SETS_PER_PART = 2;
+
+  function buildSets() {
+    // 24 phrases → 6 sets of 5 (2 per part).
+    // Sets 1–4 use 20 different phrases, set 5 uses the other 4 plus one repeat,
+    // set 6 is 5 random phrases. So every phrase is used in a game.
+    var ids = ITEMS.map(function (it) { return it.id; });
+    var order = shuffle(ids.slice());
+    var sets = [];
+    for (var k = 0; k < 4; k++) {
+      sets.push(order.slice(k * 5, k * 5 + 5));
+    }
+    var rest = order.slice(20);
+    sets.push(rest.concat([order[0]]));
+    sets.push(shuffle(ids.slice()).slice(0, 5));
+    SETS = sets;
+  }
+
+  var app = document.getElementById("game-app");
+  if (!app) return;
+
+  var modeIndex = 0;
+  var phase = "menu"; // menu | play | between | done
+  var setIndex = 0;
+  var leftOrder = [];
+  var rightOrder = [];
+  var locked = {};
+  var matches = {};
+  var selectedLeft = null;
+  var currentAudio = null;
+  var playingLeft = null;
+  var setCorrect = 0;
+  var modeCorrect = 0;
+  var totalCorrect = 0;
+  var mistakes = 0;
+  var busy = false;
+
+  function byId(id) {
+    return ITEMS.find(function (c) {
+      return c.id === id;
     });
   }
 
-  function awardStars(gameId, correct, total) {
-    const pct = total ? Math.round((correct / total) * 100) : 0;
-    if (window.LAStars) {
-      LAStars.recordPlay(gameId);
-      LAStars.saveFromAccuracy(gameId, pct);
-    }
-    return pct;
-  }
-
-  // All 24 items
-  const ALL = [
-    { id: "cook-dinner",          verb: "cook",   phrase: "dinner",          full: "cook dinner",          audio: "https://cdn.imgurl.ir/uploads/o673860_.mp3",          image: "https://cdn.imgurl.ir/uploads/j357273_.png" },
-    { id: "do-homework",          verb: "do",     phrase: "homework",        full: "do homework",          audio: "https://cdn.imgurl.ir/uploads/p09599_.mp3",          image: "https://cdn.imgurl.ir/uploads/m94348_.png" },
-    { id: "do-housework",         verb: "do",     phrase: "housework",       full: "do housework",         audio: "https://cdn.imgurl.ir/uploads/o80603_.mp3",         image: "https://cdn.imgurl.ir/uploads/08745_.png" },
-    { id: "do-yoga",              verb: "do",     phrase: "yoga",            full: "do yoga",              audio: "https://cdn.imgurl.ir/uploads/u74460_.mp3",              image: "https://cdn.imgurl.ir/uploads/j0493_.png" },
-    { id: "drink-water",          verb: "drink",  phrase: "water",           full: "drink water",          audio: "https://cdn.imgurl.ir/uploads/e95233_.mp3",          image: "https://cdn.imgurl.ir/uploads/n11539_.png" },
-    { id: "drive-a-car",          verb: "drive",  phrase: "a car",           full: "drive a car",          audio: "https://cdn.imgurl.ir/uploads/e808976_.mp3",          image: "https://cdn.imgurl.ir/uploads/m63077_.png" },
-    { id: "eat-vegetables",       verb: "eat",    phrase: "vegetables",      full: "eat vegetables",       audio: "https://cdn.imgurl.ir/uploads/k804902_.mp3",       image: "https://cdn.imgurl.ir/uploads/c15380_.png" },
-    { id: "go-to-the-movies",     verb: "go",     phrase: "to the movies",   full: "go to the movies",     audio: "https://cdn.imgurl.ir/uploads/e24429_.mp3",     image: "https://cdn.imgurl.ir/uploads/h931390_.png" },
-    { id: "have-a-garden",        verb: "have",   phrase: "a garden",        full: "have a garden",        audio: "https://cdn.imgurl.ir/uploads/m64217_.mp3",        image: "https://cdn.imgurl.ir/uploads/d740384_.png" },
-    { id: "like-animals",         verb: "like",   phrase: "animals",         full: "like animals",         audio: "https://cdn.imgurl.ir/uploads/n22603_.mp3",         image: "https://cdn.imgurl.ir/uploads/r75951_.png" },
-    { id: "listen-to-music",      verb: "listen", phrase: "to music",        full: "listen to music",      audio: "https://cdn.imgurl.ir/uploads/m558203_.mp3",      image: "https://cdn.imgurl.ir/uploads/l733951_.png" },
-    { id: "live-in-an-apartment", verb: "live",   phrase: "in an apartment", full: "live in an apartment", audio: "https://cdn.imgurl.ir/uploads/k443109_.mp3", image: "https://cdn.imgurl.ir/uploads/62296_.png" },
-    { id: "need-a-new-phone",     verb: "need",   phrase: "a new phone",     full: "need a new phone",     audio: "https://cdn.imgurl.ir/uploads/q430686_.mp3",     image: "https://cdn.imgurl.ir/uploads/v13976_.png" },
-    { id: "play-tennis",          verb: "play",   phrase: "tennis",          full: "play tennis",          audio: "https://cdn.imgurl.ir/uploads/x185579_.mp3",          image: "https://cdn.imgurl.ir/uploads/y879_.png" },
-    { id: "play-the-guitar",      verb: "play",   phrase: "the guitar",      full: "play the guitar",      audio: "https://cdn.imgurl.ir/uploads/p690767_.mp3",      image: "https://cdn.imgurl.ir/uploads/j469440_.png" },
-    { id: "read-a-book",          verb: "read",   phrase: "a book",          full: "read a book",          audio: "https://cdn.imgurl.ir/uploads/x041368_.mp3",          image: "https://cdn.imgurl.ir/uploads/z09542_.png" },
-    { id: "say-sorry",            verb: "say",    phrase: "sorry",           full: "say sorry",            audio: "https://cdn.imgurl.ir/uploads/n903104_.mp3",            image: "https://cdn.imgurl.ir/uploads/m86105_.png" },
-    { id: "speak-german",         verb: "speak",  phrase: "German",          full: "speak German",         audio: "https://cdn.imgurl.ir/uploads/s391734_.mp3",         image: "https://cdn.imgurl.ir/uploads/b78021_.png" },
-    { id: "study-history",        verb: "study",  phrase: "history",         full: "study history",        audio: "https://cdn.imgurl.ir/uploads/q43071_.mp3",        image: "https://cdn.imgurl.ir/uploads/y054248_.png" },
-    { id: "take-an-umbrella",     verb: "take",   phrase: "an umbrella",     full: "take an umbrella",     audio: "https://cdn.imgurl.ir/uploads/f29577_.mp3",     image: "https://cdn.imgurl.ir/uploads/b478986_.png" },
-    { id: "want-a-coffee",        verb: "want",   phrase: "a coffee",        full: "want a coffee",        audio: "https://cdn.imgurl.ir/uploads/d50989_.mp3",        image: "https://cdn.imgurl.ir/uploads/q14407_.png" },
-    { id: "watch-tv",             verb: "watch",  phrase: "TV",              full: "watch TV",             audio: "https://cdn.imgurl.ir/uploads/c92596_.mp3",             image: "https://cdn.imgurl.ir/uploads/g207116_.png" },
-    { id: "wear-glasses",         verb: "wear",   phrase: "glasses",         full: "wear glasses",         audio: "https://cdn.imgurl.ir/uploads/s37443_.mp3",         image: "https://cdn.imgurl.ir/uploads/f90075_.png" },
-    { id: "work-in-an-office",    verb: "work",   phrase: "in an office",    full: "work in an office",    audio: "https://cdn.imgurl.ir/uploads/z267_.mp3",    image: "https://cdn.imgurl.ir/uploads/z444646_.png" },
-  ];
-
-  // Mode 1: 4 rounds of 6 (verb → phrase)
-  // Round 1 includes all three "do" pairs: housework, homework, yoga
-  const VERB_ROUNDS = [
-    [
-      ALL.find(x => x.id === "cook-dinner"),
-      ALL.find(x => x.id === "drink-water"),
-      ALL.find(x => x.id === "drive-a-car"),
-      ALL.find(x => x.id === "do-housework"),
-      ALL.find(x => x.id === "do-homework"),
-      ALL.find(x => x.id === "do-yoga"),
-    ],
-    [
-      ALL.find(x => x.id === "eat-vegetables"),
-      ALL.find(x => x.id === "go-to-the-movies"),
-      ALL.find(x => x.id === "have-a-garden"),
-      ALL.find(x => x.id === "like-animals"),
-      ALL.find(x => x.id === "listen-to-music"),
-      ALL.find(x => x.id === "live-in-an-apartment"),
-    ],
-    [
-      ALL.find(x => x.id === "need-a-new-phone"),
-      ALL.find(x => x.id === "read-a-book"),
-      ALL.find(x => x.id === "say-sorry"),
-      ALL.find(x => x.id === "speak-german"),
-      ALL.find(x => x.id === "study-history"),
-      ALL.find(x => x.id === "take-an-umbrella"),
-    ],
-    [
-      ALL.find(x => x.id === "want-a-coffee"),
-      ALL.find(x => x.id === "watch-tv"),
-      ALL.find(x => x.id === "wear-glasses"),
-      ALL.find(x => x.id === "work-in-an-office"),
-      ALL.find(x => x.id === "play-the-guitar"),
-      ALL.find(x => x.id === "play-tennis"),
-    ],
-  ];
-
-  // Mode 2 & 3 use the same groupings
-  const AUDIO_ROUNDS = VERB_ROUNDS;
-
-  const MODES = [
-    { name: "Verb → Phrase", desc: "Match each verb to the correct phrase ending." },
-    { name: "Audio → Picture", desc: "Listen and tap the correct picture." },
-    { name: "Audio → Phrase", desc: "Listen and tap the correct verb phrase." },
-  ];
-
-  // DOM
-  const matchArea    = document.getElementById("matchArea");
-  const modeLabel    = document.getElementById("modeLabel");
-  const scoreEl      = document.getElementById("score");
-  const progressFill = document.getElementById("progressFill");
-  const modeDesc     = document.getElementById("modeDesc");
-  const feedbackEl   = document.getElementById("feedback");
-  const nextRoundBtn = document.getElementById("nextRoundBtn");
-  const nextModeBtn  = document.getElementById("nextModeBtn");
-  const restartBtn   = document.getElementById("restartBtn");
-  const confettiEl   = document.getElementById("confetti");
-  const modeTabs     = document.querySelectorAll(".mode-tab");
-
-  let mode = 0;          // 0,1,2
-  let round = 0;         // 0-3 inside mode
-  let score = 0;
-  let matched = new Set();
-  let matchCount = 0;
-  let selectedLeft = null;
-  let selectedRight = null;
-  let currentAudio = null;
-  let roundDone = false;
-  let currentAudioItem = null; // for modes 2 & 3
-
   function shuffle(arr) {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i];
+      a[i] = a[j];
+      a[j] = t;
     }
     return a;
   }
 
-  function stopAudio() {
-    if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.currentTime = 0;
-      currentAudio = null;
+  var sfxCtx = null;
+
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try {
+        sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) {
+        return null;
+      }
     }
-    document.querySelectorAll(".big-play.playing").forEach(b => b.classList.remove("playing"));
+    if (sfxCtx.state === "suspended") {
+      try {
+        sfxCtx.resume();
+      } catch (_) {}
+    }
+    return sfxCtx;
   }
 
-  function playSrc(src, btn) {
+  function sfx(name) {
+    if (!window.LASfx) return;
+    try {
+      if (name === "correct" && LASfx.correct) LASfx.correct();
+      else if (name === "wrong" && LASfx.wrong) LASfx.wrong();
+      else if (name === "win" && LASfx.win) LASfx.win();
+      else if (name === "pop" && LASfx.pop) LASfx.pop();
+      else if (name === "click" && LASfx.click) LASfx.click();
+    } catch (_) {}
+  }
+
+  function stopAudio() {
+    if (currentAudio) {
+      try {
+        currentAudio.pause();
+      } catch (_) {}
+      currentAudio = null;
+    }
+    playingLeft = null;
+    app.querySelectorAll(".mc-play.playing").forEach(function (b) {
+      b.classList.remove("playing");
+    });
+  }
+
+  function playAudioFor(leftIndex) {
+    var id = leftOrder[leftIndex];
+    var c = byId(id);
+    if (!c || !c.audio) return;
+
+    if (playingLeft === leftIndex && currentAudio && !currentAudio.paused) {
+      stopAudio();
+      return;
+    }
     stopAudio();
-    const a = new Audio(src);
+    var a = new Audio(c.audio);
     currentAudio = a;
+    playingLeft = leftIndex;
+    var btn = app.querySelector('.mc-play[data-i="' + leftIndex + '"]');
     if (btn) btn.classList.add("playing");
-    a.play().catch(() => {});
-    a.onended = () => {
+    a.play().catch(function () {
       if (btn) btn.classList.remove("playing");
-      if (currentAudio === a) currentAudio = null;
+      playingLeft = null;
+    });
+    a.onended = function () {
+      if (btn) btn.classList.remove("playing");
+      if (playingLeft === leftIndex) playingLeft = null;
+      currentAudio = null;
     };
   }
 
-  function totalPairsInMode() {
-    return 24; // always 4×6
+  function startPart(mi) {
+    if (window.LAFinish && mi === 0) LAFinish.startTimer();
+    modeIndex = mi;
+    modeCorrect = 0;
+    // Mistakes reset only when starting the full game (part 1)
+    if (mi === 0) mistakes = 0;
+    phase = "play";
+    startSet(mi * SETS_PER_PART);
   }
 
-  function updateProgress() {
-    const total = 72; // 3 modes × 24
-    const inRound = (mode === 0) ? matchCount : matched.size;
-    const done = mode * 24 + inRound;
-    progressFill.style.width = (done / total * 100) + "%";
-    scoreEl.textContent = score;
-    modeLabel.textContent = (mode + 1) + "/3";
-  }
-
-  function clearFeedback() {
-    feedbackEl.textContent = "";
-    feedbackEl.className = "feedback";
-  }
-
-  function showFeedback(type, msg) {
-    feedbackEl.className = "feedback " + type;
-    feedbackEl.textContent = msg;
-  }
-
-  function hideAllBtns() {
-    nextRoundBtn.classList.add("hidden");
-    nextModeBtn.classList.add("hidden");
-    restartBtn.classList.add("hidden");
-  }
-
-  // ===================== MODE 0: Verb → Phrase =====================
-  function renderVerbPhrase() {
-    const pairs = VERB_ROUNDS[round];
-    matched.clear();
-    matchCount = 0;
-    selectedLeft = null;
-    selectedRight = null;
-    roundDone = false;
+  function startSet(si) {
     stopAudio();
-    hideAllBtns();
-    clearFeedback();
-    updateProgress();
-
-    modeDesc.textContent = MODES[0].desc + "  ·  Round " + (round + 1) + "/4";
-
-    const verbOrder = shuffle(pairs);
-    const phraseOrder = shuffle(pairs);
-
-    matchArea.innerHTML = `
-      <div class="match-grid">
-        <section>
-          <h2 class="col-title">Verb</h2>
-          <div class="cards" id="leftCards"></div>
-        </section>
-        <div class="divider"><span class="divider-line"></span><span class="divider-icon">→</span><span class="divider-line"></span></div>
-        <section>
-          <h2 class="col-title">Phrase</h2>
-          <div class="cards" id="rightCards"></div>
-        </section>
-      </div>`;
-
-    const leftEl = document.getElementById("leftCards");
-    const rightEl = document.getElementById("rightCards");
-
-    verbOrder.forEach(item => {
-      const c = document.createElement("div");
-      c.className = "verb-card";
-      c.dataset.id = item.id;
-      c.textContent = item.verb;
-      c.addEventListener("click", () => onLeftClick(item, c));
-      leftEl.appendChild(c);
-    });
-
-    phraseOrder.forEach(item => {
-      const c = document.createElement("div");
-      c.className = "phrase-card";
-      c.dataset.id = item.id;
-      c.textContent = item.phrase;
-      c.addEventListener("click", () => onRightClick(item, c));
-      rightEl.appendChild(c);
-    });
+    setIndex = si;
+    var ids = SETS[setIndex].slice();
+    leftOrder = shuffle(ids);
+    rightOrder = shuffle(ids);
+    locked = {};
+    matches = {};
+    selectedLeft = null;
+    setCorrect = 0;
+    busy = false;
+    phase = "play";
+    render();
   }
 
-  function onLeftClick(item, card) {
-    // Use card class — NOT item.id (shared between verb & phrase columns)
-    if (card.classList.contains("matched") || roundDone) return;
-    if (selectedLeft && selectedLeft.card === card) {
-      selectedLeft.card.classList.remove("selected");
+  function correctCount() {
+    return Object.keys(locked).length;
+  }
+
+  function allMatched() {
+    return correctCount() === 5;
+  }
+
+  function spawnMatchFX(leftEl, rightEl) {
+    [leftEl, rightEl].forEach(function (el) {
+      if (!el) return;
+      el.classList.add("mc-match-pop");
+      for (var i = 0; i < 8; i++) {
+        var s = document.createElement("span");
+        s.className = "mc-spark";
+        var angle = (i / 8) * Math.PI * 2;
+        var dist = 28 + Math.random() * 18;
+        s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+        s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+        s.style.setProperty("--delay", i * 0.02 + "s");
+        el.appendChild(s);
+        setTimeout(function (node) {
+          return function () {
+            node.remove();
+          };
+        }(s), 700);
+      }
+      setTimeout(function (node) {
+        return function () {
+          node.classList.remove("mc-match-pop");
+        };
+      }(el), 550);
+    });
+    var flash = document.createElement("div");
+    flash.className = "mc-match-flash";
+    app.appendChild(flash);
+    setTimeout(function () {
+      flash.remove();
+    }, 500);
+  }
+
+  function selectLeft(i) {
+    if (busy || locked[i]) return;
+    selectedLeft = i;
+    sfx("click");
+    app.querySelectorAll(".mc-left-item").forEach(function (el) {
+      el.classList.toggle("is-selected", +el.dataset.i === i);
+    });
+    var mode = MODES[modeIndex];
+    if (mode.left === "audio") {
+      playAudioFor(i);
+    }
+  }
+
+  function selectRight(rightId) {
+    if (busy) return;
+    if (selectedLeft === null) {
+      var hint = document.getElementById("mc-hint");
+      if (hint) {
+        var mode = MODES[modeIndex];
+        hint.textContent =
+          mode.left === "audio"
+            ? "Play a sound first, then tap a match."
+            : mode.left === "pic"
+              ? "Tap a picture on the left first."
+              : "Tap a word on the left first.";
+        hint.classList.add("mc-hint-warn");
+        setTimeout(function () {
+          hint.classList.remove("mc-hint-warn");
+        }, 1200);
+      }
+      sfx("wrong");
+      return;
+    }
+    var used = Object.keys(locked).some(function (li) {
+      return matches[li] === rightId;
+    });
+    if (used) return;
+
+    var leftId = leftOrder[selectedLeft];
+    var ok = leftId === rightId;
+    var leftEl = app.querySelector('.mc-left-item[data-i="' + selectedLeft + '"]');
+    var rightEl = app.querySelector('.mc-right-item[data-id="' + rightId + '"]');
+
+    if (ok) {
+      locked[selectedLeft] = true;
+      matches[selectedLeft] = rightId;
+      setCorrect += 1;
+      modeCorrect += 1;
+      totalCorrect += 1;
+      if (leftEl) leftEl.classList.add("is-correct");
+      if (rightEl) rightEl.classList.add("is-correct", "is-used");
+      spawnMatchFX(leftEl, rightEl);
+      sfx("pop");
+      sfx("correct");
       selectedLeft = null;
-      return;
-    }
-    document.querySelectorAll(".verb-card.selected").forEach(c => c.classList.remove("selected"));
-    card.classList.add("selected");
-    selectedLeft = { item, card };
-    if (selectedRight) tryVerbMatch();
-  }
-
-  function onRightClick(item, card) {
-    if (card.classList.contains("matched") || roundDone) return;
-    if (selectedRight && selectedRight.card === card) {
-      selectedRight.card.classList.remove("selected");
-      selectedRight = null;
-      return;
-    }
-    document.querySelectorAll(".phrase-card.selected").forEach(c => c.classList.remove("selected"));
-    card.classList.add("selected");
-    selectedRight = { item, card };
-    if (selectedLeft) tryVerbMatch();
-  }
-
-  // Any "do" card can pair with any of: homework, housework, yoga
-  // Any "play" card can pair with any of: the guitar, tennis
-  // Other verbs must match their own phrase (cook→dinner, etc.)
-  function isFlexibleMatch(verbItem, phraseItem) {
-    if (!verbItem || !phraseItem) return false;
-    if (verbItem.verb === phraseItem.verb) return true;
-    return false;
-  }
-
-  function tryVerbMatch() {
-    const L = selectedLeft, R = selectedRight;
-    if (!L || !R) return;
-
-    if (isFlexibleMatch(L.item, R.item)) {
-      // Mark the specific cards only (not shared item ids)
-      matchCount++;
-      L.card.classList.add("matched");
-      R.card.classList.add("matched");
-      L.card.classList.remove("selected");
-      R.card.classList.remove("selected");
-      score++;
+      app.querySelectorAll(".mc-left-item").forEach(function (el) {
+        el.classList.remove("is-selected");
+      });
       updateProgress();
-      const full = L.item.verb + " " + R.item.phrase;
-      showFeedback("success", full);
-      playSrc(R.item.audio);
-      selectedLeft = selectedRight = null;
-      checkRoundComplete();
+      if (allMatched()) {
+        busy = true;
+        setTimeout(function () {
+          if (setIndex % SETS_PER_PART < SETS_PER_PART - 1) {
+            // Next set of current part
+            startSet(setIndex + 1);
+          } else if (modeIndex < MODES.length - 1) {
+            // Part finished → encouraging screen, then next part
+            sfx("win");
+            phase = "between";
+            render();
+          } else {
+            // Last part finished → finish screen
+            sfx("win");
+            phase = "done";
+            render();
+          }
+        }, 650);
+      }
     } else {
-      L.card.classList.add("wrong");
-      R.card.classList.add("wrong");
-      showFeedback("error", "Not a match");
-      setTimeout(() => {
-        L.card.classList.remove("wrong", "selected");
-        R.card.classList.remove("wrong", "selected");
-        selectedLeft = selectedRight = null;
-        clearFeedback();
+      busy = true;
+      if (leftEl) leftEl.classList.add("is-wrong");
+      if (rightEl) rightEl.classList.add("is-wrong");
+      sfx("wrong");
+      setTimeout(function () {
+        if (leftEl) leftEl.classList.remove("is-wrong");
+        if (rightEl) rightEl.classList.remove("is-wrong");
+      }, 500);
+      mistakes += 1;
+      setTimeout(function () {
+        busy = false;
       }, 500);
     }
   }
 
-  // ===================== MODE 1 & 2: Audio → Picture / Phrase =====================
-  function renderAudioMatch(isPicture) {
-    const pairs = AUDIO_ROUNDS[round];
-    matched.clear();
-    matchCount = 0;
-    roundDone = false;
-    stopAudio();
-    hideAllBtns();
-    clearFeedback();
-    updateProgress();
+  function updateProgress() {
+    var el = document.getElementById("mc-progress");
+    if (!el) return;
+    var full =
+      "Part " +
+      (modeIndex + 1) +
+      "/" +
+      MODES.length +
+      " · Set " +
+      (setIndex % SETS_PER_PART + 1) +
+      "/" +
+      SETS_PER_PART +
+      " · " +
+      correctCount() +
+      "/5";
+    var short =
+      (setIndex % SETS_PER_PART + 1) +
+      "/" +
+      SETS_PER_PART +
+      " · " +
+      correctCount() +
+      "/5";
+    var fullEl = el.querySelector(".mc-prog-full");
+    var shortEl = el.querySelector(".mc-prog-short");
+    if (fullEl && shortEl) {
+      fullEl.textContent = full;
+      shortEl.textContent = short;
+    } else {
+      el.textContent = full;
+    }
+  }
 
-    modeDesc.textContent = MODES[mode].desc + "  ·  Round " + (round + 1) + "/4";
+  function calcStars() {
+    // Stars from accuracy: correct pairs out of all attempts
+    var tries = totalCorrect + mistakes;
+    var pct = tries ? Math.round((totalCorrect / tries) * 100) : 0;
+    return pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
+  }
 
-    // Pick one random remaining item as the current audio target
-    // Actually for this mode we present one audio at a time and 6 options
-    // We'll cycle through the 6 items of the round one by one.
-    currentAudioItem = null;
+  function saveStars() {
+    var stars = calcStars();
+    if (window.LAStars) {
+      try {
+        LAStars.recordPlay(GAME_ID);
+        LAStars.save(GAME_ID, stars);
+      } catch (_) {}
+    }
+    return stars;
+  }
 
-    matchArea.innerHTML = `
-      <div class="audio-match">
-        <div class="audio-side">
-          <button class="big-play" id="bigPlay" aria-label="Play">
-            <span class="wave"></span><span class="wave"></span><span class="wave"></span>
-            <svg viewBox="0 0 24 24" width="36" height="36"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
-          </button>
-          <p class="audio-label" id="audioHint">Tap to listen</p>
-        </div>
-        <div>
-          <h2 class="col-title">${isPicture ? "Choose the picture" : "Choose the phrase"}</h2>
-          <div class="options-grid${isPicture ? " pics" : " phrases"}" id="optionsGrid"></div>
-        </div>
-      </div>`;
+  function leftCell(id, i, kind) {
+    var c = byId(id);
+    var isLocked = !!locked[i];
+    var sel = selectedLeft === i ? " is-selected" : "";
+    var ok = isLocked ? " is-correct" : "";
 
-    const bigPlay = document.getElementById("bigPlay");
-    const optionsGrid = document.getElementById("optionsGrid");
+    if (kind === "audio") {
+      return (
+        '<div class="mc-left-item mc-audio-cell' +
+        ok +
+        sel +
+        '" data-i="' +
+        i +
+        '">' +
+        '<button type="button" class="mc-play" data-i="' +
+        i +
+        '" aria-label="Play ' +
+        c.label +
+        '"' +
+        (isLocked ? " disabled" : "") +
+        ">" +
+        '<span class="wave"></span><span class="wave"></span><span class="wave"></span>' +
+        '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>' +
+        '<div class="eq"><span></span><span></span><span></span><span></span></div>' +
+        "</button></div>"
+      );
+    }
 
-    // State for this sub-mode: queue of remaining items in the round
-    const queue = shuffle([...pairs]);
-    let qIndex = 0;
+    if (kind === "pic") {
+      return (
+        '<div class="mc-left-item mc-pic-cell' +
+        ok +
+        sel +
+        '" data-i="' +
+        i +
+        '">' +
+        '<img class="mc-thumb" src="' +
+        c.image +
+        '" alt="" draggable="false" loading="lazy" />' +
+        "</div>"
+      );
+    }
 
-    function loadNextAudio() {
-      if (qIndex >= queue.length) {
-        roundDone = true;
-        checkRoundComplete();
+    // word
+    return (
+      '<div class="mc-left-item mc-word-left' +
+      ok +
+      sel +
+      '" data-i="' +
+      i +
+      '">' +
+      '<span class="mc-word-label">' +
+      c.label +
+      "</span></div>"
+    );
+  }
+
+  function rightCell(id, kind) {
+    var c = byId(id);
+    var used = Object.keys(locked).some(function (li) {
+      return matches[li] === id;
+    });
+    var usedClass = used ? " is-correct is-used" : "";
+    var disabled = used ? " disabled" : "";
+
+    if (kind === "pic") {
+      return (
+        '<button type="button" class="mc-right-item mc-pic-btn' +
+        usedClass +
+        '" data-id="' +
+        id +
+        '"' +
+        disabled +
+        ">" +
+        '<img class="mc-thumb" src="' +
+        c.image +
+        '" alt="" draggable="false" loading="lazy" />' +
+        "</button>"
+      );
+    }
+
+    return (
+      '<button type="button" class="mc-right-item mc-word' +
+      usedClass +
+      '" data-id="' +
+      id +
+      '"' +
+      disabled +
+      ">" +
+      '<span class="mc-word-label">' +
+      c.label +
+      "</span></button>"
+    );
+  }
+
+  function render() {
+    if (phase === "menu") {
+      app.innerHTML =
+        '<header class="mc-topbar">' +
+        '<a class="mc-back" href="../" aria-label="Back">←</a>' +
+        '<span class="mc-title">Match Rush</span>' +
+        '<span class="mc-badge">Unit 3A</span>' +
+        "</header>" +
+        '<section class="mc-start">' +
+        '<div class="mc-hero" aria-hidden="true">🏙️</div>' +
+        "<h1>Match Rush</h1>" +
+        '<p class="mc-desc">3 parts · 10 items each</p>' +
+        '<ol class="mc-part-list">' +
+        "<li><strong>Part 1</strong> — Words → Pictures</li>" +
+        "<li><strong>Part 2</strong> — Audio → Words</li>" +
+        "<li><strong>Part 3</strong> — Audio → Pictures</li>" +
+        "</ol>" +
+        '<button type="button" class="mc-btn mc-start-btn" id="mc-start">Start Part 1</button>' +
+        "</section>";
+      document.getElementById("mc-start").onclick = function () {
+        sfx("click");
+        totalCorrect = 0;
+        buildSets();
+        startPart(0);
+      };
+      return;
+    }
+
+    if (phase === "between") {
+      var finished = MODES[modeIndex];
+      var next = MODES[modeIndex + 1];
+      app.innerHTML =
+        '<header class="mc-topbar">' +
+        '<a class="mc-back" href="../" aria-label="Back">←</a>' +
+        '<span class="mc-title">Match Rush</span>' +
+        '<span class="mc-badge">Unit 3A</span>' +
+        "</header>" +
+        '<section class="mc-start mc-between">' +
+        '<div class="mc-hero" aria-hidden="true">✨</div>' +
+        "<h1>Part " +
+        (modeIndex + 1) +
+        " complete!</h1>" +
+        '<p class="mc-desc">' +
+        finished.encourage +
+        "</p>" +
+        '<p class="mc-next-label">Up next:</p>' +
+        '<p class="mc-next-title"><strong>Part ' +
+        (modeIndex + 2) +
+        "</strong> — " +
+        next.title +
+        "</p>" +
+        '<button type="button" class="mc-btn mc-start-btn" id="mc-continue">Continue</button>' +
+        "</section>";
+      document.getElementById("mc-continue").onclick = function () {
+        sfx("click");
+        startPart(modeIndex + 1);
+      };
+      return;
+    }
+
+    if (phase === "done") {
+      var stars = saveStars();
+      if (window.LAFinish) {
+        var timeMs = LAFinish.stopTimer();
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: totalCorrect,
+          total: TOTAL_PAIRS,
+          stars: stars,
+          timeMs: timeMs,
+          onAgain: function () {
+            totalCorrect = 0;
+            buildSets();
+            startPart(0);
+          },
+          onModes: function () {
+            phase = "menu";
+            render();
+          },
+          backHref: "../",
+          save: false
+        });
         return;
       }
-      currentAudioItem = queue[qIndex];
-      document.getElementById("audioHint").textContent = "Item " + (qIndex + 1) + " of 6";
-      // re-enable all non-matched options
-      optionsGrid.querySelectorAll(".pic-option, .phrase-option").forEach(el => {
-        if (!el.classList.contains("matched")) {
-          el.classList.remove("disabled", "wrong", "selected");
-        }
-      });
-      // auto play
-      setTimeout(() => playSrc(currentAudioItem.audio, bigPlay), 300);
+      app.innerHTML =
+        '<section class="mc-done"><h1>Done!</h1>' +
+        "<p>You matched " +
+        totalCorrect +
+        "/" +
+        TOTAL_PAIRS +
+        ".</p>" +
+        '<button type="button" class="mc-btn" id="cm-again">Again</button></section>';
+      document.getElementById("cm-again").onclick = function () {
+        totalCorrect = 0;
+        buildSets();
+        startPart(0);
+      };
+      return;
     }
 
-    // Build options (all 6 of this round)
-    const optionOrder = shuffle(pairs);
-    optionOrder.forEach(item => {
-      let el;
-      if (isPicture) {
-        el = document.createElement("div");
-        el.className = "pic-option";
-        el.dataset.id = item.id;
-        el.innerHTML = `<img src="${item.image}" alt="${item.full}" draggable="false">`;
-        // If a picture is missing, show the phrase as text so the card still works
-        const img = el.querySelector("img");
-        img.addEventListener("error", () => {
-          el.classList.add("no-img");
-          el.textContent = item.full;
-        });
-      } else {
-        el = document.createElement("div");
-        el.className = "phrase-option";
-        el.dataset.id = item.id;
-        el.textContent = item.full;
-      }
-      el.addEventListener("click", () => {
-        if (roundDone || !currentAudioItem || el.classList.contains("matched") || el.classList.contains("disabled")) return;
+    // play
+    var mode = MODES[modeIndex];
+    var left = leftOrder
+      .map(function (id, i) {
+        return leftCell(id, i, mode.left);
+      })
+      .join("");
+    var right = rightOrder
+      .map(function (id) {
+        return rightCell(id, mode.right);
+      })
+      .join("");
 
-        if (el.dataset.id === currentAudioItem.id) {
-          // correct
-          el.classList.add("matched");
-          matched.add(item.id);
-          score++;
-          updateProgress();
-          showFeedback("success", currentAudioItem.full);
-          playSrc(currentAudioItem.audio, bigPlay);
-          // disable others temporarily then next
-          optionsGrid.querySelectorAll(".pic-option, .phrase-option").forEach(o => {
-            if (!o.classList.contains("matched")) o.classList.add("disabled");
-          });
-          qIndex++;
-          setTimeout(() => {
-            clearFeedback();
-            loadNextAudio();
-          }, 900);
-        } else {
-          el.classList.add("wrong");
-          showFeedback("error", "Try again");
-          setTimeout(() => {
-            el.classList.remove("wrong");
-            clearFeedback();
-          }, 500);
-        }
-      });
-      optionsGrid.appendChild(el);
+    var shortTitles = ["Words → Pics", "Audio → Words", "Audio → Pics"];
+    var shortTitle = shortTitles[modeIndex] || mode.title;
+    app.innerHTML =
+      '<header class="mc-topbar">' +
+      '<a class="mc-back" href="../" aria-label="Back">←</a>' +
+      '<span class="mc-title" title="' +
+      mode.title +
+      '"><span class="mc-title-full">Part ' +
+      (modeIndex + 1) +
+      " · " +
+      mode.title +
+      '</span><span class="mc-title-short">P' +
+      (modeIndex + 1) +
+      " · " +
+      shortTitle +
+      "</span></span>" +
+      '<span class="mc-progress" id="mc-progress">' +
+      '<span class="mc-prog-full">Part ' +
+      (modeIndex + 1) +
+      "/" +
+      MODES.length +
+      " · Set " +
+      (setIndex % SETS_PER_PART + 1) +
+      "/" +
+      SETS_PER_PART +
+      " · " +
+      correctCount() +
+      '/5</span><span class="mc-prog-short">' +
+      (setIndex % SETS_PER_PART + 1) +
+      "/" +
+      SETS_PER_PART +
+      " · " +
+      correctCount() +
+      "/5</span></span>" +
+      "</header>" +
+      '<p class="mc-instruction" id="mc-hint">' +
+      mode.tip +
+      "</p>" +
+      '<div class="mc-board is-entering">' +
+      '<div class="mc-col mc-col-left">' +
+      left +
+      "</div>" +
+      '<div class="mc-col mc-col-right">' +
+      right +
+      "</div>" +
+      "</div>" +
+      '<div class="mc-actions">' +
+      '<button type="button" class="mc-btn secondary" id="mc-reset">Reset round</button>' +
+      "</div>";
+
+    // clear enter animation class after it runs
+    setTimeout(function () {
+      var board = app.querySelector(".mc-board");
+      if (board) board.classList.remove("is-entering");
+    }, 500);
+
+    app.querySelectorAll(".mc-left-item").forEach(function (el) {
+      el.onclick = function () {
+        selectLeft(+el.dataset.i);
+      };
     });
-
-    bigPlay.addEventListener("click", () => {
-      if (currentAudioItem) playSrc(currentAudioItem.audio, bigPlay);
+    app.querySelectorAll(".mc-play").forEach(function (btn) {
+      btn.onclick = function (e) {
+        e.stopPropagation();
+        var i = +btn.dataset.i;
+        if (locked[i]) return;
+        selectLeft(i);
+      };
     });
-
-    loadNextAudio();
-  }
-
-  function checkRoundComplete() {
-    // Mode 0 counts pairs via matchCount; modes 1–2 add one id per item
-    const done = (mode === 0) ? (matchCount >= 6) : (matched.size >= 6);
-    if (!done) return;
-    roundDone = true;
-
-    if (round < 3) {
-      showFeedback("success", "Round complete! ✨");
-      // Auto-advance to next round
-      setTimeout(() => {
-        round++;
-        renderCurrent();
-      }, 1100);
-    } else if (mode < 2) {
-      showFeedback("success", "Mode complete! Great job");
-      // Auto-advance to next mode
-      setTimeout(() => {
-        mode++;
-        round = 0;
-        updateTabs();
-        renderCurrent();
-      }, 1400);
-    } else {
-      showFeedback("success", "All modes finished! Score: " + score + "/72");
-      restartBtn.classList.remove("hidden");
-      awardStars(GAME_ID, score, 72);
-      showFinish(score, 72, restart);
-      launchConfetti();
-    }
-  }
-
-  function goNextRound() {
-    round++;
-    renderCurrent();
-  }
-
-  function goNextMode() {
-    mode++;
-    round = 0;
-    updateTabs();
-    renderCurrent();
-  }
-
-  function restart() {
-    mode = 0;
-    round = 0;
-    score = 0;
-    updateTabs();
-    renderCurrent();
-  }
-
-  function updateTabs() {
-    modeTabs.forEach(t => {
-      t.classList.toggle("active", parseInt(t.dataset.mode) === mode);
+    app.querySelectorAll(".mc-right-item").forEach(function (btn) {
+      btn.onclick = function () {
+        selectRight(btn.dataset.id);
+      };
     });
+    document.getElementById("mc-reset").onclick = function () {
+      sfx("click");
+      startSet(setIndex);
+    };
   }
 
-  function renderCurrent() {
-    if (mode === 0) renderVerbPhrase();
-    else if (mode === 1) renderAudioMatch(true);  // pictures
-    else renderAudioMatch(false);                 // phrases
-  }
-
-  function launchConfetti() {
-    const colors = ["#38bdf8", "#a78bfa", "#34d399", "#fbbf24", "#f472b6"];
-    for (let i = 0; i < 60; i++) {
-      const s = document.createElement("span");
-      s.style.left = Math.random() * 100 + "%";
-      s.style.background = colors[i % colors.length];
-      s.style.animationDuration = (1.3 + Math.random() * 1.5) + "s";
-      s.style.animationDelay = Math.random() * 0.4 + "s";
-      confettiEl.appendChild(s);
-      setTimeout(() => s.remove(), 3500);
-    }
-  }
-
-  // Events
-  nextRoundBtn.addEventListener("click", goNextRound);
-  nextModeBtn.addEventListener("click", goNextMode);
-  restartBtn.addEventListener("click", restart);
-
-  modeTabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      const m = parseInt(tab.dataset.mode);
-      if (m === mode) return;
-      // allow free switching
-      mode = m;
-      round = 0;
-      updateTabs();
-      renderCurrent();
-    });
+  // Preload images
+  ITEMS.forEach(function (c) {
+    var img = new Image();
+    img.src = c.image;
   });
 
-  // Start
-  renderCurrent();
+  render();
 })();

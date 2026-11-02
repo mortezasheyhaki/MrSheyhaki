@@ -93,6 +93,8 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.audio = [
   { track: "1.13", url: "https://cdn.imgurl.ir/uploads/h225688_AEF3e_Starter_SB_1.13.mp3" },
   { track: "1.14", url: "https://cdn.imgurl.ir/uploads/n71037_AEF3e_Starter_SB_1.14.mp3" },
   { track: "1.15", url: "https://cdn.imgurl.ir/uploads/u890290_AEF3e_Starter_SB_1.15.mp3" },
+  { track: "1.1", url: "https://cdn.imgurl.ir/uploads/s8989_.mp3", title: "Unit 1 practice", label: "Workbook" },
+  { track: "1.2", url: "https://cdn.imgurl.ir/uploads/m814225_.mp3", title: "Unit 1 practice", label: "Workbook" },
 ];
 
 // Unit 1A – Games
