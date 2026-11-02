@@ -1,5 +1,19 @@
 (function () {
-  const GAME_ID = "aef1-u3a-listen-and-write";
+  const GAME_ID = "1-3a-listen-and-write";
+
+  // Shared Learning Arcade finish screen. Stars/plays are already saved above,
+  // so LAFinish is told not to save again (save: false).
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
 
   function awardStars(gameId, correct, total) {
     const pct = total ? Math.round((correct / total) * 100) : 0;
@@ -11,30 +25,30 @@
   }
 
   const PHRASES = [
-    { text: "cook dinner",          audio: "audio/cook-dinner.mp3" },
-    { text: "do homework",          audio: "audio/do-homework.mp3" },
-    { text: "do housework",         audio: "audio/do-housework.mp3" },
-    { text: "do yoga",              audio: "audio/do-yoga.mp3" },
-    { text: "drink water",          audio: "audio/drink-water.mp3" },
-    { text: "drive a car",          audio: "audio/drive-a-car.mp3" },
-    { text: "eat vegetables",       audio: "audio/eat-vegetables.mp3" },
-    { text: "go to the movies",     audio: "audio/go-to-the-movies.mp3" },
-    { text: "have a garden",        audio: "audio/have-a-garden.mp3" },
-    { text: "like animals",         audio: "audio/like-animals.mp3" },
-    { text: "listen to music",      audio: "audio/listen-to-music.mp3" },
-    { text: "live in an apartment", audio: "audio/live-in-an-apartment.mp3" },
-    { text: "need a new phone",     audio: "audio/need-a-new-phone.mp3" },
-    { text: "play tennis",          audio: "audio/play-tennis.mp3" },
-    { text: "play the guitar",      audio: "audio/play-the-guitar.mp3" },
-    { text: "read a book",          audio: "audio/read-a-book.mp3" },
-    { text: "say sorry",            audio: "audio/say-sorry.mp3" },
-    { text: "speak German",         audio: "audio/speak-german.mp3" },
-    { text: "study history",        audio: "audio/study-history.mp3" },
-    { text: "take an umbrella",     audio: "audio/take-an-umbrella.mp3" },
-    { text: "want a coffee",        audio: "audio/want-a-coffee.mp3" },
-    { text: "watch TV",             audio: "audio/watch-tv.mp3" },
-    { text: "wear glasses",         audio: "audio/wear-glasses.mp3" },
-    { text: "work in an office",    audio: "audio/work-in-an-office.mp3" },
+    { text: "cook dinner",          audio: "https://cdn.imgurl.ir/uploads/o673860_.mp3" },
+    { text: "do homework",          audio: "https://cdn.imgurl.ir/uploads/p09599_.mp3" },
+    { text: "do housework",         audio: "https://cdn.imgurl.ir/uploads/o80603_.mp3" },
+    { text: "do yoga",              audio: "https://cdn.imgurl.ir/uploads/u74460_.mp3" },
+    { text: "drink water",          audio: "https://cdn.imgurl.ir/uploads/e95233_.mp3" },
+    { text: "drive a car",          audio: "https://cdn.imgurl.ir/uploads/e808976_.mp3" },
+    { text: "eat vegetables",       audio: "https://cdn.imgurl.ir/uploads/k804902_.mp3" },
+    { text: "go to the movies",     audio: "https://cdn.imgurl.ir/uploads/e24429_.mp3" },
+    { text: "have a garden",        audio: "https://cdn.imgurl.ir/uploads/m64217_.mp3" },
+    { text: "like animals",         audio: "https://cdn.imgurl.ir/uploads/n22603_.mp3" },
+    { text: "listen to music",      audio: "https://cdn.imgurl.ir/uploads/m558203_.mp3" },
+    { text: "live in an apartment", audio: "https://cdn.imgurl.ir/uploads/k443109_.mp3" },
+    { text: "need a new phone",     audio: "https://cdn.imgurl.ir/uploads/q430686_.mp3" },
+    { text: "play tennis",          audio: "https://cdn.imgurl.ir/uploads/x185579_.mp3" },
+    { text: "play the guitar",      audio: "https://cdn.imgurl.ir/uploads/p690767_.mp3" },
+    { text: "read a book",          audio: "https://cdn.imgurl.ir/uploads/x041368_.mp3" },
+    { text: "say sorry",            audio: "https://cdn.imgurl.ir/uploads/n903104_.mp3" },
+    { text: "speak German",         audio: "https://cdn.imgurl.ir/uploads/s391734_.mp3" },
+    { text: "study history",        audio: "https://cdn.imgurl.ir/uploads/q43071_.mp3" },
+    { text: "take an umbrella",     audio: "https://cdn.imgurl.ir/uploads/f29577_.mp3" },
+    { text: "want a coffee",        audio: "https://cdn.imgurl.ir/uploads/d50989_.mp3" },
+    { text: "watch TV",             audio: "https://cdn.imgurl.ir/uploads/c92596_.mp3" },
+    { text: "wear glasses",         audio: "https://cdn.imgurl.ir/uploads/s37443_.mp3" },
+    { text: "work in an office",    audio: "https://cdn.imgurl.ir/uploads/z267_.mp3" },
   ];
 
   const playBtn      = document.getElementById("playBtn");
@@ -138,6 +152,7 @@
       showFeedback("success", "Finished! You got " + score + " out of " + queue.length);
       restartBtn.classList.remove("hidden");
       awardStars(GAME_ID, score, queue.length);
+      showFinish(score, queue.length, function () { restartBtn.click(); });
       if (score === queue.length) launchConfetti();
       return;
     }

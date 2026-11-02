@@ -1,6 +1,20 @@
 (function () {
   const GAME_ID = "1-3a-listen-and-change";
 
+  // Shared Learning Arcade finish screen. Stars/plays are already saved above,
+  // so LAFinish is told not to save again (save: false).
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
+
   // subject is shown fixed; student types the FULL sentence including the subject
   const ITEMS = [
     {
@@ -201,6 +215,7 @@
       doneBox.classList.remove("hidden");
       finalScore.textContent = score + " / " + ITEMS.length + " correct";
       renderStars(awardStars(score, ITEMS.length));
+      showFinish(score, ITEMS.length, function () { restartBtn.click(); });
     }, 700);
   }
 

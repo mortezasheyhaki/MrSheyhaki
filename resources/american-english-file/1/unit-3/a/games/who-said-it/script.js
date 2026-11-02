@@ -1,6 +1,20 @@
 (function () {
   const GAME_ID = "1-3a-who-said-it";
 
+  // Shared Learning Arcade finish screen. Stars/plays are already saved above,
+  // so LAFinish is told not to save again (save: false).
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
+
   const PEOPLE = [
     {
       name: "Sarah",
@@ -287,6 +301,7 @@
         LAStars.saveFromAccuracy(GAME_ID, pct);
       }
       const stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
+      showFinish(correct, required, reset);
       starsEl.classList.remove("celebrate");
       starsEl.innerHTML = "";
       for (let i = 1; i <= 3; i++) {

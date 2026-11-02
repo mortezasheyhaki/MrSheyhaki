@@ -1,5 +1,19 @@
 (function () {
-  const GAME_ID = "aef1-u3a-listen-and-complete";
+  const GAME_ID = "1-3a-listen-and-complete";
+
+  // Shared Learning Arcade finish screen. Stars/plays are already saved above,
+  // so LAFinish is told not to save again (save: false).
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
 
   function awardStars(gameId, correct, total) {
     const pct = total ? Math.round((correct / total) * 100) : 0;
@@ -131,6 +145,7 @@
       showFeedback("success", "Finished! You got " + score + " out of " + queue.length);
       restartBtn.classList.remove("hidden");
       awardStars(GAME_ID, score, queue.length);
+      showFinish(score, queue.length, function () { restartBtn.click(); });
       if (score === queue.length) launchConfetti();
       return;
     }

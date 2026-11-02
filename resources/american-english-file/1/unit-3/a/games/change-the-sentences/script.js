@@ -1,5 +1,19 @@
 (function () {
-  const GAME_ID = "aef1-u3a-change-the-sentences";
+  const GAME_ID = "1-3a-change-the-sentences";
+
+  // Shared Learning Arcade finish screen. Stars/plays are already saved above,
+  // so LAFinish is told not to save again (save: false).
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
 
   function awardStars(correct, total) {
     const pct = total ? Math.round((correct / total) * 100) : 0;
@@ -230,6 +244,7 @@
         aFinalScore.textContent = aScore + " / " + PART_A.length + " correct";
         const stars = awardStars(aScore, PART_A.length);
         renderStars(document.getElementById("aStars"), stars);
+        showFinish(aScore, PART_A.length, function () { aRestart.click(); });
       }, 600);
       return;
     }
@@ -358,6 +373,7 @@
         bDone.classList.remove("hidden");
         if (bFinal) bFinal.textContent = correct + " / " + PART_B.length + " correct";
         renderStars(document.getElementById("bStars"), stars);
+        showFinish(correct, PART_B.length, resetB);
       }
     } else {
       bFeedback.className = "feedback error";

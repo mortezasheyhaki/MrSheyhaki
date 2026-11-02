@@ -3,6 +3,20 @@
 
   const GAME_ID = "1-3a-write-their-routine";
 
+  // Shared Learning Arcade finish screen. Stars/plays are already saved above,
+  // so LAFinish is told not to save again (save: false).
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
+
   const ADAM_PARAS = [
     "Hi, I'm Adam. I usually get up at 7:00. I drink coffee and check my phone. Then I do housework in the morning because my apartment gets messy very quickly. After that, I drive a car to work. I work in an office, and I usually get there at about 9:00.",
     "In the afternoon, I'm usually busy. I have lunch with my coworkers, and sometimes we eat Japanese food. After lunch, I go back to work. When I finish, I sometimes take photos with my phone on the way home. I like taking pictures of interesting places in the city.",
@@ -241,6 +255,7 @@
       LAStars.recordPlay(GAME_ID);
       LAStars.saveFromAccuracy(GAME_ID, avg);
     }
+    showFinish(avg, 100, restart);
     stepBtns.forEach(function (btn) {
       btn.classList.remove("active");
       btn.classList.add("done");

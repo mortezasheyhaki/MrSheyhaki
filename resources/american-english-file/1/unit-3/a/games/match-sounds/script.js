@@ -1,5 +1,19 @@
 (function () {
-  const GAME_ID = "aef1-u3a-match-sounds";
+  const GAME_ID = "1-3a-match-sounds";
+
+  // Shared Learning Arcade finish screen. Stars/plays are already saved above,
+  // so LAFinish is told not to save again (save: false).
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
 
   function awardStars(gameId, correct, total) {
     const pct = total ? Math.round((correct / total) * 100) : 0;
@@ -11,11 +25,11 @@
   }
 
   const ITEMS = [
-    { id: 1, phrase: "speak German", audio: "audio/1-speak-german.mp3" },
-    { id: 2, phrase: "drink water", audio: "audio/2-drink-water.mp3" },
-    { id: 3, phrase: "watch TV", audio: "audio/3-watch-tv.mp3" },
-    { id: 4, phrase: "play the guitar", audio: "audio/4-play-the-guitar.mp3" },
-    { id: 5, phrase: "like animals", audio: "audio/5-like-animals.mp3" },
+    { id: 1, phrase: "speak German", audio: "https://cdn.imgurl.ir/uploads/315515_.mp3" },
+    { id: 2, phrase: "drink water", audio: "https://cdn.imgurl.ir/uploads/l952839_.mp3" },
+    { id: 3, phrase: "watch TV", audio: "https://cdn.imgurl.ir/uploads/z992094_.mp3" },
+    { id: 4, phrase: "play the guitar", audio: "https://cdn.imgurl.ir/uploads/n9524_.mp3" },
+    { id: 5, phrase: "like animals", audio: "https://cdn.imgurl.ir/uploads/c998353_.mp3" },
   ];
 
   const soundsEl = document.getElementById("sounds");
@@ -164,6 +178,7 @@
       if (score === ITEMS.length) {
         feedbackEl.textContent = "Perfect! You matched all 5 🎉";
         awardStars(GAME_ID, score, ITEMS.length);
+        showFinish(score, ITEMS.length, render);
         launchConfetti();
       }
     } else {

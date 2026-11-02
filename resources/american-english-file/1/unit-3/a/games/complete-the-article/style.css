@@ -1,5 +1,9 @@
-:root {
+/* ========== Theme tokens (site toggle: html[data-theme]) ========== */
+:root,
+html[data-theme="dark"] {
+  --radius: 16px;
   --bg: #0f172a;
+  --bg-mid: #1e293b;
   --card: #1e293b;
   --card-hover: #334155;
   --accent: #38bdf8;
@@ -8,15 +12,49 @@
   --danger: #f87171;
   --text: #f1f5f9;
   --muted: #94a3b8;
-  --radius: 12px;
-  --shadow: 0 8px 24px rgba(0,0,0,.3);
+  --line: rgba(148, 163, 184, 0.18);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --on-accent: #0f172a;
+  --input-bg: #0f172a;
+  --input-border: #334155;
+  --overlay: rgba(15, 23, 42, 0.75);
+  --success-bg: rgba(52, 211, 153, 0.12);
+  --danger-bg: rgba(248, 113, 113, 0.12);
+  --accent-glow: rgba(56, 189, 248, 0.28);
+  --accent-2-glow: rgba(167, 139, 250, 0.28);
+  color-scheme: dark;
 }
+
+html[data-theme="light"] {
+  --bg: #f1f5f9;
+  --bg-mid: #e2e8f0;
+  --card: #ffffff;
+  --card-hover: #f1f5f9;
+  --accent: #0284c7;
+  --accent-2: #7c3aed;
+  --success: #059669;
+  --danger: #dc2626;
+  --text: #0f172a;
+  --muted: #64748b;
+  --line: rgba(15, 23, 42, 0.1);
+  --shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+  --on-accent: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --overlay: rgba(15, 23, 42, 0.55);
+  --success-bg: rgba(5, 150, 105, 0.12);
+  --danger-bg: rgba(220, 38, 38, 0.1);
+  --accent-glow: rgba(2, 132, 199, 0.22);
+  --accent-2-glow: rgba(124, 58, 237, 0.2);
+  color-scheme: light;
+}
+
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   font-family: 'Nunito', system-ui, sans-serif;
-  background: radial-gradient(ellipse at top, #1e293b 0%, var(--bg) 70%);
+  background: radial-gradient(ellipse at top, var(--card) 0%, var(--bg) 70%);
   color: var(--text);
   min-height: 100vh;
   display: flex;
@@ -79,11 +117,11 @@ body {
 }
 .step.active {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #0f172a;
+  color: var(--on-accent);
 }
 .step.done {
   background: var(--success);
-  color: #0f172a;
+  color: var(--on-accent);
 }
 .step-line {
   width: 18px; height: 2px;
@@ -118,7 +156,7 @@ body {
 }
 .chip {
   border: none;
-  background: #0f172a;
+  background: var(--input-bg);
   color: var(--text);
   font-family: inherit;
   font-weight: 700;
@@ -207,7 +245,7 @@ body {
 }
 .btn.primary {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #0f172a;
+  color: var(--on-accent);
 }
 .btn.primary:hover { transform: translateY(-1px); }
 .btn.secondary {
@@ -249,7 +287,7 @@ body {
   border-radius: 50%;
   border: none;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #0f172a;
+  color: var(--on-accent);
   display: grid; place-items: center;
   cursor: pointer;
   position: relative;
@@ -349,7 +387,7 @@ body {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: #0f172a;
+  background: var(--input-bg);
   color: var(--accent);
   font-weight: 800;
   font-size: .85rem;

@@ -1,5 +1,19 @@
 (function () {
-  const GAME_ID = "aef1-u3a-complete-the-article";
+  const GAME_ID = "1-3a-complete-the-article";
+
+  // Shared Learning Arcade finish screen. Stars/plays are already saved above,
+  // so LAFinish is told not to save again (save: false).
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
 
   function awardStars(gameId, correct, total) {
     const pct = total ? Math.round((correct / total) * 100) : 0;
@@ -212,6 +226,10 @@
       fb.textContent = "Perfect! All correct ✓";
       // count filled correct - approximate full score on perfect
       awardStars(GAME_ID, 1, 1);
+      showFinish(blanks.length, blanks.length, function () {
+        var r = document.querySelector("#restartAll");
+        if (r) r.click(); else location.reload();
+      });
       after.classList.add("hidden");
       return true;
     } else {

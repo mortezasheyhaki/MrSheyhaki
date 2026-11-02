@@ -1,5 +1,19 @@
 (function () {
-  const GAME_ID = "aef1-u3a-match-rush";
+  const GAME_ID = "1-3a-match-rush";
+
+  // Shared Learning Arcade finish screen. Stars/plays are already saved above,
+  // so LAFinish is told not to save again (save: false).
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
 
   function awardStars(gameId, correct, total) {
     const pct = total ? Math.round((correct / total) * 100) : 0;
@@ -12,30 +26,30 @@
 
   // All 24 items
   const ALL = [
-    { id: "cook-dinner",          verb: "cook",   phrase: "dinner",          full: "cook dinner",          audio: "audio/cook-dinner.mp3",          image: "images/cook-dinner.png" },
-    { id: "do-homework",          verb: "do",     phrase: "homework",        full: "do homework",          audio: "audio/do-homework.mp3",          image: "images/do-homework.png" },
-    { id: "do-housework",         verb: "do",     phrase: "housework",       full: "do housework",         audio: "audio/do-housework.mp3",         image: "images/do-housework.png" },
-    { id: "do-yoga",              verb: "do",     phrase: "yoga",            full: "do yoga",              audio: "audio/do-yoga.mp3",              image: "images/do-yoga.png" },
-    { id: "drink-water",          verb: "drink",  phrase: "water",           full: "drink water",          audio: "audio/drink-water.mp3",          image: "images/drink-water.png" },
-    { id: "drive-a-car",          verb: "drive",  phrase: "a car",           full: "drive a car",          audio: "audio/drive-a-car.mp3",          image: "images/drive-a-car.png" },
-    { id: "eat-vegetables",       verb: "eat",    phrase: "vegetables",      full: "eat vegetables",       audio: "audio/eat-vegetables.mp3",       image: "images/eat-vegetables.png" },
-    { id: "go-to-the-movies",     verb: "go",     phrase: "to the movies",   full: "go to the movies",     audio: "audio/go-to-the-movies.mp3",     image: "images/go-to-the-movies.png" },
-    { id: "have-a-garden",        verb: "have",   phrase: "a garden",        full: "have a garden",        audio: "audio/have-a-garden.mp3",        image: "images/have-a-garden.png" },
-    { id: "like-animals",         verb: "like",   phrase: "animals",         full: "like animals",         audio: "audio/like-animals.mp3",         image: "images/like-animals.png" },
-    { id: "listen-to-music",      verb: "listen", phrase: "to music",        full: "listen to music",      audio: "audio/listen-to-music.mp3",      image: "images/listen-to-music.png" },
-    { id: "live-in-an-apartment", verb: "live",   phrase: "in an apartment", full: "live in an apartment", audio: "audio/live-in-an-apartment.mp3", image: "images/live-in-an-apartment.png" },
-    { id: "need-a-new-phone",     verb: "need",   phrase: "a new phone",     full: "need a new phone",     audio: "audio/need-a-new-phone.mp3",     image: "images/need-a-new-phone.png" },
-    { id: "play-tennis",          verb: "play",   phrase: "tennis",          full: "play tennis",          audio: "audio/play-tennis.mp3",          image: "images/play-tennis.png" },
-    { id: "play-the-guitar",      verb: "play",   phrase: "the guitar",      full: "play the guitar",      audio: "audio/play-the-guitar.mp3",      image: "images/play-the-guitar.png" },
-    { id: "read-a-book",          verb: "read",   phrase: "a book",          full: "read a book",          audio: "audio/read-a-book.mp3",          image: "images/read-a-book.png" },
-    { id: "say-sorry",            verb: "say",    phrase: "sorry",           full: "say sorry",            audio: "audio/say-sorry.mp3",            image: "images/say-sorry.png" },
-    { id: "speak-german",         verb: "speak",  phrase: "German",          full: "speak German",         audio: "audio/speak-german.mp3",         image: "images/speak-german.png" },
-    { id: "study-history",        verb: "study",  phrase: "history",         full: "study history",        audio: "audio/study-history.mp3",        image: "images/study-history.png" },
-    { id: "take-an-umbrella",     verb: "take",   phrase: "an umbrella",     full: "take an umbrella",     audio: "audio/take-an-umbrella.mp3",     image: "images/take-an-umbrella.png" },
-    { id: "want-a-coffee",        verb: "want",   phrase: "a coffee",        full: "want a coffee",        audio: "audio/want-a-coffee.mp3",        image: "images/want-a-coffee.png" },
-    { id: "watch-tv",             verb: "watch",  phrase: "TV",              full: "watch TV",             audio: "audio/watch-tv.mp3",             image: "images/watch-tv.png" },
-    { id: "wear-glasses",         verb: "wear",   phrase: "glasses",         full: "wear glasses",         audio: "audio/wear-glasses.mp3",         image: "images/wear-glasses.png" },
-    { id: "work-in-an-office",    verb: "work",   phrase: "in an office",    full: "work in an office",    audio: "audio/work-in-an-office.mp3",    image: "images/work-in-an-office.png" },
+    { id: "cook-dinner",          verb: "cook",   phrase: "dinner",          full: "cook dinner",          audio: "https://cdn.imgurl.ir/uploads/o673860_.mp3",          image: "https://cdn.imgurl.ir/uploads/j357273_.png" },
+    { id: "do-homework",          verb: "do",     phrase: "homework",        full: "do homework",          audio: "https://cdn.imgurl.ir/uploads/p09599_.mp3",          image: "https://cdn.imgurl.ir/uploads/m94348_.png" },
+    { id: "do-housework",         verb: "do",     phrase: "housework",       full: "do housework",         audio: "https://cdn.imgurl.ir/uploads/o80603_.mp3",         image: "https://cdn.imgurl.ir/uploads/08745_.png" },
+    { id: "do-yoga",              verb: "do",     phrase: "yoga",            full: "do yoga",              audio: "https://cdn.imgurl.ir/uploads/u74460_.mp3",              image: "https://cdn.imgurl.ir/uploads/j0493_.png" },
+    { id: "drink-water",          verb: "drink",  phrase: "water",           full: "drink water",          audio: "https://cdn.imgurl.ir/uploads/e95233_.mp3",          image: "https://cdn.imgurl.ir/uploads/n11539_.png" },
+    { id: "drive-a-car",          verb: "drive",  phrase: "a car",           full: "drive a car",          audio: "https://cdn.imgurl.ir/uploads/e808976_.mp3",          image: "https://cdn.imgurl.ir/uploads/m63077_.png" },
+    { id: "eat-vegetables",       verb: "eat",    phrase: "vegetables",      full: "eat vegetables",       audio: "https://cdn.imgurl.ir/uploads/k804902_.mp3",       image: "https://cdn.imgurl.ir/uploads/c15380_.png" },
+    { id: "go-to-the-movies",     verb: "go",     phrase: "to the movies",   full: "go to the movies",     audio: "https://cdn.imgurl.ir/uploads/e24429_.mp3",     image: "https://cdn.imgurl.ir/uploads/h931390_.png" },
+    { id: "have-a-garden",        verb: "have",   phrase: "a garden",        full: "have a garden",        audio: "https://cdn.imgurl.ir/uploads/m64217_.mp3",        image: "https://cdn.imgurl.ir/uploads/d740384_.png" },
+    { id: "like-animals",         verb: "like",   phrase: "animals",         full: "like animals",         audio: "https://cdn.imgurl.ir/uploads/n22603_.mp3",         image: "https://cdn.imgurl.ir/uploads/r75951_.png" },
+    { id: "listen-to-music",      verb: "listen", phrase: "to music",        full: "listen to music",      audio: "https://cdn.imgurl.ir/uploads/m558203_.mp3",      image: "https://cdn.imgurl.ir/uploads/l733951_.png" },
+    { id: "live-in-an-apartment", verb: "live",   phrase: "in an apartment", full: "live in an apartment", audio: "https://cdn.imgurl.ir/uploads/k443109_.mp3", image: "https://cdn.imgurl.ir/uploads/62296_.png" },
+    { id: "need-a-new-phone",     verb: "need",   phrase: "a new phone",     full: "need a new phone",     audio: "https://cdn.imgurl.ir/uploads/q430686_.mp3",     image: "https://cdn.imgurl.ir/uploads/v13976_.png" },
+    { id: "play-tennis",          verb: "play",   phrase: "tennis",          full: "play tennis",          audio: "https://cdn.imgurl.ir/uploads/x185579_.mp3",          image: "https://cdn.imgurl.ir/uploads/y879_.png" },
+    { id: "play-the-guitar",      verb: "play",   phrase: "the guitar",      full: "play the guitar",      audio: "https://cdn.imgurl.ir/uploads/p690767_.mp3",      image: "https://cdn.imgurl.ir/uploads/j469440_.png" },
+    { id: "read-a-book",          verb: "read",   phrase: "a book",          full: "read a book",          audio: "https://cdn.imgurl.ir/uploads/x041368_.mp3",          image: "https://cdn.imgurl.ir/uploads/z09542_.png" },
+    { id: "say-sorry",            verb: "say",    phrase: "sorry",           full: "say sorry",            audio: "https://cdn.imgurl.ir/uploads/n903104_.mp3",            image: "https://cdn.imgurl.ir/uploads/m86105_.png" },
+    { id: "speak-german",         verb: "speak",  phrase: "German",          full: "speak German",         audio: "https://cdn.imgurl.ir/uploads/s391734_.mp3",         image: "https://cdn.imgurl.ir/uploads/b78021_.png" },
+    { id: "study-history",        verb: "study",  phrase: "history",         full: "study history",        audio: "https://cdn.imgurl.ir/uploads/q43071_.mp3",        image: "https://cdn.imgurl.ir/uploads/y054248_.png" },
+    { id: "take-an-umbrella",     verb: "take",   phrase: "an umbrella",     full: "take an umbrella",     audio: "https://cdn.imgurl.ir/uploads/f29577_.mp3",     image: "https://cdn.imgurl.ir/uploads/b478986_.png" },
+    { id: "want-a-coffee",        verb: "want",   phrase: "a coffee",        full: "want a coffee",        audio: "https://cdn.imgurl.ir/uploads/d50989_.mp3",        image: "https://cdn.imgurl.ir/uploads/q14407_.png" },
+    { id: "watch-tv",             verb: "watch",  phrase: "TV",              full: "watch TV",             audio: "https://cdn.imgurl.ir/uploads/c92596_.mp3",             image: "https://cdn.imgurl.ir/uploads/g207116_.png" },
+    { id: "wear-glasses",         verb: "wear",   phrase: "glasses",         full: "wear glasses",         audio: "https://cdn.imgurl.ir/uploads/s37443_.mp3",         image: "https://cdn.imgurl.ir/uploads/f90075_.png" },
+    { id: "work-in-an-office",    verb: "work",   phrase: "in an office",    full: "work in an office",    audio: "https://cdn.imgurl.ir/uploads/z267_.mp3",    image: "https://cdn.imgurl.ir/uploads/z444646_.png" },
   ];
 
   // Mode 1: 4 rounds of 6 (verb → phrase)
@@ -354,6 +368,12 @@
         el.className = "pic-option";
         el.dataset.id = item.id;
         el.innerHTML = `<img src="${item.image}" alt="${item.full}" draggable="false">`;
+        // If a picture is missing, show the phrase as text so the card still works
+        const img = el.querySelector("img");
+        img.addEventListener("error", () => {
+          el.classList.add("no-img");
+          el.textContent = item.full;
+        });
       } else {
         el = document.createElement("div");
         el.className = "phrase-option";
@@ -425,6 +445,7 @@
       showFeedback("success", "All modes finished! Score: " + score + "/72");
       restartBtn.classList.remove("hidden");
       awardStars(GAME_ID, score, 72);
+      showFinish(score, 72, restart);
       launchConfetti();
     }
   }

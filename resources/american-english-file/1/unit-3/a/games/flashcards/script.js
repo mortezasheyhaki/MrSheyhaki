@@ -1,31 +1,45 @@
 (function () {
-  const GAME_ID = "aef1-u3a-flashcards";
+  const GAME_ID = "1-3a-flashcards";
+
+  // Shared Learning Arcade finish screen. Stars/plays are already saved above,
+  // so LAFinish is told not to save again (save: false).
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
 
   const CARDS = [
-    { phrase: "cook dinner",          image: "images/cook-dinner.png",          audio: "audio/cook-dinner.mp3" },
-    { phrase: "do homework",          image: "images/do-homework.png",          audio: "audio/do-homework.mp3" },
-    { phrase: "do housework",         image: "images/do-housework.png",         audio: "audio/do-housework.mp3" },
-    { phrase: "do yoga",              image: "images/do-yoga.png",              audio: "audio/do-yoga.mp3" },
-    { phrase: "drink water",          image: "images/drink-water.png",          audio: "audio/drink-water.mp3" },
-    { phrase: "drive a car",          image: "images/drive-a-car.png",          audio: "audio/drive-a-car.mp3" },
-    { phrase: "eat vegetables",       image: "images/eat-vegetables.png",       audio: "audio/eat-vegetables.mp3" },
-    { phrase: "go to the movies",     image: "images/go-to-the-movies.png",     audio: "audio/go-to-the-movies.mp3" },
-    { phrase: "have a garden",        image: "images/have-a-garden.png",        audio: "audio/have-a-garden.mp3" },
-    { phrase: "like animals",         image: "images/like-animals.png",         audio: "audio/like-animals.mp3" },
-    { phrase: "listen to music",      image: "images/listen-to-music.png",      audio: "audio/listen-to-music.mp3" },
-    { phrase: "live in an apartment", image: "images/live-in-an-apartment.png", audio: "audio/live-in-an-apartment.mp3" },
-    { phrase: "need a new phone",     image: "images/need-a-new-phone.png",     audio: "audio/need-a-new-phone.mp3" },
-    { phrase: "play tennis",          image: "images/play-tennis.png",          audio: "audio/play-tennis.mp3" },
-    { phrase: "play the guitar",      image: "images/play-the-guitar.png",      audio: "audio/play-the-guitar.mp3" },
-    { phrase: "read a book",          image: "images/read-a-book.png",          audio: "audio/read-a-book.mp3" },
-    { phrase: "say sorry",            image: "images/say-sorry.png",            audio: "audio/say-sorry.mp3" },
-    { phrase: "speak German",         image: "images/speak-german.png",         audio: "audio/speak-german.mp3" },
-    { phrase: "study history",        image: "images/study-history.png",        audio: "audio/study-history.mp3" },
-    { phrase: "take an umbrella",     image: "images/take-an-umbrella.png",     audio: "audio/take-an-umbrella.mp3" },
-    { phrase: "want a coffee",        image: "images/want-a-coffee.png",        audio: "audio/want-a-coffee.mp3" },
-    { phrase: "watch TV",             image: "images/watch-tv.png",             audio: "audio/watch-tv.mp3" },
-    { phrase: "wear glasses",         image: "images/wear-glasses.png",         audio: "audio/wear-glasses.mp3" },
-    { phrase: "work in an office",    image: "images/work-in-an-office.png",    audio: "audio/work-in-an-office.mp3" },
+    { phrase: "cook dinner",          image: "images/cook-dinner.png",          audio: "https://cdn.imgurl.ir/uploads/o673860_.mp3" },
+    { phrase: "do homework",          image: "images/do-homework.png",          audio: "https://cdn.imgurl.ir/uploads/p09599_.mp3" },
+    { phrase: "do housework",         image: "images/do-housework.png",         audio: "https://cdn.imgurl.ir/uploads/o80603_.mp3" },
+    { phrase: "do yoga",              image: "images/do-yoga.png",              audio: "https://cdn.imgurl.ir/uploads/u74460_.mp3" },
+    { phrase: "drink water",          image: "images/drink-water.png",          audio: "https://cdn.imgurl.ir/uploads/e95233_.mp3" },
+    { phrase: "drive a car",          image: "images/drive-a-car.png",          audio: "https://cdn.imgurl.ir/uploads/e808976_.mp3" },
+    { phrase: "eat vegetables",       image: "images/eat-vegetables.png",       audio: "https://cdn.imgurl.ir/uploads/k804902_.mp3" },
+    { phrase: "go to the movies",     image: "images/go-to-the-movies.png",     audio: "https://cdn.imgurl.ir/uploads/e24429_.mp3" },
+    { phrase: "have a garden",        image: "images/have-a-garden.png",        audio: "https://cdn.imgurl.ir/uploads/m64217_.mp3" },
+    { phrase: "like animals",         image: "images/like-animals.png",         audio: "https://cdn.imgurl.ir/uploads/n22603_.mp3" },
+    { phrase: "listen to music",      image: "images/listen-to-music.png",      audio: "https://cdn.imgurl.ir/uploads/m558203_.mp3" },
+    { phrase: "live in an apartment", image: "images/live-in-an-apartment.png", audio: "https://cdn.imgurl.ir/uploads/k443109_.mp3" },
+    { phrase: "need a new phone",     image: "images/need-a-new-phone.png",     audio: "https://cdn.imgurl.ir/uploads/q430686_.mp3" },
+    { phrase: "play tennis",          image: "images/play-tennis.png",          audio: "https://cdn.imgurl.ir/uploads/x185579_.mp3" },
+    { phrase: "play the guitar",      image: "images/play-the-guitar.png",      audio: "https://cdn.imgurl.ir/uploads/p690767_.mp3" },
+    { phrase: "read a book",          image: "images/read-a-book.png",          audio: "https://cdn.imgurl.ir/uploads/x041368_.mp3" },
+    { phrase: "say sorry",            image: "images/say-sorry.png",            audio: "https://cdn.imgurl.ir/uploads/n903104_.mp3" },
+    { phrase: "speak German",         image: "images/speak-german.png",         audio: "https://cdn.imgurl.ir/uploads/s391734_.mp3" },
+    { phrase: "study history",        image: "images/study-history.png",        audio: "https://cdn.imgurl.ir/uploads/q43071_.mp3" },
+    { phrase: "take an umbrella",     image: "images/take-an-umbrella.png",     audio: "https://cdn.imgurl.ir/uploads/f29577_.mp3" },
+    { phrase: "want a coffee",        image: "images/want-a-coffee.png",        audio: "https://cdn.imgurl.ir/uploads/d50989_.mp3" },
+    { phrase: "watch TV",             image: "images/watch-tv.png",             audio: "https://cdn.imgurl.ir/uploads/c92596_.mp3" },
+    { phrase: "wear glasses",         image: "images/wear-glasses.png",         audio: "https://cdn.imgurl.ir/uploads/s37443_.mp3" },
+    { phrase: "work in an office",    image: "images/work-in-an-office.png",    audio: "https://cdn.imgurl.ir/uploads/z267_.mp3" },
   ];
 
   const cardEl      = document.getElementById("card");
@@ -131,6 +145,9 @@
     if (index < deck.length - 1) {
       index++;
       updateCard("left");
+    } else {
+      // last card reached: deck finished
+      showFinish(deck.length, deck.length, function () { start(false); });
     }
   }
 
