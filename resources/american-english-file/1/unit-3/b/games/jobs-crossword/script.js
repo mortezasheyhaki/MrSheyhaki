@@ -192,6 +192,7 @@
       }
     });
     if (allOk && filled === total) {
+      LASfx.win();
       feedback.className = "feedback success";
       feedback.textContent = "Perfect! Crossword complete ✓";
       finishCrossword(total);
@@ -199,6 +200,12 @@
       feedback.className = "feedback";
       feedback.textContent = "Fill in the letters, then tap Check.";
     } else {
+      // one sound per check, not per letter
+      const anyWrong = Object.keys(cellMap).some(function (k) {
+        const v = inputs[k].value;
+        return v && v.toUpperCase() !== cellMap[k].letter;
+      });
+      if (anyWrong) LASfx.wrong(); else LASfx.correct();
       feedback.className = "feedback error";
       feedback.textContent = "Some letters are wrong — keep trying!";
     }

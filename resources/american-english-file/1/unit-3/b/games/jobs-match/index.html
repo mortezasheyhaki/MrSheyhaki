@@ -25,43 +25,42 @@
 <body class="game-page" data-course="american-english-file" data-type="game" data-level="1" data-unit="3" data-lesson="b">
 <main id="game-app" class="mc-game">
 
-  <!-- Mode select -->
+  <!-- Start screen (same layout as Plural Match) -->
   <section id="modeScreen" class="screen">
     <header class="mc-topbar">
       <a class="mc-back" href="../" aria-label="Back">←</a>
       <span class="mc-title">Jobs Match</span>
-      <span class="mc-badge">Unit 3B</span>
+      <span class="mc-badge">3B</span>
     </header>
-    <div class="mc-start">
-      <p class="mc-desc">Choose a match type · 5 rounds · 6 pairs each</p>
+    <section class="mc-start">
+      <div class="mc-hero" aria-hidden="true">💼</div>
+      <h1>Jobs Match</h1>
+      <p class="mc-desc">3 parts, one after another · 75 pairs</p>
       <div class="mc-mode-list">
-        <button type="button" class="mc-mode-card mc-mode-btn" data-mode="word-pic">
+        <div class="mc-mode-card" data-mode="word-pic">
           <span class="mc-mode-num">1</span>
-          <span><strong>Words ↔ Pictures</strong><p>Match job names to photos. Audio plays on a correct match.</p></span>
-        </button>
-        <button type="button" class="mc-mode-card mc-mode-btn" data-mode="word-audio">
+          <span><strong>Pictures ↔ Words</strong><p>Match each job picture to the word.</p></span>
+        </div>
+        <div class="mc-mode-card" data-mode="word-audio">
           <span class="mc-mode-num">2</span>
-          <span><strong>Words ↔ Audio</strong><p>Match job names to the spoken word.</p></span>
-        </button>
-        <button type="button" class="mc-mode-card mc-mode-btn" data-mode="audio-pic">
+          <span><strong>Audio ↔ Words</strong><p>Listen, then match to the word.</p></span>
+        </div>
+        <div class="mc-mode-card" data-mode="audio-pic">
           <span class="mc-mode-num">3</span>
-          <span><strong>Audio ↔ Pictures</strong><p>Listen and match to the correct photo.</p></span>
-        </button>
+          <span><strong>Audio ↔ Pictures</strong><p>Listen, then match to the picture.</p></span>
+        </div>
       </div>
-    </div>
+      <button type="button" class="mc-btn" id="startModeBtn">Start →</button>
+    </section>
   </section>
 
-  <!-- Play -->
+  <!-- Play screen (same layout as Plural Match) -->
   <section id="playScreen" class="screen hidden">
     <header class="mc-topbar">
       <a class="mc-back" href="#" id="backToModes" aria-label="Modes" onclick="return false;">←</a>
-      <span class="mc-title" id="modeLabel">Words ↔ Pictures</span>
-      <span class="mc-badge">Unit 3B</span>
+      <span class="mc-title" id="modeLabel">Pictures ↔ Words</span>
+      <span class="mc-progress">Round <span id="roundNum">1</span>/5 · <span id="matchedCount">0</span>/5 · Score <span id="score">0</span></span>
     </header>
-    <div class="mc-progress-row">
-      <span class="mc-progress">Round <span id="roundNum">1</span> / 5 · <span id="matchedCount">0</span>/6 · Score <span id="score">0</span></span>
-      <div class="mc-track"><div id="progressFill" class="mc-fill"></div></div>
-    </div>
     <p class="mc-instruction" id="hint">Tap a card on each side to match.</p>
     <div class="mc-board">
       <div class="mc-col mc-col-left" id="colLeft"></div>
@@ -71,6 +70,7 @@
       <button type="button" class="mc-btn secondary" id="resetRoundBtn">Reset round</button>
     </div>
     <div id="feedback" class="mc-feedback" role="status"></div>
+    <div id="progressFill" class="hidden"></div>
   </section>
 
   <!-- Round / game complete -->
@@ -89,7 +89,8 @@
   <script src="/learningarcade/la-stars.js"></script>
   <script src="/learningarcade/la-finish.js"></script>
   <script src="../jobs-media.js"></script>
-<script src="script.js"></script>
+<script src="/learningarcade/la-sfx.js"></script>
+  <script src="script.js"></script>
   <script src="../../../../../../theme.js"></script>
 <script src="/visit-counter.js" defer></script>
 </body>

@@ -71,13 +71,13 @@ function show(){
 function check(){
   if(locked)return;const j=order[idx];const user=input.value;if(!user.trim()){input.focus();return;}
   locked=true;checkBtn.disabled=true;input.disabled=true;
-  if(ok(user,j.answers)){score++;scoreEl.textContent=String(score);input.classList.add("correct");feedback.className="feedback success";feedback.textContent="Correct! ✓";
+  if(ok(user,j.answers)){score++;scoreEl.textContent=String(score);LASfx.correct();input.classList.add("correct");feedback.className="feedback success";feedback.textContent="Correct! ✓";
     setTimeout(()=>{idx++;show();},850);
-  }else{input.classList.add("wrong");feedback.className="feedback error";feedback.textContent="It's \""+j.answers[0]+"\"";
+  }else{LASfx.wrong();input.classList.add("wrong");feedback.className="feedback error";feedback.textContent="It's \""+j.answers[0]+"\"";
     setTimeout(()=>{idx++;show();},1600);}
 }
 function stars(p){return p>=90?3:p>=70?2:p>=40?1:0;}
-function finish(){
+function finish(){LASfx.win();
   play.classList.add("hidden");done.classList.remove("hidden");
   const pct=Math.round((score/order.length)*100);
   document.getElementById("finalScore").textContent=score+" / "+order.length+" correct ("+pct+"%)";

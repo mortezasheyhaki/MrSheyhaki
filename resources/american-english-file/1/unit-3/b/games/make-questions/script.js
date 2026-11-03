@@ -181,6 +181,7 @@
         score++;
         scoreLabel.textContent = score + " correct";
       }
+      LASfx.correct();
       answerRow.classList.add("correct");
       feedback.className = "feedback success";
       feedback.textContent = "Correct! ✓";
@@ -188,6 +189,7 @@
         goNext();
       }, 900);
     } else {
+      LASfx.wrong();
       answerRow.classList.add("wrong");
       feedback.className = "feedback error";
       feedback.innerHTML =
@@ -257,6 +259,7 @@
   }
 
   function finish() {
+    LASfx.win();
     playCard.classList.add("hidden");
     doneBox.classList.remove("hidden");
     const pct = Math.round((score / order.length) * 100);

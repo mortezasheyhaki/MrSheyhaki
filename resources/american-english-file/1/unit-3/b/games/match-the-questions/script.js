@@ -190,6 +190,7 @@
       score++;
       scoreEl.textContent = String(score);
       used[item.id] = true;
+      LASfx.correct();
       answerCard.classList.add("is-correct");
       if (btn) {
         btn.classList.remove("selected");
@@ -201,6 +202,7 @@
       playAudio(item.audio, function () { advance(); });
     } else {
       mistakes++;
+      LASfx.wrong();
       answerCard.classList.add("is-wrong");
       if (btn) btn.classList.add("is-wrong");
       feedback.className = "feedback error";
@@ -251,6 +253,7 @@
   }
 
   function finish() {
+    LASfx.win();
     stopAudio();
     stage.classList.add("hidden");
     doneBox.classList.remove("hidden");

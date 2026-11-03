@@ -187,6 +187,41 @@
       ".la-finish-btn-primary{background:linear-gradient(180deg,#8b7cf7,#7c6cf0);border-color:transparent;color:#fff;box-shadow:0 6px 18px rgba(124,108,240,.4)}",
       ".la-finish-btn-primary:hover{background:linear-gradient(180deg,#9a8cf8,#6b5ce0);border-color:transparent;box-shadow:0 8px 22px rgba(124,108,240,.48)}",
       "html[data-theme=dark] .la-finish-btn-primary{background:linear-gradient(180deg,#8b7cf7,#7c6cf0);border-color:transparent;color:#fff}",
+
+      /* ===== Neon glass theme (applied to every game) =====
+         Prefixed with the overlay id so it wins over the theme rules above. */
+      "#" + OVERLAY_ID + "{background:radial-gradient(circle at 50% 30%,rgba(76,60,160,.45),rgba(8,6,20,.82) 70%);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}",
+      "#" + OVERLAY_ID + " .la-finish-card{max-width:340px;color:#f5f3ff;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.025)),#14122b;border:1px solid rgba(167,139,250,.28);border-radius:28px;box-shadow:0 30px 80px rgba(124,58,237,.32),0 0 0 1px rgba(255,255,255,.04) inset;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}",
+      "#" + OVERLAY_ID + " .la-finish-sticker{filter:drop-shadow(0 0 22px rgba(167,139,250,.55)) drop-shadow(0 10px 18px rgba(0,0,0,.35));width:112px;height:112px}",
+      "#" + OVERLAY_ID + " .la-finish-emoji{filter:drop-shadow(0 0 18px rgba(167,139,250,.6))}",
+      "#" + OVERLAY_ID + " .la-finish-title{color:#f5f3ff;background:linear-gradient(90deg,#f5f3ff,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}",
+      "#" + OVERLAY_ID + " .la-finish-star{color:rgba(255,255,255,.18)}",
+      "#" + OVERLAY_ID + " .la-finish-star.is-on{color:#fde047;text-shadow:0 0 14px rgba(253,224,71,.75)}",
+      "#" + OVERLAY_ID + " .la-finish-ring-bg{stroke:rgba(196,181,253,.16)}",
+      "#" + OVERLAY_ID + " .la-finish-ring-fg{stroke:#a78bfa;filter:drop-shadow(0 0 8px #a78bfa)}",
+      "#" + OVERLAY_ID + " .la-finish-pct{color:#f5f3ff}",
+      "#" + OVERLAY_ID + " .la-finish-pct-sub{color:#c4b5fd}",
+      "#" + OVERLAY_ID + " .la-finish-stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);box-shadow:none}",
+      "#" + OVERLAY_ID + " .la-finish-stat-label{color:#a5a3c9}",
+      "#" + OVERLAY_ID + " .la-finish-stat-value{color:#f5f3ff}",
+      "#" + OVERLAY_ID + " .la-finish-stat--score{background:rgba(139,92,246,.12);border-color:rgba(167,139,250,.3)}",
+      "#" + OVERLAY_ID + " .la-finish-stat--score .la-finish-stat-label{color:#c4b5fd}",
+      "#" + OVERLAY_ID + " .la-finish-stat--time{background:rgba(34,211,238,.1);border-color:rgba(103,232,249,.3)}",
+      "#" + OVERLAY_ID + " .la-finish-stat--time .la-finish-stat-label{color:#67e8f9}",
+      "#" + OVERLAY_ID + " .la-finish-stat--time .la-finish-stat-value{color:#67e8f9}",
+      "#" + OVERLAY_ID + " .la-finish-stat--stars{background:rgba(250,204,21,.1);border-color:rgba(253,224,71,.3)}",
+      "#" + OVERLAY_ID + " .la-finish-stat--stars .la-finish-stat-label{color:#fde047}",
+      "#" + OVERLAY_ID + " .la-finish-stat--stars .la-finish-stat-value{color:#fde047}",
+      "#" + OVERLAY_ID + " .la-finish-action-label{color:#a5a3c9}",
+      "#" + OVERLAY_ID + " .la-finish-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#e9e7ff;box-shadow:none}",
+      "#" + OVERLAY_ID + " .la-finish-btn:hover{border-color:#a78bfa;box-shadow:0 6px 18px rgba(124,58,237,.35)}",
+      "#" + OVERLAY_ID + " .la-finish-btn-primary{background:linear-gradient(135deg,#8b5cf6,#6d28d9);border-color:transparent;color:#fff;box-shadow:0 10px 26px rgba(124,58,237,.5)}",
+      "#" + OVERLAY_ID + " .la-finish-btn-primary:hover{background:linear-gradient(135deg,#9d74fb,#7c3aed);border-color:transparent}",
+      "#" + OVERLAY_ID + " .la-finish-speed{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)}",
+      "#" + OVERLAY_ID + " .la-finish-speed-title{color:#67e8f9}",
+      "#" + OVERLAY_ID + " .la-finish-speed-left{color:#f5f3ff}",
+      "#" + OVERLAY_ID + " .la-finish-speed-time{color:#67e8f9}",
+      "#" + OVERLAY_ID + " .la-finish-speed-row.is-me{background:rgba(103,232,249,.12)}",
     ].join("\n");
     document.head.appendChild(css);
   }
@@ -704,6 +739,7 @@
     againBtn.textContent = "↻";
     againBtn.addEventListener("click", function () {
       hide();
+      startTimer();
       if (typeof opts.onAgain === "function") opts.onAgain();
     });
     actions.appendChild(makeAction(againBtn, "Restart"));
@@ -813,6 +849,9 @@
   }
 
   /* ---------- public API ---------- */
+
+  // Time the attempt from page open (games can still call startTimer() at Start)
+  startTimer();
 
   global.LAFinish = {
     show: show,

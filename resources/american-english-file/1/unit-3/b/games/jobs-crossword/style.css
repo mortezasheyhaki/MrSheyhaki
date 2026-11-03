@@ -322,3 +322,52 @@ body {
 }
 
 button, a { touch-action: manipulation; }
+
+/* ---------- Layout: crossword and picture clues side by side on desktop ---------- */
+.play-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.play-area .grid-wrap { width: 100%; }
+
+@media (min-width: 900px) {
+  .game-wrap { max-width: 1000px; }
+  .play-area {
+    display: grid;
+    grid-template-columns: auto minmax(300px, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .play-area .grid-wrap { width: auto; }
+  /* clue pictures stacked in one panel on the right */
+  .clues {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.1rem 1.1rem 0.9rem;
+  }
+  .clue-item { min-height: 60px; }
+  .clue-item img { width: 52px; height: 52px; }
+}
+
+/* Desktop: crossword and clue panels are the same size */
+@media (min-width: 900px) {
+  .play-area {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+  .play-area .grid-wrap {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 1.5rem 1.25rem;
+  }
+  .clues {
+    height: 100%;
+    box-sizing: border-box;
+  }
+}

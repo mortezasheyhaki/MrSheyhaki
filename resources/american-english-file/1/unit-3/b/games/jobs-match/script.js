@@ -50,8 +50,8 @@
   ];
 
   const MODE_META = {
-    "word-pic": { title: "Words ↔ Pictures", left: "word", right: "pic", playAudioOnMatch: true },
-    "word-audio": { title: "Words ↔ Audio", left: "audio", right: "word", playAudioOnMatch: false },
+    "word-pic": { title: "Pictures ↔ Words", left: "pic", right: "word", playAudioOnMatch: false },
+    "word-audio": { title: "Audio ↔ Words", left: "audio", right: "word", playAudioOnMatch: false },
     "audio-pic": { title: "Audio ↔ Pictures", left: "audio", right: "pic", playAudioOnMatch: false }
   };
 
@@ -73,6 +73,11 @@
   }
 
   let mode = null;
+  const PART_ORDER = ["word-pic", "word-audio", "audio-pic"];
+  const PAIRS_PER_ROUND = 5; // 5×5 grid
+  const ROUNDS_PER_PART = 5;
+  const TOTAL_PAIRS = PART_ORDER.length * ROUNDS_PER_PART * PAIRS_PER_ROUND; // 3 × 5 × 5 = 75
+  let partIndex = 0;
   let rounds = []; // 5 arrays of 6 jobs
   let roundIndex = 0;
   let matched = 0;
@@ -255,6 +260,7 @@
       // Correct
       leftEl.classList.remove("is-selected");
       rightEl.classList.remove("is-selected");
+      LASfx.correct();
       leftEl.classList.add("is-correct");
       rightEl.classList.add("is-correct");
       matched++;
@@ -277,7 +283,7 @@
         selected = null;
         locked = false;
         feedback.textContent = "";
-        if (matched >= 6) {
+        if (matched >= PAIRS_PER_ROUND) {
           setTimeout(roundDone, 350);
         }
       };
@@ -287,13 +293,14 @@
           setTimeout(finishMatch, 200);
         });
       } else {
-        setTimeout(finishMatch, 550);
+        setTimeout(finishMatch, 240);
       }
     } else {
       // Wrong
       leftEl.classList.remove("is-selected");
       rightEl.classList.remove("is-selected");
       mistakes++;
+      LASfx.wrong();
       leftEl.classList.add("is-wrong");
       rightEl.classList.add("is-wrong");
       feedback.className = "mc-feedback error";
@@ -304,7 +311,7 @@
         selected = null;
         locked = false;
         feedback.textContent = "";
-      }, 450);
+      }, 300);
     }
   }
 
@@ -329,56 +336,82 @@
     const isLast = roundIndex >= rounds.length - 1;
 
     if (!isLast) {
-      // Skip intermediate screen — go straight to next round
       roundIndex++;
-      setTimeout(function () {
-        renderRound();
-      }, 400);
+      setTimeout(function () { renderRound(); }, 180);
       return;
     }
 
-    // Final round only — show completion screen
-    document.getElementById("doneTitle").textContent = "All rounds complete!";
+    // Last round of this part
     const attempts = totalMatched + mistakes;
     const pct = attempts > 0 ? Math.round((totalMatched / attempts) * 100) : 100;
+    const nextBtn = document.getElementById("nextRoundBtn");
+    const replayBtn = document.getElementById("replayModeBtn");
+    const changeBtn = document.getElementById("changeModeBtn");
+
+    if (partIndex < PART_ORDER.length - 1) {
+      // Part finished: go on to the next part
+      document.getElementById("doneTitle").textContent = "Part " + (partIndex + 1) + " complete!";
+      document.getElementById("finalScore").textContent =
+        "Next: " + MODE_META[PART_ORDER[partIndex + 1]].title;
+      renderStars(starsFromPct(pct));
+      LASfx.win();
+      nextBtn.style.display = "";
+      nextBtn.textContent = "Next part →";
+      replayBtn.style.display = "none";
+      changeBtn.style.display = "none";
+      showScreen("done");
+      return;
+    }
+
+    // Whole game finished
+    document.getElementById("doneTitle").textContent = "All parts complete!";
     document.getElementById("finalScore").textContent =
-      "Matched: " + totalMatched + " / 30 · Accuracy: " + pct + "%";
+      "Matched: " + totalMatched + " / " + TOTAL_PAIRS + " · Accuracy: " + pct + "%";
     renderStars(starsFromPct(pct));
     if (window.LAStars) {
       try {
-        LAStars.recordPlay(GAME_ID + "-" + mode);
-        LAStars.saveFromAccuracy(GAME_ID + "-" + mode, pct);
+        LAStars.recordPlay(GAME_ID);
+        LAStars.saveFromAccuracy(GAME_ID, pct);
       } catch (e) {}
     }
-    document.getElementById("nextRoundBtn").style.display = "none";
+    nextBtn.style.display = "none";
+    replayBtn.style.display = "";
+    replayBtn.textContent = "Play again";
+    changeBtn.style.display = "";
     showScreen("done");
-    showFinish(totalMatched, 30, function () { startMode(mode); });
+    LASfx.win();
+    showFinish(totalMatched, TOTAL_PAIRS, startGame);
   }
 
-  function startMode(m) {
-    mode = m;
-    modeLabel.textContent = MODE_META[m].title;
-    rounds = chunk(shuffle(JOBS), 6);
-    // ensure exactly 5 rounds of 6
-    while (rounds.length > 5) rounds.pop();
-    while (rounds.length < 5) {
-      // pad if needed (shouldn't happen with 30)
-      rounds.push(shuffle(JOBS).slice(0, 6));
-    }
-    roundIndex = 0;
+  // The whole game: Part 1 → Part 2 → Part 3
+  function startGame() {
+    partIndex = 0;
     score = 0;
     totalMatched = 0;
     mistakes = 0;
     scoreEl.textContent = "0";
+    startPart(0);
+  }
+
+  function startPart(i) {
+    partIndex = i;
+    mode = PART_ORDER[i];
+    modeLabel.textContent = "Part " + (i + 1) + "/" + PART_ORDER.length + " · " + MODE_META[mode].title;
+    // 5 rounds of 5 pairs (5×5 grid), all different jobs in a round
+    rounds = chunk(shuffle(JOBS).slice(0, ROUNDS_PER_PART * PAIRS_PER_ROUND), PAIRS_PER_ROUND);
+    while (rounds.length < ROUNDS_PER_PART) {
+      rounds.push(shuffle(JOBS).slice(0, PAIRS_PER_ROUND));
+    }
+    roundIndex = 0;
+    document.getElementById("nextRoundBtn").style.display = "none";
+    document.getElementById("replayModeBtn").style.display = "";
+    document.getElementById("changeModeBtn").style.display = "";
     showScreen("play");
     renderRound();
   }
 
-  // Mode buttons
-  document.querySelectorAll(".mc-mode-btn").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      startMode(btn.dataset.mode);
-    });
+  document.getElementById("startModeBtn").addEventListener("click", function () {
+    startGame();
   });
 
   document.getElementById("resetRoundBtn").addEventListener("click", function () {
@@ -395,17 +428,11 @@
   });
 
   document.getElementById("nextRoundBtn").addEventListener("click", function () {
-    roundIndex++;
-    if (roundIndex >= rounds.length) {
-      showScreen("mode");
-      return;
-    }
-    showScreen("play");
-    renderRound();
+    startPart(partIndex + 1);
   });
 
   document.getElementById("replayModeBtn").addEventListener("click", function () {
-    if (mode) startMode(mode);
+    startGame();
   });
 
   document.getElementById("changeModeBtn").addEventListener("click", function () {

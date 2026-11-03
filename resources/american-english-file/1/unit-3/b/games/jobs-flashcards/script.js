@@ -112,6 +112,7 @@
   }
 
   function flip() {
+    if (window.LASfx) LASfx.click();
     flipped = !flipped;
     card.classList.toggle("flipped", flipped);
   }

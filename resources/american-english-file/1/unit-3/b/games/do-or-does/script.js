@@ -105,6 +105,7 @@
         scoreEl.parentElement.style.transform = "";
       }, 250);
 
+      LASfx.correct();
       chosenBtn.classList.add("correct");
       otherBtn.classList.add("dim");
       feedback.className = "feedback success";
@@ -112,6 +113,7 @@
       sentenceEl.innerHTML =
         '<span class="blank filled correct-fill">' + item.answer + "</span> " + item.after;
     } else {
+      LASfx.wrong();
       chosenBtn.classList.add("wrong");
       otherBtn.classList.add("correct");
       feedback.className = "feedback error";
@@ -155,6 +157,7 @@
   }
 
   function finish() {
+    LASfx.win();
     playArea.classList.add("hidden");
     doneBox.classList.remove("hidden");
     const pct = Math.round((score / order.length) * 100);

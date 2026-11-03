@@ -260,6 +260,7 @@
 
     checked = true;
     const pct = Math.round((correct / total) * 100);
+    if (correct === total) LASfx.win(); else LASfx.wrong();
     feedback.className = "feedback " + (correct === total ? "success" : "error");
     feedback.textContent = correct + " / " + total + " correct";
 
