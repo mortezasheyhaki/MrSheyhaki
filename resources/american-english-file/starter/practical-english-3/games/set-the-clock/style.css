@@ -1,0 +1,531 @@
+
+/* Hide site chrome / profile FAB on this game page */
+.arcade-header-bar,
+.arcade-nav,
+.nav-profile,
+.profile-fab,
+[data-theme-toggle],
+.theme-toggle,
+body > header,
+.site-footer,
+#profileFab,
+.la-profile,
+a[href*="profile"] {
+  display: none !important;
+}
+
+/* Set the Clock · PE3 — flat teaching dial */
+:root {
+  --sc-bg: #f4f2ec;
+  --sc-card: #ffffff;
+  --sc-ink: #1d1f24;
+  --sc-muted: #6b6f7a;
+  --sc-line: #e5e1d7;
+  --sc-accent: #3b5bdb;
+  --sc-accent-2: #5c7cfa;
+  --sc-accent-soft: #eef2ff;
+  --sc-ok: #0f9d74;
+  --sc-bad: #e03e3e;
+  --sc-face: #fafbfc;
+  --sc-face-ring: #d8dee9;
+  --sc-tick: #94a3b8;
+  --sc-tick-on: #3b5bdb;
+  --sc-hand: #1e293b;
+  --sc-shadow: 0 8px 28px rgba(30, 25, 15, 0.08);
+}
+html[data-theme="dark"] {
+  --sc-bg: #101217;
+  --sc-card: #181b23;
+  --sc-ink: #eef0f4;
+  --sc-muted: #9aa0ad;
+  --sc-line: rgba(255, 255, 255, 0.1);
+  --sc-accent: #8ea4ff;
+  --sc-accent-2: #a5b8ff;
+  --sc-accent-soft: rgba(142, 164, 255, 0.14);
+  --sc-ok: #46d9a6;
+  --sc-bad: #ff7d7d;
+  --sc-face: #1c2030;
+  --sc-face-ring: #2a3148;
+  --sc-tick: #64748b;
+  --sc-tick-on: #91a7ff;
+  --sc-hand: #e2e8f0;
+  --sc-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+body.game-page {
+  font-family: 'Nunito', system-ui, sans-serif;
+  background: var(--sc-bg);
+  color: var(--sc-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+.sc-app {
+  max-width: 440px;
+  margin: 0 auto;
+  height: 100dvh;
+  padding: 0 14px 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.sc-top {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 0 8px;
+  flex-shrink: 0;
+}
+.sc-back {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  text-decoration: none;
+  color: var(--sc-ink);
+  background: var(--sc-card);
+  border: 1px solid var(--sc-line);
+  font-weight: 800;
+}
+.sc-top-mid { text-align: center; min-width: 0; }
+.sc-eye {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sc-accent);
+}
+.sc-top-mid strong {
+  font-size: 15px;
+  font-weight: 800;
+}
+.sc-badge {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: var(--sc-card);
+  border: 1px solid var(--sc-line);
+}
+
+.sc-progress {
+  height: 5px;
+  background: var(--sc-line);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.sc-progress i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--sc-accent), var(--sc-accent-2));
+  border-radius: 99px;
+  width: 0;
+  transition: width 0.35s ease;
+}
+
+/* menu */
+.sc-menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  padding-bottom: 20px;
+}
+.sc-hero { font-size: 48px; line-height: 1; }
+.sc-menu h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+.sc-menu > p {
+  color: var(--sc-muted);
+  font-size: 0.92rem;
+  max-width: 32ch;
+  line-height: 1.45;
+  font-weight: 600;
+}
+.sc-mode-cards {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+.sc-mode {
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--sc-line);
+  background: var(--sc-card);
+  box-shadow: var(--sc-shadow);
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--sc-ink);
+  transition: border-color 0.15s, transform 0.12s;
+}
+.sc-mode:hover { border-color: var(--sc-accent); transform: translateY(-1px); }
+.sc-mode strong { display: block; font-size: 1rem; font-weight: 800; margin-bottom: 2px; }
+.sc-mode span { font-size: 0.82rem; color: var(--sc-muted); font-weight: 600; line-height: 1.35; }
+
+/* play */
+.sc-play {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+}
+
+.sc-dial {
+  width: min(100%, 300px);
+  height: auto;
+  touch-action: none;
+  cursor: grab;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.12));
+  user-select: none;
+  -webkit-user-select: none;
+}
+.sc-dial:active { cursor: grabbing; }
+
+.sc-face {
+  fill: var(--sc-face);
+  stroke: var(--sc-face-ring);
+  stroke-width: 3;
+}
+.sc-face-inner {
+  fill: none;
+  stroke: color-mix(in srgb, var(--sc-line) 80%, transparent);
+  stroke-width: 1;
+}
+.sc-tick {
+  stroke: var(--sc-tick);
+  stroke-width: 2;
+  stroke-linecap: round;
+  transition: stroke 0.15s, stroke-width 0.15s;
+}
+.sc-tick.is-active {
+  stroke: var(--sc-tick-on);
+  stroke-width: 3.5;
+}
+.sc-num {
+  fill: var(--sc-muted);
+  font-size: 11px;
+  font-weight: 800;
+  font-family: inherit;
+  pointer-events: none;
+}
+.sc-hand {
+  stroke: var(--sc-hand);
+  stroke-linecap: round;
+  pointer-events: none;
+}
+.sc-hand-hour { stroke-width: 5; }
+.sc-hand-minute { stroke-width: 3.5; }
+.sc-hand-grip {
+  fill: var(--sc-accent);
+  stroke: var(--sc-card);
+  stroke-width: 2;
+  pointer-events: none;
+}
+.sc-pin {
+  fill: var(--sc-accent);
+  stroke: var(--sc-card);
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+.sc-controls {
+  display: grid;
+  grid-template-columns: 64px 1fr 64px;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  max-width: 320px;
+}
+.sc-step {
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--sc-line);
+  background: var(--sc-card);
+  color: var(--sc-ink);
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: var(--sc-shadow);
+}
+.sc-step:active { transform: scale(0.96); }
+.sc-readout-wrap { text-align: center; min-height: 1.2em; }
+.sc-readout {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--sc-accent);
+  line-height: 1.3;
+}
+
+.sc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 160px;
+  height: 46px;
+  padding: 0 20px;
+  border-radius: 14px;
+  border: none;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.12s, box-shadow 0.2s;
+}
+.sc-btn.primary {
+  background: linear-gradient(135deg, var(--sc-accent), var(--sc-accent-2));
+  color: #fff;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--sc-accent) 35%, transparent);
+}
+.sc-btn.primary:active { transform: scale(0.97); }
+.sc-btn.secondary {
+  background: var(--sc-card);
+  color: var(--sc-ink);
+  border: 1px solid var(--sc-line);
+  margin-top: 8px;
+}
+
+.sc-hint {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--sc-muted);
+  text-align: center;
+  max-width: 34ch;
+  line-height: 1.4;
+}
+.sc-target-phrase {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--sc-ink);
+  text-align: center;
+  padding: 8px 12px;
+  background: var(--sc-card);
+  border: 1px solid var(--sc-line);
+  border-radius: 14px;
+  box-shadow: var(--sc-shadow);
+}
+.sc-actions { display: flex; gap: 10px; justify-content: center; }
+.sc-feedback {
+  min-height: 1.3em;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-align: center;
+}
+.sc-feedback.ok { color: var(--sc-ok); }
+.sc-feedback.bad { color: var(--sc-bad); }
+
+@media (max-height: 700px) {
+  .sc-dial { width: min(100%, 240px); }
+  .sc-play { gap: 8px; }
+}
+@media (max-width: 380px) {
+  .sc-dial { width: min(100%, 260px); }
+  .sc-controls { max-width: 100%; }
+}
+
+button, a { touch-action: manipulation; }
+
+
+/* ---------- desktop: larger centred clock ---------- */
+@media (min-width: 768px) {
+  .sc-app {
+    max-width: 560px;
+    padding: 0 24px 24px;
+  }
+  .sc-play {
+    justify-content: center;
+    gap: 16px;
+    padding-top: 12px;
+  }
+  .sc-dial {
+    width: min(100%, 380px);
+  }
+  .sc-controls {
+    max-width: 380px;
+  }
+  .sc-btn.primary {
+    min-width: 180px;
+    height: 50px;
+    font-size: 1rem;
+  }
+  .sc-readout {
+    font-size: 1.05rem;
+  }
+}
+@media (min-width: 1024px) {
+  .sc-app {
+    max-width: 640px;
+  }
+  .sc-play {
+    justify-content: center;
+    min-height: 0;
+    flex: 1;
+  }
+  .sc-dial {
+    width: min(100%, 420px);
+  }
+  .sc-controls {
+    max-width: 420px;
+  }
+}
+
+
+/* ---------- polished action buttons ---------- */
+.sc-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 280px;
+  margin-top: 4px;
+}
+
+.sc-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 280px;
+  min-width: 0;
+  height: 52px;
+  padding: 0 22px;
+  border-radius: 16px;
+  border: none;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease, background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.sc-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.sc-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* Primary — Play the time / Play audio */
+.sc-btn.primary {
+  background: linear-gradient(135deg, #4c6ef5 0%, #748ffc 45%, #91a7ff 100%);
+  color: #fff;
+  box-shadow:
+    0 4px 0 #364fc7,
+    0 10px 24px rgba(76, 110, 245, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.sc-btn.primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+  box-shadow:
+    0 4px 0 #364fc7,
+    0 14px 28px rgba(76, 110, 245, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.sc-btn.primary:active:not(:disabled) {
+  box-shadow:
+    0 2px 0 #364fc7,
+    0 6px 16px rgba(76, 110, 245, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(2px) scale(0.99);
+}
+html[data-theme="dark"] .sc-btn.primary {
+  background: linear-gradient(135deg, #5c7cfa 0%, #91a7ff 100%);
+  box-shadow:
+    0 4px 0 #3b5bdb,
+    0 10px 28px rgba(92, 124, 250, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Check — solid, distinct from Play */
+.sc-btn.check {
+  background: linear-gradient(180deg, #fff 0%, #f1f3f5 100%);
+  color: #364fc7;
+  border: 2px solid rgba(76, 110, 245, 0.35);
+  box-shadow:
+    0 4px 0 rgba(76, 110, 245, 0.2),
+    0 8px 20px rgba(30, 25, 15, 0.06);
+}
+.sc-btn.check:hover:not(:disabled) {
+  border-color: #4c6ef5;
+  background: linear-gradient(180deg, #eef2ff 0%, #e8ebff 100%);
+  box-shadow:
+    0 4px 0 rgba(76, 110, 245, 0.28),
+    0 10px 22px rgba(76, 110, 245, 0.12);
+}
+.sc-btn.check:active:not(:disabled) {
+  transform: translateY(2px) scale(0.99);
+  box-shadow:
+    0 2px 0 rgba(76, 110, 245, 0.2),
+    0 4px 12px rgba(76, 110, 245, 0.1);
+}
+html[data-theme="dark"] .sc-btn.check {
+  background: linear-gradient(180deg, #252a38 0%, #1c2030 100%);
+  color: #c5d0ff;
+  border-color: rgba(145, 167, 255, 0.35);
+  box-shadow:
+    0 4px 0 rgba(59, 91, 219, 0.35),
+    0 8px 22px rgba(0, 0, 0, 0.25);
+}
+html[data-theme="dark"] .sc-btn.check:hover:not(:disabled) {
+  border-color: #91a7ff;
+  background: linear-gradient(180deg, #2c3348 0%, #232839 100%);
+  color: #eef0ff;
+}
+
+.sc-btn .sc-ico {
+  display: inline-grid;
+  place-items: center;
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+.sc-hint {
+  order: 0;
+}
+
+/* ---------- smooth clock hands ---------- */
+#hourHand,
+#minuteHand {
+  transform-origin: 100px 100px;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* disable transition while dragging for responsive feel */
+.sc-dial.is-dragging #hourHand,
+.sc-dial.is-dragging #minuteHand {
+  transition: none;
+}
+.sc-tick {
+  transition: stroke 0.25s ease, stroke-width 0.25s ease;
+}
+
+#hourHand, #minuteHand {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+/* pin is at 100,100 in viewBox — use explicit origin in px of SVG user space via SVG attribute fallback */
+#hourHand, #minuteHand {
+  transform-origin: 100px 100px;
+  transform-box: view-box;
+}

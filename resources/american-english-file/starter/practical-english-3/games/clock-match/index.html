@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+(function () {
+  try {
+    var t = localStorage.getItem("mrsheyhaki-theme");
+    if (t !== "light" && t !== "dark") {
+      t = (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+})();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Clock Match · PE3 | Mr. Sheyhaki</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="game-page" data-course="american-english-file" data-type="game" data-level="starter" data-pe="3">
+<main id="game-app" class="mc-game">
+
+  <section id="modeScreen" class="screen">
+    <header class="mc-topbar">
+      <a class="mc-back" href="../" aria-label="Back">←</a>
+      <span class="mc-title">Clock Match</span>
+      <span class="mc-badge">PE3</span>
+    </header>
+    <section class="mc-start">
+      <div class="mc-hero" aria-hidden="true">🕐</div>
+      <h1>Clock Match</h1>
+      <p class="mc-desc">3 parts · 2 rounds of 6 pairs</p>
+      <div class="mc-mode-list">
+        <div class="mc-mode-card">
+          <span class="mc-mode-num">1</span>
+          <span><strong>Clocks ↔ Times</strong><p>Match each clock face to the written time.</p></span>
+        </div>
+        <div class="mc-mode-card">
+          <span class="mc-mode-num">2</span>
+          <span><strong>Audio ↔ Times</strong><p>Listen, then match to the time.</p></span>
+        </div>
+        <div class="mc-mode-card">
+          <span class="mc-mode-num">3</span>
+          <span><strong>Audio ↔ Clocks</strong><p>Listen, then match to the clock.</p></span>
+        </div>
+      </div>
+      <button type="button" class="mc-btn" id="startModeBtn">Start →</button>
+    </section>
+  </section>
+
+  <section id="playScreen" class="screen hidden">
+    <header class="mc-topbar">
+      <a class="mc-back" href="../" aria-label="Back">←</a>
+      <span class="mc-title" id="modeLabel">Clocks ↔ Times</span>
+      <span class="mc-progress">Part <span id="partNum">1</span>/3 · Set <span id="roundNum">1</span>/2 · <span id="matchedCount">0</span>/6 · <span id="score">0</span></span>
+    </header>
+    <p class="mc-instruction" id="hint">Tap a card on each side to match.</p>
+    <div class="mc-board">
+      <div class="mc-col mc-col-left" id="colLeft"></div>
+      <div class="mc-col mc-col-right" id="colRight"></div>
+    </div>
+    <div id="feedback" class="mc-feedback" role="status" aria-live="polite"></div>
+  </section>
+
+  <section id="doneScreen" class="screen hidden">
+    <section class="mc-done">
+      <div class="stars mc-stars" id="stars"></div>
+      <h1 id="doneTitle">Complete!</h1>
+      <p id="finalScore"></p>
+      <button type="button" class="mc-btn" id="againBtn">Play again</button>
+      <a class="mc-btn secondary" href="../">Back to games</a>
+    </section>
+  </section>
+
+</main>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="/learningarcade/la-sfx.js"></script>
+<script src="script.js"></script>
+<script src="../../../../../../theme.js"></script>
+<script src="/visit-counter.js" defer></script>
+</body>
+</html>

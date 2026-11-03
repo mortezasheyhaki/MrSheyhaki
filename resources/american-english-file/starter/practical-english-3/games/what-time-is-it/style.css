@@ -1,0 +1,335 @@
+/* What time is it? · PE3 — compact listening station (not full-height card) */
+
+/* ---------- shell: moderate width ---------- */
+.al-app,
+.lc-app.al-app {
+  max-width: 560px;
+  padding: 0 14px;
+  margin-left: auto;
+  margin-right: auto;
+}
+@media (min-width: 900px) {
+  .al-app,
+  .lc-app.al-app {
+    max-width: 600px;
+    padding: 0 20px;
+  }
+}
+
+/* main column: stack from the top, no vertical stretch */
+.al-app .lc-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 12px;
+  padding-bottom: 16px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.lc-top {
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 0 8px;
+  gap: 10px;
+}
+.lc-seg { margin: 0 0 4px; }
+
+/* ---------- audio strip ---------- */
+.al-listen {
+  box-sizing: border-box;
+  min-height: 0;
+  height: auto;
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: var(--lc-card);
+  border: 1px solid var(--lc-line);
+  box-shadow: var(--lc-shadow);
+  flex: 0 0 auto;
+}
+@media (min-width: 900px) {
+  .al-listen {
+    grid-template-columns: 68px minmax(0, 1fr);
+    padding: 14px 18px;
+  }
+}
+
+.al-play {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  background: var(--lc-accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--lc-accent) 35%, transparent);
+}
+.al-play:active:not(:disabled) { transform: scale(0.94); }
+.al-play:focus-visible { outline: none; box-shadow: var(--lc-ring); }
+.al-play:disabled {
+  cursor: not-allowed;
+  background: var(--lc-page);
+  border: 1px solid var(--lc-line);
+  box-shadow: none;
+  color: var(--lc-muted);
+}
+
+.al-play-tri {
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 11px 0 11px 18px;
+  border-color: transparent transparent transparent #fff;
+  margin-left: 4px;
+}
+.al-play:disabled .al-play-tri {
+  border-left-color: var(--lc-muted);
+  opacity: 0.6;
+}
+
+.al-play.is-playing {
+  background: color-mix(in srgb, var(--lc-accent) 50%, #0a1628);
+}
+.al-play.is-playing::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--lc-accent) 55%, transparent);
+  animation: al-pulse 1.4s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes al-pulse {
+  from { transform: scale(0.92); opacity: 0.9; }
+  to   { transform: scale(1.12); opacity: 0; }
+}
+.al-play.is-error { background: var(--lc-bad); }
+
+.al-play-bars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 20px;
+}
+.al-play-bars i {
+  display: block;
+  width: 3px;
+  border-radius: 2px;
+  background: #fff;
+  animation: al-bar 0.9s ease-in-out infinite;
+}
+.al-play-bars i:nth-child(1) { height: 7px; animation-delay: 0s; }
+.al-play-bars i:nth-child(2) { height: 14px; animation-delay: 0.12s; }
+.al-play-bars i:nth-child(3) { height: 20px; animation-delay: 0.24s; }
+.al-play-bars i:nth-child(4) { height: 11px; animation-delay: 0.18s; }
+.al-play-bars i:nth-child(5) { height: 7px; animation-delay: 0.06s; }
+@keyframes al-bar {
+  0%, 100% { transform: scaleY(0.45); }
+  50%      { transform: scaleY(1); }
+}
+.al-play-alert {
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+}
+
+.al-listen-text { min-width: 0; }
+.al-listen-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--lc-ink);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+.al-listen-sub {
+  margin: 3px 0 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--lc-muted);
+  line-height: 1.3;
+}
+
+/* ---------- question card: size to content, NOT full height ---------- */
+.al-set {
+  background: var(--lc-card);
+  border: 1px solid var(--lc-line);
+  border-radius: 18px;
+  box-shadow: var(--lc-shadow);
+  padding: 18px 16px 16px;
+  flex: 0 0 auto;           /* critical: don't stretch */
+  height: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+@media (min-width: 900px) {
+  .al-set { padding: 20px 20px 18px; }
+}
+
+.al-set .tf-statement,
+.al-prompt {
+  margin: 0 0 4px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--lc-ink);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.st-hint {
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--lc-muted);
+  margin: 0 0 16px;
+  font-weight: 600;
+}
+
+/* ---------- options ---------- */
+.al-opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.al-opts.is-tri .al-opt:last-child {
+  grid-column: 1 / -1;
+  max-width: 72%;
+  justify-self: center;
+  width: 100%;
+}
+@media (max-width: 420px) {
+  .al-opts { grid-template-columns: 1fr; }
+  .al-opts.is-tri .al-opt:last-child { max-width: 100%; }
+}
+
+.al-opt {
+  min-height: 54px;
+  border-radius: 14px;
+  border: 1.5px solid var(--lc-line);
+  background: color-mix(in srgb, var(--lc-card) 85%, var(--lc-page));
+  color: var(--lc-ink);
+  font-size: 0.98rem;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 12px 14px;
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--lc-line) 80%, transparent);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.15s, background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.al-opt:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--lc-accent-line);
+  background: var(--lc-accent-soft);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--lc-accent-line) 70%, transparent);
+}
+.al-opt:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--lc-line);
+}
+.al-opt.is-picked {
+  border-color: var(--lc-accent);
+  background: var(--lc-accent-soft);
+  color: var(--lc-accent);
+  box-shadow: 0 3px 0 var(--lc-accent);
+}
+.al-opt.is-correct {
+  border-color: var(--lc-ok);
+  background: var(--lc-ok-soft);
+  color: var(--lc-ok-ink);
+  box-shadow: 0 3px 0 var(--lc-ok);
+}
+.al-opt.is-wrong {
+  border-color: var(--lc-bad);
+  background: var(--lc-bad-soft);
+  color: var(--lc-bad-ink);
+  box-shadow: 0 3px 0 var(--lc-bad);
+}
+.al-opt:disabled { cursor: default; }
+.al-tick { margin-left: 6px; }
+
+/* ---------- footer ---------- */
+.al-foot {
+  background: var(--lc-card);
+  border: 1px solid var(--lc-line);
+  border-radius: 14px;
+  box-shadow: var(--lc-shadow);
+  padding: 12px 14px;
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+.al-foot-text {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--lc-muted);
+  line-height: 1.3;
+}
+.al-foot-text.is-ok { color: var(--lc-ok-ink); }
+.al-foot-text.is-bad { color: var(--lc-bad-ink); }
+
+.al-next {
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-weight: 900;
+  font-size: 0.92rem;
+  font-family: inherit;
+  background: linear-gradient(180deg, #ffe36a, #ffb020);
+  color: #3a1d00;
+  border: none;
+  box-shadow: 0 3px 0 #9a6b00;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.12s ease;
+}
+.al-next:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #9a6b00;
+}
+
+/* ---------- mobile ---------- */
+@media (max-width: 480px) {
+  .al-app,
+  .lc-app.al-app { padding: 0 10px; }
+  .al-listen {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 16px;
+  }
+  .al-play { width: 56px; height: 56px; }
+  .al-play-tri { border-width: 9px 0 9px 15px; }
+  .al-listen-title { font-size: 0.95rem; }
+  .al-set { padding: 16px 12px 14px; border-radius: 16px; }
+  .al-set .tf-statement,
+  .al-prompt { font-size: 1.1rem; }
+  .st-hint { margin-bottom: 12px; font-size: 0.82rem; }
+  .al-opt { min-height: 50px; font-size: 0.92rem; }
+  .al-foot {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+  .al-next { width: 100%; }
+}
+
+body.game-page {
+  background: var(--lc-page);
+}
