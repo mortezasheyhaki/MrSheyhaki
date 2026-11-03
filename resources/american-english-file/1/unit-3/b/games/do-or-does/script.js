@@ -3,6 +3,19 @@
 
   const GAME_ID = "1-3b-do-or-does";
 
+  // Shared Learning Arcade finish screen. Stars are already saved above, so save:false.
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
+
   const ITEMS = [
     { id: 1, after: "you have a dog?", answer: "Do" },
     { id: 2, after: "you speak a foreign language?", answer: "Do" },
@@ -154,6 +167,7 @@
         LAStars.saveFromAccuracy(GAME_ID, pct);
       } catch (e) {}
     }
+    showFinish(score, order.length, start);
   }
 
   function start() {

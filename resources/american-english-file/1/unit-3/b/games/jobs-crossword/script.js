@@ -2,6 +2,34 @@
   "use strict";
 
   const ASSET = "../jobs-match/";
+  const GAME_ID = "1-3b-jobs-crossword";
+  let crosswordDone = false;
+
+  // Shared Learning Arcade finish screen. Stars are saved in finishCrossword(), so save:false.
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
+
+  function finishCrossword(total) {
+    if (crosswordDone) return;
+    crosswordDone = true;
+    // Completing the crossword with every letter right = full marks
+    if (window.LAStars) {
+      try {
+        LAStars.recordPlay(GAME_ID);
+        LAStars.saveFromAccuracy(GAME_ID, 100);
+      } catch (e) {}
+    }
+    showFinish(total, total, function () { location.reload(); });
+  }
 
   // Validated interlocking crossword — picture clues from our job images
   const WORDS = [
@@ -166,6 +194,7 @@
     if (allOk && filled === total) {
       feedback.className = "feedback success";
       feedback.textContent = "Perfect! Crossword complete ✓";
+      finishCrossword(total);
     } else if (filled === 0) {
       feedback.className = "feedback";
       feedback.textContent = "Fill in the letters, then tap Check.";

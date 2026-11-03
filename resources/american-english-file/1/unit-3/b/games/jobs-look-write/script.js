@@ -2,6 +2,19 @@
 (function(){
 "use strict";
 const GAME_ID="1-3b-jobs-look-write";
+
+// Shared Learning Arcade finish screen. Stars are already saved above, so save:false.
+function showFinish(score, total, again) {
+  if (!window.LAFinish) return;
+  LAFinish.show({
+    gameId: GAME_ID,
+    score: score,
+    total: total,
+    save: false,
+    onAgain: again || function () { location.reload(); },
+    backHref: "../"
+  });
+}
 const ASSET="../jobs-match/";
 const JOBS=[
 {id:"accountant",answers:["accountant","an accountant"]},
@@ -71,6 +84,7 @@ function finish(){
   const el=document.getElementById("stars");el.innerHTML="";
   const n=stars(pct);for(let i=1;i<=3;i++){const s=document.createElement("span");s.className="star"+(i<=n?" filled":"");s.textContent=i<=n?"★":"☆";s.style.animationDelay=(i-1)*.12+"s";el.appendChild(s);}
   if(window.LAStars){try{LAStars.recordPlay(GAME_ID);LAStars.saveFromAccuracy(GAME_ID,pct);}catch(e){}}
+showFinish(score,order.length,start);
 }
 function start(){order=shuffle(JOBS);idx=0;score=0;scoreEl.textContent="0";done.classList.add("hidden");play.classList.remove("hidden");show();}
 checkBtn.addEventListener("click",check);

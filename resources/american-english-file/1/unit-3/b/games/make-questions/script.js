@@ -3,6 +3,19 @@
 
   const GAME_ID = "1-3b-make-questions";
 
+  // Shared Learning Arcade finish screen. Stars are already saved above, so save:false.
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
+
   // answer = expected start of the question (case-insensitive, flexible punctuation)
   // verbHighlight = the bold verb from the original for display
   const ITEMS = [
@@ -256,6 +269,7 @@
         LAStars.saveFromAccuracy(GAME_ID, pct);
       } catch (e) {}
     }
+    showFinish(score, order.length, start);
   }
 
   function start() {

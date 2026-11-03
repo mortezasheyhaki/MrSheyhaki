@@ -3,6 +3,19 @@
 
   const GAME_ID = "1-3b-jobs-match";
 
+  // Shared Learning Arcade finish screen. Stars are already saved above, so save:false.
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
+
   const JOBS = [
     { id: "accountant", label: "an accountant" },
     { id: "actor", label: "an actor" },
@@ -89,7 +102,7 @@
       currentAudio.currentTime = 0;
       currentAudio = null;
     }
-    document.querySelectorAll(".tile.audio.playing").forEach(function (el) {
+    document.querySelectorAll(".mc-play.playing").forEach(function (el) {
       el.classList.remove("playing");
     });
   }
@@ -98,19 +111,28 @@
     stopAudio();
     const a = new Audio(jobAudio(id));
     currentAudio = a;
+    // Make sure the follow-up runs only once, even if several events fire
+    let called = false;
+    function finishOnce() {
+      if (called) return;
+      called = true;
+      if (onEnded) onEnded();
+    }
     a.addEventListener("ended", function () {
       currentAudio = null;
-      document.querySelectorAll(".tile.audio.playing").forEach(function (el) {
+      document.querySelectorAll(".mc-play.playing").forEach(function (el) {
         el.classList.remove("playing");
       });
-      if (onEnded) onEnded();
+      finishOnce();
     });
     a.addEventListener("error", function () {
       currentAudio = null;
-      if (onEnded) onEnded();
+      document.querySelectorAll(".mc-play.playing").forEach(function (el) { el.classList.remove("playing"); });
+      finishOnce();
     });
     a.play().catch(function () {
-      if (onEnded) onEnded();
+      document.querySelectorAll(".mc-play.playing").forEach(function (el) { el.classList.remove("playing"); });
+      finishOnce();
     });
     return a;
   }
@@ -122,42 +144,45 @@
   }
 
   function makeTile(job, type, side) {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "tile " + type;
-    btn.dataset.id = job.id;
-    btn.dataset.side = side;
-    btn.dataset.type = type;
-
-    if (type === "word") {
-      const span = document.createElement("span");
-      span.className = "tile-label";
-      span.textContent = job.label;
-      btn.appendChild(span);
-    } else if (type === "pic") {
-      const img = document.createElement("img");
-      img.src = jobImage(job.id);
-      img.alt = job.label;
-      img.loading = "lazy";
-      btn.appendChild(img);
-    } else if (type === "audio") {
-      const wrap = document.createElement("span");
-      wrap.className = "audio-btn";
-      wrap.innerHTML =
-        '<span class="audio-rings" aria-hidden="true"></span>' +
-        '<span class="audio-core" aria-hidden="true">' +
-        '<svg viewBox="0 0 24 24" width="22" height="22" fill="none">' +
-        '<rect x="4" y="9" width="3" height="6" rx="1.5" fill="currentColor"/>' +
-        '<rect x="10.5" y="5" width="3" height="14" rx="1.5" fill="currentColor"/>' +
-        '<rect x="17" y="8" width="3" height="8" rx="1.5" fill="currentColor"/>' +
-        '</svg></span>';
-      btn.appendChild(wrap);
+    let el;
+    if (side === "left") {
+      if (type === "audio") {
+        el = document.createElement("div");
+        el.className = "mc-left-item mc-audio-cell";
+        el.innerHTML =
+          '<button type="button" class="mc-play" aria-label="Play ' + job.label + '">' +
+          '<span class="wave"></span><span class="wave"></span><span class="wave"></span>' +
+          '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>' +
+          '<div class="eq"><span></span><span></span><span></span><span></span></div></button>';
+      } else if (type === "pic") {
+        el = document.createElement("div");
+        el.className = "mc-left-item mc-pic-cell";
+        el.innerHTML = '<img class="mc-thumb" src="' + jobImage(job.id) + '" alt="" draggable="false" loading="lazy" />';
+      } else {
+        el = document.createElement("div");
+        el.className = "mc-left-item mc-word-left";
+        el.innerHTML = '<span class="mc-word-label"></span>';
+        el.querySelector(".mc-word-label").textContent = job.label;
+      }
+    } else {
+      el = document.createElement("button");
+      el.type = "button";
+      if (type === "pic") {
+        el.className = "mc-right-item mc-pic-btn";
+        el.innerHTML = '<img class="mc-thumb" src="' + jobImage(job.id) + '" alt="" draggable="false" loading="lazy" />';
+      } else {
+        el.className = "mc-right-item mc-word";
+        el.innerHTML = '<span class="mc-word-label"></span>';
+        el.querySelector(".mc-word-label").textContent = job.label;
+      }
     }
-
-    btn.addEventListener("click", function () {
-      onTileClick(btn, job, type, side);
+    el.dataset.id = job.id;
+    el.dataset.side = side;
+    el.dataset.type = type;
+    el.addEventListener("click", function () {
+      onTileClick(el, job, type, side);
     });
-    return btn;
+    return el;
   }
 
   function renderRound() {
@@ -168,7 +193,7 @@
     locked = false;
     selected = null;
     feedback.textContent = "";
-    feedback.className = "feedback";
+    feedback.className = "mc-feedback";
     hint.textContent = "Tap a card on each side to match.";
 
     roundNum.textContent = String(roundIndex + 1);
@@ -190,23 +215,24 @@
   }
 
   function clearSelection() {
-    if (selected && selected.el) selected.el.classList.remove("selected");
+    if (selected && selected.el) selected.el.classList.remove("is-selected");
     selected = null;
   }
 
   function onTileClick(btn, job, type, side) {
-    if (locked || btn.classList.contains("matched") || btn.classList.contains("correct")) return;
+    if (locked || btn.classList.contains("is-used") || btn.classList.contains("is-correct")) return;
 
     // Audio tiles: always play sound on tap
     if (type === "audio") {
-      btn.classList.add("playing");
       playJobAudio(job.id);
+      const pb = btn.querySelector(".mc-play");
+      if (pb) pb.classList.add("playing");
     }
 
     if (!selected) {
       clearSelection();
       selected = { side: side, id: job.id, el: btn };
-      btn.classList.add("selected");
+      btn.classList.add("is-selected");
       return;
     }
 
@@ -214,7 +240,7 @@
     if (selected.side === side) {
       clearSelection();
       selected = { side: side, id: job.id, el: btn };
-      btn.classList.add("selected");
+      btn.classList.add("is-selected");
       return;
     }
 
@@ -227,24 +253,27 @@
 
     if (leftId === rightId) {
       // Correct
-      leftEl.classList.remove("selected");
-      rightEl.classList.remove("selected");
-      leftEl.classList.add("correct");
-      rightEl.classList.add("correct");
+      leftEl.classList.remove("is-selected");
+      rightEl.classList.remove("is-selected");
+      leftEl.classList.add("is-correct");
+      rightEl.classList.add("is-correct");
       matched++;
       score++;
       totalMatched++;
       matchedCount.textContent = String(matched);
       scoreEl.textContent = String(score);
-      feedback.className = "feedback success";
+      feedback.className = "mc-feedback success";
       feedback.textContent = "Correct! ✓";
 
       const meta = MODE_META[mode];
+      let finished = false;
       const finishMatch = function () {
-        leftEl.classList.add("matched");
-        rightEl.classList.add("matched");
-        leftEl.classList.remove("correct");
-        rightEl.classList.remove("correct");
+        if (finished) return;
+        finished = true;
+        leftEl.classList.add("is-used");
+        rightEl.classList.add("is-used");
+        leftEl.classList.remove("is-correct");
+        rightEl.classList.remove("is-correct");
         selected = null;
         locked = false;
         feedback.textContent = "";
@@ -262,16 +291,16 @@
       }
     } else {
       // Wrong
-      leftEl.classList.remove("selected");
-      rightEl.classList.remove("selected");
+      leftEl.classList.remove("is-selected");
+      rightEl.classList.remove("is-selected");
       mistakes++;
-      leftEl.classList.add("wrong");
-      rightEl.classList.add("wrong");
-      feedback.className = "feedback error";
+      leftEl.classList.add("is-wrong");
+      rightEl.classList.add("is-wrong");
+      feedback.className = "mc-feedback error";
       feedback.textContent = "Try again";
       setTimeout(function () {
-        leftEl.classList.remove("wrong");
-        rightEl.classList.remove("wrong");
+        leftEl.classList.remove("is-wrong");
+        rightEl.classList.remove("is-wrong");
         selected = null;
         locked = false;
         feedback.textContent = "";
@@ -323,6 +352,7 @@
     }
     document.getElementById("nextRoundBtn").style.display = "none";
     showScreen("done");
+    showFinish(totalMatched, 30, function () { startMode(mode); });
   }
 
   function startMode(m) {
@@ -345,10 +375,18 @@
   }
 
   // Mode buttons
-  document.querySelectorAll(".mode-card").forEach(function (btn) {
+  document.querySelectorAll(".mc-mode-btn").forEach(function (btn) {
     btn.addEventListener("click", function () {
       startMode(btn.dataset.mode);
     });
+  });
+
+  document.getElementById("resetRoundBtn").addEventListener("click", function () {
+    if (locked) return;
+    totalMatched -= matched;
+    score -= matched;
+    scoreEl.textContent = String(score);
+    renderRound();
   });
 
   document.getElementById("backToModes").addEventListener("click", function () {

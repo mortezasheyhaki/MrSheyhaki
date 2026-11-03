@@ -292,18 +292,38 @@ body {
   cursor: default;
 }
 .opt-btn.correct {
+  /* opaque tint so the green border gradient never shows through the text */
   background:
-    linear-gradient(var(--success-soft), var(--success-soft)) padding-box,
-    linear-gradient(135deg, var(--success), color-mix(in srgb, var(--success) 60%, #86efac)) border-box;
+    linear-gradient(color-mix(in srgb, var(--success) 18%, var(--card)), color-mix(in srgb, var(--success) 18%, var(--card))) padding-box,
+    linear-gradient(135deg, var(--success), #6ee7b7) border-box;
   color: var(--success);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 28%, transparent), var(--shadow-sm);
+  font-weight: 900;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 22%, transparent), 0 10px 24px color-mix(in srgb, var(--success) 25%, transparent);
   animation: correctPulse 0.45s ease both;
+}
+.opt-btn.correct::before {
+  content: "✓";
+  position: absolute;
+  top: 0.4rem;
+  right: 0.45rem;
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #fff;
+  background: var(--success);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--success) 45%, transparent);
+  z-index: 1;
 }
 .opt-btn.wrong {
   background:
-    linear-gradient(var(--danger-soft), var(--danger-soft)) padding-box,
-    linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger) 60%, #fca5a5)) border-box;
+    linear-gradient(color-mix(in srgb, var(--danger) 16%, var(--card)), color-mix(in srgb, var(--danger) 16%, var(--card))) padding-box,
+    linear-gradient(135deg, var(--danger), #fca5a5) border-box;
   color: var(--danger);
+  font-weight: 900;
   animation: shake 0.4s ease both;
 }
 .opt-btn.dim {

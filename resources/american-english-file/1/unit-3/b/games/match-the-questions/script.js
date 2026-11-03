@@ -3,6 +3,19 @@
 
   const GAME_ID = "1-3b-match-the-questions";
 
+  // Shared Learning Arcade finish screen. Stars are already saved above, so save:false.
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
+
   const ITEMS = [
     {
       id: "q-job",
@@ -127,8 +140,7 @@
       btn.classList.toggle("selected", !isUsed && id === selectedId);
       btn.setAttribute("aria-pressed", String(!isUsed && id === selectedId));
       btn.disabled = isUsed || locked;
-      if (isUsed) btn.textContent = "";
-      else btn.textContent = ITEMS.find(function (it) { return it.id === id; }).question;
+      btn.textContent = ITEMS.find(function (it) { return it.id === id; }).question;
     });
     checkBtn.disabled = locked || !selectedId;
   }
@@ -253,6 +265,7 @@
         LAStars.saveFromAccuracy(GAME_ID, pct);
       } catch (e) {}
     }
+    showFinish(score, TOTAL, start);
   }
 
   function start() {

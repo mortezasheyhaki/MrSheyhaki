@@ -22,81 +22,72 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
-  <div class="game-wrap">
-    <!-- Mode select -->
-    <section id="modeScreen" class="screen">
-      <header class="game-header">
-        <a href="../" class="back-btn" aria-label="Back">←</a>
-        <div class="header-text">
-          <span class="eyebrow">Unit 3B · Vocabulary</span>
-          <h1>Jobs Match</h1>
-          <p>Choose a match type · 5 rounds · 6 pairs each</p>
-        </div>
-      </header>
-      <div class="mode-grid">
-        <button type="button" class="mode-card" data-mode="word-pic">
-          <span class="mode-icon">🖼️</span>
-          <span class="mode-title">Words ↔ Pictures</span>
-          <span class="mode-desc">Match job names to photos. Audio plays on a correct match.</span>
+<body class="game-page" data-course="american-english-file" data-type="game" data-level="1" data-unit="3" data-lesson="b">
+<main id="game-app" class="mc-game">
+
+  <!-- Mode select -->
+  <section id="modeScreen" class="screen">
+    <header class="mc-topbar">
+      <a class="mc-back" href="../" aria-label="Back">←</a>
+      <span class="mc-title">Jobs Match</span>
+      <span class="mc-badge">Unit 3B</span>
+    </header>
+    <div class="mc-start">
+      <p class="mc-desc">Choose a match type · 5 rounds · 6 pairs each</p>
+      <div class="mc-mode-list">
+        <button type="button" class="mc-mode-card mc-mode-btn" data-mode="word-pic">
+          <span class="mc-mode-num">1</span>
+          <span><strong>Words ↔ Pictures</strong><p>Match job names to photos. Audio plays on a correct match.</p></span>
         </button>
-        <button type="button" class="mode-card" data-mode="word-audio">
-          <span class="mode-icon">🔊</span>
-          <span class="mode-title">Words ↔ Audio</span>
-          <span class="mode-desc">Match job names to the spoken word.</span>
+        <button type="button" class="mc-mode-card mc-mode-btn" data-mode="word-audio">
+          <span class="mc-mode-num">2</span>
+          <span><strong>Words ↔ Audio</strong><p>Match job names to the spoken word.</p></span>
         </button>
-        <button type="button" class="mode-card" data-mode="audio-pic">
-          <span class="mode-icon">🎧</span>
-          <span class="mode-title">Audio ↔ Pictures</span>
-          <span class="mode-desc">Listen and match to the correct photo.</span>
+        <button type="button" class="mc-mode-card mc-mode-btn" data-mode="audio-pic">
+          <span class="mc-mode-num">3</span>
+          <span><strong>Audio ↔ Pictures</strong><p>Listen and match to the correct photo.</p></span>
         </button>
       </div>
+    </div>
+  </section>
+
+  <!-- Play -->
+  <section id="playScreen" class="screen hidden">
+    <header class="mc-topbar">
+      <a class="mc-back" href="#" id="backToModes" aria-label="Modes" onclick="return false;">←</a>
+      <span class="mc-title" id="modeLabel">Words ↔ Pictures</span>
+      <span class="mc-badge">Unit 3B</span>
+    </header>
+    <div class="mc-progress-row">
+      <span class="mc-progress">Round <span id="roundNum">1</span> / 5 · <span id="matchedCount">0</span>/6 · Score <span id="score">0</span></span>
+      <div class="mc-track"><div id="progressFill" class="mc-fill"></div></div>
+    </div>
+    <p class="mc-instruction" id="hint">Tap a card on each side to match.</p>
+    <div class="mc-board">
+      <div class="mc-col mc-col-left" id="colLeft"></div>
+      <div class="mc-col mc-col-right" id="colRight"></div>
+    </div>
+    <div class="mc-actions">
+      <button type="button" class="mc-btn secondary" id="resetRoundBtn">Reset round</button>
+    </div>
+    <div id="feedback" class="mc-feedback" role="status"></div>
+  </section>
+
+  <!-- Round / game complete -->
+  <section id="doneScreen" class="screen hidden">
+    <section class="mc-done">
+      <div class="stars mc-stars" id="stars"></div>
+      <h1 id="doneTitle">Round complete!</h1>
+      <p id="finalScore"></p>
+      <button type="button" class="mc-btn" id="nextRoundBtn">Next round</button>
+      <button type="button" class="mc-btn secondary" id="replayModeBtn">Play this mode again</button>
+      <button type="button" class="mc-btn secondary" id="changeModeBtn">Change mode</button>
     </section>
-
-    <!-- Play screen -->
-    <section id="playScreen" class="screen hidden">
-      <header class="game-header compact">
-        <button type="button" class="back-btn" id="backToModes" aria-label="Modes">←</button>
-        <div class="header-text">
-          <span class="eyebrow" id="modeLabel">Words ↔ Pictures</span>
-          <h1>Round <span id="roundNum">1</span> / 5</h1>
-        </div>
-        <div class="stats">
-          <div class="stat">
-            <span class="stat-label">Matched</span>
-            <span id="matchedCount">0</span><span class="stat-total">/6</span>
-          </div>
-          <div class="stat">
-            <span class="stat-label">Score</span>
-            <span id="score">0</span>
-          </div>
-        </div>
-      </header>
-      <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
-
-      <div class="board" id="board">
-        <div class="col" id="colLeft"></div>
-        <div class="col" id="colRight"></div>
-      </div>
-
-      <p class="hint" id="hint">Tap a card on each side to match.</p>
-      <div id="feedback" class="feedback" role="status"></div>
-    </section>
-
-    <!-- Round / game complete -->
-    <section id="doneScreen" class="screen hidden">
-      <div class="done-box">
-        <div class="stars" id="stars"></div>
-        <h2 id="doneTitle">Round complete!</h2>
-        <p id="finalScore"></p>
-        <button type="button" class="btn primary" id="nextRoundBtn">Next round</button>
-        <button type="button" class="btn secondary" id="replayModeBtn">Play this mode again</button>
-        <button type="button" class="btn secondary" id="changeModeBtn">Change mode</button>
-      </div>
-    </section>
-  </div>
+  </section>
+</main>
 
   <script src="/learningarcade/la-stars.js"></script>
+  <script src="/learningarcade/la-finish.js"></script>
   <script src="../jobs-media.js"></script>
 <script src="script.js"></script>
   <script src="../../../../../../theme.js"></script>

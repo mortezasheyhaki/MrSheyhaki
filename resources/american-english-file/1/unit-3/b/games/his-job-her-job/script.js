@@ -3,6 +3,19 @@
 
   const GAME_ID = "1-3b-his-job-her-job";
 
+  // Shared Learning Arcade finish screen. Stars are already saved above, so save:false.
+  function showFinish(score, total, again) {
+    if (!window.LAFinish) return;
+    LAFinish.show({
+      gameId: GAME_ID,
+      score: score,
+      total: total,
+      save: false,
+      onAgain: again || function () { location.reload(); },
+      backHref: "../"
+    });
+  }
+
   const PARTS = {
     1: {
       title: "Part 1 · Alex",
@@ -273,6 +286,7 @@
         LAStars.saveFromAccuracy(GAME_ID + "-part" + part, pct);
       } catch (e) {}
     }
+    showFinish(correct, total, function () { setPart(part); });
 
     if (part === 1) {
       nextPartBtn.classList.remove("hidden");
