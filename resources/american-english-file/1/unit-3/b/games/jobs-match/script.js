@@ -96,7 +96,7 @@
 
   function playJobAudio(id, onEnded) {
     stopAudio();
-    const a = new Audio("audio/" + id + ".mp3");
+    const a = new Audio(jobAudio(id));
     currentAudio = a;
     a.addEventListener("ended", function () {
       currentAudio = null;
@@ -136,7 +136,7 @@
       btn.appendChild(span);
     } else if (type === "pic") {
       const img = document.createElement("img");
-      img.src = "images/" + job.id + ".png";
+      img.src = jobImage(job.id);
       img.alt = job.label;
       img.loading = "lazy";
       btn.appendChild(img);

@@ -45,12 +45,12 @@ const progressFill=document.getElementById("progressFill"),qNum=document.getElem
 const checkBtn=document.getElementById("checkBtn"),pic=document.getElementById("pic");
 const play=document.getElementById("play"),done=document.getElementById("done");
 
-function playA(id,cb){if(audio){audio.pause();}audio=new Audio(ASSET+"audio/"+id+".mp3");audio.addEventListener("ended",()=>{if(cb)cb();});audio.play().catch(()=>{if(cb)cb();});}
+function playA(id,cb){if(audio){audio.pause();}audio=new Audio(jobAudio(id));audio.addEventListener("ended",()=>{if(cb)cb();});audio.play().catch(()=>{if(cb)cb();});}
 function show(){
   if(idx>=order.length){finish();return;}
   locked=false;checkBtn.disabled=false;input.disabled=false;input.value="";input.className="answer-input";
   feedback.textContent="";feedback.className="feedback";
-  const j=order[idx];pic.src=ASSET+"images/"+j.id+".png";pic.alt=j.answers[0];
+  const j=order[idx];pic.src=jobImage(j.id);pic.alt=j.answers[0];
   qNum.textContent=(idx+1)+" of "+order.length;progress.textContent=String(idx);
   progressFill.style.width=(idx/order.length)*100+"%";
   setTimeout(()=>input.focus(),150);

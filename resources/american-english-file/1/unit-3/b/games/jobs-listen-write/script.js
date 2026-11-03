@@ -46,7 +46,7 @@ const checkBtn=document.getElementById("checkBtn"),audioBtn=document.getElementB
 const play=document.getElementById("play"),done=document.getElementById("done");
 
 function stopA(){if(audio){audio.pause();audio=null;}audioBtn.classList.remove("playing");}
-function playA(){stopA();const j=order[idx];audio=new Audio(ASSET+"audio/"+j.id+".mp3");audioBtn.classList.add("playing");audio.addEventListener("ended",()=>audioBtn.classList.remove("playing"));audio.play().catch(()=>audioBtn.classList.remove("playing"));}
+function playA(){stopA();const j=order[idx];audio=new Audio(jobAudio(j.id));audioBtn.classList.add("playing");audio.addEventListener("ended",()=>audioBtn.classList.remove("playing"));audio.play().catch(()=>audioBtn.classList.remove("playing"));}
 function show(){
   if(idx>=order.length){finish();return;}
   locked=false;checkBtn.disabled=false;input.disabled=false;input.value="";input.className="answer-input";

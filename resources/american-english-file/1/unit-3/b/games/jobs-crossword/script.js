@@ -127,7 +127,7 @@
         item.className = "clue-item";
         item.innerHTML =
           '<span class="clue-num">' + w.num + "</span>" +
-          '<img src="' + ASSET + "images/" + w.id + '.png" alt="" loading="lazy">' +
+          '<img src="' + jobImage(w.id) + '" alt="" loading="lazy">' +
           '<span class="clue-len">' + w.answer.length + " letters</span>";
         item.addEventListener("click", function () {
           focusAt(w.r, w.c);

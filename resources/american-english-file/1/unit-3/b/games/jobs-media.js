@@ -1,0 +1,36 @@
+// Shared CDN media for the Unit 3B Jobs games (pictures + audio per job).
+// Falls back to the local folder if an id is missing.
+window.JOB_MEDIA = {
+  "accountant": { image: "https://cdn.imgurl.ir/uploads/d712833_.png", audio: "https://cdn.imgurl.ir/uploads/a568390_.mp3" },
+  "actor": { image: "https://cdn.imgurl.ir/uploads/o26122_.png", audio: "https://cdn.imgurl.ir/uploads/x544193_.mp3" },
+  "administrator": { image: "https://cdn.imgurl.ir/uploads/f53248_.png", audio: "https://cdn.imgurl.ir/uploads/p71050_.mp3" },
+  "architect": { image: "https://cdn.imgurl.ir/uploads/c15908_.png", audio: "https://cdn.imgurl.ir/uploads/q02724_.mp3" },
+  "chef": { image: "https://cdn.imgurl.ir/uploads/g3691_.png", audio: "https://cdn.imgurl.ir/uploads/t01388_.mp3" },
+  "cleaner": { image: "https://cdn.imgurl.ir/uploads/q414589_.png", audio: "https://cdn.imgurl.ir/uploads/c066646_.mp3" },
+  "construction-worker": { image: "https://cdn.imgurl.ir/uploads/k389529_.png", audio: "https://cdn.imgurl.ir/uploads/u87090_.mp3" },
+  "dentist": { image: "https://cdn.imgurl.ir/uploads/v621071_.png", audio: "https://cdn.imgurl.ir/uploads/k615949_.mp3" },
+  "doctor": { image: "https://cdn.imgurl.ir/uploads/d708657_.png", audio: "https://cdn.imgurl.ir/uploads/n076398_.mp3" },
+  "engineer": { image: "https://cdn.imgurl.ir/uploads/a47818_.png", audio: "https://cdn.imgurl.ir/uploads/b463826_.mp3" },
+  "factory-worker": { image: "https://cdn.imgurl.ir/uploads/o57138_.png", audio: "https://cdn.imgurl.ir/uploads/x022895_.mp3" },
+  "flight-attendant": { image: "https://cdn.imgurl.ir/uploads/m960363_.png", audio: "https://cdn.imgurl.ir/uploads/r057262_.mp3" },
+  "guide": { image: "https://cdn.imgurl.ir/uploads/p769264_.png", audio: "https://cdn.imgurl.ir/uploads/022233_.mp3" },
+  "hairstylist": { image: "https://cdn.imgurl.ir/uploads/i13171_.png", audio: "https://cdn.imgurl.ir/uploads/j363583_.mp3" },
+  "journalist": { image: "https://cdn.imgurl.ir/uploads/r387556_.png", audio: "https://cdn.imgurl.ir/uploads/x50878_.mp3" },
+  "lawyer": { image: "https://cdn.imgurl.ir/uploads/x221913_.png", audio: "https://cdn.imgurl.ir/uploads/s570489_.mp3" },
+  "manager": { image: "https://cdn.imgurl.ir/uploads/m984258_.png", audio: "https://cdn.imgurl.ir/uploads/v93622_.mp3" },
+  "model": { image: "https://cdn.imgurl.ir/uploads/g33448_.png", audio: "https://cdn.imgurl.ir/uploads/x5832_.mp3" },
+  "musician": { image: "https://cdn.imgurl.ir/uploads/b757714_.png", audio: "https://cdn.imgurl.ir/uploads/c0524_.mp3" },
+  "nurse": { image: "https://cdn.imgurl.ir/uploads/b133397_.png", audio: "https://cdn.imgurl.ir/uploads/f86964_.mp3" },
+  "pilot": { image: "https://cdn.imgurl.ir/uploads/q577964_.png", audio: "https://cdn.imgurl.ir/uploads/e54408_.mp3" },
+  "police-officer": { image: "https://cdn.imgurl.ir/uploads/b166480_.png", audio: "https://cdn.imgurl.ir/uploads/v091953_.mp3" },
+  "receptionist": { image: "https://cdn.imgurl.ir/uploads/s605150_.png", audio: "https://cdn.imgurl.ir/uploads/j977772_.mp3" },
+  "salesperson": { image: "https://cdn.imgurl.ir/uploads/v05475_.png", audio: "https://cdn.imgurl.ir/uploads/j50201_.mp3" },
+  "soccer-player": { image: "https://cdn.imgurl.ir/uploads/b894377_.png", audio: "https://cdn.imgurl.ir/uploads/w547486_.mp3" },
+  "soldier": { image: "https://cdn.imgurl.ir/uploads/m8145_.png", audio: "https://cdn.imgurl.ir/uploads/g344243_.mp3" },
+  "taxi-driver": { image: "https://cdn.imgurl.ir/uploads/q58419_.png", audio: "https://cdn.imgurl.ir/uploads/h279204_.mp3" },
+  "teacher": { image: "https://cdn.imgurl.ir/uploads/u542780_.png", audio: "https://cdn.imgurl.ir/uploads/x988240_.mp3" },
+  "vet": { image: "https://cdn.imgurl.ir/uploads/s28820_.png", audio: "https://cdn.imgurl.ir/uploads/v157583_.mp3" },
+  "waiter": { image: "https://cdn.imgurl.ir/uploads/d116003_.png", audio: "https://cdn.imgurl.ir/uploads/v049541_.mp3" },
+};
+window.jobImage = function (id) { var m = window.JOB_MEDIA[id]; return m ? m.image : 'images/' + id + '.png'; };
+window.jobAudio = function (id) { var m = window.JOB_MEDIA[id]; return m ? m.audio : 'audio/' + id + '.mp3'; };

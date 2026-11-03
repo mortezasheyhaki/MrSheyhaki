@@ -76,7 +76,7 @@
   function playAudio() {
     stopAudio();
     const j = order[idx];
-    audio = new Audio(ASSET + "audio/" + j.id + ".mp3");
+    audio = new Audio(jobAudio(j.id));
     audioBtn.classList.add("playing");
     audio.addEventListener("ended", function () {
       audioBtn.classList.remove("playing");
@@ -93,7 +93,7 @@
 
   function show(animateEnter) {
     const j = order[idx];
-    cardImg.src = ASSET + "images/" + j.id + ".png";
+    cardImg.src = jobImage(j.id);
     cardImg.alt = j.label;
     cardWord.textContent = j.label;
     frontWord.textContent = j.label;
