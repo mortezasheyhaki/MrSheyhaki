@@ -152,156 +152,156 @@ body {
   transition: width 0.4s ease;
 }
 
-.panel-label {
-  font-size: 0.65rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-  margin-bottom: 0.3rem;
-}
 
-.questions-panel {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.questions-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+.stage {
   flex: 1;
   min-height: 0;
-  overflow: hidden;
-}
-.q-btn {
-  appearance: none;
-  border: 1.5px solid var(--line);
-  background: var(--card);
-  color: var(--text);
-  font-family: inherit;
-  font-size: 0.88rem;
-  font-weight: 700;
-  text-align: left;
-  padding: 0.55rem 0.75rem;
-  border-radius: 12px;
-  cursor: grab;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  transition: border-color 0.15s, background 0.15s, transform 0.12s, opacity 0.2s;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-  line-height: 1.25;
-  flex: 1 1 0;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-}
-.q-btn:active:not(:disabled) { cursor: grabbing; transform: scale(0.98); }
-.q-btn:disabled,
-.q-btn.used {
-  opacity: 0.35;
-  cursor: default;
-  pointer-events: none;
-}
-.q-btn.selected {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent);
-}
-.q-btn.correct-flash {
-  border-color: var(--success);
-  background: color-mix(in srgb, var(--success) 12%, var(--card));
-}
-.q-btn.wrong-flash {
-  border-color: var(--danger);
-  animation: shake 0.35s ease;
-}
-.q-btn.dragging,
-.q-btn.drag-source { opacity: 0.35; }
-
-.answer-panel {
-  flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  gap: 0.9rem;
 }
-.drop-zone {
-  border: 2px dashed var(--input-border, var(--line));
-  border-radius: 14px;
-  padding: 0.4rem;
-  background: var(--input-bg);
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-}
-.drop-zone.drag-over {
-  border-color: var(--accent);
-  border-style: solid;
-  background: rgba(56, 189, 248, 0.08);
-  box-shadow: 0 0 0 3px rgba(56,189,248,0.25);
-}
-.drop-zone.drop-success {
-  border-color: var(--success);
-  border-style: solid;
-  background: rgba(52, 211, 153, 0.1);
-}
-.drop-zone.drop-wrong {
-  border-color: var(--danger);
-  border-style: solid;
-  animation: shake 0.35s ease;
-}
-.drop-label {
-  text-align: center;
-  font-size: 0.65rem;
+
+.panel-label {
+  font-size: 0.66rem;
   font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
   color: var(--muted);
-  padding: 0;
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
-  transition: opacity 0.2s, max-height 0.2s, padding 0.2s;
+  text-align: center;
 }
-.drop-zone.drag-over .drop-label {
-  opacity: 1;
-  max-height: 1.5rem;
-  padding: 0.15rem 0 0.3rem;
-}
-.drop-zone .answer-card {
-  border: none;
-  background: transparent;
-  min-height: 0;
-  padding: 0.55rem 0.65rem;
-}
+
+/* ---------- Answer card (middle) ---------- */
 .answer-card {
+  position: relative;
   background: var(--card);
-  border-radius: 12px;
-  padding: 0.65rem 0.75rem;
+  border: 2px dashed var(--input-border);
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
+  padding: 1.1rem 1.1rem;
+  min-height: 118px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: border-color 0.35s ease, background-color 0.35s ease, box-shadow 0.35s ease;
+}
+.answer-card.is-correct {
+  border: 2px solid var(--success);
+  background: color-mix(in srgb, var(--success) 12%, var(--card));
+}
+.answer-card.is-wrong {
+  border: 2px solid var(--danger);
+  animation: shake 0.45s ease;
 }
 .answer-text {
-  font-size: 0.95rem;
-  font-weight: 700;
-  line-height: 1.35;
-  text-align: center;
-}
-.hint {
-  text-align: center;
-  font-size: 0.72rem;
-  color: var(--muted);
-  font-weight: 600;
-  margin-top: 0.3rem;
-  line-height: 1.3;
-}
-.feedback {
-  text-align: center;
+  font-size: 1.05rem;
   font-weight: 800;
-  font-size: 0.85rem;
-  min-height: 1.15em;
-  margin-top: 0.15rem;
+  line-height: 1.4;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.answer-text.swap-out { opacity: 0; transform: translateY(6px); }
+.answer-text.swap-in  { opacity: 1; transform: translateY(0); }
+
+.feedback {
+  min-height: 1.2rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: opacity 0.25s ease;
 }
 .feedback.success { color: var(--success); }
 .feedback.error { color: var(--danger); }
+
+/* ---------- Question options: 3 on top, 2 below, centred ---------- */
+.options-label { margin-top: 0.2rem; }
+.options {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.6rem;
+}
+.option {
+  grid-column: span 2;
+  min-height: 64px;
+  padding: 0.55rem 0.6rem;
+  border-radius: 14px;
+  border: 2px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.25;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.25s ease, box-shadow 0.25s ease, opacity 0.35s ease;
+}
+/* second row (2 options) is centred */
+.option:nth-child(4) { grid-column: 2 / span 2; }
+.option:nth-child(5) { grid-column: 4 / span 2; }
+
+.option:hover:not(:disabled) { border-color: var(--accent); }
+.option:active:not(:disabled) { transform: scale(0.97); }
+.option:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.option.selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, var(--card));
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent), var(--shadow);
+}
+.option.is-wrong {
+  border-color: var(--danger);
+  animation: shake 0.45s ease;
+}
+.option.is-right {
+  border-color: var(--success);
+  background: color-mix(in srgb, var(--success) 16%, var(--card));
+}
+/* solved option becomes an empty "_ _ _" slot so the layout never shifts */
+.option.used {
+  visibility: visible;
+  background: transparent;
+  border: 2px dashed var(--line);
+  box-shadow: none;
+  color: transparent;
+  cursor: default;
+  transform: none;
+}
+.option.used::after {
+  content: "_ _ _";
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+}
+
+/* ---------- Check button ---------- */
+.check-row { display: flex; justify-content: center; }
+.check-btn {
+  min-width: 170px;
+  padding: 0.7rem 1.4rem;
+  border: none;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--on-accent, #fff);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 30%, transparent);
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.25s ease, box-shadow 0.25s ease;
+}
+.check-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.check-btn:active:not(:disabled) { transform: scale(0.98); }
+.check-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.hidden { display: none !important; }
 
 .done-box {
   position: fixed;
@@ -360,41 +360,20 @@ body {
   75% { transform: translateX(4px); }
 }
 
-.drag-ghost {
-  position: fixed;
-  left: 0; top: 0;
-  z-index: 10000;
-  pointer-events: none;
-  opacity: 0.95;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.28);
-  transform: rotate(2deg);
-  margin: 0;
-  max-width: 90vw;
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
 }
 
-/* Desktop / larger screens — more breathing room, still no page scroll */
 @media (min-width: 600px) {
-  body { padding: 0.85rem; }
-  .game-wrap { gap: 0.65rem; max-height: min(100dvh, 900px); }
-  .header-text h1 { font-size: 1.3rem; }
-  .header-text p { font-size: 0.85rem; -webkit-line-clamp: 2; }
-  .back-btn { width: 40px; height: 40px; }
-  .q-btn { font-size: 0.95rem; padding: 0.7rem 0.9rem; }
-  .answer-text { font-size: 1.05rem; }
-  .drop-zone .answer-card { padding: 0.85rem 1rem; }
-  .hint { font-size: 0.8rem; }
+  .option { font-size: 0.92rem; min-height: 72px; }
+  .answer-text { font-size: 1.2rem; }
 }
-
-/* Very short phones */
 @media (max-height: 640px) {
-  .header-text p { display: none; }
-  .hint { display: none; }
-  .panel-label { margin-bottom: 0.2rem; font-size: 0.6rem; }
-  .q-btn { font-size: 0.82rem; padding: 0.4rem 0.6rem; }
-  .answer-text { font-size: 0.88rem; }
-  .drop-zone .answer-card { padding: 0.4rem 0.5rem; }
-  .stat { min-width: 3rem; padding: 0.2rem 0.4rem; }
-  .game-wrap { gap: 0.3rem; }
+  .option { min-height: 56px; }
+  .answer-card { min-height: 96px; }
 }
-
-button, a { touch-action: manipulation; }
