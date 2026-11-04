@@ -48,7 +48,9 @@
   overflow: visible !important;
 }
 .resource-card--game .skill-badge {
-  display: inline-flex;
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
   align-items: center;
   justify-content: center;
   margin: 0 0 12px 0;
@@ -318,6 +320,30 @@ html[data-theme="dark"] .skill-badge--writing {
   color: #6ee7b7;
   border-color: rgba(52, 211, 153, 0.28);
 }
+
+.skill-badge--spelling {
+  background: color-mix(in srgb, #ae3ec9 14%, transparent);
+  color: #9c36b5;
+}
+html[data-theme="dark"] .skill-badge--spelling {
+  background: color-mix(in srgb, #e599f7 18%, transparent);
+  color: #e599f7;
+}
+.resource-card--skill-spelling .resource-card-footer .resource-button {
+  background: linear-gradient(135deg, #be4bdb, #9c36b5);
+  color: #fff;
+}
+.resource-card--skill-spelling .resource-card-curve {
+  background: linear-gradient(135deg, rgba(190, 75, 219, 0.2), rgba(156, 54, 181, 0.08));
+}
+html[data-theme="dark"] .resource-card--skill-spelling .resource-card-curve {
+  background: linear-gradient(135deg, rgba(229, 153, 247, 0.18), rgba(190, 75, 219, 0.06));
+}
+a.resource-card.resource-card--game.resource-card--skill-spelling,
+.resource-card.resource-card--game.resource-card--skill-spelling {
+  border-color: rgba(190, 75, 219, 0.35);
+}
+
 
 /* Light mode: colored outline + matching top bar by skill (white card fill) */
 a.resource-card.resource-card--game.resource-card--skill-grammar,
