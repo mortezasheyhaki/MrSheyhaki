@@ -750,6 +750,17 @@ COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].games = 
   { title: "Three Sounds Match", url: "three-sounds-match/", label: "Listening" }
 ];
 
+// Practical English 3 – Starter
+// Games sit at practical-english-3/games/<game>/ (linked from the games page, so no "../").
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[3].name = "What time is it?";
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[3].games = [
+  { title: "Clock Match", url: "clock-match/", label: "Vocabulary" },
+  { title: "Listen & Set", url: "listen-set-time/", label: "Listening" },
+  { title: "Set the Clock", url: "set-the-clock/", label: "Vocabulary" },
+  { title: "Silent Letters", url: "silent-letters/", label: "Listening" },
+  { title: "What time is it?", url: "what-time-is-it/", label: "Listening" }
+];
+
 // Practical English 6 – Starter
 // Both games sit at practical-english-6/<game>/, one level above games/, hence "../".
 COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[6].games = [

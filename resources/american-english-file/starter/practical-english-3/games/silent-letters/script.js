@@ -117,7 +117,7 @@
       '<section class="sl-stage">' +
       '<div class="sl-timer" aria-hidden="true"><svg viewBox="0 0 36 36"><circle class="sl-track" cx="18" cy="18" r="15.5"/><circle class="sl-arc" id="arc" cx="18" cy="18" r="15.5"/></svg><span id="sec">5</span></div>' +
       '<div class="sl-arena" id="arena">' +
-      '<div class="sl-word is-enter" id="word">' +
+      '<div class="sl-word is-enter" id="word" style="--n:' + item.word.length + ';">' +
       lettersHtml(item) +
       "</div>" +
       "</div>" +
