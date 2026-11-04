@@ -240,6 +240,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.games = [
   { title: "Plurals Match", url: "plural-match/", label: "Vocabulary" },
   { title: "Singular ↔ Plural Sentences", url: "sing-plur-sentences/", label: "Grammar" },
   { title: "Make Plurals", url: "make-plurals/", label: "Grammar" },
+  { title: "Add -ing", url: "add-ing/", label: "Grammar" },
   { title: "What is it?", url: "what-is-it/", label: "Speaking" },
   { title: "Ask & Answer", url: "q-and-a/", label: "Speaking" },
   { title: "What's in Your Bag?", url: "whats-in-your-bag/", label: "Speaking" },
@@ -869,6 +870,7 @@ COURSE_DATA["teen2teen"].levels["1"].units[11].games = [
 COURSE_DATA["teen2teen"].levels["2"].units[1].games = [
   { title: "Am / Is / Are", url: "games/am-is-are/", label: "Grammar" },
   { title: "Verb + -ing", url: "games/verb-ing/", label: "Grammar" },
+  { title: "Add -ing", url: "games/add-ing/", label: "Grammar" },
   { title: "Correct Sentence", url: "games/choose-sentence/", label: "Grammar" },
   { title: "Picture Sentences", url: "games/picture-sentences/", label: "Grammar" },
   { title: "Write the Sentences", url: "games/write-sentences/", label: "Grammar" },

@@ -165,8 +165,33 @@
     setTimeout(function () { if (layer.parentNode) layer.parentNode.removeChild(layer); }, 4000);
   }
 
+  /* Show the shared finish overlay (la-finish) whenever a result card is built */
+  function showFinishOverlay(o) {
+    if (!window.LAFinish || typeof LAFinish.show !== "function") return;
+    var timeMs = 0;
+    try { timeMs = typeof LAFinish.stopTimer === "function" ? LAFinish.stopTimer() : 0; } catch (e) {}
+    setTimeout(function () {
+      try {
+        LAFinish.show({
+          gameId: (document.body && document.body.dataset && document.body.dataset.course ? document.body.dataset.course : "ua") + ":" + location.pathname,
+          score: o.score,
+          total: o.total,
+          stars: o.stars || 0,
+          timeMs: timeMs,
+          onAgain: function () {
+            var b = o.againId ? document.getElementById(o.againId) : null;
+            if (b) b.click();
+          },
+          backHref: "../",
+          save: false
+        });
+      } catch (e) {}
+    }, 350);
+  }
+
   /* Result card. opts: { score, total, stars, title, backHref, againId } */
   function doneHTML(o) {
+    showFinishOverlay(o);
     var s = o.stars || 0;
     var msg = o.message || ["Keep practising!", "Good effort!", "Great work!", "Perfect!"][s];
     var stars = [1, 2, 3].map(function (n, i) {
