@@ -1,202 +1,11 @@
-/* ===== Arcade FX: progress bar, combo, milestone celebration ===== */
+/* Match Classroom Objects – 3 parts × 2 sets of 5 – AEF Starter Practical English 1
+   Each part: shuffle the 10 objects → 2 sets of 5
+*/
 (function () {
-  if (window.ArcadeFX) return;
-  var streak = 0, best = 0, count = 0, lastPct = 0, ctx = null;
-  var CHEERS = [["🌟","Awesome!","10 correct answers!"],["🚀","Superstar!","20 correct — unstoppable!"],["👑","Legend!","30 correct — the best of the best!"]];
-  function tone(f, d, type, v, when) {
-    try {
-      if (!ctx) { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; ctx = new AC(); }
-      if (ctx.state === "suspended") ctx.resume();
-      var t = ctx.currentTime + (when || 0), o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = type || "sine"; o.frequency.value = f;
-      g.gain.setValueAtTime(v || 0.09, t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
-      o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + d + 0.03);
-    } catch (e) {}
-  }
-  function label(n) { return n >= 10 ? "UNSTOPPABLE" : n >= 7 ? "ON FIRE" : n >= 5 ? "HOT STREAK" : n >= 3 ? "NICE" : ""; }
-  function chip() {
-    var el = document.getElementById("afx-combo");
-    if (!el) { el = document.createElement("div"); el.id = "afx-combo"; el.className = "afx-combo"; document.body.appendChild(el); }
-    return el;
-  }
-  function place(el) {
-    el = el || document.getElementById("afx-combo");
-    var app = (document.getElementById("game-app") || document.getElementById("app"));
-    if (!el || !app) return;
-    var a = app.querySelector(".afx-bar") || app.querySelector("header") || app.firstElementChild;
-    if (!a) return;
-    if (a.offsetParent === null) a = app;
-    var r = a.getBoundingClientRect();
-    el.style.right = Math.max(8, document.documentElement.clientWidth - r.right) + "px";
-    el.style.top = Math.max(8, a === app ? r.top + 64 : r.bottom + 8) + "px";
-  }
-  function showCombo() {
-    var el = chip(); place(el);
-    el.className = "afx-combo is-on" + (streak >= 5 ? " is-hot" : "");
-    el.innerHTML = '<span class="afx-fire">🔥</span> x' + streak + " <em>" + label(streak) + "</em>";
-    void el.offsetWidth; el.classList.add("is-bump");
-  }
-  function celebrate(n) { burst(CHEERS[Math.min(Math.floor(n / 10) - 1, 2)]); }
-  function burst(c) {
-    [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.22, "triangle", 0.1, i * 0.09); });
-    tone(1568, 0.6, "sine", 0.08, 0.5);
-    var ov = document.createElement("div"); ov.className = "afx-burst";
-    var cols = ["#f59e0b", "#ec4899", "#8b5cf6", "#22c55e", "#3b82f6", "#ef4444"], h = "";
-    for (var i = 0; i < 44; i++) h += '<i style="left:' + Math.random() * 100 + "%;background:" + cols[i % 6] + ";animation-delay:" + (Math.random() * 0.35).toFixed(2) + "s;animation-duration:" + (1.3 + Math.random() * 0.9).toFixed(2) + 's"></i>';
-    ov.innerHTML = h + '<div class="afx-card"><div class="afx-emoji">' + c[0] + '</div><div class="afx-title">' + c[1] + '</div><div class="afx-sub">' + c[2] + "</div></div>";
-    document.body.appendChild(ov);
-    setTimeout(function () { ov.classList.add("is-out"); }, 1900);
-    setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 2300);
-  }
-  function hookRestart() {
-    var L = window.LAFinish;
-    if (L && L.startTimer && !L.__afx) { var st = L.startTimer; L.__afx = 1; L.startTimer = function () { api.reset(); return st.apply(this, arguments); }; }
-  }
-  var api = window.ArcadeFX = {
-    track: null,
-    bar: function (pct) {
-      var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
-      var bar = app.querySelector(".afx-bar");
-      if (!bar) {
-        var anchor = app.querySelector('[id*="rogress"]') || app.querySelector("header"); if (!anchor) return;
-        var host = anchor.closest("header") || anchor.parentElement;
-        bar = document.createElement("div"); bar.className = "afx-bar"; bar.innerHTML = '<i style="width:' + lastPct + '%"></i>';
-        host.parentNode.insertBefore(bar, host.nextSibling);
-      }
-      var fill = bar.firstChild; lastPct = pct;
-      requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = pct + "%"; }); });
-    },
-    ok: function () {
-      var nw = Date.now(); if (nw - (api._o || 0) < 90) return; api._o = nw;
-      hookRestart(); streak++; count++; if (streak > best) best = streak;
-      if (streak >= 2) { var b = 660 * Math.pow(1.0595, Math.min(streak, 12)); tone(b, 0.09, "triangle", 0.08, 0); tone(b * 1.5, 0.14, "triangle", 0.07, 0.07); showCombo(); }
-      if (count % 10 === 0 && !api.noMilestone) setTimeout(function () { celebrate(count); }, 250);
-    },
-    bad: function () {
-      var nw = Date.now(); if (nw - (api._b || 0) < 90) return; api._b = nw;
-      hookRestart();
-      if (streak >= 3) { tone(300, 0.12, "sawtooth", 0.05, 0); tone(200, 0.2, "sawtooth", 0.05, 0.09); }
-      if (streak >= 2) { var el = chip(); el.className = "afx-combo is-lost"; el.textContent = "Combo lost"; setTimeout(function () { el.className = "afx-combo"; }, 1200); }
-      streak = 0;
-    },
-    cheer: function (i, n, sub) {
-      var T = [["🎉", "Great job!"], ["🌟", "Brilliant!"], ["🏆", "Champion!"]];
-      var c = T[i >= n - 1 && n > 1 ? 2 : Math.min(i, 1)];
-      burst([c[0], c[1], sub || ("Part " + (i + 1) + " of " + n + " complete")]);
-    },
-    reset: function () { streak = 0; best = 0; count = 0; lastPct = 0; var el = document.getElementById("afx-combo"); if (el) el.className = "afx-combo"; }
-  };
-  function sync() {
-    var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
-    place();
-    var bar = app.querySelector(".afx-bar");
-    if (bar && bar.offsetParent === null) { bar.parentNode.removeChild(bar); bar = null; }
-    var badge = null, hasBar = false, els = app.querySelectorAll('[class*="-badge"],[class*="-progress"],[id*="rogress"]');
-    for (var i = 0; i < els.length; i++) {
-      var t = els[i].textContent.trim(); if (els[i].offsetParent === null) continue;
-      if (/^(?:[A-Za-z]{1,9}\s*)?\d+\s*(?:\/|of)\s*\d+$/.test(t)) { if (!badge) badge = els[i]; }
-      else if (!t && /progress/.test(els[i].className) && !els[i].classList.contains("afx-bar")) hasBar = true;
-    }
-    if (app.querySelector('[class$="-bar"]:not(.afx-bar),[class*="-bar-fill"],[class*="-progress-fill"]')) return;
-    if (!badge && api.track) { try { api.bar(api.track()); } catch (e) {} return; }
-    if (!badge || hasBar) return;
-    var m = badge.textContent.trim().match(/^(?:[A-Za-z]{1,9}\s*)?(\d+)\s*(?:\/|of)\s*(\d+)$/), pct = Math.min(100, Math.round(m[1] / m[2] * 100));
-    if (!bar) {
-      var host = badge.closest("header") || badge.parentElement;
-      bar = document.createElement("div"); bar.className = "afx-bar"; bar.innerHTML = '<i style="width:' + lastPct + '%"></i>';
-      host.parentNode.insertBefore(bar, host.nextSibling);
-    }
-    var fill = bar.firstChild; lastPct = pct;
-    requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = pct + "%"; }); });
-  }
-  var q = 0;
-  function start() {
-    var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
-    new MutationObserver(function () { if (q) return; q = requestAnimationFrame(function () { q = 0; sync(); }); }).observe(app, { childList: true, subtree: true, characterData: true });
-    window.addEventListener("resize", function () { place(); });
-    window.addEventListener("scroll", function () { place(); }, { passive: true });
-    sync();
-  }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
-})();
-window.ArcadeFX && (ArcadeFX.noMilestone = true);
+  "use strict";
 
-/* Match Classroom Objects – 3 modes × 2 sets of 5 – AEF Starter Practical English 1 */
-(function () {
-
-/* === Shared UI sound effects (Web Audio) === */
-(function () {
-  if (window.__laUiSfx) return;
-  var ctx = null;
-  function getCtx() {
-    if (!ctx) {
-      var AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return null;
-      ctx = new AC();
-    }
-    if (ctx.state === "suspended") ctx.resume().catch(function () {});
-    return ctx;
-  }
-  function tone(freq, dur, type, vol, when) {
-    var c = getCtx();
-    if (!c) return;
-    var t0 = (when || 0) + c.currentTime;
-    var osc = c.createOscillator();
-    var gain = c.createGain();
-    osc.type = type || "sine";
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(vol || 0.12, t0);
-    gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
-    osc.connect(gain);
-    gain.connect(c.destination);
-    osc.start(t0);
-    osc.stop(t0 + dur + 0.02);
-  }
-  function sfxTap() { tone(520, 0.06, "triangle", 0.08); }
-  function sfxCorrect() { window.ArcadeFX && ArcadeFX.ok();
-    tone(523, 0.1, "sine", 0.12, 0);
-    tone(659, 0.12, "sine", 0.12, 0.08);
-    tone(784, 0.18, "sine", 0.1, 0.16);
-  }
-  function sfxWrong() { window.ArcadeFX && ArcadeFX.bad();
-    tone(220, 0.14, "sawtooth", 0.07, 0);
-    tone(180, 0.18, "sawtooth", 0.06, 0.1);
-  }
-  function sfxCelebrate() {
-    [523, 659, 784, 1047].forEach(function (f, i) { tone(f, 0.15, "sine", 0.1, i * 0.07); });
-  }
-  window.__laUiSfx = { tap: sfxTap, correct: sfxCorrect, wrong: sfxWrong, celebrate: sfxCelebrate };
-  window.sfxTap = sfxTap;
-  window.sfxCorrect = sfxCorrect;
-  window.sfxWrong = sfxWrong;
-  window.sfxCelebrate = sfxCelebrate;
-
-  var lastAt = 0, lastKind = "";
-  function fire(kind, fn) {
-    var now = Date.now();
-    if (kind === lastKind && now - lastAt < 80) return;
-    lastKind = kind; lastAt = now;
-    try { fn(); } catch (e) {}
-  }
-  try {
-    var origAdd = DOMTokenList.prototype.add;
-    DOMTokenList.prototype.add = function () {
-      var tokens = Array.prototype.slice.call(arguments);
-      var r = origAdd.apply(this, tokens);
-      if (tokens.indexOf("correct") >= 0 || tokens.indexOf("is-correct") >= 0 || tokens.indexOf("picked-ok") >= 0) {
-        fire("correct", sfxCorrect);
-      } else if (tokens.indexOf("wrong") >= 0 || tokens.indexOf("is-wrong") >= 0) {
-        fire("wrong", sfxWrong);
-      }
-      return r;
-    };
-  } catch (e) {}
-})();
-
-
-  const GAME_ID = "starter-pe1-match-classroom-objects";
-
-  const ITEMS = [
+  var GAME_ID = "starter-pe1-match-classroom-objects";
+  var ITEMS = [
     { id: "bag",            label: "a bag",             audio: "https://cdn.imgurl.ir/uploads/k337766_a-bag.mp3",            image: "https://cdn.imgurl.ir/uploads/q131373_a-bag.png" },
     { id: "pen",            label: "a pen",             audio: "https://cdn.imgurl.ir/uploads/d36470_a-pen.mp3",            image: "https://cdn.imgurl.ir/uploads/t81465_a-pen.png" },
     { id: "paper",          label: "a piece of paper",  audio: "https://cdn.imgurl.ir/uploads/762189_a-piece-of-paper.mp3", image: "https://cdn.imgurl.ir/uploads/l77286_a-piece-of-paper.png" },
@@ -209,355 +18,658 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     { id: "board",          label: "the board",         audio: "https://cdn.imgurl.ir/uploads/i034259_the-board.mp3",        image: "https://cdn.imgurl.ir/uploads/v58413_the-board.png" },
   ];
 
-  // 2 sets of 5 (covers all 10 items)
-  const SETS = [
-    ["bag", "pen", "paper", "dictionary", "laptop"],
-    ["table", "chair", "window", "door", "board"],
+  // Built fresh each game from shuffled pool (2 sets of 5)
+  var SETS = [];
+
+  var MODES = [
+    {
+      id: "pic-word",
+      title: "Pictures → Words",
+      left: "pic",
+      right: "word",
+      tip: "Match each picture to the word.",
+      encourage: "Awesome matching! 🌟 You finished Pictures → Words."
+    },
+    {
+      id: "audio-word",
+      title: "Audio → Words",
+      left: "audio",
+      right: "word",
+      tip: "Listen, then match the word.",
+      encourage: "Great listening! 🎧 You finished Audio → Words."
+    },
+    {
+      id: "audio-pic",
+      title: "Audio → Pictures",
+      left: "audio",
+      right: "pic",
+      tip: "Listen, then match the picture.",
+      encourage: "Amazing work! 🎉 You finished all the parts."
+    }
   ];
 
-  const MODES = [
-    { id: "pic-word", title: "Pictures → Words", left: "picture", right: "word", tip: "Match each picture to the word." },
-    { id: "audio-word", title: "Audio → Words", left: "audio", right: "word", tip: "Listen, then match to the word." },
-    { id: "audio-pic", title: "Audio → Pictures", left: "audio", right: "picture", tip: "Listen, then match to the picture." },
-  ];
+  var TOTAL_PAIRS = 30; // 3 parts × 2 sets × 5
+  var SETS_PER_PART = 2;
 
-  const app = document.getElementById("game-app");
+  function buildSets() {
+    // Each part uses all 10 objects, split into 2 sets of 5.
+    var ids = ITEMS.map(function (it) { return it.id; });
+    var sets = [];
+    for (var p = 0; p < MODES.length; p++) {
+      var order = shuffle(ids.slice());
+      sets.push(order.slice(0, 5));
+      sets.push(order.slice(5, 10));
+    }
+    SETS = sets;
+  }
+
+  var app = document.getElementById("game-app");
   if (!app) return;
 
-  let modeIndex = 0;
-  let phase = "menu"; // menu | play | done
-  let setIndex = 0;
-  let leftOrder = [];
-  let rightOrder = [];
-  let locked = {};
-  let matches = {};
-  let selectedLeft = null;
-  let currentAudio = null;
-  let playingLeft = null;
-  let setCorrect = 0;
-  let modeCorrect = 0;
+  var modeIndex = 0;
+  var phase = "menu"; // menu | play | between | done
+  var setIndex = 0;
+  var leftOrder = [];
+  var rightOrder = [];
+  var locked = {};
+  var matches = {};
+  var selectedLeft = null;
+  var currentAudio = null;
+  var playingLeft = null;
+  var setCorrect = 0;
+  var modeCorrect = 0;
+  var totalCorrect = 0;
+  var mistakes = 0;
+  var busy = false;
 
   function byId(id) {
-    return ITEMS.find((c) => c.id === id);
+    return ITEMS.find(function (c) {
+      return c.id === id;
+    });
   }
 
   function shuffle(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i];
+      a[i] = a[j];
+      a[j] = t;
     }
     return a;
   }
 
+  var sfxCtx = null;
+
+  function getSfxCtx() {
+    if (!sfxCtx) {
+      try {
+        sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) {
+        return null;
+      }
+    }
+    if (sfxCtx.state === "suspended") {
+      try {
+        sfxCtx.resume();
+      } catch (_) {}
+    }
+    return sfxCtx;
+  }
+
+  function sfx(name) {
+    if (!window.LASfx) return;
+    try {
+      if (name === "correct" && LASfx.correct) LASfx.correct();
+      else if (name === "wrong" && LASfx.wrong) LASfx.wrong();
+      else if (name === "win" && LASfx.win) LASfx.win();
+      else if (name === "pop" && LASfx.pop) LASfx.pop();
+      else if (name === "click" && LASfx.click) LASfx.click();
+    } catch (_) {}
+  }
+
   function stopAudio() {
     if (currentAudio) {
-      try { currentAudio.pause(); } catch (_) {}
+      try {
+        currentAudio.pause();
+      } catch (_) {}
       currentAudio = null;
     }
     playingLeft = null;
-    app.querySelectorAll(".mc-play.playing").forEach((b) => b.classList.remove("playing"));
+    app.querySelectorAll(".mc-play.playing").forEach(function (b) {
+      b.classList.remove("playing");
+    });
   }
 
   function playAudioFor(leftIndex) {
-    const id = leftOrder[leftIndex];
-    const c = byId(id);
-    if (!c) return;
+    var id = leftOrder[leftIndex];
+    var c = byId(id);
+    if (!c || !c.audio) return;
 
     if (playingLeft === leftIndex && currentAudio && !currentAudio.paused) {
       stopAudio();
       return;
     }
     stopAudio();
-    const a = new Audio(c.audio);
+    var a = new Audio(c.audio);
     currentAudio = a;
     playingLeft = leftIndex;
-    const btn = app.querySelector('.mc-play[data-i="' + leftIndex + '"]');
+    var btn = app.querySelector('.mc-play[data-i="' + leftIndex + '"]');
     if (btn) btn.classList.add("playing");
-    a.play().catch(() => {
+    a.play().catch(function () {
       if (btn) btn.classList.remove("playing");
       playingLeft = null;
     });
-    a.onended = () => {
+    a.onended = function () {
       if (btn) btn.classList.remove("playing");
       if (playingLeft === leftIndex) playingLeft = null;
       currentAudio = null;
     };
   }
 
-  function startMode(mi) {
-    if (window.LAFinish) LAFinish.startTimer();
+  function startPart(mi) {
+    if (window.LAFinish && mi === 0) LAFinish.startTimer();
     modeIndex = mi;
     modeCorrect = 0;
-    startSet(0);
+    // Mistakes reset only when starting the full game (part 1)
+    if (mi === 0) mistakes = 0;
+    phase = "play";
+    startSet(mi * SETS_PER_PART);
   }
 
   function startSet(si) {
+    stopAudio();
     setIndex = si;
-    const ids = SETS[setIndex].slice();
+    var ids = SETS[setIndex].slice();
     leftOrder = shuffle(ids);
     rightOrder = shuffle(ids);
     locked = {};
     matches = {};
     selectedLeft = null;
     setCorrect = 0;
-    stopAudio();
+    busy = false;
     phase = "play";
     render();
   }
 
-  function spawnMatchFX(leftEl, rightEl) {
-    [leftEl, rightEl].forEach((el) => {
-      if (!el) return;
-      el.classList.add("mc-match-pop");
-      for (let i = 0; i < 8; i++) {
-        const s = document.createElement("span");
-        s.className = "mc-spark";
-        const angle = (i / 8) * Math.PI * 2;
-        const dist = 28 + Math.random() * 18;
-        s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
-        s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
-        s.style.setProperty("--delay", (i * 0.02) + "s");
-        el.appendChild(s);
-        setTimeout(() => s.remove(), 700);
-      }
-      setTimeout(() => el.classList.remove("mc-match-pop"), 550);
-    });
-    const flash = document.createElement("div");
-    flash.className = "mc-match-flash";
-    app.appendChild(flash);
-    setTimeout(() => flash.remove(), 500);
-  }
-
-  function playItemAudio(itemId) {
-    const c = byId(itemId);
-    if (!c) return;
-    stopAudio();
-    const a = new Audio(c.audio);
-    currentAudio = a;
-    a.play().catch(() => {});
-    a.onended = () => { if (currentAudio === a) currentAudio = null; };
-  }
-
-  if (window.ArcadeFX) ArcadeFX.track = function () {
-    var t = 0, done = 0;
-    SETS.forEach(function (set, i) { t += set.length; if (i < setIndex) done += set.length; });
-    return Math.round(((done + correctCount()) / Math.max(1, t)) * 100);
-  };
   function correctCount() {
     return Object.keys(locked).length;
   }
 
   function allMatched() {
-    return correctCount() === SETS[setIndex].length;
+    return correctCount() === 5;
+  }
+
+  function spawnMatchFX(leftEl, rightEl) {
+    [leftEl, rightEl].forEach(function (el) {
+      if (!el) return;
+      el.classList.add("mc-match-pop");
+      for (var i = 0; i < 8; i++) {
+        var s = document.createElement("span");
+        s.className = "mc-spark";
+        var angle = (i / 8) * Math.PI * 2;
+        var dist = 28 + Math.random() * 18;
+        s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+        s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+        s.style.setProperty("--delay", i * 0.02 + "s");
+        el.appendChild(s);
+        setTimeout(function (node) {
+          return function () {
+            node.remove();
+          };
+        }(s), 700);
+      }
+      setTimeout(function (node) {
+        return function () {
+          node.classList.remove("mc-match-pop");
+        };
+      }(el), 550);
+    });
+    var flash = document.createElement("div");
+    flash.className = "mc-match-flash";
+    app.appendChild(flash);
+    setTimeout(function () {
+      flash.remove();
+    }, 500);
   }
 
   function selectLeft(i) {
-    if (locked[i]) return;
+    if (busy || locked[i]) return;
     selectedLeft = i;
-    app.querySelectorAll(".mc-left-item").forEach((el) => {
+    sfx("click");
+    app.querySelectorAll(".mc-left-item").forEach(function (el) {
       el.classList.toggle("is-selected", +el.dataset.i === i);
     });
-    const mode = MODES[modeIndex];
-    if (mode.left === "audio") playAudioFor(i);
+    var mode = MODES[modeIndex];
+    if (mode.left === "audio") {
+      playAudioFor(i);
+    }
   }
 
   function selectRight(rightId) {
+    if (busy) return;
     if (selectedLeft === null) {
-      const hint = document.getElementById("mc-hint");
+      var hint = document.getElementById("mc-hint");
       if (hint) {
-        hint.textContent = MODES[modeIndex].left === "audio"
-          ? "Play a sound first, then tap a match."
-          : "Tap an item on the left first.";
+        var mode = MODES[modeIndex];
+        hint.textContent =
+          mode.left === "audio"
+            ? "Play a sound first, then tap a match."
+            : mode.left === "pic"
+              ? "Tap a picture on the left first."
+              : "Tap a word on the left first.";
         hint.classList.add("mc-hint-warn");
-        setTimeout(() => hint.classList.remove("mc-hint-warn"), 1200);
+        setTimeout(function () {
+          hint.classList.remove("mc-hint-warn");
+        }, 1200);
       }
+      sfx("wrong");
       return;
     }
-    const used = Object.keys(locked).some((li) => matches[li] === rightId);
+    var used = Object.keys(locked).some(function (li) {
+      return matches[li] === rightId;
+    });
     if (used) return;
 
-    const leftId = leftOrder[selectedLeft];
-    const ok = leftId === rightId;
-    const leftEl = app.querySelector('.mc-left-item[data-i="' + selectedLeft + '"]');
-    const rightEl = app.querySelector('.mc-right-item[data-id="' + rightId + '"]');
+    var leftId = leftOrder[selectedLeft];
+    var ok = leftId === rightId;
+    var leftEl = app.querySelector('.mc-left-item[data-i="' + selectedLeft + '"]');
+    var rightEl = app.querySelector('.mc-right-item[data-id="' + rightId + '"]');
 
-    if (ok) { try{sfxCorrect();}catch(e){}
+    if (ok) {
       locked[selectedLeft] = true;
       matches[selectedLeft] = rightId;
       setCorrect += 1;
       modeCorrect += 1;
+      totalCorrect += 1;
       if (leftEl) leftEl.classList.add("is-correct");
       if (rightEl) rightEl.classList.add("is-correct", "is-used");
       spawnMatchFX(leftEl, rightEl);
-      if (MODES[modeIndex].id === "pic-word") {
-        playItemAudio(leftId);
-      }
+      sfx("pop");
+      sfx("correct");
       selectedLeft = null;
-      app.querySelectorAll(".mc-left-item").forEach((el) => el.classList.remove("is-selected"));
+      app.querySelectorAll(".mc-left-item").forEach(function (el) {
+        el.classList.remove("is-selected");
+      });
       updateProgress();
       if (allMatched()) {
-        setTimeout(() => {
-          if (setIndex < SETS.length - 1) {
-            if (window.ArcadeFX && setIndex === Math.floor(SETS.length / 2) - 1) ArcadeFX.cheer(0, 2, "Halfway there — " + (setIndex + 1) + " of " + SETS.length + " sets done");
+        busy = true;
+        setTimeout(function () {
+          if (setIndex % SETS_PER_PART < SETS_PER_PART - 1) {
+            // Next set of current part
             startSet(setIndex + 1);
+          } else if (modeIndex < MODES.length - 1) {
+            // Part finished → encouraging screen, then next part
+            sfx("win");
+            phase = "between";
+            render();
           } else {
+            // Last part finished → finish screen
+            sfx("win");
             phase = "done";
             render();
           }
-        }, 700);
+        }, 650);
       }
     } else {
+      busy = true;
       if (leftEl) leftEl.classList.add("is-wrong");
       if (rightEl) rightEl.classList.add("is-wrong");
-      setTimeout(() => {
+      sfx("wrong");
+      setTimeout(function () {
         if (leftEl) leftEl.classList.remove("is-wrong");
         if (rightEl) rightEl.classList.remove("is-wrong");
-      }, 450);
+      }, 500);
+      mistakes += 1;
+      setTimeout(function () {
+        busy = false;
+      }, 500);
     }
   }
 
   function updateProgress() {
-    const el = document.getElementById("mc-progress");
-    if (el) el.textContent = "Set " + (setIndex + 1) + "/" + SETS.length + " · " + correctCount() + "/" + SETS[setIndex].length;
+    var el = document.getElementById("mc-progress");
+    if (!el) return;
+    var full =
+      "Part " +
+      (modeIndex + 1) +
+      "/" +
+      MODES.length +
+      " · Set " +
+      (setIndex % SETS_PER_PART + 1) +
+      "/" +
+      SETS_PER_PART +
+      " · " +
+      correctCount() +
+      "/5";
+    var short =
+      (setIndex % SETS_PER_PART + 1) +
+      "/" +
+      SETS_PER_PART +
+      " · " +
+      correctCount() +
+      "/5";
+    var fullEl = el.querySelector(".mc-prog-full");
+    var shortEl = el.querySelector(".mc-prog-short");
+    if (fullEl && shortEl) {
+      fullEl.textContent = full;
+      shortEl.textContent = short;
+    } else {
+      el.textContent = full;
+    }
   }
 
   function calcStars() {
-    const totalPairs = SETS.reduce((sum, s) => sum + s.length, 0);
-    const n = modeCorrect;
-    if (n >= totalPairs - 1) return 3;
-    if (n >= Math.ceil(totalPairs * 0.66)) return 2;
-    if (n >= Math.ceil(totalPairs * 0.33)) return 1;
-    return 0;
+    // Stars from accuracy: correct pairs out of all attempts
+    var tries = totalCorrect + mistakes;
+    var pct = tries ? Math.round((totalCorrect / tries) * 100) : 0;
+    return pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
+  }
+
+  function saveStars() {
+    var stars = calcStars();
+    if (window.LAStars) {
+      try {
+        LAStars.recordPlay(GAME_ID);
+        LAStars.save(GAME_ID, stars);
+      } catch (_) {}
+    }
+    return stars;
   }
 
   function leftCell(id, i, kind) {
-    const c = byId(id);
-    const isLocked = !!locked[i];
-    const sel = selectedLeft === i ? " is-selected" : "";
-    const ok = isLocked ? " is-correct" : "";
+    var c = byId(id);
+    var isLocked = !!locked[i];
+    var sel = selectedLeft === i ? " is-selected" : "";
+    var ok = isLocked ? " is-correct" : "";
 
     if (kind === "audio") {
-      return `
-        <div class="mc-left-item mc-audio-cell${ok}${sel}" data-i="${i}">
-          <button type="button" class="mc-play" data-i="${i}" aria-label="Play ${c.label}" ${isLocked ? "disabled" : ""}>
-            <span class="wave"></span><span class="wave"></span><span class="wave"></span>
-            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
-            <div class="eq"><span></span><span></span><span></span><span></span></div>
-          </button>
-        </div>`;
+      return (
+        '<div class="mc-left-item mc-audio-cell' +
+        ok +
+        sel +
+        '" data-i="' +
+        i +
+        '">' +
+        '<button type="button" class="mc-play" data-i="' +
+        i +
+        '" aria-label="Play ' +
+        c.label +
+        '"' +
+        (isLocked ? " disabled" : "") +
+        ">" +
+        '<span class="wave"></span><span class="wave"></span><span class="wave"></span>' +
+        '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>' +
+        '<div class="eq"><span></span><span></span><span></span><span></span></div>' +
+        "</button></div>"
+      );
     }
-    // picture
-    return `
-      <div class="mc-left-item mc-pic-cell${ok}${sel}" data-i="${i}">
-        <img class="mc-thumb" src="${c.image}" alt="${c.label}" draggable="false">
-      </div>`;
+
+    if (kind === "pic") {
+      return (
+        '<div class="mc-left-item mc-pic-cell' +
+        ok +
+        sel +
+        '" data-i="' +
+        i +
+        '">' +
+        '<img class="mc-thumb" src="' +
+        c.image +
+        '" alt="" draggable="false" loading="lazy" />' +
+        "</div>"
+      );
+    }
+
+    // word
+    return (
+      '<div class="mc-left-item mc-word-left' +
+      ok +
+      sel +
+      '" data-i="' +
+      i +
+      '">' +
+      '<span class="mc-word-label">' +
+      c.label +
+      "</span></div>"
+    );
   }
 
   function rightCell(id, kind) {
-    const c = byId(id);
-    const used = Object.keys(locked).some((li) => matches[li] === id);
-    if (kind === "word") {
-      return `
-        <button type="button" class="mc-right-item mc-word${used ? " is-correct is-used" : ""}" data-id="${id}" ${used ? "disabled" : ""}>
-          <span class="mc-word-label">${c.label}</span>
-        </button>`;
+    var c = byId(id);
+    var used = Object.keys(locked).some(function (li) {
+      return matches[li] === id;
+    });
+    var usedClass = used ? " is-correct is-used" : "";
+    var disabled = used ? " disabled" : "";
+
+    if (kind === "pic") {
+      return (
+        '<button type="button" class="mc-right-item mc-pic-btn' +
+        usedClass +
+        '" data-id="' +
+        id +
+        '"' +
+        disabled +
+        ">" +
+        '<img class="mc-thumb" src="' +
+        c.image +
+        '" alt="" draggable="false" loading="lazy" />' +
+        "</button>"
+      );
     }
-    // picture on the right
-    return `
-      <button type="button" class="mc-right-item mc-pic-btn${used ? " is-correct is-used" : ""}" data-id="${id}" ${used ? "disabled" : ""}>
-        <img class="mc-thumb" src="${c.image}" alt="${c.label}" draggable="false">
-      </button>`;
+
+    return (
+      '<button type="button" class="mc-right-item mc-word' +
+      usedClass +
+      '" data-id="' +
+      id +
+      '"' +
+      disabled +
+      ">" +
+      '<span class="mc-word-label">' +
+      c.label +
+      "</span></button>"
+    );
   }
 
   function render() {
     if (phase === "menu") {
-      app.innerHTML = `
-        <header class="mc-topbar">
-          <a class="mc-back" href="../" aria-label="Back">←</a>
-          <span class="mc-title">Match Classroom Objects</span>
-          <span class="mc-badge">PE1</span>
-        </header>
-        <section class="mc-start">
-          <div class="mc-hero" aria-hidden="true">📚</div>
-          <h1>Match Classroom Objects</h1>
-          <p class="mc-desc">Choose a mode · 10 items (2 sets)</p>
-          <div class="mc-mode-list">
-            ${MODES.map((m, i) => `
-              <button type="button" class="mc-mode-card mc-mode-btn" data-mode="${i}">
-                <span class="mc-mode-num">${i + 1}</span>
-                <div>
-                  <strong>${m.title}</strong>
-                  <p>${m.tip}</p>
-                </div>
-              </button>`).join("")}
-          </div>
-        </section>`;
-      app.querySelectorAll(".mc-mode-btn").forEach((btn) => {
-        btn.onclick = () => startMode(+btn.dataset.mode);
-      });
+      app.innerHTML =
+        '<header class="mc-topbar">' +
+        '<a class="mc-back" href="../" aria-label="Back">←</a>' +
+        '<span class="mc-title">Match Classroom Objects</span>' +
+        '<span class="mc-badge">Practical English 1</span>' +
+        "</header>" +
+        '<section class="mc-start">' +
+        '<div class="mc-hero" aria-hidden="true">🎒</div>' +
+        "<h1>Match Classroom Objects</h1>" +
+        '<p class="mc-desc">3 parts · 2 sets of 5 each</p>' +
+        '<ol class="mc-part-list">' +
+        "<li><strong>Part 1</strong> — Pictures → Words</li>" +
+        "<li><strong>Part 2</strong> — Audio → Words</li>" +
+        "<li><strong>Part 3</strong> — Audio → Pictures</li>" +
+        "</ol>" +
+        '<button type="button" class="mc-btn mc-start-btn" id="mc-start">Start Part 1</button>' +
+        "</section>";
+      document.getElementById("mc-start").onclick = function () {
+        sfx("click");
+        totalCorrect = 0;
+        buildSets();
+        startPart(0);
+      };
+      return;
+    }
+
+    if (phase === "between") {
+      var finished = MODES[modeIndex];
+      var next = MODES[modeIndex + 1];
+      app.innerHTML =
+        '<header class="mc-topbar">' +
+        '<a class="mc-back" href="../" aria-label="Back">←</a>' +
+        '<span class="mc-title">Match Classroom Objects</span>' +
+        '<span class="mc-badge">Practical English 1</span>' +
+        "</header>" +
+        '<section class="mc-start mc-between">' +
+        '<div class="mc-hero" aria-hidden="true">✨</div>' +
+        "<h1>Part " +
+        (modeIndex + 1) +
+        " complete!</h1>" +
+        '<p class="mc-desc">' +
+        finished.encourage +
+        "</p>" +
+        '<p class="mc-next-label">Up next:</p>' +
+        '<p class="mc-next-title"><strong>Part ' +
+        (modeIndex + 2) +
+        "</strong> — " +
+        next.title +
+        "</p>" +
+        '<button type="button" class="mc-btn mc-start-btn" id="mc-continue">Continue</button>' +
+        "</section>";
+      document.getElementById("mc-continue").onclick = function () {
+        sfx("click");
+        startPart(modeIndex + 1);
+      };
       return;
     }
 
     if (phase === "done") {
-      const stars = calcStars();
+      var stars = saveStars();
       if (window.LAFinish) {
-        const timeMs = LAFinish.stopTimer();
-        const totalItems = SETS.reduce((sum, s) => sum + s.length, 0);
+        var timeMs = LAFinish.stopTimer();
         LAFinish.show({
           gameId: GAME_ID,
-          score: typeof modeCorrect !== 'undefined' ? modeCorrect : totalItems,
-          total: totalItems,
+          score: totalCorrect,
+          total: TOTAL_PAIRS,
           stars: stars,
-          save: true,
           timeMs: timeMs,
-          onAgain: () => { phase = 'menu'; render(); },
-          onModes: () => { phase = 'menu'; render(); },
+          onAgain: function () {
+            totalCorrect = 0;
+            buildSets();
+            startPart(0);
+          },
+          onModes: function () {
+            phase = "menu";
+            render();
+          },
           backHref: "../",
+          save: false
         });
         return;
       }
-      app.innerHTML = `<p>Done</p><button type="button" id="pe-again">Again</button>`;
-      document.getElementById("pe-again").onclick = () => { phase = 'menu'; render(); };
+      app.innerHTML =
+        '<section class="mc-done"><h1>Done!</h1>' +
+        "<p>You matched " +
+        totalCorrect +
+        "/" +
+        TOTAL_PAIRS +
+        ".</p>" +
+        '<button type="button" class="mc-btn" id="cm-again">Again</button></section>';
+      document.getElementById("cm-again").onclick = function () {
+        totalCorrect = 0;
+        buildSets();
+        startPart(0);
+      };
       return;
     }
 
     // play
-    const mode = MODES[modeIndex];
-    const left = leftOrder.map((id, i) => leftCell(id, i, mode.left)).join("");
-    const right = rightOrder.map((id) => rightCell(id, mode.right)).join("");
+    var mode = MODES[modeIndex];
+    var left = leftOrder
+      .map(function (id, i) {
+        return leftCell(id, i, mode.left);
+      })
+      .join("");
+    var right = rightOrder
+      .map(function (id) {
+        return rightCell(id, mode.right);
+      })
+      .join("");
 
-    app.innerHTML = `
-      <header class="mc-topbar">
-        <a class="mc-back" href="../" aria-label="Back">←</a>
-        <span class="mc-title">${mode.title} · Set ${setIndex + 1}/${SETS.length}</span>
-        <span class="mc-progress" id="mc-progress">Set ${setIndex + 1}/${SETS.length} · ${correctCount()}/${SETS[setIndex].length}</span>
-      </header>
-      <p class="mc-instruction" id="mc-hint">${mode.tip}</p>
-      <div class="mc-board">
-        <div class="mc-col mc-col-left">${left}</div>
-        <div class="mc-col mc-col-right">${right}</div>
-      </div>
-      <div class="mc-actions">
-        <button type="button" class="mc-btn secondary" id="mc-reset">Reset round</button>
-      </div>`;
+    var shortTitles = ["Words → Pics", "Audio → Words", "Audio → Pics"];
+    var shortTitle = shortTitles[modeIndex] || mode.title;
+    app.innerHTML =
+      '<header class="mc-topbar">' +
+      '<a class="mc-back" href="../" aria-label="Back">←</a>' +
+      '<span class="mc-title" title="' +
+      mode.title +
+      '"><span class="mc-title-full">Part ' +
+      (modeIndex + 1) +
+      " · " +
+      mode.title +
+      '</span><span class="mc-title-short">P' +
+      (modeIndex + 1) +
+      " · " +
+      shortTitle +
+      "</span></span>" +
+      '<span class="mc-progress" id="mc-progress">' +
+      '<span class="mc-prog-full">Part ' +
+      (modeIndex + 1) +
+      "/" +
+      MODES.length +
+      " · Set " +
+      (setIndex % SETS_PER_PART + 1) +
+      "/" +
+      SETS_PER_PART +
+      " · " +
+      correctCount() +
+      '/5</span><span class="mc-prog-short">' +
+      (setIndex % SETS_PER_PART + 1) +
+      "/" +
+      SETS_PER_PART +
+      " · " +
+      correctCount() +
+      "/5</span></span>" +
+      "</header>" +
+      '<p class="mc-instruction" id="mc-hint">' +
+      mode.tip +
+      "</p>" +
+      '<div class="mc-board is-entering">' +
+      '<div class="mc-col mc-col-left">' +
+      left +
+      "</div>" +
+      '<div class="mc-col mc-col-right">' +
+      right +
+      "</div>" +
+      "</div>" +
+      '<div class="mc-actions">' +
+      '<button type="button" class="mc-btn secondary" id="mc-reset">Reset round</button>' +
+      "</div>";
 
-    app.querySelectorAll(".mc-left-item").forEach((el) => {
-      el.onclick = () => selectLeft(+el.dataset.i);
+    // clear enter animation class after it runs
+    setTimeout(function () {
+      var board = app.querySelector(".mc-board");
+      if (board) board.classList.remove("is-entering");
+    }, 500);
+
+    app.querySelectorAll(".mc-left-item").forEach(function (el) {
+      el.onclick = function () {
+        selectLeft(+el.dataset.i);
+      };
     });
-    app.querySelectorAll(".mc-play").forEach((btn) => {
-      btn.onclick = (e) => {
+    app.querySelectorAll(".mc-play").forEach(function (btn) {
+      btn.onclick = function (e) {
         e.stopPropagation();
-        const i = +btn.dataset.i;
+        var i = +btn.dataset.i;
         if (locked[i]) return;
         selectLeft(i);
       };
     });
-    app.querySelectorAll(".mc-right-item").forEach((btn) => {
-      btn.onclick = () => selectRight(btn.dataset.id);
+    app.querySelectorAll(".mc-right-item").forEach(function (btn) {
+      btn.onclick = function () {
+        selectRight(btn.dataset.id);
+      };
     });
-    document.getElementById("mc-reset").onclick = () => startSet(setIndex);
+    document.getElementById("mc-reset").onclick = function () {
+      sfx("click");
+      startSet(setIndex);
+    };
   }
+
+  // Preload images
+  ITEMS.forEach(function (c) {
+    var img = new Image();
+    img.src = c.image;
+  });
 
   render();
 })();
