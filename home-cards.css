@@ -1,0 +1,122 @@
+/* Homepage section cards: one row of tall cards on desktop,
+   square cards with icon + very short text on phones. Text is unchanged. */
+
+.hub-main .hub-cards.hub-cards--2col {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  width: min(1180px, 100%);
+  max-width: 1180px;
+  margin: 26px auto 0;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.hub-main .hub-cards--2col .hub-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  padding: 16px 14px 14px;
+  border-radius: 24px;
+  gap: 0;
+  box-sizing: border-box;
+}
+
+.hub-main .hub-cards--2col .hub-card-icon {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 16px !important;
+  margin-bottom: 10px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+}
+.hub-main .hub-cards--2col .hub-card-icon svg { width: 30px; height: 30px; }
+
+.hub-main .hub-cards--2col .hub-card h2 {
+  margin: 0;
+  font-size: clamp(.78rem, 1vw, .9rem);
+  line-height: 1.25;
+  letter-spacing: .08em;
+  white-space: normal;
+}
+
+.hub-main .hub-cards--2col .hub-card-rule {
+  display: block;
+  width: 28px;
+  height: 3px;
+  border-radius: 3px;
+  margin: 6px auto 8px;
+}
+
+.hub-main .hub-cards--2col .hub-card p {
+  margin: 0 0 8px;
+  font-size: .76rem;
+  line-height: 1.38;
+  max-width: 100%;
+  flex: 1 1 auto;
+}
+
+.hub-main .hub-cards--2col .hub-card-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-size: .72rem;
+}
+
+/* short text is only for phones */
+.hub-main .hub-cards--2col .hub-card-short { display: none; }
+
+/* ---------- phones: 2 × 2 square cards ---------- */
+@media (max-width: 719px) {
+  .hub-main .hub-cards.hub-cards--2col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 0 12px;
+    margin-top: 18px;
+  }
+  .hub-main .hub-cards--2col .hub-card {
+    aspect-ratio: 1 / 1;
+    min-height: 0;
+    padding: 12px 10px;
+    justify-content: center;
+    gap: 6px;
+    border-radius: 20px;
+  }
+  .hub-main .hub-cards--2col .hub-card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    margin-bottom: 0;
+  }
+  .hub-main .hub-cards--2col .hub-card-icon svg { width: 30px; height: 30px; }
+  .hub-main .hub-cards--2col .hub-card h2 {
+    font-size: .72rem;
+    letter-spacing: .06em;
+  }
+  .hub-main .hub-cards--2col .hub-card-rule { margin: 4px auto 0; width: 26px; }
+  .hub-main .hub-cards--2col .hub-card p,
+  .hub-main .hub-cards--2col .hub-card-btn { display: none; }
+  .hub-main .hub-cards--2col .hub-card-short {
+    display: block;
+    font-size: .78rem;
+    font-weight: 600;
+    opacity: .8;
+    margin-top: 2px;
+  }
+}
+
+@media (max-width: 380px) {
+  .hub-main .hub-cards--2col .hub-card h2 { font-size: .66rem; }
+  .hub-main .hub-cards--2col .hub-card-short { font-size: .72rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-main .hub-cards--2col .hub-card { transition: none; }
+}

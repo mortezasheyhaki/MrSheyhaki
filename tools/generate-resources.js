@@ -32,7 +32,6 @@ const HEADER = (upToRoot) => `<header class="site-header">
       <a href="${upToRoot}resources/">Resources</a>
       <a href="${upToRoot}worksheets/">Worksheets</a>
       <a href="${upToRoot}about/">About</a>
-      <a href="${upToRoot}contact/">Contact</a>
     </nav>
     <button class="theme-toggle" data-theme-toggle type="button" aria-label="Toggle website theme"></button>
     <button id="menuToggle" class="menu-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mainNav">

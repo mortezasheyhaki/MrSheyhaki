@@ -33,10 +33,10 @@
     if (
       path === "" ||
       path === "/" ||
-      /\/index\.html$/.test(path) && !/\/(learningarcade|resources|about|contact|worksheets)\//.test(path)
+      /\/index\.html$/.test(path) && !/\/(learningarcade|resources|about|worksheets)\//.test(path)
     ) {
       // avoid matching nested index as home when path contains those folders
-      if (!/\/(learningarcade|resources|about|contact|worksheets)(\/|$)/.test(path)) {
+      if (!/\/(learningarcade|resources|about|worksheets)(\/|$)/.test(path)) {
         return "home";
       }
     }

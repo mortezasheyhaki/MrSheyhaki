@@ -1,133 +1,11 @@
-/* ===== Arcade FX: progress bar, combo, milestone celebration ===== */
-(function () {
-  if (window.ArcadeFX) return;
-  var streak = 0, best = 0, count = 0, lastPct = 0, ctx = null;
-  var CHEERS = [["🌟","Awesome!","10 correct answers!"],["🚀","Superstar!","20 correct — unstoppable!"],["👑","Legend!","30 correct — the best of the best!"]];
-  function tone(f, d, type, v, when) {
-    try {
-      if (!ctx) { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; ctx = new AC(); }
-      if (ctx.state === "suspended") ctx.resume();
-      var t = ctx.currentTime + (when || 0), o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = type || "sine"; o.frequency.value = f;
-      g.gain.setValueAtTime(v || 0.09, t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
-      o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + d + 0.03);
-    } catch (e) {}
-  }
-  function label(n) { return n >= 10 ? "UNSTOPPABLE" : n >= 7 ? "ON FIRE" : n >= 5 ? "HOT STREAK" : n >= 3 ? "NICE" : ""; }
-  function chip() {
-    var el = document.getElementById("afx-combo");
-    if (!el) { el = document.createElement("div"); el.id = "afx-combo"; el.className = "afx-combo"; document.body.appendChild(el); }
-    return el;
-  }
-  function place(el) {
-    el = el || document.getElementById("afx-combo");
-    var app = (document.getElementById("game-app") || document.getElementById("app"));
-    if (!el || !app) return;
-    var a = app.querySelector(".afx-bar") || app.querySelector("header") || app.firstElementChild;
-    if (!a) return;
-    if (a.offsetParent === null) a = app;
-    var r = a.getBoundingClientRect();
-    el.style.right = Math.max(8, document.documentElement.clientWidth - r.right) + "px";
-    el.style.top = Math.max(8, a === app ? r.top + 64 : r.bottom + 8) + "px";
-  }
-  function showCombo() {
-    var el = chip(); place(el);
-    el.className = "afx-combo is-on" + (streak >= 5 ? " is-hot" : "");
-    el.innerHTML = '<span class="afx-fire">🔥</span> x' + streak + " <em>" + label(streak) + "</em>";
-    void el.offsetWidth; el.classList.add("is-bump");
-  }
-  function celebrate(n) { burst(CHEERS[Math.min(Math.floor(n / 10) - 1, 2)]); }
-  function burst(c) {
-    [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.22, "triangle", 0.1, i * 0.09); });
-    tone(1568, 0.6, "sine", 0.08, 0.5);
-    var ov = document.createElement("div"); ov.className = "afx-burst";
-    var cols = ["#f59e0b", "#ec4899", "#8b5cf6", "#22c55e", "#3b82f6", "#ef4444"], h = "";
-    for (var i = 0; i < 44; i++) h += '<i style="left:' + Math.random() * 100 + "%;background:" + cols[i % 6] + ";animation-delay:" + (Math.random() * 0.35).toFixed(2) + "s;animation-duration:" + (1.3 + Math.random() * 0.9).toFixed(2) + 's"></i>';
-    ov.innerHTML = h + '<div class="afx-card"><div class="afx-emoji">' + c[0] + '</div><div class="afx-title">' + c[1] + '</div><div class="afx-sub">' + c[2] + "</div></div>";
-    document.body.appendChild(ov);
-    setTimeout(function () { ov.classList.add("is-out"); }, 1900);
-    setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 2300);
-  }
-  function hookRestart() {
-    var L = window.LAFinish;
-    if (L && L.startTimer && !L.__afx) { var st = L.startTimer; L.__afx = 1; L.startTimer = function () { api.reset(); return st.apply(this, arguments); }; }
-  }
-  var api = window.ArcadeFX = {
-    track: null,
-    bar: function (pct) {
-      var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
-      var bar = app.querySelector(".afx-bar");
-      if (!bar) {
-        var anchor = app.querySelector('[id*="rogress"]') || app.querySelector("header"); if (!anchor) return;
-        var host = anchor.closest("header") || anchor.parentElement;
-        bar = document.createElement("div"); bar.className = "afx-bar"; bar.innerHTML = '<i style="width:' + lastPct + '%"></i>';
-        host.parentNode.insertBefore(bar, host.nextSibling);
-      }
-      var fill = bar.firstChild; lastPct = pct;
-      requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = pct + "%"; }); });
-    },
-    ok: function () {
-      var nw = Date.now(); if (nw - (api._o || 0) < 90) return; api._o = nw;
-      hookRestart(); streak++; count++; if (streak > best) best = streak;
-      if (streak >= 2) { var b = 660 * Math.pow(1.0595, Math.min(streak, 12)); tone(b, 0.09, "triangle", 0.08, 0); tone(b * 1.5, 0.14, "triangle", 0.07, 0.07); showCombo(); }
-      if (count % 10 === 0 && !api.noMilestone) setTimeout(function () { celebrate(count); }, 250);
-    },
-    bad: function () {
-      var nw = Date.now(); if (nw - (api._b || 0) < 90) return; api._b = nw;
-      hookRestart();
-      if (streak >= 3) { tone(300, 0.12, "sawtooth", 0.05, 0); tone(200, 0.2, "sawtooth", 0.05, 0.09); }
-      if (streak >= 2) { var el = chip(); el.className = "afx-combo is-lost"; el.textContent = "Combo lost"; setTimeout(function () { el.className = "afx-combo"; }, 1200); }
-      streak = 0;
-    },
-    cheer: function (i, n, sub) {
-      var T = [["🎉", "Great job!"], ["🌟", "Brilliant!"], ["🏆", "Champion!"]];
-      var c = T[i >= n - 1 && n > 1 ? 2 : Math.min(i, 1)];
-      burst([c[0], c[1], sub || ("Part " + (i + 1) + " of " + n + " complete")]);
-    },
-    reset: function () { streak = 0; best = 0; count = 0; lastPct = 0; var el = document.getElementById("afx-combo"); if (el) el.className = "afx-combo"; }
-  };
-  function sync() {
-    var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
-    place();
-    var bar = app.querySelector(".afx-bar");
-    if (bar && bar.offsetParent === null) { bar.parentNode.removeChild(bar); bar = null; }
-    var badge = null, hasBar = false, els = app.querySelectorAll('[class*="-badge"],[class*="-progress"],[id*="rogress"]');
-    for (var i = 0; i < els.length; i++) {
-      var t = els[i].textContent.trim(); if (els[i].offsetParent === null) continue;
-      if (/^(?:[A-Za-z]{1,9}\s*)?\d+\s*(?:\/|of)\s*\d+$/.test(t)) { if (!badge) badge = els[i]; }
-      else if (!t && /progress/.test(els[i].className) && !els[i].classList.contains("afx-bar")) hasBar = true;
-    }
-    if (app.querySelector('[class$="-bar"]:not(.afx-bar),[class$="-track"],[class*="-bar-fill"],[class*="-track-fill"],[class*="-progress-fill"]')) return;
-    if (!badge && api.track) { try { api.bar(api.track()); } catch (e) {} return; }
-    if (!badge || hasBar) return;
-    var m = badge.textContent.trim().match(/^(?:[A-Za-z]{1,9}\s*)?(\d+)\s*(?:\/|of)\s*(\d+)$/), pct = Math.min(100, Math.round(m[1] / m[2] * 100));
-    if (!bar) {
-      var host = badge.closest("header") || badge.parentElement;
-      bar = document.createElement("div"); bar.className = "afx-bar"; bar.innerHTML = '<i style="width:' + lastPct + '%"></i>';
-      host.parentNode.insertBefore(bar, host.nextSibling);
-    }
-    var fill = bar.firstChild; lastPct = pct;
-    requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = pct + "%"; }); });
-  }
-  var q = 0;
-  function start() {
-    var app = (document.getElementById("game-app") || document.getElementById("app")); if (!app) return;
-    new MutationObserver(function () { if (q) return; q = requestAnimationFrame(function () { q = 0; sync(); }); }).observe(app, { childList: true, subtree: true, characterData: true });
-    window.addEventListener("resize", function () { place(); });
-    window.addEventListener("scroll", function () { place(); }, { passive: true });
-    sync();
-  }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
-})();
-window.ArcadeFX && (ArcadeFX.noMilestone = true);
-
-/* Jobs Match – 3 sequential parts × 2 sets of 6 – AEF Starter Unit 6A */
+/* Jobs Match – 3 parts × 2 sets of 5 – AEF Starter Unit 6A
+   Each part: pick 10 of 12 jobs → 2 sets of 5
+*/
 (function () {
   "use strict";
 
   var GAME_ID = "starter-6a-jobs-match";
   var CDN = "https://cdn.imgurl.ir/uploads/";
-
   var ITEMS = [
     { id: "teacher", label: "a teacher",
       image: CDN + "y431285_1_teacher.png", audio: CDN + "e500251_1_a_teacher.mp3" },
@@ -155,13 +33,9 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       image: CDN + "q003095_12_a_taxi_driver.png", audio: CDN + "c56441_12_a_taxi_driver.mp3" }
   ];
 
-  // 2 fixed sets of 6 (covers all 12 jobs)
-  var SETS = [
-    ["teacher", "doctor", "nurse", "journalist", "waiter", "waitress"],
-    ["salesperson", "receptionist", "policeman", "policewoman", "factory-worker", "taxi-driver"]
-  ];
+  // Built fresh each game from shuffled pool (2 sets of 5)
+  var SETS = [];
 
-  // Sequential parts (not free-choice modes)
   var MODES = [
     {
       id: "word-pic",
@@ -189,7 +63,20 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     }
   ];
 
-  var TOTAL_PAIRS = MODES.length * SETS.reduce(function (n, set) { return n + set.length; }, 0);
+  var TOTAL_PAIRS = 30; // 3 parts × 2 sets × 5
+  var SETS_PER_PART = 2;
+
+  function buildSets() {
+    // Each part: pick 10 of the 12 jobs at random, split into 2 sets of 5.
+    var ids = ITEMS.map(function (it) { return it.id; });
+    var sets = [];
+    for (var p = 0; p < MODES.length; p++) {
+      var order = shuffle(ids.slice()).slice(0, 10);
+      sets.push(order.slice(0, 5));
+      sets.push(order.slice(5, 10));
+    }
+    SETS = sets;
+  }
 
   var app = document.getElementById("game-app");
   if (!app) return;
@@ -207,8 +94,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
   var setCorrect = 0;
   var modeCorrect = 0;
   var totalCorrect = 0;
-  var totalWrong = 0;
-  var lives = 3;
+  var mistakes = 0;
   var busy = false;
 
   function byId(id) {
@@ -226,22 +112,6 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       a[j] = t;
     }
     return a;
-  }
-
-  /* ── Screen transitions: fade+slide the current screen out, then
-     hand control back so the caller can change state and re-render.
-     The freshly rendered screen fades itself in via the .mc-screen
-     entrance animation in CSS, so no "enter" bookkeeping is needed. ── */
-  var SCREEN_LEAVE_MS = 190;
-
-  function playExit(cb) {
-    var scr = app.querySelector(".mc-screen");
-    if (!scr) {
-      cb();
-      return;
-    }
-    scr.classList.add("mc-screen-leave");
-    setTimeout(cb, SCREEN_LEAVE_MS);
   }
 
   var sfxCtx = null;
@@ -263,7 +133,6 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
   }
 
   function sfx(name) {
-    if (window.ArcadeFX) { if (name === "good" || name === "correct") ArcadeFX.ok(); else if (name === "bad" || name === "wrong") ArcadeFX.bad(); }
     if (!window.LASfx) return;
     try {
       if (name === "correct" && LASfx.correct) LASfx.correct();
@@ -271,54 +140,6 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       else if (name === "win" && LASfx.win) LASfx.win();
       else if (name === "pop" && LASfx.pop) LASfx.pop();
       else if (name === "click" && LASfx.click) LASfx.click();
-    } catch (_) {}
-  }
-
-  /** Heart-break SFX — short crack + descending tone */
-  function sfxHeartBreak() {
-    var ctx = getSfxCtx();
-    if (!ctx) return;
-    try {
-      var t0 = ctx.currentTime;
-      // Soft crack (noise burst)
-      var bufferSize = Math.floor(ctx.sampleRate * 0.08);
-      var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      var data = buffer.getChannelData(0);
-      for (var i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2.5);
-      }
-      var noise = ctx.createBufferSource();
-      noise.buffer = buffer;
-      var noiseGain = ctx.createGain();
-      var noiseFilter = ctx.createBiquadFilter();
-      noiseFilter.type = "bandpass";
-      noiseFilter.frequency.value = 1200;
-      noiseFilter.Q.value = 0.8;
-      noiseGain.gain.setValueAtTime(0.18, t0);
-      noiseGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.09);
-      noise.connect(noiseFilter);
-      noiseFilter.connect(noiseGain);
-      noiseGain.connect(ctx.destination);
-      noise.start(t0);
-      noise.stop(t0 + 0.1);
-
-      // Descending glass-like tones
-      function drop(freq, delay, dur, vol) {
-        var o = ctx.createOscillator();
-        var g = ctx.createGain();
-        o.type = "sine";
-        o.frequency.setValueAtTime(freq, t0 + delay);
-        o.frequency.exponentialRampToValueAtTime(freq * 0.45, t0 + delay + dur);
-        g.gain.setValueAtTime(0.0001, t0 + delay);
-        g.gain.exponentialRampToValueAtTime(vol, t0 + delay + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.0001, t0 + delay + dur);
-        o.connect(g);
-        g.connect(ctx.destination);
-        o.start(t0 + delay);
-        o.stop(t0 + delay + dur + 0.02);
-      }
-      drop(520, 0.02, 0.22, 0.12);
-      drop(340, 0.06, 0.28, 0.09);
     } catch (_) {}
   }
 
@@ -365,10 +186,10 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     if (window.LAFinish && mi === 0) LAFinish.startTimer();
     modeIndex = mi;
     modeCorrect = 0;
-    // Lives reset only when starting the full game (part 1)
-    if (mi === 0) lives = 3;
+    // Mistakes reset only when starting the full game (part 1)
+    if (mi === 0) mistakes = 0;
     phase = "play";
-    startSet(0);
+    startSet(mi * SETS_PER_PART);
   }
 
   function startSet(si) {
@@ -391,62 +212,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
   }
 
   function allMatched() {
-    return correctCount() === SETS[setIndex].length;
-  }
-
-  function heartsHtml() {
-    var h = '<div class="mc-hearts" id="mc-hearts" aria-label="Lives">';
-    for (var i = 0; i < 3; i++) {
-      if (i < lives) {
-        h += '<span class="mc-heart is-full" data-i="' + i + '">♥</span>';
-      } else {
-        h += '<span class="mc-heart is-broken" data-i="' + i + '">♡</span>';
-      }
-    }
-    return h + "</div>";
-  }
-
-  function renderHearts() {
-    var root = document.getElementById("mc-hearts");
-    if (!root) return;
-    var nodes = root.querySelectorAll(".mc-heart");
-    for (var i = 0; i < nodes.length; i++) {
-      var el = nodes[i];
-      el.classList.remove("is-full", "is-broken", "is-breaking");
-      if (i < lives) {
-        el.classList.add("is-full");
-        el.textContent = "♥";
-      } else {
-        el.classList.add("is-broken");
-        el.textContent = "♡";
-      }
-    }
-  }
-
-  function breakHeart(done) {
-    if (lives <= 0) {
-      if (done) done();
-      return;
-    }
-    var loseIndex = lives - 1;
-    lives -= 1;
-    sfxHeartBreak();
-    var root = document.getElementById("mc-hearts");
-    var el = root ? root.querySelector('.mc-heart[data-i="' + loseIndex + '"]') : null;
-    if (el) {
-      el.classList.remove("is-full");
-      el.classList.add("is-breaking");
-      el.textContent = "♥";
-      setTimeout(function () {
-        el.classList.remove("is-breaking");
-        el.classList.add("is-broken");
-        el.textContent = "♡";
-        if (done) done();
-      }, 480);
-    } else {
-      renderHearts();
-      if (done) done();
-    }
+    return correctCount() === 5;
   }
 
   function spawnMatchFX(leftEl, rightEl) {
@@ -544,18 +310,17 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       if (allMatched()) {
         busy = true;
         setTimeout(function () {
-          if (setIndex < SETS.length - 1) {
+          if (setIndex % SETS_PER_PART < SETS_PER_PART - 1) {
             // Next set of current part
             startSet(setIndex + 1);
           } else if (modeIndex < MODES.length - 1) {
-            // Part finished → pop-up, then straight into the next part
+            // Part finished → encouraging screen, then next part
             sfx("win");
-            if (window.ArcadeFX) ArcadeFX.cheer(modeIndex, MODES.length);
-            setTimeout(function () { startPart(modeIndex + 1); }, 1700);
+            phase = "between";
+            render();
           } else {
             // Last part finished → finish screen
             sfx("win");
-            if (window.ArcadeFX) ArcadeFX.cheer(modeIndex, MODES.length);
             phase = "done";
             render();
           }
@@ -563,7 +328,6 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       }
     } else {
       busy = true;
-      totalWrong += 1;
       if (leftEl) leftEl.classList.add("is-wrong");
       if (rightEl) rightEl.classList.add("is-wrong");
       sfx("wrong");
@@ -571,9 +335,10 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         if (leftEl) leftEl.classList.remove("is-wrong");
         if (rightEl) rightEl.classList.remove("is-wrong");
       }, 500);
-      breakHeart(function () {
-        busy = false; // mistakes no longer end the game; stars come from accuracy
-      });
+      mistakes += 1;
+      setTimeout(function () {
+        busy = false;
+      }, 500);
     }
   }
 
@@ -586,19 +351,19 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       "/" +
       MODES.length +
       " · Set " +
-      (setIndex + 1) +
+      (setIndex % SETS_PER_PART + 1) +
       "/" +
-      SETS.length +
+      SETS_PER_PART +
       " · " +
       correctCount() +
-      "/6";
+      "/5";
     var short =
-      (setIndex + 1) +
+      (setIndex % SETS_PER_PART + 1) +
       "/" +
-      SETS.length +
+      SETS_PER_PART +
       " · " +
       correctCount() +
-      "/6";
+      "/5";
     var fullEl = el.querySelector(".mc-prog-full");
     var shortEl = el.querySelector(".mc-prog-short");
     if (fullEl && shortEl) {
@@ -607,28 +372,17 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     } else {
       el.textContent = full;
     }
-    var fill = document.getElementById("mc-set-progress-fill");
-    if (fill) fill.style.width = Math.round((correctCount() / 6) * 100) + "%";
-  }
-
-  function calcAccuracy() {
-    var attempts = totalCorrect + totalWrong;
-    if (attempts <= 0) return 0;
-    return Math.round((totalCorrect / attempts) * 100);
   }
 
   function calcStars() {
-    // Accuracy-based (same thresholds as LAStars.saveFromAccuracy)
-    var acc = calcAccuracy();
-    if (acc >= 90) return 3;
-    if (acc >= 70) return 2;
-    if (acc >= 40) return 1;
-    return 0;
+    // Stars from accuracy: correct pairs out of all attempts
+    var tries = totalCorrect + mistakes;
+    var pct = tries ? Math.round((totalCorrect / tries) * 100) : 0;
+    return pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
   }
 
   function saveStars() {
     var stars = calcStars();
-    var acc = calcAccuracy();
     if (window.LAStars) {
       try {
         LAStars.recordPlay(GAME_ID);
@@ -736,7 +490,6 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
   function render() {
     if (phase === "menu") {
       app.innerHTML =
-        '<div class="mc-screen">' +
         '<header class="mc-topbar">' +
         '<a class="mc-back" href="../" aria-label="Back">←</a>' +
         '<span class="mc-title">Jobs Match</span>' +
@@ -745,22 +498,19 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         '<section class="mc-start">' +
         '<div class="mc-hero" aria-hidden="true">💼</div>' +
         "<h1>Jobs Match</h1>" +
-        '<p class="mc-desc">3 parts · 2 sets of 6 · 3 hearts</p>' +
+        '<p class="mc-desc">3 parts · 2 sets of 5 each</p>' +
         '<ol class="mc-part-list">' +
         "<li><strong>Part 1</strong> — Words → Pictures</li>" +
         "<li><strong>Part 2</strong> — Audio → Words</li>" +
         "<li><strong>Part 3</strong> — Audio → Pictures</li>" +
         "</ol>" +
         '<button type="button" class="mc-btn mc-start-btn" id="mc-start">Start Part 1</button>' +
-        "</section>" +
-        "</div>";
+        "</section>";
       document.getElementById("mc-start").onclick = function () {
         sfx("click");
-        playExit(function () {
-          totalCorrect = 0;
-          totalWrong = 0;
-          startPart(0);
-        });
+        totalCorrect = 0;
+        buildSets();
+        startPart(0);
       };
       return;
     }
@@ -769,7 +519,6 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       var finished = MODES[modeIndex];
       var next = MODES[modeIndex + 1];
       app.innerHTML =
-        '<div class="mc-screen">' +
         '<header class="mc-topbar">' +
         '<a class="mc-back" href="../" aria-label="Back">←</a>' +
         '<span class="mc-title">Jobs Match</span>' +
@@ -790,13 +539,10 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         next.title +
         "</p>" +
         '<button type="button" class="mc-btn mc-start-btn" id="mc-continue">Continue</button>' +
-        "</section>" +
-        "</div>";
+        "</section>";
       document.getElementById("mc-continue").onclick = function () {
         sfx("click");
-        playExit(function () {
-          startPart(modeIndex + 1);
-        });
+        startPart(modeIndex + 1);
       };
       return;
     }
@@ -809,21 +555,16 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
           gameId: GAME_ID,
           score: totalCorrect,
           total: TOTAL_PAIRS,
-          accuracy: calcAccuracy(),
           stars: stars,
           timeMs: timeMs,
           onAgain: function () {
-            playExit(function () {
-              totalCorrect = 0;
-              totalWrong = 0;
-              startPart(0);
-            });
+            totalCorrect = 0;
+            buildSets();
+            startPart(0);
           },
           onModes: function () {
-            playExit(function () {
-              phase = "menu";
-              render();
-            });
+            phase = "menu";
+            render();
           },
           backHref: "../",
           save: false
@@ -831,22 +572,17 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         return;
       }
       app.innerHTML =
-        '<div class="mc-screen">' +
         '<section class="mc-done"><h1>Done!</h1>' +
         "<p>You matched " +
         totalCorrect +
         "/" +
         TOTAL_PAIRS +
         ".</p>" +
-        '<button type="button" class="mc-btn" id="cm-again">Again</button></section>' +
-        "</div>";
+        '<button type="button" class="mc-btn" id="cm-again">Again</button></section>';
       document.getElementById("cm-again").onclick = function () {
-        sfx("click");
-        playExit(function () {
-          totalCorrect = 0;
-          totalWrong = 0;
-          startPart(0);
-        });
+        totalCorrect = 0;
+        buildSets();
+        startPart(0);
       };
       return;
     }
@@ -866,9 +602,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
 
     var shortTitles = ["Words → Pics", "Audio → Words", "Audio → Pics"];
     var shortTitle = shortTitles[modeIndex] || mode.title;
-    var progressPct = Math.round((correctCount() / 6) * 100);
     app.innerHTML =
-      '<div class="mc-screen">' +
       '<header class="mc-topbar">' +
       '<a class="mc-back" href="../" aria-label="Back">←</a>' +
       '<span class="mc-title" title="' +
@@ -882,34 +616,28 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       " · " +
       shortTitle +
       "</span></span>" +
-      heartsHtml() +
       '<span class="mc-progress" id="mc-progress">' +
       '<span class="mc-prog-full">Part ' +
       (modeIndex + 1) +
       "/" +
       MODES.length +
       " · Set " +
-      (setIndex + 1) +
+      (setIndex % SETS_PER_PART + 1) +
       "/" +
-      SETS.length +
+      SETS_PER_PART +
       " · " +
       correctCount() +
-      '/6</span><span class="mc-prog-short">' +
-      (setIndex + 1) +
+      '/5</span><span class="mc-prog-short">' +
+      (setIndex % SETS_PER_PART + 1) +
       "/" +
-      SETS.length +
+      SETS_PER_PART +
       " · " +
       correctCount() +
-      "/6</span></span>" +
+      "/5</span></span>" +
       "</header>" +
       '<p class="mc-instruction" id="mc-hint">' +
       mode.tip +
       "</p>" +
-      '<div class="mc-set-progress" aria-hidden="true">' +
-      '<span class="mc-set-progress-fill" id="mc-set-progress-fill" style="width:' +
-      progressPct +
-      '%"></span>' +
-      "</div>" +
       '<div class="mc-board is-entering">' +
       '<div class="mc-col mc-col-left">' +
       left +
@@ -920,7 +648,6 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
       "</div>" +
       '<div class="mc-actions">' +
       '<button type="button" class="mc-btn secondary" id="mc-reset">Reset round</button>' +
-      "</div>" +
       "</div>";
 
     // clear enter animation class after it runs
@@ -949,9 +676,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     });
     document.getElementById("mc-reset").onclick = function () {
       sfx("click");
-      playExit(function () {
-        startSet(setIndex);
-      });
+      startSet(setIndex);
     };
   }
 

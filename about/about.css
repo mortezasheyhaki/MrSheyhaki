@@ -1,0 +1,113 @@
+/* About page — clean editorial layout; uses the site's theme variables */
+.about-page {
+  --ab-bg: #0b0f1a;
+  --ab-card: rgba(255,255,255,.04);
+  --ab-border: rgba(148,163,184,.18);
+  --ab-text: #f1f5f9;
+  --ab-muted: #aab4c8;
+  --ab-accent: #a78bfa;
+  --ab-accent2: #60a5fa;
+}
+html:not([data-theme="dark"]) .about-page {
+  --ab-bg: #f5f6fb;
+  --ab-card: #ffffff;
+  --ab-border: #e2e6f0;
+  --ab-text: #1e1b4b;
+  --ab-muted: #5b6478;
+  --ab-accent: #6d28d9;
+  --ab-accent2: #2563eb;
+}
+.about-page { color: var(--ab-text); }
+.about-page .ab-main { padding: 110px 16px 40px; min-height: 80vh; }
+.ab-wrap { max-width: 1040px; margin: 0 auto; }
+
+/* hero */
+.ab-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
+  gap: 48px;
+  align-items: center;
+}
+.ab-eyebrow {
+  display: inline-block; padding: 6px 14px; border-radius: 999px;
+  font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--ab-accent); border: 1px solid var(--ab-border); background: var(--ab-card);
+}
+.ab-intro h1 {
+  margin: 18px 0 16px; font-size: clamp(32px, 4.6vw, 52px); line-height: 1.08; letter-spacing: -.02em; font-weight: 900;
+}
+.ab-lead { margin: 0 0 14px; font-size: clamp(16px, 1.7vw, 18px); line-height: 1.65; color: var(--ab-muted); max-width: 58ch; }
+.ab-soon {
+  margin: 22px 0 0; display: inline-block; padding: 8px 14px; border-radius: 12px;
+  font-size: 14px; color: var(--ab-muted); background: var(--ab-card); border: 1px dashed var(--ab-border);
+}
+
+.ab-profile {
+  position: relative; text-align: center; padding: 36px 26px 30px; border-radius: 26px;
+  background: var(--ab-card); border: 1px solid var(--ab-border);
+  box-shadow: 0 24px 60px rgba(15,23,42,.12);
+  overflow: hidden;
+}
+.ab-profile::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 110px;
+  background: linear-gradient(135deg, var(--ab-accent), var(--ab-accent2)); opacity: .9;
+}
+.ab-avatar {
+  position: relative; width: 110px; height: 110px; margin: 10px auto 16px; border-radius: 30px;
+  display: grid; place-items: center; font-size: 34px; font-weight: 900; letter-spacing: .04em; color: #fff;
+  background: linear-gradient(145deg, var(--ab-accent), var(--ab-accent2));
+  box-shadow: 0 14px 30px rgba(109,40,217,.35), 0 0 0 6px var(--ab-card);
+}
+.ab-name { display: block; font-size: 22px; font-weight: 900; }
+.ab-role { display: block; margin-top: 4px; font-size: 14px; color: var(--ab-muted); }
+
+/* what I create */
+.ab-what { margin-top: 64px; }
+.ab-section-title {
+  margin: 0 0 22px; font-size: clamp(22px, 2.6vw, 30px); font-weight: 900; letter-spacing: -.01em;
+}
+.ab-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.ab-card {
+  padding: 26px 24px; border-radius: 22px; background: var(--ab-card); border: 1px solid var(--ab-border);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.ab-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(15,23,42,.12); }
+.ab-card-icon {
+  width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; margin-bottom: 18px;
+}
+.ab-card-icon svg { width: 30px; height: 30px; }
+.ab-card--lessons .ab-card-icon { background: rgba(124,92,255,.14); color: #7c5cff; }
+.ab-card--activities .ab-card-icon { background: rgba(59,130,246,.14); color: #3b82f6; }
+.ab-card--games .ab-card-icon { background: rgba(34,197,94,.14); color: #16a34a; }
+.ab-card h3 { margin: 0 0 8px; font-size: 18px; font-weight: 800; }
+.ab-card p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--ab-muted); }
+
+/* responsive */
+@media (max-width: 860px) {
+  .ab-hero-grid { grid-template-columns: 1fr; gap: 32px; }
+  .ab-profile { max-width: 380px; width: 100%; margin: 0 auto; }
+  .ab-cards { grid-template-columns: 1fr; gap: 14px; }
+  .ab-card { display: grid; grid-template-columns: 56px 1fr; column-gap: 16px; align-items: start; padding: 20px; }
+  .ab-card-icon { margin-bottom: 0; grid-row: span 2; }
+}
+@media (max-width: 480px) {
+  .about-page .ab-main { padding-top: 96px; }
+  .ab-intro h1 { font-size: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ab-card { transition: none; }
+}
+
+/* ---------- Footer: centred stack (brand, links, copyright) ---------- */
+.about-page .site-footer .footer-inner {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 14px;
+  width: min(1040px, 100%); margin: 0 auto; padding: 28px 16px 32px; box-sizing: border-box;
+}
+.about-page .site-footer .footer-brand {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; width: auto;
+}
+.about-page .site-footer .footer-links {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 22px; width: auto;
+}
+.about-page .site-footer .copyright { margin: 4px 0 0; text-align: center; }

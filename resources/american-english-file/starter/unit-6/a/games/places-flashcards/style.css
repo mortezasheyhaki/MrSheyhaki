@@ -581,3 +581,72 @@ html[data-theme="dark"] .afx-card{background:#1a1f35;color:#f1f5f9}
 
 .fc-progress,.lw-progress,.lc-progress,.wd-progress,.set-progress{height:12px!important;border-radius:999px;background:rgba(139,92,246,.16)!important;overflow:hidden}
 .fc-progress-fill,.lw-progress-fill,.lc-progress-fill,.wd-progress-fill,.set-progress-fill,.progress-fill{border-radius:999px;background:linear-gradient(90deg,#8b5cf6,#ec4899,#f59e0b)!important;background-size:200% 100%;animation:afx-shine 2.4s linear infinite;transition:width .6s cubic-bezier(.22,.9,.3,1)!important;box-shadow:0 0 12px rgba(139,92,246,.55)}
+
+/* Smooth transition between cards (plays on next/previous; the flip is unaffected) */
+@keyframes fc-card-slide-in {
+  from { transform: translateX(28px) scale(0.97); }
+  to   { transform: translateX(0) scale(1); }
+}
+.fc-card {
+  animation: fc-card-slide-in 0.35s ease-out backwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fc-card { animation: none; }
+}
+
+/* ---------- Controls: rounder and closer to the card ---------- */
+.fc-controls {
+  gap: 16px;
+  padding: 0 16px 4px;
+  margin-top: -8px;
+}
+.fc-nav {
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  color: #4f46e5;
+  font-size: 1.5rem;
+  line-height: 1;
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.16), inset 0 -2px 0 rgba(79, 70, 229, 0.08);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.fc-nav:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(79, 70, 229, 0.24), inset 0 -2px 0 rgba(79, 70, 229, 0.08);
+}
+html[data-theme="dark"] .fc-nav {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+.fc-nav.fc-nav-end {
+  width: auto;
+  height: 52px;
+  min-width: 68px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+.fc-audio-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  box-shadow: 0 10px 24px rgba(99, 102, 241, 0.38), inset 0 2px 0 rgba(255, 255, 255, 0.25);
+}
+.fc-audio-btn:hover { box-shadow: 0 14px 28px rgba(99, 102, 241, 0.46), inset 0 2px 0 rgba(255, 255, 255, 0.25); }
+@media (min-width: 900px) {
+  .fc-nav { width: 58px; height: 58px; }
+  .fc-nav.fc-nav-end { height: 58px; }
+  .fc-audio-btn { width: 74px; height: 74px; }
+}
+@media (max-height: 680px) {
+  .fc-nav { width: 44px; height: 44px; }
+  .fc-nav.fc-nav-end { height: 44px; }
+  .fc-audio-btn { width: 58px; height: 58px; }
+}
+
+/* Controls sit directly under the card; the card + controls group is centred */
+.fc-stage { flex: 0 0 auto; margin-top: auto; }
+.fc-controls { margin-top: 14px; margin-bottom: auto; }

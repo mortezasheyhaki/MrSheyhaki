@@ -105,11 +105,7 @@
 
   function isWriteCorrect(user, item) {
     var n = norm(user);
-    var targets = [
-      norm(targetSentence(item)),
-      norm(pronoun(item) + " is " + item.label),
-      norm(pronoun(item) + " is " + item.job)
-    ];
+    var targets = [norm(targetSentence(item))];
     return targets.indexOf(n) >= 0;
   }
 
@@ -189,8 +185,6 @@
         if (distractors.indexOf(w) < 0 && correct.indexOf(w) < 0) distractors.push(w);
       });
     });
-    // optional "is" distractor
-    if (distractors.indexOf("is") < 0) distractors.push("is");
 
     var pool = correct.concat(distractors);
     // unique by value but keep multiples if needed - for multi-word job no dupes needed
@@ -250,7 +244,24 @@
       } else {
         render();
       }
-    }, ok ? 700 : 1200);
+    }, ok ? 1100 : 1400);
+  }
+
+  function showResult(ok, item) {
+    var fb = document.getElementById("wd-fb");
+    var card = document.querySelector(".wd-card");
+    var slots = document.getElementById("wd-slots");
+    if (fb) {
+      fb.className = "wd-fb " + (ok ? "ok" : "bad");
+      fb.innerHTML =
+        '<span class="wd-reveal-icon" aria-hidden="true">' + (ok ? "✓" : "✗") + "</span>" +
+        '<span class="wd-reveal-body">' +
+        '<span class="wd-reveal-label">' + (ok ? "Well done!" : "The answer is") + "</span>" +
+        '<span class="wd-reveal-text">' + escapeHtml(targetSentence(item)) + "</span>" +
+        "</span>";
+    }
+    if (card) card.classList.add(ok ? "is-correct" : "is-wrong");
+    if (slots) slots.classList.add(ok ? "ok" : "bad");
   }
 
   function checkChips() {
@@ -259,11 +270,7 @@
     if (!item) return;
     if (slots.length < targetTokens(item).length) return;
     var ok = chipsCorrect(item);
-    var fb = document.getElementById("wd-fb");
-    if (fb) {
-      fb.textContent = ok ? "✓ " + targetSentence(item) : "Answer: " + targetSentence(item);
-      fb.className = "wd-fb " + (ok ? "ok" : "bad");
-    }
+    showResult(ok, item);
     afterAnswer(ok);
   }
 
@@ -279,11 +286,7 @@
     }
     input.disabled = true;
     var ok = isWriteCorrect(user, item);
-    var fb = document.getElementById("wd-fb");
-    if (fb) {
-      fb.textContent = ok ? "✓ " + targetSentence(item) : "Answer: " + targetSentence(item);
-      fb.className = "wd-fb " + (ok ? "ok" : "bad");
-    }
+    showResult(ok, item);
     input.classList.add(ok ? "ok" : "bad");
     afterAnswer(ok);
   }

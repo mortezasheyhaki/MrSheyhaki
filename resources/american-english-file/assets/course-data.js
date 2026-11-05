@@ -342,8 +342,11 @@ COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.games = [
   { title: "Listen & Write · Places of Work", url: "places-listen-write/", label: "Listening" },
   { title: "What does he / she do?", url: "what-does-he-she-do/", label: "Grammar" },
   { title: "Where do they work?", url: "where-do-they-work/", label: "Grammar" },
+  { title: "Make Third Person", url: "make-third-person/", label: "Grammar" },
   { title: "Listen & Complete", url: "listen-and-complete/", label: "Listening" },
-  { title: "Listen & Write", url: "listen-and-write/", label: "Listening" }
+  { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
+  { title: "Wheel Sound Match", url: "wheel-sound-match/", label: "Listening" },
+  { title: "Listen & Select · Places of Work", url: "places-of-work-listen-select/", label: "Listening" },
 ];
 
 // Unit 7A – Games
@@ -876,6 +879,168 @@ COURSE_DATA["teen2teen"].levels["2"].units[1].games = [
   { title: "Write the Sentences", url: "games/write-sentences/", label: "Grammar" },
   { title: "Speak the Sentences", url: "games/voice-sentences/", label: "Grammar" },
 ];
+
+
+// ---- Workbook audio (AEF Starter), label: Workbook ----
+// Unit 1B (lesson b)
+COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.b.audio || []).concat([
+    { track: "1.3", url: "https://cdn.imgurl.ir/uploads/a078916_.mp3", title: "Unit 1 practice", label: "Workbook" },
+]);
+
+// Practical English 1
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].audio = (COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[1].audio || []).concat([
+    { track: "1.4", url: "https://cdn.imgurl.ir/uploads/y384884_.mp3", title: "Practical English 1 practice", label: "Workbook" },
+    { track: "1.5", url: "https://cdn.imgurl.ir/uploads/u979306_.mp3", title: "Practical English 1 practice", label: "Workbook" },
+    { track: "1.6", url: "https://cdn.imgurl.ir/uploads/j196869_.mp3", title: "Practical English 1 practice", label: "Workbook" },
+    { track: "1.7", url: "https://cdn.imgurl.ir/uploads/b231479_.mp3", title: "Practical English 1 practice", label: "Workbook" },
+]);
+
+// Unit 2A (lesson a)
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.audio = (COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.a.audio || []).concat([
+    { track: "2.1", url: "https://cdn.imgurl.ir/uploads/b563952_.mp3", title: "Unit 2 practice", label: "Workbook" },
+    { track: "2.2", url: "https://cdn.imgurl.ir/uploads/g73219_.mp3", title: "Unit 2 practice", label: "Workbook" },
+]);
+
+// Unit 2B (lesson b)
+COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.audio || []).concat([
+    { track: "2.3", url: "https://cdn.imgurl.ir/uploads/c78875_.mp3", title: "Unit 2 practice", label: "Workbook" },
+    { track: "2.4", url: "https://cdn.imgurl.ir/uploads/i613285_.mp3", title: "Unit 2 practice", label: "Workbook" },
+]);
+
+// Unit 3A (lesson a)
+COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.audio = (COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.a.audio || []).concat([
+    { track: "3.1", url: "https://cdn.imgurl.ir/uploads/a475462_.mp3", title: "Unit 3 practice", label: "Workbook" },
+    { track: "3.2", url: "https://cdn.imgurl.ir/uploads/o454520_.mp3", title: "Unit 3 practice", label: "Workbook" },
+]);
+
+// Unit 3B (lesson b)
+COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[3].lessons.b.audio || []).concat([
+    { track: "3.3", url: "https://cdn.imgurl.ir/uploads/r87758_.mp3", title: "Unit 3 practice", label: "Workbook" },
+]);
+
+// Practical English 2
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].audio = (COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[2].audio || []).concat([
+    { track: "3.4", url: "https://cdn.imgurl.ir/uploads/u744623_.mp3", title: "Practical English 2 practice", label: "Workbook" },
+    { track: "3.5", url: "https://cdn.imgurl.ir/uploads/k14060_.mp3", title: "Practical English 2 practice", label: "Workbook" },
+]);
+
+// Unit 4A (lesson a)
+COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.audio = (COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.a.audio || []).concat([
+    { track: "4.1", url: "https://cdn.imgurl.ir/uploads/a806796_.mp3", title: "Unit 4 practice", label: "Workbook" },
+]);
+
+// Unit 4B (lesson b)
+COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[4].lessons.b.audio || []).concat([
+    { track: "4.2", url: "https://cdn.imgurl.ir/uploads/e21742_.mp3", title: "Unit 4 practice", label: "Workbook" },
+    { track: "4.3", url: "https://cdn.imgurl.ir/uploads/y80986_.mp3", title: "Unit 4 practice", label: "Workbook" },
+]);
+
+// Unit 5B (lesson b)
+COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[5].lessons.b.audio || []).concat([
+    { track: "5.3", url: "https://cdn.imgurl.ir/uploads/o809529_.mp3", title: "Unit 5 practice", label: "Workbook" },
+    { track: "5.4", url: "https://cdn.imgurl.ir/uploads/f72912_.mp3", title: "Unit 5 practice", label: "Workbook" },
+]);
+
+// Practical English 3
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[3].audio = (COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[3].audio || []).concat([
+    { track: "5.5", url: "https://cdn.imgurl.ir/uploads/z30239_.mp3", title: "Practical English 3 practice", label: "Workbook" },
+    { track: "5.6", url: "https://cdn.imgurl.ir/uploads/j78391_.mp3", title: "Practical English 3 practice", label: "Workbook" },
+    { track: "5.7", url: "https://cdn.imgurl.ir/uploads/t641401_.mp3", title: "Practical English 3 practice", label: "Workbook" },
+]);
+
+// Unit 6A (lesson a)
+COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.audio = (COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.audio || []).concat([
+    { track: "6.1", url: "https://cdn.imgurl.ir/uploads/j75363_.mp3", title: "Unit 6 practice", label: "Workbook" },
+    { track: "6.2", url: "https://cdn.imgurl.ir/uploads/z161562_.mp3", title: "Unit 6 practice", label: "Workbook" },
+]);
+
+// Unit 6B (lesson b)
+COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.b.audio || []).concat([
+    { track: "6.3", url: "https://cdn.imgurl.ir/uploads/m54434_.mp3", title: "Unit 6 practice", label: "Workbook" },
+    { track: "6.4", url: "https://cdn.imgurl.ir/uploads/a54641_.mp3", title: "Unit 6 practice", label: "Workbook" },
+    { track: "6.5", url: "https://cdn.imgurl.ir/uploads/0522_.mp3", title: "Unit 6 practice", label: "Workbook" },
+]);
+
+// Unit 7A (lesson a)
+COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.audio = (COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.audio || []).concat([
+    { track: "7.1", url: "https://cdn.imgurl.ir/uploads/o040399_.mp3", title: "Unit 7 practice", label: "Workbook" },
+]);
+
+// Unit 7B (lesson b)
+COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.audio || []).concat([
+    { track: "7.2", url: "https://cdn.imgurl.ir/uploads/y2413_.mp3", title: "Unit 7 practice", label: "Workbook" },
+]);
+
+// Unit 8A (lesson a)
+COURSE_DATA["american-english-file"].levels.starter.units[8].lessons.a.audio = (COURSE_DATA["american-english-file"].levels.starter.units[8].lessons.a.audio || []).concat([
+    { track: "8.1", url: "https://cdn.imgurl.ir/uploads/e550624_.mp3", title: "Unit 8 practice", label: "Workbook" },
+]);
+
+// Unit 8B (lesson b)
+COURSE_DATA["american-english-file"].levels.starter.units[8].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[8].lessons.b.audio || []).concat([
+    { track: "8.2", url: "https://cdn.imgurl.ir/uploads/t925867_.mp3", title: "Unit 8 practice", label: "Workbook" },
+    { track: "8.3", url: "https://cdn.imgurl.ir/uploads/a03427_.mp3", title: "Unit 8 practice", label: "Workbook" },
+    { track: "8.4", url: "https://cdn.imgurl.ir/uploads/q4717_.mp3", title: "Unit 8 practice", label: "Workbook" },
+]);
+
+// Unit 9A (lesson a)
+COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.audio = (COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.a.audio || []).concat([
+    { track: "9.1", url: "https://cdn.imgurl.ir/uploads/u013901_.mp3", title: "Unit 9 practice", label: "Workbook" },
+]);
+
+// Unit 9B (lesson b)
+COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[9].lessons.b.audio || []).concat([
+    { track: "9.2", url: "https://cdn.imgurl.ir/uploads/j53100_.mp3", title: "Unit 9 practice", label: "Workbook" },
+    { track: "9.3", url: "https://cdn.imgurl.ir/uploads/e629361_.mp3", title: "Unit 9 practice", label: "Workbook" },
+    { track: "9.4", url: "https://cdn.imgurl.ir/uploads/m2081_.mp3", title: "Unit 9 practice", label: "Workbook" },
+]);
+
+// Unit 10A (lesson a)
+COURSE_DATA["american-english-file"].levels.starter.units[10].lessons.a.audio = (COURSE_DATA["american-english-file"].levels.starter.units[10].lessons.a.audio || []).concat([
+    { track: "10.1", url: "https://cdn.imgurl.ir/uploads/r569590_.mp3", title: "Unit 10 practice", label: "Workbook" },
+]);
+
+// Unit 10B (lesson b)
+COURSE_DATA["american-english-file"].levels.starter.units[10].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[10].lessons.b.audio || []).concat([
+    { track: "10.2", url: "https://cdn.imgurl.ir/uploads/x25415_.mp3", title: "Unit 10 practice", label: "Workbook" },
+]);
+
+// Unit 11A (lesson a)
+COURSE_DATA["american-english-file"].levels.starter.units[11].lessons.a.audio = (COURSE_DATA["american-english-file"].levels.starter.units[11].lessons.a.audio || []).concat([
+    { track: "11.1", url: "https://cdn.imgurl.ir/uploads/x113765_.mp3", title: "Unit 11 practice", label: "Workbook" },
+    { track: "11.2", url: "https://cdn.imgurl.ir/uploads/k8717_.mp3", title: "Unit 11 practice", label: "Workbook" },
+]);
+
+// Unit 11B (lesson b)
+COURSE_DATA["american-english-file"].levels.starter.units[11].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[11].lessons.b.audio || []).concat([
+    { track: "11.3", url: "https://cdn.imgurl.ir/uploads/i978158_.mp3", title: "Unit 11 practice", label: "Workbook" },
+]);
+
+// Unit 12A (lesson a)
+COURSE_DATA["american-english-file"].levels.starter.units[12].lessons.a.audio = (COURSE_DATA["american-english-file"].levels.starter.units[12].lessons.a.audio || []).concat([
+    { track: "12.1", url: "https://cdn.imgurl.ir/uploads/t7406_.mp3", title: "Unit 12 practice", label: "Workbook" },
+]);
+
+// Unit 12B (lesson b)
+COURSE_DATA["american-english-file"].levels.starter.units[12].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[12].lessons.b.audio || []).concat([
+    { track: "12.2", url: "https://cdn.imgurl.ir/uploads/r494336_.mp3", title: "Unit 12 practice", label: "Workbook" },
+    { track: "12.3", url: "https://cdn.imgurl.ir/uploads/b26167_.mp3", title: "Unit 12 practice", label: "Workbook" },
+]);
+
+// Practical English 4 and 5 (starter): workbook audio. Names to be added later.
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[4] = COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[4] || { name: "", audio: [], games: [], worksheets: [] };
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[5] = COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[5] || { name: "", audio: [], games: [], worksheets: [] };
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[4].audio = (COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[4].audio || []).concat([
+    { track: "7.3", url: "https://cdn.imgurl.ir/uploads/t16235_.mp3", title: "Practical English 4 practice", label: "Workbook" },
+]);
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[5].audio = (COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[5].audio || []).concat([
+    { track: "9.5", url: "https://cdn.imgurl.ir/uploads/c082_.mp3", title: "Practical English 5 practice", label: "Workbook" },
+]);
+
+// Practical English 4–6 (starter) names, from the book's contents (Episodes 4–6)
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[4].name = "Saying the date, talking on the phone";
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[5].name = "Inviting and offering";
+COURSE_DATA["american-english-file"].levels.starter.practicalEnglish[6].name = "Asking for and giving directions";
 
 // Node (generator script) and browser (rendered pages) both need this object.
 if (typeof module !== "undefined" && module.exports) {
