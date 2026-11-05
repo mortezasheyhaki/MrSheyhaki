@@ -4279,3 +4279,223 @@ a.resource-card,
     background-attachment: scroll !important;
   }
 }
+
+
+/* =========================================================
+   COMPACT HUB CARDS — small, side by side, left-aligned
+   under the "Coursebooks" heading (desktop/tablet only)
+========================================================= */
+@media (min-width: 701px) {
+  .resource-grid.resource-grid--hub {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    /* same left edge/width as the "Coursebooks" heading */
+    width: min(calc(100% - 48px), var(--container, 1180px)) !important;
+    margin: 0 auto 50px !important;
+  }
+
+  a.resource-card.resource-card--hub,
+  .resource-card.resource-card--hub {
+    flex: 0 0 205px !important;
+    width: 205px !important;
+    min-height: 0 !important;
+    padding: 16px 14px 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .resource-card--hub .resource-icon {
+    width: 40px !important;
+    height: 40px !important;
+    margin: 0 auto 8px !important;
+    border-radius: 11px !important;
+    font-size: 18px !important;
+  }
+
+  .resource-card--hub h3 {
+    margin: 0 0 6px !important;
+    font-size: 12px !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .resource-card--hub .card-rule {
+    width: 28px !important;
+    height: 2px !important;
+    margin: 0 auto 8px !important;
+  }
+
+  .resource-card--hub p {
+    margin: 0 0 10px !important;
+    font-size: 0.72rem !important;
+    line-height: 1.4 !important;
+    max-width: none !important;
+  }
+
+  .resource-card--hub .card-tag {
+    margin: 0 auto 12px !important;
+    padding: 3px 8px !important;
+    font-size: 9px !important;
+  }
+
+  .resource-card--hub .card-link {
+    min-width: 0 !important;
+    padding: 7px 14px !important;
+    font-size: 10.5px !important;
+  }
+
+  .resource-card--hub:hover {
+    transform: translateY(-4px) !important;
+  }
+}
+
+
+/* =========================================================
+   TACTICS FOR LISTENING hub card — indigo/violet
+   (mirrors the Pre-starter / AEF / Teen2Teen hub card rules)
+========================================================= */
+.resource-card--hub.resource-card--tactics {
+  border-color: rgba(99, 102, 241, 0.4) !important;
+  background: linear-gradient(160deg, rgba(224, 231, 255, 0.95) 0%, rgba(238, 242, 255, 0.9) 45%, #fff 100%) !important;
+  box-shadow: 0 14px 36px rgba(99, 102, 241, 0.14) !important;
+}
+.resource-card--hub.resource-card--tactics::before {
+  background: linear-gradient(90deg, #a5b4fc, #6366f1, #4f46e5) !important;
+}
+.resource-card--hub.resource-card--tactics .resource-icon {
+  background: linear-gradient(145deg, #e0e7ff, #a5b4fc) !important;
+  color: #4338ca !important;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25) !important;
+}
+.resource-card--hub.resource-card--tactics .card-rule {
+  background: #6366f1 !important;
+}
+.resource-card--hub.resource-card--tactics .card-tag {
+  background: rgba(99, 102, 241, 0.14) !important;
+  color: #4338ca !important;
+}
+.resource-card--hub.resource-card--tactics .card-link {
+  background: linear-gradient(180deg, #818cf8, #4f46e5) !important;
+  color: #fff !important;
+  opacity: 1 !important;
+  filter: none !important;
+  box-shadow: 0 4px 0 #3730a3, 0 10px 22px rgba(79, 70, 229, 0.32) !important;
+}
+
+/* Dark: Tactics indigo */
+html[data-theme="dark"] .resource-card--hub.resource-card--tactics {
+  border-color: rgba(165, 180, 252, 0.5) !important;
+  background: linear-gradient(160deg, rgba(67, 56, 202, 0.4) 0%, rgba(25, 25, 55, 0.92) 45%, rgba(10, 16, 28, 0.98) 100%) !important;
+  box-shadow: 0 0 36px rgba(99, 102, 241, 0.18), 0 16px 40px rgba(0,0,0,0.5) !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--tactics h3 {
+  color: #eef2ff !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--tactics p {
+  color: #c7d2fe !important;
+  opacity: 0.85;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--tactics .resource-icon {
+  background: linear-gradient(145deg, #4f46e5, #3730a3) !important;
+  color: #e0e7ff !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--tactics .card-rule {
+  background: #818cf8 !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--tactics .card-tag {
+  background: rgba(129, 140, 248, 0.2) !important;
+  color: #c7d2fe !important;
+}
+html[data-theme="dark"] .resource-card--hub.resource-card--tactics .card-link {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  filter: none !important;
+  background: linear-gradient(180deg, #818cf8, #4f46e5) !important;
+}
+
+
+/* =========================================================
+   ALIGN hub cards — icon, name, rule, description, tag and
+   button sit at the same height in every card (desktop/tablet)
+========================================================= */
+@media (min-width: 701px) {
+  /* fixed-size icon box so a wrapping emoji pair can't push the rest down */
+  .resource-card--hub .resource-icon {
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    overflow: hidden !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+  .resource-card--hub.resource-card--teen-2-teen .resource-icon {
+    font-size: 15px !important;
+    letter-spacing: -2px !important;
+  }
+
+  /* one-line names, same box height */
+  .resource-card--hub h3 {
+    min-height: 1.3em !important;
+    line-height: 1.3 !important;
+  }
+
+  /* description reserves room for 4 lines, so tags start at the same y */
+  .resource-card--hub p {
+    min-height: 5.6em !important;   /* 4 lines × 1.4 line-height */
+    line-height: 1.4 !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* tag in a fixed-height slot */
+  .resource-card--hub .card-tag {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 22px !important;
+    white-space: nowrap !important;
+  }
+}
+
+
+/* =========================================================
+   TACTICS — dark mode definitive rules (same pattern/specificity
+   as Pre-starter / AEF / Teen2Teen): tinted gradient + inner glow
+========================================================= */
+html[data-theme="dark"] a.resource-card.resource-card--tactics,
+html[data-theme="dark"] a.resource-card.resource-card--hub.resource-card--tactics,
+html[data-theme="dark"] .resource-card.resource-card--tactics {
+  border: 1.5px solid rgba(165, 180, 252, 0.55) !important;
+  background:
+    linear-gradient(155deg,
+      rgba(79, 70, 229, 0.38) 0%,
+      rgba(30, 27, 75, 0.92) 40%,
+      rgba(10, 16, 28, 0.98) 100%) !important;
+  box-shadow:
+    0 0 0 1px rgba(165, 180, 252, 0.12) inset,
+    0 0 36px rgba(99, 102, 241, 0.2),
+    0 16px 40px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .resource-card--tactics::before {
+  content: "" !important;
+  height: 4px !important;
+  background: linear-gradient(90deg, #c7d2fe, #6366f1, #4338ca) !important;
+  opacity: 1 !important;
+}
+html[data-theme="dark"] .resource-card--tactics .resource-icon {
+  background: linear-gradient(145deg, #4f46e5, #3730a3) !important;
+  color: #e0e7ff !important;
+  border: 1px solid rgba(165, 180, 252, 0.35) !important;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4) !important;
+}
+html[data-theme="dark"] .resource-card--tactics .card-tag {
+  background: rgba(99, 102, 241, 0.22) !important;
+  background-image: none !important;
+  color: #c7d2fe !important;
+  border: 1px solid rgba(165, 180, 252, 0.28) !important;
+}
+html[data-theme="dark"] .resource-card--tactics .card-link {
+  background: linear-gradient(180deg, #818cf8 0%, #4f46e5 100%) !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 0 #312e81, 0 10px 24px rgba(79, 70, 229, 0.4) !important;
+}
