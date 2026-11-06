@@ -579,14 +579,11 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
   }
 
   function backLink(href, label) {
-    // Round arrow button + optional text label (matches Learning Arcade)
-    const wrap = el("div", { class: "skill-intro-top aef-back-row" }, [
-      el("a", { class: "skill-back-btn aef-round-back", href, "aria-label": label, title: label }, [
-        document.createTextNode("←"),
-      ]),
-      el("span", { class: "aef-back-label", text: label }),
+    // Pill back button (same look as Tactics For Listening): "← Resources"
+    const short = String(label).replace(/^Back to /, "");
+    return el("div", { class: "aef-back-row" }, [
+      el("a", { class: "back-link", href, "aria-label": label, title: label, text: "\u2190 " + short }),
     ]);
-    return wrap;
   }
 
   function courseFor(body) {
