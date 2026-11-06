@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 1 · Write the Days of the Week | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Write the missing letters of the days of the week, in order. American English File Starter, Unit 1.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+/* Every rule is scoped to body.dw so the site theme cannot override the layout. */
+body.dw{
+  --bg:#f7f4ee; --card:#ffffff; --ink:#1d2430; --mut:#6b7280; --line:#cfc6b4;
+  --acc:#0f766e; --acc-d:#0b5c56; --acc-two:#14b8a6; --acc-soft:rgba(15,118,110,.10); --btn-ink:#ffffff;
+  --ok:#15803d; --ok-bg:#dcfce7; --amber:#b45309; --amber-bg:#fef3c7;
+  --ghost:#ffffff; --btn-off:#cfd6dc;
+  --fs:clamp(28px, 9vw, 52px);
+  --app-bg:radial-gradient(900px 520px at 8% -12%, rgba(20,184,166,.20), transparent 60%), radial-gradient(760px 480px at 100% 0%, rgba(124,58,237,.11), transparent 58%), radial-gradient(720px 520px at 50% 115%, rgba(15,118,110,.16), transparent 62%), linear-gradient(180deg, #f0fdfa 0%, #eef4ff 100%);
+}
+html[data-theme="dark"] body.dw{
+  --bg:#0f1420; --card:#171e2d; --ink:#e8edf6; --mut:#9aa6b8; --line:#3a4660;
+  --acc:#2dd4bf; --acc-d:#0f8a7b; --acc-two:#5eead4; --acc-soft:rgba(45,212,191,.14); --btn-ink:#062b27;
+  --ok:#4ade80; --ok-bg:rgba(74,222,128,.14); --amber:#fbbf24; --amber-bg:rgba(251,191,36,.14);
+  --ghost:#1d2638; --btn-off:#2a3447;
+  --app-bg:radial-gradient(900px 520px at 8% -12%, rgba(45,212,191,.16), transparent 60%), radial-gradient(760px 480px at 100% 0%, rgba(124,58,237,.18), transparent 58%), radial-gradient(720px 520px at 50% 115%, rgba(20,184,166,.12), transparent 62%), linear-gradient(180deg, #0c1a1f 0%, #0f1420 100%);
+}
+html, html[data-theme="dark"]{ background:var(--bg); height:100%; overflow:hidden; margin:0; padding:0; }
+body.dw{
+  position:fixed; inset:0; margin:0; padding:0; overflow:hidden; box-sizing:border-box;
+  background:var(--app-bg) fixed; color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; height:100vh; height:100dvh;
+}
+body.dw *, body.dw *::before, body.dw *::after{ box-sizing:border-box; }
+
+body.dw .app{
+  position:absolute; top:0; right:0; bottom:0; left:0; margin:0 auto;
+  width:100%; max-width:720px; height:100%;
+  display:flex; flex-direction:column; gap:clamp(8px,1.8vh,18px);
+  padding:max(12px,env(safe-area-inset-top)) 16px max(14px,env(safe-area-inset-bottom));
+  overflow:hidden;
+}
+
+/* top bar: same back pill and sound circle as the other Tests & Exams games */
+body.dw .top{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex:0 0 auto; }
+body.dw .back-btn{
+  display:inline-flex; align-items:center; gap:.35rem; min-height:40px; padding:.4rem .9rem;
+  border-radius:999px; background:#fff; border:2px solid rgba(124,58,237,.16); color:#5b21b6;
+  font-weight:700; font-size:.92rem; text-decoration:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s, box-shadow .15s;
+}
+body.dw .back-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(124,58,237,.12); }
+body.dw .count{ margin-left:auto; font-weight:700; font-size:.92rem; color:var(--mut); font-variant-numeric:tabular-nums; }
+
+/* question area: centred, with fixed-height slots so nothing moves while typing */
+body.dw .stage{
+  flex:1 1 auto; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; gap:clamp(10px,2.4vh,22px); overflow:hidden;
+}
+body.dw .stage.hide{ display:none; }
+body.dw .kind{
+  display:inline-flex; align-items:center; height:26px; padding:0 12px; border-radius:20px;
+  background:var(--acc-soft); color:var(--acc);
+  font-size:11px; font-weight:700; letter-spacing:.6px; text-transform:uppercase;
+}
+body.dw .example{ font-size:14px; color:var(--mut); height:20px; line-height:20px; }
+body.dw .example b{ color:var(--ink); font-weight:800; }
+
+/* the word: one row, visible letters as text and one box per missing letter */
+body.dw .word{
+  height:calc(var(--fs) * 1.9); display:flex; align-items:center; justify-content:center;
+  gap:.14em; font-size:var(--fs); font-weight:800; color:var(--ink); line-height:1;
+}
+body.dw .letter{ display:inline-block; min-width:.6em; text-align:center; }
+body.dw .box{
+  appearance:none; width:1.05em; height:1.4em; margin:0; padding:0;
+  border:3px solid var(--line); border-radius:.28em; background:var(--card); color:var(--ink);
+  font:inherit; font-size:inherit; font-weight:800; line-height:1; text-align:center;
+  caret-color:var(--acc); outline:none;
+  box-shadow:0 3px 0 var(--line); transition:border-color .15s, box-shadow .15s, background .15s;
+}
+body.dw .box:focus{ border-color:var(--acc); box-shadow:0 3px 0 var(--acc-d), 0 0 0 4px var(--acc-soft); }
+body.dw .box:disabled{ cursor:default; }
+body.dw .box.ok{ border-color:var(--ok); background:var(--ok-bg); color:var(--ok); box-shadow:0 3px 0 rgba(21,128,61,.25); }
+body.dw .box.no{ border-color:var(--amber); background:var(--amber-bg); color:var(--amber); box-shadow:0 3px 0 rgba(180,83,9,.2); }
+
+body.dw .fb{ height:28px; line-height:28px; white-space:nowrap; overflow:hidden; font-size:15px; font-weight:800; color:var(--mut); }
+body.dw .fb.ok{ color:var(--ok); }
+body.dw .fb.bad{ color:var(--amber); }
+
+/* progress */
+body.dw .progress{ flex:0 0 auto; width:100%; max-width:640px; margin:0 auto; }
+body.dw .progress-label{ display:flex; justify-content:space-between; font-size:10px; letter-spacing:1px; color:var(--mut); font-weight:700; }
+body.dw .progress-bar{ height:7px; margin-top:7px; overflow:hidden; border-radius:20px; background:rgba(127,127,127,.13); }
+body.dw .progress-fill{ width:0; height:100%; border-radius:20px; background:linear-gradient(90deg,var(--acc),var(--acc-two)); transition:width .35s ease; }
+
+/* bottom actions */
+body.dw .actions{ flex:0 0 auto; display:flex; gap:10px; width:100%; max-width:640px; margin:0 auto; }
+body.dw .actions.hide{ display:none; }
+body.dw .btn{
+  flex:1 1 auto; min-height:54px; border:0; border-radius:16px; cursor:pointer;
+  font:inherit; font-size:1rem; font-weight:800; color:var(--btn-ink); background:var(--acc);
+  box-shadow:0 4px 0 var(--acc-d); text-decoration:none; display:inline-flex;
+  align-items:center; justify-content:center; text-align:center;
+  transition:transform .1s, box-shadow .1s, opacity .2s; -webkit-tap-highlight-color:transparent;
+}
+body.dw .btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--acc-d); }
+body.dw .btn:disabled{ background:var(--btn-off); box-shadow:0 4px 0 var(--line); cursor:default; color:var(--mut); }
+body.dw .btn.ghost{ background:var(--ghost); color:var(--ink); border:1px solid var(--line); box-shadow:0 4px 0 var(--line); }
+body.dw .result-actions{ display:none; flex:0 0 auto; gap:10px; width:100%; max-width:640px; margin:0 auto; }
+body.dw .result-actions.show{ display:flex; }
+
+/* result */
+body.dw .result{
+  display:none; flex:1 1 auto; min-height:0; width:100%; max-width:640px; margin:0 auto;
+  flex-direction:column; align-items:center; justify-content:center; gap:clamp(6px,1.4vh,12px);
+  background:var(--card); border:1px solid var(--line); border-radius:24px;
+  padding:14px; box-shadow:0 10px 30px rgba(29,36,48,.07); text-align:center; overflow:hidden;
+}
+body.dw .result.show{ display:flex; }
+body.dw .big{ font-size:clamp(2rem, 7vw, 3rem); font-weight:900; color:var(--acc); line-height:1; font-variant-numeric:tabular-nums; }
+body.dw .result h2{ margin:0; font-size:1.2rem; font-weight:800; color:var(--ink); }
+body.dw .result .msg{ margin:0; font-size:.9rem; color:var(--mut); max-width:32ch; }
+body.dw .review{
+  list-style:none; margin:0; padding:0; width:100%; max-width:520px;
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; overflow:auto; max-height:40vh;
+}
+body.dw .review li{ border-radius:12px; padding:6px 7px; font-size:.82rem; line-height:1.25; background:var(--ghost); color:var(--ink); overflow-wrap:anywhere; }
+body.dw .review li.ok{ background:var(--ok-bg); color:var(--ok); }
+body.dw .review li.no{ background:var(--amber-bg); color:var(--amber); }
+body.dw .review .n{ font-weight:800; margin-right:3px; }
+body.dw .review .was{ display:block; font-weight:700; text-decoration:line-through; opacity:.8; }
+body.dw .review .right{ display:block; font-weight:800; }
+
+/* phones and short screens: everything still fits without scrolling */
+@media (max-width:420px){
+  body.dw .app{ padding-left:12px; padding-right:12px; }
+  body.dw .word{ gap:.1em; }
+}
+@media (max-height:700px){
+  body.dw{ --fs:clamp(26px, 7vh, 44px); }
+}
+@media (max-height:560px){
+  body.dw .kind{ visibility:hidden; }
+  body.dw .btn{ min-height:46px; }
+  body.dw .back-btn{ min-height:36px; padding:.3rem .8rem; }
+}
+@media (prefers-reduced-motion:reduce){ body.dw *{ transition:none !important; } }
+/* shared Tests & Exams top bar: round sound button (same as the other games) */
+body.dw .tui-sound{
+  appearance:none; border:2px solid rgba(124,58,237,.16); background:#fff; color:inherit;
+  width:40px; height:40px; border-radius:50%; font-size:1.05rem; cursor:pointer; flex:none; padding:0;
+  display:inline-grid; place-items:center; box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s;
+}
+body.dw .tui-sound:active{ transform:translateY(2px); }
+</style>
+</head>
+<body class="dw">
+<div class="app">
+  <div class="top header">
+    <a class="back-btn" href="../">← Unit 1</a>
+    <span class="count" id="count">1 / 6</span>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="kind">Write the days of the week in order</div>
+    <div class="example">Example: <b>Sunday</b></div>
+    <div class="word" id="word" aria-live="polite"></div>
+    <div class="fb" id="fb" role="status" aria-live="polite"></div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="big" id="score">0 / 6</div>
+    <h2 id="resultTitle"></h2>
+    <p class="msg" id="resultMsg"></p>
+    <ul class="review" id="review"></ul>
+  </div>
+
+  <div class="progress">
+    <div class="progress-label"><span>PROGRESS</span><span id="progressText">0 / 6</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="actions" id="actions">
+    <button type="button" class="btn" id="mainBtn" disabled>Check</button>
+  </div>
+  <div class="result-actions" id="resultActions">
+    <button type="button" class="btn" id="retryBtn">Try again</button>
+    <a class="btn ghost" href="../">← Unit 1</a>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  /* One word at a time. "_" marks a missing letter: each one gets its own box. */
+  var ITEMS = [
+    { word: "Monday",    mask: "M__day" },
+    { word: "Tuesday",   mask: "__esday" },
+    { word: "Wednesday", mask: "We____day" },
+    { word: "Thursday",  mask: "Thu_____" },
+    { word: "Friday",    mask: "F_____" },
+    { word: "Saturday",  mask: "S_t__day" }
+  ];
+  var TOTAL = ITEMS.length, GAME_ID = "starter-u1-days-order";
+  var idx = 0, correct = 0, answers = [], answered = false;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function boxes() { return Array.prototype.slice.call(document.querySelectorAll("#word .box")); }
+  function allFilled() {
+    return boxes().every(function (b) { return b.value.length === 1; });
+  }
+
+  function render() {
+    var item = ITEMS[idx];
+    answered = false;
+    $("count").textContent = (idx + 1) + " / " + TOTAL;
+    $("progressText").textContent = idx + " / " + TOTAL;
+    $("progressFill").style.width = (idx / TOTAL * 100) + "%";
+    $("fb").className = "fb"; $("fb").textContent = "";
+
+    var html = "";
+    for (var i = 0; i < item.mask.length; i++) {
+      if (item.mask.charAt(i) === "_") {
+        html += '<input class="box" type="text" inputmode="text" maxlength="1" autocomplete="off" ' +
+                'autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="letter ' + (i + 1) + '">';
+      } else {
+        html += '<span class="letter">' + esc(item.word.charAt(i)) + '</span>';
+      }
+    }
+    $("word").innerHTML = html;
+    $("mainBtn").textContent = "Check";
+    $("mainBtn").disabled = true;
+    var first = document.querySelector("#word .box");
+    if (first) first.focus({ preventScroll: true });
+  }
+
+  /* one letter per box: keep only the letter, move on to the next box */
+  function onInput(e) {
+    var el = e.target;
+    if (!el.classList || !el.classList.contains("box")) return;
+    var v = el.value.replace(/[^a-zA-Z]/g, "").slice(-1);
+    el.value = v;
+    if (v) {
+      var list = boxes(), i = list.indexOf(el);
+      if (i < list.length - 1) list[i + 1].focus({ preventScroll: true });
+    }
+    if (!answered) $("mainBtn").disabled = !allFilled();
+  }
+
+  /* backspace in an empty box goes back to the previous box */
+  function onKeyDown(e) {
+    var el = e.target;
+    if (!el.classList || !el.classList.contains("box")) return;
+    if (e.key === "Backspace" && el.value === "") {
+      var list = boxes(), i = list.indexOf(el);
+      if (i > 0) { e.preventDefault(); list[i - 1].value = ""; list[i - 1].focus({ preventScroll: true }); $("mainBtn").disabled = true; }
+    }
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+      var l2 = boxes(), j = l2.indexOf(el);
+      var t = e.key === "ArrowLeft" ? j - 1 : j + 1;
+      if (l2[t]) { e.preventDefault(); l2[t].focus({ preventScroll: true }); }
+    }
+  }
+
+  function check() {
+    if (answered || !allFilled()) return;
+    answered = true;
+    var item = ITEMS[idx], list = boxes(), typed = "", k = 0, ok = true;
+    for (var i = 0; i < item.mask.length; i++) {
+      if (item.mask.charAt(i) !== "_") { typed += item.word.charAt(i); continue; }
+      var b = list[k++], want = item.word.charAt(i), got = b.value;
+      typed += got;
+      b.disabled = true;
+      if (got === want) { b.classList.add("ok"); }
+      else { ok = false; b.classList.add("no"); b.value = want; }
+    }
+    answers[idx] = { ok: ok, typed: typed };
+    if (ok) correct++;
+    $("fb").className = "fb " + (ok ? "ok" : "bad");
+    $("fb").textContent = ok ? "Correct! " + item.word : "→ " + item.word;
+    $("progressText").textContent = (idx + 1) + " / " + TOTAL;
+    $("progressFill").style.width = ((idx + 1) / TOTAL * 100) + "%";
+    $("mainBtn").textContent = idx === TOTAL - 1 ? "See results" : "Next";
+    $("mainBtn").disabled = false;
+  }
+
+  function onMain() { if (!answered) check(); else next(); }
+
+  function next() {
+    idx++;
+    if (idx >= TOTAL) finish(); else render();
+  }
+
+  function finish() {
+    $("progressFill").style.width = "100%";
+    $("progressText").textContent = TOTAL + " / " + TOTAL;
+    $("stage").classList.add("hide");
+    $("actions").classList.add("hide");
+    $("resultActions").classList.add("show");
+    $("result").classList.add("show");
+    $("score").textContent = correct + " / " + TOTAL;
+    $("resultTitle").textContent =
+      correct === TOTAL ? "Wonderful work!" : correct >= TOTAL - 2 ? "Nice work!" : "Good effort!";
+    $("resultMsg").textContent =
+      correct === TOTAL ? "Every word is spelled correctly." : "Check the words below, then try again if you like.";
+
+    var ul = $("review");
+    ul.innerHTML = "";
+    ITEMS.forEach(function (item, i) {
+      var a = answers[i] || {};
+      var li = document.createElement("li");
+      if (a.ok) {
+        li.className = "ok";
+        li.innerHTML = '<span class="n">' + (i + 1) + '</span>' + esc(item.word);
+      } else {
+        li.className = "no";
+        li.innerHTML = '<span class="n">' + (i + 1) + '</span><span class="was">' +
+          esc(a.typed || "—") + '</span><span class="right">' + esc(item.word) + '</span>';
+      }
+      ul.appendChild(li);
+    });
+
+    try {
+      if (window.TestStars && typeof TestStars.award === "function") TestStars.award(GAME_ID);
+    } catch (e0) {}
+    try {
+      if (window.LAFinish && typeof LAFinish.show === "function") {
+        LAFinish.show({
+          gameId: GAME_ID, gameName: "Write the Days of the Week", score: correct, total: TOTAL,
+          title: "Write the Days of the Week", backHref: "../",
+          onAgain: function () { $("retryBtn").click(); },
+          category: "tests", unit: "starter-1"
+        });
+      } else if (window.LAStars) {
+        if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(GAME_ID);
+        if (typeof LAStars.saveFromAccuracy === "function") {
+          LAStars.saveFromAccuracy(GAME_ID, Math.round((correct / TOTAL) * 100));
+        }
+      }
+    } catch (e) {}
+  }
+
+  document.addEventListener("input", onInput);
+  document.addEventListener("keydown", function (e) {
+    onKeyDown(e);
+    if (e.key === "Enter") {
+      if (!$("stage").classList.contains("hide")) { e.preventDefault(); onMain(); }
+    }
+  });
+  $("mainBtn").addEventListener("click", onMain);
+  $("retryBtn").addEventListener("click", function () {
+    idx = 0; correct = 0; answers = []; answered = false;
+    $("result").classList.remove("show");
+    $("resultActions").classList.remove("show");
+    $("actions").classList.remove("hide");
+    $("stage").classList.remove("hide");
+    render();
+  });
+
+  render();
+});
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="../../../assets/tests-stars.js"></script>
+<script src="../../../assets/tests-ui.js"></script>
+<script src="/visit-counter.js" defer></script>
+</body>
+</html>
