@@ -125,7 +125,7 @@ body.rd .opt{
   transition:border-color .15s, background .15s, transform .12s;
 }
 body.rd .opt:hover{ border-color:var(--acc-two); }
-body.rd .opt input{ position:absolute; opacity:0; width:1px; height:1px; pointer-events:none; }
+body.rd .opt input{ position:absolute; opacity:0; width:0; height:0; margin:0; appearance:none; -webkit-appearance:none; }
 body.rd .opt .letter{
   flex:none; width:26px; height:26px; border-radius:8px; display:grid; place-items:center;
   background:var(--card); border:1px solid var(--line); font-size:12px; font-weight:900; color:var(--mut);
@@ -203,7 +203,9 @@ body.rd .btn-ghost{
   body.rd .lbl{ width:86px; }
 }
 @media (prefers-reduced-motion:reduce){ body.rd *{ animation:none !important; transition:none !important; } }
-</style>
+
+}
+html[data-theme="dark"] </style>
 </head>
 <body class="rd">
 
@@ -292,18 +294,19 @@ document.addEventListener("DOMContentLoaded", function () {
   /* ---------- the ID cards: "v" is printed, "blank" is typed ---------- */
   var CARDS = [
     { rows: [ { l: "First name", v: "Lena" }, { l: "Last name", v: "Taylor" },
-              { l: "From", blank: 1, acc: ["brooklyn", "brooklyn new york", "new york"], show: "Brooklyn" } ] },
+              { l: "From", blank: 1, acc: ["the us", "us", "usa", "united states", "the united states"], show: "the US" } ] },
     { rows: [ { l: "First name", v: "Akiko" },
               { l: "Last name", blank: 2, acc: ["ito"], show: "Ito" },
-              { l: "From", blank: 3, acc: ["japan", "kyoto", "kyoto japan"], show: "Japan" } ] },
+              { l: "From", blank: 3, acc: ["japan"], show: "Japan" } ] },
     { rows: [ { l: "First name", v: "Sofia" }, { l: "Last name", v: "Ricci" },
-              { l: "From", blank: 4, acc: ["milan"], show: "Milan" } ] },
+              { l: "From", blank: 4, acc: ["italy"], show: "Italy" } ] },
     { rows: [ { l: "First name", blank: 5, acc: ["fadil"], show: "Fadil" },
               { l: "Last name", blank: 6, acc: ["zaher"], show: "Zaher" },
               { l: "From", v: "Egypt" } ] }
   ];
 
   var TOTAL = QUESTIONS.length + 6, correctCount = 0, checked = false;
+  var choices = {}; /* data-i -> option index */
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
@@ -361,7 +364,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function updateProgress() {
     var done = 0;
     document.querySelectorAll(".q").forEach(function (q) {
-      if (q.querySelector("input:checked")) done++;
+      var i = q.getAttribute("data-i");
+      if (choices[i] != null || q.querySelector("input:checked")) done++;
     });
     document.querySelectorAll("#ids input").forEach(function (inp) {
       if (inp.value.trim()) done++;
@@ -371,16 +375,38 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* ---------- choosing ---------- */
+  function selectOption(card, j) {
+    if (checked || !card) return;
+    var i = card.getAttribute("data-i");
+    choices[i] = j;
+    var inputs = card.querySelectorAll("input[type=radio]");
+    inputs.forEach(function (inp) {
+      var v = parseInt(inp.value, 10);
+      inp.checked = (v === j);
+    });
+    card.classList.add("answered");
+    card.querySelectorAll(".opt").forEach(function (l) {
+      var lj = parseInt(l.getAttribute("data-j"), 10);
+      l.classList.toggle("on", lj === j);
+    });
+    updateProgress();
+  }
   function onChange(e) {
     if (checked) return;
     var input = e.target;
-    if (input.type !== "radio") return;
+    if (!input || input.type !== "radio") return;
     var card = input.closest(".q");
-    card.classList.add("answered");
-    card.querySelectorAll(".opt").forEach(function (l) {
-      l.classList.toggle("on", l.querySelector("input") === input);
-    });
-    updateProgress();
+    selectOption(card, parseInt(input.value, 10));
+  }
+  function onOptClick(e) {
+    if (checked) return;
+    var opt = e.target.closest && e.target.closest(".opt");
+    if (!opt) return;
+    var card = opt.closest(".q");
+    var j = parseInt(opt.getAttribute("data-j"), 10);
+    if (isNaN(j)) return;
+    e.preventDefault();
+    selectOption(card, j);
   }
   function onType(e) {
     if (checked) return;
@@ -388,16 +414,22 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* ---------- checking ---------- */
+
   function check() {
     if (checked) return;
+    var _cb = document.getElementById("checkBtn"); if (_cb) { _cb.disabled = true; _cb.textContent = "Check"; }
+    
     checked = true;
     correctCount = 0;
 
     QUESTIONS.forEach(function (item, i) {
       var card = document.querySelector('.q[data-i="' + i + '"]');
       var note = $("note" + i);
-      var sel = card.querySelector("input:checked");
-      var chosen = sel ? parseInt(sel.value, 10) : -1;
+      var chosen = (choices[i] != null) ? choices[i] : -1;
+      if (chosen === -1) {
+        var sel = card.querySelector("input:checked");
+        chosen = sel ? parseInt(sel.value, 10) : -1;
+      }
       card.querySelectorAll(".opt").forEach(function (l) {
         var j = parseInt(l.getAttribute("data-j"), 10);
         l.classList.add("locked");
@@ -429,7 +461,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showResult();
     $("checkBtn").style.display = "none";
-  }
+  
+    
+}
 
   function showResult() {
     var pct = Math.round(correctCount / TOTAL * 100);
@@ -443,26 +477,23 @@ document.addEventListener("DOMContentLoaded", function () {
     $("doneText").textContent = correctCount + " / " + TOTAL;
     $("doneFill").style.width = (correctCount / TOTAL * 100) + "%";
 
+    /* Save progress/stars, but do NOT open the full-screen la-finish overlay.
+       This is a review activity: students need to see green/amber feedback first. */
     try {
       if (window.TestStars && typeof TestStars.award === "function") TestStars.award(GAME_ID);
     } catch (e0) {}
     try {
-      if (window.LAFinish && typeof LAFinish.show === "function") {
-        LAFinish.show({
-          gameId: GAME_ID, gameName: "Reading: Pen Pals", score: correctCount, total: TOTAL,
-          stars: stars, accuracy: pct, save: false, onAgain: reset, backHref: "../",
-          title: "Reading: Pen Pals", category: "tests", unit: "starter-1"
-        });
-      } else if (window.LAStars) {
+      if (window.LAStars) {
         if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(GAME_ID);
         if (typeof LAStars.saveFromAccuracy === "function") LAStars.saveFromAccuracy(GAME_ID, pct);
+        else if (typeof LAStars.save === "function") LAStars.save(GAME_ID, stars);
       }
     } catch (e) {}
     $("scoreCard").scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   function reset() {
-    checked = false; correctCount = 0;
+    checked = false; correctCount = 0; choices = {};
     document.querySelectorAll(".q").forEach(function (q) {
       q.classList.remove("answered");
       q.querySelectorAll(".opt").forEach(function (l) {
@@ -487,6 +518,7 @@ document.addEventListener("DOMContentLoaded", function () {
   buildQuestions();
   buildIds();
   document.addEventListener("change", onChange);
+  document.addEventListener("click", onOptClick);
   document.addEventListener("input", onType);
   $("checkBtn").addEventListener("click", check);
   $("retryBtn").addEventListener("click", reset);

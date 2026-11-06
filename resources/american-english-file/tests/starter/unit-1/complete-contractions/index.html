@@ -171,7 +171,9 @@ body.cc .tui-sound{
   display:inline-grid; place-items:center; box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s;
 }
 body.cc .tui-sound:active{ transform:translateY(2px); }
-</style>
+
+}
+html[data-theme="dark"] </style>
 </head>
 <body class="cc">
 <div class="app">
@@ -283,6 +285,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function check() {
     if (answered || sel === null) return;
+    var _mb = document.getElementById("mainBtn"); if (_mb) { _mb.disabled = true; }
+    
     answered = true;
     var item = ITEMS[idx];
     var ok = sel === item.ans;
@@ -305,8 +309,11 @@ document.addEventListener("DOMContentLoaded", function () {
     $("fb").textContent = ok ? "Correct! " + item.full : "→ " + item.full;
     $("progressText").textContent = (idx + 1) + " / " + TOTAL;
     $("progressFill").style.width = ((idx + 1) / TOTAL * 100) + "%";
+    $("mainBtn").disabled = false;
     $("mainBtn").textContent = idx === TOTAL - 1 ? "See results" : "Next";
-  }
+  
+    
+}
 
   function onMain() { if (!answered) check(); else next(); }
 

@@ -216,7 +216,9 @@ body.pst .sentence{ min-height:2.4em !important; }
 body.pst .gap{ color:var(--acc); font-weight:800; text-align:center; min-width:6.5ch; white-space:nowrap; }
 body.pst .gap.filled{ border-bottom-style:solid; height:auto !important; line-height:1.3; padding:0 .15em .1em; vertical-align:baseline; }
 @media (max-width:420px){ body.pst .ans{ min-height:52px !important; font-size:16px !important; } }
-</style>
+
+}
+html[data-theme="dark"] </style>
 </head>
 <body class="pst">
 <div class="bg" aria-hidden="true"></div>
@@ -333,6 +335,8 @@ function choose(v) {
 
 function check() {
   if (answered || sel === null) return;
+  var _mb = document.getElementById("mainBtn"); if (_mb) { _mb.disabled = true; }
+  
   answered = true;
   var item = ITEMS[idx];
   var ok = sel === item.ans;
@@ -349,7 +353,10 @@ function check() {
   $("fb").textContent = ok ? "Correct!" : "→ " + item.ans;
   $("progressText").textContent = (idx + 1) + " / " + TOTAL;
   $("progressFill").style.width = ((idx + 1) / TOTAL * 100) + "%";
-  $("mainBtn").textContent = idx === TOTAL - 1 ? "See results" : "Next";
+  $("mainBtn").disabled = false;
+    $("mainBtn").textContent = idx === TOTAL - 1 ? "See results" : "Next";
+
+  
 }
 
 function onMain() {

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 5 · Roommate Wanted · Multiple Choice | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Read about Maite. Choose the correct option.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+html:root, html:root body.u5{
+  height:100% !important; max-height:100% !important;
+  overflow:hidden !important; padding:0 !important; margin:0 !important;
+}
+body.u5{
+  --bg:#f0fdfa; --card:#fff; --ink:#1e1b3a; --mut:#64668a; --line:#d5e8ec;
+  --acc:#155e75; --acc-d:#0e7490; --acc-two:#22d3ee; --acc-soft:rgba(15,118,110,.10);
+  --ok:#15803d; --ok-bg:#dcfce7; --warn:#b91c1c; --warn-bg:#fee2e2; --amber:#b45309; --amber-bg:#fef3c7;
+  --btn-ink:#fff; --ghost:#fff;
+  --app-bg:radial-gradient(900px 480px at 0% -10%, rgba(20,184,166,.16), transparent 60%),
+           linear-gradient(180deg, #f0fdfa 0%, #eef4ff 100%);
+  height:100dvh; height:100vh; color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:var(--app-bg) fixed; display:flex; flex-direction:column; overflow:hidden;
+}
+html[data-theme="dark"] body.u5{
+  --bg:#0f1420; --card:#171e2d; --ink:#e8edf6; --mut:#a3a9c4; --line:#2c3550;
+  --acc:#2dd4bf; --acc-d:#0f766e; --acc-two:#5eead4; --acc-soft:rgba(45,212,191,.14);
+  --ok:#4ade80; --ok-bg:rgba(74,222,128,.14); --warn:#f87171; --warn-bg:rgba(248,113,113,.14);
+  --amber:#fbbf24; --amber-bg:rgba(251,191,36,.14); --btn-ink:#062b27; --ghost:#1e2433;
+  --app-bg:linear-gradient(180deg, #111728 0%, #0f1420 100%);
+}
+body.u5 *, body.u5 *::before, body.u5 *::after{ box-sizing:border-box; }
+body.u5 .wrap{
+  width:100%; max-width:520px; margin:0 auto; height:100%;
+  display:flex; flex-direction:column; padding:10px 14px max(12px, env(safe-area-inset-bottom));
+  gap:8px; overflow:hidden;
+}
+body.u5 .top{
+  flex:none; display:flex; align-items:center; gap:10px;
+  padding:8px 12px; background:rgba(255,255,255,.88); backdrop-filter:blur(12px);
+  border:1px solid var(--line); border-radius:16px;
+}
+html[data-theme="dark"] body.u5 .top{ background:rgba(23,30,45,.85); }
+body.u5 .back-btn{
+  display:inline-flex; align-items:center; gap:.3rem; min-height:36px; padding:.35rem .8rem;
+  border-radius:999px; background:#fff; border:2px solid rgba(15,118,110,.18); color:var(--acc);
+  font-weight:700; font-size:.88rem; text-decoration:none; box-shadow:0 2px 0 rgba(15,118,110,.12);
+}
+html[data-theme="dark"] body.u5 .back-btn{ background:var(--card); }
+body.u5 .count{ margin-left:auto; font-weight:700; font-size:.9rem; color:var(--mut); font-variant-numeric:tabular-nums; }
+body.u5 .tui-sound{
+  appearance:none; border:2px solid rgba(15,118,110,.18); background:#fff; color:inherit;
+  width:36px; height:36px; border-radius:50%; font-size:1rem; cursor:pointer; flex:none; padding:0;
+  display:inline-grid; place-items:center; box-shadow:0 2px 0 rgba(15,118,110,.12);
+}
+html[data-theme="dark"] body.u5 .tui-sound{ background:var(--card); }
+body.u5 .hero{ flex:none; text-align:center; padding:2px 4px 0; }
+body.u5 .badge{
+  display:inline-block; font-size:10px; font-weight:800; letter-spacing:.7px; text-transform:uppercase;
+  padding:5px 12px; border-radius:999px; background:var(--acc-soft); color:var(--acc);
+}
+body.u5 .hero h1{ margin:6px 0 2px; font-size:clamp(1.15rem, 4vw, 1.4rem); font-weight:900; line-height:1.15; }
+body.u5 .hero p{ margin:0; color:var(--mut); font-size:.82rem; }
+body.u5 .stage{
+  flex:1 1 auto; min-height:0; display:flex; flex-direction:column; justify-content:center;
+  background:var(--card); border:1px solid var(--line); border-radius:18px;
+  padding:16px; box-shadow:0 10px 24px -16px rgba(30,27,58,.15); overflow:auto;
+}
+body.u5 .kind{ font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--acc); margin-bottom:6px; }
+body.u5 .question{ font-size:clamp(1.05rem, 3.8vw, 1.25rem); font-weight:800; line-height:1.35; margin:0 0 14px; }
+body.u5 .opts{ display:grid; gap:8px; }
+body.u5 .ans{
+  appearance:none; border:2px solid var(--line); background:var(--bg); color:var(--ink);
+  border-radius:14px; padding:12px 14px; font:inherit; font-size:1rem; font-weight:700;
+  cursor:pointer; text-align:left; transition:border-color .15s, background .15s;
+}
+body.u5 .ans:disabled{ cursor:default; }
+body.u5 .ans.sel{ border-color:var(--acc); background:var(--acc-soft); color:var(--acc); }
+body.u5 .ans.correct, body.u5 .ans.reveal{ border-color:var(--ok); background:var(--ok-bg); color:var(--ok); }
+body.u5 .ans.wrong{ border-color:var(--amber); background:var(--amber-bg); color:var(--amber); }
+body.u5 .ans, body.u5 .ans:active{ transform:none !important; }
+body.u5 .fb{ min-height:1.25em; margin-top:10px; font-weight:750; font-size:.9rem; }
+body.u5 .fb.ok{ color:var(--ok); }
+body.u5 .fb.bad{ color:var(--warn); }
+body.u5 .bottom{ flex:none; display:flex; flex-direction:column; gap:8px; }
+body.u5 .progress-label{ display:flex; justify-content:space-between; font-size:.7rem; font-weight:800; letter-spacing:.06em; color:var(--mut); }
+body.u5 .progress-bar{ height:6px; border-radius:99px; background:rgba(127,127,127,.14); overflow:hidden; }
+body.u5 .progress-fill{ height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,var(--acc),var(--acc-two)); transition:width .35s; }
+body.u5 .actions{ display:flex; justify-content:center; }
+body.u5 .btn{
+  appearance:none; border:none; cursor:pointer; min-height:46px; min-width:140px; padding:.65rem 1.6rem;
+  border-radius:999px; font:inherit; font-size:1rem; font-weight:800; color:var(--btn-ink);
+  background:var(--acc); box-shadow:0 3px 0 var(--acc-d);
+}
+body.u5 .btn:disabled{ opacity:.4; cursor:default; box-shadow:none; }
+body.u5 .btn.ghost{
+  background:var(--ghost); color:var(--acc); border:2px solid rgba(15,118,110,.2);
+  box-shadow:0 2px 0 rgba(15,118,110,.1); text-decoration:none; display:inline-flex; align-items:center;
+}
+body.u5 .result{ flex:1 1 auto; min-height:0; display:none; flex-direction:column; text-align:center; overflow:auto; }
+body.u5 .result.show{ display:flex; }
+body.u5 .result .big{ font-size:clamp(1.8rem, 7vw, 2.6rem); font-weight:900; color:var(--acc); }
+body.u5 .review{ list-style:none; margin:10px 0 0; padding:0; text-align:left; display:grid; gap:6px; }
+body.u5 .review li{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:.84rem; }
+body.u5 .review li.ok .a{ color:var(--ok); }
+body.u5 .review li.bad .a{ color:var(--warn); }
+body.u5 .result-actions{ display:none; gap:8px; justify-content:center; flex-wrap:wrap; }
+body.u5 .result-actions.show{ display:flex; }
+body.u5 .stage.hide{ display:none !important; }
+/* checking loader */
+html[data-theme="dark"] }
+@media (max-height:560px){
+  body.u5 .hero p{ display:none; }
+  body.u5 .stage{ padding:12px; }
+}
+</style>
+</head>
+<body class="u5">
+<div class="wrap">
+  <div class="top header">
+    <a class="back-btn" href="../">← Unit 5</a>
+    <span class="count" id="count">1 / 8</span>
+  </div>
+  <div class="hero">
+    <span class="badge">READING</span>
+    <h1>Roommate Wanted · Multiple Choice</h1>
+    <p>Read about Maite. Choose the correct option.</p>
+  </div>
+  <div class="stage" id="stage">
+    <div class="kind" id="kind">READING</div>
+    <p class="question" id="question"></p>
+    <div class="opts" id="opts" role="group"></div>
+    <div class="fb" id="fb" role="status"></div>
+  </div>
+  <div class="result" id="result">
+    <div class="big" id="score">0 / 8</div>
+    <h2 id="resultTitle"></h2>
+    <p class="msg" id="resultMsg" style="color:var(--mut)"></p>
+    <ul class="review" id="review"></ul>
+  </div>
+  <div class="bottom">
+    <div>
+      <div class="progress-label"><span>PROGRESS</span><span id="progressText">0 / 8</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="actions" id="actions">
+      <button type="button" class="btn" id="mainBtn" disabled>Check</button>
+    </div>
+    <div class="result-actions" id="resultActions">
+      <button type="button" class="btn" id="retryBtn">Try again</button>
+      <a class="btn ghost" href="../">← Unit 5</a>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var GAME_ID = "starter-u5-reading-mc";
+  var ITEMS = [
+  {
+    "q": "My last name is…",
+    "opts": [
+      "A Lopez",
+      "B Perez",
+      "C Sanchez"
+    ],
+    "ans": 0
+  },
+  {
+    "q": "My apartment doesn't have a…",
+    "opts": [
+      "A bedroom",
+      "B backyard",
+      "C kitchen"
+    ],
+    "ans": 1
+  },
+  {
+    "q": "I eat… at home.",
+    "opts": [
+      "A breakfast and lunch",
+      "B lunch and dinner",
+      "C breakfast and dinner"
+    ],
+    "ans": 2
+  },
+  {
+    "q": "I have lunch with my…",
+    "opts": [
+      "A brother",
+      "B roommate",
+      "C friends"
+    ],
+    "ans": 2
+  },
+  {
+    "q": "In the evening I'm…",
+    "opts": [
+      "A cold",
+      "B hungry",
+      "C tired"
+    ],
+    "ans": 2
+  },
+  {
+    "q": "In the evening I usually…",
+    "opts": [
+      "A study",
+      "B work in a café",
+      "C watch TV"
+    ],
+    "ans": 2
+  },
+  {
+    "q": "I work in a… on the weekend.",
+    "opts": [
+      "A café",
+      "B movie theater",
+      "C university"
+    ],
+    "ans": 0
+  },
+  {
+    "q": "I speak…",
+    "opts": [
+      "A English and Italian",
+      "B Spanish and Italian",
+      "C Spanish and French"
+    ],
+    "ans": 2
+  }
+];
+  var TOTAL = ITEMS.length;
+  var idx = 0, correct = 0, answered = false, sel = null;
+  var answers = [];
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c];
+    });
+  }
+
+  function render() {
+    answered = false; sel = null;
+    var item = ITEMS[idx];
+    $("count").textContent = (idx + 1) + " / " + TOTAL;
+    $("kind").textContent = "READING" + "  ·  " + (idx + 1) + " / " + TOTAL;
+    $("question").innerHTML = item.q;
+    $("fb").className = "fb"; $("fb").textContent = "";
+    $("mainBtn").textContent = "Check"; $("mainBtn").disabled = true;
+    $("progressText").textContent = idx + " / " + TOTAL;
+    $("progressFill").style.width = (idx / TOTAL * 100) + "%";
+    $("stage").classList.remove("hide");
+    $("actions").style.display = "";
+    $("result").classList.remove("show");
+    $("resultActions").classList.remove("show");
+    var box = $("opts"); box.innerHTML = "";
+    item.opts.forEach(function (o, j) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "ans"; b.setAttribute("data-j", j);
+      b.textContent = o;
+      b.addEventListener("click", function () {
+        if (answered) return;
+        sel = j;
+        Array.prototype.forEach.call(box.querySelectorAll(".ans"), function (x) {
+          x.classList.toggle("sel", x === b);
+        });
+        $("mainBtn").disabled = false;
+      });
+      box.appendChild(b);
+    });
+  }
+  function check() {
+    if (answered || sel === null) return;
+    $("mainBtn").disabled = true;
+    
+      answered = true;
+      var item = ITEMS[idx];
+      var ok = sel === item.ans;
+      answers[idx] = { ok: ok, text: item.opts[sel] };
+      if (ok) correct++;
+      Array.prototype.forEach.call(document.querySelectorAll("#opts .ans"), function (b) {
+        var j = parseInt(b.getAttribute("data-j"), 10);
+        b.disabled = true; b.classList.remove("sel");
+        if (j === item.ans) b.classList.add(ok ? "correct" : "reveal");
+        else if (j === sel) b.classList.add("wrong");
+      });
+      $("fb").className = "fb " + (ok ? "ok" : "bad");
+      $("fb").textContent = ok ? "Correct!" : ("→ " + (item.tip || item.opts[item.ans]));
+      $("progressText").textContent = (idx + 1) + " / " + TOTAL;
+      $("progressFill").style.width = ((idx + 1) / TOTAL * 100) + "%";
+      $("mainBtn").disabled = false;
+      $("mainBtn").textContent = idx === TOTAL - 1 ? "See results" : "Next";
+    
+  }
+  function next() {
+    idx++;
+    if (idx >= TOTAL) finish(); else render();
+  }
+  function onMain() { if (!answered) check(); else next(); }
+  function finish() {
+    $("stage").classList.add("hide");
+    $("actions").style.display = "none";
+    $("progressFill").style.width = "100%";
+    var pct = Math.round((correct / TOTAL) * 100);
+    $("score").textContent = correct + " / " + TOTAL;
+    $("resultTitle").textContent = correct === TOTAL ? "Excellent!" : pct >= 70 ? "Well done!" : "Good effort!";
+    $("resultMsg").textContent = correct === TOTAL ? "Every answer is correct." : "Review the answers below.";
+    var html = "";
+    ITEMS.forEach(function (item, i) {
+      var a = answers[i] || { ok:false, text:"—" };
+      html += '<li class="' + (a.ok?"ok":"bad") + '"><div><b>' + (i+1) + ".</b> " + item.q.replace(/<[^>]+>/g,"") +
+        '</div><div class="a">You: ' + esc(a.text) + (a.ok?"":' · <b style="color:var(--ok)">' + esc(item.opts[item.ans]) + "</b>") +
+        "</div></li>";
+    });
+    $("review").innerHTML = html;
+    $("result").classList.add("show");
+    $("resultActions").classList.add("show");
+    try { if (window.TestStars) TestStars.award(GAME_ID); } catch(e){}
+    try {
+      if (window.LAFinish) LAFinish.show({
+        gameId: GAME_ID, gameName: "Roommate Wanted · Multiple Choice", score: correct, total: TOTAL,
+        accuracy: pct, onAgain: reset, backHref: "../", category: "tests", unit: "starter-5"
+      });
+      else if (window.LAStars && LAStars.saveFromAccuracy) LAStars.saveFromAccuracy(GAME_ID, pct);
+    } catch(e){}
+  }
+  function reset() {
+    idx = 0; correct = 0; answers = []; answered = false; sel = null;
+    render();
+  }
+  $("mainBtn").addEventListener("click", onMain);
+  $("retryBtn").addEventListener("click", reset);
+  render();
+});
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="../../../assets/tests-stars.js"></script>
+<script src="../../../assets/tests-ui.js"></script>
+<script src="/visit-counter.js" defer></script>
+</body>
+</html>

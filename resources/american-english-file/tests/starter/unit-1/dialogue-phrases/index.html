@@ -208,7 +208,9 @@ body.dl .review .right{ font-weight:800; }
   body.dl .back-btn{ min-height:36px; padding:.3rem .8rem; }
 }
 @media (prefers-reduced-motion:reduce){ body.dl *{ transition:none !important; } }
-</style>
+
+}
+html[data-theme="dark"] </style>
 </head>
 <body class="dl">
 <div class="app">
@@ -324,6 +326,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function check() {
     if (answered || sel === null) return;
+    var _mb = document.getElementById("mainBtn"); if (_mb) { _mb.disabled = true; }
+    
     answered = true;
     var item = ITEMS[idx];
     var ok = sel === item.ans;
@@ -342,9 +346,12 @@ document.addEventListener("DOMContentLoaded", function () {
     $("fb").textContent = ok ? "Correct!" : "→ " + item.ans;
     $("progressText").textContent = (idx + 1) + " / " + TOTAL;
     $("progressFill").style.width = ((idx + 1) / TOTAL * 100) + "%";
+    $("mainBtn").disabled = false;
     $("mainBtn").textContent = idx === TOTAL - 1 ? "See results" : "Next";
     $("mainBtn").disabled = false;
-  }
+  
+    
+}
 
   function onMain() { if (!answered) check(); else next(); }
 
