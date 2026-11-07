@@ -18,7 +18,16 @@
   var TOTAL = ITEMS.length;
   var app = document.getElementById("game-app");
   var phase = "start";
-  var choice = [];          // per line: index of picked option or null
+  var choice = [];
+  var ORDER = {};   // per line: shuffled display order of options (original indexes), reset each attempt
+  function orderFor(i) {
+    if (!ORDER[i]) {
+      var a = []; for (var x = 0; x < ITEMS[i].opts.length; x++) a.push(x);
+      for (var y = a.length - 1; y > 0; y--) { var r = Math.floor(Math.random() * (y + 1)); var t = a[y]; a[y] = a[r]; a[r] = t; }
+      ORDER[i] = a;
+    }
+    return ORDER[i];
+  }          // per line: index of picked option or null
   var checked = false;
   var score = 0;
   var playing = false;
@@ -68,6 +77,7 @@
   /* ---------- state ---------- */
   function setupGame() {
     choice = ITEMS.map(function () { return null; });
+    ORDER = {};
     checked = false;
     score = 0;
     played = false;
@@ -157,7 +167,7 @@
   function lineHtml(i) {
     var it = ITEMS[i];
     var mine = choice[i];
-    var btns = it.opts.map(function (label, k) {
+    var btns = orderFor(i).map(function (k, pos) { var label = it.opts[k];
       var cls = "ul-opt";
       var tick = "";
       if (checked) {
@@ -167,7 +177,7 @@
         cls += " is-picked";
       }
       return '<button type="button" class="' + cls + '" data-i="' + i + '" data-k="' + k + '"' +
-        (checked ? " disabled" : "") + '><span class="ul-letter">' + String.fromCharCode(65 + k) + "</span>" +
+        (checked ? " disabled" : "") + '><span class="ul-letter">' + String.fromCharCode(65 + pos) + "</span>" +
         esc(label) + tick + "</button>";
     }).join("");
     var rowCls = "ul-row" + (checked ? (mine === it.answer ? " is-right" : " is-wrong") : "");

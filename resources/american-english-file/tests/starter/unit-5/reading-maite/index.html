@@ -27,10 +27,10 @@ body.rd {
   --ok: #15803d; --ok-bg: #dcfce7; --warn: #b91c1c; --warn-bg: #fee2e2;
   --amber: #b45309; --amber-bg: #fef3c7; --teal: #0d9488; --teal-soft: rgba(13,148,136,.12);
   --app-bg:
-    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(20,184,166,.18), transparent 55%),
-    radial-gradient(ellipse 60% 40% at 95% 20%, rgba(251,191,36,.10), transparent 50%),
-    radial-gradient(ellipse 50% 35% at 80% 90%, rgba(99,102,241,.08), transparent 50%),
-    linear-gradient(180deg, #f7f3ea 0%, #f0f7f5 40%, #eef2ff 100%);
+    radial-gradient(ellipse 70% 45% at 18% -6%, rgba(255,253,246,.95), transparent 70%),
+    radial-gradient(ellipse 65% 50% at 100% 100%, rgba(20,184,166,.14), transparent 60%),
+    radial-gradient(ellipse 45% 35% at 0% 100%, rgba(251,191,36,.10), transparent 60%),
+    linear-gradient(180deg, #fbf6ea 0%, #f6efdf 55%, #efe7d4 100%);
   min-height: 100vh; min-height: 100dvh; color: var(--ink);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background: var(--app-bg) fixed;
@@ -43,46 +43,43 @@ html[data-theme="dark"] body.rd {
   --ok: #4ade80; --ok-bg: rgba(74,222,128,.14); --warn: #f87171; --warn-bg: rgba(248,113,113,.14);
   --amber: #fbbf24; --amber-bg: rgba(251,191,36,.14); --teal: #2dd4bf; --teal-soft: rgba(45,212,191,.14);
   --app-bg:
-    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(45,212,191,.12), transparent 55%),
-    radial-gradient(ellipse 60% 40% at 95% 20%, rgba(251,191,36,.06), transparent 50%),
-    linear-gradient(180deg, #12181f 0%, #0f1420 50%, #111728 100%);
+    radial-gradient(ellipse 70% 45% at 18% -6%, rgba(251,191,36,.07), transparent 70%),
+    radial-gradient(ellipse 65% 50% at 100% 100%, rgba(45,212,191,.10), transparent 60%),
+    linear-gradient(180deg, #161a20 0%, #12151c 55%, #0f121a 100%);
 }
 body.rd::before {
   content: "";
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  opacity: .45;
+  opacity: .9;
   background-image:
+    linear-gradient(90deg, transparent 0 58px, rgba(190, 60, 50, .16) 58px 59px, transparent 59px),
     repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 27px,
-      rgba(15, 118, 110, .035) 27px,
-      rgba(15, 118, 110, .035) 28px
+      180deg,
+      transparent 0 31px,
+      rgba(120, 104, 80, .10) 31px 32px
     );
 }
 html[data-theme="dark"] body.rd::before {
-  opacity: .25;
+  opacity: .8;
   background-image:
+    linear-gradient(90deg, transparent 0 58px, rgba(251, 191, 36, .14) 58px 59px, transparent 59px),
     repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 27px,
-      rgba(45, 212, 191, .04) 27px,
-      rgba(45, 212, 191, .04) 28px
+      180deg,
+      transparent 0 31px,
+      rgba(45, 212, 191, .07) 31px 32px
     );
 }
 body.rd::after {
   content: "";
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
   background:
-    radial-gradient(circle at 12% 78%, rgba(15,118,110,.06) 0 40px, transparent 41px),
-    radial-gradient(circle at 88% 18%, rgba(180,83,9,.05) 0 36px, transparent 37px),
-    radial-gradient(circle at 70% 70%, rgba(99,102,241,.04) 0 50px, transparent 51px);
+    radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(120, 88, 40, .12) 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.4  0 0 0 0 0.3  0 0 0 0 0.2  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 html[data-theme="dark"] body.rd::after {
   background:
-    radial-gradient(circle at 12% 78%, rgba(45,212,191,.05) 0 40px, transparent 41px),
-    radial-gradient(circle at 88% 18%, rgba(251,191,36,.04) 0 36px, transparent 37px);
+    radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0, 0, 0, .35) 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 body.rd *, body.rd *::before, body.rd *::after { box-sizing: border-box; }
 body.rd .wrap {
@@ -414,15 +411,28 @@ document.addEventListener("DOMContentLoaded", function () {
   var correctCount = 0, checked = false, choices = {};
 
   function letter(j) { return String.fromCharCode(65 + j); }
+  var ORDER = {};   // per question: shuffled display order of options (original indexes); reset on retry
+  function orderFor(i) {
+    if (!ORDER[i]) {
+      var a = []; for (var x = 0; x < QUESTIONS[i].opts.length; x++) a.push(x);
+      for (var y = a.length - 1; y > 0; y--) { var r = Math.floor(Math.random() * (y + 1)); var t = a[y]; a[y] = a[r]; a[r] = t; }
+      ORDER[i] = a;
+    }
+    return ORDER[i];
+  }
+  function optsMarkup(i) {
+    var item = QUESTIONS[i];
+    return orderFor(i).map(function (j, pos) {
+      return '<label class="opt" data-j="' + j + '"><input type="radio" name="q' + i + '" value="' + j + '">' +
+        '<span class="letter">' + letter(pos) + '</span><span>' + esc(item.opts[j]) + '</span></label>';
+    }).join("");
+  }
 
   function buildQuestions() {
     var html1 = "", html2 = "";
     QUESTIONS.forEach(function (item, i) {
       var label = item.section === 1 ? String(item.local + 1) : String(item.local + 1);
-      var opts = item.opts.map(function (o, j) {
-        return '<label class="opt" data-j="' + j + '"><input type="radio" name="q' + i + '" value="' + j + '">' +
-          '<span class="letter">' + letter(j) + '</span><span>' + esc(o) + '</span></label>';
-      }).join("");
+      var opts = optsMarkup(i);
       var card =
         '<article class="q" data-i="' + i + '">' +
         '<div class="q-head"><span class="q-num' + (item.ex ? " ex" : "") + '">' + label + '</span>' +
@@ -496,10 +506,10 @@ document.addEventListener("DOMContentLoaded", function () {
         note.textContent = "Correct!";
       } else if (chosen === -1) {
         note.className = "q-note bad";
-        note.textContent = "No answer. The answer is " + letter(item.ans) + " · " + item.opts[item.ans] + ".";
+        note.textContent = "No answer. The answer is " + letter(orderFor(i).indexOf(item.ans)) + " · " + item.opts[item.ans] + ".";
       } else {
         note.className = "q-note bad";
-        note.textContent = "The answer is " + letter(item.ans) + " · " + item.opts[item.ans] + ".";
+        note.textContent = "The answer is " + letter(orderFor(i).indexOf(item.ans)) + " · " + item.opts[item.ans] + ".";
       }
     });
 
@@ -528,6 +538,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function reset() {
     checked = false; correctCount = 0; choices = {};
+    ORDER = {};
+    QUESTIONS.forEach(function (item, i) {
+      var box = document.querySelector('.q[data-i="' + i + '"] .opts');
+      if (box) box.innerHTML = optsMarkup(i);
+    });
     document.querySelectorAll(".q").forEach(function (q) {
       q.classList.remove("answered");
       q.querySelectorAll(".opt").forEach(function (l) {

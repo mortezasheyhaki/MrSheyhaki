@@ -33,7 +33,7 @@ html[data-theme="dark"] .back{ color:#c4b5fd; }
 .card{ flex:1 1 auto; min-height:0; overflow:auto; background:var(--card); border:1px solid var(--line); border-radius:22px; padding:18px 18px 22px; box-shadow:0 10px 30px rgba(0,0,0,.06); }
 .card p{ margin:0 0 14px; font-size:clamp(17px,2.4vw,20px); line-height:1.9; }
 .card p.sig{ margin-top:6px; font-size:clamp(17px,2.4vw,20px); }
-.blank{ display:inline-block; position:relative; }
+.blank{ display:inline-block; position:relative; margin-top:.95em; }
 .blank input{ width:7.2em; height:2.1em; margin:0 .15em; padding:0 .4em; border:0; border-bottom:3px solid var(--acc); border-radius:10px 10px 0 0; background:var(--acc-soft); color:var(--ink); font:inherit; font-weight:700; text-align:center; outline:none; transition:background .2s, border-color .2s; }
 .blank input:focus{ background:var(--card); border-bottom-color:var(--btn); box-shadow:0 2px 0 var(--btn-d); }
 .blank .hint{ position:absolute; left:50%; transform:translateX(-50%); top:-1.05em; font-size:.62em; color:var(--mut); font-weight:700; white-space:nowrap; pointer-events:none; }
@@ -58,8 +58,27 @@ html[data-theme="dark"] .back{ color:#c4b5fd; }
 .corr{ margin-top:10px; font-size:.9rem; color:var(--mut); text-align:left; line-height:1.6; }
 .corr b{ color:var(--bad); }
 @media (max-width:420px){ .blank input{ width:6.4em; font-size:16px; } .card{ padding:14px 13px 18px; } }
+@media (max-width:420px){ .card p{ line-height:1.6; } .card p.sig{ margin-top:2px; } }
+@media (max-height:760px){ .card p{ line-height:1.65; } }
 @media (max-height:700px){ .head p{ display:none; } .card p{ line-height:1.75; } }
 @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+
+/* ---- layout fit: whole passage visible, no scrolling; one progress bar ---- */
+.tui-progress, .tui-progress-label{ display:none !important; }
+.head p{ display:none; }
+@media (min-height:820px) and (min-width:501px){ .head p{ display:block; } }
+.card p, .card p.sig{ font-size:clamp(14px, min(2.2vh, 4.1vw), 19px) !important; line-height:1.6 !important; margin-bottom:.7em !important; }
+.card{ padding:14px 16px 16px; }
+@media (max-width:500px){
+  .app{ gap:8px; padding-top:max(10px,env(safe-area-inset-top)); padding-bottom:max(10px,env(safe-area-inset-bottom)); }
+  .card{ padding:12px 13px 14px; }
+  .card p, .card p.sig{ font-size:clamp(14px, 3.9vw, 17px) !important; line-height:1.5 !important; margin-bottom:.55em !important; }
+  .fb{ min-height:1.2em; }
+  .btn{ min-height:50px; }
+}
+@media (max-height:600px){ .card p, .card p.sig{ font-size:14px !important; line-height:1.45 !important; } }
+@media (max-width:500px){ .blank{ margin-top:.8em; } .blank .hint{ font-size:.58em; } .blank input{ height:1.9em; } }
+@media (max-width:500px){ .back{ min-height:36px; padding:.3rem .8rem; } .blank input{ height:1.75em; } .card p, .card p.sig{ margin-bottom:.45em !important; } .bar{ height:6px; } }
 </style>
 <link rel="stylesheet" href="../../../assets/tests-ui.css">
 </head>
