@@ -675,6 +675,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.b.name = "G
 
 COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.b.games = [
   { title: "Listen & Write", url: "listen-and-write/", label: "Listening" },
+  { title: "Listen & Answer · Morning Routine", url: "listen-and-answer/", label: "Listening" },
 ];
 COURSE_DATA["american-english-file"].levels.starter.units[7].name = "Weekends & film";
 COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.name = "Have a nice weekend!";

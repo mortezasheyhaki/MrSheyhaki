@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>Listen & Answer | Unit 6B | Mr. Sheyhaki</title>
+  <meta name="description" content="Listen to Hannah's morning routine, read along, and answer the questions. Unit 6B – American English File Starter.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="game-page">
+  <div class="stage">
+
+    <!-- Left: interviewer -->
+    <aside class="side side-left" id="sideLeft" aria-hidden="true">
+      <div class="bubble" id="bubbleLeft" hidden>?</div>
+      <svg class="char" viewBox="0 0 200 340" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="332" rx="78" ry="8" fill="#0f172a" opacity=".12"/>
+        <path d="M34 340 C34 236 58 196 100 196 C142 196 166 236 166 340 Z" fill="#7c6cf0"/>
+        <path d="M86 197 L100 232 L114 197 Z" fill="#ffffff"/>
+        <path d="M96 205 L104 205 L108 242 L100 254 L92 242 Z" fill="#1e1b4b"/>
+        <rect x="90" y="168" width="20" height="32" fill="#f2c7a5"/>
+        <ellipse cx="100" cy="126" rx="38" ry="44" fill="#f2c7a5"/>
+        <path d="M61 118 C58 78 80 62 100 62 C124 62 142 78 139 118 C132 96 120 88 100 88 C84 88 70 96 61 118 Z" fill="#2d2a3e"/>
+        <circle cx="86" cy="130" r="4" fill="#1e1b4b"/>
+        <circle cx="114" cy="130" r="4" fill="#1e1b4b"/>
+        <path d="M78 114 Q86 109 94 114" stroke="#2d2a3e" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M106 114 Q114 109 122 114" stroke="#2d2a3e" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <ellipse class="mouth" cx="100" cy="152" rx="9" ry="3.5" fill="#9a3412"/>
+        <path d="M46 300 Q30 252 60 236" stroke="#7c6cf0" stroke-width="20" stroke-linecap="round" fill="none"/>
+        <path d="M150 262 Q160 232 146 204" stroke="#7c6cf0" stroke-width="20" stroke-linecap="round" fill="none"/>
+        <circle cx="144" cy="196" r="10" fill="#2d2a3e"/>
+        <rect x="141" y="204" width="6" height="18" rx="3" fill="#2d2a3e"/>
+      </svg>
+      <p class="side-name">Interviewer</p>
+    </aside>
+
+    <div class="game" id="app">
+
+      <header class="top-bar">
+        <a href="../" class="back-btn" aria-label="Back to games">←</a>
+        <div class="top-center">
+          <span class="unit-label">Unit 6B</span>
+          <span class="game-title">Listen & Answer</span>
+        </div>
+        <div class="top-stats">
+          <div class="stat">
+            <span class="stat-label">Question</span>
+            <span class="stat-value" id="qProgress">0/8</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Score</span>
+            <span class="stat-value" id="scoreValue">0</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+
+        <p class="instruction">Listen and read along. The audio stops at each question. Answer it, then keep listening.</p>
+
+        <!-- Player -->
+        <div class="player">
+          <button class="play-btn" id="playBtn" type="button" aria-label="Play">▶</button>
+          <div class="progress-wrap">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="time-row"><span id="timeNow">0:00</span><span id="timeTotal">Line 1/21</span></div>
+          </div>
+          <div class="player-tools">
+            <button class="tool-btn" id="replayBtn" type="button" title="Replay this line">↺</button>
+            <button class="tool-btn" id="speedBtn" type="button" title="Change speed">1×</button>
+          </div>
+        </div>
+
+        <p class="hint" id="hint" hidden>Tap ▶ to continue listening</p>
+
+        <!-- Script -->
+        <section class="script" id="script" aria-label="Script"></section>
+
+        <!-- Question pop-up (centred, blurred background) -->
+        <div class="q-modal" id="qModal" hidden>
+          <div class="q-backdrop"></div>
+          <section class="question-panel" id="questionPanel" role="dialog" aria-modal="true" aria-labelledby="questionText">
+            <p class="question-label">Question <span id="qNum">1</span></p>
+            <h2 class="question-text" id="questionText"></h2>
+            <div class="options" id="options"></div>
+            <p class="feedback" id="feedback" aria-live="polite"></p>
+            <button class="continue-btn" id="continueBtn" type="button" hidden>Continue</button>
+          </section>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- Right: Hannah -->
+    <aside class="side side-right" id="sideRight" aria-hidden="true">
+      <div class="bubble" id="bubbleRight" hidden>✓</div>
+      <svg class="char" viewBox="0 0 200 340" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="332" rx="78" ry="8" fill="#0f172a" opacity=".12"/>
+        <path d="M58 140 C54 70 78 54 100 54 C122 54 146 70 142 140 L152 232 L48 232 Z" fill="#6b3f2a"/>
+        <path d="M42 340 C42 240 60 200 100 200 C140 200 158 240 158 340 Z" fill="#ff9600"/>
+        <rect x="90" y="168" width="20" height="32" fill="#f2c7a5"/>
+        <ellipse cx="100" cy="126" rx="36" ry="42" fill="#f2c7a5"/>
+        <path d="M64 120 C64 84 84 72 102 74 C122 76 136 92 136 120 C124 102 110 96 98 96 C84 96 70 104 64 120 Z" fill="#6b3f2a"/>
+        <circle cx="86" cy="130" r="4" fill="#1e1b4b"/>
+        <circle cx="114" cy="130" r="4" fill="#1e1b4b"/>
+        <ellipse cx="78" cy="144" rx="6" ry="4" fill="#fb7185" opacity=".35"/>
+        <ellipse cx="122" cy="144" rx="6" ry="4" fill="#fb7185" opacity=".35"/>
+        <ellipse class="mouth" cx="100" cy="152" rx="8" ry="3.5" fill="#9a3412"/>
+        <circle cx="64" cy="142" r="4" fill="#facc15"/>
+        <circle cx="136" cy="142" r="4" fill="#facc15"/>
+        <path d="M150 262 Q164 236 156 212" stroke="#ff9600" stroke-width="20" stroke-linecap="round" fill="none"/>
+        <rect x="146" y="186" width="24" height="24" rx="4" fill="#ffffff"/>
+        <path d="M170 192 Q180 196 170 204" stroke="#ffffff" stroke-width="3" fill="none"/>
+        <path d="M46 300 Q34 262 56 246" stroke="#ff9600" stroke-width="20" stroke-linecap="round" fill="none"/>
+      </svg>
+      <p class="side-name">Hannah</p>
+    </aside>
+
+  </div>
+
+  <script src="/learningarcade/la-stars.js"></script>
+  <script src="/learningarcade/la-finish.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
