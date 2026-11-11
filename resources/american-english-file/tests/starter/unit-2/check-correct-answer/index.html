@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 2 · Check the Correct Answer | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Check the correct answer to each question. American English File Starter, Unit 2.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+/* Every rule is scoped to body.cc so the site theme cannot override the layout. */
+body.cc{
+  --bg:#f7f4ee; --card:#ffffff; --ink:#1d2430; --mut:#6b7280; --line:#e6e0d4;
+  --acc:#0f766e; --acc-d:#0b5c56; --acc-two:#14b8a6; --acc-soft:rgba(15,118,110,.10); --btn-ink:#ffffff;
+  --ok:#15803d; --ok-bg:#dcfce7; --warn:#b91c1c; --warn-bg:#fee2e2; --amber:#b45309; --amber-bg:#fef3c7;
+  --ghost:#ffffff; --btn-off:#cfd6dc; --shadow:rgba(29,36,48,.07);
+  --app-bg:radial-gradient(900px 520px at 8% -12%, rgba(20,184,166,.20), transparent 60%), radial-gradient(760px 480px at 100% 0%, rgba(124,58,237,.11), transparent 58%), radial-gradient(720px 520px at 50% 115%, rgba(15,118,110,.16), transparent 62%), linear-gradient(180deg, #f0fdfa 0%, #eef4ff 100%);
+}
+html[data-theme="dark"] body.cc{
+  --bg:#0f1420; --card:#171e2d; --ink:#e8edf6; --mut:#9aa6b8; --line:#2a3447;
+  --acc:#2dd4bf; --acc-d:#0f8a7b; --acc-two:#5eead4; --acc-soft:rgba(45,212,191,.14); --btn-ink:#062b27;
+  --ok:#4ade80; --ok-bg:rgba(74,222,128,.14); --warn:#f87171; --warn-bg:rgba(248,113,113,.14); --amber:#fbbf24; --amber-bg:rgba(251,191,36,.14);
+  --ghost:#1d2638; --btn-off:#2a3447; --shadow:rgba(0,0,0,.35);
+  --app-bg:radial-gradient(900px 520px at 8% -12%, rgba(45,212,191,.16), transparent 60%), radial-gradient(760px 480px at 100% 0%, rgba(124,58,237,.18), transparent 58%), radial-gradient(720px 520px at 50% 115%, rgba(20,184,166,.12), transparent 62%), linear-gradient(180deg, #0c1a1f 0%, #0f1420 100%);
+}
+html, html[data-theme="dark"]{ background:var(--bg); height:100%; overflow:hidden; margin:0; padding:0; }
+body.cc{
+  position:fixed; inset:0; margin:0; padding:0; overflow:hidden; box-sizing:border-box;
+  background:var(--app-bg) fixed; color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  height:100vh; height:100dvh;
+}
+body.cc *, body.cc *::before, body.cc *::after{ box-sizing:border-box; }
+
+body.cc{ --fs:clamp(20px, 3.6vw + 8px, 34px); --ans-h:clamp(50px, 8.5vh, 70px); }
+body.cc .app{
+  position:absolute; top:0; right:0; bottom:0; left:0; margin:0 auto;
+  width:100%; max-width:640px; height:100%;
+  display:flex; flex-direction:column; gap:clamp(8px,1.8vh,16px);
+  padding:max(12px,env(safe-area-inset-top)) 16px max(14px,env(safe-area-inset-bottom));
+  overflow:hidden;
+}
+
+/* top bar: same back pill and sound circle as the other Tests & Exams games */
+body.cc .top{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex:0 0 auto; }
+body.cc .back-btn{
+  display:inline-flex; align-items:center; gap:.35rem; min-height:40px; padding:.4rem .9rem;
+  border-radius:999px; background:#fff; border:2px solid rgba(124,58,237,.16); color:#5b21b6;
+  font-weight:700; font-size:.92rem; text-decoration:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s, box-shadow .15s;
+}
+body.cc .back-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(124,58,237,.12); }
+body.cc .count{ margin-left:auto; font-weight:700; font-size:.92rem; color:var(--mut); font-variant-numeric:tabular-nums; }
+
+/* question area: centred and always fits the screen */
+body.cc .stage{
+  flex:1 1 auto; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; gap:clamp(8px,2vh,18px); overflow:hidden;
+}
+body.cc .stage.hide{ display:none; }
+body.cc .kind{
+  display:inline-flex; align-items:center; height:26px; padding:0 12px; border-radius:20px; background:var(--acc-soft); color:var(--acc);
+  font-size:11px; font-weight:700; letter-spacing:.6px; text-transform:uppercase;
+}
+body.cc .sentence{
+  width:100%; max-width:600px; height:calc(var(--fs) * 1.55 * 4); display:flex; flex-direction:column; justify-content:center;
+  font-size:var(--fs); font-weight:700; line-height:1.55; color:var(--ink);
+}
+body.cc .dline{ display:block; overflow-wrap:anywhere; text-wrap:balance; }
+body.cc .gap{
+  display:inline-block; min-width:5em; width:auto; margin:0 .12em; padding:0 .3em;
+  border-bottom:3px solid var(--acc); text-align:center; color:var(--acc); font-weight:800; overflow:visible;
+  line-height:1.2; vertical-align:baseline;
+  white-space:nowrap; user-select:none; vertical-align:baseline;
+}
+body.cc .gap.join{ margin:0 0 0 0; text-align:left; }
+body.cc .gap.filled{ border-bottom-style:solid; }
+body.cc .gap.ok{ color:var(--ok); border-bottom-color:var(--ok); }
+body.cc .gap.no{ color:var(--amber); border-bottom-color:var(--amber); }
+
+/* answer cards */
+body.cc .answers{
+  width:100%; max-width:520px; height:var(--ans-h); display:flex; justify-content:center; align-items:stretch; gap:clamp(8px,1.6vw,12px);
+}
+body.cc .answers .ans{ flex:0 1 240px; min-width:0; overflow-wrap:anywhere; }
+body.cc .ans{
+  appearance:none; position:relative; height:var(--ans-h); padding:10px 8px; cursor:pointer;
+  border:2px solid var(--line); border-radius:17px; background:var(--card); color:var(--ink);
+  font:inherit; font-size:clamp(16px, 2.6vw, 21px); font-weight:800; line-height:1.2; overflow-wrap:anywhere;
+  box-shadow:0 3px 0 var(--line); transition:transform .15s, border-color .15s, background .15s, box-shadow .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+@media (hover:hover){ body.cc .ans:hover:not(:disabled){ border-color:var(--acc-two); } }
+body.cc .ans:active:not(:disabled){ box-shadow:0 1px 0 var(--line); }
+body.cc .ans:disabled{ cursor:default; }
+body.cc .ans:disabled:not(.correct):not(.wrong):not(.reveal){ opacity:.5; }
+body.cc .ans.sel{ border-color:var(--acc); background:var(--acc-soft); color:var(--acc); box-shadow:0 2px 0 var(--acc); }
+body.cc .ans.correct, body.cc .ans.reveal{ border-color:var(--ok); background:var(--ok-bg); color:var(--ok); box-shadow:0 4px 0 rgba(21,128,61,.25); }
+body.cc .ans.wrong{ border-color:var(--amber); background:var(--amber-bg); color:var(--amber); box-shadow:0 4px 0 rgba(180,83,9,.2); }
+
+body.cc .fb{ height:28px; line-height:28px; white-space:nowrap; overflow:hidden; font-size:14px; font-weight:800; color:var(--mut); text-align:center; }
+body.cc .fb.ok{ color:var(--ok); }
+body.cc .fb.bad{ color:var(--amber); }
+
+/* progress */
+body.cc .progress{ flex:0 0 auto; width:100%; max-width:600px; margin:0 auto; }
+body.cc .progress-label{ display:flex; justify-content:space-between; font-size:10px; letter-spacing:1px; color:var(--mut); font-weight:700; }
+body.cc .progress-bar{ height:7px; margin-top:7px; overflow:hidden; border-radius:20px; background:rgba(127,127,127,.13); }
+body.cc .progress-fill{ width:0; height:100%; border-radius:20px; background:linear-gradient(90deg,var(--acc),var(--acc-two)); transition:width .35s ease; }
+
+/* bottom actions */
+body.cc .actions{ flex:0 0 auto; display:flex; gap:10px; width:100%; max-width:600px; margin:0 auto; }
+body.cc .actions.hide{ display:none; }
+body.cc .btn{
+  flex:1 1 auto; min-height:52px; border:0; border-radius:16px; cursor:pointer;
+  font:inherit; font-size:1rem; font-weight:800; color:var(--btn-ink); background:var(--acc);
+  box-shadow:0 4px 0 var(--acc-d); text-decoration:none; display:inline-flex;
+  align-items:center; justify-content:center; text-align:center;
+  transition:transform .1s, box-shadow .1s, opacity .2s; -webkit-tap-highlight-color:transparent;
+}
+body.cc .btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--acc-d); }
+body.cc .btn:disabled{ background:var(--btn-off); box-shadow:0 4px 0 var(--line); cursor:default; color:var(--mut); }
+body.cc .btn.ghost{ background:var(--ghost); color:var(--ink); border:1px solid var(--line); box-shadow:0 4px 0 var(--line); }
+body.cc .result-actions{ display:none; flex:0 0 auto; gap:10px; width:100%; max-width:600px; margin:0 auto; }
+body.cc .result-actions.show{ display:flex; }
+
+/* result */
+body.cc .result{
+  display:none; flex:1 1 auto; min-height:0; width:100%; max-width:600px; margin:0 auto;
+  flex-direction:column; align-items:center; justify-content:center; gap:clamp(6px,1.4vh,12px);
+  background:var(--card); border:1px solid var(--line); border-radius:24px;
+  padding:14px; box-shadow:0 10px 30px var(--shadow); text-align:center; overflow:hidden;
+}
+body.cc .result.show{ display:flex; }
+body.cc .big{ font-size:clamp(2rem, 7vw, 3rem); font-weight:900; color:var(--acc); line-height:1; font-variant-numeric:tabular-nums; }
+body.cc .result h2{ margin:0; font-size:1.2rem; font-weight:800; color:var(--ink); }
+body.cc .result .msg{ margin:0; font-size:.9rem; color:var(--mut); max-width:32ch; }
+body.cc .review{
+  list-style:none; margin:0; padding:0; width:100%; max-width:520px;
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; overflow:auto; max-height:40vh;
+}
+body.cc .review li{
+  border-radius:12px; padding:6px 7px; font-size:.78rem; line-height:1.25; text-align:left;
+  background:var(--ghost); color:var(--ink); overflow-wrap:anywhere;
+}
+body.cc .review li.ok{ background:var(--ok-bg); color:var(--ok); }
+body.cc .review li.no{ background:var(--amber-bg); color:var(--amber); }
+body.cc .review .n{ font-weight:800; margin-right:3px; }
+body.cc .review .was{ display:block; font-weight:700; text-decoration:line-through; opacity:.8; }
+body.cc .review .right{ display:block; font-weight:800; }
+
+/* phones and short screens: smaller type and tighter spacing so nothing scrolls */
+@media (max-width:420px){
+  body.cc .app{ padding-left:12px; padding-right:12px; }
+  body.cc .answers{ gap:8px; }
+  body.cc .ans{ font-size:16px; padding:8px 6px; }
+}
+@media (max-height:700px){ body.cc .sentence{ height:calc(var(--fs) * 1.55 * 4); }
+  body.cc{ --fs:clamp(18px, 3vw + 6px, 26px); --ans-h:50px; }
+}
+@media (max-height:560px){
+  body.cc .kind{ visibility:hidden; }
+  body.cc .btn{ min-height:46px; }
+  body.cc .back-btn{ min-height:36px; padding:.3rem .8rem; }
+}
+@media (prefers-reduced-motion:reduce){ body.cc *{ transition:none !important; } }
+/* shared Tests & Exams top bar: round sound button (same as the other games) */
+body.cc .tui-sound{
+  appearance:none; border:2px solid rgba(124,58,237,.16); background:#fff; color:inherit;
+  width:40px; height:40px; border-radius:50%; font-size:1.05rem; cursor:pointer; flex:none; padding:0;
+  display:inline-grid; place-items:center; box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s;
+}
+body.cc .tui-sound:active{ transform:translateY(2px); }
+
+</style>
+</head>
+<body class="cc">
+<div class="app">
+  <div class="top header">
+    <a class="back-btn" href="../">← Unit 2</a>
+    <span class="count" id="count">1 / 5</span>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="kind" id="kind"></div>
+    <div class="sentence" id="sentence" aria-live="polite"></div>
+    <div class="answers" id="opts" role="group" aria-label="Answer choices"></div>
+    <div class="fb" id="fb" role="status" aria-live="polite"></div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="big" id="score">0 / 5</div>
+    <h2 id="resultTitle"></h2>
+    <p class="msg" id="resultMsg"></p>
+    <ul class="review" id="review"></ul>
+  </div>
+
+  <div class="progress">
+    <div class="progress-label"><span>PROGRESS</span><span id="progressText">0 / 5</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="actions" id="actions">
+    <button type="button" class="btn" id="mainBtn" disabled>Check</button>
+  </div>
+  <div class="result-actions" id="resultActions">
+    <button type="button" class="btn" id="retryBtn">Try again</button>
+    <a class="btn ghost" href="../">← Unit 2</a>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  /* Duplicates removed: "Am I in your class? / No, you’re not" appears on both worksheets, so it is asked once. */
+  var ITEMS = [
+    { lines: ["A: What’s your cell phone number?", "B: ___"], ans: "555-409-6300", opts: ["K16 4PX", "555-409-6300"], full: "B: 555-409-6300" },
+    { lines: ["A: What’s your address?", "B: It’s ___."], ans: "16 Park Avenue", opts: ["16 Park Avenue", "room 18"], full: "B: It’s 16 Park Avenue." },
+    { lines: ["A: What’s your zip code?", "B: ___"], ans: "28657", opts: ["28657", "M11 4XC"], full: "B: 28657" },
+    { lines: ["A: What nationality are you?", "B: I’m ___."], ans: "Chinese", opts: ["China", "Chinese"], full: "B: I’m Chinese." },
+    { lines: ["A: What’s your email?", "B: It’s ___."], ans: "molly26@mail.com", opts: ["molly26@mail.com", "72 Oak Street"], full: "B: It’s molly26@mail.com." }
+  ];
+  var TOTAL = ITEMS.length, GAME_ID = "starter-u2-check-correct-answer";
+  var idx = 0, correct = 0, answers = [], answered = false, sel = null;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function shuffle(a) {
+    var b = a.slice();
+    for (var i = b.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1)); var t = b[i]; b[i] = b[j]; b[j] = t;
+    }
+    return b;
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function isJoin(v) { return v.indexOf("’") === 0; }
+
+  function render() {
+    var item = ITEMS[idx];
+    answered = false; sel = null;
+    $("count").textContent = (idx + 1) + " / " + TOTAL;
+    $("progressText").textContent = idx + " / " + TOTAL;
+    $("progressFill").style.width = (idx / TOTAL * 100) + "%";
+    $("kind").textContent = "Check the correct answer · tap one, then check";
+    $("sentence").innerHTML = item.lines.map(function (l) {
+      var parts = l.split("___").map(function (p, i, arr) {
+        var t = esc(p);
+        return i === arr.length - 1 ? t.replace(/ ([^ ]+)$/, "\u00A0$1") : t;
+      });
+      return '<span class="dline">' + parts.join('<span class="gap" aria-label="gap"></span>') + '</span>';
+    }).join("");
+    $("fb").className = "fb"; $("fb").textContent = "";
+    var box = $("opts"); box.innerHTML = "";
+    shuffle(item.opts).forEach(function (v) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "ans"; b.setAttribute("data-v", v); b.textContent = v;
+      b.addEventListener("click", function () { choose(v); });
+      box.appendChild(b);
+    });
+    $("mainBtn").textContent = "Check";
+    $("mainBtn").disabled = true;
+  }
+
+  /* tapping an option fills the gap and selects it; Check reveals the answer */
+  function choose(v) {
+    if (answered) return;
+    sel = v;
+    var g = document.querySelector("#sentence .gap");
+    if (g) {
+      g.textContent = v;
+      g.className = "gap filled" + (isJoin(v) ? " join" : "");
+    }
+    Array.prototype.forEach.call(document.querySelectorAll("#opts .ans"), function (b) {
+      b.classList.toggle("sel", b.getAttribute("data-v") === v);
+    });
+    $("mainBtn").disabled = false;
+  }
+
+  function check() {
+    if (answered || sel === null) return;
+    var _mb = document.getElementById("mainBtn"); if (_mb) { _mb.disabled = true; }
+    
+    answered = true;
+    var item = ITEMS[idx];
+    var ok = sel === item.ans;
+    answers[idx] = { ok: ok, text: sel };
+    if (ok) correct++;
+
+    var g = document.querySelector("#sentence .gap");
+    if (g) {
+      g.textContent = item.ans;
+      g.className = "gap " + (ok ? "ok" : "no") + (isJoin(item.ans) ? " join" : "");
+    }
+    Array.prototype.forEach.call(document.querySelectorAll("#opts .ans"), function (b) {
+      var bv = b.getAttribute("data-v");
+      b.disabled = true;
+      b.classList.remove("sel");
+      if (bv === item.ans) b.classList.add(ok ? "correct" : "reveal");
+      else if (bv === sel) b.classList.add("wrong");
+    });
+    $("fb").className = "fb " + (ok ? "ok" : "bad");
+    $("fb").textContent = ok ? "Correct! " + item.full : "→ " + item.full;
+    $("progressText").textContent = (idx + 1) + " / " + TOTAL;
+    $("progressFill").style.width = ((idx + 1) / TOTAL * 100) + "%";
+    $("mainBtn").disabled = false;
+    $("mainBtn").textContent = idx === TOTAL - 1 ? "See results" : "Next";
+  
+    
+}
+
+  function onMain() { if (!answered) check(); else next(); }
+
+  function next() {
+    idx++;
+    if (idx >= TOTAL) finish(); else render();
+  }
+
+  function finish() {
+    $("progressFill").style.width = "100%";
+    $("progressText").textContent = TOTAL + " / " + TOTAL;
+    $("stage").classList.add("hide");
+    $("actions").classList.add("hide");
+    $("resultActions").classList.add("show");
+    $("result").classList.add("show");
+    $("score").textContent = correct + " / " + TOTAL;
+    $("resultTitle").textContent =
+      correct === TOTAL ? "Wonderful work!" : correct >= TOTAL - 2 ? "Nice work!" : "Good effort!";
+    $("resultMsg").textContent =
+      correct === TOTAL ? "Every answer is correct." : "Check the answers below, then try again if you like.";
+
+    var ul = $("review");
+    ul.innerHTML = "";
+    ITEMS.forEach(function (item, i) {
+      var a = answers[i] || {};
+      var li = document.createElement("li");
+      if (a.ok) {
+        li.className = "ok";
+        li.innerHTML = '<span class="n">' + (i + 1) + '</span>' + esc(item.full);
+      } else {
+        li.className = "no";
+        li.innerHTML = '<span class="n">' + (i + 1) + '</span><span class="was">' +
+          esc(a.text || "—") + '</span><span class="right">' + esc(item.full) + '</span>';
+      }
+      ul.appendChild(li);
+    });
+
+    try {
+      if (window.TestStars && typeof TestStars.award === "function") TestStars.award(GAME_ID);
+    } catch (e0) {}
+    try {
+      if (window.LAFinish && typeof LAFinish.show === "function") {
+        LAFinish.show({
+          gameId: GAME_ID, gameName: "Check the Correct Answer", score: correct, total: TOTAL,
+          title: "Check the Correct Answer · 2", backHref: "../",
+          onAgain: function () { $("retryBtn").click(); },
+          category: "tests", unit: "starter-2"
+        });
+      } else if (window.LAStars) {
+        if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(GAME_ID);
+        if (typeof LAStars.saveFromAccuracy === "function") {
+          LAStars.saveFromAccuracy(GAME_ID, Math.round((correct / TOTAL) * 100));
+        }
+      }
+    } catch (e) {}
+  }
+
+  /* keyboard: 1/2/3 choose, Enter goes on */
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (!$("stage").classList.contains("hide")) onMain();
+      return;
+    }
+    if (!answered && /^[123]$/.test(e.key)) {
+      var b = document.querySelectorAll("#opts .ans")[parseInt(e.key, 10) - 1];
+      if (b) choose(b.getAttribute("data-v"));
+    }
+  });
+
+  $("mainBtn").addEventListener("click", onMain);
+  $("retryBtn").addEventListener("click", function () {
+    idx = 0; correct = 0; answers = []; answered = false; sel = null;
+    $("result").classList.remove("show");
+    $("resultActions").classList.remove("show");
+    $("actions").classList.remove("hide");
+    $("stage").classList.remove("hide");
+    render();
+  });
+
+  render();
+});
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="../../../assets/tests-stars.js"></script>
+<script src="../../../assets/tests-ui.js"></script>
+<script src="/visit-counter.js" defer></script>
+</body>
+</html>

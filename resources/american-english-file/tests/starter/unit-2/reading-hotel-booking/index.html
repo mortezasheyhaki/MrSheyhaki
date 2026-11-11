@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 2 · Reading: Hotel Booking | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Read the hotel booking form, match the words and answer the questions. American English File Starter, Unit 2.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+/* Scoped to body.rd. This game scrolls on purpose: it is a reading page. */
+body.rd{
+  --bg:#f5f3ff; --card:#ffffff; --ink:#1e1b3a; --mut:#64668a; --line:#e4e1f2;
+  --acc:#5b21b6; --acc-d:#4c1d95; --acc-two:#8b5cf6; --acc-soft:rgba(91,33,182,.08);
+  --teal:#0f766e; --teal-soft:#ccfbf1; --ok:#15803d; --ok-bg:#dcfce7; --amber:#b45309; --amber-bg:#fef3c7;
+  --app-bg:radial-gradient(900px 480px at 0% -10%, rgba(139,92,246,.18), transparent 60%), radial-gradient(800px 500px at 100% 0%, rgba(20,184,166,.14), transparent 60%), linear-gradient(180deg, #faf8ff 0%, #f1f5ff 100%);
+  margin:0; min-height:100vh; min-height:100dvh; color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--app-bg) fixed; -webkit-font-smoothing:antialiased;
+}
+html[data-theme="dark"] body.rd{
+  --bg:#0f1420; --card:#171e2d; --ink:#e8edf6; --mut:#a3a9c4; --line:#2c3550;
+  --acc:#a78bfa; --acc-d:#7c3aed; --acc-two:#c4b5fd; --acc-soft:rgba(167,139,250,.14);
+  --teal:#5eead4; --teal-soft:rgba(94,234,212,.14); --ok:#4ade80; --ok-bg:rgba(74,222,128,.14); --amber:#fbbf24; --amber-bg:rgba(251,191,36,.14);
+  --app-bg:radial-gradient(900px 480px at 0% -10%, rgba(139,92,246,.22), transparent 60%), linear-gradient(180deg, #111728 0%, #0f1420 100%);
+}
+body.rd *, body.rd *::before, body.rd *::after{ box-sizing:border-box; }
+/* this page scrolls normally: the sticky bar needs the page itself to be the scroller */
+html:root, html:root body.rd{ overflow:visible !important; height:auto !important; max-height:none !important; }
+/* the shared site stylesheet adds space for its own navigation bar, which this page does not show */
+html:root body.rd{ padding:0 !important; }
+
+body.rd .wrap{ max-width:980px; margin:0 auto; padding:0 16px 40px; }
+
+/* sticky top bar: same back pill, counter and sound button as the other Unit 1 games */
+body.rd .top{
+  position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:10px 14px; background:rgba(255,255,255,.8); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  border:1px solid var(--line); border-radius:20px; margin:12px 0 0; box-shadow:0 10px 26px -18px rgba(30,27,58,.35);
+}
+html[data-theme="dark"] body.rd .top{ background:rgba(23,30,45,.75); }
+body.rd .back-btn{
+  display:inline-flex; align-items:center; gap:.35rem; min-height:40px; padding:.4rem .9rem;
+  border-radius:999px; background:#fff; border:2px solid rgba(124,58,237,.16); color:#5b21b6;
+  font-weight:700; font-size:.92rem; text-decoration:none; box-shadow:0 3px 0 rgba(124,58,237,.12);
+}
+body.rd .back-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(124,58,237,.12); }
+body.rd .progress-pill{
+  margin-left:auto; display:flex; align-items:center; gap:10px; font-weight:800; font-size:.9rem; color:var(--mut); font-variant-numeric:tabular-nums;
+}
+body.rd .progress-track{ width:110px; height:8px; border-radius:99px; background:rgba(127,127,127,.15); overflow:hidden; }
+body.rd .progress-fill{ height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,var(--acc),var(--acc-two)); transition:width .35s ease; }
+body.rd .tui-sound{
+  appearance:none; border:2px solid rgba(124,58,237,.16); background:#fff; color:inherit;
+  width:40px; height:40px; border-radius:50%; font-size:1.05rem; cursor:pointer; flex:none; padding:0;
+  display:inline-grid; place-items:center; box-shadow:0 3px 0 rgba(124,58,237,.12);
+}
+
+/* hero */
+body.rd .hero{ text-align:center; padding:14px 8px 4px; background:transparent; }
+body.rd section, body.rd .hero{ background-color:transparent; }
+body.rd .badge{
+  display:inline-block; font-size:11px; font-weight:800; letter-spacing:.7px; text-transform:uppercase;
+  padding:7px 14px; border-radius:999px; background:var(--teal-soft); color:var(--teal);
+}
+body.rd .hero h1{ margin:14px 0 6px; font-size:clamp(26px, 5vw, 38px); font-weight:900; letter-spacing:-.02em; line-height:1.15; }
+body.rd .hero p{ margin:0 auto; max-width:560px; color:var(--mut); font-size:1rem; line-height:1.55; }
+body.rd .site{
+  display:inline-flex; align-items:center; gap:8px; margin-top:14px; padding:8px 16px; border-radius:999px;
+  background:var(--card); border:1px solid var(--line); font-weight:700; font-size:.92rem; color:var(--acc);
+  box-shadow:0 6px 18px -10px rgba(91,33,182,.35);
+}
+
+/* section headings */
+body.rd .part{ display:flex; align-items:center; gap:12px; margin:30px 0 14px; }
+body.rd .part-num{
+  width:36px; height:36px; border-radius:12px; display:grid; place-items:center; flex:none;
+  background:linear-gradient(135deg,var(--acc),var(--acc-two)); color:#fff; font-weight:900;
+  box-shadow:0 8px 18px -8px rgba(91,33,182,.6);
+}
+body.rd .part h2{ margin:0; font-size:1.2rem; font-weight:900; letter-spacing:-.01em; }
+body.rd .part p{ margin:2px 0 0; color:var(--mut); font-size:.92rem; }
+
+/* emails: an inbox of cards */
+body.rd .mails{ display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px; }
+body.rd .mail{
+  background:var(--card); border:1px solid var(--line); border-radius:22px; padding:18px 18px 20px;
+  box-shadow:0 14px 34px -22px rgba(30,27,58,.35); display:flex; flex-direction:column;
+}
+body.rd .mail-head{ display:flex; gap:12px; align-items:center; padding-bottom:12px; border-bottom:1px dashed var(--line); }
+body.rd .avatar{
+  width:42px; height:42px; border-radius:50%; flex:none; display:grid; place-items:center;
+  background:linear-gradient(135deg,#f0abfc,#8b5cf6); color:#fff; font-weight:900; font-size:15px;
+}
+body.rd .avatar.teal{ background:linear-gradient(135deg,#5eead4,#0f766e); }
+body.rd .avatar.amber{ background:linear-gradient(135deg,#fdba74,#ea580c); }
+body.rd .meta{ display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:.86rem; color:var(--mut); min-width:0; }
+body.rd .meta b{ color:var(--ink); font-weight:800; }
+body.rd .meta span{ overflow-wrap:anywhere; }
+body.rd .attach{
+  display:inline-flex; align-items:center; gap:6px; margin-top:10px; align-self:flex-start;
+  padding:5px 11px; border-radius:999px; background:var(--acc-soft); color:var(--acc); font-size:.78rem; font-weight:700;
+}
+body.rd .mail-body{ margin:12px 0 0; font-size:1rem; line-height:1.7; color:var(--ink); }
+
+/* questions */
+body.rd .qs{ display:grid; grid-template-columns:repeat(auto-fit, minmax(330px, 1fr)); gap:14px; }
+body.rd .q{
+  background:var(--card); border:1px solid var(--line); border-radius:20px; padding:16px 16px 14px;
+  box-shadow:0 10px 26px -20px rgba(30,27,58,.4); transition:border-color .2s, box-shadow .2s;
+}
+body.rd .q.answered{ border-color:#c4b5fd; }
+body.rd .q-head{ display:flex; gap:12px; align-items:flex-start; }
+body.rd .q-num{
+  flex:none; min-width:34px; height:34px; padding:0 8px; border-radius:11px; display:grid; place-items:center;
+  background:var(--acc-soft); color:var(--acc); font-weight:900; font-size:13px;
+}
+body.rd .q-num.ex{ background:var(--teal-soft); color:var(--teal); font-size:11px; letter-spacing:.3px; }
+body.rd .q-text{ margin:4px 0 0; font-size:1.02rem; font-weight:700; line-height:1.4; }
+body.rd .blank{ display:inline-block; min-width:5.5em; border-bottom:2px solid var(--acc); margin:0 .1em; color:transparent; }
+body.rd .opts{ display:grid; grid-template-columns:repeat(auto-fit, minmax(128px, 1fr)); gap:8px; margin-top:14px; }
+body.rd .opt{
+  position:relative; display:flex; align-items:center; gap:10px; padding:11px 12px; cursor:pointer;
+  border:2px solid var(--line); border-radius:14px; background:var(--bg); font-weight:700; font-size:.95rem; line-height:1.25;
+  transition:border-color .15s, background .15s, transform .12s;
+}
+body.rd .opt:hover{ border-color:var(--acc-two); }
+body.rd .opt input{ position:absolute; opacity:0; width:0; height:0; margin:0; appearance:none; -webkit-appearance:none; }
+body.rd .opt .letter{
+  flex:none; width:26px; height:26px; border-radius:8px; display:grid; place-items:center;
+  background:var(--card); border:1px solid var(--line); font-size:12px; font-weight:900; color:var(--mut);
+}
+body.rd .opt.on{ border-color:var(--acc); background:var(--acc-soft); }
+body.rd .opt.on .letter{ background:var(--acc); border-color:var(--acc); color:#fff; }
+body.rd .opt:focus-within{ outline:3px solid rgba(139,92,246,.35); outline-offset:2px; }
+body.rd .opt.right{ border-color:var(--ok); background:var(--ok-bg); color:var(--ok); }
+body.rd .opt.right .letter{ background:var(--ok); border-color:var(--ok); color:#fff; }
+body.rd .opt.bad{ border-color:var(--amber); background:var(--amber-bg); color:var(--amber); }
+body.rd .opt.bad .letter{ background:var(--amber); border-color:var(--amber); color:#fff; }
+body.rd .opt.locked{ cursor:default; }
+body.rd .q-note{ min-height:0; margin-top:8px; font-size:.86rem; font-weight:700; color:var(--mut); }
+body.rd .q-note.ok{ color:var(--ok); }
+body.rd .q-note.bad{ color:var(--amber); }
+
+/* ID cards */
+body.rd .ids{ display:grid; grid-template-columns:repeat(auto-fit, minmax(290px, 1fr)); gap:16px; }
+body.rd .id{
+  position:relative; overflow:hidden; background:var(--card); border:1px solid var(--line); border-radius:22px;
+  padding:20px 20px 12px; box-shadow:0 14px 34px -22px rgba(30,27,58,.35);
+}
+body.rd .id::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:6px;
+  background:linear-gradient(90deg,var(--acc),var(--acc-two),var(--teal));
+}
+body.rd .id-no{ position:absolute; right:16px; top:16px; font-size:11px; font-weight:800; letter-spacing:.6px; color:var(--mut); text-transform:uppercase; }
+body.rd .row{ display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px dashed var(--line); min-width:0; }
+body.rd .row:last-child{ border-bottom:0; }
+body.rd .lbl{ flex:none; width:104px; font-size:.84rem; font-weight:800; color:var(--mut); }
+body.rd .val{ font-size:1.02rem; font-weight:700; }
+body.rd .fill{ position:relative; flex:1; min-width:0; }
+body.rd .fill input{
+  width:100%; border:0; border-bottom:2px solid var(--acc-two); border-radius:0; background:transparent;
+  padding:6px 4px; font:inherit; font-size:1.02rem; font-weight:700; color:var(--ink); outline:none;
+  transition:border-color .2s, background .2s;
+}
+body.rd .fill input::placeholder{ color:#b4aed4; font-weight:600; }
+body.rd .fill input:focus{ border-bottom-color:var(--acc); background:var(--acc-soft); border-radius:8px 8px 0 0; }
+body.rd .fill input.ok{ color:var(--ok); border-bottom-color:var(--ok); background:var(--ok-bg); border-radius:8px 8px 0 0; }
+body.rd .fill input.bad{ color:var(--amber); border-bottom-color:var(--amber); background:var(--amber-bg); border-radius:8px 8px 0 0; }
+body.rd .fill .show{ display:block; font-size:.8rem; font-weight:700; color:var(--ok); margin-top:4px; }
+body.rd .fill .show.bad{ color:var(--amber); }
+
+/* finish */
+body.rd .finish{ margin-top:30px; display:grid; gap:14px; justify-items:center; text-align:center; }
+body.rd .check-btn{
+  appearance:none; border:0; cursor:pointer; min-height:56px; min-width:min(100%, 320px); padding:0 28px; border-radius:18px;
+  font:inherit; font-size:1.05rem; font-weight:900; color:#fff;
+  background:linear-gradient(135deg,var(--acc),var(--acc-d)); box-shadow:0 6px 0 #3b0f85, 0 18px 30px -14px rgba(91,33,182,.6);
+  transition:transform .1s, box-shadow .1s;
+}
+body.rd .check-btn:active{ transform:translateY(4px); box-shadow:0 2px 0 #3b0f85; }
+body.rd .check-btn[disabled]{ opacity:.55; cursor:default; }
+body.rd .score-card{
+  width:min(100%, 480px); background:var(--card); border:1px solid var(--line); border-radius:24px; padding:22px;
+  box-shadow:0 20px 40px -26px rgba(30,27,58,.5); display:none;
+}
+body.rd .score-card.show{ display:block; animation:rd-in .4s ease both; }
+@keyframes rd-in{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+body.rd .score-big{ font-size:clamp(2.4rem, 8vw, 3.4rem); font-weight:900; color:var(--acc); line-height:1; font-variant-numeric:tabular-nums; }
+body.rd .score-card h3{ margin:8px 0 4px; font-size:1.3rem; font-weight:900; }
+body.rd .score-card p{ margin:0; color:var(--mut); }
+body.rd .score-actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:16px; }
+body.rd .btn-ghost{
+  display:inline-flex; align-items:center; min-height:46px; padding:0 18px; border-radius:14px; text-decoration:none;
+  border:2px solid var(--line); background:var(--card); color:var(--ink); font-weight:800; cursor:pointer; font:inherit;
+}
+
+@media (max-width:560px){
+  body.rd .top{ margin:8px 0 0; padding:8px 10px; }
+  body.rd .progress-track{ width:64px; }
+  body.rd .wrap{ padding:0 12px 40px; }
+  body.rd .opts{ grid-template-columns:1fr; }
+  body.rd .lbl{ width:86px; }
+}
+@media (prefers-reduced-motion:reduce){ body.rd *{ animation:none !important; transition:none !important; } }
+
+
+/* hotel form, matching area and typed answers (added for this activity) */
+body.rd .form-card, body.rd .match-card{
+  background:var(--card); border:1px solid var(--line); border-radius:22px; padding:20px;
+  box-shadow:0 14px 34px -22px rgba(30,27,58,.35); margin-bottom:16px;
+}
+body.rd .form-head{ display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; padding-bottom:14px; border-bottom:1px dashed var(--line); }
+body.rd .form-title{ font-size:1rem; font-weight:900; }
+body.rd .hotel-addr{ text-align:right; font-size:.9rem; line-height:1.5; color:var(--mut); }
+body.rd .hotel-addr b{ color:var(--ink); }
+body.rd .mail-link{ color:var(--acc); font-weight:700; }
+body.rd .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:4px 18px; padding-top:12px; }
+body.rd .frow{ display:flex; gap:8px; padding:6px 0; font-size:.95rem; min-width:0; }
+body.rd .frow.wide{ grid-column:1 / -1; }
+body.rd .flbl{ flex:none; font-weight:800; color:var(--mut); min-width:118px; }
+body.rd .fval{ font-weight:700; overflow-wrap:anywhere; }
+
+body.rd .tray-label{ font-size:.8rem; font-weight:800; letter-spacing:.5px; text-transform:uppercase; color:var(--mut); margin-bottom:8px; }
+body.rd .tray{
+  display:flex; flex-wrap:wrap; gap:8px; padding:12px; min-height:64px; border:2px dashed var(--line); border-radius:16px; margin-bottom:16px;
+}
+body.rd .tray-empty{ color:var(--mut); font-weight:700; font-size:.9rem; align-self:center; }
+body.rd .chip{
+  appearance:none; touch-action:none; user-select:none; -webkit-user-select:none; cursor:grab;
+  padding:9px 14px; border-radius:999px; border:2px solid var(--line); background:var(--bg); color:var(--ink);
+  font:inherit; font-weight:800; font-size:.95rem; line-height:1.2; box-shadow:0 3px 0 var(--line);
+  transition:transform .12s, border-color .15s, box-shadow .15s, opacity .15s;
+}
+body.rd .chip:hover{ border-color:var(--acc-two); }
+body.rd .chip.sel{ border-color:var(--acc); background:var(--acc-soft); color:var(--acc); box-shadow:0 3px 0 var(--acc); }
+body.rd .chip.dragging{ opacity:.35; }
+body.rd .chip.in-slot{ background:var(--acc-soft); border-color:var(--acc); color:var(--acc); }
+
+body.rd .items{ list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+body.rd .item{ display:grid; grid-template-columns:28px minmax(0,1fr) minmax(150px,auto); align-items:center; gap:10px; flex-wrap:wrap; }
+body.rd .item-num{ font-weight:900; color:var(--acc); }
+body.rd .item-val{ font-weight:700; overflow-wrap:anywhere; }
+body.rd .slot{
+  display:flex; align-items:center; justify-content:center; min-height:44px; min-width:150px; padding:4px 6px;
+  border:2px dashed var(--acc-two); border-radius:14px; background:var(--card); transition:background .15s, border-color .15s;
+}
+body.rd .slot.over{ border-style:solid; border-color:var(--acc); background:var(--acc-soft); }
+body.rd .slot.filled{ border-style:solid; }
+body.rd .slot-hint{ font-size:.8rem; color:var(--mut); font-weight:700; }
+body.rd .slot.ok{ border-color:var(--ok); background:var(--ok-bg); }
+body.rd .slot.bad{ border-color:var(--amber); background:var(--amber-bg); }
+body.rd .slot.ok .chip, body.rd .slot.bad .chip{ cursor:default; }
+body.rd .slot.ok .chip{ border-color:var(--ok); color:var(--ok); background:transparent; box-shadow:none; }
+body.rd .slot.bad .chip{ border-color:var(--amber); color:var(--amber); background:transparent; box-shadow:none; }
+body.rd .show{ grid-column:2 / -1; font-size:.8rem; font-weight:700; color:var(--amber); }
+
+body.rd .example-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); font-size:.95rem; }
+body.rd .ex-tag{ font-size:.7rem; font-weight:800; letter-spacing:.4px; text-transform:uppercase; color:var(--teal); background:var(--teal-soft); padding:4px 10px; border-radius:999px; }
+body.rd .ex-val{ font-weight:700; }
+body.rd .ex-arrow{ color:var(--mut); }
+body.rd .ex-ans{ font-weight:800; color:var(--ok); }
+
+body.rd .qs{ display:grid; gap:12px; }
+body.rd .q.ex-q{ border-style:dashed; }
+body.rd .q-ans{ margin:8px 0 0; font-size:1rem; line-height:1.7; }
+body.rd .q-ans input{
+  width:min(100%, 260px); border:0; border-bottom:2px solid var(--acc-two); border-radius:0; background:transparent;
+  padding:4px 6px; font:inherit; font-weight:700; color:var(--ink); outline:none;
+}
+body.rd .q-ans input:focus{ border-bottom-color:var(--acc); background:var(--acc-soft); border-radius:8px 8px 0 0; }
+body.rd .q-ans input.ok{ color:var(--ok); border-bottom-color:var(--ok); background:var(--ok-bg); border-radius:8px 8px 0 0; }
+body.rd .q-ans input.bad{ color:var(--amber); border-bottom-color:var(--amber); background:var(--amber-bg); border-radius:8px 8px 0 0; }
+body.rd .ans-ex{ color:var(--ok); font-weight:800; }
+
+/* ghost card that follows the finger or mouse while dragging */
+body.rd .ghost{
+  position:fixed; left:0; top:0; z-index:60; pointer-events:none; display:none;
+  transform:translate(-50%, -50%); padding:9px 14px; border-radius:999px;
+  background:var(--card); border:2px solid var(--acc); color:var(--acc); font-weight:800; font-size:.95rem;
+  box-shadow:0 14px 30px -10px rgba(30,27,58,.5);
+}
+body.rd .ghost.show{ display:block; }
+
+@media (max-width:560px){
+  body.rd .form-grid{ grid-template-columns:1fr; }
+  body.rd .hotel-addr{ text-align:left; }
+  body.rd .flbl{ min-width:104px; }
+  body.rd .item{ grid-template-columns:24px minmax(0,1fr); }
+  body.rd .slot{ grid-column:2 / -1; min-width:0; }
+}
+
+/* design fixes: one outline per slot, and blanks stay on the same line as their sentence */
+body.rd .slot{
+  min-height:42px; min-width:170px; padding:0 6px; border-radius:999px; border:2px dashed var(--acc-two); background:transparent;
+}
+body.rd .slot.over{ border-style:solid; border-color:var(--acc); background:var(--acc-soft); }
+body.rd .slot.filled{ border-style:solid; border-color:var(--acc-two); background:var(--acc-soft); padding:3px 4px; }
+body.rd .slot.filled .chip.in-slot{ border:0; background:transparent; box-shadow:none; color:var(--acc); padding:7px 12px; }
+body.rd .slot.ok{ border-style:solid; border-color:var(--ok); background:var(--ok-bg); }
+body.rd .slot.bad{ border-style:solid; border-color:var(--amber); background:var(--amber-bg); }
+body.rd .slot.ok .chip.in-slot{ border:0; background:transparent; box-shadow:none; color:var(--ok); }
+body.rd .slot.bad .chip.in-slot{ border:0; background:transparent; box-shadow:none; color:var(--amber); }
+body.rd .item{ padding:6px 0; border-bottom:1px dashed var(--line); }
+body.rd .item:last-child{ border-bottom:0; }
+
+body.rd .q-ans{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
+body.rd .q-ans input{ width:200px; max-width:100%; flex:0 1 200px; margin:0 2px; }
+</style>
+</head>
+<body class="rd">
+
+<div class="wrap">
+  <header class="top header">
+    <a class="back-btn" href="../">← Unit 2</a>
+    <div class="progress-pill">
+      <span id="doneText">0 / 15</span>
+      <span class="progress-track"><span class="progress-fill" id="doneFill"></span></span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="badge">Reading · Unit 2</span>
+    <h1>Hotel Booking</h1>
+    <p>Read the hotel booking form. Then match the words in the box with items 1–7, and answer the questions.</p>
+  </section>
+
+  <div class="part">
+    <span class="part-num">1</span>
+    <div><h2>Match the words in the box</h2><p>Drag each word into the right space. On a phone, tap a word and then tap a space.</p></div>
+  </div>
+
+  <article class="form-card">
+    <div class="form-head">
+      <div><span class="form-title">Hotel Booking Form</span></div>
+      <div class="hotel-addr">
+        <b>Ambassador Hotel</b><br>
+        14 Clark Avenue<br>
+        Sunny, NY 85512<br>
+        555-323-4938<br>
+        <span class="mail-link">ambassador@mail.co.us</span>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="frow"><span class="flbl">First name:</span><span class="fval">Alex</span></div>
+      <div class="frow"><span class="flbl">Last name:</span><span class="fval">Sanchez</span></div>
+      <div class="frow"><span class="flbl">Email:</span><span class="fval mail-link">a.sanchez@qcom.es</span></div>
+      <div class="frow"><span class="flbl">Phone:</span><span class="fval">(03442) 45-0442</span></div>
+      <div class="frow wide"><span class="flbl">Address:</span><span class="fval">Av H Yrigoyen 739, Entre Rios, Argentina</span></div>
+      <div class="frow"><span class="flbl">Nationality:</span><span class="fval">Argentinian</span></div>
+      <div class="frow"><span class="flbl">Passport number:</span><span class="fval">ZA553802</span></div>
+    </div>
+  </article>
+
+  <article class="match-card">
+    <div class="tray-label">Words in the box</div>
+    <div class="tray" id="tray" aria-label="Words in the box"></div>
+
+    <ol class="items" id="items"></ol>
+
+    <div class="example-row">
+      <span class="ex-tag">Example</span>
+      <span class="ex-val">Sanchez</span>
+      <span class="ex-arrow" aria-hidden="true">→</span>
+      <span class="ex-ans">last name</span>
+    </div>
+  </article>
+
+  <div class="part">
+    <span class="part-num">2</span>
+    <div><h2>Read the hotel booking form again and complete the answers</h2><p>Type the missing words.</p></div>
+  </div>
+
+  <div class="qs" id="qs"></div>
+
+  <div class="finish">
+    <button type="button" class="check-btn" id="checkBtn">Check my answers</button>
+    <div class="score-card" id="scoreCard" role="status" aria-live="polite">
+      <div class="score-big" id="scoreBig">0 / 15</div>
+      <h3 id="scoreTitle"></h3>
+      <p id="scoreMsg"></p>
+      <div class="score-actions">
+        <button type="button" class="btn-ghost" id="retryBtn">Try again</button>
+        <a class="btn-ghost" href="../">← Unit 2</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ghost" id="ghost" aria-hidden="true"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var GAME_ID = "starter-u2-reading-hotel-booking";
+
+  /* ---------- part 1: the matching (item number, the form value, the box word that goes with it) ---------- */
+  var MATCH = [
+    { v: "14 Clark Avenue",       ans: "hotel’s address" },
+    { v: "a.sanchez@qcom.es",     ans: "Alex’s email address" },
+    { v: "Argentinian",           ans: "nationality" },
+    { v: "(03442) 45-0442",       ans: "Alex’s phone number" },
+    { v: "555-323-4938",          ans: "hotel’s phone number" },
+    { v: "ZA553802",              ans: "passport number" },
+    { v: "85512",                 ans: "zip code" }
+  ];
+
+  /* ---------- part 2: the questions (typed). acc = accepted answers, show = shown when wrong ---------- */
+  var QS = [
+    { q: "What is the name of the hotel?",   pre: "It’s",    acc: ["Ambassador Hotel"],        show: "Ambassador Hotel" },
+    { q: "What street is the hotel on?",     pre: "It’s on", acc: ["Clark Avenue", "14 Clark Avenue"], show: "Clark Avenue" },
+    { q: "What is the hotel’s phone number?", pre: "It’s",   acc: ["555-323-4938", "5553234938"], show: "555-323-4938" },
+    { q: "What is Alex’s nationality?",      pre: "He’s",    acc: ["Argentinian"],             show: "Argentinian" },
+    { q: "What is Alex’s email address?",    pre: "It’s",    acc: ["a.sanchez@qcom.es", "a.sanchez@gcom.es"], show: "a.sanchez@qcom.es" },
+    { q: "What is the hotel’s zip code?",    pre: "It’s",    acc: ["85512"],                   show: "85512" },
+    { q: "What is Alex’s passport number?",  pre: "It’s",    acc: ["ZA553802"],                show: "ZA553802" },
+    { q: "What is the hotel’s email address?", pre: "It’s",  acc: ["ambassador@mail.co.us"],   show: "ambassador@mail.co.us" }
+  ];
+
+  var TOTAL = MATCH.length + QS.length;   /* 7 + 8 = 15 */
+  var placed = {};            /* item index -> box word */
+  var selected = null;        /* tapped box word (tap fallback) */
+  var checked = false, correctCount = 0;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  /* letters and digits; ignores spaces, hyphens, brackets and apostrophes */
+  function norm(s) { return String(s).toLowerCase().replace(/[\s\-()’']/g, ""); }
+
+  /* ---------- tray and slots ---------- */
+  function boxWords() {
+    /* a fixed order on the page; shuffled once per try */
+    return MATCH.map(function (m) { return m.ans; });
+  }
+  var trayOrder = [];
+  function shuffle(a) {
+    var b = a.slice();
+    for (var i = b.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1)); var t = b[i]; b[i] = b[j]; b[j] = t;
+    }
+    return b;
+  }
+
+  function placedWord(word) {
+    for (var k in placed) if (placed[k] === word) return parseInt(k, 10);
+    return -1;
+  }
+
+  function render() {
+    /* tray: words not placed */
+    var tray = $("tray");
+    tray.innerHTML = trayOrder.filter(function (w) { return placedWord(w) === -1; }).map(function (w) {
+      return '<button type="button" class="chip' + (selected === w ? " sel" : "") + '" data-word="' + esc(w) + '">' + esc(w) + '</button>';
+    }).join("") || '<span class="tray-empty">All words are in place</span>';
+
+    /* items: each with its slot */
+    $("items").innerHTML = MATCH.map(function (m, i) {
+      var w = placed[i];
+      var inner = w
+        ? '<button type="button" class="chip in-slot" data-slot="' + i + '" data-word="' + esc(w) + '">' + esc(w) + '</button>'
+        : '<span class="slot-hint">drop here</span>';
+      var cls = "slot" + (w ? " filled" : "");
+      if (checked) {
+        if (w === m.ans) cls += " ok";
+        else cls += " bad";
+      }
+      var show = checked && w !== m.ans ? '<span class="show bad">Answer: ' + esc(m.ans) + '</span>' : "";
+      return '<li class="item"><span class="item-num">' + (i + 1) + '</span><span class="item-val">' + esc(m.v) + '</span>' +
+        '<span class="' + cls + '" data-i="' + i + '">' + inner + '</span>' + show + '</li>';
+    }).join("");
+    updateProgress();
+  }
+
+  function updateProgress() {
+    var done = Object.keys(placed).length;
+    document.querySelectorAll("#qs input").forEach(function (inp) { if (inp.value.trim()) done++; });
+    $("doneText").textContent = done + " / " + TOTAL;
+    $("doneFill").style.width = (done / TOTAL * 100) + "%";
+  }
+
+  function place(word, i) {
+    if (checked) return;
+    var old = placedWord(word);
+    if (old !== -1) delete placed[old];          /* the word moves */
+    if (placed[i] !== undefined) delete placed[i];  /* the space gets a new word; the old one goes back */
+    placed[i] = word;
+    selected = null;
+    render();
+  }
+  function unplace(word) {
+    if (checked) return;
+    var k = placedWord(word);
+    if (k !== -1) delete placed[k];
+    selected = null;
+    render();
+  }
+
+  /* ---------- drag (mouse, touch and pen) with tap fallback ---------- */
+  var drag = null;
+  document.addEventListener("pointerdown", function (e) {
+    if (checked) return;
+    var chip = e.target.closest && e.target.closest(".chip");
+    if (!chip) return;
+    e.preventDefault();
+    drag = { word: chip.getAttribute("data-word"), x0: e.clientX, y0: e.clientY, moved: false, id: e.pointerId, from: chip };
+  });
+
+  document.addEventListener("pointermove", function (e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+    if (!drag.moved && Math.sqrt(dx * dx + dy * dy) > 6) {
+      drag.moved = true;
+      var g = $("ghost");
+      g.textContent = drag.word;
+      g.classList.add("show");
+      drag.from.classList.add("dragging");
+    }
+    if (drag.moved) {
+      var g2 = $("ghost");
+      g2.style.left = e.clientX + "px";
+      g2.style.top = e.clientY + "px";
+      document.querySelectorAll(".slot.over").forEach(function (s) { s.classList.remove("over"); });
+      var under = document.elementFromPoint(e.clientX, e.clientY);
+      var s2 = under && under.closest ? under.closest(".slot") : null;
+      if (s2) s2.classList.add("over");
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener("pointerup", function (e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var d = drag; drag = null;
+    $("ghost").classList.remove("show");
+    document.querySelectorAll(".slot.over").forEach(function (s) { s.classList.remove("over"); });
+    if (d.from) d.from.classList.remove("dragging");
+
+    if (!d.moved) {
+      /* a tap: a word is picked up, a slot is filled, or a placed word is returned */
+      var chip = d.from;
+      if (chip && chip.classList.contains("in-slot")) { unplace(d.word); return; }
+      selected = (selected === d.word) ? null : d.word;
+      render();
+      return;
+    }
+
+    var under = document.elementFromPoint(e.clientX, e.clientY);
+    var slot = under && under.closest ? under.closest(".slot") : null;
+    var tray = under && under.closest ? under.closest("#tray") : null;
+    if (slot) place(d.word, parseInt(slot.getAttribute("data-i"), 10));
+    else if (tray) unplace(d.word);
+    else render();
+  });
+
+  document.addEventListener("pointercancel", function () {
+    drag = null;
+    $("ghost").classList.remove("show");
+    document.querySelectorAll(".dragging").forEach(function (c) { c.classList.remove("dragging"); });
+  });
+
+  /* tap fallback: a selected word is placed by tapping an empty space */
+  document.addEventListener("click", function (e) {
+    if (checked) return;
+    var slot = e.target.closest && e.target.closest(".slot");
+    if (slot && selected && !drag) {
+      place(selected, parseInt(slot.getAttribute("data-i"), 10));
+    }
+  });
+
+  /* ---------- part 2: build the questions ---------- */
+  function buildQs() {
+    var ex = '<article class="q ex-q"><div class="q-head"><span class="q-num ex">EXAMPLE</span>' +
+      '<div><p class="q-text">What is Alex’s last name?</p><p class="q-ans">His last name is <span class="ans-ex">Sanchez</span>.</p></div></div></article>';
+    $("qs").innerHTML = ex + QS.map(function (item, i) {
+      return '<article class="q" data-q="' + i + '"><div class="q-head"><span class="q-num">' + (i + 1) + '</span>' +
+        '<div><p class="q-text">' + esc(item.q) + '</p>' +
+        '<p class="q-ans">' + esc(item.pre) + ' <input type="text" data-q="' + i + '" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="' + esc(item.q) + '"> .</p>' +
+        '<div class="q-note" id="qnote' + i + '"></div></div></div></article>';
+    }).join("");
+  }
+
+  document.addEventListener("input", function (e) {
+    if (checked) return;
+    if (e.target.matches && e.target.matches("#qs input")) updateProgress();
+  });
+
+  /* ---------- check ---------- */
+  function check() {
+    if (checked) return;
+    checked = true;
+    correctCount = 0;
+
+    MATCH.forEach(function (m, i) {
+      if (placed[i] === m.ans) correctCount++;
+    });
+
+    QS.forEach(function (item, i) {
+      var inp = document.querySelector('#qs input[data-q="' + i + '"]');
+      var ok = item.acc.some(function (a) { return norm(a) === norm(inp.value); });
+      inp.disabled = true;
+      inp.classList.add(ok ? "ok" : "bad");
+      var note = $("qnote" + i);
+      if (ok) { correctCount++; note.className = "q-note ok"; note.textContent = "Correct!"; }
+      else { note.className = "q-note bad"; note.textContent = "Answer: " + item.show; }
+    });
+
+    render();
+    showResult();
+    $("checkBtn").style.display = "none";
+  }
+
+  function showResult() {
+    var pct = Math.round(correctCount / TOTAL * 100);
+    var stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 50 ? 1 : 0;
+    $("scoreBig").textContent = correctCount + " / " + TOTAL;
+    $("scoreTitle").textContent = correctCount === TOTAL ? "Excellent reading!" :
+      pct >= 70 ? "Well done!" : "Good effort!";
+    $("scoreMsg").textContent = correctCount === TOTAL ? "Every answer is correct." :
+      "Look at the answers in green and amber, then try again.";
+    $("scoreCard").classList.add("show");
+    $("doneText").textContent = correctCount + " / " + TOTAL;
+    $("doneFill").style.width = (correctCount / TOTAL * 100) + "%";
+    try {
+      if (window.TestStars && typeof TestStars.award === "function") TestStars.award(GAME_ID);
+    } catch (e0) {}
+    try {
+      if (window.LAStars) {
+        if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(GAME_ID);
+        if (typeof LAStars.saveFromAccuracy === "function") LAStars.saveFromAccuracy(GAME_ID, pct);
+        else if (typeof LAStars.save === "function") LAStars.save(GAME_ID, stars);
+      }
+    } catch (e) {}
+    $("scoreCard").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  function reset() {
+    checked = false; correctCount = 0; placed = {}; selected = null;
+    trayOrder = shuffle(boxWords());
+    document.querySelectorAll("#qs input").forEach(function (inp) {
+      inp.value = ""; inp.disabled = false; inp.classList.remove("ok", "bad");
+    });
+    QS.forEach(function (_, i) { $("qnote" + i).textContent = ""; $("qnote" + i).className = "q-note"; });
+    $("scoreCard").classList.remove("show");
+    $("checkBtn").style.display = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    render();
+  }
+
+  buildQs();
+  trayOrder = shuffle(boxWords());
+  render();
+  $("checkBtn").addEventListener("click", check);
+  $("retryBtn").addEventListener("click", reset);
+});
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="../../../assets/tests-stars.js"></script>
+<script src="../../../assets/tests-ui.js"></script>
+<script src="/visit-counter.js" defer></script>
+</body>
+</html>
