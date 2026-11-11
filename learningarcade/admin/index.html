@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#6937d8" />
+  <title>Admin · Students | Learning Arcade</title>
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../theme.css" />
+  <style>
+    .admin-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 16px 16px 64px;
+    }
+    .admin-card {
+      background: rgba(255,255,255,.97);
+      border-radius: 20px;
+      padding: 22px 20px;
+      box-shadow: 0 8px 0 rgba(84,37,184,.1), 0 14px 28px rgba(32,38,54,.07);
+      margin-bottom: 18px;
+    }
+    html[data-theme=dark] .admin-card {
+      background: #1e2130;
+      box-shadow: 0 8px 0 rgba(0,0,0,.25), 0 14px 28px rgba(0,0,0,.3);
+    }
+    .admin-title {
+      margin: 0 0 6px;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #202636;
+    }
+    html[data-theme=dark] .admin-title { color: #f0f2f8; }
+    .admin-sub {
+      margin: 0 0 18px;
+      color: #687184;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+    .admin-note {
+      background: #f3edff;
+      border: 1.5px solid rgba(105,55,216,.2);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #3d2f6b;
+      margin-bottom: 16px;
+      line-height: 1.45;
+    }
+    html[data-theme=dark] .admin-note {
+      background: #2a2540;
+      border-color: #4a3f70;
+      color: #d4c8f5;
+    }
+    .admin-status {
+      min-height: 1.3em;
+      margin: 0 0 12px;
+      font-weight: 700;
+      color: #687184;
+      font-size: 0.9rem;
+    }
+    .admin-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .admin-btn {
+      border: 2px solid #e8e0ff;
+      background: #fff;
+      color: #2c2450;
+      font: inherit;
+      font-weight: 800;
+      font-size: 0.88rem;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .admin-btn.primary {
+      background: #6937d8;
+      border-color: #6937d8;
+      color: #fff;
+      box-shadow: 0 3px 0 #5425b8;
+    }
+    .admin-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    html[data-theme=dark] .admin-btn {
+      background: #2a2e42;
+      border-color: #3a3f55;
+      color: #d0d4e4;
+    }
+    .student-list {
+      display: grid;
+      gap: 10px;
+    }
+    .student-row {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #faf9ff;
+      border: 1.5px solid #ece6ff;
+    }
+    html[data-theme=dark] .student-row {
+      background: #252838;
+      border-color: #353a50;
+    }
+    .student-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #6937d8;
+      color: #fff;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+    .student-name {
+      font-weight: 800;
+      color: #202636;
+      font-size: 1rem;
+    }
+    html[data-theme=dark] .student-name { color: #f0f2f8; }
+    .student-meta {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #8b86b0;
+      margin-top: 2px;
+    }
+    .student-score {
+      font-weight: 900;
+      color: #6937d8;
+      font-size: 0.95rem;
+      text-align: right;
+    }
+    .empty {
+      text-align: center;
+      padding: 28px 12px;
+      color: #8b86b0;
+      font-weight: 700;
+    }
+    .gate {
+      max-width: 360px;
+      margin: 40px auto;
+      text-align: center;
+    }
+    .gate input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 2px solid #e8e0ff;
+      background: #faf9ff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 12px 0 14px;
+    }
+  </style>
+</head>
+<body>
+  <header class="arcade-header-bar">
+    <nav class="arcade-nav" aria-label="Main navigation">
+      <a href="../" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+      <a href="./" class="nav-link active" aria-current="page" aria-label="Admin" data-icon="🔐"><span class="nav-ico" aria-hidden="true">🔐</span><span class="nav-text">Admin</span></a>
+    </nav>
+  </header>
+
+  <main class="admin-wrap">
+    <!-- Simple password gate so students don't open this page -->
+    <div id="gate" class="admin-card gate">
+      <h1 class="admin-title">Teacher Admin</h1>
+      <p class="admin-sub">Enter the admin password to continue</p>
+      <input id="gatePassword" type="password" placeholder="Admin password" autocomplete="current-password" />
+      <button type="button" class="admin-btn primary" id="gateBtn" style="width:100%">Open Admin</button>
+      <p id="gateError" class="admin-status" style="color:#c0392b;margin-top:10px;"></p>
+    </div>
+
+    <div id="adminPanel" style="display:none;">
+      <div class="admin-card">
+        <h1 class="admin-title">Students</h1>
+        <p class="admin-sub">Players who have submitted scores</p>
+
+        <div class="admin-note">
+          <strong>Full registered accounts</strong> (everyone who signed up) are listed in the Supabase Dashboard:<br>
+          <strong>Authentication → Users</strong><br><br>
+          Usernames look like: <code>sara_8b@players.mrsheyhaki.ir</code><br>
+          The real username is the part before <code>@</code>.
+        </div>
+
+        <div class="admin-actions">
+          <button type="button" class="admin-btn primary" id="refreshBtn">Refresh list</button>
+          <button type="button" class="admin-btn" id="logoutAdminBtn">Close admin</button>
+        </div>
+
+        <p class="admin-status" id="status">Loading…</p>
+        <div class="student-list" id="studentList"></div>
+      </div>
+
+      <div class="admin-card">
+        <h2 class="admin-title" style="font-size:1.15rem;">Recent scores</h2>
+        <p class="admin-sub">Last 30 submitted scores</p>
+        <div class="student-list" id="recentList"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../auth-system/auth.js"></script>
+  <script src="../firebase-scores.js"></script>
+  <script src="../theme.js"></script>
+  <script>
+    (function () {
+      // Change this password to something only you know
+      var ADMIN_PASSWORD = "sheyhaki2026";
+
+      var gate = document.getElementById("gate");
+      var panel = document.getElementById("adminPanel");
+      var statusEl = document.getElementById("status");
+      var studentList = document.getElementById("studentList");
+      var recentList = document.getElementById("recentList");
+
+      function openAdmin() {
+        try { sessionStorage.setItem("laAdminOk", "1"); } catch (e) {}
+        gate.style.display = "none";
+        panel.style.display = "block";
+        loadData();
+      }
+
+      function closeAdmin() {
+        try { sessionStorage.removeItem("laAdminOk"); } catch (e) {}
+        panel.style.display = "none";
+        gate.style.display = "block";
+        document.getElementById("gatePassword").value = "";
+      }
+
+      document.getElementById("gateBtn").onclick = function () {
+        var pw = document.getElementById("gatePassword").value;
+        if (pw === ADMIN_PASSWORD) {
+          document.getElementById("gateError").textContent = "";
+          openAdmin();
+        } else {
+          document.getElementById("gateError").textContent = "Wrong password";
+        }
+      };
+
+      document.getElementById("gatePassword").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") document.getElementById("gateBtn").click();
+      });
+
+      document.getElementById("logoutAdminBtn").onclick = closeAdmin;
+      document.getElementById("refreshBtn").onclick = loadData;
+
+      // Auto-open if already unlocked this session
+      try {
+        if (sessionStorage.getItem("laAdminOk") === "1") openAdmin();
+      } catch (e) {}
+
+      function loadData() {
+        statusEl.textContent = "Loading…";
+        studentList.innerHTML = "";
+        recentList.innerHTML = "";
+
+        if (typeof LAScores === "undefined" || !LAScores.init()) {
+          statusEl.textContent = "Supabase not ready. Check that the scores table is exposed.";
+          return;
+        }
+
+        // Load recent scores, then group by player name
+        var client = window.supabase && window.supabase.createClient
+          ? window.supabase.createClient(
+              "https://ezlcrygimvceusmnojgk.supabase.co",
+              "sb_publishable_aPyfAl2ErhMN5awDrQTZnQ_gR0-0sDr"
+            )
+          : null;
+
+        if (!client) {
+          statusEl.textContent = "Could not create Supabase client.";
+          return;
+        }
+
+        client
+          .from("scores")
+          .select("name, score, game_id, game_name, at, created_at")
+          .order("at", { ascending: false })
+          .limit(200)
+          .then(function (res) {
+            if (res.error) {
+              statusEl.textContent = "Error: " + (res.error.message || "Could not load scores");
+              return;
+            }
+
+            var rows = res.data || [];
+            statusEl.textContent = rows.length
+              ? rows.length + " score(s) found"
+              : "No scores yet. Students need to play a game and submit a score.";
+
+            // Group by player name
+            var byName = {};
+            rows.forEach(function (r) {
+              var name = (r.name || "Player").trim() || "Player";
+              var key = name.toLowerCase();
+              if (!byName[key]) {
+                byName[key] = {
+                  name: name,
+                  totalScore: 0,
+                  games: 0,
+                  lastAt: 0
+                };
+              }
+              byName[key].totalScore += Number(r.score) || 0;
+              byName[key].games += 1;
+              var t = Number(r.at) || 0;
+              if (t > byName[key].lastAt) byName[key].lastAt = t;
+            });
+
+            var students = Object.keys(byName)
+              .map(function (k) { return byName[k]; })
+              .sort(function (a, b) {
+                if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+                return a.name.localeCompare(b.name);
+              });
+
+            if (!students.length) {
+              studentList.innerHTML = '<div class="empty">No students with scores yet</div>';
+            } else {
+              studentList.innerHTML = students
+                .map(function (s, i) {
+                  var initial = (s.name.charAt(0) || "?").toUpperCase();
+                  var last = s.lastAt
+                    ? new Date(s.lastAt).toLocaleString()
+                    : "—";
+                  return (
+                    '<div class="student-row">' +
+                    '<div class="student-avatar">' + initial + "</div>" +
+                    '<div><div class="student-name">' + escapeHtml(s.name) + "</div>" +
+                    '<div class="student-meta">' + s.games + " game(s) · last: " + last + "</div></div>" +
+                    '<div class="student-score">' + s.totalScore + " pts</div>" +
+                    "</div>"
+                  );
+                })
+                .join("");
+            }
+
+            // Recent scores
+            var recent = rows.slice(0, 30);
+            if (!recent.length) {
+              recentList.innerHTML = '<div class="empty">No recent scores</div>';
+            } else {
+              recentList.innerHTML = recent
+                .map(function (r) {
+                  var when = r.at
+                    ? new Date(Number(r.at)).toLocaleString()
+                    : (r.created_at || "—");
+                  return (
+                    '<div class="student-row">' +
+                    '<div class="student-avatar">' + ((r.name || "?").charAt(0) || "?").toUpperCase() + "</div>" +
+                    '<div><div class="student-name">' + escapeHtml(r.name || "Player") + "</div>" +
+                    '<div class="student-meta">' + escapeHtml(r.game_name || r.game_id || "game") + " · " + when + "</div></div>" +
+                    '<div class="student-score">' + (Number(r.score) || 0) + "</div>" +
+                    "</div>"
+                  );
+                })
+                .join("");
+            }
+          })
+          .catch(function (err) {
+            statusEl.textContent = "Error loading data: " + (err && err.message ? err.message : String(err));
+          });
+      }
+
+      function escapeHtml(s) {
+        return String(s || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+    })();
+  </script>
+</body>
+</html>
