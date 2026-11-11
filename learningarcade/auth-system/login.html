@@ -226,10 +226,19 @@
       }
 
       var returnUrl = getReturnUrl();
+      // ?back= = where Back / Continue as Guest should go (e.g. the Resources hub
+      // when a game page sent the visitor here). Falls back to the return URL.
+      var backUrl = returnUrl;
+      try {
+        var backParam = new URLSearchParams(window.location.search).get("back");
+        if (backParam && backParam.charAt(0) === "/" && backParam.indexOf("//") === -1) {
+          backUrl = backParam;
+        }
+      } catch (e) {}
       var backLink = document.getElementById("authBack");
       var guestLink = document.getElementById("authGuest");
-      if (backLink) backLink.href = returnUrl;
-      if (guestLink) guestLink.href = returnUrl;
+      if (backLink) backLink.href = backUrl;
+      if (guestLink) guestLink.href = backUrl;
 
       var mode = "login"; // or "register"
       var form = document.getElementById("authForm");
