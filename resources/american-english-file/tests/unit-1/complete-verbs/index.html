@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 1 · Complete the Sentences with Verbs | AEF 1 | Mr. Sheyhaki</title>
+<meta name="description" content="Drag the correct verb into each sentence. American English File 1 Unit 1.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+/* Every rule is scoped to body.pst so the site's theme CSS cannot override it. */
+body.pst{
+  --bg:#f7f4ee; --card:#ffffff; --ink:#1d2430; --mut:#6b7280; --line:#e6e0d4;
+  --acc:#0f766e; --acc-d:#0b5c56; --acc-two:#14b8a6; --acc-soft:rgba(15,118,110,.10); --btn-ink:#ffffff;
+  --ok:#15803d; --ok-bg:#dcfce7; --warn:#b91c1c; --warn-bg:#fee2e2;
+  --ghost:#ffffff; --btn-off:#cfd6dc; --shadow:rgba(29,36,48,.07);
+  --pos:#15803d; --pos-bg:rgba(34,197,94,.14); --neg:#b91c1c; --neg-bg:rgba(239,68,68,.12);
+  --app-bg:radial-gradient(900px 520px at 8% -12%, rgba(20,184,166,.20), transparent 60%), radial-gradient(760px 480px at 100% 0%, rgba(124,58,237,.11), transparent 58%), radial-gradient(720px 520px at 50% 115%, rgba(15,118,110,.16), transparent 62%), linear-gradient(180deg, #f0fdfa 0%, #eef4ff 100%);
+}
+html[data-theme="dark"] body.pst{
+  --bg:#0f1420; --card:#171e2d; --ink:#e8edf6; --mut:#9aa6b8; --line:#2a3447;
+  --acc:#2dd4bf; --acc-d:#0f8a7b; --acc-two:#5eead4; --acc-soft:rgba(45,212,191,.14); --btn-ink:#062b27;
+  --ok:#4ade80; --ok-bg:rgba(74,222,128,.14); --warn:#f87171; --warn-bg:rgba(248,113,113,.14);
+  --ghost:#1d2638; --btn-off:#2a3447; --shadow:rgba(0,0,0,.35);
+  --pos:#4ade80; --pos-bg:rgba(74,222,128,.16); --neg:#f87171; --neg-bg:rgba(248,113,113,.16);
+  --app-bg:radial-gradient(900px 520px at 8% -12%, rgba(45,212,191,.16), transparent 60%), radial-gradient(760px 480px at 100% 0%, rgba(124,58,237,.18), transparent 58%), radial-gradient(720px 520px at 50% 115%, rgba(20,184,166,.12), transparent 62%), linear-gradient(180deg, #0c1a1f 0%, #0f1420 100%);
+}
+html, html[data-theme="dark"]{ background:var(--bg); }
+html[data-theme="dark"] body.pst{ background:var(--app-bg) fixed !important; }
+html, body.pst{ margin:0; padding:0; height:100%; overflow:hidden; }
+body.pst{
+  position:fixed; inset:0; overflow:hidden; box-sizing:border-box;
+  background:var(--app-bg) fixed; color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+body.pst *, body.pst *::before, body.pst *::after{ box-sizing:border-box; }
+
+body.pst .app{
+  position:fixed; top:0; right:0; bottom:0; left:0;
+  display:flex; flex-direction:column;
+  width:100%; max-width:680px; margin:0 auto;
+  padding:max(12px,env(safe-area-inset-top)) 16px max(22px,env(safe-area-inset-bottom));
+  overflow:hidden;
+}
+body.pst .app > *{ margin:0; }
+body.pst .bg{ position:fixed; inset:0; z-index:0; background:var(--app-bg); }
+body.pst .app{ z-index:1; }
+
+/* top bar: same back pill and sound circle as the other Tests & Exams games */
+body.pst .top{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; flex:0 0 auto;
+  background:none; border:0; box-shadow:none; padding:0; height:auto; position:static;
+}
+body.pst .back-btn{
+  display:inline-flex; align-items:center; gap:.35rem; min-height:40px; padding:.4rem .9rem;
+  border-radius:999px; background:#fff; border:2px solid rgba(124,58,237,.16); color:#5b21b6;
+  font-weight:700; font-size:.92rem; text-decoration:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s, box-shadow .15s;
+}
+body.pst .back-btn:hover{ background:#fff; transform:translateY(-1px); }
+body.pst .back-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(124,58,237,.12); }
+body.pst .count{ margin-left:auto; font-weight:700; font-size:.92rem; color:var(--mut); font-variant-numeric:tabular-nums; }
+body.pst .tui-sound{
+  appearance:none; border:2px solid rgba(124,58,237,.16); background:#fff;
+  width:40px; height:40px; border-radius:50%; font-size:1.05rem; cursor:pointer; flex:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s; padding:0;
+  display:inline-grid; place-items:center; position:static; margin-left:8px;
+}
+body.pst .tui-sound:active{ transform:translateY(2px); }
+
+/* question area: centred, so the sentence and answers sit together */
+body.pst .stage{
+  flex:1 1 auto; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:8px 0;
+}
+body.pst .stage.hide{ display:none; }
+body.pst .kind{
+  display:inline-block; padding:7px 12px; border-radius:20px;
+  background:var(--acc-soft); color:var(--acc);
+  font-size:11px; font-weight:700; letter-spacing:.6px; text-transform:uppercase;
+}
+/* fixed-height sentence area: it starts in the same place whether it wraps or not */
+body.pst .sentence{
+  margin:14px 0 0; max-width:720px; width:100%; min-height:3.6em;
+  display:flex; align-items:center; justify-content:center;
+  font-size:clamp(24px, 4vw + 8px, 38px); font-weight:700; line-height:1.35; color:var(--ink);
+}
+body.pst .sline{ display:block; text-align:center; overflow-wrap:anywhere; }
+body.pst .gap{
+  display:inline-block; min-width:4.5ch; height:1em; margin:0 .12em;
+  border-bottom:3px solid var(--acc); vertical-align:baseline; user-select:none;
+}
+body.pst .hint{ margin:10px 0 0; font-size:13px; color:var(--mut); min-height:1.4em; }
+
+/* answer cards */
+body.pst .answers{
+  margin-top:22px; width:100%; max-width:640px;
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(0,1fr)); gap:12px;
+}
+body.pst .ans{
+  appearance:none; position:relative; min-height:96px; padding:14px 10px; cursor:pointer;
+  border:2px solid var(--line); border-radius:17px; background:var(--card); color:var(--ink);
+  font:inherit; font-size:clamp(16px, 2.6vw, 19px); font-weight:700; line-height:1.3; overflow-wrap:anywhere;
+  box-shadow:0 2px 0 var(--line); transition:transform .15s, border-color .15s, background .15s, box-shadow .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+body.pst .ans:hover:not(:disabled){ transform:translateY(-3px); border-color:var(--acc-two); }
+body.pst .ans:active:not(:disabled){ transform:translateY(1px); box-shadow:0 1px 0 var(--line); }
+body.pst .ans:disabled{ cursor:default; }
+body.pst .ans:disabled:not(.correct):not(.wrong):not(.reveal){ opacity:.5; }
+body.pst .ans.correct, body.pst .ans.reveal{ border-color:var(--ok); background:var(--ok-bg); color:var(--ok); box-shadow:0 4px 0 rgba(21,128,61,.25); }
+body.pst .ans.wrong{ border-color:var(--warn); background:var(--warn-bg); color:var(--warn); box-shadow:0 4px 0 rgba(185,28,28,.2); }
+body.pst .ans.correct::after, body.pst .ans.wrong::after{
+  position:absolute; top:6px; right:10px; font-size:14px; font-weight:900;
+}
+body.pst .ans.correct::after{ content:"✓"; }
+body.pst .ans.wrong::after{ content:"✕"; }
+
+body.pst .fb{ min-height:34px; margin-top:14px; font-size:14px; font-weight:800; color:var(--mut); }
+body.pst .fb.ok{ color:var(--ok); }
+body.pst .fb.bad{ color:var(--warn); }
+body.pst .example{ margin-top:10px; font-size:12.5px; color:var(--mut); line-height:1.45; max-width:46ch; }
+body.pst .example b{ color:var(--acc); font-weight:700; text-decoration:underline; text-underline-offset:3px; }
+
+/* battle-style progress */
+body.pst .progress{ flex:0 0 auto; width:100%; max-width:640px; margin:0 auto; }
+body.pst .progress-label{ display:flex; justify-content:space-between; font-size:9px; letter-spacing:1px; color:var(--mut); }
+body.pst .progress-bar{ height:7px; margin-top:8px; overflow:hidden; border-radius:20px; background:rgba(127,127,127,.13); }
+body.pst .progress-fill{ width:0; height:100%; border-radius:20px; background:linear-gradient(90deg,var(--acc),var(--acc-two)); transition:width .35s ease; }
+
+/* bottom action: always keeps its space so nothing moves */
+body.pst .actions{ flex:0 0 auto; display:flex; gap:10px; margin-top:12px; width:100%; max-width:640px; margin-left:auto; margin-right:auto; }
+body.pst .btn{
+  flex:1 1 auto; min-height:52px; border:0; border-radius:16px; cursor:pointer;
+  font:inherit; font-size:1rem; font-weight:800; color:var(--btn-ink); background:var(--acc);
+  box-shadow:0 4px 0 var(--acc-d); text-decoration:none; display:inline-flex;
+  align-items:center; justify-content:center; text-align:center;
+  transition:transform .1s, box-shadow .1s, opacity .2s; -webkit-tap-highlight-color:transparent;
+}
+body.pst .btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--acc-d); }
+body.pst .btn:disabled{ background:var(--btn-off); box-shadow:0 4px 0 var(--line); cursor:default; color:var(--mut); }
+body.pst .btn.ghost{ background:var(--ghost); color:var(--ink); border:1px solid var(--line); box-shadow:0 4px 0 var(--line); }
+body.pst .btn.hidden{ visibility:hidden; }
+
+/* result */
+body.pst .result{
+  display:none; flex:1 1 auto; min-height:0; width:100%; max-width:640px; margin:0 auto;
+  flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  background:var(--card); border:1px solid var(--line); border-radius:24px;
+  padding:14px; box-shadow:0 10px 30px var(--shadow); text-align:center; overflow:hidden;
+}
+body.pst .result.show{ display:flex; }
+body.pst .big{ font-size:clamp(2rem, 7vw, 3rem); font-weight:900; color:var(--acc); line-height:1; font-variant-numeric:tabular-nums; }
+body.pst .result h2{ margin:0; font-size:1.2rem; font-weight:800; color:var(--ink); }
+body.pst .result .msg{ margin:0; font-size:.9rem; color:var(--mut); max-width:30ch; }
+body.pst .review{
+  list-style:none; margin:2px 0 0; padding:0; width:100%; max-width:520px;
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px;
+}
+body.pst .review li{
+  border-radius:12px; padding:6px 7px; font-size:.78rem; line-height:1.25; text-align:left;
+  background:var(--ghost); color:var(--ink); overflow-wrap:anywhere;
+}
+body.pst .review li.ok{ background:var(--ok-bg); color:var(--ok); }
+body.pst .review li.no{ background:var(--warn-bg); color:var(--warn); }
+body.pst .review .n{ font-weight:800; margin-right:3px; }
+body.pst .review .was{ display:block; font-weight:700; }
+body.pst .review .right{ display:block; font-weight:800; }
+body.pst .resultActions{ display:none; }
+
+body.pst .ans.sel{ border-color:var(--acc); background:var(--acc-soft); color:var(--acc); box-shadow:0 2px 0 var(--acc); }
+body.pst .kind.pos{ background:var(--pos-bg); color:var(--pos); }
+body.pst .kind.neg{ background:var(--neg-bg); color:var(--neg); }
+/* phones: smaller cards and sentence, so everything fits without scrolling */
+@media (max-width:420px){
+  body.pst .answers{ gap:8px; }
+  body.pst .ans{ min-height:84px; padding:10px 6px; font-size:15px; }
+  body.pst .sentence{ min-height:3.6em; }
+}
+@media (max-height:700px){
+  body.pst .example{ display:none; }
+  body.pst .sentence{ margin-top:8px; }
+  body.pst .answers{ margin-top:16px; }
+  body.pst .ans{ min-height:76px; }
+}
+@media (max-height:560px){
+  body.pst .hint{ display:none; }
+  body.pst .top .back-btn{ min-height:36px; padding:.3rem .8rem; }
+  body.pst .ans{ min-height:64px; }
+  body.pst .fb{ margin-top:6px; min-height:24px; }
+  body.pst .btn{ min-height:46px; }
+}
+@media (prefers-reduced-motion:reduce){ body.pst *{ transition:none !important; } }
+
+/* typed gaps: the answer is written in the sentence */
+body.pst .typed{
+  width:9em; max-width:70%; font:inherit; font-size:inherit; font-weight:800; text-align:center; color:var(--ink);
+  background:var(--acc-soft); border:0; border-bottom:3px solid var(--acc); border-radius:8px 8px 0 0; padding:4px 8px; outline:none;
+}
+body.pst .typed:focus{ background:var(--card); }
+body.pst .typed:disabled{ cursor:default; }
+body.pst .typed.ok{ color:var(--ok); border-bottom-color:var(--ok); background:var(--ok-bg); }
+body.pst .typed.bad{ color:var(--warn); border-bottom-color:var(--warn); background:var(--warn-bg); }
+
+/* dialogue lines: each question and answer on its own line */
+body.pst .sentence{ text-align:left; }
+body.pst .sline{ display:block; line-height:1.7; margin:4px 0; }
+
+/* A and B lines stack on top of each other */
+body.pst .sentence{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+body.pst .sline{ display:block; width:100%; }
+
+/* keep each dialogue line on one row where the screen is wide enough */
+body.pst .sentence{ font-size:clamp(20px, 3.2vw, 30px); }
+body.pst .typed{ width:6.5em; }
+@media (min-width: 600px){ body.pst .sline{ white-space:nowrap; } }
+
+/* instruction under the question counter */
+body.pst .instr{ text-align:center; font-size:16px; font-weight:700; color:var(--ink); margin:8px 12px 4px; line-height:1.4; }
+
+/* drag-and-drop verbs */
+body.pst .instr{ text-align:center; font-size:16px; font-weight:700; color:var(--ink); margin:8px 12px 4px; line-height:1.4; }
+body.pst .bank{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; padding:12px; margin:10px auto; max-width:620px;
+  border:2px dashed var(--line); border-radius:16px; min-height:60px; background:var(--card); }
+body.pst .vchip{ appearance:none; touch-action:none; user-select:none; -webkit-user-select:none; cursor:grab;
+  padding:8px 14px; border-radius:999px; border:2px solid var(--acc); background:var(--acc-soft); color:var(--acc);
+  font:inherit; font-weight:800; font-size:16px; box-shadow:0 3px 0 var(--acc); }
+body.pst .vchip.sel{ background:var(--acc); color:#fff; }
+body.pst .vchip.struck{ text-decoration:line-through; cursor:default; opacity:.6; box-shadow:none; border-color:var(--line); color:var(--ink); background:transparent; }
+body.pst .vchip.dragging{ opacity:.35; }
+body.pst .vchip.in-slot{ box-shadow:none; padding:4px 10px; }
+body.pst .sents{ list-style:none; margin:14px auto; padding:0; max-width:620px; display:grid; gap:12px; }
+body.pst .sent{ display:flex; gap:12px; align-items:center; font-size:20px; font-weight:700; color:var(--ink); line-height:1.4; flex-wrap:wrap; }
+body.pst .sent .num{ min-width:26px; font-weight:900; color:var(--acc); }
+body.pst .sent .line{ display:flex; align-items:center; flex-wrap:wrap; gap:4px; }
+body.pst .slot{ display:inline-flex; align-items:center; justify-content:center; min-width:140px; min-height:40px; padding:2px 6px;
+  border:2px dashed var(--acc); border-radius:999px; background:var(--card); }
+body.pst .slot.over{ border-style:solid; background:var(--acc-soft); }
+body.pst .slot.filled{ border-style:solid; }
+body.pst .slot-hint{ color:var(--mut); }
+body.pst .slot.ok{ border-style:solid; border-color:var(--ok); background:var(--ok-bg); }
+body.pst .slot.bad{ border-style:solid; border-color:var(--warn); background:var(--warn-bg); }
+body.pst .show{ font-size:16px; font-weight:800; color:var(--warn); }
+body.pst .foot-row{ display:flex; gap:12px; justify-content:center; margin:16px 0; }
+body.pst .ghost{ position:fixed; left:0; top:0; z-index:60; pointer-events:none; display:none; transform:translate(-50%,-50%);
+  padding:8px 14px; border-radius:999px; background:var(--card); border:2px solid var(--acc); color:var(--acc); font-weight:800; font-size:16px;
+  box-shadow:0 14px 30px -10px rgba(30,27,58,.5); }
+body.pst .ghost.show{ display:block; }
+body.pst .verdict{ text-align:center; font-weight:800; font-size:18px; color:var(--ink); margin:8px 0; }
+
+/* ===== polished layout ===== */
+[hidden]{ display:none !important; }
+body.pst{ font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; }
+body.pst .vg-wrap{ max-width:680px; margin:0 auto; padding:0 16px 40px; }
+body.pst .vg-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 0 6px; }
+body.pst .vg-back{ text-decoration:none; font-weight:800; color:var(--acc); padding:8px 14px; border-radius:999px; background:var(--card); box-shadow:0 2px 0 var(--line); }
+body.pst .vg-count{ font-weight:900; color:var(--ink); font-size:15px; font-variant-numeric:tabular-nums; }
+body.pst .vg-bar{ height:8px; border-radius:999px; background:var(--line); overflow:hidden; margin:4px 0 18px; }
+body.pst .vg-bar > span{ display:block; height:100%; width:0; background:linear-gradient(90deg,var(--acc),var(--ok)); border-radius:999px; transition:width .35s ease; }
+body.pst .vg-kind{ display:inline-block; font-size:12px; font-weight:900; letter-spacing:.6px; text-transform:uppercase; color:var(--acc); background:var(--acc-soft); padding:6px 12px; border-radius:999px; }
+body.pst .vg-instr{ margin:10px 0 16px; font-size:17px; font-weight:700; color:var(--ink); line-height:1.5; }
+body.pst .vg-bank{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px; padding:16px; border-radius:18px; background:var(--card); border:2px dashed var(--line); min-height:78px; }
+body.pst .vg-bank-label{ width:100%; text-align:center; font-size:11px; font-weight:900; letter-spacing:.6px; color:var(--mut); text-transform:uppercase; margin-bottom:-2px; }
+body.pst .vchip{ appearance:none; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; padding:9px 16px; border-radius:999px; border:2px solid var(--acc); background:var(--card); color:var(--acc); font:inherit; font-weight:800; font-size:16px; box-shadow:0 3px 0 var(--acc); transition:transform .12s ease, box-shadow .12s ease, background .12s ease; }
+body.pst .vchip:hover{ transform:translateY(-1px); }
+body.pst .vchip:focus-visible{ outline:3px solid var(--acc); outline-offset:3px; }
+body.pst .vchip.sel{ background:var(--acc); color:#fff; box-shadow:0 3px 0 var(--acc); }
+body.pst .vchip.struck{ text-decoration:line-through; cursor:default; opacity:.55; box-shadow:none; border-color:var(--line); color:var(--mut); background:transparent; transform:none; }
+body.pst .vchip.dragging{ opacity:.35; }
+body.pst .vchip.in-slot{ border:0; background:transparent; box-shadow:none; color:var(--acc); padding:4px 8px; cursor:grab; }
+body.pst .vchip.in-slot:hover{ transform:none; }
+body.pst .vg-example{ text-align:center; font-size:15px; color:var(--mut); margin:18px 0 6px; font-weight:600; }
+body.pst .vg-example b{ color:var(--acc); text-decoration:underline; text-underline-offset:3px; }
+body.pst .vg-list{ list-style:none; margin:10px 0 0; padding:0; display:grid; gap:8px; }
+body.pst .vg-row{ display:grid; grid-template-columns:34px 1fr auto; align-items:center; gap:8px; padding:10px 14px; border-radius:14px; background:var(--card); border:2px solid transparent; box-shadow:0 2px 6px rgba(20,20,40,.04); transition:border-color .2s ease, background .2s ease; }
+body.pst .vg-row.is-ok{ border-color:var(--ok); background:var(--ok-bg); }
+body.pst .vg-row.is-bad{ border-color:var(--warn); background:var(--warn-bg); }
+body.pst .vg-num{ font-weight:900; color:var(--acc); font-size:16px; }
+body.pst .vg-text{ font-size:19px; font-weight:700; color:var(--ink); line-height:1.6; display:flex; flex-wrap:wrap; align-items:center; gap:4px; }
+body.pst .vg-slot{ display:inline-flex; align-items:center; justify-content:center; min-width:130px; min-height:40px; padding:3px 8px; border-radius:999px; border:2px dashed var(--acc); background:var(--acc-soft); transition:background .15s ease, border-color .15s ease; }
+body.pst .vg-slot.over{ border-style:solid; background:var(--card); box-shadow:0 0 0 3px var(--acc-soft); }
+body.pst .vg-slot.filled{ border-style:solid; border-color:var(--acc); background:var(--card); }
+body.pst .vg-slot.ok{ border-style:solid; border-color:var(--ok); background:var(--ok-bg); }
+body.pst .vg-slot.bad{ border-style:solid; border-color:var(--warn); background:var(--warn-bg); }
+body.pst .vg-slot.ok .vchip.in-slot{ color:var(--ok); }
+body.pst .vg-slot.bad .vchip.in-slot{ color:var(--warn); }
+body.pst .vg-mark{ font-weight:900; font-size:18px; }
+body.pst .vg-mark.ok{ color:var(--ok); }
+body.pst .vg-mark.bad{ color:var(--warn); }
+body.pst .vg-fix{ display:block; width:100%; font-size:14px; font-weight:800; color:var(--warn); margin-top:2px; }
+body.pst .vg-fix b{ color:var(--ok); }
+body.pst .vg-actions{ display:flex; gap:12px; margin:22px 0 0; }
+body.pst .vg-btn{ flex:1; appearance:none; border:0; border-radius:16px; padding:15px 18px; font:inherit; font-weight:900; font-size:17px; cursor:pointer; color:#fff; background:var(--acc); box-shadow:0 4px 0 rgba(0,0,0,.18); transition:transform .1s ease, opacity .2s ease; }
+body.pst .vg-btn:active{ transform:translateY(2px); box-shadow:0 2px 0 rgba(0,0,0,.18); }
+body.pst .vg-btn:disabled{ opacity:.45; cursor:not-allowed; }
+body.pst .vg-btn.ghost{ background:var(--card); color:var(--acc); box-shadow:0 4px 0 var(--line); }
+body.pst .vg-result{ margin-top:18px; padding:18px; border-radius:18px; background:var(--card); text-align:center; box-shadow:0 10px 30px -18px rgba(20,20,40,.35); }
+body.pst .vg-result h3{ margin:0 0 4px; font-size:20px; color:var(--ink); }
+body.pst .vg-result p{ margin:0; color:var(--mut); font-weight:600; }
+body.pst .vg-score{ font-size:34px; font-weight:900; color:var(--acc); margin-bottom:4px; font-variant-numeric:tabular-nums; }
+body.pst .vg-ghost{ position:fixed; left:0; top:0; z-index:60; pointer-events:none; display:none; transform:translate(-50%,-50%); padding:9px 16px; border-radius:999px; background:var(--card); border:2px solid var(--acc); color:var(--acc); font-weight:800; font-size:16px; box-shadow:0 14px 30px -10px rgba(30,27,58,.5); }
+body.pst .vg-ghost.show{ display:block; }
+@media (max-width:520px){
+  body.pst .vg-text{ font-size:17px; }
+  body.pst .vg-row{ grid-template-columns:28px 1fr; }
+  body.pst .vg-row .vg-mark{ display:none; }
+  body.pst .vg-slot{ min-width:110px; }
+}
+
+/* progress track: teal tint instead of beige */
+body.pst .vg-bar{ background:rgba(15,118,110,.14); }
+
+/* compact sizing so the whole game fits on one screen */
+body.pst .vg-wrap{ max-width:600px; padding:0 14px 20px; }
+body.pst .vg-head{ padding:8px 0 4px; }
+body.pst .vg-back{ padding:6px 12px; font-size:14px; }
+body.pst .vg-count{ font-size:14px; }
+body.pst .vg-bar{ margin:4px 0 12px; height:6px; }
+body.pst .vg-kind{ font-size:11px; padding:5px 10px; }
+body.pst .vg-instr{ margin:8px 0 12px; font-size:14px; line-height:1.4; }
+body.pst .vg-bank{ gap:7px; padding:10px 12px; min-height:0; border-radius:14px; }
+body.pst .vg-bank-label{ font-size:10px; }
+body.pst .vchip{ padding:6px 12px; font-size:14px; box-shadow:0 2px 0 var(--acc); }
+body.pst .vchip.in-slot{ padding:2px 6px; }
+body.pst .vg-example{ font-size:13px; margin:10px 0 4px; }
+body.pst .vg-list{ margin-top:8px; gap:6px; }
+body.pst .vg-row{ grid-template-columns:24px 1fr auto; gap:6px; padding:7px 10px; border-radius:12px; }
+body.pst .vg-num{ font-size:14px; }
+body.pst .vg-text{ font-size:16px; gap:3px; line-height:1.4; }
+body.pst .vg-slot{ min-width:96px; min-height:30px; padding:2px 6px; }
+body.pst .vg-mark{ font-size:15px; }
+body.pst .vg-fix{ font-size:12px; }
+body.pst .vg-actions{ margin-top:14px; gap:10px; }
+body.pst .vg-btn{ padding:11px 14px; font-size:15px; border-radius:14px; }
+body.pst .vg-result{ margin-top:12px; padding:14px; }
+body.pst .vg-result h3{ font-size:17px; }
+body.pst .vg-score{ font-size:26px; }
+@media (max-width:520px){
+  body.pst .vg-text{ font-size:15px; }
+  body.pst .vg-slot{ min-width:84px; }
+}
+
+/* page frame: normal flow with scrolling, plain background, no fixed-screen gap or edge glow */
+html, html[data-theme="dark"], body.pst, html[data-theme="dark"] body.pst{
+  position:static !important; inset:auto !important;
+  height:auto !important; min-height:100%;
+  overflow-x:hidden !important; overflow-y:auto !important;
+  margin:0 !important; padding:0 !important;
+  background:var(--bg) !important;
+}
+body.pst{ padding-bottom:24px !important; }
+body.pst .vg-wrap{ margin:0 auto; padding-top:12px; }
+
+/* sound button sits in the top row, like the other test games */
+body.pst .vg-head.header{ background:none; border:0; backdrop-filter:none; -webkit-backdrop-filter:none; padding:8px 0 4px; }
+body.pst .vg-head .tui-sound{ margin-left:8px; width:36px; height:36px; }
+body.pst .tui-sound.is-floating{ position:static; }
+</style>
+<!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
+</head>
+<body class="pst">
+<div class="vg-wrap">
+  <div class="vg-head header">
+    <a class="vg-back" href="/resources/american-english-file/tests/unit-1/">← Unit 1</a>
+    <span class="vg-count" id="count">0 / 8</span>
+  </div>
+  <div class="vg-bar"><span id="bar"></span></div>
+
+  <span class="vg-kind">Complete the sentences with the correct verbs</span>
+  <p class="vg-instr">Drag a verb into each gap. On a phone, tap a verb and then tap a gap. Press Check when you are ready.</p>
+
+  <div class="vg-bank" id="bank" aria-label="Word bank"></div>
+
+  <p class="vg-example">Example: <b>Turn</b> off your cell phone.</p>
+
+  <ol class="vg-list" id="list"></ol>
+
+  <div class="vg-actions">
+    <button type="button" class="vg-btn" id="checkBtn" disabled>Check</button>
+    <button type="button" class="vg-btn ghost" id="retryBtn" hidden>Try again</button>
+  </div>
+
+  <div class="vg-result" id="result" role="status" aria-live="polite" hidden>
+    <div class="vg-score" id="score"></div>
+    <h3 id="resultTitle"></h3>
+    <p id="resultMsg"></p>
+  </div>
+</div>
+<div class="vg-ghost" id="ghost" aria-hidden="true"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var ITEMS = [
+    { before: "", after: "in pairs.", ans: "Work" },
+    { before: "Please", after: "to page 15.", ans: "go" },
+    { before: "", after: "and repeat after me.", ans: "Listen" },
+    { before: "Don’t", after: "your book.", ans: "open" },
+    { before: "Please", after: "talking!", ans: "stop" },
+    { before: "", after: "exercises 1 and 2.", ans: "Do" },
+    { before: "How do you", after: "this word?", ans: "spell" },
+    { before: "", after: "the questions.", ans: "Answer" }
+  ];
+  var TOTAL = ITEMS.length;
+  var GAME_ID = "aef1-u1-complete-verbs";
+  var $ = function (id) { return document.getElementById(id); };
+  var placed = {}, selected = null, checked = false, drag = null;
+  var bankOrder = shuffle(ITEMS.map(function (it) { return it.ans; }));
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function shuffle(a) {
+    var b = a.slice();
+    for (var i = b.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1)); var t = b[i]; b[i] = b[j]; b[j] = t;
+    }
+    return b;
+  }
+  function placedKey(word) {
+    for (var k in placed) if (placed[k] === word) return parseInt(k, 10);
+    return -1;
+  }
+  function filledCount() { return Object.keys(placed).length; }
+
+  function render() {
+    var words = bankOrder.filter(function (w) { return placedKey(w) === -1; });
+    $("bank").innerHTML = '<span class="vg-bank-label">' + (words.length ? "Word bank" : "All words are in place") + '</span>' +
+      words.map(function (w) {
+        return '<button type="button" class="vchip' + (selected === w ? " sel" : "") + '" data-word="' + esc(w) + '">' + esc(w) + "</button>";
+      }).join("") +
+      '<span class="vchip struck" aria-hidden="true">Turn</span>';
+
+    $("list").innerHTML = ITEMS.map(function (it, i) {
+      var w = placed[i];
+      var state = "";
+      var mark = "";
+      if (checked) {
+        if (w === it.ans) { state = " is-ok"; mark = '<span class="vg-mark ok" aria-label="correct">✓</span>'; }
+        else { state = " is-bad"; mark = '<span class="vg-mark bad" aria-label="wrong">✕</span>'; }
+      }
+      var slotCls = "vg-slot" + (w ? " filled" : "") + (checked ? (w === it.ans ? " ok" : " bad") : "");
+      var inner = w
+        ? '<button type="button" class="vchip in-slot" data-word="' + esc(w) + '" data-slot="' + i + '">' + esc(w) + "</button>"
+        : '<span aria-hidden="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+      var fix = (checked && w !== it.ans) ? '<span class="vg-fix">Correct answer: <b>' + esc(it.ans) + "</b></span>" : "";
+      return '<li class="vg-row' + state + '">' +
+        '<span class="vg-num">' + (i + 1) + "</span>" +
+        '<span class="vg-text">' + (it.before ? '<span>' + esc(it.before) + "</span>" : "") +
+          '<span class="' + slotCls + '" data-i="' + i + '">' + inner + "</span>" +
+          '<span>' + esc(it.after) + "</span>" + fix + "</span>" +
+        mark + "</li>";
+    }).join("");
+
+    var n = filledCount();
+    $("count").textContent = (checked ? "Checked" : n + " / " + TOTAL);
+    $("bar").style.width = ((checked ? TOTAL : n) / TOTAL * 100) + "%";
+    $("checkBtn").disabled = checked || n === 0;
+  }
+
+  function place(word, i) {
+    if (checked) return;
+    var old = placedKey(word);
+    if (old !== -1) delete placed[old];
+    if (placed[i] !== undefined) delete placed[i];
+    placed[i] = word;
+    selected = null;
+    render();
+  }
+  function unplace(word) {
+    if (checked) return;
+    var k = placedKey(word);
+    if (k !== -1) delete placed[k];
+    selected = null;
+    render();
+  }
+
+  /* mouse, touch or pen: drag, or tap to pick up and place */
+  document.addEventListener("pointerdown", function (e) {
+    if (checked) return;
+    var chip = e.target.closest && e.target.closest(".vchip:not(.struck)");
+    if (!chip) return;
+    e.preventDefault();
+    drag = { word: chip.getAttribute("data-word"), x0: e.clientX, y0: e.clientY, moved: false, id: e.pointerId, from: chip, inSlot: chip.classList.contains("in-slot") };
+  });
+  document.addEventListener("pointermove", function (e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+    if (!drag.moved && Math.sqrt(dx * dx + dy * dy) > 6) {
+      drag.moved = true;
+      var g = $("ghost"); g.textContent = drag.word; g.classList.add("show");
+      drag.from.classList.add("dragging");
+    }
+    if (drag.moved) {
+      var g2 = $("ghost"); g2.style.left = e.clientX + "px"; g2.style.top = e.clientY + "px";
+      document.querySelectorAll(".vg-slot.over").forEach(function (s) { s.classList.remove("over"); });
+      var under = document.elementFromPoint(e.clientX, e.clientY);
+      var s2 = under && under.closest ? under.closest(".vg-slot") : null;
+      if (s2) s2.classList.add("over");
+      e.preventDefault();
+    }
+  });
+  document.addEventListener("pointerup", function (e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var d = drag; drag = null;
+    $("ghost").classList.remove("show");
+    document.querySelectorAll(".vg-slot.over").forEach(function (s) { s.classList.remove("over"); });
+    if (d.from) d.from.classList.remove("dragging");
+    if (!d.moved) {
+      if (d.inSlot) { unplace(d.word); return; }
+      selected = (selected === d.word) ? null : d.word;
+      render();
+      return;
+    }
+    var under = document.elementFromPoint(e.clientX, e.clientY);
+    var slot = under && under.closest ? under.closest(".vg-slot") : null;
+    var bank = under && under.closest ? under.closest("#bank") : null;
+    if (slot) place(d.word, parseInt(slot.getAttribute("data-i"), 10));
+    else if (bank) unplace(d.word);
+    else render();
+  });
+  document.addEventListener("pointercancel", function () {
+    drag = null; $("ghost").classList.remove("show");
+    document.querySelectorAll(".dragging").forEach(function (c) { c.classList.remove("dragging"); });
+  });
+  document.addEventListener("click", function (e) {
+    if (checked) return;
+    var slot = e.target.closest && e.target.closest(".vg-slot");
+    if (slot && selected && !drag) place(selected, parseInt(slot.getAttribute("data-i"), 10));
+  });
+
+  function check() {
+    if (checked || filledCount() === 0) return;
+    checked = true;
+    var score = 0;
+    ITEMS.forEach(function (it, i) { if (placed[i] === it.ans) score++; });
+    var pct = Math.round(score / TOTAL * 100);
+    render();
+    try { if (window.TestStars && typeof TestStars.award === "function") TestStars.award(GAME_ID); } catch (e0) {}
+    if (window.LAFinish && typeof LAFinish.show === "function") {
+      /* the finish screen saves the stars and offers Play again / Back */
+      LAFinish.show({
+        gameId: GAME_ID, score: score, total: TOTAL, accuracy: pct,
+        onAgain: reset, backHref: "/resources/american-english-file/tests/unit-1/", category: "tests", unit: "aef1-1"
+      });
+      return;
+    }
+    $("retryBtn").hidden = false;
+    $("result").hidden = false;
+    $("score").textContent = score + " / " + TOTAL;
+    $("resultTitle").textContent = score === TOTAL ? "Perfect!" : pct >= 70 ? "Well done!" : "Good effort!";
+    $("resultMsg").textContent = score === TOTAL ? "Every verb is in the right place." : "Look at the correct answers under each sentence, then try again.";
+    try {
+      if (window.LAStars) {
+        if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(GAME_ID);
+        if (typeof LAStars.saveFromAccuracy === "function") LAStars.saveFromAccuracy(GAME_ID, pct);
+      }
+    } catch (e) {}
+  }
+  function reset() {
+    checked = false; placed = {}; selected = null;
+    bankOrder = shuffle(ITEMS.map(function (it) { return it.ans; }));
+    $("retryBtn").hidden = true; $("result").hidden = true;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    render();
+  }
+
+  $("checkBtn").addEventListener("click", check);
+  $("retryBtn").addEventListener("click", reset);
+  render();
+});
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="../../assets/tests-stars.js"></script>
+<script src="../../assets/tests-ui.js"></script>
+<script>
+/* desktop: Enter presses Check (capture phase, so it runs once) */
+(function () {
+  if (window.__enterCheck) return; window.__enterCheck = true;
+  var isDesktop = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  window.addEventListener("keydown", function (e) {
+    if (!isDesktop || e.key !== "Enter" || e.isComposing) return;
+    var b = document.getElementById("checkBtn");
+    if (!b || b.disabled || b.hidden) return;
+    e.preventDefault(); e.stopPropagation(); b.click();
+  }, true);
+})();
+</script>
+</body>
+</html>
