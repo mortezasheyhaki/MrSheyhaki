@@ -21,6 +21,47 @@
 </style>
 <link rel="stylesheet" href="../assets/tests-ui.css">
 <!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
+<style>
+/* Starter card style */
+.game-card {
+    display: flex; flex-direction: column; text-decoration: none; color: #fff;
+    border-radius: 1.35rem; padding: 1.4rem 1.3rem 1.25rem;
+    position: relative; overflow: hidden; min-height: 160px;
+    background: linear-gradient(145deg, #4c1d95 0%, #7c3aed 45%, #a78bfa 100%);
+    box-shadow: 0 12px 28px rgba(15,23,42,.12);
+    border: 1px solid rgba(255,255,255,.18);
+    transition: transform .22s, box-shadow .22s;
+  }
+.game-card::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(18rem 12rem at 110% -20%, rgba(255,255,255,.28), transparent 55%);
+    pointer-events: none;
+  }
+.game-card:hover { transform: translateY(-5px); box-shadow: 0 18px 36px rgba(15,23,42,.18); }
+.game-card .g-badge { position: relative; z-index: 1; font-size: .65rem; font-weight: 800; letter-spacing: .08em; opacity: .92; margin-bottom: .45rem; }
+.game-card h3 { position: relative; z-index: 1; font-size: 1.18rem; font-weight: 800; margin: 0 0 .35rem; color: #fff; }
+.game-card p { position: relative; z-index: 1; font-size: .86rem; opacity: .92; margin: 0; line-height: 1.4; color: #fff; flex: 1; }
+.game-card .arrow {
+    position: absolute; top: 1rem; right: 1rem; z-index: 2;
+    width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.22);
+    display: flex; align-items: center; justify-content: center; font-size: .9rem;
+  }
+.chips { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .9rem; }
+.chips span {
+    font-size: .68rem; font-weight: 700; background: rgba(255,255,255,.2);
+    padding: .22rem .55rem; border-radius: 999px;
+  }
+.ts-star.ts-corner {
+    position: absolute; top: 1rem; right: 3.1rem; z-index: 2;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.2); font-size: 1rem;
+  }
+.ts-star.ts-corner.on {
+    background: linear-gradient(145deg, #fde68a, #f59e0b); color: #fff;
+    box-shadow: 0 4px 12px rgba(245,158,11,.45);
+  }
+</style>
 </head>
 <body>
 <main class="page">
@@ -35,12 +76,13 @@
 
   <h2 class="tui-section">✏️ Grammar <small>1 activity</small></h2>
   <div class="games-grid">
-    <a href="past-simple-complete/" class="game-card k-gram" style="--i:0">
-      <div class="game-icon">📝</div>
-      <span class="game-tag">GRAMMAR</span>
+    <a class="game-card" href="past-simple-complete/" style="background:linear-gradient(145deg,#0f766e 0%,#14b8a6 50%,#5eead4 100%)">
+      <span class="ts-star ts-corner" data-star="starter-u12-past-simple-complete" role="img">☆</span>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="g-badge">GRAMMAR</div>
       <h3>Past simple · Complete</h3>
       <p>Write the correct past simple form of the verb in brackets — one sentence at a time.</p>
-      <span class="play-btn">Start <span aria-hidden="true">→</span></span>
+      <div class="chips"><span>Grammar</span><span>Practice</span></div>
     </a>
   </div>
 
@@ -49,5 +91,6 @@
 <script>document.getElementById("year").textContent=new Date().getFullYear();</script>
 <script src="../assets/tests-ui.js"></script>
 <script src="/visit-counter.js" defer></script>
+<script src="../assets/tests-stars.js"></script>
 </body>
 </html>

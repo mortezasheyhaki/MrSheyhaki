@@ -85,5 +85,24 @@ inputs.forEach((inp,i)=>inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e
 </script>
 <script src="../../assets/tests-ui.js"></script>
 <script src="/visit-counter.js" defer></script>
+<script>
+/* desktop: Enter presses the Check / Next / See results button (capture phase, so the game handles it once) */
+(function () {
+  if (window.__enterCheck) return; window.__enterCheck = true;
+  var isDesktop = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var IDS = ["ul-results", "ul-check", "mainBtn", "checkBtn"];
+  window.addEventListener("keydown", function (e) {
+    if (!isDesktop || e.key !== "Enter" || e.isComposing) return;
+    var target = null;
+    for (var i = 0; i < IDS.length; i++) {
+      var b = document.getElementById(IDS[i]);
+      if (b && !b.disabled && b.offsetParent !== null && b.style.display !== "none") { target = b; break; }
+    }
+    if (!target) return;
+    e.preventDefault(); e.stopPropagation();
+    target.click();
+  }, true);
+})();
+</script>
 </body>
 </html>

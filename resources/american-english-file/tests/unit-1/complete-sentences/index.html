@@ -202,6 +202,19 @@ body.pst .typed:focus{ background:var(--card); }
 body.pst .typed:disabled{ cursor:default; }
 body.pst .typed.ok{ color:var(--ok); border-bottom-color:var(--ok); background:var(--ok-bg); }
 body.pst .typed.bad{ color:var(--warn); border-bottom-color:var(--warn); background:var(--warn-bg); }
+
+/* dialogue lines: each question and answer on its own line */
+body.pst .sentence{ text-align:left; }
+body.pst .sline{ display:block; line-height:1.7; margin:4px 0; }
+
+/* A and B lines stack on top of each other */
+body.pst .sentence{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+body.pst .sline{ display:block; width:100%; }
+
+/* keep each dialogue line on one row where the screen is wide enough */
+body.pst .sentence{ font-size:clamp(20px, 3.2vw, 30px); }
+body.pst .typed{ width:6.5em; }
+@media (min-width: 600px){ body.pst .sline{ white-space:nowrap; } }
 </style>
 <!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
@@ -246,14 +259,14 @@ body.pst .typed.bad{ color:var(--warn); border-bottom-color:var(--warn); backgro
 document.addEventListener("DOMContentLoaded", function () {
 /* prompt = line above the sentence; before/after = text around the gap; acc = accepted answers; ans = shown when wrong */
 var ITEMS = [
-  { prompt: "", before: "", after: "he a student?", acc: ["is"], ans: "Is" },
-  { prompt: "", before: "‘Are", after: "in our class?’ ‘No, I’m not.’", acc: ["you"], ans: "you" },
-  { prompt: "", before: "‘Where are", after: "from?’ ‘We’re from Egypt.’", acc: ["you"], ans: "you" },
-  { prompt: "‘Is Anita Hungarian?’", before: "‘Yes,", after: "is.’", acc: ["she"], ans: "she" },
-  { prompt: "", before: "The food isn’t Italian.", after: "’s Spanish.", acc: ["it"], ans: "It" },
-  { prompt: "‘Are they from Australia?’", before: "‘No, they", after: ".’", acc: ["aren’t", "are not", "’re not"], ans: "aren’t / ’re not" },
-  { prompt: "", before: "We", after: "Asian. We’re from Thailand.", acc: ["are", "’re"], ans: "are / ’re" },
-  { prompt: "", before: "My name’s Oscar. I", after: "from Peru.", acc: ["’m", "am"], ans: "’m" }
+  { lines: ["___ he a student?"], acc: ["Is"], ans: "Is", strict: true },
+  { lines: ["A: Are ___ in our class?", "B: No, I’m not."], acc: ["you"], ans: "you" },
+  { lines: ["A: Where are ___ from?", "B: We’re from Egypt."], acc: ["you"], ans: "you" },
+  { lines: ["A: Is Anita Hungarian?", "B: Yes, ___ is."], acc: ["she"], ans: "she" },
+  { lines: ["The food isn’t Italian. ___’s Spanish."], acc: ["It"], ans: "It", strict: true },
+  { lines: ["A: Are they from Australia?", "B: No, they ___."], acc: ["aren’t", "are not", "’re not"], ans: "aren’t / ’re not" },
+  { lines: ["We ___ Asian. We’re from Thailand."], acc: ["are", "’re"], ans: "are / ’re" },
+  { lines: ["My name’s Oscar. I ___ from Peru."], acc: ["’m", "am"], ans: "’m" }
 ];
 var TOTAL = ITEMS.length;
 var idx = 0, correct = 0, answers = [], answered = false;
@@ -264,6 +277,7 @@ function escapeHtml(s) {
   });
 }
 /* lower case, straight apostrophes, single spaces */
+function exact(s) { return String(s).replace(/’/g, "'").replace(/\s+/g, " ").trim(); }
 function norm(s) { return String(s).toLowerCase().replace(/’/g, "'").replace(/\s+/g, " ").trim(); }
 
 function render() {
@@ -273,11 +287,13 @@ function render() {
   $("progressText").textContent = idx + " / " + TOTAL;
   $("progressFill").style.width = (idx / TOTAL * 100) + "%";
   $("kind").textContent = "COMPLETE THE SENTENCES  ·  " + (idx + 1) + " / " + TOTAL;
-  $("sentence").innerHTML =
-    '<span class="sline">' + (item.before ? escapeHtml(item.before) + " " : "") +
-    '<input type="text" id="typed" class="typed" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="gap ' + (idx + 1) + '">' +
-    (item.after ? (/^[.,!?’”']/.test(item.after) ? "" : " ") + escapeHtml(item.after) : "") + "</span>";
-  $("hint").textContent = item.prompt || "";
+  $("sentence").innerHTML = item.lines.map(function (ln) {
+    var parts = ln.split("___");
+    var inner = escapeHtml(parts[0]) +
+      (parts.length > 1 ? '<input type="text" id="typed" class="typed" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="gap ' + (idx + 1) + '">' + escapeHtml(parts.slice(1).join("___")) : "");
+    return '<span class="sline">' + inner + "</span>";
+  }).join("");
+  $("hint").textContent = "";
   $("fb").className = "fb";
   $("fb").textContent = "";
   $("mainBtn").textContent = "Check";
@@ -294,7 +310,10 @@ function check() {
   var v = $("typed").value;
   if (norm(v) === "") return;
   answered = true;
-  var ok = item.acc.some(function (a) { return norm(a) === norm(v); });
+  var ok = item.acc.some(function (a) {
+    if (item.strict) return exact(a) === exact(v);   /* sentence-start gap: capital letter needed */
+    return norm(a) === norm(v);
+  });
   answers[idx] = { ok: ok, text: v.trim() };
   if (ok) correct++;
   var t = $("typed");
@@ -380,5 +399,24 @@ render();
 <script src="/resources/american-english-file/tests/assets/tests-stars.js"></script>
 <script src="/resources/american-english-file/tests/assets/tests-ui.js"></script>
 <script src="/visit-counter.js" defer></script>
+<script>
+/* desktop: Enter presses the Check / Next / See results button (capture phase, so the game handles it once) */
+(function () {
+  if (window.__enterCheck) return; window.__enterCheck = true;
+  var isDesktop = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var IDS = ["ul-results", "ul-check", "mainBtn", "checkBtn"];
+  window.addEventListener("keydown", function (e) {
+    if (!isDesktop || e.key !== "Enter" || e.isComposing) return;
+    var target = null;
+    for (var i = 0; i < IDS.length; i++) {
+      var b = document.getElementById(IDS[i]);
+      if (b && !b.disabled && b.offsetParent !== null && b.style.display !== "none") { target = b; break; }
+    }
+    if (!target) return;
+    e.preventDefault(); e.stopPropagation();
+    target.click();
+  }, true);
+})();
+</script>
 </body>
 </html>
