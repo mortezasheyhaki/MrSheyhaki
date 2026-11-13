@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+document.documentElement.setAttribute("data-theme","dark");
+else document.documentElement.setAttribute("data-theme","light");
+}catch(e){}})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 6 · Complete Raul’s Email with -ing Verbs | AEF 1 | Mr. Sheyhaki</title>
+<meta name="description" content="Type the -ing form of each verb in the email. American English File 1 Unit 6.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+:root{
+  --bg:#f4f7fb; --card:#fff; --ink:#1b2430; --mut:#6b7280; --line:#dfe5ee;
+  --acc:#0f766e; --acc-soft:#e6f4f1; --acc-d:#0b5c56;
+  --ok:#15803d; --ok-bg:#dcfce7; --bad:#b91c1c; --bad-bg:#fee2e2;
+  --btn:#0f766e; --btn-d:#0b5c56; --shadow:rgba(15,23,42,.08);
+}
+html[data-theme="dark"]{
+  --bg:#0f1420; --card:#171e2d; --ink:#e8edf6; --mut:#9aa6b8; --line:#2a3447;
+  --acc:#2dd4bf; --acc-soft:rgba(45,212,191,.14); --acc-d:#0f8a7b;
+  --ok:#4ade80; --ok-bg:rgba(74,222,128,.14); --bad:#f87171; --bad-bg:rgba(248,113,113,.14);
+  --btn:#2dd4bf; --btn-d:#0f8a7b; --shadow:rgba(0,0,0,.35);
+}
+html,body{ margin:0; height:100%; overflow:hidden; }
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+*{ box-sizing:border-box; }
+
+.app{
+  position:fixed; inset:0; display:flex; flex-direction:column;
+  max-width:780px; margin:0 auto;
+  padding:max(12px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));
+  gap:10px;
+}
+
+/* top bar */
+.top{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex:0 0 auto; }
+.back{
+  display:inline-flex; align-items:center; gap:.35rem; min-height:40px; padding:.4rem .95rem;
+  border-radius:999px; background:var(--card); border:2px solid rgba(124,58,237,.16);
+  color:#5b21b6; font-weight:700; font-size:.92rem; text-decoration:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12);
+}
+html[data-theme="dark"] .back{ color:#c4b5fd; border-color:rgba(167,139,250,.28); }
+.count{ font-weight:700; font-size:.92rem; color:var(--mut); font-variant-numeric:tabular-nums; }
+
+/* header */
+.head{ flex:0 0 auto; }
+.head h1{ margin:0; font-size:clamp(1.05rem, 3.2vw, 1.25rem); font-weight:800; letter-spacing:-.01em; }
+.head p{ margin:4px 0 0; font-size:.9rem; color:var(--mut); line-height:1.4; }
+.example{ margin:6px 0 0; font-size:.88rem; color:var(--mut); }
+.example b{ color:var(--acc); font-weight:800; }
+
+/* email card */
+.card{
+  flex:1 1 auto; min-height:0; overflow:auto;
+  background:var(--card); border:1px solid var(--line); border-radius:20px;
+  padding:22px 24px 26px; box-shadow:0 12px 32px -12px var(--shadow);
+}
+.card p{
+  margin:0 0 14px; font-size:clamp(15px, 2.2vw, 18px); line-height:2.05; color:var(--ink);
+}
+.card p:last-child{ margin-bottom:0; }
+.card p.sig{ margin-top:4px; }
+
+/* blanks — plain underline only (override tests-ui.css boxes) */
+.blank{ display:inline; white-space:nowrap; vertical-align:baseline; }
+.blank input,
+.blank input[type=text],
+body .blank input,
+body .blank input[type=text],
+body .card .blank input,
+body .card .blank input[type=text]{
+  display:inline-block !important;
+  width:6.8em !important;
+  min-width:4.2em !important;
+  min-height:0 !important;
+  height:auto !important;
+  margin:0 .12em !important;
+  padding:0 2px 1px !important;
+  border:0 !important;
+  border-bottom:2.5px solid var(--acc) !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:var(--ink) !important;
+  font:inherit !important;
+  font-size:inherit !important;
+  font-weight:700 !important;
+  text-align:center !important;
+  outline:none !important;
+  vertical-align:baseline !important;
+  line-height:1.25 !important;
+  transition:border-color .2s, background .2s, color .2s !important;
+}
+.blank input::placeholder{
+  color:var(--mut) !important;
+  font-weight:500 !important;
+  opacity:.5 !important;
+  letter-spacing:.08em;
+}
+.blank input:focus,
+.blank input[type=text]:focus{
+  background:var(--acc-soft) !important;
+  border-bottom-color:var(--acc-d) !important;
+  box-shadow:none !important;
+}
+.blank input.ok,
+.blank input[type=text].ok{
+  background:transparent !important;
+  color:var(--ok) !important;
+  border-bottom-color:var(--ok) !important;
+  box-shadow:none !important;
+}
+.blank input.bad,
+.blank input[type=text].bad{
+  background:transparent !important;
+  color:var(--bad) !important;
+  border-bottom-color:var(--bad) !important;
+  box-shadow:none !important;
+}
+.blank input:disabled{ cursor:default !important; opacity:1 !important; }
+.blank .base{
+  display:inline;
+  margin-left:2px;
+  font-size:.78em;
+  font-weight:700;
+  color:var(--mut);
+}
+.blank .fix{
+  display:inline-block;
+  margin-left:4px;
+  font-size:.78em;
+  font-weight:800;
+  color:var(--bad);
+  white-space:nowrap;
+}
+
+/* feedback line */
+.fb{
+  min-height:1.5em; text-align:center; font-weight:800; font-size:.95rem;
+  color:var(--mut); flex:0 0 auto;
+}
+.fb.ok{ color:var(--ok); }
+.fb.bad{ color:var(--bad); }
+
+/* actions */
+.actions{ display:flex; gap:10px; flex:0 0 auto; }
+.btn{
+  flex:1; min-height:54px; border:0; border-radius:16px;
+  background:var(--btn); color:#fff; font:inherit; font-size:1.05rem; font-weight:800;
+  box-shadow:0 5px 0 var(--btn-d); cursor:pointer;
+  transition:transform .12s, box-shadow .12s, opacity .2s;
+}
+.btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--btn-d); }
+.btn:disabled{ background:#cfd6dc; box-shadow:0 5px 0 #e6e0d4; color:#6b7280; cursor:default; }
+html[data-theme="dark"] .btn:disabled{ background:#2a3447; box-shadow:0 5px 0 #1a2233; color:#6b7280; }
+.btn.ghost{
+  background:var(--card); color:var(--ink); border:1.5px solid var(--line);
+  box-shadow:0 5px 0 var(--line);
+}
+.btn.ghost:active{ box-shadow:0 2px 0 var(--line); }
+
+@media (max-width:560px){
+  .card{ padding:16px 14px 20px; }
+  .card p{ font-size:15px; line-height:1.95; }
+  .blank input, .blank input[type=text]{ width:5.4em !important; font-size:15px !important; }
+  .btn{ min-height:50px; font-size:1rem; }
+}
+@media (max-height:680px){
+  .head p, .example{ display:none; }
+  .card p{ line-height:1.85; margin-bottom:10px; }
+}
+@media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+<link rel="stylesheet" href="../../assets/tests-ui.css">
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a class="back" href="/resources/american-english-file/tests/unit-6/">← Unit 6</a>
+    <span class="count" id="count">0 / 6</span>
+  </div>
+  <div class="head">
+    <h1>Complete Raul’s email with the -ing form</h1>
+    <p>Type the -ing form of the verb in brackets in each blank. Then press Check.</p>
+    <p class="example">Example: Ryan doesn’t like <b>studying</b>.</p>
+  </div>
+  <div class="card" id="card"></div>
+  <div class="fb" id="fb" role="status" aria-live="polite"></div>
+  <div class="actions" id="actions">
+    <button class="btn" id="checkBtn" type="button" disabled>Check</button>
+    <button class="btn ghost" id="retryBtn" type="button" hidden>Try again</button>
+    <button class="btn" id="finishBtn" type="button" hidden>Finish</button>
+  </div>
+</div>
+
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="/learningarcade/la-sfx.js"></script>
+<script src="../../assets/tests-stars.js"></script>
+<script src="../../assets/tests-ui.js"></script>
+<script>
+(function () {
+  var GAME_ID = "aef1-u6-complete-ing-email";
+  var ITEMS = [
+    { base: "be", ing: "being" },
+    { base: "sit", ing: "sitting" },
+    { base: "listen", ing: "listening" },
+    { base: "dance", ing: "dancing" },
+    { base: "cook", ing: "cooking" },
+    { base: "do", ing: "doing" }
+  ];
+  var PARAS = [
+    "Hi Soon-yi,",
+    "My name’s Ryan and I’m a student at Birmingham University. I don’t like <i><u>studying</u></i>, but I like {0} a student. I live in a house with another student. We love {1} in cafés, drinking coffee and talking. We also like {2} to good music, but we both hate {3} – we can’t dance very well.",
+    "I usually go home on the weekend. I don’t mind {4}, and my favorite food to cook is pasta – but I love the food my mom makes!",
+    "What do you like {5}?",
+    "Write soon",
+    "Ryan"
+  ];
+  var TOTAL = ITEMS.length;
+  var $ = function (id) { return document.getElementById(id); };
+  var checked = false, score = 0;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function norm(s) {
+    return String(s).toLowerCase().replace(/[’`]/g, "'").replace(/\s+/g, " ").trim();
+  }
+  function sfx(name) {
+    try { if (window.LASfx && typeof LASfx[name] === "function") LASfx[name](); } catch (e) {}
+  }
+
+  function gapHtml(i) {
+    var it = ITEMS[i];
+    return '<span class="blank">' +
+      '<input type="text" class="gapin" data-i="' + i + '" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="______" aria-label="gap ' + (i + 1) + ': ' + esc(it.base) + '">' +
+      '<span class="base">(' + esc(it.base) + ')</span>' +
+      '</span>';
+  }
+
+  function render() {
+    $("card").innerHTML = PARAS.map(function (p, idx) {
+      var cls = (idx === PARAS.length - 1 || idx === PARAS.length - 2) ? ' class="sig"' : '';
+      return '<p' + cls + '>' + p.replace(/\{(\d+)\}/g, function (m, k) {
+        return gapHtml(Number(k));
+      }) + '</p>';
+    }).join("");
+    document.querySelectorAll(".gapin").forEach(function (inp) {
+      inp.addEventListener("input", update);
+    });
+    update();
+  }
+
+  function filled() {
+    var n = 0;
+    document.querySelectorAll(".gapin").forEach(function (inp) {
+      if (inp.value.trim()) n++;
+    });
+    return n;
+  }
+
+  function update() {
+    if (checked) return;
+    var n = filled();
+    $("count").textContent = n + " / " + TOTAL;
+    $("checkBtn").disabled = n === 0;
+    $("fb").textContent = "";
+    $("fb").className = "fb";
+  }
+
+  function check() {
+    if (checked || filled() === 0) return;
+    checked = true;
+    score = 0;
+
+    ITEMS.forEach(function (it, i) {
+      var inp = document.querySelector('.gapin[data-i="' + i + '"]');
+      var ok = norm(inp.value) === norm(it.ing);
+      if (ok) score++;
+      inp.disabled = true;
+      inp.classList.add(ok ? "ok" : "bad");
+      if (!ok) {
+        var f = document.createElement("span");
+        f.className = "fix";
+        f.textContent = "→ " + it.ing;
+        inp.parentNode.appendChild(f);
+      }
+    });
+
+    $("count").textContent = score + " / " + TOTAL;
+    $("checkBtn").hidden = true;
+
+    var perfect = score === TOTAL;
+    $("finishBtn").hidden = false;
+    $("retryBtn").hidden = perfect; // only show Try again if there were mistakes
+
+    sfx(perfect ? "win" : "wrong");
+    $("fb").className = "fb " + (perfect ? "ok" : "bad");
+    $("fb").textContent = perfect
+      ? "Perfect! Every verb is correct. Press Finish."
+      : "Some answers are wrong (shown in red). Try again, or press Finish.";
+  }
+
+  function finishGame() {
+    var pct = Math.round(score / TOTAL * 100);
+    try {
+      if (window.TestStars && typeof TestStars.award === "function" && score === TOTAL) {
+        TestStars.award(GAME_ID);
+      }
+    } catch (e0) {}
+    try {
+      if (window.LAStars) {
+        if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(GAME_ID);
+        if (typeof LAStars.saveFromAccuracy === "function") LAStars.saveFromAccuracy(GAME_ID, pct);
+      }
+    } catch (e1) {}
+    if (window.LAFinish && typeof LAFinish.show === "function") {
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: score,
+        total: TOTAL,
+        accuracy: pct,
+        onAgain: reset,
+        backHref: "/resources/american-english-file/tests/unit-6/",
+        category: "tests",
+        unit: "aef1-6"
+      });
+    }
+  }
+
+  function reset() {
+    checked = false;
+    score = 0;
+    $("checkBtn").hidden = false;
+    $("retryBtn").hidden = true;
+    $("finishBtn").hidden = true;
+    $("fb").textContent = "";
+    $("fb").className = "fb";
+    render();
+  }
+
+  $("checkBtn").addEventListener("click", check);
+  $("retryBtn").addEventListener("click", reset);
+  $("finishBtn").addEventListener("click", finishGame);
+  render();
+
+  /* desktop: Enter presses Check */
+  var isDesktop = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  window.addEventListener("keydown", function (e) {
+    if (!isDesktop || e.key !== "Enter" || e.isComposing) return;
+    var b = $("checkBtn");
+    if (!b || b.disabled || b.hidden) return;
+    e.preventDefault();
+    e.stopPropagation();
+    b.click();
+  }, true);
+})();
+</script>
+</body>
+</html>

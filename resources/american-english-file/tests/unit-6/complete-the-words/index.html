@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+document.documentElement.setAttribute("data-theme","dark");
+else document.documentElement.setAttribute("data-theme","light");
+}catch(e){}})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 6 · Complete the Words | AEF 1 | Mr. Sheyhaki</title>
+<meta name="description" content="Type the missing letters to complete each word. American English File 1 Unit 6.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+:root{
+  --bg:#f0f4f8; --card:#ffffff; --ink:#1b2430; --mut:#6b7280; --line:#dbe3ee;
+  --acc:#0f766e; --acc-soft:rgba(15,118,110,.12); --acc-d:#0b5c56;
+  --ok:#15803d; --ok-bg:#dcfce7; --bad:#b91c1c; --bad-bg:#fee2e2;
+  --btn:#0f766e; --btn-d:#0b5c56; --shadow:rgba(15,23,42,.08);
+  --box-bg:#f0fdfa; --box-border:#14b8a6; --box-fixed-bg:#ccfbf1; --box-fixed-ink:#0f766e;
+}
+html[data-theme="dark"]{
+  --bg:#0b1220; --card:#141c2c; --ink:#e8edf6; --mut:#9aa6b8; --line:#243044;
+  --acc:#2dd4bf; --acc-soft:rgba(45,212,191,.14); --acc-d:#14b8a6;
+  --ok:#4ade80; --ok-bg:rgba(74,222,128,.14); --bad:#f87171; --bad-bg:rgba(248,113,113,.14);
+  --btn:#2dd4bf; --btn-d:#0f8a7b; --shadow:rgba(0,0,0,.4);
+  --box-bg:rgba(45,212,191,.08); --box-border:#2dd4bf; --box-fixed-bg:rgba(45,212,191,.18); --box-fixed-ink:#5eead4;
+}
+html,body{ margin:0; height:100%; overflow:hidden; }
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+*{ box-sizing:border-box; }
+
+.app{
+  position:fixed; inset:0; display:flex; flex-direction:column;
+  max-width:740px; margin:0 auto;
+  padding:max(12px,env(safe-area-inset-top)) 18px max(18px,env(safe-area-inset-bottom));
+  gap:12px;
+}
+
+.top{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex:0 0 auto; }
+.back{
+  display:inline-flex; align-items:center; gap:.35rem; min-height:40px; padding:.4rem .95rem;
+  border-radius:999px; background:var(--card); border:2px solid rgba(124,58,237,.16);
+  color:#5b21b6; font-weight:700; font-size:.92rem; text-decoration:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12);
+}
+html[data-theme="dark"] .back{ color:#c4b5fd; border-color:rgba(167,139,250,.28); background:#1a2233; }
+.count{ font-weight:700; font-size:.92rem; color:var(--mut); font-variant-numeric:tabular-nums; }
+
+.stage{
+  flex:1 1 auto; min-height:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center; gap:14px;
+  overflow:auto; padding:6px 0;
+}
+.stage.hide{ display:none; }
+
+.kind{
+  display:inline-block; padding:8px 14px; border-radius:999px;
+  background:var(--acc-soft); color:var(--acc);
+  font-size:11px; font-weight:800; letter-spacing:.7px; text-transform:uppercase;
+}
+
+.instr{
+  margin:0; font-size:16px; font-weight:700; color:var(--ink); line-height:1.4;
+}
+
+.example{
+  margin:0; max-width:480px; width:100%;
+  background:var(--card); border-left:4px solid #7c3aed;
+  border-radius:0 14px 14px 0; padding:12px 16px;
+  font-size:14px; color:var(--mut); text-align:left; line-height:1.45;
+  box-shadow:0 6px 18px -10px var(--shadow);
+}
+.example b{
+  color:var(--acc); font-weight:800; letter-spacing:.12em;
+}
+
+.panel{
+  width:100%; max-width:620px;
+  background:var(--card); border:1px solid var(--line); border-radius:22px;
+  padding:22px 20px 24px; box-shadow:0 14px 36px -16px var(--shadow);
+}
+
+.prompt{
+  margin:0 0 18px; font-size:clamp(17px, 2.8vw, 20px); font-weight:650;
+  color:var(--ink); line-height:1.55;
+}
+
+/* continuous letter row — fixed + editable same size; scales to fit one line */
+.letters{
+  display:flex; flex-wrap:nowrap; justify-content:center; align-items:center;
+  gap:var(--gap, 6px);
+  width:100%;
+  overflow:visible;
+}
+.cell{
+  width:var(--cell, 38px); height:var(--cell-h, 44px);
+  flex:0 0 var(--cell, 38px);
+  display:inline-flex; align-items:center; justify-content:center;
+  border-radius:10px; font-size:var(--cell-fs, 18px); font-weight:800;
+  border:2px solid var(--box-border);
+}
+.cell.fixed{
+  background:var(--box-fixed-bg); color:var(--box-fixed-ink);
+  border-style:solid; opacity:.95;
+}
+.cell input.lb,
+body .cell input.lb,
+body input.lb[type=text]{
+  width:100% !important; height:100% !important;
+  min-width:0 !important; min-height:0 !important;
+  margin:0 !important; padding:0 !important;
+  border:0 !important; border-radius:10px !important;
+  background:var(--box-bg) !important; box-shadow:none !important;
+  color:var(--ink) !important; font:inherit !important; font-size:20px !important; font-weight:800 !important;
+  text-align:center !important; text-transform:lowercase !important; outline:none !important;
+  caret-color:var(--acc);
+}
+.cell:has(input:focus){
+  border-color:var(--acc-d);
+  box-shadow:0 0 0 3px var(--acc-soft);
+}
+.cell input.lb:focus,
+body input.lb:focus{
+  background:transparent !important;
+  box-shadow:none !important;
+}
+.cell.ok{
+  border-color:var(--ok); background:var(--ok-bg);
+}
+.cell.ok input.lb,
+body .cell.ok input.lb{
+  color:var(--ok) !important; background:transparent !important;
+}
+.cell.bad{
+  border-color:var(--bad); background:var(--bad-bg);
+}
+.cell.bad input.lb,
+body .cell.bad input.lb{
+  color:var(--bad) !important; background:transparent !important;
+}
+.cell input.lb:disabled{ cursor:default !important; opacity:1 !important; }
+
+.reveal{
+  margin-top:12px; font-size:15px; font-weight:800; color:var(--bad);
+  min-height:1.2em; letter-spacing:.06em;
+}
+
+.fb{ min-height:1.3em; font-weight:800; font-size:1rem; color:var(--mut); }
+.fb.ok{ color:var(--ok); }
+.fb.bad{ color:var(--bad); }
+
+.progress{ flex:0 0 auto; }
+.progress-label{
+  display:flex; justify-content:space-between; font-size:.72rem; font-weight:800;
+  letter-spacing:.08em; color:var(--mut); margin-bottom:4px;
+}
+.progress-bar{ height:8px; border-radius:20px; background:var(--line); overflow:hidden; }
+.progress-fill{
+  height:100%; width:0; border-radius:20px;
+  background:linear-gradient(90deg,var(--acc),#14b8a6);
+  transition:width .35s ease;
+}
+
+.actions{ display:flex; gap:10px; flex:0 0 auto; width:100%; }
+.btn{
+  flex:1; min-height:54px; border:0; border-radius:16px;
+  background:var(--btn); color:#fff; font:inherit; font-size:1.05rem; font-weight:800;
+  box-shadow:0 5px 0 var(--btn-d); cursor:pointer;
+}
+.btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--btn-d); }
+.btn:disabled{ background:#cfd6dc; box-shadow:0 5px 0 #e6e0d4; color:#6b7280; cursor:default; }
+html[data-theme="dark"] .btn:disabled{ background:#2a3447; box-shadow:0 5px 0 #1a2233; color:#6b7280; }
+.btn.ghost{
+  background:var(--card); color:var(--ink); border:1.5px solid var(--line);
+  box-shadow:0 5px 0 var(--line); text-decoration:none; display:inline-flex;
+  align-items:center; justify-content:center;
+}
+
+.result{
+  display:none; flex:1 1 auto; min-height:0; overflow:auto;
+  flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; gap:8px; padding:12px 0;
+}
+.result.show{ display:flex; }
+.result .big{ font-size:clamp(2.2rem, 8vw, 3.2rem); font-weight:900; color:var(--acc); line-height:1; }
+.result h2{ margin:4px 0; font-size:1.25rem; }
+.result .msg{ color:var(--mut); margin:0 0 8px; font-size:.95rem; }
+.review{
+  list-style:none; margin:8px 0 0; padding:0; width:100%; max-width:440px;
+  text-align:left; font-size:.95rem;
+}
+.review li{
+  display:flex; gap:10px; align-items:baseline; padding:8px 10px;
+  border-radius:12px; margin-bottom:6px; background:var(--card); border:1px solid var(--line);
+}
+.review li .n{ font-weight:800; color:var(--acc); min-width:1.4em; }
+.review li.ok{ border-color:rgba(21,128,61,.25); }
+.review li.no{ border-color:rgba(185,28,28,.2); }
+.review li .was{ color:var(--bad); text-decoration:line-through; margin-right:6px; }
+.review li .right{ color:var(--ok); font-weight:800; }
+
+@media (max-width:560px){
+  /* cell size is set in JS to fit one line */
+  .cell{ border-radius:9px; }
+  .panel{ padding:18px 14px 20px; }
+  .btn{ min-height:50px; }
+}
+@media (max-width:380px){
+  .cell{ border-radius:8px; }
+}
+@media (max-height:680px){
+  .instr, .example{ display:none; }
+  .panel{ padding:16px 14px; }
+  .prompt{ margin-bottom:12px; }
+}
+@media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+<link rel="stylesheet" href="../../assets/tests-ui.css">
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a class="back" href="/resources/american-english-file/tests/unit-6/">← Unit 6</a>
+    <span class="count" id="count">1 / 6</span>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="kind" id="kind">Complete the words · 1 / 6</div>
+    <p class="instr">Type the missing letters to complete each word.</p>
+    <div class="example">Example: Aya plays the piano. She’s a <b>p i a n i s t</b>.</div>
+
+    <div class="panel">
+      <p class="prompt" id="prompt"></p>
+      <div class="letters" id="letters"></div>
+      <div class="reveal" id="reveal"></div>
+    </div>
+
+    <div class="fb" id="fb" role="status" aria-live="polite"></div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="big" id="score">0 / 6</div>
+    <h2 id="resultTitle"></h2>
+    <p class="msg" id="resultMsg"></p>
+    <ul class="review" id="review"></ul>
+  </div>
+
+  <div class="progress">
+    <div class="progress-label"><span>PROGRESS</span><span id="progressText">0 / 6</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="actions" id="actions">
+    <button type="button" class="btn" id="mainBtn" disabled>Check</button>
+  </div>
+  <div class="actions" id="resultActions" style="display:none">
+    <button type="button" class="btn" id="retryBtn">Try again</button>
+    <a class="btn ghost" href="/resources/american-english-file/tests/unit-6/">← Unit 6</a>
+  </div>
+</div>
+
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="/learningarcade/la-sfx.js"></script>
+<script src="../../assets/tests-stars.js"></script>
+<script src="../../assets/tests-ui.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var GAME_ID = "aef1-u6-complete-the-words";
+  var ITEMS = [
+    {
+      prompt: "He’s a ______. He plays the trumpet.",
+      pattern: ["t", null, null, "m", null, null, null, null, null],
+      word: "trumpeter"
+    },
+    {
+      prompt: "Itzel sings in a ______.",
+      pattern: ["c", null, null, null, "r"],
+      word: "choir"
+    },
+    {
+      prompt: "My aunt likes jazz, but she doesn’t like ______ music.",
+      pattern: ["c", null, null, null, null, "i", null, null, "l"],
+      word: "classical"
+    },
+    {
+      prompt: "I sometimes go to pop ______.",
+      pattern: ["c", null, null, "c", "e", null, "t", "s"],
+      word: "concerts"
+    },
+    {
+      prompt: "My cousin plays the accordion. He’s an ______.",
+      pattern: ["a", null, null, null, "r", null, null, null, "n", null, null, null],
+      word: "accordionist"
+    },
+    {
+      prompt: "She’s a ______. She plays the drums.",
+      pattern: ["d", null, null, null, null, null, "r"],
+      word: "drummer"
+    }
+  ];
+
+  var TOTAL = ITEMS.length;
+  var idx = 0, correct = 0, answers = [], answered = false;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function norm(s) {
+    return String(s).toLowerCase().replace(/[^a-z]/g, "");
+  }
+  function sfx(name) {
+    try { if (window.LASfx && typeof LASfx[name] === "function") LASfx[name](); } catch (e) {}
+  }
+
+  function blankInputs() {
+    return [].slice.call(document.querySelectorAll("#letters input.lb"));
+  }
+
+  function readWord() {
+    var item = ITEMS[idx];
+    var inputs = blankInputs();
+    var bi = 0;
+    return item.pattern.map(function (ch) {
+      if (ch === null) {
+        var v = (inputs[bi] && inputs[bi].value) || "";
+        bi++;
+        return v.slice(0, 1);
+      }
+      return ch;
+    }).join("");
+  }
+
+  function allFilled() {
+    return blankInputs().every(function (inp) { return inp.value.trim() !== ""; });
+  }
+
+  function render() {
+    var item = ITEMS[idx];
+    answered = false;
+    $("count").textContent = (idx + 1) + " / " + TOTAL;
+    $("progressText").textContent = idx + " / " + TOTAL;
+    $("progressFill").style.width = (idx / TOTAL * 100) + "%";
+    $("kind").textContent = "Complete the words · " + (idx + 1) + " / " + TOTAL;
+    $("prompt").textContent = item.prompt;
+    $("reveal").textContent = "";
+    $("fb").className = "fb";
+    $("fb").textContent = "";
+    $("mainBtn").textContent = "Check";
+    $("mainBtn").disabled = true;
+
+    var html = "";
+    var blankIndex = 0;
+    item.pattern.forEach(function (ch, i) {
+      if (ch === null) {
+        html += '<div class="cell editable">' +
+          '<input type="text" class="lb" maxlength="1" data-b="' + blankIndex +
+          '" autocomplete="off" autocapitalize="none" spellcheck="false" inputmode="text" aria-label="letter ' + (i + 1) + '">' +
+          "</div>";
+        blankIndex++;
+      } else {
+        html += '<div class="cell fixed" aria-hidden="true">' + esc(ch) + "</div>";
+      }
+    });
+    $("letters").innerHTML = html;
+
+    var inputs = blankInputs();
+    inputs.forEach(function (inp, i) {
+      inp.addEventListener("input", function () {
+        var v = inp.value.replace(/[^a-zA-Z]/g, "").slice(-1);
+        inp.value = v;
+        if (v && i < inputs.length - 1) inputs[i + 1].focus();
+        if (!answered) $("mainBtn").disabled = !allFilled();
+      });
+      inp.addEventListener("keydown", function (e) {
+        if (e.key === "Backspace" && !inp.value && i > 0) {
+          inputs[i - 1].focus();
+          inputs[i - 1].value = "";
+        }
+        if (e.key === "ArrowLeft" && i > 0) { e.preventDefault(); inputs[i - 1].focus(); }
+        if (e.key === "ArrowRight" && i < inputs.length - 1) { e.preventDefault(); inputs[i + 1].focus(); }
+        if (e.key === "Enter") { e.preventDefault(); onMain(); }
+      });
+    });
+    fitLetters();
+    if (inputs[0]) setTimeout(function () { inputs[0].focus(); }, 40);
+  }
+
+  function fitLetters() {
+    var row = $("letters");
+    if (!row) return;
+    var n = ITEMS[idx].pattern.length;
+    var panel = row.parentElement;
+    var avail = (panel ? panel.clientWidth : row.clientWidth) - 40; // padding
+    if (avail < 80) avail = Math.min(window.innerWidth - 48, 560);
+    // cell + gap: n*cell + (n-1)*gap <= avail
+    var gap = n > 10 ? 4 : n > 8 ? 5 : 6;
+    var cell = Math.floor((avail - (n - 1) * gap) / n);
+    cell = Math.max(26, Math.min(42, cell));
+    var h = Math.round(cell * 1.15);
+    var fs = Math.max(13, Math.min(20, Math.round(cell * 0.5)));
+    row.style.setProperty("--cell", cell + "px");
+    row.style.setProperty("--cell-h", h + "px");
+    row.style.setProperty("--cell-fs", fs + "px");
+    row.style.setProperty("--gap", gap + "px");
+    row.querySelectorAll("input.lb").forEach(function (inp) {
+      inp.style.fontSize = fs + "px";
+    });
+  }
+
+  function check() {
+    if (answered || !allFilled()) return;
+    answered = true;
+    var item = ITEMS[idx];
+    var typed = readWord();
+    var ok = norm(typed) === norm(item.word);
+    answers[idx] = { ok: ok, text: typed };
+    if (ok) correct++;
+
+    blankInputs().forEach(function (inp) {
+      inp.disabled = true;
+      var cell = inp.closest(".cell");
+      if (cell) cell.classList.add(ok ? "ok" : "bad");
+      inp.classList.add(ok ? "ok" : "bad");
+    });
+
+    $("fb").className = "fb " + (ok ? "ok" : "bad");
+    $("fb").textContent = ok ? "Correct!" : "Not quite.";
+    $("reveal").textContent = ok ? "" : item.word;
+    sfx(ok ? "correct" : "wrong");
+
+    $("progressText").textContent = (idx + 1) + " / " + TOTAL;
+    $("progressFill").style.width = ((idx + 1) / TOTAL * 100) + "%";
+    $("mainBtn").disabled = false;
+    $("mainBtn").textContent = idx === TOTAL - 1 ? "See results" : "Next";
+  }
+
+  function next() {
+    idx++;
+    if (idx >= TOTAL) finish();
+    else render();
+  }
+
+  function onMain() {
+    if (!answered) check();
+    else next();
+  }
+
+  function finish() {
+    $("progressFill").style.width = "100%";
+    $("progressText").textContent = TOTAL + " / " + TOTAL;
+    $("stage").classList.add("hide");
+    $("actions").style.display = "none";
+    $("resultActions").style.display = "flex";
+    $("result").classList.add("show");
+    $("score").textContent = correct + " / " + TOTAL;
+    $("resultTitle").textContent =
+      correct === TOTAL ? "Wonderful work!" : correct >= TOTAL - 1 ? "Nice work!" : "Good effort!";
+    $("resultMsg").textContent =
+      correct === TOTAL ? "Every word is complete." : "Check the answers below, then try again if you like.";
+
+    var ul = $("review");
+    ul.innerHTML = "";
+    ITEMS.forEach(function (item, i) {
+      var a = answers[i] || {};
+      var li = document.createElement("li");
+      if (a.ok) {
+        li.className = "ok";
+        li.innerHTML = '<span class="n">' + (i + 1) + "</span>" + esc(a.text);
+      } else {
+        li.className = "no";
+        li.innerHTML = '<span class="n">' + (i + 1) + '</span><span class="was">' +
+          esc(a.text || "—") + '</span><span class="right">' + esc(item.word) + "</span>";
+      }
+      ul.appendChild(li);
+    });
+
+    try {
+      if (window.TestStars && typeof TestStars.award === "function" && correct === TOTAL) {
+        TestStars.award(GAME_ID);
+      }
+    } catch (e0) {}
+    try {
+      if (window.LAStars) {
+        if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(GAME_ID);
+        if (typeof LAStars.saveFromAccuracy === "function") {
+          LAStars.saveFromAccuracy(GAME_ID, Math.round((correct / TOTAL) * 100));
+        }
+      }
+    } catch (e1) {}
+    if (window.LAFinish && typeof LAFinish.show === "function") {
+      LAFinish.show({
+        gameId: GAME_ID,
+        gameName: "Complete the Words",
+        score: correct,
+        total: TOTAL,
+        title: "Complete the Words",
+        backHref: "/resources/american-english-file/tests/unit-6/",
+        onAgain: function () { $("retryBtn").click(); },
+        category: "tests",
+        unit: "aef1-6"
+      });
+    }
+  }
+
+  window.addEventListener("resize", function () {
+    if (!$("stage").classList.contains("hide")) fitLetters();
+  });
+
+  $("mainBtn").addEventListener("click", onMain);
+  $("retryBtn").addEventListener("click", function () {
+    idx = 0; correct = 0; answers = []; answered = false;
+    $("result").classList.remove("show");
+    $("resultActions").style.display = "none";
+    $("actions").style.display = "flex";
+    $("stage").classList.remove("hide");
+    render();
+  });
+
+  render();
+});
+</script>
+</body>
+</html>

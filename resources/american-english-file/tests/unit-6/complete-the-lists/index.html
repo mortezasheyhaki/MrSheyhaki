@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){try{var t=localStorage.getItem("mrsheyhaki-theme");
+if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);
+else if(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)
+document.documentElement.setAttribute("data-theme","dark");
+else document.documentElement.setAttribute("data-theme","light");
+}catch(e){}})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 6 · Complete the Lists | AEF 1 | Mr. Sheyhaki</title>
+<meta name="description" content="Write the missing word in each list. American English File 1 Unit 6.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+:root{
+  --bg:#f4f7fb; --card:#fff; --ink:#1b2430; --mut:#6b7280; --line:#dfe5ee;
+  --acc:#0f766e; --acc-soft:#e6f4f1; --acc-d:#0b5c56;
+  --ok:#15803d; --ok-bg:#dcfce7; --bad:#b91c1c; --bad-bg:#fee2e2;
+  --btn:#0f766e; --btn-d:#0b5c56; --shadow:rgba(15,23,42,.08);
+}
+html[data-theme="dark"]{
+  --bg:#0f1420; --card:#171e2d; --ink:#e8edf6; --mut:#9aa6b8; --line:#2a3447;
+  --acc:#2dd4bf; --acc-soft:rgba(45,212,191,.14); --acc-d:#0f8a7b;
+  --ok:#4ade80; --ok-bg:rgba(74,222,128,.14); --bad:#f87171; --bad-bg:rgba(248,113,113,.14);
+  --btn:#2dd4bf; --btn-d:#0f8a7b; --shadow:rgba(0,0,0,.35);
+}
+html,body{ margin:0; height:100%; overflow:hidden; }
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+*{ box-sizing:border-box; }
+
+.app{
+  position:fixed; inset:0; display:flex; flex-direction:column;
+  max-width:680px; margin:0 auto;
+  padding:max(12px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));
+  gap:10px;
+}
+
+.top{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex:0 0 auto; }
+.back{
+  display:inline-flex; align-items:center; gap:.35rem; min-height:40px; padding:.4rem .95rem;
+  border-radius:999px; background:var(--card); border:2px solid rgba(124,58,237,.16);
+  color:#5b21b6; font-weight:700; font-size:.92rem; text-decoration:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12);
+}
+html[data-theme="dark"] .back{ color:#c4b5fd; border-color:rgba(167,139,250,.28); }
+.count{ font-weight:700; font-size:.92rem; color:var(--mut); font-variant-numeric:tabular-nums; }
+
+.stage{
+  flex:1 1 auto; min-height:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center; gap:10px;
+  overflow:auto; padding:8px 0;
+}
+.stage.hide{ display:none; }
+
+.kind{
+  display:inline-block; padding:7px 12px; border-radius:20px;
+  background:var(--acc-soft); color:var(--acc);
+  font-size:11px; font-weight:700; letter-spacing:.6px; text-transform:uppercase;
+}
+.instr{
+  margin:0; font-size:15px; font-weight:700; color:var(--ink); line-height:1.4;
+  max-width:520px;
+}
+.example{
+  margin:0; font-size:14px; color:var(--mut);
+}
+.example i{ color:var(--acc); font-weight:800; font-style:normal; text-decoration:underline; }
+
+.sentence{
+  margin:10px 0 0; max-width:640px; width:100%;
+  font-size:clamp(20px, 3.4vw, 28px); font-weight:800; line-height:1.65; color:var(--ink);
+}
+
+/* typed blank — plain underline, override tests-ui boxes */
+.typed,
+input.typed[type=text],
+body input.typed,
+body input.typed[type=text]{
+  display:inline-block !important;
+  width:8em !important;
+  min-width:5em !important;
+  min-height:0 !important;
+  height:auto !important;
+  margin:0 .15em !important;
+  padding:2px 6px !important;
+  border:0 !important;
+  border-bottom:3px solid var(--acc) !important;
+  border-radius:8px 8px 0 0 !important;
+  background:var(--acc-soft) !important;
+  box-shadow:none !important;
+  color:var(--ink) !important;
+  font:inherit !important;
+  font-size:inherit !important;
+  font-weight:800 !important;
+  text-align:center !important;
+  outline:none !important;
+  vertical-align:baseline !important;
+}
+.typed:focus,
+body input.typed:focus{
+  background:var(--card) !important;
+  box-shadow:none !important;
+}
+.typed.ok,
+body input.typed.ok{
+  color:var(--ok) !important;
+  border-bottom-color:var(--ok) !important;
+  background:var(--ok-bg) !important;
+}
+.typed.bad,
+body input.typed.bad{
+  color:var(--bad) !important;
+  border-bottom-color:var(--bad) !important;
+  background:var(--bad-bg) !important;
+}
+.typed:disabled{ cursor:default !important; opacity:1 !important; }
+
+.fb{
+  min-height:1.5em; font-weight:800; font-size:1rem; color:var(--mut);
+}
+.fb.ok{ color:var(--ok); }
+.fb.bad{ color:var(--bad); }
+
+.progress{ flex:0 0 auto; }
+.progress-label{
+  display:flex; justify-content:space-between; font-size:.72rem; font-weight:800;
+  letter-spacing:.08em; color:var(--mut); margin-bottom:4px;
+}
+.progress-bar{ height:8px; border-radius:20px; background:var(--line); overflow:hidden; }
+.progress-fill{
+  height:100%; width:0; border-radius:20px;
+  background:linear-gradient(90deg,var(--acc),#14b8a6);
+  transition:width .35s ease;
+}
+
+.actions{ display:flex; gap:10px; flex:0 0 auto; width:100%; }
+.btn{
+  flex:1; min-height:54px; border:0; border-radius:16px;
+  background:var(--btn); color:#fff; font:inherit; font-size:1.05rem; font-weight:800;
+  box-shadow:0 5px 0 var(--btn-d); cursor:pointer;
+  transition:transform .12s, box-shadow .12s;
+}
+.btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--btn-d); }
+.btn:disabled{ background:#cfd6dc; box-shadow:0 5px 0 #e6e0d4; color:#6b7280; cursor:default; }
+html[data-theme="dark"] .btn:disabled{ background:#2a3447; box-shadow:0 5px 0 #1a2233; color:#6b7280; }
+.btn.ghost{
+  background:var(--card); color:var(--ink); border:1.5px solid var(--line);
+  box-shadow:0 5px 0 var(--line); text-decoration:none; display:inline-flex;
+  align-items:center; justify-content:center;
+}
+
+/* result screen */
+.result{
+  display:none; flex:1 1 auto; min-height:0; overflow:auto;
+  flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; gap:8px; padding:12px 0;
+}
+.result.show{ display:flex; }
+.result .big{ font-size:clamp(2.2rem, 8vw, 3.2rem); font-weight:900; color:var(--acc); line-height:1; }
+.result h2{ margin:4px 0; font-size:1.25rem; }
+.result .msg{ color:var(--mut); margin:0 0 8px; font-size:.95rem; }
+.review{
+  list-style:none; margin:8px 0 0; padding:0; width:100%; max-width:420px;
+  text-align:left; font-size:.95rem;
+}
+.review li{
+  display:flex; gap:10px; align-items:baseline; padding:8px 10px;
+  border-radius:12px; margin-bottom:6px; background:var(--card); border:1px solid var(--line);
+}
+.review li .n{ font-weight:800; color:var(--acc); min-width:1.4em; }
+.review li.ok{ border-color:rgba(21,128,61,.25); }
+.review li.no{ border-color:rgba(185,28,28,.2); }
+.review li .was{ color:var(--bad); text-decoration:line-through; margin-right:6px; }
+.review li .right{ color:var(--ok); font-weight:800; }
+
+@media (max-width:560px){
+  .sentence{ font-size:18px; }
+  .typed, body input.typed{ width:6.5em !important; font-size:18px !important; }
+  .btn{ min-height:50px; }
+}
+@media (max-height:680px){
+  .instr, .example{ display:none; }
+}
+@media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+<link rel="stylesheet" href="../../assets/tests-ui.css">
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a class="back" href="/resources/american-english-file/tests/unit-6/">← Unit 6</a>
+    <span class="count" id="count">1 / 8</span>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="kind" id="kind">Complete the lists · 1 / 8</div>
+    <p class="instr">Write the missing word in each list.</p>
+    <p class="example">Example: twenty-fourth, twenty-fifth, <i>twenty-sixth</i></p>
+    <div class="sentence" id="sentence"></div>
+    <div class="fb" id="fb" role="status" aria-live="polite"></div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="big" id="score">0 / 8</div>
+    <h2 id="resultTitle"></h2>
+    <p class="msg" id="resultMsg"></p>
+    <ul class="review" id="review"></ul>
+  </div>
+
+  <div class="progress">
+    <div class="progress-label"><span>PROGRESS</span><span id="progressText">0 / 8</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="actions" id="actions">
+    <button type="button" class="btn" id="mainBtn" disabled>Check</button>
+  </div>
+  <div class="actions" id="resultActions" style="display:none">
+    <button type="button" class="btn" id="retryBtn">Try again</button>
+    <a class="btn ghost" href="/resources/american-english-file/tests/unit-6/">← Unit 6</a>
+  </div>
+</div>
+
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="/learningarcade/la-sfx.js"></script>
+<script src="../../assets/tests-stars.js"></script>
+<script src="../../assets/tests-ui.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var GAME_ID = "aef1-u6-complete-the-lists";
+  var ITEMS = [
+    { line: "second, ___, fourth, fifth", ans: "third", acc: ["third"] },
+    { line: "___, March, April", ans: "February", acc: ["february", "February"] },
+    { line: "fiftieth, ___, fifty-second", ans: "fifty-first", acc: ["fifty-first", "fifty first"] },
+    { line: "April, May, ___", ans: "June", acc: ["june", "June"] },
+    { line: "spring, ___, autumn, winter", ans: "summer", acc: ["summer"] },
+    { line: "ninth, tenth, ___", ans: "eleventh", acc: ["eleventh"] },
+    { line: "October, November, ___", ans: "December", acc: ["december", "December"] },
+    { line: "___, September, October", ans: "August", acc: ["august", "August"] }
+  ];
+  var TOTAL = ITEMS.length;
+  var idx = 0, correct = 0, answers = [], answered = false;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function norm(s) {
+    return String(s).toLowerCase().replace(/[’`']/g, "'").replace(/\s+/g, " ").trim();
+  }
+  function sfx(name) {
+    try { if (window.LASfx && typeof LASfx[name] === "function") LASfx[name](); } catch (e) {}
+  }
+
+  function render() {
+    var item = ITEMS[idx];
+    answered = false;
+    $("count").textContent = (idx + 1) + " / " + TOTAL;
+    $("progressText").textContent = idx + " / " + TOTAL;
+    $("progressFill").style.width = (idx / TOTAL * 100) + "%";
+    $("kind").textContent = "Complete the lists · " + (idx + 1) + " / " + TOTAL;
+
+    var parts = item.line.split("___");
+    $("sentence").innerHTML =
+      esc(parts[0]) +
+      '<input type="text" id="typed" class="typed" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="missing word">' +
+      esc(parts.slice(1).join("___"));
+
+    $("fb").className = "fb";
+    $("fb").textContent = "";
+    $("mainBtn").textContent = "Check";
+    $("mainBtn").disabled = true;
+
+    var t = $("typed");
+    t.addEventListener("input", function () {
+      if (!answered) $("mainBtn").disabled = norm(t.value) === "";
+    });
+    setTimeout(function () { t.focus(); }, 40);
+  }
+
+  function check() {
+    if (answered) return;
+    var item = ITEMS[idx];
+    var t = $("typed");
+    var v = t.value;
+    if (norm(v) === "") return;
+    answered = true;
+
+    var ok = item.acc.some(function (a) { return norm(a) === norm(v); });
+    answers[idx] = { ok: ok, text: v.trim() };
+    if (ok) correct++;
+
+    t.disabled = true;
+    t.classList.add(ok ? "ok" : "bad");
+    $("fb").className = "fb " + (ok ? "ok" : "bad");
+    $("fb").textContent = ok ? "Correct!" : "→ " + item.ans;
+    sfx(ok ? "correct" : "wrong");
+
+    $("progressText").textContent = (idx + 1) + " / " + TOTAL;
+    $("progressFill").style.width = ((idx + 1) / TOTAL * 100) + "%";
+    $("mainBtn").disabled = false;
+    $("mainBtn").textContent = idx === TOTAL - 1 ? "See results" : "Next";
+  }
+
+  function next() {
+    idx++;
+    if (idx >= TOTAL) finish();
+    else render();
+  }
+
+  function onMain() {
+    if (!answered) check();
+    else next();
+  }
+
+  function finish() {
+    $("progressFill").style.width = "100%";
+    $("progressText").textContent = TOTAL + " / " + TOTAL;
+    $("stage").classList.add("hide");
+    $("actions").style.display = "none";
+    $("resultActions").style.display = "flex";
+    $("result").classList.add("show");
+    $("score").textContent = correct + " / " + TOTAL;
+    $("resultTitle").textContent =
+      correct === TOTAL ? "Wonderful work!" : correct >= TOTAL - 2 ? "Nice work!" : "Good effort!";
+    $("resultMsg").textContent =
+      correct === TOTAL ? "Every answer is correct." : "Check the answers below, then try again if you like.";
+
+    var ul = $("review");
+    ul.innerHTML = "";
+    ITEMS.forEach(function (item, i) {
+      var a = answers[i] || {};
+      var li = document.createElement("li");
+      if (a.ok) {
+        li.className = "ok";
+        li.innerHTML = '<span class="n">' + (i + 1) + "</span>" + esc(a.text);
+      } else {
+        li.className = "no";
+        li.innerHTML = '<span class="n">' + (i + 1) + '</span><span class="was">' +
+          esc(a.text || "—") + '</span><span class="right">' + esc(item.ans) + "</span>";
+      }
+      ul.appendChild(li);
+    });
+
+    try {
+      if (window.TestStars && typeof TestStars.award === "function" && correct === TOTAL) {
+        TestStars.award(GAME_ID);
+      }
+    } catch (e0) {}
+    try {
+      if (window.LAStars) {
+        if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(GAME_ID);
+        if (typeof LAStars.saveFromAccuracy === "function") {
+          LAStars.saveFromAccuracy(GAME_ID, Math.round((correct / TOTAL) * 100));
+        }
+      }
+    } catch (e1) {}
+    if (window.LAFinish && typeof LAFinish.show === "function") {
+      LAFinish.show({
+        gameId: GAME_ID,
+        gameName: "Complete the Lists",
+        score: correct,
+        total: TOTAL,
+        title: "Complete the Lists",
+        backHref: "/resources/american-english-file/tests/unit-6/",
+        onAgain: function () { $("retryBtn").click(); },
+        category: "tests",
+        unit: "aef1-6"
+      });
+    }
+  }
+
+  $("mainBtn").addEventListener("click", onMain);
+  $("retryBtn").addEventListener("click", function () {
+    idx = 0; correct = 0; answers = []; answered = false;
+    $("result").classList.remove("show");
+    $("resultActions").style.display = "none";
+    $("actions").style.display = "flex";
+    $("stage").classList.remove("hide");
+    render();
+  });
+
+  render();
+});
+</script>
+<script>
+(function () {
+  if (window.__enterCheck) return; window.__enterCheck = true;
+  var isDesktop = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  window.addEventListener("keydown", function (e) {
+    if (!isDesktop || e.key !== "Enter" || e.isComposing) return;
+    var b = document.getElementById("mainBtn");
+    if (!b || b.disabled || b.offsetParent === null) return;
+    e.preventDefault(); e.stopPropagation();
+    b.click();
+  }, true);
+})();
+</script>
+</body>
+</html>
