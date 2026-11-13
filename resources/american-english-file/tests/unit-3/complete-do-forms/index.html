@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Unit 3 · Complete the Sentences with a Form of do | AEF 1 | Mr. Sheyhaki</title>
+<meta name="description" content="Complete the sentences with a form of do (do / does / don’t / doesn’t). American English File 1 Unit 3.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<style>
+/* Every rule is scoped to body.pst so the site's theme CSS cannot override it. */
+body.pst{
+  --bg:#f7f4ee; --card:#ffffff; --ink:#1d2430; --mut:#6b7280; --line:#e6e0d4;
+  --acc:#0f766e; --acc-d:#0b5c56; --acc-two:#14b8a6; --acc-soft:rgba(15,118,110,.10); --btn-ink:#ffffff;
+  --ok:#15803d; --ok-bg:#dcfce7; --warn:#b91c1c; --warn-bg:#fee2e2;
+  --ghost:#ffffff; --btn-off:#cfd6dc; --shadow:rgba(29,36,48,.07);
+  --pos:#15803d; --pos-bg:rgba(34,197,94,.14); --neg:#b91c1c; --neg-bg:rgba(239,68,68,.12);
+  --app-bg:radial-gradient(900px 520px at 8% -12%, rgba(20,184,166,.20), transparent 60%), radial-gradient(760px 480px at 100% 0%, rgba(124,58,237,.11), transparent 58%), radial-gradient(720px 520px at 50% 115%, rgba(15,118,110,.16), transparent 62%), linear-gradient(180deg, #f0fdfa 0%, #eef4ff 100%);
+}
+html[data-theme="dark"] body.pst{
+  --bg:#0f1420; --card:#171e2d; --ink:#e8edf6; --mut:#9aa6b8; --line:#2a3447;
+  --acc:#2dd4bf; --acc-d:#0f8a7b; --acc-two:#5eead4; --acc-soft:rgba(45,212,191,.14); --btn-ink:#062b27;
+  --ok:#4ade80; --ok-bg:rgba(74,222,128,.14); --warn:#f87171; --warn-bg:rgba(248,113,113,.14);
+  --ghost:#1d2638; --btn-off:#2a3447; --shadow:rgba(0,0,0,.35);
+  --pos:#4ade80; --pos-bg:rgba(74,222,128,.16); --neg:#f87171; --neg-bg:rgba(248,113,113,.16);
+  --app-bg:radial-gradient(900px 520px at 8% -12%, rgba(45,212,191,.16), transparent 60%), radial-gradient(760px 480px at 100% 0%, rgba(124,58,237,.18), transparent 58%), radial-gradient(720px 520px at 50% 115%, rgba(20,184,166,.12), transparent 62%), linear-gradient(180deg, #0c1a1f 0%, #0f1420 100%);
+}
+html, html[data-theme="dark"]{ background:var(--bg); }
+html[data-theme="dark"] body.pst{ background:var(--app-bg) fixed !important; }
+html, body.pst{ margin:0; padding:0; height:100%; overflow:hidden; }
+body.pst{
+  position:fixed; inset:0; overflow:hidden; box-sizing:border-box;
+  background:var(--app-bg) fixed; color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+body.pst *, body.pst *::before, body.pst *::after{ box-sizing:border-box; }
+
+body.pst .app{
+  position:fixed; top:0; right:0; bottom:0; left:0;
+  display:flex; flex-direction:column;
+  width:100%; max-width:680px; margin:0 auto;
+  padding:max(12px,env(safe-area-inset-top)) 16px max(22px,env(safe-area-inset-bottom));
+  overflow:hidden;
+}
+body.pst .app > *{ margin:0; }
+body.pst .bg{ position:fixed; inset:0; z-index:0; background:var(--app-bg); }
+body.pst .app{ z-index:1; }
+
+/* top bar: same back pill and sound circle as the other Tests & Exams games */
+body.pst .top{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; flex:0 0 auto;
+  background:none; border:0; box-shadow:none; padding:0; height:auto; position:static;
+}
+body.pst .back-btn{
+  display:inline-flex; align-items:center; gap:.35rem; min-height:40px; padding:.4rem .9rem;
+  border-radius:999px; background:#fff; border:2px solid rgba(124,58,237,.16); color:#5b21b6;
+  font-weight:700; font-size:.92rem; text-decoration:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s, box-shadow .15s;
+}
+body.pst .back-btn:hover{ background:#fff; transform:translateY(-1px); }
+body.pst .back-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(124,58,237,.12); }
+body.pst .count{ margin-left:auto; font-weight:700; font-size:.92rem; color:var(--mut); font-variant-numeric:tabular-nums; }
+body.pst .tui-sound{
+  appearance:none; border:2px solid rgba(124,58,237,.16); background:#fff;
+  width:40px; height:40px; border-radius:50%; font-size:1.05rem; cursor:pointer; flex:none;
+  box-shadow:0 3px 0 rgba(124,58,237,.12); transition:transform .15s; padding:0;
+  display:inline-grid; place-items:center; position:static; margin-left:8px;
+}
+body.pst .tui-sound:active{ transform:translateY(2px); }
+
+/* question area: centred, so the sentence and answers sit together */
+body.pst .stage{
+  flex:1 1 auto; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:8px 0;
+}
+body.pst .stage.hide{ display:none; }
+body.pst .kind{
+  display:inline-block; padding:7px 12px; border-radius:20px;
+  background:var(--acc-soft); color:var(--acc);
+  font-size:11px; font-weight:700; letter-spacing:.6px; text-transform:uppercase;
+}
+/* fixed-height sentence area: it starts in the same place whether it wraps or not */
+body.pst .sentence{
+  margin:14px 0 0; max-width:720px; width:100%; min-height:3.6em;
+  display:flex; align-items:center; justify-content:center;
+  font-size:clamp(20px, 3.4vw, 28px); font-weight:800; line-height:1.55;
+  color:var(--ink);
+}
+body.pst .typed{
+  display:inline-block; min-width:4.2em; max-width:9em; width:auto;
+  margin:0 2px; padding:2px 6px 3px;
+  border:0; border-bottom:3px solid var(--acc);
+  background:rgba(15,118,110,.06); color:var(--ink);
+  font:inherit; font-weight:800; text-align:center;
+  outline:none; border-radius:4px 4px 0 0;
+  transition:background .15s, border-color .15s, color .15s;
+}
+body.pst .typed:focus{ background:var(--card); }
+body.pst .typed:disabled{ cursor:default; }
+body.pst .typed.ok{ color:var(--ok); border-bottom-color:var(--ok); background:var(--ok-bg); }
+body.pst .typed.bad{ color:var(--warn); border-bottom-color:var(--warn); background:var(--warn-bg); }
+
+/* dialogue lines: each question and answer on its own line */
+body.pst .sentence{ text-align:left; }
+body.pst .sline{ display:block; line-height:1.7; margin:4px 0; }
+
+/* A and B lines stack on top of each other */
+body.pst .sentence{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+body.pst .sline{ display:block; width:100%; }
+
+/* keep each dialogue line on one row where the screen is wide enough */
+body.pst .sentence{ font-size:clamp(20px, 3.2vw, 30px); }
+body.pst .typed{ width:6.5em; box-sizing:border-box; padding:4px 6px; }
+body.pst .hintline{ white-space:nowrap; margin-left:.3em; }
+@media (min-width: 600px){ body.pst .sline{ white-space:nowrap; } }
+
+/* instruction under the question counter */
+body.pst .instr{ text-align:center; font-size:16px; font-weight:700; color:var(--ink); margin:8px 12px 4px; line-height:1.4; }
+
+/* sentence: wraps inside a centred column and is never cut off */
+body.pst #sentence{ max-width:640px; width:auto; margin:0 auto; text-align:left; font-size:clamp(20px, 3.4vw, 28px); line-height:1.7; font-weight:800; height:auto; min-height:0; overflow:visible; white-space:normal; padding:0 8px; box-sizing:border-box; display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+body.pst #sentence .sline{ display:block; width:100%; white-space:normal; overflow:visible; }
+body.pst #sentence .typed{ max-width:100%; }
+
+body.pst .hint{ margin:6px 0 0; min-height:1.2em; font-size:13px; color:var(--mut); }
+body.pst .fb{
+  margin-top:10px; min-height:1.4em; font-size:15px; font-weight:700;
+  transition:color .15s;
+}
+body.pst .fb.ok{ color:var(--ok); }
+body.pst .fb.bad{ color:var(--warn); }
+body.pst .example{ margin-top:10px; font-size:12.5px; color:var(--mut); line-height:1.45; max-width:46ch; }
+body.pst .example b{ color:var(--acc); font-weight:700; text-decoration:underline; text-underline-offset:3px; }
+
+body.pst .progress{
+  flex:0 0 auto; margin:8px 0 4px; padding:0 2px;
+}
+body.pst .progress-label{
+  display:flex; justify-content:space-between; font-size:11px; font-weight:700;
+  letter-spacing:.04em; color:var(--mut); margin-bottom:4px;
+}
+body.pst .progress-bar{
+  height:8px; border-radius:999px; background:var(--line); overflow:hidden;
+}
+body.pst .progress-fill{
+  height:100%; width:0%; border-radius:999px;
+  background:linear-gradient(90deg, var(--acc), var(--acc-two));
+  transition:width .25s ease;
+}
+
+body.pst .actions{
+  flex:0 0 auto; display:flex; gap:10px; justify-content:center; padding:6px 0 0;
+}
+body.pst .btn{
+  appearance:none; border:0; cursor:pointer;
+  min-height:48px; min-width:140px; padding:.7rem 1.4rem;
+  border-radius:14px; font-weight:800; font-size:1rem;
+  background:var(--acc); color:var(--btn-ink);
+  box-shadow:0 4px 0 var(--acc-d);
+  transition:transform .12s, box-shadow .12s, opacity .15s;
+}
+body.pst .btn:active:not(:disabled){ transform:translateY(3px); box-shadow:0 1px 0 var(--acc-d); }
+body.pst .btn:disabled{ opacity:.45; cursor:not-allowed; box-shadow:none; }
+body.pst .btn.ghost{
+  background:var(--ghost); color:var(--ink); border:2px solid var(--line);
+  box-shadow:0 3px 0 rgba(0,0,0,.06);
+}
+body.pst .btn.ghost:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.06); }
+
+body.pst .result{
+  display:none; flex-direction:column; align-items:center; text-align:center;
+  flex:1 1 auto; min-height:0; overflow:auto; padding:8px 0 4px;
+}
+body.pst .result.show{ display:flex; }
+body.pst .result .big{
+  font-size:clamp(2.4rem, 8vw, 3.2rem); font-weight:900; color:var(--acc);
+  line-height:1; margin-bottom:6px;
+}
+body.pst .result h2{ font-size:1.25rem; margin:0 0 4px; }
+body.pst .result .msg{ color:var(--mut); font-size:.95rem; margin-bottom:14px; }
+body.pst .review{
+  list-style:none; width:100%; max-width:520px; text-align:left;
+  margin:0; padding:0; font-size:14px;
+}
+body.pst .review li{
+  display:flex; align-items:flex-start; gap:8px; padding:8px 10px;
+  border-radius:10px; margin-bottom:6px; background:var(--card);
+  border:1px solid var(--line);
+}
+body.pst .review li.ok{ border-color:rgba(21,128,61,.25); background:var(--ok-bg); }
+body.pst .review li.no{ border-color:rgba(185,28,28,.2); background:var(--warn-bg); }
+body.pst .review .n{ flex:none; font-weight:800; color:var(--mut); min-width:1.4em; }
+body.pst .review .was{ text-decoration:line-through; opacity:.7; margin-right:6px; }
+body.pst .review .right{ font-weight:700; color:var(--ok); }
+
+body.pst .kind.pos{ background:var(--pos-bg); color:var(--pos); }
+body.pst .kind.neg{ background:var(--neg-bg); color:var(--neg); }
+
+@media (max-width:480px){
+  body.pst .example{ display:none; }
+  body.pst .btn{ min-width:120px; }
+}
+</style>
+<!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
+</head>
+<body class="pst">
+<div class="bg" aria-hidden="true"></div>
+<div class="app">
+  <div class="top header">
+    <a class="back-btn" href="/resources/american-english-file/tests/unit-3/">← Unit 3</a>
+    <span class="count" id="count">1 / 6</span>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="kind" id="kind" aria-live="polite"></div>
+    <p class="instr">Complete the sentences with a form of <b>do</b>.</p>
+    <div class="sentence" id="sentence"></div>
+    <p class="hint" id="hint"></p>
+    <div class="fb" id="fb" role="status" aria-live="polite"></div>
+    <div class="example">Example: <b>Do</b> you drink coffee?</div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="big" id="score">0 / 6</div>
+    <h2 id="resultTitle"></h2>
+    <p class="msg" id="resultMsg"></p>
+    <ul class="review" id="review"></ul>
+  </div>
+
+  <div class="progress">
+    <div class="progress-label"><span>PROGRESS</span><span id="progressText">0 / 6</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="actions" id="actions">
+    <button type="button" class="btn" id="mainBtn" disabled>Check</button>
+  </div>
+  <div class="actions" id="resultActions" style="display:none">
+    <button type="button" class="btn" id="retryBtn">Try again</button>
+    <a class="btn ghost" href="../">← Unit 3</a>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+/* lines = dialogue or sentence parts; ___ = gap; acc = accepted answers; ans = shown when wrong; strict = require capital */
+var ITEMS = [
+  {
+    lines: ["___ your phone have a good camera?"],
+    acc: ["Does"],
+    ans: "Does",
+    strict: true
+  },
+  {
+    lines: [
+      "A: ‘Do you speak Japanese?’",
+      "B: ‘Yes, I ___.’"
+    ],
+    acc: ["do"],
+    ans: "do",
+    strict: false
+  },
+  {
+    lines: ["___ Ethan work in a hotel?"],
+    acc: ["Does"],
+    ans: "Does",
+    strict: true
+  },
+  {
+    lines: [
+      "A: ‘Does Sunita live near you?’",
+      "B: ‘No, she ___.’"
+    ],
+    acc: ["doesn’t", "doesn't", "does not"],
+    ans: "doesn’t",
+    strict: false
+  },
+  {
+    lines: ["What ___ your parents do for a living?"],
+    acc: ["do"],
+    ans: "do",
+    strict: false
+  },
+  {
+    lines: ["___ your cousins live in the USA?"],
+    acc: ["Do"],
+    ans: "Do",
+    strict: true
+  }
+];
+var TOTAL = ITEMS.length;
+var idx = 0, correct = 0, answers = [], answered = false;
+var $ = function (id) { return document.getElementById(id); };
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+/* lower case, straight apostrophes, single spaces */
+function exact(s) { return String(s).replace(/’/g, "'").replace(/\s+/g, " ").trim(); }
+function norm(s) { return String(s).toLowerCase().replace(/’/g, "'").replace(/\s+/g, " ").trim(); }
+
+function sentenceHtml(item, i) {
+  return item.lines.map(function (ln) {
+    var parts = ln.split("___");
+    var inner = escapeHtml(parts[0]) +
+      (parts.length > 1
+        ? '<input type="text" id="typed" class="typed" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="gap ' + (i + 1) + '">' + escapeHtml(parts.slice(1).join("___"))
+        : "");
+    return '<span class="sline">' + inner + "</span>";
+  }).join("");
+}
+
+/* One font size for every sentence (so the gap is the same width everywhere):
+   the size at which the LONGEST sentence still fits on one row.
+   Measured on a hidden copy so the live question is never touched. */
+function fitSentences() {
+  var el = $("sentence");
+  var probe = el.cloneNode(false);
+  probe.removeAttribute("id");
+  probe.style.cssText = "position:absolute;left:0;top:0;visibility:hidden;pointer-events:none;white-space:nowrap;width:auto;max-width:none;height:auto;font-size:28px;";
+  el.parentNode.appendChild(probe);
+  var maxW = 0;
+  ITEMS.forEach(function (it, i) {
+    probe.innerHTML = sentenceHtml(it, i).replace(' id="typed"', "");
+    maxW = Math.max(maxW, probe.scrollWidth);
+  });
+  el.parentNode.removeChild(probe);
+  var par = el.parentNode, cs = getComputedStyle(par);
+  var avail = Math.min(640, par.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) - 16;
+  var px = maxW > avail && maxW > 0 ? Math.floor(28 * avail / maxW) : 28;
+  el.style.fontSize = Math.max(18, Math.min(28, px)) + "px";
+}
+
+function render() {
+  var item = ITEMS[idx];
+  answered = false;
+  $("count").textContent = (idx + 1) + " / " + TOTAL;
+  $("progressText").textContent = idx + " / " + TOTAL;
+  $("progressFill").style.width = (idx / TOTAL * 100) + "%";
+  $("kind").textContent = "FORMS OF DO  ·  " + (idx + 1) + " / " + TOTAL;
+  $("sentence").innerHTML = sentenceHtml(item, idx);
+  $("hint").textContent = "";
+  $("fb").className = "fb";
+  $("fb").textContent = "";
+  $("mainBtn").textContent = "Check";
+  $("mainBtn").disabled = true;
+  var t = $("typed");
+  if (t) {
+    t.addEventListener("input", function () { if (!answered) $("mainBtn").disabled = norm(t.value) === ""; });
+    t.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); onMain(); } });
+    setTimeout(function () { t.focus(); }, 50);
+  }
+}
+
+function check() {
+  if (answered) return;
+  var item = ITEMS[idx];
+  var t = $("typed");
+  if (!t) return;
+  var v = t.value;
+  if (norm(v) === "") return;
+  answered = true;
+  var ok = item.acc.some(function (a) {
+    if (item.strict) return exact(a) === exact(v);   /* sentence-start gap: capital letter needed */
+    return norm(a) === norm(v);
+  });
+  answers[idx] = { ok: ok, text: v.trim() };
+  if (ok) correct++;
+  t.disabled = true;
+  t.classList.add(ok ? "ok" : "bad");
+  $("fb").className = "fb " + (ok ? "ok" : "bad");
+  $("fb").textContent = ok ? "Correct!" : "→ " + item.ans;
+  $("progressText").textContent = (idx + 1) + " / " + TOTAL;
+  $("progressFill").style.width = ((idx + 1) / TOTAL * 100) + "%";
+  $("mainBtn").disabled = false;
+  $("mainBtn").textContent = idx === TOTAL - 1 ? "See results" : "Next";
+}
+
+function onMain() { if (!answered) check(); else next(); }
+function next() { idx++; if (idx >= TOTAL) finish(); else render(); }
+
+function finish() {
+  $("progressFill").style.width = "100%";
+  $("progressText").textContent = TOTAL + " / " + TOTAL;
+  $("stage").classList.add("hide");
+  $("actions").style.display = "none";
+  $("resultActions").style.display = "flex";
+  $("result").classList.add("show");
+  $("score").textContent = correct + " / " + TOTAL;
+  $("resultTitle").textContent =
+    correct === TOTAL ? "Wonderful work!" : correct >= TOTAL - 1 ? "Nice work!" : "Good effort!";
+  $("resultMsg").textContent =
+    correct === TOTAL ? "Every answer is correct." : "Check the answers below, then try again if you like.";
+
+  var ul = $("review");
+  ul.innerHTML = "";
+  ITEMS.forEach(function (item, i) {
+    var a = answers[i] || {};
+    var li = document.createElement("li");
+    var filled = item.lines.map(function (ln) {
+      return ln.replace("___", a.text || "___");
+    }).join(" · ");
+    if (a.ok) {
+      li.className = "ok";
+      li.innerHTML = '<span class="n">' + (i + 1) + '</span>' + escapeHtml(filled);
+    } else {
+      li.className = "no";
+      li.innerHTML = '<span class="n">' + (i + 1) + '</span><span class="was">' +
+        escapeHtml(a.text || "—") + '</span><span class="right">' + escapeHtml(item.ans) + '</span>';
+    }
+    ul.appendChild(li);
+  });
+
+  var gameId = "aef1-u3-complete-do-forms";
+  try {
+    if (window.TestStars && typeof TestStars.award === "function") TestStars.award(gameId);
+  } catch (e0) {}
+  try {
+    if (window.LAFinish && typeof LAFinish.show === "function") {
+      LAFinish.show({
+        gameId: gameId,
+        gameName: "Complete the Sentences with a Form of do",
+        score: correct,
+        total: TOTAL,
+        title: "Complete the Sentences with a Form of do",
+        backHref: "/resources/american-english-file/tests/unit-3/",
+        onAgain: function () { $("retryBtn").click(); },
+        category: "grammar"
+      });
+    }
+  } catch (e1) {}
+  try {
+    if (window.LAStars) {
+      if (typeof LAStars.recordPlay === "function") LAStars.recordPlay(gameId);
+      if (typeof LAStars.saveFromAccuracy === "function") {
+        LAStars.saveFromAccuracy(gameId, Math.round((correct / TOTAL) * 100));
+      }
+    }
+  } catch (e) {}
+}
+
+$("mainBtn").addEventListener("click", onMain);
+$("retryBtn").addEventListener("click", function () {
+  idx = 0; correct = 0; answers = []; answered = false;
+  $("result").classList.remove("show");
+  $("resultActions").style.display = "none";
+  $("actions").style.display = "flex";
+  $("stage").classList.remove("hide");
+  render();
+});
+
+fitSentences();
+window.addEventListener("resize", fitSentences);
+render();
+});
+</script>
+<script src="/theme.js"></script>
+<script src="/learningarcade/la-stars.js" data-la-stars></script>
+<script src="/learningarcade/la-finish.js"></script>
+<script src="/resources/american-english-file/tests/assets/tests-stars.js"></script>
+<script src="/resources/american-english-file/tests/assets/tests-ui.js"></script>
+<script src="/visit-counter.js" defer></script>
+<script>
+/* desktop: Enter presses the Check / Next / See results button (capture phase, so the game handles it once) */
+(function () {
+  if (window.__enterCheck) return; window.__enterCheck = true;
+  var isDesktop = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var IDS = ["ul-results", "ul-check", "mainBtn", "checkBtn"];
+  window.addEventListener("keydown", function (e) {
+    if (!isDesktop || e.key !== "Enter" || e.isComposing) return;
+    var target = null;
+    for (var i = 0; i < IDS.length; i++) {
+      var b = document.getElementById(IDS[i]);
+      if (b && !b.disabled && b.offsetParent !== null && b.style.display !== "none") { target = b; break; }
+    }
+    if (!target) return;
+    e.preventDefault(); e.stopPropagation();
+    target.click();
+  }, true);
+})();
+</script>
+<script>
+/* sounds (same as the other units) */
+document.addEventListener("click", function (e) {
+  var t = e.target;
+  var m = t.closest && t.closest("#mainBtn");
+  if (!m) return;
+  var label = (m.textContent || "").trim();
+  var isNext = /Next|See results/.test(label);
+  var isFinish = /See results/.test(label);
+  setTimeout(function () {
+    try {
+      if (isFinish) { LASfx.win(); return; }
+      if (isNext) { LASfx.pop(); return; }
+      var fb = document.getElementById("fb");
+      if (!fb) return;
+      if (fb.className.indexOf("ok") !== -1) LASfx.correct();
+      else if (fb.className.indexOf("bad") !== -1) LASfx.wrong();
+    } catch (x) {}
+  }, 40);
+}, true);
+</script>
+<script src="/learningarcade/la-sfx.js"></script>
+</body>
+</html>
