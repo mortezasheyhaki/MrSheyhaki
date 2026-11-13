@@ -306,13 +306,45 @@
     </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase with CDN fallbacks (jsDelivr is often blocked) -->
+  <script>
+  (function () {
+    var urls = [
+      "../vendor/supabase.min.js",
+      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js",
+      "https://unpkg.com/@supabase/supabase-js@2.49.1/dist/umd/supabase.js",
+      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ];
+    function done() {
+      document.dispatchEvent(new Event("supabase-ready"));
+    }
+    function loadNext(i) {
+      if (i >= urls.length) {
+        window.__supabaseLoadError = "All Supabase CDN URLs failed to load.";
+        console.error(window.__supabaseLoadError);
+        done();
+        return;
+      }
+      var s = document.createElement("script");
+      s.src = urls[i];
+      s.onload = function () {
+        if (window.supabase && window.supabase.createClient) done();
+        else loadNext(i + 1);
+      };
+      s.onerror = function () { loadNext(i + 1); };
+      document.head.appendChild(s);
+    }
+    loadNext(0);
+  })();
+  </script>
   <script src="../auth-system/auth.js"></script>
   <script src="../firebase-scores.js"></script>
   <script src="../theme.js"></script>
   <script>
     (function () {
       var ADMIN_PASSWORD = "sheyhaki2026";
+      var SB_URL = "https://ezlcrygimvceusmnojgk.supabase.co";
+      var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6bGNyeWdpbXZjZXVzbW5vamdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNjU4NjQsImV4cCI6MjEwOTk0MTg2NH0.R3a0dMRDCHaAbDKRGhLssvYfg8HzcEb5ODF5xfUt_Ys";
 
       var gate = document.getElementById("gate");
       var panel = document.getElementById("adminPanel");
@@ -355,138 +387,162 @@
         if (sessionStorage.getItem("laAdminOk") === "1") openAdmin();
       } catch (e) {}
 
+      function getClient() {
+        if (!(window.supabase && window.supabase.createClient)) return null;
+        return window.supabase.createClient(SB_URL, SB_KEY);
+      }
+
       function loadData() {
         statusEl.textContent = "Loading…";
         studentList.innerHTML = "";
         recentList.innerHTML = "";
 
-        var client = window.supabase && window.supabase.createClient
-          ? window.supabase.createClient(
-              "https://ezlcrygimvceusmnojgk.supabase.co",
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6bGNyeWdpbXZjZXVzbW5vamdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNjU4NjQsImV4cCI6MjEwOTk0MTg2NH0.R3a0dMRDCHaAbDKRGhLssvYfg8HzcEb5ODF5xfUt_Ys"
-            )
-          : null;
+        function run() {
+          if (!(window.supabase && window.supabase.createClient)) {
+            statusEl.textContent = "Could not load Supabase library. Check CDN / network, then refresh.";
+            studentList.innerHTML =
+              '<div class="empty">The Supabase script failed to load.<br>' +
+              'This often happens when <code>cdn.jsdelivr.net</code> is blocked.<br>' +
+              'The page now also tries <strong>unpkg</strong> and <strong>cdnjs</strong>. Hard-refresh and try again.</div>';
+            return;
+          }
+          var client = getClient();
+          if (!client) {
+            statusEl.textContent = "Could not create Supabase client.";
+            return;
+          }
 
-        if (!client) {
-          statusEl.textContent = "Could not create Supabase client.";
-          return;
-        }
+          Promise.all([
+            client.from("profiles").select("id,username,display_name,created_at").order("created_at", { ascending: false }).limit(200),
+            client.from("scores").select("name, score, game_id, game_name, at, created_at").order("created_at", { ascending: false }).limit(100)
+          ])
+            .then(function (results) {
+              var profRes = results[0];
+              var scoreRes = results[1];
+              var profiles = profRes.data || [];
+              var rows = scoreRes.data || [];
 
-        Promise.all([
-          client.from("profiles").select("id,username,display_name,created_at").order("created_at", { ascending: false }).limit(200),
-          client.from("scores").select("name, score, game_id, game_name, at, created_at").order("at", { ascending: false }).limit(200)
-        ]).then(function (results) {
-            var profRes = results[0];
-            var scoreRes = results[1];
+              if (profRes.error) console.warn("profiles error", profRes.error);
+              if (scoreRes.error) console.warn("scores error", scoreRes.error);
 
-            if (scoreRes.error && (!profRes.data || !profRes.data.length)) {
-              statusEl.textContent = "Error: " + (scoreRes.error.message || (profRes.error && profRes.error.message) || "Could not load data");
-              return;
-            }
-
-            var profiles = profRes.data || [];
-            var rows = scoreRes.data || [];
-
-            var byName = {};
-            rows.forEach(function (r) {
-              var name = (r.name || "Player").trim() || "Player";
-              var key = name.toLowerCase();
-              if (!byName[key]) {
-                byName[key] = { name: name, totalScore: 0, games: 0, lastAt: 0 };
-              }
-              byName[key].totalScore += Number(r.score) || 0;
-              byName[key].games += 1;
-              var ts = Number(r.at) || 0;
-              if (ts > byName[key].lastAt) byName[key].lastAt = ts;
-            });
-
-            var studentsMap = {};
-            profiles.forEach(function (p) {
-              var un = (p.username || "").trim();
-              var dn = (p.display_name || un || "Student").trim();
-              var key = un.toLowerCase() || dn.toLowerCase();
-              if (!key) return;
-              var scoreInfo = byName[key] || byName[dn.toLowerCase()] || null;
-              studentsMap[key] = {
-                name: dn + (un && un.toLowerCase() !== dn.toLowerCase() ? " (@" + un + ")" : ""),
-                username: un,
-                totalScore: scoreInfo ? scoreInfo.totalScore : 0,
-                games: scoreInfo ? scoreInfo.games : 0,
-                lastAt: scoreInfo ? scoreInfo.lastAt : 0,
-                signedUp: p.created_at ? new Date(p.created_at).getTime() : 0,
-                registered: true
-              };
-            });
-            Object.keys(byName).forEach(function (k) {
-              if (!studentsMap[k]) {
-                studentsMap[k] = {
-                  name: byName[k].name,
-                  username: "",
-                  totalScore: byName[k].totalScore,
-                  games: byName[k].games,
-                  lastAt: byName[k].lastAt,
-                  signedUp: 0,
-                  registered: false
-                };
-              }
-            });
-
-            var students = Object.keys(studentsMap)
-              .map(function (k) { return studentsMap[k]; })
-              .sort(function (a, b) {
-                if (a.registered !== b.registered) return a.registered ? -1 : 1;
-                if (b.signedUp !== a.signedUp) return b.signedUp - a.signedUp;
-                return a.name.localeCompare(b.name);
+              var byName = {};
+              rows.forEach(function (r) {
+                var name = (r.name || "Player").trim();
+                var key = name.toLowerCase();
+                if (!byName[key]) {
+                  byName[key] = { name: name, totalScore: 0, games: 0, lastAt: 0 };
+                }
+                byName[key].totalScore += Number(r.score) || 0;
+                byName[key].games += 1;
+                var ts = Number(r.at) || 0;
+                if (ts > byName[key].lastAt) byName[key].lastAt = ts;
               });
 
-            statusEl.textContent =
-              profiles.length + " registered · " + rows.length + " score(s)" +
-              (profRes.error ? " (profiles: " + profRes.error.message + ")" : "");
+              var studentsMap = {};
+              profiles.forEach(function (p) {
+                var un = (p.username || "").trim();
+                var dn = (p.display_name || un || "Student").trim();
+                var key = un.toLowerCase() || dn.toLowerCase();
+                if (!key) return;
+                var scoreInfo = byName[key] || byName[dn.toLowerCase()] || null;
+                studentsMap[key] = {
+                  name: dn + (un && un.toLowerCase() !== dn.toLowerCase() ? " (@" + un + ")" : ""),
+                  username: un,
+                  totalScore: scoreInfo ? scoreInfo.totalScore : 0,
+                  games: scoreInfo ? scoreInfo.games : 0,
+                  lastAt: scoreInfo ? scoreInfo.lastAt : 0,
+                  signedUp: p.created_at ? new Date(p.created_at).getTime() : 0,
+                  registered: true
+                };
+              });
+              Object.keys(byName).forEach(function (k) {
+                if (!studentsMap[k]) {
+                  studentsMap[k] = {
+                    name: byName[k].name,
+                    username: "",
+                    totalScore: byName[k].totalScore,
+                    games: byName[k].games,
+                    lastAt: byName[k].lastAt,
+                    signedUp: 0,
+                    registered: false
+                  };
+                }
+              });
 
-            if (!students.length) {
-              studentList.innerHTML = '<div class="empty">No students yet. When someone registers, they appear here.</div>';
-            } else {
-              studentList.innerHTML = students.map(function (s) {
-                var initial = (s.name.charAt(0) || "?").toUpperCase();
-                var meta = [];
-                if (s.registered) meta.push("Registered");
-                else meta.push("Guest scores");
-                if (s.games) meta.push(s.games + " game(s)");
-                if (s.lastAt) meta.push("last score: " + new Date(s.lastAt).toLocaleString());
-                else if (s.signedUp) meta.push("joined: " + new Date(s.signedUp).toLocaleString());
-                return (
-                  '<div class="student-row">' +
-                  '<div class="student-avatar">' + initial + "</div>" +
-                  '<div><div class="student-name">' + escapeHtml(s.name) + "</div>" +
-                  '<div class="student-meta">' + escapeHtml(meta.join(" · ")) + "</div></div>" +
-                  '<div class="student-score">' + (s.games ? s.totalScore + " pts" : "—") + "</div>" +
-                  "</div>"
-                );
-              }).join("");
-            }
+              var students = Object.keys(studentsMap)
+                .map(function (k) { return studentsMap[k]; })
+                .sort(function (a, b) {
+                  if (a.registered !== b.registered) return a.registered ? -1 : 1;
+                  if (b.signedUp !== a.signedUp) return b.signedUp - a.signedUp;
+                  return a.name.localeCompare(b.name);
+                });
 
-            var recent = rows.slice(0, 30);
-            if (!recent.length) {
-              recentList.innerHTML = '<div class="empty">No recent scores</div>';
-            } else {
-              recentList.innerHTML = recent.map(function (r) {
-                var when = r.at
-                  ? new Date(Number(r.at)).toLocaleString()
-                  : (r.created_at || "—");
-                return (
-                  '<div class="student-row">' +
-                  '<div class="student-avatar">' + ((r.name || "?").charAt(0) || "?").toUpperCase() + "</div>" +
-                  '<div><div class="student-name">' + escapeHtml(r.name || "Player") + "</div>" +
-                  '<div class="student-meta">' + escapeHtml(r.game_name || r.game_id || "game") + " · " + when + "</div></div>" +
-                  '<div class="student-score">' + (Number(r.score) || 0) + "</div>" +
-                  "</div>"
-                );
-              }).join("");
-            }
-          })
-          .catch(function (err) {
-            statusEl.textContent = "Error loading data: " + (err && err.message ? err.message : String(err));
-          });
+              statusEl.textContent =
+                profiles.length + " registered · " + rows.length + " score(s)" +
+                (profRes.error ? " (profiles: " + profRes.error.message + ")" : "") +
+                (scoreRes.error ? " (scores: " + scoreRes.error.message + ")" : "");
+
+              if (!students.length) {
+                studentList.innerHTML = '<div class="empty">No students yet. When someone registers, they appear here.</div>';
+              } else {
+                studentList.innerHTML = students.map(function (s) {
+                  var initial = (s.name.charAt(0) || "?").toUpperCase();
+                  var meta = [];
+                  if (s.registered) meta.push("Registered");
+                  else meta.push("Guest scores");
+                  if (s.games) meta.push(s.games + " game(s)");
+                  else if (s.signedUp) meta.push("joined: " + new Date(s.signedUp).toLocaleString());
+                  return (
+                    '<div class="student-row">' +
+                    '<div class="student-avatar">' + initial + "</div>" +
+                    '<div><div class="student-name">' + escapeHtml(s.name) + "</div>" +
+                    '<div class="student-meta">' + escapeHtml(meta.join(" · ")) + "</div></div>" +
+                    '<div class="student-score">' + (s.games ? s.totalScore + " pts" : "—") + "</div>" +
+                    "</div>"
+                  );
+                }).join("");
+              }
+
+              var recent = rows.slice(0, 30);
+              if (!recent.length) {
+                recentList.innerHTML = '<div class="empty">No recent scores</div>';
+              } else {
+                recentList.innerHTML = recent.map(function (r) {
+                  var when = r.at
+                    ? new Date(Number(r.at)).toLocaleString()
+                    : (r.created_at || "—");
+                  return (
+                    '<div class="student-row">' +
+                    '<div class="student-avatar">' + ((r.name || "?").charAt(0) || "?").toUpperCase() + "</div>" +
+                    '<div><div class="student-name">' + escapeHtml(r.name || "Player") + "</div>" +
+                    '<div class="student-meta">' + escapeHtml(r.game_name || r.game_id || "game") + " · " + when + "</div></div>" +
+                    '<div class="student-score">' + (Number(r.score) || 0) + "</div>" +
+                    "</div>"
+                  );
+                }).join("");
+              }
+            })
+            .catch(function (err) {
+              statusEl.textContent = "Error loading data: " + (err && err.message ? err.message : String(err));
+            });
+        }
+
+        if (window.supabase && window.supabase.createClient) {
+          run();
+        } else if (window.__supabaseLoadError) {
+          run();
+        } else {
+          statusEl.textContent = "Loading Supabase library…";
+          var finished = false;
+          function once() {
+            if (finished) return;
+            finished = true;
+            document.removeEventListener("supabase-ready", once);
+            run();
+          }
+          document.addEventListener("supabase-ready", once);
+          setTimeout(once, 8000);
+        }
       }
 
       function escapeHtml(s) {
