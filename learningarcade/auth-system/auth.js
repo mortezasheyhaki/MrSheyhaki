@@ -148,6 +148,22 @@
     return msg || "Something went wrong. Try again.";
   }
 
+
+  async function ensureProfile(user, username, displayName) {
+    if (!user || !user.id || !sb) return;
+    var un = username || (user.user_metadata && user.user_metadata.username) || usernameFromEmail(user.email);
+    var dn = displayName || (user.user_metadata && user.user_metadata.display_name) || un;
+    try {
+      await sb.from("profiles").upsert({
+        id: user.id,
+        username: un,
+        display_name: dn
+      }, { onConflict: "id" });
+    } catch (e) {
+      console.warn("[LAAuth] profile upsert failed", e);
+    }
+  }
+
   async function register(username, password, displayName) {
     if (!init()) return { ok: false, error: initError || "Not ready" };
     var clean = sanitizeUsername(username);
@@ -189,6 +205,7 @@
           };
         }
         saveSessionFromUser(loginRes.data.user);
+        await ensureProfile(loginRes.data.user, clean, name);
         return { ok: true, player: getSession() };
       }
       return { ok: false, error: "Could not create account. Try again." };
@@ -209,6 +226,7 @@
       });
       if (res.error) return { ok: false, error: mapAuthError(res.error) };
       saveSessionFromUser(res.data.user);
+      await ensureProfile(res.data.user, clean, null);
       return { ok: true, player: getSession() };
     } catch (e) {
       console.warn("[LAAuth] login error", e);

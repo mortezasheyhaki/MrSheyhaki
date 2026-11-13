@@ -187,12 +187,12 @@
     <div id="adminPanel" style="display:none;">
       <div class="admin-card">
         <h1 class="admin-title">Students</h1>
-        <p class="admin-sub">Players who have submitted scores</p>
+        <p class="admin-sub">Registered accounts and players who submitted scores</p>
 
         <div class="admin-note">
           <strong>Full registered accounts</strong> (everyone who signed up) are listed in the Supabase Dashboard:<br>
           <strong>Authentication → Users</strong><br><br>
-          Usernames look like: <code>sara_8b@players.mrsheyhaki.ir</code><br>
+          Usernames look like: <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0e7d6f7c6f51366c4e7e626f776b7c7d20637c7d666b77666f656720677c">[email&#160;protected]</a></code><br>
           The real username is the part before <code>@</code>.
         </div>
 
@@ -213,7 +213,7 @@
     </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../auth-system/auth.js"></script>
   <script src="../firebase-scores.js"></script>
   <script src="../theme.js"></script>
@@ -274,7 +274,6 @@
           return;
         }
 
-        // Load recent scores, then group by player name
         var client = window.supabase && window.supabase.createClient
           ? window.supabase.createClient(
               "https://ezlcrygimvceusmnojgk.supabase.co",
@@ -287,63 +286,98 @@
           return;
         }
 
-        client
-          .from("scores")
-          .select("name, score, game_id, game_name, at, created_at")
-          .order("at", { ascending: false })
-          .limit(200)
-          .then(function (res) {
-            if (res.error) {
-              statusEl.textContent = "Error: " + (res.error.message || "Could not load scores");
+        Promise.all([
+          client.from("profiles").select("id,username,display_name,created_at").order("created_at", { ascending: false }).limit(200),
+          client.from("scores").select("name, score, game_id, game_name, at, created_at").order("at", { ascending: false }).limit(200)
+        ]).then(function (results) {
+            var profRes = results[0];
+            var scoreRes = results[1];
+
+            if (scoreRes.error && (!profRes.data || !profRes.data.length)) {
+              statusEl.textContent = "Error: " + (scoreRes.error.message || profRes.error && profRes.error.message || "Could not load data");
               return;
             }
 
-            var rows = res.data || [];
-            statusEl.textContent = rows.length
-              ? rows.length + " score(s) found"
-              : "No scores yet. Students need to play a game and submit a score.";
+            var profiles = (profRes.data || []);
+            var rows = (scoreRes.data || []);
 
-            // Group by player name
+            // Group scores by player name
             var byName = {};
             rows.forEach(function (r) {
               var name = (r.name || "Player").trim() || "Player";
               var key = name.toLowerCase();
               if (!byName[key]) {
-                byName[key] = {
-                  name: name,
-                  totalScore: 0,
-                  games: 0,
-                  lastAt: 0
-                };
+                byName[key] = { name: name, totalScore: 0, games: 0, lastAt: 0 };
               }
               byName[key].totalScore += Number(r.score) || 0;
               byName[key].games += 1;
-              var t = Number(r.at) || 0;
-              if (t > byName[key].lastAt) byName[key].lastAt = t;
+              var ts = Number(r.at) || 0;
+              if (ts > byName[key].lastAt) byName[key].lastAt = ts;
             });
 
-            var students = Object.keys(byName)
-              .map(function (k) { return byName[k]; })
+            // Merge registered profiles into student list
+            var studentsMap = {};
+            profiles.forEach(function (p) {
+              var un = (p.username || "").trim();
+              var dn = (p.display_name || un || "Student").trim();
+              var key = un.toLowerCase() || dn.toLowerCase();
+              if (!key) return;
+              var scoreInfo = byName[key] || byName[dn.toLowerCase()] || null;
+              studentsMap[key] = {
+                name: dn + (un && un !== dn.toLowerCase() ? " (@" + un + ")" : ""),
+                username: un,
+                totalScore: scoreInfo ? scoreInfo.totalScore : 0,
+                games: scoreInfo ? scoreInfo.games : 0,
+                lastAt: scoreInfo ? scoreInfo.lastAt : 0,
+                signedUp: p.created_at ? new Date(p.created_at).getTime() : 0,
+                registered: true
+              };
+            });
+            // Include score-only players (guests)
+            Object.keys(byName).forEach(function (k) {
+              if (!studentsMap[k]) {
+                studentsMap[k] = {
+                  name: byName[k].name,
+                  username: "",
+                  totalScore: byName[k].totalScore,
+                  games: byName[k].games,
+                  lastAt: byName[k].lastAt,
+                  signedUp: 0,
+                  registered: false
+                };
+              }
+            });
+
+            var students = Object.keys(studentsMap)
+              .map(function (k) { return studentsMap[k]; })
               .sort(function (a, b) {
-                if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+                if (a.registered !== b.registered) return a.registered ? -1 : 1;
+                if (b.signedUp !== a.signedUp) return b.signedUp - a.signedUp;
                 return a.name.localeCompare(b.name);
               });
 
+            statusEl.textContent =
+              profiles.length + " registered · " + rows.length + " score(s)" +
+              (profRes.error ? " (profiles: " + profRes.error.message + ")" : "");
+
             if (!students.length) {
-              studentList.innerHTML = '<div class="empty">No students with scores yet</div>';
+              studentList.innerHTML = '<div class="empty">No students yet. When someone registers, they appear here.</div>';
             } else {
               studentList.innerHTML = students
-                .map(function (s, i) {
+                .map(function (s) {
                   var initial = (s.name.charAt(0) || "?").toUpperCase();
-                  var last = s.lastAt
-                    ? new Date(s.lastAt).toLocaleString()
-                    : "—";
+                  var meta = [];
+                  if (s.registered) meta.push("Registered");
+                  else meta.push("Guest scores");
+                  if (s.games) meta.push(s.games + " game(s)");
+                  if (s.lastAt) meta.push("last score: " + new Date(s.lastAt).toLocaleString());
+                  else if (s.signedUp) meta.push("joined: " + new Date(s.signedUp).toLocaleString());
                   return (
                     '<div class="student-row">' +
                     '<div class="student-avatar">' + initial + "</div>" +
                     '<div><div class="student-name">' + escapeHtml(s.name) + "</div>" +
-                    '<div class="student-meta">' + s.games + " game(s) · last: " + last + "</div></div>" +
-                    '<div class="student-score">' + s.totalScore + " pts</div>" +
+                    '<div class="student-meta">' + escapeHtml(meta.join(" · ")) + "</div></div>" +
+                    '<div class="student-score">' + (s.games ? s.totalScore + " pts" : "—") + "</div>" +
                     "</div>"
                   );
                 })
