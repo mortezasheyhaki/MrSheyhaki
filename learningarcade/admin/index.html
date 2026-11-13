@@ -8,57 +8,139 @@
   <link rel="stylesheet" href="../style.css" />
   <link rel="stylesheet" href="../theme.css" />
   <style>
-    .admin-wrap {
-      max-width: 720px;
+    /* Hide global profile / login floating controls on this page */
+    .nav-profile,
+    a[href*="profile"],
+    .auth-bar,
+    .la-auth-btn,
+    .login-fab,
+    .profile-fab,
+    button.profile,
+    .arcade-header-bar .nav-profile,
+    header a[aria-label="Profile"],
+    a.nav-link[data-icon="👤"] {
+      display: none !important;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(900px 500px at 10% -10%, rgba(105,55,216,.12), transparent 55%),
+        radial-gradient(700px 420px at 100% 0%, rgba(59,130,246,.10), transparent 50%),
+        linear-gradient(180deg, #f5f3ff 0%, #eef2ff 50%, #f8fafc 100%);
+    }
+    html[data-theme=dark] body {
+      background:
+        radial-gradient(900px 500px at 10% -10%, rgba(105,55,216,.22), transparent 55%),
+        linear-gradient(180deg, #0f1220 0%, #151a2b 100%);
+    }
+
+    .admin-top {
+      max-width: 760px;
       margin: 0 auto;
-      padding: 16px 16px 64px;
+      padding: 18px 16px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+    .admin-brand-ico {
+      width: 36px; height: 36px; border-radius: 12px;
+      display: grid; place-items: center;
+      background: linear-gradient(145deg, #7c3aed, #4f46e5);
+      color: #fff; font-size: 1rem;
+      box-shadow: 0 4px 0 rgba(79,70,229,.35);
+    }
+    .admin-tabs {
+      display: inline-flex;
+      background: rgba(255,255,255,.85);
+      border: 1.5px solid rgba(105,55,216,.12);
+      border-radius: 999px;
+      padding: 4px;
+      gap: 2px;
+      box-shadow: 0 4px 16px rgba(32,38,54,.06);
+    }
+    html[data-theme=dark] .admin-tabs {
+      background: #1e2130;
+      border-color: #2e3348;
+    }
+    .admin-tabs a {
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.84rem;
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: #687184;
+    }
+    .admin-tabs a.active {
+      background: linear-gradient(145deg, #7c3aed, #5b21b6);
+      color: #fff;
+      box-shadow: 0 2px 0 #4c1d95;
+    }
+
+    .admin-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 18px 16px 64px;
     }
     .admin-card {
       background: rgba(255,255,255,.97);
-      border-radius: 20px;
+      border-radius: 22px;
       padding: 22px 20px;
-      box-shadow: 0 8px 0 rgba(84,37,184,.1), 0 14px 28px rgba(32,38,54,.07);
+      border: 1px solid rgba(105,55,216,.08);
+      box-shadow: 0 10px 0 rgba(84,37,184,.08), 0 18px 36px rgba(32,38,54,.07);
       margin-bottom: 18px;
     }
     html[data-theme=dark] .admin-card {
-      background: #1e2130;
-      box-shadow: 0 8px 0 rgba(0,0,0,.25), 0 14px 28px rgba(0,0,0,.3);
+      background: #1a1f2e;
+      border-color: #2a3145;
+      box-shadow: 0 10px 0 rgba(0,0,0,.25), 0 18px 36px rgba(0,0,0,.3);
     }
     .admin-title {
-      margin: 0 0 6px;
-      font-size: 1.4rem;
+      margin: 0 0 4px;
+      font-size: 1.45rem;
       font-weight: 900;
-      color: #202636;
+      color: #1e1b4b;
+      letter-spacing: -0.02em;
     }
     html[data-theme=dark] .admin-title { color: #f0f2f8; }
     .admin-sub {
-      margin: 0 0 18px;
+      margin: 0 0 16px;
       color: #687184;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 600;
     }
     .admin-note {
-      background: #f3edff;
-      border: 1.5px solid rgba(105,55,216,.2);
+      background: linear-gradient(135deg, #f5f3ff, #eef2ff);
+      border: 1.5px solid rgba(105,55,216,.15);
       border-radius: 14px;
       padding: 12px 14px;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 600;
-      color: #3d2f6b;
+      color: #4338ca;
       margin-bottom: 16px;
-      line-height: 1.45;
+      line-height: 1.5;
     }
     html[data-theme=dark] .admin-note {
-      background: #2a2540;
-      border-color: #4a3f70;
-      color: #d4c8f5;
+      background: #252042;
+      border-color: #3b3560;
+      color: #c4b5fd;
     }
     .admin-status {
       min-height: 1.3em;
       margin: 0 0 12px;
       font-weight: 700;
       color: #687184;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
     }
     .admin-actions {
       display: flex;
@@ -73,84 +155,86 @@
       font: inherit;
       font-weight: 800;
       font-size: 0.88rem;
-      padding: 10px 14px;
+      padding: 10px 16px;
       border-radius: 12px;
       cursor: pointer;
-      transition: 0.15s;
+      transition: transform .1s, box-shadow .1s;
     }
+    .admin-btn:active { transform: translateY(2px); }
     .admin-btn.primary {
-      background: #6937d8;
-      border-color: #6937d8;
+      background: linear-gradient(145deg, #7c3aed, #5b21b6);
+      border-color: transparent;
       color: #fff;
-      box-shadow: 0 3px 0 #5425b8;
+      box-shadow: 0 4px 0 #4c1d95;
     }
-    .admin-btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
+    .admin-btn.primary:active { box-shadow: 0 1px 0 #4c1d95; }
     html[data-theme=dark] .admin-btn {
       background: #2a2e42;
       border-color: #3a3f55;
       color: #d0d4e4;
     }
-    .student-list {
-      display: grid;
-      gap: 10px;
-    }
+
+    .student-list { display: grid; gap: 10px; }
     .student-row {
-      display: grid;
-      grid-template-columns: 44px 1fr auto;
-      gap: 10px;
-      align-items: center;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: #faf9ff;
-      border: 1.5px solid #ece6ff;
-    }
-    html[data-theme=dark] .student-row {
-      background: #252838;
-      border-color: #353a50;
-    }
-    .student-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: #6937d8;
-      color: #fff;
-      font-weight: 900;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 1rem;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #f8f7ff;
+      border: 1px solid rgba(105,55,216,.08);
+    }
+    html[data-theme=dark] .student-row {
+      background: #22263a;
+      border-color: #2e3348;
+    }
+    .student-avatar {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: grid; place-items: center;
+      font-weight: 900; font-size: 0.95rem;
+      background: linear-gradient(145deg, #c4b5fd, #8b5cf6);
+      color: #4c1d95;
+      flex: none;
     }
     .student-name {
       font-weight: 800;
-      color: #202636;
-      font-size: 1rem;
+      color: #1e1b4b;
+      font-size: 0.95rem;
     }
-    html[data-theme=dark] .student-name { color: #f0f2f8; }
+    html[data-theme=dark] .student-name { color: #eef0f8; }
     .student-meta {
       font-size: 0.78rem;
       font-weight: 600;
-      color: #8b86b0;
+      color: #7c8298;
       margin-top: 2px;
     }
     .student-score {
+      margin-left: auto;
       font-weight: 900;
-      color: #6937d8;
+      color: #6d28d9;
       font-size: 0.95rem;
       text-align: right;
+      flex: none;
     }
     .empty {
       text-align: center;
-      padding: 28px 12px;
+      padding: 32px 12px;
       color: #8b86b0;
       font-weight: 700;
     }
+
     .gate {
-      max-width: 360px;
-      margin: 40px auto;
+      max-width: 380px;
+      margin: 48px auto;
       text-align: center;
+    }
+    .gate-lock {
+      width: 56px; height: 56px; border-radius: 18px;
+      margin: 0 auto 14px;
+      display: grid; place-items: center;
+      background: linear-gradient(145deg, #7c3aed, #4f46e5);
+      color: #fff; font-size: 1.4rem;
+      box-shadow: 0 6px 0 rgba(79,70,229,.35);
     }
     .gate input {
       width: 100%;
@@ -163,23 +247,33 @@
       font-size: 1rem;
       font-weight: 600;
       margin: 12px 0 14px;
+      text-align: center;
+    }
+    html[data-theme=dark] .gate input {
+      background: #151925;
+      border-color: #2e3348;
+      color: #eef0f8;
     }
   </style>
 </head>
 <body>
-  <header class="arcade-header-bar">
-    <nav class="arcade-nav" aria-label="Main navigation">
-      <a href="../" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
-      <a href="./" class="nav-link active" aria-current="page" aria-label="Admin" data-icon="🔐"><span class="nav-ico" aria-hidden="true">🔐</span><span class="nav-text">Admin</span></a>
+  <div class="admin-top">
+    <a class="admin-brand" href="../">
+      <span class="admin-brand-ico" aria-hidden="true">🕹️</span>
+      <span>Learning Arcade</span>
+    </a>
+    <nav class="admin-tabs" aria-label="Section">
+      <a href="../">Arcade</a>
+      <a href="./" class="active">Admin</a>
     </nav>
-  </header>
+  </div>
 
   <main class="admin-wrap">
-    <!-- Simple password gate so students don't open this page -->
     <div id="gate" class="admin-card gate">
+      <div class="gate-lock" aria-hidden="true">🔐</div>
       <h1 class="admin-title">Teacher Admin</h1>
       <p class="admin-sub">Enter the admin password to continue</p>
-      <input id="gatePassword" type="password" placeholder="Admin password" autocomplete="current-password" />
+      <input type="password" id="gatePassword" placeholder="Password" autocomplete="current-password" />
       <button type="button" class="admin-btn primary" id="gateBtn" style="width:100%">Open Admin</button>
       <p id="gateError" class="admin-status" style="color:#c0392b;margin-top:10px;"></p>
     </div>
@@ -190,10 +284,9 @@
         <p class="admin-sub">Registered accounts and players who submitted scores</p>
 
         <div class="admin-note">
-          <strong>Full registered accounts</strong> (everyone who signed up) are listed in the Supabase Dashboard:<br>
-          <strong>Authentication → Users</strong><br><br>
-          Usernames look like: <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0e7d6f7c6f51366c4e7e626f776b7c7d20637c7d666b77666f656720677c">[email&#160;protected]</a></code><br>
-          The real username is the part before <code>@</code>.
+          <strong>Registered accounts</strong> come from the <code>profiles</code> table (created when students sign up).<br>
+          You can also check Supabase → <strong>Authentication → Users</strong>
+          (email = <code>username@players.mrsheyhaki.ir</code>).
         </div>
 
         <div class="admin-actions">
@@ -213,13 +306,12 @@
     </div>
   </main>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../auth-system/auth.js"></script>
   <script src="../firebase-scores.js"></script>
   <script src="../theme.js"></script>
   <script>
     (function () {
-      // Change this password to something only you know
       var ADMIN_PASSWORD = "sheyhaki2026";
 
       var gate = document.getElementById("gate");
@@ -259,7 +351,6 @@
       document.getElementById("logoutAdminBtn").onclick = closeAdmin;
       document.getElementById("refreshBtn").onclick = loadData;
 
-      // Auto-open if already unlocked this session
       try {
         if (sessionStorage.getItem("laAdminOk") === "1") openAdmin();
       } catch (e) {}
@@ -268,11 +359,6 @@
         statusEl.textContent = "Loading…";
         studentList.innerHTML = "";
         recentList.innerHTML = "";
-
-        if (typeof LAScores === "undefined" || !LAScores.init()) {
-          statusEl.textContent = "Supabase not ready. Check that the scores table is exposed.";
-          return;
-        }
 
         var client = window.supabase && window.supabase.createClient
           ? window.supabase.createClient(
@@ -294,14 +380,13 @@
             var scoreRes = results[1];
 
             if (scoreRes.error && (!profRes.data || !profRes.data.length)) {
-              statusEl.textContent = "Error: " + (scoreRes.error.message || profRes.error && profRes.error.message || "Could not load data");
+              statusEl.textContent = "Error: " + (scoreRes.error.message || (profRes.error && profRes.error.message) || "Could not load data");
               return;
             }
 
-            var profiles = (profRes.data || []);
-            var rows = (scoreRes.data || []);
+            var profiles = profRes.data || [];
+            var rows = scoreRes.data || [];
 
-            // Group scores by player name
             var byName = {};
             rows.forEach(function (r) {
               var name = (r.name || "Player").trim() || "Player";
@@ -315,7 +400,6 @@
               if (ts > byName[key].lastAt) byName[key].lastAt = ts;
             });
 
-            // Merge registered profiles into student list
             var studentsMap = {};
             profiles.forEach(function (p) {
               var un = (p.username || "").trim();
@@ -324,7 +408,7 @@
               if (!key) return;
               var scoreInfo = byName[key] || byName[dn.toLowerCase()] || null;
               studentsMap[key] = {
-                name: dn + (un && un !== dn.toLowerCase() ? " (@" + un + ")" : ""),
+                name: dn + (un && un.toLowerCase() !== dn.toLowerCase() ? " (@" + un + ")" : ""),
                 username: un,
                 totalScore: scoreInfo ? scoreInfo.totalScore : 0,
                 games: scoreInfo ? scoreInfo.games : 0,
@@ -333,7 +417,6 @@
                 registered: true
               };
             });
-            // Include score-only players (guests)
             Object.keys(byName).forEach(function (k) {
               if (!studentsMap[k]) {
                 studentsMap[k] = {
@@ -363,47 +446,42 @@
             if (!students.length) {
               studentList.innerHTML = '<div class="empty">No students yet. When someone registers, they appear here.</div>';
             } else {
-              studentList.innerHTML = students
-                .map(function (s) {
-                  var initial = (s.name.charAt(0) || "?").toUpperCase();
-                  var meta = [];
-                  if (s.registered) meta.push("Registered");
-                  else meta.push("Guest scores");
-                  if (s.games) meta.push(s.games + " game(s)");
-                  if (s.lastAt) meta.push("last score: " + new Date(s.lastAt).toLocaleString());
-                  else if (s.signedUp) meta.push("joined: " + new Date(s.signedUp).toLocaleString());
-                  return (
-                    '<div class="student-row">' +
-                    '<div class="student-avatar">' + initial + "</div>" +
-                    '<div><div class="student-name">' + escapeHtml(s.name) + "</div>" +
-                    '<div class="student-meta">' + escapeHtml(meta.join(" · ")) + "</div></div>" +
-                    '<div class="student-score">' + (s.games ? s.totalScore + " pts" : "—") + "</div>" +
-                    "</div>"
-                  );
-                })
-                .join("");
+              studentList.innerHTML = students.map(function (s) {
+                var initial = (s.name.charAt(0) || "?").toUpperCase();
+                var meta = [];
+                if (s.registered) meta.push("Registered");
+                else meta.push("Guest scores");
+                if (s.games) meta.push(s.games + " game(s)");
+                if (s.lastAt) meta.push("last score: " + new Date(s.lastAt).toLocaleString());
+                else if (s.signedUp) meta.push("joined: " + new Date(s.signedUp).toLocaleString());
+                return (
+                  '<div class="student-row">' +
+                  '<div class="student-avatar">' + initial + "</div>" +
+                  '<div><div class="student-name">' + escapeHtml(s.name) + "</div>" +
+                  '<div class="student-meta">' + escapeHtml(meta.join(" · ")) + "</div></div>" +
+                  '<div class="student-score">' + (s.games ? s.totalScore + " pts" : "—") + "</div>" +
+                  "</div>"
+                );
+              }).join("");
             }
 
-            // Recent scores
             var recent = rows.slice(0, 30);
             if (!recent.length) {
               recentList.innerHTML = '<div class="empty">No recent scores</div>';
             } else {
-              recentList.innerHTML = recent
-                .map(function (r) {
-                  var when = r.at
-                    ? new Date(Number(r.at)).toLocaleString()
-                    : (r.created_at || "—");
-                  return (
-                    '<div class="student-row">' +
-                    '<div class="student-avatar">' + ((r.name || "?").charAt(0) || "?").toUpperCase() + "</div>" +
-                    '<div><div class="student-name">' + escapeHtml(r.name || "Player") + "</div>" +
-                    '<div class="student-meta">' + escapeHtml(r.game_name || r.game_id || "game") + " · " + when + "</div></div>" +
-                    '<div class="student-score">' + (Number(r.score) || 0) + "</div>" +
-                    "</div>"
-                  );
-                })
-                .join("");
+              recentList.innerHTML = recent.map(function (r) {
+                var when = r.at
+                  ? new Date(Number(r.at)).toLocaleString()
+                  : (r.created_at || "—");
+                return (
+                  '<div class="student-row">' +
+                  '<div class="student-avatar">' + ((r.name || "?").charAt(0) || "?").toUpperCase() + "</div>" +
+                  '<div><div class="student-name">' + escapeHtml(r.name || "Player") + "</div>" +
+                  '<div class="student-meta">' + escapeHtml(r.game_name || r.game_id || "game") + " · " + when + "</div></div>" +
+                  '<div class="student-score">' + (Number(r.score) || 0) + "</div>" +
+                  "</div>"
+                );
+              }).join("");
             }
           })
           .catch(function (err) {
