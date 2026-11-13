@@ -1,147 +1,101 @@
 /**
- * Learning Arcade — Appwrite scoreboard helper
- * Uses Appwrite TablesDB (Frankfurt). Public API: global.LAScores
+ * Learning Arcade — Scoreboard helper on Supabase
+ * Public API: global.LAScores  (same shape as the old Appwrite version)
  *
- * Load BEFORE this file:
- *   <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
+ * Load AFTER Supabase SDK (optional if only submitting as guest):
+ *   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+ *   <script src="/learningarcade/firebase-scores.js"></script>
+ *
+ * CONFIG — use the SAME values as auth.js
  */
 (function (global) {
-  'use strict';
+  "use strict";
 
-  var ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
-  var PROJECT_ID = '6aafc5370019ebd5da7c';
-  var DATABASE_ID = '6aafc5ce007461d09d3';
-  var TABLE_ID = '6aafc6060001c3f793eb';
+  // ========== CONFIG (required) ==========
+  var SUPABASE_URL = "https://ezlcrygimvceusmnojgk.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_aPyfAl2ErhMN5awDrQTZnQ_gR0-0sDr";
+  // =======================================
 
-  var NAME_KEY = 'laPlayerName';
-  var CLASS_KEY = 'laClassCode';
+  var NAME_KEY = "laPlayerName";
+  var CLASS_KEY = "laClassCode";
   var ready = false;
   var initError = null;
-  var tablesDB = null;
-  var ID = null;
-  var Query = null;
+  var sb = null;
 
   function init() {
     if (ready) return true;
     if (initError) return false;
-    if (typeof Appwrite === 'undefined') {
-      initError = 'Appwrite SDK not loaded — use appwrite@26.2.0 CDN';
-      console.warn('[LAScores]', initError);
+    if (!SUPABASE_URL || SUPABASE_URL.indexOf("YOUR_PROJECT") !== -1) {
+      initError = "Supabase URL not configured — edit firebase-scores.js";
+      console.warn("[LAScores]", initError);
+      return false;
+    }
+    if (typeof supabase === "undefined" || typeof supabase.createClient !== "function") {
+      // Reuse LAAuth client if available
+      if (global.LAAuth && typeof LAAuth.getClient === "function") {
+        sb = LAAuth.getClient();
+        if (sb) {
+          ready = true;
+          return true;
+        }
+      }
+      initError = "Supabase SDK not loaded";
+      console.warn("[LAScores]", initError);
       return false;
     }
     try {
-      var Client = Appwrite.Client;
-      var TablesDBCtor = Appwrite.TablesDB || Appwrite.Databases;
-      if (!Client || !TablesDBCtor) {
-        initError = 'Appwrite.TablesDB missing. Keys: ' + Object.keys(Appwrite).join(', ');
-        console.warn('[LAScores]', initError);
-        return false;
+      if (global.LAAuth && typeof LAAuth.getClient === "function" && LAAuth.getClient()) {
+        sb = LAAuth.getClient();
+      } else {
+        sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       }
-      ID = Appwrite.ID;
-      Query = Appwrite.Query;
-
-      var client = new Client()
-        .setEndpoint(ENDPOINT)
-        .setProject(PROJECT_ID);
-
-      tablesDB = new TablesDBCtor(client);
-
-      // Fallback if old Databases API only
-      if (typeof tablesDB.createRow !== 'function' && typeof tablesDB.createDocument === 'function') {
-        tablesDB.createRow = function (opts) {
-          return tablesDB.createDocument(
-            opts.databaseId,
-            opts.tableId,
-            opts.rowId,
-            opts.data
-          );
-        };
-      }
-      if (typeof tablesDB.listRows !== 'function' && typeof tablesDB.listDocuments === 'function') {
-        tablesDB.listRows = function (opts) {
-          return tablesDB
-            .listDocuments(opts.databaseId, opts.tableId, opts.queries || [])
-            .then(function (res) {
-              res.rows = res.documents || res.rows || [];
-              return res;
-            });
-        };
-      }
-
       ready = true;
       return true;
     } catch (e) {
       initError = e && e.message ? e.message : String(e);
-      console.warn('[LAScores]', initError);
+      console.warn("[LAScores]", initError);
       return false;
     }
   }
 
   function ensureAuth() {
-    if (!init()) {
-      return Promise.reject(new Error(initError || 'Appwrite not ready'));
-    }
-    return Promise.resolve({ uid: null });
+    return init();
   }
 
   function getPlayerName() {
     try {
-      return (localStorage.getItem(NAME_KEY) || '').trim();
+      return localStorage.getItem(NAME_KEY) || "";
     } catch (e) {
-      return '';
+      return "";
     }
   }
-
-  function setPlayerName(name) {
-    var clean = String(name || '').trim().slice(0, 32);
+  function setPlayerName(n) {
     try {
-      if (clean) localStorage.setItem(NAME_KEY, clean);
-      else localStorage.removeItem(NAME_KEY);
+      localStorage.setItem(NAME_KEY, String(n || "").trim().slice(0, 32));
     } catch (e) {}
-    return clean;
   }
-
-  /** Class code: short school/class id, e.g. 7A, G1, SPRING26 */
-  function sanitizeClassCode(code) {
-    return String(code || '')
-      .trim()
-      .toUpperCase()
-      .replace(/[^A-Z0-9\-]/g, '')
-      .slice(0, 12);
-  }
-
   function getClassCode() {
     try {
-      return sanitizeClassCode(localStorage.getItem(CLASS_KEY) || '');
+      return localStorage.getItem(CLASS_KEY) || "";
     } catch (e) {
-      return '';
+      return "";
     }
   }
-
-  function setClassCode(code) {
-    var clean = sanitizeClassCode(code);
+  function setClassCode(c) {
     try {
-      if (clean) localStorage.setItem(CLASS_KEY, clean);
-      else localStorage.removeItem(CLASS_KEY);
+      localStorage.setItem(CLASS_KEY, String(c || "").trim().slice(0, 16));
     } catch (e) {}
-    return clean;
+  }
+  function getDisplayName(name, code) {
+    name = (name != null ? name : getPlayerName()) || "";
+    code = code != null ? code : getClassCode();
+    name = String(name).trim();
+    code = String(code || "").trim();
+    return code ? name + " · " + code : name;
   }
 
-  /**
-   * Unique leaderboard label: "Ali · 7A"
-   * Keeps same first names in different classes distinct.
-   */
-  function getDisplayName(name, classCode) {
-    var n = (name != null ? String(name) : getPlayerName()).trim().slice(0, 32);
-    var c = sanitizeClassCode(classCode != null ? classCode : getClassCode());
-    if (!n) return '';
-    if (!c) return n;
-    return n + ' · ' + c;
-  }
-
-  /** Match a stored score row name to this player (with or without class code). */
   function nameMatchesPlayer(rowName) {
-    var row = String(rowName || '').trim().toLowerCase();
+    var row = String(rowName || "").trim().toLowerCase();
     if (!row) return false;
     var display = getDisplayName().toLowerCase();
     if (display && row === display) return true;
@@ -149,26 +103,27 @@
     var code = getClassCode().toLowerCase();
     if (!plain) return false;
     if (row === plain) return true;
-    if (code && row === plain + ' · ' + code) return true;
-    if (code && row.indexOf(plain + ' · ') === 0) {
+    if (code && row === plain + " · " + code) return true;
+    if (code && row.indexOf(plain + " · ") === 0) {
       return row.slice(plain.length + 3) === code;
     }
     return false;
   }
 
   function sanitizeGameId(id) {
-    return String(id || 'game').replace(/[.#$\[\]]/g, '_').slice(0, 64);
+    return String(id || "game")
+      .replace(/[.#$\[\]]/g, "_")
+      .slice(0, 64);
   }
 
   function submit(opts) {
     opts = opts || {};
     if (!init()) {
-      return Promise.resolve({ ok: false, error: initError || 'Appwrite not ready' });
+      return Promise.resolve({ ok: false, error: initError || "Supabase not ready" });
     }
 
-    // Prefer logged-in user name when available
     var sessionUser = null;
-    if (global.LAAuth && typeof LAAuth.currentUser === 'function') {
+    if (global.LAAuth && typeof LAAuth.currentUser === "function") {
       sessionUser = LAAuth.currentUser();
     }
 
@@ -180,17 +135,11 @@
       rawName = String(sessionUser.username).trim().slice(0, 32);
     }
     if (!rawName) {
-      return Promise.resolve({ ok: false, error: 'Please enter a name' });
+      return Promise.resolve({ ok: false, error: "Please enter a name" });
     }
     setPlayerName(rawName);
-
-    // Class code is optional (kept for shared tablets if a teacher wants it)
-    if (opts.classCode != null) {
-      setClassCode(opts.classCode);
-    }
+    if (opts.classCode != null) setClassCode(opts.classCode);
     var classCode = getClassCode();
-
-    // Leaderboard label: just the name, or "Name · CLASS" if a class code was set
     var name = getDisplayName(rawName, classCode);
 
     var gameId = sanitizeGameId(opts.gameId);
@@ -198,209 +147,162 @@
     if (!isFinite(score)) score = 0;
     score = Math.max(0, Math.round(score));
 
-    // Link to logged-in account when available
-    var userId = null;
-    if (global.LAAuth && typeof LAAuth.currentUser === 'function') {
-      var session = LAAuth.currentUser();
-      if (session && session.id) {
-        userId = session.id;
-        // Prefer account display name when logged in
-        if (session.displayName) {
-          name = session.displayName;
-          if (classCode) name = name + ' · ' + classCode;
-        }
-      }
-    }
-
-    var data = {
+    var row = {
       name: name,
       score: score,
-      gameId: gameId,
-      gameName: opts.gameName ? String(opts.gameName).slice(0, 128) : gameId,
-      at: Date.now()
+      game_id: gameId,
+      game_name: opts.gameName ? String(opts.gameName).slice(0, 80) : gameId,
+      at: Date.now(),
     };
-    if (userId) {
-      data.userId = userId;
-    }
     if (opts.maxScore != null && isFinite(Number(opts.maxScore))) {
-      data.maxScore = Number(opts.maxScore);
+      row.max_score = Number(opts.maxScore);
     }
-    // Optional race time (ms). Requires Appwrite attribute: timeMs (integer).
-    var timeMs = opts.timeMs != null ? Number(opts.timeMs) : null;
-    if (timeMs != null && isFinite(timeMs) && timeMs > 0) {
-      data.timeMs = Math.round(timeMs);
+    if (opts.timeMs != null && isFinite(Number(opts.timeMs))) {
+      row.time_ms = Math.round(Number(opts.timeMs));
     }
-
-    function create(payload) {
-      return tablesDB.createRow({
-        databaseId: DATABASE_ID,
-        tableId: TABLE_ID,
-        rowId: ID.unique(),
-        data: payload
-      });
+    if (sessionUser && sessionUser.id) {
+      row.user_id = sessionUser.id;
     }
 
-    return create(data)
-      .catch(function (err) {
-        // If timeMs column is missing in Appwrite, retry without it
-        var msg = err && err.message ? err.message : String(err);
-        if (data.userId != null && /userId|attribute|unknown|invalid/i.test(msg)) {
-          console.warn('[LAScores] userId not accepted — retrying without it. Add string attribute userId in Appwrite.');
-          var fallback = Object.assign({}, data);
-          delete fallback.userId;
-          return create(fallback);
-        }
-        if (data.timeMs != null && /timeMs|attribute|unknown|invalid/i.test(msg)) {
-          console.warn('[LAScores] timeMs not accepted — retrying without it. Add integer attribute timeMs in Appwrite.');
-          var fallback = Object.assign({}, data);
-          delete fallback.timeMs;
-          return create(fallback);
-        }
-        throw err;
-      })
-      .then(function (row) {
-        return {
-          ok: true,
-          key: row.$id,
-          data: {
-            name: data.name,
-            score: data.score,
-            maxScore: data.maxScore != null ? data.maxScore : null,
-            timeMs: data.timeMs != null ? data.timeMs : null,
-            gameName: data.gameName,
-            uid: null,
-            at: data.at,
-            iso: new Date(data.at).toISOString()
-          }
-        };
-      })
-      .catch(function (err) {
-        console.warn('[LAScores] submit failed', err);
-        var msg = err && err.message ? err.message : String(err);
-        if (/permission|not authorized|401|403/i.test(msg)) {
-          msg = 'Permission denied. Set table Create+Read for role Any in Appwrite.';
-        }
-        return { ok: false, error: msg };
-      });
-  }
-
-  /**
-   * Fastest players for a game (lowest timeMs wins).
-   * Best time per player name. Optional minAccuracy (0–100) filters by score/maxScore.
-   */
-  function topByTime(gameId, limit, minAccuracy) {
-    if (!init()) return Promise.resolve([]);
-    limit = limit || 3;
-    minAccuracy = minAccuracy != null ? Number(minAccuracy) : 90;
-    var id = sanitizeGameId(gameId);
-
-    return tablesDB
-      .listRows({
-        databaseId: DATABASE_ID,
-        tableId: TABLE_ID,
-        queries: [
-          Query.equal('gameId', id),
-          Query.limit(100)
-        ]
-      })
+    return sb
+      .from("scores")
+      .insert([row])
+      .select("id")
       .then(function (res) {
-        var best = {};
-        (res.rows || res.documents || []).forEach(function (r) {
-          var t = Number(r.timeMs);
-          if (!isFinite(t) || t <= 0) return;
-
-          // Quality filter: only count strong runs for the speed board
-          if (minAccuracy > 0) {
-            var sc = Number(r.score) || 0;
-            var mx = Number(r.maxScore);
-            if (isFinite(mx) && mx > 0) {
-              if ((sc / mx) * 100 < minAccuracy) return;
-            }
-          }
-
-          var name = String(r.name || 'Player').trim() || 'Player';
-          var key = name.toLowerCase();
-          var prev = best[key];
-          if (!prev || t < prev.timeMs) {
-            best[key] = {
-              name: name,
-              timeMs: Math.round(t),
-              score: Number(r.score) || 0,
-              maxScore: r.maxScore != null ? Number(r.maxScore) : null,
-              gameId: id,
-              at: Number(r.at) || 0,
-              key: key
-            };
-          }
-        });
-
-        return Object.keys(best)
-          .map(function (k) { return best[k]; })
-          .sort(function (a, b) {
-            if (a.timeMs !== b.timeMs) return a.timeMs - b.timeMs;
-            return a.name.localeCompare(b.name);
-          })
-          .slice(0, limit);
+        if (res.error) {
+          console.warn("[LAScores] submit failed", res.error);
+          return { ok: false, error: res.error.message || "Submit failed" };
+        }
+        return { ok: true, id: res.data && res.data[0] ? res.data[0].id : null };
       })
       .catch(function (err) {
-        console.warn('[LAScores] topByTime failed', err);
-        return [];
+        console.warn("[LAScores] submit failed", err);
+        return { ok: false, error: err && err.message ? err.message : "Submit failed" };
       });
   }
 
   function top(gameId, limit) {
     if (!init()) return Promise.resolve([]);
     limit = limit || 20;
-    var id = sanitizeGameId(gameId);
-
-    return tablesDB
-      .listRows({
-        databaseId: DATABASE_ID,
-        tableId: TABLE_ID,
-        queries: [
-          Query.equal('gameId', id),
-          Query.orderDesc('score'),
-          Query.limit(limit)
-        ]
-      })
+    gameId = sanitizeGameId(gameId);
+    return sb
+      .from("scores")
+      .select("id,name,score,max_score,game_id,game_name,time_ms,at,created_at")
+      .eq("game_id", gameId)
+      .order("score", { ascending: false })
+      .limit(limit)
       .then(function (res) {
-        var rows = (res.rows || res.documents || []).map(function (r) {
+        if (res.error) {
+          console.warn("[LAScores] top failed", res.error);
+          return [];
+        }
+        return (res.data || []).map(function (r) {
           return {
-            key: r.$id,
-            name: r.name || 'Player',
+            key: r.id,
+            gameId: r.game_id,
+            name: r.name || "Player",
             score: Number(r.score) || 0,
-            maxScore: r.maxScore,
-            gameName: r.gameName,
-            uid: null,
+            maxScore: r.max_score != null ? Number(r.max_score) : null,
+            gameName: r.game_name || r.game_id,
             at: r.at || 0,
-            iso: r.$createdAt || ''
+            iso: r.created_at || "",
           };
         });
-        rows.sort(function (a, b) {
-          if (b.score !== a.score) return b.score - a.score;
-          return (b.at || 0) - (a.at || 0);
+      })
+      .catch(function (err) {
+        console.warn("[LAScores] top failed", err);
+        return [];
+      });
+  }
+
+  function topByTime(gameId, limit, minAccuracy) {
+    if (!init()) return Promise.resolve([]);
+    limit = limit || 20;
+    gameId = sanitizeGameId(gameId);
+    return sb
+      .from("scores")
+      .select("id,name,score,max_score,game_id,game_name,time_ms,at,created_at")
+      .eq("game_id", gameId)
+      .not("time_ms", "is", null)
+      .order("time_ms", { ascending: true })
+      .limit(Math.max(limit * 3, 40))
+      .then(function (res) {
+        if (res.error) {
+          console.warn("[LAScores] topByTime failed", res.error);
+          return [];
+        }
+        var rows = [];
+        var seen = {};
+        (res.data || []).forEach(function (r) {
+          if (minAccuracy != null && r.max_score) {
+            var pct = (Number(r.score) / Number(r.max_score)) * 100;
+            if (pct < minAccuracy) return;
+          }
+          var key = String(r.name || "").toLowerCase();
+          if (seen[key]) return;
+          seen[key] = true;
+          rows.push({
+            key: r.id,
+            gameId: r.game_id,
+            name: r.name || "Player",
+            score: Number(r.score) || 0,
+            maxScore: r.max_score != null ? Number(r.max_score) : null,
+            timeMs: r.time_ms != null ? Number(r.time_ms) : null,
+            gameName: r.game_name || r.game_id,
+            at: r.at || 0,
+          });
+        });
+        return rows.slice(0, limit);
+      })
+      .catch(function (err) {
+        console.warn("[LAScores] topByTime failed", err);
+        return [];
+      });
+  }
+
+  function myScores() {
+    if (!init()) return Promise.resolve([]);
+    if (!getPlayerName()) return Promise.resolve([]);
+    return sb
+      .from("scores")
+      .select("id,name,score,max_score,game_id,game_name,time_ms,at,created_at")
+      .order("at", { ascending: false })
+      .limit(100)
+      .then(function (res) {
+        if (res.error) return [];
+        var rows = [];
+        (res.data || []).forEach(function (r) {
+          if (!nameMatchesPlayer(r.name)) return;
+          rows.push({
+            key: r.id,
+            gameId: r.game_id,
+            name: r.name || "Player",
+            score: Number(r.score) || 0,
+            maxScore: r.max_score != null ? Number(r.max_score) : null,
+            gameName: r.game_name || r.game_id,
+            at: r.at || 0,
+            iso: r.created_at || "",
+          });
         });
         return rows;
       })
-      .catch(function (err) {
-        console.warn('[LAScores] top failed', err);
+      .catch(function () {
         return [];
       });
   }
 
   function listGames() {
     if (!init()) return Promise.resolve([]);
-    return tablesDB
-      .listRows({
-        databaseId: DATABASE_ID,
-        tableId: TABLE_ID,
-        queries: [Query.limit(100)]
-      })
+    return sb
+      .from("scores")
+      .select("game_id")
+      .limit(200)
       .then(function (res) {
+        if (res.error) return [];
         var seen = {};
         var ids = [];
-        (res.rows || res.documents || []).forEach(function (r) {
-          var gid = r.gameId;
+        (res.data || []).forEach(function (r) {
+          var gid = r.game_id;
           if (gid && !seen[gid]) {
             seen[gid] = true;
             ids.push(gid);
@@ -409,44 +311,6 @@
         return ids;
       })
       .catch(function () {
-        return [];
-      });
-  }
-
-  function myScores() {
-    if (!init()) return Promise.resolve([]);
-    if (!getPlayerName()) return Promise.resolve([]);
-
-    return tablesDB
-      .listRows({
-        databaseId: DATABASE_ID,
-        tableId: TABLE_ID,
-        queries: [Query.limit(100)]
-      })
-      .then(function (res) {
-        var rows = [];
-        (res.rows || res.documents || []).forEach(function (r) {
-          if (nameMatchesPlayer(r.name)) {
-            rows.push({
-              key: r.$id,
-              gameId: r.gameId,
-              name: r.name || 'Player',
-              score: Number(r.score) || 0,
-              maxScore: r.maxScore,
-              gameName: r.gameName || r.gameId,
-              uid: null,
-              at: r.at || 0,
-              iso: r.$createdAt || ''
-            });
-          }
-        });
-        rows.sort(function (a, b) {
-          return (b.at || 0) - (a.at || 0);
-        });
-        return rows;
-      })
-      .catch(function (err) {
-        console.warn('[LAScores] myScores failed', err);
         return [];
       });
   }
@@ -465,8 +329,8 @@
     myScores: myScores,
     listGames: listGames,
     GAMES: {
-      'opposite-snap': { title: 'Opposite Snap', maxScore: null },
-      'sound-match-picture': { title: 'Sound Match Picture', maxScore: 16 }
-    }
+      "opposite-snap": { title: "Opposite Snap", maxScore: null },
+      "sound-match-picture": { title: "Sound Match Picture", maxScore: 16 },
+    },
   };
-})(typeof window !== 'undefined' ? window : this);
+})(typeof window !== "undefined" ? window : this);

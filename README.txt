@@ -1,6 +1,10 @@
-Teen2Teen 1 · Unit 10 · Games pack
-Copy course-data.js to site root and merge resources/ into your site.
+Supabase migration package for mrsheyhaki.ir
 
-Games:
-  Clothes Flashcards, Clothes Match, Sound Match Picture,
-  Clothes Bingo, Unscramble Clothes, Listen & Write
+1. Read SETUP-SUPABASE.md
+2. Run scores.sql in Supabase SQL Editor
+3. Put SUPABASE_URL + SUPABASE_ANON_KEY into:
+   - learningarcade/auth-system/auth.js
+   - learningarcade/firebase-scores.js
+4. Upload the three files listed in SETUP-SUPABASE.md
+
+Public APIs LAAuth + LAScores stay the same.
