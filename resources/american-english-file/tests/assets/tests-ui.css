@@ -685,3 +685,84 @@ body.dark.tq-body .q-box {
     font-size: 8px !important;
   }
 }
+
+/* ==========================================================================
+   PHONE · SCROLLING (overrides the fixed-screen rules above at phone width)
+   Units, tests lists and listening games scroll normally on phones.
+   Desktop is not affected.
+   ========================================================================== */
+@media (max-width: 560px) {
+  html {
+    height: auto !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+  }
+  html body,
+  html body.game-page {
+    height: auto !important;
+    min-height: 100%;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  body.game-page .lc-app,
+  body.game-page .al-app,
+  #game-app.lc-app,
+  #game-app {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  body.game-page .lc-main,
+  #game-app .lc-main,
+  body.game-page .ul-list,
+  #game-app .ul-list {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+  }
+  body.game-page .ul-row,
+  #game-app .ul-row {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+  }
+  /* answers: equal columns, whole words only (no mid-word breaks) */
+  body.game-page .ul-choices,
+  #game-app .ul-choices {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+  body.game-page .ul-choices .ul-opt,
+  #game-app .ul-choices .ul-opt,
+  body.game-page .ul-opt,
+  #game-app .ul-opt {
+    width: auto !important;
+    min-width: 0 !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+    min-height: 40px;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+  }
+    /* keep the audio player in view while the questions scroll */
+  body.game-page .al-listen,
+  #game-app .al-listen {
+    position: sticky !important;
+    top: 0;
+    z-index: 5;
+  }
+  body.game-page .al-foot,
+  #game-app .al-foot {
+    position: sticky !important;
+    bottom: 0;
+    z-index: 5;
+  }
+}
