@@ -208,7 +208,44 @@
       color: #7c8298;
       margin-top: 2px;
     }
+    .student-row {
+      cursor: pointer;
+    }
+    .student-row:hover {
+      filter: brightness(0.98);
+    }
+    .student-detail {
+      display: none;
+      padding: 0 14px 14px 58px;
+      margin-top: -4px;
+    }
+    .student-detail.open { display: block; }
+    .game-chip-row {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;
+    }
+    .game-chip {
+      background: #f5f3ff;
+      border: 1px solid rgba(105,55,216,.15);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      line-height: 1.35;
+      min-width: 140px;
+    }
+    html[data-theme=dark] .game-chip {
+      background: #1e2130;
+      border-color: #2e3348;
+    }
+    .game-chip strong { display: block; font-size: 0.88rem; }
+    .game-chip .meta { color: #6b7280; font-size: 0.78rem; }
+    .stars-note {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #6b7280;
+      line-height: 1.4;
+    }
     .student-score {
+
       margin-left: auto;
       font-weight: 900;
       color: #6d28d9;
@@ -285,7 +322,7 @@
 
         <div class="admin-note">
           <strong>Registered accounts</strong> come from the <code>profiles</code> table (created when students sign up).<br>
-          You can also check Supabase → <strong>Authentication → Users</strong>
+          Tap a student to see <strong>stars, plays, and scores</strong> synced while they are logged in. You can also check Supabase → <strong>Authentication → Users</strong>
           (email = <code>username@players.mrsheyhaki.ir</code>).
         </div>
 
@@ -414,16 +451,20 @@
 
           Promise.all([
             client.from("profiles").select("id,username,display_name,created_at").order("created_at", { ascending: false }).limit(200),
-            client.from("scores").select("name, score, game_id, game_name, at, created_at").order("created_at", { ascending: false }).limit(100)
+            client.from("scores").select("name, score, max_score, game_id, game_name, at, created_at, user_id").order("created_at", { ascending: false }).limit(200),
+            client.from("game_progress").select("user_id,game_id,game_name,stars,plays,best_score,max_score,best_accuracy,last_at,completed").order("last_at", { ascending: false }).limit(1000)
           ])
             .then(function (results) {
               var profRes = results[0];
               var scoreRes = results[1];
+              var progRes = results[2];
               var profiles = profRes.data || [];
               var rows = scoreRes.data || [];
+              var progressRows = (progRes && progRes.data) || [];
 
               if (profRes.error) console.warn("profiles error", profRes.error);
               if (scoreRes.error) console.warn("scores error", scoreRes.error);
+              if (progRes && progRes.error) console.warn("game_progress error", progRes.error);
 
               var byName = {};
               rows.forEach(function (r) {
@@ -448,6 +489,7 @@
                 studentsMap[key] = {
                   name: dn + (un && un.toLowerCase() !== dn.toLowerCase() ? " (@" + un + ")" : ""),
                   username: un,
+                  userId: p.id || null,
                   totalScore: scoreInfo ? scoreInfo.totalScore : 0,
                   games: scoreInfo ? scoreInfo.games : 0,
                   lastAt: scoreInfo ? scoreInfo.lastAt : 0,
@@ -478,31 +520,143 @@
                 });
 
               statusEl.textContent =
-                profiles.length + " registered · " + rows.length + " score(s)" +
+                profiles.length + " registered · " + rows.length + " score(s) · " +
+                progressRows.length + " progress row(s)" +
                 (profRes.error ? " (profiles: " + profRes.error.message + ")" : "") +
-                (scoreRes.error ? " (scores: " + scoreRes.error.message + ")" : "");
+                (scoreRes.error ? " (scores: " + scoreRes.error.message + ")" : "") +
+                (progRes && progRes.error ? " (progress: " + progRes.error.message + ")" : "");
+
+              // attach cloud progress + scores per student
+              students.forEach(function (s) {
+                var keys = [];
+                if (s.username) keys.push(s.username.toLowerCase());
+                if (s.name) {
+                  keys.push(s.name.toLowerCase());
+                  var bare = s.name.replace(/\s*\(@[^)]+\)\s*$/, "").trim().toLowerCase();
+                  if (bare) keys.push(bare);
+                }
+                s.gamesList = rows.filter(function (r) {
+                  if (s.userId && r.user_id && r.user_id === s.userId) return true;
+                  var n = (r.name || "").trim().toLowerCase();
+                  return keys.indexOf(n) !== -1;
+                });
+                s.progressList = progressRows.filter(function (r) {
+                  return s.userId && r.user_id === s.userId;
+                });
+              });
 
               if (!students.length) {
                 studentList.innerHTML = '<div class="empty">No students yet. When someone registers, they appear here.</div>';
               } else {
-                studentList.innerHTML = students.map(function (s) {
+                studentList.innerHTML = students.map(function (s, si) {
                   var initial = (s.name.charAt(0) || "?").toUpperCase();
                   var meta = [];
                   if (s.registered) meta.push("Registered");
                   else meta.push("Guest scores");
-                  if (s.games) meta.push(s.games + " game(s)");
+                  if (s.gamesList && s.gamesList.length) meta.push(s.gamesList.length + " score(s)");
+                  else if (s.games) meta.push(s.games + " game(s)");
                   else if (s.signedUp) meta.push("joined: " + new Date(s.signedUp).toLocaleString());
+                  if (s.signedUp) meta.push("joined: " + new Date(s.signedUp).toLocaleDateString());
+
+                  // Prefer game_progress (real stars); fall back to scores
+                  var byGame = {};
+                  (s.progressList || []).forEach(function (r) {
+                    var gid = r.game_id || "game";
+                    byGame[gid] = {
+                      id: gid,
+                      name: r.game_name || r.game_id || "game",
+                      best: Number(r.best_score) || 0,
+                      max: Number(r.max_score) || 0,
+                      plays: Number(r.plays) || 0,
+                      stars: Number(r.stars) || 0,
+                      accuracy: Number(r.best_accuracy) || 0,
+                      lastAt: r.last_at ? new Date(r.last_at).getTime() : 0,
+                      fromProgress: true
+                    };
+                  });
+                  (s.gamesList || []).forEach(function (r) {
+                    var gid = r.game_id || r.game_name || "game";
+                    if (!byGame[gid]) {
+                      byGame[gid] = {
+                        id: gid,
+                        name: r.game_name || r.game_id || "game",
+                        best: 0,
+                        max: 0,
+                        plays: 0,
+                        stars: 0,
+                        accuracy: 0,
+                        lastAt: 0,
+                        fromProgress: false
+                      };
+                    }
+                    if (!byGame[gid].fromProgress) {
+                      byGame[gid].plays += 1;
+                      var sc = Number(r.score) || 0;
+                      var mx = Number(r.max_score) || 0;
+                      if (sc > byGame[gid].best) {
+                        byGame[gid].best = sc;
+                        byGame[gid].max = mx;
+                      }
+                      var ts = Number(r.at) || (r.created_at ? new Date(r.created_at).getTime() : 0);
+                      if (ts > byGame[gid].lastAt) byGame[gid].lastAt = ts;
+                    }
+                  });
+                  var games = Object.keys(byGame).map(function (k) { return byGame[k]; })
+                    .sort(function (a, b) { return b.lastAt - a.lastAt; });
+
+                  var totalStars = games.reduce(function (sum, g) {
+                    return sum + (Number(g.stars) || 0);
+                  }, 0);
+
+                  var detail;
+                  if (!games.length) {
+                    detail = '<div class="stars-note">No cloud progress yet. After this student plays while logged in, stars and plays appear here.</div>';
+                  } else {
+                    detail = '<div class="stars-note" style="margin-bottom:8px"><strong>' + totalStars + '</strong> total stars · ' + games.length + ' game(s)</div>';
+                    detail += '<div class="game-chip-row">' + games.map(function (g) {
+                      var stars = Math.max(0, Math.min(3, Number(g.stars) || 0));
+                      if (!g.fromProgress && g.max > 0) {
+                        var acc = Math.round(g.best / g.max * 100);
+                        stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 50 ? 1 : 0;
+                      }
+                      var starStr = "★".repeat(stars) + "☆".repeat(3 - stars);
+                      var scoreLabel = g.max ? (g.best + " / " + g.max) : (g.best ? g.best + " pts" : "");
+                      var when = g.lastAt ? new Date(g.lastAt).toLocaleString() : "";
+                      return (
+                        '<div class="game-chip">' +
+                        "<strong>" + escapeHtml(g.name) + "</strong>" +
+                        '<div class="meta">' + starStr +
+                        (scoreLabel ? " · " + escapeHtml(scoreLabel) : "") +
+                        (g.plays ? " · " + g.plays + " play" + (g.plays === 1 ? "" : "s") : "") +
+                        (when ? "<br>" + escapeHtml(when) : "") +
+                        "</div></div>"
+                      );
+                    }).join("") + "</div>";
+                  }
+
                   return (
-                    '<div class="student-row">' +
+                    '<div class="student-block">' +
+                    '<div class="student-row" data-si="' + si + '">' +
                     '<div class="student-avatar">' + initial + "</div>" +
                     '<div><div class="student-name">' + escapeHtml(s.name) + "</div>" +
                     '<div class="student-meta">' + escapeHtml(meta.join(" · ")) + "</div></div>" +
-                    '<div class="student-score">' + (s.games ? s.totalScore + " pts" : "—") + "</div>" +
+                    '<div class="student-score">' + (games.length ? games.length + " games" : "—") + "</div>" +
+                    "</div>" +
+                    '<div class="student-detail" id="detail-' + si + '">' + detail + "</div>" +
                     "</div>"
                   );
                 }).join("");
+
+                studentList.querySelectorAll(".student-row").forEach(function (row) {
+                  row.addEventListener("click", function () {
+                    var si = row.getAttribute("data-si");
+                    var d = document.getElementById("detail-" + si);
+                    if (d) d.classList.toggle("open");
+                  });
+                });
               }
 
+              
               var recent = rows.slice(0, 30);
               if (!recent.length) {
                 recentList.innerHTML = '<div class="empty">No recent scores</div>';

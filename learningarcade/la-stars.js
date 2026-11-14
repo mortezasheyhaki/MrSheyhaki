@@ -327,7 +327,7 @@
     var acc = Number(accuracyPercent) || 0;
     var stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 40 ? 1 : 0;
     var best = save(gameId, stars);
-    // Push to Appwrite progress for every game that records accuracy
+    // Push to cloud progress for every game that records accuracy
     try {
       if (typeof global.LAProgressSave === "function") {
         global.LAProgressSave({
@@ -376,6 +376,11 @@
       data[id] = n;
     });
     saveJSON(playsKey(), data);
+    try {
+      if (typeof global.LAProgressSave === "function") {
+        global.LAProgressSave({ gameId: gameId, playsDelta: 1, completed: false });
+      }
+    } catch (e) {}
     return n;
   }
 
@@ -561,7 +566,7 @@
    * automatically). Older pages that only call LAStars.save/saveFromAccuracy
    * are covered by a delayed fallback that is cancelled whenever a fuller
    * LAProgressSave arrives for the same game. Guests do nothing, load nothing,
-   * and never see an error. progress.js + the Appwrite SDK load on demand. */
+   * and never see an error. progress.js (Supabase) loads on demand. */
   var PROGRESS_BASE = (function () {
     try {
       var cs = document.currentScript;
@@ -593,10 +598,7 @@
     if (global.LAProgress) return Promise.resolve(global.LAProgress);
     if (!PROGRESS_BASE) return Promise.resolve(null);
     if (!progressLoad) {
-      progressLoad = (typeof Appwrite !== "undefined"
-        ? Promise.resolve()
-        : injectScript("https://cdn.jsdelivr.net/npm/appwrite@26.2.0"))
-        .then(function () { return injectScript(PROGRESS_BASE + "progress.js"); })
+      progressLoad = injectScript(PROGRESS_BASE + "progress.js")
         .then(function () { return global.LAProgress || null; })
         .catch(function () { progressLoad = null; return null; });
     }
