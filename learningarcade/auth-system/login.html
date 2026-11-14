@@ -209,8 +209,45 @@
     </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="auth.js"></script>
+  <div id="sdkStatus" style="display:none;text-align:center;padding:8px 12px;margin:8px 16px;border-radius:10px;background:#fef2f2;color:#b91c1c;font-weight:700;font-size:14px;"></div>
+  <script src="/learningarcade/vendor/load-supabase.js"></script>
+  <script>
+  (function () {
+    var statusEl = document.getElementById("sdkStatus");
+    function showErr(msg) {
+      if (!statusEl) return;
+      statusEl.style.display = "block";
+      statusEl.textContent = msg;
+    }
+    function hideErr() {
+      if (statusEl) statusEl.style.display = "none";
+    }
+    function boot() {
+      if (window.__authBooted) return;
+      window.__authBooted = true;
+      var s = document.createElement("script");
+      s.src = "auth.js";
+      s.onload = function () {
+        if (window.supabase && window.supabase.createClient) hideErr();
+        else showErr("Supabase SDK not loaded. Upload /learningarcade/vendor/supabase.min.js to the server.");
+      };
+      document.head.appendChild(s);
+    }
+    if (window.supabase && window.supabase.createClient) boot();
+    else {
+      document.addEventListener("supabase-ready", function () {
+        if (window.supabase && window.supabase.createClient) boot();
+        else showErr("Supabase SDK not loaded. Check network or upload the vendor file.");
+      }, { once: true });
+      setTimeout(function () {
+        if (!window.supabase || !window.supabase.createClient) {
+          showErr("Still loading Supabase… If this stays, upload /learningarcade/vendor/supabase.min.js");
+        }
+        boot();
+      }, 6000);
+    }
+  })();
+  </script>
   <script>
     (function () {
       // Smart return URL: ?next= / home

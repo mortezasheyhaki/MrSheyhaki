@@ -41,8 +41,8 @@
       return false;
     }
     if (typeof supabase === "undefined" || typeof supabase.createClient !== "function") {
-      initError = "Supabase SDK not loaded";
-      console.warn("[LAAuth]", initError);
+      // Do NOT set initError permanently — SDK may still be loading from CDN fallbacks
+      console.warn("[LAAuth] Supabase SDK not loaded yet");
       return false;
     }
     try {
@@ -165,7 +165,7 @@
   }
 
   async function register(username, password, displayName) {
-    if (!init()) return { ok: false, error: initError || "Not ready" };
+    if (!init()) return { ok: false, error: initError || "Supabase is still loading — wait a second and try again" };
     var clean = sanitizeUsername(username);
     if (clean.length < 3) return { ok: false, error: "Username must be at least 3 characters" };
     if (!password || password.length < MIN_PASSWORD) {
@@ -216,7 +216,7 @@
   }
 
   async function login(username, password) {
-    if (!init()) return { ok: false, error: initError || "Not ready" };
+    if (!init()) return { ok: false, error: initError || "Supabase is still loading — wait a second and try again" };
     var clean = sanitizeUsername(username);
     if (!clean || !password) return { ok: false, error: "Please enter username and password" };
     try {
