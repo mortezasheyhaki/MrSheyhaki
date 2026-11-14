@@ -1,0 +1,203 @@
+/* ==========================================================================
+   AEF listening tests · phone layout
+   One fixed screen: top bar, audio strip, all five questions and their
+   answers, and the footer. Nothing scrolls. Desktop is not affected.
+   Loaded last on every listening test page.
+   ========================================================================== */
+@media (max-width: 600px) {
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  html body #game-app.lc-app,
+  html body #game-app #game-app.al-app {
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+  }
+
+  /* top bar always visible */
+  html body #game-app .lc-top {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    padding: 6px 10px !important;
+  }
+  html body #game-app .lc-top .lc-eyebrow { font-size: 9px !important; }
+  html body #game-app .lc-top .lc-back { padding: 4px 10px !important; }
+
+  /* main area takes the rest of the screen and never scrolls */
+  html body #game-app .lc-main {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+    padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+    overflow: hidden !important;
+  }
+
+  /* audio strip: compact, fixed height */
+  html body #game-app .al-listen {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 6px 10px !important;
+    gap: 10px !important;
+  }
+  html body #game-app .al-listen .al-play {
+    width: 40px !important;
+    height: 40px !important;
+    flex: none;
+  }
+  html body #game-app .al-listen-title { font-size: 13px !important; margin: 0 !important; }
+  html body #game-app .al-listen-sub { display: none !important; }
+
+  /* questions: share the free height equally, each row shrinks to fit */
+  html body #game-app .ul-list {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  html body #game-app .ul-row {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 5px 9px !important;
+    border-radius: 12px !important;
+    overflow: visible;
+  }
+  html body #game-app .ul-line {
+    width: 100%;
+    gap: 2px 7px !important;
+    display: grid !important;
+    grid-template-columns: 20px minmax(0, 1fr) !important;
+    align-items: start !important;
+  }
+  /* true/false rows put the statement and buttons straight into the line */
+  html body #game-app .ul-line > .ul-text,
+  html body #game-app .ul-line > .ul-choices,
+  html body #game-app .ul-line > .ul-body { grid-column: 2; min-width: 0; }
+  html body #game-app .ul-num {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 11px !important;
+    margin: 0 !important;
+  }
+  html body #game-app .ul-body { gap: 4px !important; min-width: 0; }
+  html body #game-app .ul-text {
+    font-size: var(--fit-text, 13px) !important;
+    line-height: 1.18 !important;
+  }
+
+  /* answers: A, B, C in one row, all readable */
+  html body #game-app .ul-choices { gap: 5px !important; width: 100%; }
+  html body #game-app .ul-choices .ul-opt {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    min-height: clamp(28px, 4.6vh, 36px) !important;
+    padding: 2px 4px !important;
+    font-size: var(--fit-opt, 12px) !important;
+    line-height: 1.1 !important;
+    gap: 3px !important;
+    overflow-wrap: anywhere;
+  }
+  html body #game-app .ul-letter {
+    width: 14px !important;
+    height: 14px !important;
+    font-size: 9px !important;
+    flex: none;
+  }
+  /* ✓ / ✕ sit on the corner of the answer, so the words keep their full width */
+  html body #game-app .ul-choices .ul-opt { overflow: visible; }
+  html body #game-app .ul-tick {
+    position: absolute !important;
+    top: -5px !important;
+    right: -5px !important;
+    width: 15px !important;
+    height: 15px !important;
+    margin: 0 !important;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 9px !important;
+    line-height: 1 !important;
+    font-weight: 900;
+    color: #fff;
+  }
+  html body #game-app .ul-opt.is-correct .ul-tick { background: var(--lc-ok, #16a34a); }
+  html body #game-app .ul-opt.is-wrong .ul-tick { background: var(--lc-bad, #dc2626); }
+
+  /* footer: always the last thing on screen */
+  html body #game-app .al-foot {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    padding: 6px 10px !important;
+    gap: 8px !important;
+  }
+  html body #game-app .al-foot-text { font-size: 12px !important; }
+  html body #game-app .al-next {
+    min-height: 36px !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* shorter phone screens (or browser toolbars eating height): tighten every band */
+@media (max-width: 600px) and (max-height: 680px) {
+  html body #game-app .lc-top { padding: 4px 10px !important; }
+  html body #game-app .lc-top .lc-back { min-height: 0 !important; }
+  html body #game-app .lc-main { gap: 4px !important; padding: 4px 10px calc(5px + env(safe-area-inset-bottom, 0px)) !important; }
+  html body #game-app .al-listen { padding: 4px 10px !important; }
+  html body #game-app .al-listen .al-play { width: 34px !important; height: 34px !important; }
+  html body #game-app .ul-list { gap: 4px !important; }
+  html body #game-app .ul-row { padding: 3px 7px !important; }
+  html body #game-app .ul-body, html body #game-app .ul-line { gap: 1px 6px !important; }
+  html body #game-app .ul-text { line-height: 1.14 !important; }
+  html body #game-app .ul-choices { gap: 4px !important; }
+  html body #game-app .ul-choices .ul-opt { min-height: 24px !important; padding: 1px 4px !important; }
+  html body #game-app .al-foot { padding: 3px 10px !important; }
+  html body #game-app .al-foot-text { font-size: 11px !important; }
+  html body #game-app .al-next { min-height: 30px !important; padding: 3px 12px !important; font-size: 12px !important; }
+}
+
+/* fill-in lines: the sentence and its answers sit straight in the line, so
+   let them flow across the row (number, sentence, answers) and wrap if needed */
+@media (max-width: 600px) {
+  html body #game-app .ul-line:not(:has(> .ul-body)) {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    grid-template-columns: none !important;
+    gap: 4px 6px !important;
+  }
+  html body #game-app .ul-line:not(:has(> .ul-body)) > .ul-text { flex: 0 1 auto; min-width: 0; }
+  html body #game-app .ul-line:not(:has(> .ul-body)) > .ul-choices { flex: 1 1 auto; min-width: 0; }
+  html body #game-app .ul-line:not(:has(> .ul-body)) > .ul-choices .ul-opt { flex: 1 1 0; }
+}
+
+/* very short phone screens: a little more room for the questions */
+@media (max-width: 600px) and (max-height: 620px) {
+  html body #game-app .lc-top { padding: 3px 8px !important; }
+  html body #game-app .lc-main { gap: 3px !important; padding: 3px 8px calc(4px + env(safe-area-inset-bottom, 0px)) !important; }
+  html body #game-app .al-listen { padding: 3px 8px !important; }
+  html body #game-app .al-listen .al-play { width: 30px !important; height: 30px !important; }
+  html body #game-app .ul-list { gap: 3px !important; }
+  html body #game-app .ul-row { padding: 3px 6px !important; }
+  html body #game-app .ul-choices .ul-opt { min-height: 22px !important; }
+  html body #game-app .al-foot { padding: 2px 8px !important; }
+  html body #game-app .al-next { min-height: 28px !important; }
+}
