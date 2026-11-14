@@ -463,3 +463,180 @@ body.dark.tq-body .q-box {
   border-color: #0d9488 !important;
   color: #f1f5f9 !important;
 }
+
+/* ============================================================
+   Listening games — phone layout fix (AEF Starter + AEF 1 tests)
+   Keeps A/B/C (or A/B) on one horizontal row instead of stacking
+   full-width, and makes the question list scrollable on small screens.
+   ============================================================ */
+@media (max-width: 560px) {
+  /* Main column: allow the question list to scroll under a fixed audio strip */
+  body.game-page .lc-app,
+  body.game-page .al-app,
+  #game-app.lc-app {
+    height: 100% !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+  body.game-page .lc-main,
+  #game-app .lc-main {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    gap: 8px !important;
+    padding: 6px 10px 10px !important;
+  }
+
+  /* Compact audio strip */
+  body.game-page .al-listen,
+  #game-app .al-listen {
+    flex: 0 0 auto !important;
+    padding: 8px 12px !important;
+    gap: 10px !important;
+    min-height: 0 !important;
+    height: auto !important;
+  }
+  body.game-page .al-listen .al-play,
+  #game-app .al-listen .al-play {
+    width: 46px !important;
+    height: 46px !important;
+  }
+  body.game-page .al-listen-title,
+  #game-app .al-listen-title {
+    font-size: 13.5px !important;
+    line-height: 1.25 !important;
+  }
+  body.game-page .al-listen-sub,
+  #game-app .al-listen-sub {
+    display: none !important;
+  }
+
+  /* Instruction under the player */
+  body.game-page .pb-instr,
+  #game-app .pb-instr {
+    margin: 0 2px 4px !important;
+    font-size: 13px !important;
+    line-height: 1.3 !important;
+    font-weight: 650 !important;
+  }
+
+  /* Scrollable questions */
+  body.game-page .ul-list,
+  #game-app .ul-list {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 8px !important;
+    padding: 2px 0 6px !important;
+    justify-content: flex-start !important;
+  }
+
+  body.game-page .ul-row,
+  #game-app .ul-row {
+    padding: 8px 10px !important;
+    border-radius: 14px !important;
+  }
+  body.game-page .ul-text,
+  #game-app .ul-text {
+    font-size: 13.5px !important;
+    line-height: 1.3 !important;
+  }
+  body.game-page .ul-num,
+  #game-app .ul-num {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 11px !important;
+  }
+  body.game-page .ul-body,
+  #game-app .ul-body {
+    gap: 6px !important;
+  }
+
+  /* A/B/C in ONE row on phones (override flex:1 1 150px stacking) */
+  body.game-page .ul-choices,
+  #game-app .ul-choices {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-top: 4px !important;
+    flex-wrap: nowrap !important;
+  }
+  /* Exactly two options → 2 columns */
+  body.game-page .ul-choices:has(.ul-opt:nth-child(2):last-child),
+  #game-app .ul-choices:has(.ul-opt:nth-child(2):last-child) {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  /* Four options → 2×2 */
+  body.game-page .ul-choices:has(.ul-opt:nth-child(4):last-child),
+  #game-app .ul-choices:has(.ul-opt:nth-child(4):last-child) {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  body.game-page .ul-choices .ul-opt,
+  #game-app .ul-choices .ul-opt,
+  body.game-page .ul-opt,
+  #game-app .ul-opt {
+    flex: none !important;
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 40px !important;
+    max-width: none !important;
+    padding: 6px 4px !important;
+    font-size: 12.5px !important;
+    line-height: 1.2 !important;
+    justify-content: center !important;
+    text-align: center !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    gap: 4px !important;
+  }
+  body.game-page .ul-letter,
+  #game-app .ul-letter {
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 10px !important;
+    border-radius: 5px !important;
+  }
+
+  /* Footer stays visible */
+  body.game-page .al-foot,
+  #game-app .al-foot {
+    flex: 0 0 auto !important;
+    margin-top: 0 !important;
+    padding: 8px 10px !important;
+  }
+  body.game-page .al-next,
+  #game-app .al-next,
+  body.game-page .lc-btn,
+  #game-app .lc-btn {
+    min-height: 42px !important;
+  }
+}
+
+/* Very short phones */
+@media (max-width: 560px) and (max-height: 700px) {
+  body.game-page .ul-choices .ul-opt,
+  #game-app .ul-choices .ul-opt {
+    min-height: 36px !important;
+    padding: 4px 3px !important;
+    font-size: 12px !important;
+  }
+  body.game-page .ul-row,
+  #game-app .ul-row {
+    padding: 6px 8px !important;
+  }
+  body.game-page .ul-list,
+  #game-app .ul-list {
+    gap: 6px !important;
+  }
+  body.game-page .al-listen .al-play,
+  #game-app .al-listen .al-play {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
