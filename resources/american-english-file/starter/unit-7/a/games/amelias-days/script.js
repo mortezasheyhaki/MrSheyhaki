@@ -1,416 +1,214 @@
 /**
- * Amelia's Days — Mobile-first listening game
- * One activity at a time · sticky audio · waveform
+ * Amelia's Days · listening game
+ * Listen to the audio and pick Friday, Saturday or Sunday for each sentence.
  * Unit 7A | American English File Starter | Mr. Sheyhaki
  */
 (function () {
   "use strict";
 
-  
+  var GAME_ID = "starter-7a-amelias-days";
+  var AUDIO_URL = "https://cdn.imgurl.ir/uploads/x520471_.mp3";
+  var DAYS = ["Friday", "Saturday", "Sunday"];
 
-/* === Shared UI sound effects (Web Audio) === */
-(function () {
-  if (window.__laUiSfx) return;
-  var ctx = null;
-  function getCtx() {
-    if (!ctx) {
-      var AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return null;
-      ctx = new AC();
-    }
-    if (ctx.state === "suspended") ctx.resume().catch(function () {});
-    return ctx;
-  }
-  function tone(freq, dur, type, vol, when) {
-    var c = getCtx();
-    if (!c) return;
-    var t0 = (when || 0) + c.currentTime;
-    var osc = c.createOscillator();
-    var gain = c.createGain();
-    osc.type = type || "sine";
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(vol || 0.12, t0);
-    gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
-    osc.connect(gain);
-    gain.connect(c.destination);
-    osc.start(t0);
-    osc.stop(t0 + dur + 0.02);
-  }
-  function sfxTap() { tone(520, 0.06, "triangle", 0.08); }
-  function sfxCorrect() {
-    tone(523, 0.1, "sine", 0.12, 0);
-    tone(659, 0.12, "sine", 0.12, 0.08);
-    tone(784, 0.18, "sine", 0.1, 0.16);
-  }
-  function sfxWrong() {
-    tone(220, 0.14, "sawtooth", 0.07, 0);
-    tone(180, 0.18, "sawtooth", 0.06, 0.1);
-  }
-  function sfxCelebrate() {
-    [523, 659, 784, 1047].forEach(function (f, i) { tone(f, 0.15, "sine", 0.1, i * 0.07); });
-  }
-  window.__laUiSfx = { tap: sfxTap, correct: sfxCorrect, wrong: sfxWrong, celebrate: sfxCelebrate };
-  window.sfxTap = sfxTap; window.sfxCorrect = sfxCorrect; window.sfxWrong = sfxWrong; window.sfxCelebrate = sfxCelebrate;
-  var lastAt = 0, lastKind = "";
-  function fire(kind, fn) {
-    var now = Date.now();
-    if (kind === lastKind && now - lastAt < 80) return;
-    lastKind = kind; lastAt = now;
-    try { fn(); } catch (e) {}
-  }
-  try {
-    var origAdd = DOMTokenList.prototype.add;
-    DOMTokenList.prototype.add = function () {
-      var tokens = Array.prototype.slice.call(arguments);
-      var r = origAdd.apply(this, tokens);
-      if (tokens.indexOf("correct") >= 0 || tokens.indexOf("is-correct") >= 0 || tokens.indexOf("picked-ok") >= 0) fire("correct", sfxCorrect);
-      else if (tokens.indexOf("wrong") >= 0 || tokens.indexOf("is-wrong") >= 0) fire("wrong", sfxWrong);
-      return r;
-    };
-  } catch (e) {}
-})();
-
-const ACTIVITIES = [
-    { id: 1, text: "Amelia and Ben usually go out for dinner or a movie.", answer: "Friday" },
-    { id: 2, text: "They usually go to a nearby sushi restaurant.", answer: "Friday" },
-    { id: 3, text: "Amelia gets up at 5:00 a.m.", answer: "Saturday" },
-    { id: 4, text: "She works from 6:00 a.m. to 6:00 p.m.", answer: "Saturday" },
-    { id: 5, text: "She goes to the supermarket to buy food for the week.", answer: "Saturday" },
-    { id: 6, text: "Amelia and Ben usually stay at home.", answer: "Saturday" },
-    { id: 7, text: "Amelia gets up at about 9:00 a.m.", answer: "Sunday" },
-    { id: 8, text: "She has lunch with her sister and her family.", answer: "Sunday" },
-    { id: 9, text: "Her sister's husband cooks meat on a grill.", answer: "Sunday" },
-    { id: 10, text: "Amelia and her family do housework in the afternoon.", answer: "Sunday" },
-    { id: 11, text: "She is tired in the evening.", answer: "Sunday" },
-    { id: 12, text: "Amelia says this is her favorite part of the weekend.", answer: "Friday" }
+  var ITEMS = [
+    { text: "She does housework.", answer: "Sunday" },
+    { text: "She gets up at 5:00 a.m.", answer: "Saturday" },
+    { text: "She gets up at about 9:00 a.m.", answer: "Sunday" },
+    { text: "She goes to a restaurant with her husband.", answer: "Friday" },
+    { text: "She goes to the supermarket.", answer: "Saturday" },
+    { text: "She has lunch with her sister.", answer: "Sunday" },
+    { text: "She meets friends.", answer: "Friday" },
+    { text: "She watches TV.", answer: "Saturday" },
+    { text: "She works until 6:00 p.m.", answer: "Saturday" }
   ];
 
-  const DAYS = ["Friday", "Saturday", "Sunday"];
-  const AUDIO_URL = "audio.mp3";
-  const TOTAL = ACTIVITIES.length;
+  var TOTAL_ITEMS = ITEMS.length;
+  var SCORED = ITEMS.filter(function (it) { return it.answer; }).length;
+  var selections = new Array(TOTAL_ITEMS).fill(null);
+  var checked = false;
 
-  // State
-  let index = 0;
-  let selections = {}; // id -> day
-  let checked = false;
-  let audioCtx = null;
-  let analyser = null;
-  let sourceNode = null;
-  let animId = null;
-  let waveformData = null;
+  var $ = function (id) { return document.getElementById(id); };
+  var list = $("sentenceList");
+  var playBtn = $("playBtn");
+  var playIcon = $("playIcon");
+  var replayBtn = $("replayBtn");
+  var seekBar = $("seekBar");
+  var currentTimeEl = $("currentTime");
+  var durationEl = $("duration");
+  var progressText = $("progressText");
+  var feedback = $("feedback");
+  var checkBtn = $("checkBtn");
+  var resetBtn = $("resetBtn");
 
-  // DOM
-  const playBtn = document.getElementById("playBtn");
-  const playIcon = document.getElementById("playIcon");
-  const replayBtn = document.getElementById("replayBtn");
-  const seekBar = document.getElementById("seekBar");
-  const currentTimeEl = document.getElementById("currentTime");
-  const durationEl = document.getElementById("duration");
-  const progressLine = document.getElementById("progressLine");
-  const canvas = document.getElementById("waveform");
-  const ctx = canvas.getContext("2d");
-  const progressText = document.getElementById("progressText");
-  const cardNum = document.getElementById("cardNum");
-  const cardText = document.getElementById("cardText");
-  const dayChoices = document.getElementById("dayChoices");
-  const cardResult = document.getElementById("cardResult");
-  const currentCard = document.getElementById("currentCard");
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const cardStage = document.getElementById("cardStage");
-  const summary = document.getElementById("summary");
-  const summaryList = document.getElementById("summaryList");
-  const checkBtn = document.getElementById("checkBtn");
-  const resetBtn = document.getElementById("resetBtn");
-  const feedbackEl = document.getElementById("feedback");
-  const successOverlay = document.getElementById("successOverlay");
-  const finalScoreEl = document.getElementById("finalScore");
-  const playAgainBtn = document.getElementById("playAgainBtn");
-  const heroCard = document.getElementById("heroCard");
-
-  const audio = new Audio(AUDIO_URL);
+  var audio = new Audio();
   audio.preload = "auto";
+  audio.src = AUDIO_URL;
 
-  // ---------- Waveform ----------
-  function setupCanvasSize() {
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = Math.floor(rect.width * dpr);
-    canvas.height = Math.floor(40 * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  function fmt(sec) {
+    if (!isFinite(sec) || sec < 0) sec = 0;
+    var m = Math.floor(sec / 60);
+    var s = Math.floor(sec % 60);
+    return m + ":" + (s < 10 ? "0" : "") + s;
   }
-
-  function generateIdleWaveform() {
-    const bars = 48;
-    waveformData = new Float32Array(bars);
-    for (let i = 0; i < bars; i++) {
-      const t = i / bars;
-      waveformData[i] = 0.18 + 0.22 * Math.sin(t * Math.PI * 3.5) * Math.sin(t * Math.PI * 1.2) + 0.08 * Math.random();
+  function setPlayIcon(playing) {
+    playIcon.textContent = playing ? "❚❚" : "▶";
+    playBtn.setAttribute("aria-label", playing ? "Pause" : "Play");
+    playBtn.classList.toggle("is-playing", playing);
+  }
+  playBtn.addEventListener("click", function () {
+    if (audio.paused) {
+      audio.play().catch(function () {
+        feedback.textContent = "The audio could not be played. Check your connection and try again.";
+        feedback.className = "feedback is-wrong";
+      });
+    } else {
+      audio.pause();
     }
+  });
+  replayBtn.addEventListener("click", function () {
+    audio.currentTime = 0;
+    audio.play().catch(function () {});
+  });
+  audio.addEventListener("play", function () { setPlayIcon(true); });
+  audio.addEventListener("pause", function () { setPlayIcon(false); });
+  audio.addEventListener("ended", function () { setPlayIcon(false); });
+  audio.addEventListener("loadedmetadata", function () {
+    durationEl.textContent = fmt(audio.duration);
+  });
+  function paintSeek(pct) {
+    seekBar.value = String(pct);
+    seekBar.style.background =
+      "linear-gradient(90deg, #a78bfa 0%, #7c3aed " + pct + "%, #e8e4f5 " + pct + "%, #e5e7eb 100%)";
   }
-
-  function drawWaveform(liveData) {
-    const w = canvas.getBoundingClientRect().width;
-    const h = 40;
-    ctx.clearRect(0, 0, w, h);
-    const bars = liveData ? liveData.length : (waveformData ? waveformData.length : 40);
-    const gap = 2;
-    const barW = (w - gap * (bars - 1)) / bars;
-    const mid = h / 2;
-
-    for (let i = 0; i < bars; i++) {
-      const amp = liveData ? (liveData[i] / 255) * 0.9 : (waveformData ? waveformData[i] : 0.2);
-      const barH = Math.max(2, amp * (h * 0.85));
-      const x = i * (barW + gap);
-      const y = mid - barH / 2;
-      const grad = ctx.createLinearGradient(0, y, 0, y + barH);
-      if (audio.paused) {
-        grad.addColorStop(0, "#c4b5fd");
-        grad.addColorStop(1, "#a78bfa");
-      } else {
-        grad.addColorStop(0, "#8b5cf6");
-        grad.addColorStop(1, "#6c5ce7");
-      }
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      const r = Math.min(2.5, barW / 2);
-      if (ctx.roundRect) {
-        ctx.roundRect(x, y, barW, barH, r);
-      } else {
-        ctx.rect(x, y, barW, barH);
-      }
-      ctx.fill();
+  audio.addEventListener("timeupdate", function () {
+    currentTimeEl.textContent = fmt(audio.currentTime);
+    if (audio.duration && isFinite(audio.duration)) {
+      paintSeek((audio.currentTime / audio.duration) * 100);
     }
-  }
-
-  function startVisualizer() {
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 128;
-      analyser.smoothingTimeConstant = 0.75;
-      sourceNode = audioCtx.createMediaElementSource(audio);
-      sourceNode.connect(analyser);
-      analyser.connect(audioCtx.destination);
+  });
+  seekBar.addEventListener("input", function () {
+    var pct = Number(seekBar.value);
+    paintSeek(pct);
+    if (audio.duration && isFinite(audio.duration)) {
+      audio.currentTime = (pct / 100) * audio.duration;
     }
-    if (audioCtx.state === "suspended") audioCtx.resume();
+  });
+  paintSeek(0);
 
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-
-    function tick() {
-      animId = requestAnimationFrame(tick);
-      analyser.getByteFrequencyData(dataArray);
-      const bars = 40;
-      const step = Math.floor(bufferLength / bars);
-      const subset = new Uint8Array(bars);
-      for (let i = 0; i < bars; i++) subset[i] = dataArray[i * step] || 0;
-      drawWaveform(subset);
-    }
-    tick();
+  function buildList() {
+    list.innerHTML = "";
+    ITEMS.forEach(function (item, i) {
+      var li = document.createElement("li");
+      li.className = "sentence";
+      li.dataset.index = String(i);
+      var text = document.createElement("p");
+      text.className = "sentence-text";
+      text.textContent = (i + 1) + ". " + item.text;
+      var row = document.createElement("div");
+      row.className = "day-row";
+      row.setAttribute("role", "radiogroup");
+      row.setAttribute("aria-label", "Day for sentence " + (i + 1));
+      DAYS.forEach(function (day) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "day-btn";
+        b.dataset.day = day;
+        b.setAttribute("role", "radio");
+        b.setAttribute("aria-checked", "false");
+        b.textContent = day;
+        b.addEventListener("click", function () {
+          if (checked) return;
+          selections[i] = day;
+          paint(i);
+          updateProgress();
+        });
+        row.appendChild(b);
+      });
+      li.appendChild(text);
+      li.appendChild(row);
+      list.appendChild(li);
+    });
   }
 
-  function stopVisualizer() {
-    if (animId) { cancelAnimationFrame(animId); animId = null; }
-    drawWaveform(null);
+  function rowEl(i) {
+    return list.querySelector('.sentence[data-index="' + i + '"]');
   }
 
-  // ---------- Audio ----------
-  function formatTime(sec) {
-    if (!isFinite(sec)) return "0:00";
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return m + ":" + String(s).padStart(2, "0");
+  function paint(i) {
+    var li = rowEl(i);
+    if (!li) return;
+    li.querySelectorAll(".day-btn").forEach(function (b) {
+      var on = selections[i] === b.dataset.day;
+      b.classList.toggle("is-on", on);
+      b.setAttribute("aria-checked", on ? "true" : "false");
+    });
+  }
+
+  function answeredCount() {
+    return selections.filter(function (s) { return s; }).length;
   }
 
   function updateProgress() {
-    const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
-    seekBar.value = pct;
-    currentTimeEl.textContent = formatTime(audio.currentTime);
-    progressLine.style.left = pct + "%";
-  }
-
-  playBtn.addEventListener("click", () => {
-    if (audio.paused) {
-      audio.play().then(() => {
-        playIcon.textContent = "❚❚";
-        playBtn.classList.add("playing");
-        startVisualizer();
-      }).catch(() => {});
-    } else {
-      audio.pause();
-      playIcon.textContent = "▶";
-      playBtn.classList.remove("playing");
-      stopVisualizer();
-    }
-  });
-
-  replayBtn.addEventListener("click", () => {
-    audio.currentTime = 0;
-    if (audio.paused) playBtn.click();
-  });
-
-  seekBar.addEventListener("input", () => {
-    if (audio.duration) {
-      audio.currentTime = (seekBar.value / 100) * audio.duration;
-      updateProgress();
-    }
-  });
-
-  audio.addEventListener("loadedmetadata", () => {
-    durationEl.textContent = formatTime(audio.duration);
-  });
-  audio.addEventListener("timeupdate", updateProgress);
-  audio.addEventListener("ended", () => {
-    playIcon.textContent = "▶";
-    playBtn.classList.remove("playing");
-    stopVisualizer();
-  });
-
-  // ---------- Card UI (one at a time) ----------
-  function showCard(i) {
-    index = i;
-    const act = ACTIVITIES[i];
-    progressText.textContent = (i + 1) + "/" + TOTAL;
-    cardNum.textContent = "Activity " + (i + 1) + " of " + TOTAL;
-    cardText.textContent = act.text;
-
-    currentCard.classList.remove("correct", "wrong");
-    cardResult.hidden = true;
-    cardResult.textContent = "";
-
-    // day buttons
-    dayChoices.querySelectorAll(".day-btn").forEach((btn) => {
-      const day = btn.dataset.day;
-      btn.classList.toggle("selected", selections[act.id] === day);
-      btn.disabled = checked;
-    });
-
-    prevBtn.disabled = i === 0;
-    const hasAnswer = !!selections[act.id];
-    nextBtn.disabled = !hasAnswer;
-    nextBtn.textContent = i === TOTAL - 1 ? "Review →" : "Next →";
-
-    // hide hero after first answer to save space on phone
-    if (Object.keys(selections).length > 0) {
-      heroCard.style.display = "none";
+    var n = answeredCount();
+    progressText.textContent = n + "/" + TOTAL_ITEMS;
+    checkBtn.disabled = checked || n < TOTAL_ITEMS;
+    if (!checked) {
+      feedback.textContent = n < TOTAL_ITEMS
+        ? "Pick a day for every sentence (" + (TOTAL_ITEMS - n) + " left)."
+        : "All answered. Press Check.";
+      feedback.className = "feedback";
     }
   }
 
-  dayChoices.addEventListener("click", (e) => {
-    const btn = e.target.closest(".day-btn");
-    if (!btn || checked) return;
-    const day = btn.dataset.day;
-    const act = ACTIVITIES[index];
-    selections[act.id] = day;
-    dayChoices.querySelectorAll(".day-btn").forEach((b) => {
-      b.classList.toggle("selected", b.dataset.day === day);
-    });
-    nextBtn.disabled = false;
-  });
-
-  prevBtn.addEventListener("click", () => {
-    if (index > 0) showCard(index - 1);
-  });
-
-  nextBtn.addEventListener("click", () => {
-    if (!selections[ACTIVITIES[index].id]) return;
-    if (index < TOTAL - 1) {
-      showCard(index + 1);
-    } else {
-      showSummary();
-    }
-  });
-
-  function showSummary() {
-    cardStage.hidden = true;
-    summary.hidden = false;
-    summaryList.innerHTML = "";
-    ACTIVITIES.forEach((act) => {
-      const item = document.createElement("div");
-      item.className = "summary-item";
-      item.innerHTML =
-        '<span class="day-tag">' + (selections[act.id] || "—") + "</span>" +
-        "<span>" + act.text + "</span>";
-      summaryList.appendChild(item);
-    });
-    feedbackEl.hidden = true;
-    checkBtn.disabled = false;
-    checkBtn.textContent = "Check all answers";
-    // scroll summary into view
-    summary.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  checkBtn.addEventListener("click", () => {
-    if (checked) return;
+  checkBtn.addEventListener("click", function () {
+    if (checked || answeredCount() < TOTAL_ITEMS) return;
     checked = true;
-    let correct = 0;
-    const items = summaryList.querySelectorAll(".summary-item");
-    ACTIVITIES.forEach((act, i) => {
-      const chosen = selections[act.id];
-      const item = items[i];
-      if (chosen === act.answer) {
-        item.classList.add("correct");
-        correct++;
-      } else {
-        item.classList.add("wrong");
-        const tag = item.querySelector(".day-tag");
-        tag.textContent = (chosen || "—") + " → " + act.answer;
+    var correct = 0;
+    ITEMS.forEach(function (item, i) {
+      var li = rowEl(i);
+      li.classList.remove("is-right", "is-wrong", "is-nokey");
+      li.querySelectorAll(".day-btn").forEach(function (b) { b.disabled = true; });
+      if (!item.answer) {
+        li.classList.add("is-nokey");
+        return;
+      }
+      var ok = selections[i] === item.answer;
+      if (ok) correct++;
+      li.classList.add(ok ? "is-right" : "is-wrong");
+      if (!ok) {
+        li.querySelectorAll(".day-btn").forEach(function (b) {
+          if (b.dataset.day === item.answer) b.classList.add("is-answer");
+        });
       }
     });
-
-    feedbackEl.hidden = false;
-    if (correct === TOTAL) {
-      feedbackEl.className = "feedback good";
-      feedbackEl.textContent = "Perfect! All " + TOTAL + " correct.";
-      finalScoreEl.textContent = correct;
-      setTimeout(() => { successOverlay.hidden = false; }, 500);
-    } else {
-      feedbackEl.className = "feedback partial";
-      feedbackEl.textContent = "You got " + correct + " of " + TOTAL + " correct. Green = right, red = see the answer.";
-    }
     checkBtn.disabled = true;
+    resetBtn.textContent = "TRY AGAIN";
+    feedback.textContent = "You got " + correct + " of " + SCORED + " right." +
+      (SCORED < TOTAL_ITEMS ? " Grey rows have no answer key yet." : "");
+    feedback.className = "feedback " + (correct === SCORED ? "is-right" : "is-partial");
+
+    if (window.LAFinish && SCORED > 0) {
+      setTimeout(function () {
+        LAFinish.show({
+          gameId: GAME_ID,
+          score: correct,
+          total: SCORED,
+          onAgain: resetAll,
+          backHref: "../"
+        });
+      }, correct === SCORED ? 500 : 900);
+    }
   });
 
   function resetAll() {
-    selections = {};
     checked = false;
-    index = 0;
-    summary.hidden = true;
-    cardStage.hidden = false;
-    successOverlay.hidden = true;
-    feedbackEl.hidden = true;
-    heroCard.style.display = "";
-    showCard(0);
+    for (var i = 0; i < TOTAL_ITEMS; i++) selections[i] = null;
+    buildList();
+    resetBtn.textContent = "RESET";
+    updateProgress();
   }
-
   resetBtn.addEventListener("click", resetAll);
-  playAgainBtn.addEventListener("click", resetAll);
 
-  // ---------- Init ----------
-  function init() {
-    setupCanvasSize();
-    generateIdleWaveform();
-    drawWaveform(null);
-    showCard(0);
-    window.addEventListener("resize", () => {
-      setupCanvasSize();
-      if (audio.paused) drawWaveform(null);
-    });
-  }
-
-  if (!CanvasRenderingContext2D.prototype.roundRect) {
-    CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
-      if (w < 2 * r) r = w / 2;
-      if (h < 2 * r) r = h / 2;
-      this.moveTo(x + r, y);
-      this.arcTo(x + w, y, x + w, y + h, r);
-      this.arcTo(x + w, y + h, x, y + h, r);
-      this.arcTo(x, y + h, x, y, r);
-      this.arcTo(x, y, x + w, y, r);
-      this.closePath();
-    };
-  }
-
-  init();
+  buildList();
+  updateProgress();
 })();

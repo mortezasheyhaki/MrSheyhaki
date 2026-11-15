@@ -5,7 +5,7 @@
 .profile-fab,
 [data-theme-toggle],
 .theme-toggle,
-body > header,
+body > header:not(.game-header),
 .site-footer {
   display: none !important;
 }
@@ -671,4 +671,417 @@ body.dark-mode .answer-line.has-words {
     font-size: .88rem;
     padding: 7px 12px;
   }
+}
+
+/* ---- Unit 7A game header polish: one consistent back button and title ---- */
+.game-header,
+.top-bar {
+  min-height: 60px;
+  height: auto;
+  gap: 8px;
+}
+.back-button,
+.back-btn {
+  flex: 0 0 auto;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 12px;
+  white-space: nowrap;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+}
+.back-button .back-text,
+.back-btn .back-text {
+  display: inline !important;
+}
+.header-center,
+.top-center {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.header-center .eyebrow,
+.top-center .unit-label,
+.header-center .eyebrow ~ strong {
+  white-space: nowrap;
+}
+.header-center strong,
+.top-center .game-title {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Progress bar (same style as Make Questions) ---- */
+.progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(124, 58, 237, 0.14);
+  overflow: hidden;
+  margin: 0 0 12px;
+}
+.progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7c3aed, #3b82f6);
+  transition: width 0.35s ease;
+}
+
+/* ---- Word bank: fixed grid, picked chips stay in place and go muted ---- */
+.word-bank {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 10px;
+  justify-items: stretch;
+  align-items: stretch;
+  align-content: start;
+  justify-content: stretch;
+  padding: 14px;
+}
+.word-bank .word-chip {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 10px 8px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.18s ease, transform 0.08s, box-shadow 0.08s;
+}
+.word-bank .word-chip.is-used {
+  opacity: 0.38;
+  filter: grayscale(0.4);
+  box-shadow: none;
+  transform: none;
+  cursor: default;
+}
+.word-bank .word-chip:disabled:not(.is-used) {
+  opacity: 0.6;
+}
+
+/* ---- Stable size: the card keeps the same height in every round ----
+   Sentence box, word bank, feedback line and the Continue / Show answer
+   buttons always reserve their space; if a round needs more, the box scrolls. */
+:root {
+  --answer-h: 150px;
+  --bank-h: 150px;
+}
+.answer-line {
+  height: var(--answer-h) !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  margin-bottom: 14px;
+}
+.word-bank {
+  height: var(--bank-h) !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+.feedback {
+  height: 44px;
+  min-height: 44px;
+  margin: 2px 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.show-answer-btn[hidden] {
+  display: flex !important;
+  visibility: hidden;
+  height: 44px;
+}
+.after-correct[hidden] {
+  display: grid !important;
+  visibility: hidden;
+}
+.after-correct {
+  min-height: 56px;
+  align-items: center;
+}
+@media (max-width: 480px) {
+  :root {
+    --answer-h: 240px;
+    --bank-h: 240px;
+  }
+  .word-bank {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+/* =========================================================================
+   NO SCROLLING · desktop and mobile
+   The whole game screen fits the window height. The sentence box and the
+   word bank share the free space; chips and text scale with the window.
+   ========================================================================= */
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+body {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+.game-header {
+  flex: 0 0 auto;
+  height: auto !important;
+  min-height: 52px;
+  padding-top: max(6px, env(safe-area-inset-top)) !important;
+  padding-bottom: 6px !important;
+}
+main.app {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: clamp(6px, 1.4vh, 14px) clamp(10px, 2.4vw, 20px) clamp(6px, 1.4vh, 14px) !important;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#gameScreen.panel-game {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex !important;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: clamp(8px, 1.8vh, 18px) clamp(10px, 2.4vw, 22px) !important;
+  margin: 0;
+  overflow: hidden;
+}
+#gameScreen[hidden] { display: none !important; }
+
+.stats-bar {
+  flex: 0 0 auto;
+  margin-bottom: clamp(4px, 1vh, 10px);
+}
+.stat {
+  padding-top: clamp(4px, 0.9vh, 10px) !important;
+  padding-bottom: clamp(4px, 0.9vh, 10px) !important;
+}
+.stat strong { font-size: clamp(15px, 2.6vh, 20px); }
+.progress-track {
+  flex: 0 0 auto;
+  margin: 0 0 clamp(4px, 1vh, 10px) !important;
+}
+.instruction {
+  flex: 0 0 auto;
+  margin: 0 0 clamp(4px, 1vh, 8px) !important;
+  font-size: clamp(12px, 1.9vh, 15px);
+  line-height: 1.35;
+}
+@media (max-height: 760px) {
+  .kbd-hint { display: none !important; }
+}
+.zone-label {
+  flex: 0 0 auto;
+  margin: 0 0 3px !important;
+  font-size: clamp(10px, 1.5vh, 12px);
+}
+
+.answer-line {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  align-content: flex-start;
+  gap: clamp(5px, 1vh, 10px) !important;
+  padding: clamp(6px, 1.2vh, 14px) !important;
+  margin: 0 0 clamp(4px, 1vh, 10px) !important;
+}
+.word-bank {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(74px, 21vw, 112px), 1fr)) !important;
+  gap: clamp(5px, 1vh, 10px) !important;
+  align-content: center;
+  justify-items: stretch;
+  padding: clamp(6px, 1.2vh, 14px) !important;
+  margin: 0 0 clamp(4px, 1vh, 10px) !important;
+}
+.word-chip,
+.built-chip {
+  min-height: clamp(30px, 5.2vh, 46px) !important;
+  font-size: clamp(13px, 2.1vh, 17px) !important;
+  padding: 4px 8px !important;
+}
+.word-bank .word-chip {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.feedback {
+  flex: 0 0 auto;
+  height: clamp(22px, 3.6vh, 30px) !important;
+  min-height: 0 !important;
+  margin: 0 0 clamp(2px, 0.6vh, 6px) !important;
+  font-size: clamp(12px, 1.9vh, 15px);
+  overflow: hidden;
+}
+.actions-row {
+  flex: 0 0 auto;
+  margin-bottom: clamp(4px, 1vh, 8px) !important;
+}
+.actions-row button,
+.after-correct button {
+  min-height: clamp(40px, 6.4vh, 52px) !important;
+}
+.show-answer-btn {
+  flex: 0 0 auto;
+  margin: 0 0 clamp(2px, 0.6vh, 6px) !important;
+  min-height: clamp(34px, 5vh, 40px) !important;
+}
+.show-answer-btn[hidden] {
+  display: flex !important;
+  visibility: hidden;
+}
+.after-correct {
+  flex: 0 0 auto;
+  margin: 0 !important;
+  padding-top: clamp(4px, 1vh, 10px) !important;
+  min-height: clamp(46px, 7vh, 58px);
+}
+.after-correct[hidden] {
+  display: grid !important;
+  visibility: hidden;
+}
+
+/* phone: the word bank gets most of the free height, with smaller, denser chips */
+@media (max-width: 600px) {
+  .word-bank {
+    flex: 1.5 1 0 !important;
+    grid-template-columns: repeat(auto-fill, minmax(clamp(68px, 20vw, 100px), 1fr)) !important;
+    gap: 6px !important;
+    padding: 8px !important;
+  }
+  .answer-line {
+    flex: 1 1 0 !important;
+    gap: 6px !important;
+  }
+  .word-chip,
+  .built-chip {
+    min-height: clamp(30px, 4.8vh, 42px) !important;
+    font-size: clamp(12px, 1.9vh, 15px) !important;
+    padding: 3px 6px !important;
+  }
+  .word-bank .word-chip {
+    letter-spacing: -0.01em;
+  }
+}
+
+/* shorter screens (phones held upright): compact the top part so both boxes fit */
+@media (max-height: 760px) {
+  .instruction { display: none !important; }
+  .stats-bar { margin-bottom: 4px !important; gap: 6px !important; }
+  .stat { padding-top: 3px !important; padding-bottom: 3px !important; }
+  .stat .stat-label { font-size: 9px !important; }
+  .stat strong { font-size: 15px !important; }
+  .progress-track { margin-bottom: 4px !important; height: 6px !important; }
+  .zone-label { font-size: 10px !important; margin-bottom: 2px !important; }
+  .feedback { height: 20px !important; font-size: 12px !important; margin-bottom: 2px !important; }
+  .actions-row button,
+  .after-correct button { min-height: 40px !important; }
+  .show-answer-btn[hidden] { min-height: 32px !important; }
+  .after-correct { min-height: 46px !important; padding-top: 4px !important; }
+  .show-answer-btn { min-height: 32px !important; margin-bottom: 2px !important; }
+}
+
+/* Show answer and Continue share one slot, so they reserve one row of height */
+.show-answer-btn {
+  --sa-h: clamp(34px, 5vh, 40px);
+  height: var(--sa-h) !important;
+  min-height: var(--sa-h) !important;
+  margin-bottom: calc(var(--sa-h) * -1) !important;
+}
+@media (max-height: 760px) {
+  .show-answer-btn {
+    --sa-h: 32px;
+    margin-bottom: -32px !important;
+  }
+}
+@media (max-width: 600px) {
+  .word-bank {
+    grid-template-columns: repeat(auto-fill, minmax(clamp(64px, 18vw, 100px), 1fr)) !important;
+  }
+}
+
+/* ---- Header controls always visible (never pushed out of the bar) ---- */
+.game-header .back-button,
+.game-header .header-actions {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* ---- Desktop / tablet design: content-sized boxes, no stretched gaps ----
+   The sentence box and word bank are sized to their chips; the card is
+   centred in the window. Phones keep the flexible fit above. */
+@media (min-width: 601px) {
+  :root {
+    --desk-ans-h: 124px;
+    --desk-bank-h: 140px;
+  }
+  main.app {
+    justify-content: center;
+  }
+  #gameScreen.panel-game {
+    flex: 0 0 auto !important;
+    padding: 18px 22px 20px !important;
+  }
+  .stats-bar { margin-bottom: 12px; }
+  .progress-track { margin-bottom: 10px !important; }
+  .instruction { margin-bottom: 10px !important; }
+  .zone-label { margin-bottom: 6px !important; }
+  .answer-line {
+    flex: 0 0 auto !important;
+    height: var(--desk-ans-h) !important;
+    align-content: flex-start !important;
+    margin-bottom: 14px !important;
+    padding: 12px 14px !important;
+  }
+  .word-bank {
+    flex: 0 0 auto !important;
+    height: var(--desk-bank-h) !important;
+    align-content: start !important;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)) !important;
+    gap: 10px !important;
+    padding: 14px !important;
+    margin-bottom: 12px !important;
+  }
+  .word-bank .word-chip {
+    min-height: 46px !important;
+  }
+  .feedback { margin-bottom: 8px !important; }
+  .actions-row { margin-bottom: 0 !important; }
+  .after-correct { min-height: 50px !important; padding-top: 0 !important; }
+}
+
+/* narrower desktop windows: the word bank wraps to a third row */
+@media (min-width: 601px) and (max-width: 900px) {
+  :root { --desk-bank-h: 200px; }
 }

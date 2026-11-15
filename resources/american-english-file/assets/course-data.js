@@ -351,10 +351,12 @@ COURSE_DATA["american-english-file"].levels.starter.units[6].lessons.a.games = [
 
 // Unit 7A – Games
 COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.games = [
+  { title: "Free-Time Flashcards", url: "free-time-flashcards/" },
+  { title: "Free-Time Match", url: "free-time-match/" },
+  { title: "Free-Time Listen & Write", url: "free-time-listen-write/" },
   { title: "Question Builder", url: "question-builder/" },
   { title: "Build the Question", url: "build-the-question/" },
-  { title: "Amelia's Days", url: "amelias-days/" },
-  { title: "Wh- Answer Challenge", url: "wh-answer-challenge/", label: "Vocabulary" }
+  { title: "Amelia's Days", url: "amelias-days/" }
 ];
 
 // Unit 7B – Games

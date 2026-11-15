@@ -294,7 +294,20 @@ const ITEMS = [
       }
     });
 
-    show("end");
+    if (window.LAFinish) {
+      // Shared Learning Arcade results screen; stars were already saved above.
+      show("none");
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: correctCount,
+        total: total,
+        save: false,
+        onAgain: startGame,
+        backHref: "../"
+      });
+    } else {
+      show("end");
+    }
   }
 
   function startGame() {

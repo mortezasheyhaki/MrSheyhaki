@@ -1,0 +1,272 @@
+/* Free-Time Listen & Write — fixed, no-scroll on mobile & desktop */
+
+.arcade-header-bar, .arcade-nav, .nav-profile, .profile-fab, .login-fab,
+body > header:not(.top) {
+  display: none !important;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --bg: #0b1220;
+  --card: #121a2b;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --line: #243047;
+  --accent: #8b5cf6;
+  --accent2: #6d28d9;
+  --ok: #34d399;
+  --bad: #fb7185;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+}
+
+.app {
+  height: 100%;
+  height: 100dvh;
+  max-width: 720px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding:
+    max(8px, env(safe-area-inset-top))
+    14px
+    max(10px, env(safe-area-inset-bottom));
+  gap: 8px;
+  overflow: hidden;
+}
+
+/* Header */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+.back {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--line);
+  font-weight: 800;
+  flex: none;
+}
+.top-mid { flex: 1; min-width: 0; text-align: center; }
+.pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #c4b5fd;
+  background: rgba(139, 92, 246, 0.18);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+.top-mid h1 {
+  margin: 2px 0 0;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+.progress {
+  min-width: 48px;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  font-weight: 900;
+  font-size: 13px;
+  flex: none;
+}
+
+/* Stage — fills remaining height, no scroll */
+.stage {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 1fr auto auto auto;
+  gap: 10px;
+  align-content: stretch;
+  overflow: hidden;
+}
+
+.pic-wrap {
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(139, 92, 246, 0.18), transparent 60%),
+    var(--card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+  position: relative;
+}
+.pic {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  padding: 12px;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.pic-fallback {
+  font-size: 64px;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.play {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 18px 0 14px;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  color: #fff;
+  font: inherit;
+  font-weight: 900;
+  font-size: 14px;
+  background: linear-gradient(160deg, #a78bfa, #7c3aed 50%, #6d28d9);
+  box-shadow:
+    0 5px 0 #4c1d95,
+    0 12px 22px rgba(109, 40, 217, 0.35);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.play:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #4c1d95, 0 6px 12px rgba(109, 40, 217, 0.28);
+}
+.play.is-playing {
+  background: linear-gradient(160deg, #c4b5fd, #8b5cf6 55%, #7c3aed);
+}
+.play-ico {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: rgba(255,255,255,0.18);
+  font-size: 12px;
+}
+
+.type-row {
+  display: flex;
+  gap: 8px;
+  flex: none;
+}
+.input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 50px;
+  border-radius: 14px;
+  border: 2px solid var(--line);
+  background: #0f172a;
+  color: var(--text);
+  font: inherit;
+  font-size: 16px; /* prevent iOS zoom */
+  font-weight: 700;
+  padding: 0 14px;
+  outline: none;
+}
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+}
+.input.ok { border-color: var(--ok); background: rgba(52, 211, 153, 0.08); }
+.input.bad { border-color: var(--bad); background: rgba(251, 113, 133, 0.08); }
+
+.check {
+  flex: none;
+  height: 50px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(160deg, #a78bfa, #6d28d9);
+  color: #fff;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #4c1d95;
+}
+.check:active { transform: translateY(2px); box-shadow: 0 2px 0 #4c1d95; }
+.check:disabled { opacity: 0.55; cursor: default; box-shadow: none; }
+
+.feedback {
+  margin: 0;
+  min-height: 1.2em;
+  text-align: center;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--muted);
+}
+.feedback.is-ok { color: var(--ok); }
+.feedback.is-bad { color: var(--bad); }
+
+.bottom {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex: none;
+}
+.ghost {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+}
+.ghost:active { background: rgba(255,255,255,0.04); }
+
+/* Desktop: larger image area */
+@media (min-width: 700px) {
+  .app { padding-left: 20px; padding-right: 20px; gap: 12px; }
+  .top-mid h1 { font-size: 18px; }
+  .pic { padding: 20px; }
+  .input, .check { height: 54px; }
+  .play { min-height: 52px; font-size: 15px; }
+}
+
+/* Short phones: keep everything on one screen */
+@media (max-height: 700px) {
+  .app { gap: 6px; }
+  .play { min-height: 42px; padding: 0 14px 0 10px; }
+  .play-label { font-size: 13px; }
+  .input, .check { height: 46px; }
+  .pic { padding: 8px; }
+  .bottom { gap: 8px; }
+  .ghost { min-height: 36px; }
+}
+
+@media (max-height: 600px) {
+  .pill { display: none; }
+  .top-mid h1 { font-size: 14px; }
+  .play-label { display: none; }
+  .play { border-radius: 50%; width: 44px; height: 44px; min-height: 44px; padding: 0; justify-content: center; }
+  .play-ico { margin: 0; }
+}

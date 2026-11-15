@@ -96,11 +96,9 @@
   const checkQuestionBtn = $("checkQuestionBtn");
   const questionFeedback = $("questionFeedback");
   const themeBtn = $("themeBtn");
-  const muteBtn = $("muteBtn");
   const clearBtn = $("clearBtn");
   const continueBtn = $("continueBtn");
   const afterCorrect = $("afterCorrect");
-  const replayVoiceBtn = $("replayVoiceBtn");
   const showAnswerBtn = $("showAnswerBtn");
 
   var order = [];
@@ -113,12 +111,7 @@
   var bankChips = [];
   var locked = false;
   var idSeq = 0;
-  var muted = false;
   var wrongAttempts = 0;
-
-  try {
-    muted = localStorage.getItem("btq-mute") === "1";
-  } catch (e) {}
 
   function shuffle(arr) {
     var a = arr.slice();
@@ -129,50 +122,6 @@
       a[j] = t;
     }
     return a;
-  }
-
-  function stopSpeech() {
-    try {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-    } catch (e) {}
-  }
-
-  function speakQuestion(words) {
-    if (muted) return;
-    try {
-      if (!window.speechSynthesis) return;
-      stopSpeech();
-      var parts = [];
-      for (var i = 0; i < words.length; i++) {
-        if (words[i] !== "?") parts.push(words[i]);
-      }
-      var text = parts.join(" ") + "?";
-      var u = new SpeechSynthesisUtterance(text);
-      u.lang = "en-US";
-      u.rate = 0.92;
-      var voices = window.speechSynthesis.getVoices() || [];
-      var en = voices.filter(function (v) { return /^en/i.test(v.lang); });
-      if (en.length) {
-        var us = en.filter(function (v) { return /US|GB|UK/i.test(v.lang); });
-        u.voice = us[0] || en[0];
-      }
-      window.speechSynthesis.speak(u);
-    } catch (e) {}
-  }
-
-  if (window.speechSynthesis) {
-    window.speechSynthesis.getVoices();
-    window.speechSynthesis.onvoiceschanged = function () {
-      window.speechSynthesis.getVoices();
-    };
-  }
-
-  function updateMuteUI() {
-    if (!muteBtn) return;
-    muteBtn.textContent = muted ? "🔇" : "🔊";
-    muteBtn.setAttribute("aria-pressed", muted ? "true" : "false");
-    muteBtn.setAttribute("aria-label", muted ? "Unmute voice" : "Mute voice");
-    muteBtn.title = muted ? "Unmute" : "Mute";
   }
 
   function show(screen) {
@@ -190,6 +139,8 @@
     $("roundText").textContent = index + 1 + " / " + order.length;
     $("scoreText").textContent = String(score);
     $("streakText").textContent = "×" + streak;
+    var fill = $("progressFill");
+    if (fill && order.length) fill.style.width = (index / order.length) * 100 + "%";
   }
 
   function hideAfterCorrect() {
@@ -236,9 +187,7 @@
       btn.setAttribute("aria-label", "Remove " + chip.word);
       btn.addEventListener("click", function () {
         if (locked) return;
-        var removed = selected.splice(i, 1)[0];
-        bankChips.push(removed);
-        bankChips = shuffle(bankChips);
+        selected.splice(i, 1);
         renderQuestionLine();
         renderBank();
         setFeedback("", "");
@@ -248,25 +197,28 @@
     });
   }
 
+  // The bank keeps every chip in its fixed slot. A picked chip stays in place,
+  // muted and disabled, until it is removed from the sentence.
+  function isUsed(chip) {
+    for (var i = 0; i < selected.length; i++) {
+      if (selected[i].id === chip.id) return true;
+    }
+    return false;
+  }
+
   function renderBank() {
     wordBank.innerHTML = "";
-    bankChips.forEach(function (chip, bankIdx) {
+    bankChips.forEach(function (chip) {
+      var used = isUsed(chip);
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "word-chip";
+      btn.className = "word-chip" + (used ? " is-used" : "");
       btn.textContent = chip.word;
-      btn.disabled = locked;
-      btn.dataset.bankIndex = String(bankIdx);
-      btn.setAttribute("aria-label", "Add " + chip.word);
+      btn.disabled = locked || used;
+      btn.setAttribute("aria-label", (used ? "Already used " : "Add ") + chip.word);
       btn.addEventListener("click", function () {
-        if (locked) return;
-        var idx = -1;
-        for (var i = 0; i < bankChips.length; i++) {
-          if (bankChips[i].id === chip.id) { idx = i; break; }
-        }
-        if (idx === -1) return;
-        var moved = bankChips.splice(idx, 1)[0];
-        selected.push(moved);
+        if (locked || used) return;
+        selected.push(chip);
         renderQuestionLine();
         renderBank();
         setFeedback("", "");
@@ -277,7 +229,6 @@
   }
 
   function setupRoundChips() {
-    stopSpeech();
     var item = order[index];
     idSeq = 0;
     selected = [];
@@ -303,9 +254,7 @@
 
   function clearSentence() {
     if (locked) return;
-    bankChips = bankChips.concat(selected);
     selected = [];
-    bankChips = shuffle(bankChips);
     renderQuestionLine();
     renderBank();
     setFeedback("", "");
@@ -316,19 +265,15 @@
     if (locked) return;
     var item = order[index];
     locked = true;
-    var pool = selected.concat(bankChips);
     selected = [];
-    bankChips = [];
     item.words.forEach(function (w) {
-      for (var i = 0; i < pool.length; i++) {
-        if (pool[i].word === w) {
-          selected.push(pool[i]);
-          pool.splice(i, 1);
+      for (var i = 0; i < bankChips.length; i++) {
+        if (bankChips[i].word === w && !isUsed(bankChips[i])) {
+          selected.push(bankChips[i]);
           break;
         }
       }
     });
-    bankChips = pool;
     streak = 0;
     setFeedback("Answer: " + item.words.join(" "), "hint");
     checkQuestionBtn.disabled = true;
@@ -336,7 +281,6 @@
     renderQuestionLine();
     renderBank();
     showAfterCorrect();
-    speakQuestion(item.words);
     updateStats();
   }
 
@@ -354,12 +298,11 @@
       streak += 1;
       if (streak > bestStreak) bestStreak = streak;
       correctCount += 1;
-      setFeedback("Correct! Listen, or press Continue.", "ok");
+      setFeedback("Correct! Press Continue when you’re ready.", "ok");
       checkQuestionBtn.disabled = true;
       clearBtn.disabled = true;
       updateStats();
       showAfterCorrect();
-      speakQuestion(item.words);
     } else {
       wrongAttempts += 1;
       streak = 0;
@@ -386,7 +329,6 @@
   }
 
   function goContinue() {
-    stopSpeech();
     index += 1;
     if (index >= order.length) {
       finish();
@@ -396,7 +338,6 @@
   }
 
   function finish() {
-    stopSpeech();
     var total = order.length;
     var accuracy = total ? Math.round((correctCount / total) * 100) : 0;
     $("finalScore").textContent = String(score);
@@ -427,11 +368,23 @@
       }
     });
 
-    show("end");
+    if (window.LAFinish) {
+      // Shared Learning Arcade results screen; stars were already saved above.
+      show("none");
+      LAFinish.show({
+        gameId: GAME_ID,
+        score: correctCount,
+        total: total,
+        save: false,
+        onAgain: startGame,
+        backHref: "../"
+      });
+    } else {
+      show("end");
+    }
   }
 
   function startGame() {
-    stopSpeech();
     order = shuffle(ITEMS);
     index = 0;
     score = 0;
@@ -462,28 +415,11 @@
     applyTheme(false);
   }
 
-  if (muteBtn) {
-    updateMuteUI();
-    muteBtn.addEventListener("click", function () {
-      muted = !muted;
-      if (muted) stopSpeech();
-      try {
-        localStorage.setItem("btq-mute", muted ? "1" : "0");
-      } catch (e) {}
-      updateMuteUI();
-    });
-  }
-
   $("startBtn").addEventListener("click", startGame);
   $("playAgainBtn").addEventListener("click", startGame);
   checkQuestionBtn.addEventListener("click", checkQuestion);
   if (clearBtn) clearBtn.addEventListener("click", clearSentence);
   if (continueBtn) continueBtn.addEventListener("click", goContinue);
-  if (replayVoiceBtn) {
-    replayVoiceBtn.addEventListener("click", function () {
-      if (order[index]) speakQuestion(order[index].words);
-    });
-  }
   if (showAnswerBtn) {
     showAnswerBtn.addEventListener("click", revealAnswer);
   }
@@ -503,9 +439,7 @@
     }
     if (e.key === "Backspace" && selected.length) {
       e.preventDefault();
-      var removed = selected.pop();
-      bankChips.push(removed);
-      bankChips = shuffle(bankChips);
+      selected.pop();
       renderQuestionLine();
       renderBank();
       setFeedback("", "");
