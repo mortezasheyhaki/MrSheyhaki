@@ -132,15 +132,18 @@
       ctx.save();
       ctx.translate(cx, cy);
       ctx.rotate(mid);
-      ctx.textAlign = "right";
+      var ang = ((mid % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
+      var flip = ang > Math.PI / 2 || ang < -Math.PI / 2;
+      if (flip) ctx.rotate(Math.PI);
+      ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      var maxW = radius * 0.62;
-      var fontPx = fitFont(label, maxW, Math.min(42, Math.max(18, Math.floor(radius / (n > 20 ? 9 : n > 12 ? 7 : 5)))), 14);
-      ctx.font = "900 " + fontPx + "px Inter, system-ui, sans-serif";
-      ctx.fillStyle = used ? "rgba(255,255,255,0.55)" : "#fff";
-      ctx.shadowColor = "rgba(0,0,0,0.25)";
+      var maxW = radius * 0.55;
+      var fontPx = fitFont(label, maxW, Math.min(44, Math.max(18, Math.floor(radius / (n > 20 ? 9 : n > 12 ? 6 : 4.5)))), 15);
+      ctx.fillStyle = used ? "rgba(255,255,255,0.45)" : "#fff";
+      ctx.shadowColor = "rgba(0,0,0,0.3)";
       ctx.shadowBlur = 4;
-      ctx.fillText(label, radius - 18, 0);
+      var textR = flip ? -(radius * 0.62) : radius * 0.62;
+      ctx.fillText(label, textR, 0);
       ctx.restore();
     }
 
@@ -362,8 +365,16 @@
 
   function setupCanvas() {
     // Large for TV / desktop
-    var max = Math.min(560, Math.max(280, window.innerWidth - 40));
-    if (window.innerWidth > 900) max = Math.min(620, window.innerHeight * 0.55);
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var max;
+    if (vw > 900) {
+      max = Math.min(620, vh * 0.55);
+    } else {
+      // phone / tablet: leave room for SPIN + safe areas
+      max = Math.min(vw - 32, vh * 0.42, 420);
+      max = Math.max(240, max);
+    }
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.style.width = max + "px";
     canvas.style.height = max + "px";
@@ -426,19 +437,26 @@
           ctx.save();
           ctx.translate(cx, cy);
           ctx.rotate(mid);
-          ctx.textAlign = "right";
+          // Keep labels readable: flip if they would be upside-down
+          var flip = mid > Math.PI / 2 || mid < -Math.PI / 2;
+          // normalize mid into -PI..PI for flip check using actual angle
+          var ang = ((mid % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
+          flip = ang > Math.PI / 2 || ang < -Math.PI / 2;
+          if (flip) ctx.rotate(Math.PI);
+          ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          var maxW = radius * 0.64;
-          var fontPx = Math.min(48, Math.max(16, Math.floor(radius / (n > 24 ? 10 : n > 16 ? 7.5 : n > 10 ? 5.5 : 4.2))));
+          var maxW = radius * 0.55;
+          var fontPx = Math.min(44, Math.max(18, Math.floor(radius / (n > 24 ? 9 : n > 16 ? 7 : n > 10 ? 5.2 : 4))));
           ctx.font = "900 " + fontPx + "px Inter, system-ui, sans-serif";
-          while (fontPx > 14 && ctx.measureText(label).width > maxW) {
+          while (fontPx > 15 && ctx.measureText(label).width > maxW) {
             fontPx -= 1;
             ctx.font = "900 " + fontPx + "px Inter, system-ui, sans-serif";
           }
-          ctx.fillStyle = used ? "rgba(255,255,255,0.5)" : "#ffffff";
-          ctx.shadowColor = "rgba(0,0,0,0.28)";
-          ctx.shadowBlur = 5;
-          ctx.fillText(label, radius - 16, 0);
+          ctx.fillStyle = used ? "rgba(255,255,255,0.45)" : "#ffffff";
+          ctx.shadowColor = "rgba(0,0,0,0.3)";
+          ctx.shadowBlur = 4;
+          var textR = flip ? -(radius * 0.62) : radius * 0.62;
+          ctx.fillText(label, textR, 0);
           ctx.restore();
         }
 
@@ -451,6 +469,192 @@
     })(drawWheel);
     drawWheel();
   }
+
+
+  // ---- Drag to spin (mouse + touch) ----
+  var drag = {
+    active: false,
+    lastAngle: 0,
+    lastTime: 0,
+    velocity: 0, // deg per ms
+    moved: false
+  };
+
+  function pointerAngle(clientX, clientY) {
+    var rect = canvas.getBoundingClientRect();
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height / 2;
+    // atan2: 0 at right; convert so 0 is top, clockwise positive like our rotation
+    var a = Math.atan2(clientX - cx, cy - clientY); // from top, clockwise
+    return (a * 180) / Math.PI;
+  }
+
+  function onPointerDown(clientX, clientY) {
+    if (isSpinning) return;
+    drag.active = true;
+    drag.moved = false;
+    drag.lastAngle = pointerAngle(clientX, clientY);
+    drag.lastTime = performance.now();
+    drag.velocity = 0;
+    canvas.style.cursor = "grabbing";
+  }
+
+  function onPointerMove(clientX, clientY) {
+    if (!drag.active || isSpinning) return;
+    var now = performance.now();
+    var ang = pointerAngle(clientX, clientY);
+    var delta = ang - drag.lastAngle;
+    // normalize to -180..180
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+    if (Math.abs(delta) > 0.4) drag.moved = true;
+    rotation += delta;
+    var dt = Math.max(1, now - drag.lastTime);
+    // blend velocity
+    var v = delta / dt;
+    drag.velocity = drag.velocity * 0.65 + v * 0.35;
+    drag.lastAngle = ang;
+    drag.lastTime = now;
+    drawWheel();
+  }
+
+  function coastFromDrag() {
+    // If slow, just stop and snap-select under pointer
+    var speed = Math.abs(drag.velocity); // deg/ms
+    if (speed < 0.05 || items.length < 1) {
+      finishDragSelect();
+      return;
+    }
+    isSpinning = true;
+    spinBtn.disabled = true;
+    hideResult();
+
+    // Decay velocity with friction until almost stopped, then snap to segment center of landed item
+    var last = performance.now();
+    function coast(now) {
+      var dt = Math.min(32, now - last);
+      last = now;
+      rotation += drag.velocity * dt;
+      // friction
+      drag.velocity *= Math.pow(0.965, dt / 16);
+      drawWheel();
+      if (Math.abs(drag.velocity) > 0.02) {
+        requestAnimationFrame(coast);
+      } else {
+        // Snap to nearest active? or any segment under pointer
+        snapToPointerAndReveal();
+      }
+    }
+    requestAnimationFrame(coast);
+  }
+
+  function finishDragSelect() {
+    if (items.length < 1) {
+      isSpinning = false;
+      updateUsedCount();
+      return;
+    }
+    // If almost no movement, ignore (tap)
+    if (!drag.moved) {
+      isSpinning = false;
+      updateUsedCount();
+      return;
+    }
+    snapToPointerAndReveal();
+  }
+
+  function snapToPointerAndReveal() {
+    var n = items.length;
+    if (n < 1) {
+      isSpinning = false;
+      updateUsedCount();
+      return;
+    }
+    var idx = indexAtPointer();
+    // If that segment is used, find nearest available in either direction
+    if (items[idx] && items[idx].used) {
+      var found = -1;
+      for (var d = 1; d < n; d++) {
+        var a = (idx + d) % n;
+        var b = (idx - d + n) % n;
+        if (!items[a].used) { found = a; break; }
+        if (!items[b].used) { found = b; break; }
+      }
+      if (found >= 0) idx = found;
+    }
+    // animate short snap to center of that segment
+    var slice = 360 / n;
+    var targetDeg = (360 - (idx + 0.5) * slice) % 360;
+    var current = ((rotation % 360) + 360) % 360;
+    var delta = targetDeg - current;
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+    var start = rotation;
+    var t0 = performance.now();
+    var dur = 380;
+    isSpinning = true;
+    function snapFrame(now) {
+      var p = Math.min(1, (now - t0) / dur);
+      var e = 1 - Math.pow(1 - p, 3);
+      rotation = start + delta * e;
+      drawWheel();
+      if (p < 1) {
+        requestAnimationFrame(snapFrame);
+      } else {
+        rotation = start + delta;
+        drawWheel();
+        isSpinning = false;
+        lastIndex = idx;
+        if (items[idx] && !items[idx].used) {
+          pulseWheel(function () {
+            showResult(items[idx].text);
+            updateUsedCount();
+          });
+        } else {
+          updateUsedCount();
+        }
+      }
+    }
+    requestAnimationFrame(snapFrame);
+  }
+
+  function onPointerUp() {
+    if (!drag.active) return;
+    drag.active = false;
+    canvas.style.cursor = "grab";
+    if (isSpinning) return;
+    coastFromDrag();
+  }
+
+  canvas.style.cursor = "grab";
+  canvas.style.touchAction = "none";
+
+  canvas.addEventListener("mousedown", function (e) {
+    e.preventDefault();
+    onPointerDown(e.clientX, e.clientY);
+  });
+  window.addEventListener("mousemove", function (e) {
+    if (!drag.active) return;
+    onPointerMove(e.clientX, e.clientY);
+  });
+  window.addEventListener("mouseup", onPointerUp);
+
+  canvas.addEventListener("touchstart", function (e) {
+    if (e.touches.length !== 1) return;
+    e.preventDefault();
+    onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+  canvas.addEventListener("touchmove", function (e) {
+    if (!drag.active || e.touches.length !== 1) return;
+    e.preventDefault();
+    onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+  canvas.addEventListener("touchend", function (e) {
+    e.preventDefault();
+    onPointerUp();
+  }, { passive: false });
+  canvas.addEventListener("touchcancel", onPointerUp);
+
 
   // Events
   addForm.addEventListener("submit", function (e) {
