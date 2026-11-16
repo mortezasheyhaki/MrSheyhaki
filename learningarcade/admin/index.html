@@ -291,6 +291,206 @@
       border-color: #2e3348;
       color: #eef0f8;
     }
+  
+    /* Student block + expandable detail */
+    .student-block {
+      border-radius: 16px;
+      border: 1px solid rgba(105,55,216,.1);
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(32,38,54,.04);
+    }
+    html[data-theme=dark] .student-block {
+      background: #1a1f2e;
+      border-color: #2e3348;
+    }
+    .student-block .student-row {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      cursor: pointer;
+      transition: background .12s;
+    }
+    .student-block .student-row:hover {
+      background: #f5f3ff;
+    }
+    html[data-theme=dark] .student-block .student-row:hover {
+      background: #22263a;
+    }
+    .student-row .chev {
+      margin-left: 8px;
+      color: #a78bfa;
+      font-weight: 900;
+      transition: transform .15s;
+    }
+    .student-block.is-open .chev { transform: rotate(180deg); }
+
+    .student-detail {
+      display: none;
+      padding: 0 14px 16px;
+      border-top: 1px solid rgba(105,55,216,.08);
+      background: linear-gradient(180deg, #faf9ff, #fff);
+    }
+    html[data-theme=dark] .student-detail {
+      background: #151925;
+      border-top-color: #2e3348;
+    }
+    .student-detail.open { display: block; }
+
+    .detail-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 14px 0 12px;
+    }
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      background: #f3e8ff;
+      color: #6d28d9;
+      border: 1px solid rgba(109,40,217,.12);
+    }
+    html[data-theme=dark] .stat-pill {
+      background: #2a2540;
+      color: #c4b5fd;
+      border-color: #3b3560;
+    }
+    .stat-pill strong { font-weight: 900; }
+
+    .game-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+    }
+    .game-table th {
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #8b86b0;
+      padding: 0 10px 4px;
+    }
+    .game-table th.num, .game-table td.num {
+      text-align: center;
+    }
+    .game-table th.right, .game-table td.right {
+      text-align: right;
+    }
+    .game-table tr.game-tr td {
+      background: #f8f7ff;
+      border-top: 1px solid rgba(105,55,216,.06);
+      border-bottom: 1px solid rgba(105,55,216,.06);
+      padding: 12px 10px;
+      vertical-align: middle;
+      font-size: 0.88rem;
+    }
+    html[data-theme=dark] .game-table tr.game-tr td {
+      background: #22263a;
+      border-color: #2e3348;
+    }
+    .game-table tr.game-tr td:first-child {
+      border-left: 1px solid rgba(105,55,216,.06);
+      border-radius: 12px 0 0 12px;
+      font-weight: 800;
+      color: #1e1b4b;
+      max-width: 220px;
+    }
+    html[data-theme=dark] .game-table tr.game-tr td:first-child { color: #eef0f8; }
+    .game-table tr.game-tr td:last-child {
+      border-right: 1px solid rgba(105,55,216,.06);
+      border-radius: 0 12px 12px 0;
+    }
+    .game-name-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .game-name-cell .gid {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #9ca3af;
+      word-break: break-all;
+    }
+    .stars-cell {
+      font-size: 1rem;
+      letter-spacing: 1px;
+      color: #f59e0b;
+      white-space: nowrap;
+    }
+    .stars-cell .empty-star { color: #d1d5db; }
+    html[data-theme=dark] .stars-cell .empty-star { color: #4b5563; }
+    .score-cell {
+      font-weight: 800;
+      color: #6d28d9;
+      white-space: nowrap;
+    }
+    html[data-theme=dark] .score-cell { color: #c4b5fd; }
+    .plays-cell {
+      font-weight: 800;
+      color: #475569;
+    }
+    .when-cell {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+    .stars-note {
+      padding: 16px 4px;
+      text-align: center;
+      color: #8b86b0;
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    /* Mobile: stack as cards */
+    @media (max-width: 640px) {
+      .game-table, .game-table thead, .game-table tbody, .game-table th, .game-table td, .game-table tr {
+        display: block;
+      }
+      .game-table thead { display: none; }
+      .game-table tr.game-tr {
+        margin-bottom: 10px;
+      }
+      .game-table tr.game-tr td {
+        border: 1px solid rgba(105,55,216,.08) !important;
+        border-radius: 0 !important;
+        padding: 8px 12px;
+        text-align: left !important;
+      }
+      .game-table tr.game-tr td:first-child {
+        border-radius: 12px 12px 0 0 !important;
+        border-bottom: 0 !important;
+        padding-top: 12px;
+      }
+      .game-table tr.game-tr td:last-child {
+        border-radius: 0 0 12px 12px !important;
+        border-top: 0 !important;
+        padding-bottom: 12px;
+      }
+      .game-table tr.game-tr td:not(:first-child):not(:last-child) {
+        border-top: 0 !important;
+        border-bottom: 0 !important;
+      }
+      .game-table tr.game-tr td::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: #8b86b0;
+        margin-bottom: 2px;
+      }
+      .game-table tr.game-tr td:first-child::before { display: none; }
+    }
+
   </style>
 </head>
 <body>
@@ -323,7 +523,7 @@
         <div class="admin-note">
           <strong>Registered accounts</strong> come from the <code>profiles</code> table (created when students sign up).<br>
           Tap a student to see <strong>stars, plays, and scores</strong> synced while they are logged in. You can also check Supabase → <strong>Authentication → Users</strong>
-          (email = <code>username@players.mrsheyhaki.ir</code>).
+          (email = <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a4d1d7c1d6cac5c9c1e4d4c8c5ddc1d6d78ac9d6d7ccc1ddccc5cfcd8acdd6">[email&#160;protected]</a></code>).
         </div>
 
         <div class="admin-actions">
@@ -344,7 +544,7 @@
   </main>
 
   <!-- Supabase with CDN fallbacks (jsDelivr is often blocked) -->
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   (function () {
     var urls = [
       "../vendor/supabase.min.js",
@@ -612,35 +812,56 @@
                   if (!games.length) {
                     detail = '<div class="stars-note">No cloud progress yet. After this student plays while logged in, stars and plays appear here.</div>';
                   } else {
-                    detail = '<div class="stars-note" style="margin-bottom:8px"><strong>' + totalStars + '</strong> total stars · ' + games.length + ' game(s)</div>';
-                    detail += '<div class="game-chip-row">' + games.map(function (g) {
-                      var stars = Math.max(0, Math.min(3, Number(g.stars) || 0));
-                      if (!g.fromProgress && g.max > 0) {
-                        var acc = Math.round(g.best / g.max * 100);
-                        stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 50 ? 1 : 0;
-                      }
-                      var starStr = "★".repeat(stars) + "☆".repeat(3 - stars);
-                      var scoreLabel = g.max ? (g.best + " / " + g.max) : (g.best ? g.best + " pts" : "");
-                      var when = g.lastAt ? new Date(g.lastAt).toLocaleString() : "";
-                      return (
-                        '<div class="game-chip">' +
-                        "<strong>" + escapeHtml(g.name) + "</strong>" +
-                        '<div class="meta">' + starStr +
-                        (scoreLabel ? " · " + escapeHtml(scoreLabel) : "") +
-                        (g.plays ? " · " + g.plays + " play" + (g.plays === 1 ? "" : "s") : "") +
-                        (when ? "<br>" + escapeHtml(when) : "") +
-                        "</div></div>"
-                      );
-                    }).join("") + "</div>";
+                    var sumPlays = games.reduce(function (n, g) { return n + (Number(g.plays) || 0); }, 0);
+                    detail =
+                      '<div class="detail-summary">' +
+                      '<span class="stat-pill">★ <strong>' + totalStars + '</strong> stars</span>' +
+                      '<span class="stat-pill"><strong>' + games.length + '</strong> games</span>' +
+                      '<span class="stat-pill"><strong>' + sumPlays + '</strong> plays</span>' +
+                      '</div>' +
+                      '<table class="game-table"><thead><tr>' +
+                      '<th>Game</th><th class="num">Stars</th><th class="num">Score</th><th class="num">Plays</th><th class="right">Last played</th>' +
+                      '</tr></thead><tbody>' +
+                      games.map(function (g) {
+                        var stars = Math.max(0, Math.min(3, Number(g.stars) || 0));
+                        if (!g.fromProgress && g.max > 0) {
+                          var acc = Math.round(g.best / g.max * 100);
+                          stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 50 ? 1 : 0;
+                        }
+                        var starHtml = "";
+                        for (var si2 = 1; si2 <= 3; si2++) {
+                          starHtml += si2 <= stars
+                            ? "<span>★</span>"
+                            : '<span class="empty-star">★</span>';
+                        }
+                        var scoreLabel = g.max
+                          ? (g.best + " / " + g.max)
+                          : (g.best ? String(g.best) : "—");
+                        var when = g.lastAt
+                          ? new Date(g.lastAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
+                          : "—";
+                        var niceName = g.name || g.id || "Game";
+                        return (
+                          '<tr class="game-tr">' +
+                          '<td data-label="Game"><div class="game-name-cell"><span>' + escapeHtml(niceName) + "</span></div></td>" +
+                          '<td class="num stars-cell" data-label="Stars">' + starHtml + "</td>" +
+                          '<td class="num score-cell" data-label="Score">' + escapeHtml(scoreLabel) + "</td>" +
+                          '<td class="num plays-cell" data-label="Plays">' + (g.plays || 0) + "</td>" +
+                          '<td class="right when-cell" data-label="Last played">' + escapeHtml(when) + "</td>" +
+                          "</tr>"
+                        );
+                      }).join("") +
+                      "</tbody></table>";
                   }
 
                   return (
-                    '<div class="student-block">' +
+                    '<div class="student-block" id="block-' + si + '">' +
                     '<div class="student-row" data-si="' + si + '">' +
                     '<div class="student-avatar">' + initial + "</div>" +
-                    '<div><div class="student-name">' + escapeHtml(s.name) + "</div>" +
+                    '<div style="flex:1;min-width:0"><div class="student-name">' + escapeHtml(s.name) + "</div>" +
                     '<div class="student-meta">' + escapeHtml(meta.join(" · ")) + "</div></div>" +
                     '<div class="student-score">' + (games.length ? games.length + " games" : "—") + "</div>" +
+                    '<span class="chev" aria-hidden="true">▾</span>' +
                     "</div>" +
                     '<div class="student-detail" id="detail-' + si + '">' + detail + "</div>" +
                     "</div>"
@@ -651,7 +872,9 @@
                   row.addEventListener("click", function () {
                     var si = row.getAttribute("data-si");
                     var d = document.getElementById("detail-" + si);
+                    var b = document.getElementById("block-" + si);
                     if (d) d.classList.toggle("open");
+                    if (b) b.classList.toggle("is-open");
                   });
                 });
               }
