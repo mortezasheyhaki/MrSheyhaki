@@ -1,6 +1,6 @@
 /**
  * Picker Wheel — TV-friendly classroom tool
- * Large labels, big result overlay, used-items lockout
+ * Large labels, big result, used lockout, drag spin
  */
 (function () {
   "use strict";
@@ -12,11 +12,11 @@
     "#a855f7", "#eab308", "#22c55e", "#e11d48", "#0ea5e9"
   ];
 
-  /** @type {{text:string, used:boolean}[]} */
   var items = [];
-  var rotation = 0; // degrees
+  var rotation = 0;
   var isSpinning = false;
   var lastIndex = -1;
+  var logicalSize = 500;
 
   var canvas = document.getElementById("wheel");
   var ctx = canvas.getContext("2d");
@@ -36,9 +36,7 @@
   var overlayCloseBtn = document.getElementById("overlayCloseBtn");
 
   function save() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    } catch (e) {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch (e) {}
   }
 
   function load() {
@@ -55,7 +53,6 @@
         }
       }
     } catch (e) {}
-    // migrate v1 plain string list
     try {
       var old = localStorage.getItem("picker-wheel-items");
       if (old) {
@@ -63,51 +60,53 @@
         if (Array.isArray(arr)) {
           items = arr.map(function (s) { return { text: String(s), used: false }; });
           save();
-          return;
         }
       }
     } catch (e2) {}
-    items = [];
   }
 
   function activeItems() {
     return items.filter(function (it) { return !it.used; });
   }
 
-  function fitFont(text, maxWidth, maxPx, minPx) {
-    var size = maxPx;
-    ctx.font = "900 " + size + "px Inter, system-ui, sans-serif";
-    while (size > minPx && ctx.measureText(text).width > maxWidth) {
-      size -= 1;
-      ctx.font = "900 " + size + "px Inter, system-ui, sans-serif";
-    }
-    return size;
+  function updateEmptyClass() {
+    var stage = document.querySelector(".stage");
+    if (stage) stage.classList.toggle("is-empty", items.length < 1);
+  }
+
+  function updateUsedCount() {
+    updateEmptyClass();
+    var used = items.filter(function (x) { return x.used; }).length;
+    var active = items.length - used;
+    usedCountEl.textContent = used
+      ? used + " used · " + active + " still available"
+      : active + " available";
+    spinBtn.disabled = isSpinning || active < 1;
+    resetUsedBtn.disabled = used < 1;
   }
 
   function drawWheel() {
-    var size = canvas.width;
-    var cx = size / 2;
-    var cy = size / 2;
-    var radius = size / 2 - 6;
+    var size = logicalSize;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, size, size);
 
+    var cx = size / 2;
+    var cy = size / 2;
+    var radius = size / 2 - 4;
     var n = items.length;
+
+    // Empty: plain circle only — no text (hub is CSS, hint is HTML)
     if (n < 1) {
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
       ctx.fillStyle = "#e5e7eb";
       ctx.fill();
-      ctx.fillStyle = "#6b7280";
-      ctx.font = "700 22px Inter, system-ui, sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("Add items →", cx, cy);
       return;
     }
 
     var arc = (Math.PI * 2) / n;
-    // Pointer is at top (−90°). rotation is CSS degrees of the wheel.
-    var startBase = (-Math.PI / 2) + (rotation * Math.PI / 180);
+    var startBase = -Math.PI / 2 + (rotation * Math.PI) / 180;
 
     for (var i = 0; i < n; i++) {
       var start = startBase + i * arc;
@@ -119,14 +118,13 @@
       ctx.arc(cx, cy, radius, start, end);
       ctx.closePath();
       ctx.fillStyle = used ? "#9ca3af" : COLORS[i % COLORS.length];
-      ctx.globalAlpha = used ? 0.45 : 1;
+      ctx.globalAlpha = used ? 0.4 : 1;
       ctx.fill();
       ctx.globalAlpha = 1;
-      ctx.strokeStyle = "rgba(255,255,255,0.85)";
+      ctx.strokeStyle = "rgba(255,255,255,0.9)";
       ctx.lineWidth = 3;
       ctx.stroke();
 
-      // Label
       var mid = start + arc / 2;
       var label = items[i].text;
       ctx.save();
@@ -138,8 +136,13 @@
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       var maxW = radius * 0.55;
-      var fontPx = fitFont(label, maxW, Math.min(44, Math.max(18, Math.floor(radius / (n > 20 ? 9 : n > 12 ? 6 : 4.5)))), 15);
-      ctx.fillStyle = used ? "rgba(255,255,255,0.45)" : "#fff";
+      var fontPx = Math.min(44, Math.max(18, Math.floor(radius / (n > 24 ? 9 : n > 16 ? 7 : n > 10 ? 5.2 : 4))));
+      ctx.font = "900 " + fontPx + "px Inter, system-ui, sans-serif";
+      while (fontPx > 15 && ctx.measureText(label).width > maxW) {
+        fontPx -= 1;
+        ctx.font = "900 " + fontPx + "px Inter, system-ui, sans-serif";
+      }
+      ctx.fillStyle = used ? "rgba(255,255,255,0.45)" : "#ffffff";
       ctx.shadowColor = "rgba(0,0,0,0.3)";
       ctx.shadowBlur = 4;
       var textR = flip ? -(radius * 0.62) : radius * 0.62;
@@ -147,22 +150,30 @@
       ctx.restore();
     }
 
-    // outer ring
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(15,23,42,0.12)";
+    ctx.strokeStyle = "rgba(15,23,42,0.1)";
     ctx.lineWidth = 8;
     ctx.stroke();
   }
 
-  function updateUsedCount() {
-    var used = items.filter(function (x) { return x.used; }).length;
-    var active = items.length - used;
-    usedCountEl.textContent = used
-      ? used + " used · " + active + " still available"
-      : active + " available";
-    spinBtn.disabled = isSpinning || active < 1;
-    resetUsedBtn.disabled = used < 1;
+  function setupCanvas() {
+    var wrap = document.querySelector(".wheel-wrap");
+    var max = 500;
+    if (wrap) {
+      var r = wrap.getBoundingClientRect();
+      max = Math.floor(Math.min(r.width || 500, r.height || 500));
+    }
+    if (!max || max < 200) max = Math.min(500, window.innerWidth - 48);
+    max = Math.max(260, Math.min(max, 520));
+    logicalSize = max;
+
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.style.width = max + "px";
+    canvas.style.height = max + "px";
+    canvas.width = Math.round(max * dpr);
+    canvas.height = Math.round(max * dpr);
+    drawWheel();
   }
 
   function renderList() {
@@ -194,7 +205,6 @@
       toggle.type = "button";
       toggle.className = "item-toggle";
       toggle.textContent = it.used ? "Restore" : "Use";
-      toggle.title = it.used ? "Make available again" : "Mark as used (won't be picked)";
       toggle.addEventListener("click", function () {
         items[i].used = !items[i].used;
         save();
@@ -212,7 +222,7 @@
         items.splice(i, 1);
         save();
         renderList();
-        drawWheel();
+        setupCanvas();
         updateUsedCount();
       });
 
@@ -223,25 +233,17 @@
     updateUsedCount();
   }
 
-  /** Index under the top pointer after current rotation */
   function indexAtPointer() {
     var n = items.length;
     if (n < 1) return -1;
     var deg = ((rotation % 360) + 360) % 360;
-    // Segment 0 starts at top when rotation=0; pointer fixed at top.
-    // As wheel rotates clockwise, pointer hits previous segments.
     var slice = 360 / n;
-    var idx = Math.floor(((360 - deg) % 360) / slice) % n;
-    return idx;
+    return Math.floor(((360 - deg) % 360) / slice) % n;
   }
-
 
   function pulseWheel(done) {
     var wrap = document.querySelector(".wheel-wrap");
-    if (!wrap) {
-      if (done) done();
-      return;
-    }
+    if (!wrap) { if (done) done(); return; }
     wrap.classList.remove("is-settle");
     void wrap.offsetWidth;
     wrap.classList.add("is-settle");
@@ -255,21 +257,18 @@
     var layer = document.getElementById("confettiLayer");
     if (!layer) return;
     layer.innerHTML = "";
-    var colors = ["#a78bfa", "#f472b6", "#34d399", "#fbbf24", "#60a5fa", "#f87171", "#c084fc"];
-    var n = 48;
-    for (var i = 0; i < n; i++) {
+    var colors = ["#a78bfa", "#f472b6", "#34d399", "#fbbf24", "#60a5fa", "#f87171"];
+    for (var i = 0; i < 48; i++) {
       var p = document.createElement("span");
       p.className = "confetti-piece";
-      var x = 40 + Math.random() * 20;
-      var y = 35 + Math.random() * 15;
-      p.style.left = x + "%";
-      p.style.top = y + "%";
+      p.style.left = 40 + Math.random() * 20 + "%";
+      p.style.top = 35 + Math.random() * 15 + "%";
       p.style.background = colors[i % colors.length];
-      p.style.setProperty("--dx", (Math.random() * 360 - 180) + "px");
-      p.style.setProperty("--dy", (Math.random() * 280 + 80) + "px");
-      p.style.setProperty("--rot", (Math.random() * 720 - 360) + "deg");
-      p.style.setProperty("--delay", (Math.random() * 0.15) + "s");
-      p.style.setProperty("--size", (6 + Math.random() * 8) + "px");
+      p.style.setProperty("--dx", Math.random() * 360 - 180 + "px");
+      p.style.setProperty("--dy", Math.random() * 280 + 80 + "px");
+      p.style.setProperty("--rot", Math.random() * 720 - 360 + "deg");
+      p.style.setProperty("--delay", Math.random() * 0.15 + "s");
+      p.style.setProperty("--size", 6 + Math.random() * 8 + "px");
       layer.appendChild(p);
     }
     setTimeout(function () { layer.innerHTML = ""; }, 1800);
@@ -281,7 +280,6 @@
     resultOverlay.classList.remove("is-closing");
     resultOverlay.classList.add("is-open");
     markUsedBtn.disabled = false;
-    // restart word pop animation
     resultWord.classList.remove("pop");
     void resultWord.offsetWidth;
     resultWord.classList.add("pop");
@@ -316,35 +314,27 @@
     spinBtn.disabled = true;
     hideResult();
 
-    // Pick a random *active* item, then aim the wheel so it lands under the pointer
     var pick = active[Math.floor(Math.random() * active.length)];
     var targetIndex = items.indexOf(pick);
     var n = items.length;
     var slice = 360 / n;
-    // Center of target segment at pointer: rotation such that
-    // indexAtPointer() === targetIndex
-    // index = floor(((360 - deg) % 360) / slice)
-    // center of segment targetIndex: deg = 360 - (targetIndex + 0.5) * slice
     var targetDeg = (360 - (targetIndex + 0.5) * slice) % 360;
     var current = ((rotation % 360) + 360) % 360;
     var delta = (targetDeg - current + 360) % 360;
-    var extraTurns = 5 + Math.floor(Math.random() * 3); // 5–7 full spins
+    var extraTurns = 5 + Math.floor(Math.random() * 3);
     var finalRotation = rotation + extraTurns * 360 + delta;
-
     var start = rotation;
     var change = finalRotation - start;
     var duration = 5600;
     var t0 = performance.now();
 
-    // Smooth ease: slow start → long coast → soft stop (TV-friendly)
     function easeOutQuint(t) {
       return 1 - Math.pow(1 - t, 5);
     }
 
     function frame(now) {
       var p = Math.min(1, (now - t0) / duration);
-      var e = easeOutQuint(p);
-      rotation = start + change * e;
+      rotation = start + change * easeOutQuint(p);
       drawWheel();
       if (p < 1) {
         requestAnimationFrame(frame);
@@ -353,7 +343,6 @@
         drawWheel();
         isSpinning = false;
         lastIndex = targetIndex;
-        // Soft settle pulse on the wheel, then reveal result
         pulseWheel(function () {
           showResult(items[targetIndex].text);
           updateUsedCount();
@@ -363,204 +352,43 @@
     requestAnimationFrame(frame);
   }
 
-  function setupCanvas() {
-    // Large for TV / desktop
-    var vw = window.innerWidth;
-    var vh = window.innerHeight;
-    var max;
-    if (vw > 900) {
-      max = Math.min(620, vh * 0.55);
-    } else {
-      // phone / tablet: leave room for SPIN + safe areas
-      max = Math.min(vw - 32, vh * 0.42, 420);
-      max = Math.max(240, max);
-    }
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.style.width = max + "px";
-    canvas.style.height = max + "px";
-    canvas.width = Math.round(max * dpr);
-    canvas.height = Math.round(max * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    // draw uses canvas.width which is now * dpr — fix by using CSS size
-    // Override draw to use logical size
-    canvas._logical = max;
-    drawWheel = (function (orig) {
-      // Redefine draw using logical size stored on canvas style
-      return function () {
-        var size = canvas._logical || max;
-        // temporarily set transform and use size
-        var realW = canvas.width;
-        var realH = canvas.height;
-        // draw into CSS pixel space
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        var cx = size / 2;
-        var cy = size / 2;
-        var radius = size / 2 - 6;
-        ctx.clearRect(0, 0, size, size);
-
-        var n = items.length;
-        if (n < 1) {
-          ctx.beginPath();
-          ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-          ctx.fillStyle = "#e5e7eb";
-          ctx.fill();
-          ctx.fillStyle = "#6b7280";
-          ctx.font = "700 22px Inter, system-ui, sans-serif";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText("Add items →", cx, cy);
-          return;
-        }
-
-        var arc = (Math.PI * 2) / n;
-        var startBase = (-Math.PI / 2) + (rotation * Math.PI / 180);
-
-        for (var i = 0; i < n; i++) {
-          var start = startBase + i * arc;
-          var end = start + arc;
-          var used = items[i].used;
-
-          ctx.beginPath();
-          ctx.moveTo(cx, cy);
-          ctx.arc(cx, cy, radius, start, end);
-          ctx.closePath();
-          ctx.fillStyle = used ? "#9ca3af" : COLORS[i % COLORS.length];
-          ctx.globalAlpha = used ? 0.4 : 1;
-          ctx.fill();
-          ctx.globalAlpha = 1;
-          ctx.strokeStyle = "rgba(255,255,255,0.9)";
-          ctx.lineWidth = 3;
-          ctx.stroke();
-
-          var mid = start + arc / 2;
-          var label = items[i].text;
-          ctx.save();
-          ctx.translate(cx, cy);
-          ctx.rotate(mid);
-          // Keep labels readable: flip if they would be upside-down
-          var flip = mid > Math.PI / 2 || mid < -Math.PI / 2;
-          // normalize mid into -PI..PI for flip check using actual angle
-          var ang = ((mid % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
-          flip = ang > Math.PI / 2 || ang < -Math.PI / 2;
-          if (flip) ctx.rotate(Math.PI);
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          var maxW = radius * 0.55;
-          var fontPx = Math.min(44, Math.max(18, Math.floor(radius / (n > 24 ? 9 : n > 16 ? 7 : n > 10 ? 5.2 : 4))));
-          ctx.font = "900 " + fontPx + "px Inter, system-ui, sans-serif";
-          while (fontPx > 15 && ctx.measureText(label).width > maxW) {
-            fontPx -= 1;
-            ctx.font = "900 " + fontPx + "px Inter, system-ui, sans-serif";
-          }
-          ctx.fillStyle = used ? "rgba(255,255,255,0.45)" : "#ffffff";
-          ctx.shadowColor = "rgba(0,0,0,0.3)";
-          ctx.shadowBlur = 4;
-          var textR = flip ? -(radius * 0.62) : radius * 0.62;
-          ctx.fillText(label, textR, 0);
-          ctx.restore();
-        }
-
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-        ctx.strokeStyle = "rgba(15,23,42,0.1)";
-        ctx.lineWidth = 10;
-        ctx.stroke();
-      };
-    })(drawWheel);
-    drawWheel();
-  }
-
-
-  // ---- Drag to spin (mouse + touch) ----
-  var drag = {
-    active: false,
-    lastAngle: 0,
-    lastTime: 0,
-    velocity: 0, // deg per ms
-    moved: false
-  };
+  /* Drag spin */
+  var drag = { active: false, lastAngle: 0, lastTime: 0, velocity: 0, moved: false };
 
   function pointerAngle(clientX, clientY) {
     var rect = canvas.getBoundingClientRect();
     var cx = rect.left + rect.width / 2;
     var cy = rect.top + rect.height / 2;
-    // atan2: 0 at right; convert so 0 is top, clockwise positive like our rotation
-    var a = Math.atan2(clientX - cx, cy - clientY); // from top, clockwise
-    return (a * 180) / Math.PI;
+    return (Math.atan2(clientX - cx, cy - clientY) * 180) / Math.PI;
   }
 
-  function onPointerDown(clientX, clientY) {
+  function onPointerDown(x, y) {
     if (isSpinning) return;
     drag.active = true;
     drag.moved = false;
-    drag.lastAngle = pointerAngle(clientX, clientY);
+    drag.lastAngle = pointerAngle(x, y);
     drag.lastTime = performance.now();
     drag.velocity = 0;
     canvas.style.cursor = "grabbing";
   }
 
-  function onPointerMove(clientX, clientY) {
+  function onPointerMove(x, y) {
     if (!drag.active || isSpinning) return;
     var now = performance.now();
-    var ang = pointerAngle(clientX, clientY);
+    var ang = pointerAngle(x, y);
     var delta = ang - drag.lastAngle;
-    // normalize to -180..180
     if (delta > 180) delta -= 360;
     if (delta < -180) delta += 360;
     if (Math.abs(delta) > 0.4) drag.moved = true;
     rotation += delta;
     var dt = Math.max(1, now - drag.lastTime);
-    // blend velocity
-    var v = delta / dt;
-    drag.velocity = drag.velocity * 0.65 + v * 0.35;
+    var v = (delta / dt) * 2.8;
+    drag.velocity = drag.velocity * 0.5 + v * 0.5;
+    if (drag.velocity > 4.5) drag.velocity = 4.5;
+    if (drag.velocity < -4.5) drag.velocity = -4.5;
     drag.lastAngle = ang;
     drag.lastTime = now;
     drawWheel();
-  }
-
-  function coastFromDrag() {
-    // If slow, just stop and snap-select under pointer
-    var speed = Math.abs(drag.velocity); // deg/ms
-    if (speed < 0.05 || items.length < 1) {
-      finishDragSelect();
-      return;
-    }
-    isSpinning = true;
-    spinBtn.disabled = true;
-    hideResult();
-
-    // Decay velocity with friction until almost stopped, then snap to segment center of landed item
-    var last = performance.now();
-    function coast(now) {
-      var dt = Math.min(32, now - last);
-      last = now;
-      rotation += drag.velocity * dt;
-      // friction
-      drag.velocity *= Math.pow(0.965, dt / 16);
-      drawWheel();
-      if (Math.abs(drag.velocity) > 0.02) {
-        requestAnimationFrame(coast);
-      } else {
-        // Snap to nearest active? or any segment under pointer
-        snapToPointerAndReveal();
-      }
-    }
-    requestAnimationFrame(coast);
-  }
-
-  function finishDragSelect() {
-    if (items.length < 1) {
-      isSpinning = false;
-      updateUsedCount();
-      return;
-    }
-    // If almost no movement, ignore (tap)
-    if (!drag.moved) {
-      isSpinning = false;
-      updateUsedCount();
-      return;
-    }
-    snapToPointerAndReveal();
   }
 
   function snapToPointerAndReveal() {
@@ -571,7 +399,6 @@
       return;
     }
     var idx = indexAtPointer();
-    // If that segment is used, find nearest available in either direction
     if (items[idx] && items[idx].used) {
       var found = -1;
       for (var d = 1; d < n; d++) {
@@ -582,7 +409,6 @@
       }
       if (found >= 0) idx = found;
     }
-    // animate short snap to center of that segment
     var slice = 360 / n;
     var targetDeg = (360 - (idx + 0.5) * slice) % 360;
     var current = ((rotation % 360) + 360) % 360;
@@ -591,10 +417,9 @@
     if (delta < -180) delta += 360;
     var start = rotation;
     var t0 = performance.now();
-    var dur = 380;
     isSpinning = true;
     function snapFrame(now) {
-      var p = Math.min(1, (now - t0) / dur);
+      var p = Math.min(1, (now - t0) / 380);
       var e = 1 - Math.pow(1 - p, 3);
       rotation = start + delta * e;
       drawWheel();
@@ -610,35 +435,54 @@
             showResult(items[idx].text);
             updateUsedCount();
           });
-        } else {
-          updateUsedCount();
-        }
+        } else updateUsedCount();
       }
     }
     requestAnimationFrame(snapFrame);
+  }
+
+  function coastFromDrag() {
+    drag.velocity *= 1.8;
+    if (drag.velocity > 5) drag.velocity = 5;
+    if (drag.velocity < -5) drag.velocity = -5;
+    if (Math.abs(drag.velocity) < 0.03 || items.length < 1) {
+      if (drag.moved) snapToPointerAndReveal();
+      else { isSpinning = false; updateUsedCount(); }
+      return;
+    }
+    isSpinning = true;
+    spinBtn.disabled = true;
+    hideResult();
+    var last = performance.now();
+    function coast(now) {
+      var dt = Math.min(32, now - last);
+      last = now;
+      rotation += drag.velocity * dt;
+      drag.velocity *= Math.pow(0.985, dt / 16);
+      drawWheel();
+      if (Math.abs(drag.velocity) > 0.015) requestAnimationFrame(coast);
+      else snapToPointerAndReveal();
+    }
+    requestAnimationFrame(coast);
   }
 
   function onPointerUp() {
     if (!drag.active) return;
     drag.active = false;
     canvas.style.cursor = "grab";
-    if (isSpinning) return;
-    coastFromDrag();
+    if (!isSpinning) coastFromDrag();
   }
 
   canvas.style.cursor = "grab";
   canvas.style.touchAction = "none";
-
   canvas.addEventListener("mousedown", function (e) {
     e.preventDefault();
     onPointerDown(e.clientX, e.clientY);
   });
   window.addEventListener("mousemove", function (e) {
-    if (!drag.active) return;
-    onPointerMove(e.clientX, e.clientY);
+    if (drag.active) onPointerMove(e.clientX, e.clientY);
   });
   window.addEventListener("mouseup", onPointerUp);
-
   canvas.addEventListener("touchstart", function (e) {
     if (e.touches.length !== 1) return;
     e.preventDefault();
@@ -655,21 +499,16 @@
   }, { passive: false });
   canvas.addEventListener("touchcancel", onPointerUp);
 
-
-  // Events
   addForm.addEventListener("submit", function (e) {
     e.preventDefault();
     var val = itemInput.value.trim();
     if (!val) return;
-    if (items.length >= 40) {
-      alert("Maximum 40 items.");
-      return;
-    }
+    if (items.length >= 40) { alert("Maximum 40 items."); return; }
     items.push({ text: val, used: false });
     itemInput.value = "";
     save();
     renderList();
-    drawWheel();
+    setupCanvas();
     itemInput.focus();
   });
 
@@ -680,7 +519,6 @@
   resultOverlay.addEventListener("click", function (e) {
     if (e.target === resultOverlay) hideResult();
   });
-
   resetUsedBtn.addEventListener("click", function () {
     items.forEach(function (it) { it.used = false; });
     save();
@@ -688,39 +526,34 @@
     drawWheel();
     updateUsedCount();
   });
-
   shuffleBtn.addEventListener("click", function () {
     for (var i = items.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
-      var tmp = items[i];
-      items[i] = items[j];
-      items[j] = tmp;
+      var tmp = items[i]; items[i] = items[j]; items[j] = tmp;
     }
     save();
     renderList();
-    drawWheel();
+    setupCanvas();
   });
-
   clearBtn.addEventListener("click", function () {
     if (!items.length) return;
     if (!confirm("Clear all items?")) return;
     items = [];
     save();
     renderList();
-    drawWheel();
+    setupCanvas();
     hideResult();
   });
-
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") hideResult();
-    if ((e.key === "Enter" || e.key === " ") && e.target === document.body) {
-      // don't steal from inputs
-    }
   });
 
   load();
-  setupCanvas();
   renderList();
+  requestAnimationFrame(function () {
+    setupCanvas();
+    updateEmptyClass();
+  });
   window.addEventListener("resize", function () {
     if (!isSpinning) setupCanvas();
   });
