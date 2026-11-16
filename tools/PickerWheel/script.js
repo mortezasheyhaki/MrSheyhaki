@@ -1,438 +1,464 @@
-/* ========================================
-   Picker Wheel — editable spinning wheel
-   + rename items + Web Audio sounds
-======================================== */
+/**
+ * Picker Wheel — TV-friendly classroom tool
+ * Large labels, big result overlay, used-items lockout
+ */
 (function () {
   "use strict";
 
-  var STORAGE_KEY = "mrsheyhaki-picker-wheel-items";
-  var SOUND_KEY = "mrsheyhaki-picker-wheel-sound";
-
+  var STORAGE_KEY = "picker-wheel-items-v2";
   var COLORS = [
-    "#7c3aed", "#0891b2", "#db2777", "#ea580c",
-    "#16a34a", "#2563eb", "#c026d3", "#dc2626",
-    "#0d9488", "#ca8a04", "#4f46e5", "#e11d48"
+    "#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6",
+    "#ec4899", "#14b8a6", "#f97316", "#6366f1", "#06b6d4",
+    "#a855f7", "#eab308", "#22c55e", "#e11d48", "#0ea5e9"
   ];
 
-  var canvas = document.getElementById("wheelCanvas");
+  /** @type {{text:string, used:boolean}[]} */
+  var items = [];
+  var rotation = 0; // degrees
+  var isSpinning = false;
+  var lastIndex = -1;
+
+  var canvas = document.getElementById("wheel");
   var ctx = canvas.getContext("2d");
   var spinBtn = document.getElementById("spinBtn");
-  var addForm = document.getElementById("addForm");
-  var itemInput = document.getElementById("itemInput");
+  var markUsedBtn = document.getElementById("markUsedBtn");
+  var resetUsedBtn = document.getElementById("resetUsedBtn");
   var itemList = document.getElementById("itemList");
   var itemCountEl = document.getElementById("itemCount");
-  var resultBanner = document.getElementById("resultBanner");
-  var resultValue = document.getElementById("resultValue");
+  var usedCountEl = document.getElementById("usedCount");
+  var addForm = document.getElementById("addForm");
+  var itemInput = document.getElementById("itemInput");
   var shuffleBtn = document.getElementById("shuffleBtn");
   var clearBtn = document.getElementById("clearBtn");
-  var soundToggle = document.getElementById("soundToggle");
+  var resultOverlay = document.getElementById("resultOverlay");
+  var resultWord = document.getElementById("resultWord");
+  var overlayMarkBtn = document.getElementById("overlayMarkBtn");
+  var overlayCloseBtn = document.getElementById("overlayCloseBtn");
 
-  var items = [];
-  var rotation = 0;
-  var isSpinning = false;
-  var soundOn = true;
-  var audioCtx = null;
-
-  // ---- Sound ----
-  function getAudioCtx() {
-    if (!audioCtx) {
-      try {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      } catch (_) {
-        return null;
-      }
-    }
-    if (audioCtx.state === "suspended") {
-      audioCtx.resume().catch(function () {});
-    }
-    return audioCtx;
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    } catch (e) {}
   }
 
-  function playTick(intensity) {
-    if (!soundOn) return;
-    var actx = getAudioCtx();
-    if (!actx) return;
-    var t = actx.currentTime;
-    var osc = actx.createOscillator();
-    var gain = actx.createGain();
-    osc.type = "square";
-    osc.frequency.setValueAtTime(800 + intensity * 400, t);
-    gain.gain.setValueAtTime(0.08 + intensity * 0.06, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
-    osc.connect(gain);
-    gain.connect(actx.destination);
-    osc.start(t);
-    osc.stop(t + 0.05);
-  }
-
-  function playWin() {
-    if (!soundOn) return;
-    var actx = getAudioCtx();
-    if (!actx) return;
-    var t = actx.currentTime;
-    [523.25, 659.25, 783.99].forEach(function (freq, i) {
-      var osc = actx.createOscillator();
-      var gain = actx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, t + i * 0.1);
-      gain.gain.setValueAtTime(0, t + i * 0.1);
-      gain.gain.linearRampToValueAtTime(0.18, t + i * 0.1 + 0.03);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.1 + 0.4);
-      osc.connect(gain);
-      gain.connect(actx.destination);
-      osc.start(t + i * 0.1);
-      osc.stop(t + i * 0.1 + 0.45);
-    });
-  }
-
-  function playSpinStart() {
-    if (!soundOn) return;
-    var actx = getAudioCtx();
-    if (!actx) return;
-    var t = actx.currentTime;
-    var osc = actx.createOscillator();
-    var gain = actx.createGain();
-    osc.type = "triangle";
-    osc.frequency.setValueAtTime(200, t);
-    osc.frequency.exponentialRampToValueAtTime(600, t + 0.15);
-    gain.gain.setValueAtTime(0.12, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-    osc.connect(gain);
-    gain.connect(actx.destination);
-    osc.start(t);
-    osc.stop(t + 0.2);
-  }
-
-  try {
-    if (localStorage.getItem(SOUND_KEY) === "off") soundOn = false;
-  } catch (_) {}
-  if (soundToggle) {
-    soundToggle.checked = soundOn;
-    soundToggle.addEventListener("change", function () {
-      soundOn = soundToggle.checked;
-      try {
-        localStorage.setItem(SOUND_KEY, soundOn ? "on" : "off");
-      } catch (_) {}
-      if (soundOn) getAudioCtx();
-    });
-  }
-
-  // ---- Persistence ----
-  function loadItems() {
+  function load() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         var parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length) {
-          items = parsed.filter(function (s) {
-            return typeof s === "string" && s.trim();
-          });
+          items = parsed.map(function (x) {
+            if (typeof x === "string") return { text: x, used: false };
+            return { text: String(x.text || ""), used: !!x.used };
+          }).filter(function (x) { return x.text; });
           return;
         }
       }
-    } catch (_) {}
-    items = ["Student 1", "Student 2", "Student 3", "Student 4", "Teacher"];
-  }
-
-  function saveItems() {
+    } catch (e) {}
+    // migrate v1 plain string list
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    } catch (_) {}
+      var old = localStorage.getItem("picker-wheel-items");
+      if (old) {
+        var arr = JSON.parse(old);
+        if (Array.isArray(arr)) {
+          items = arr.map(function (s) { return { text: String(s), used: false }; });
+          save();
+          return;
+        }
+      }
+    } catch (e2) {}
+    items = [];
   }
 
-  // ---- Draw ----
+  function activeItems() {
+    return items.filter(function (it) { return !it.used; });
+  }
+
+  function fitFont(text, maxWidth, maxPx, minPx) {
+    var size = maxPx;
+    ctx.font = "900 " + size + "px Inter, system-ui, sans-serif";
+    while (size > minPx && ctx.measureText(text).width > maxWidth) {
+      size -= 1;
+      ctx.font = "900 " + size + "px Inter, system-ui, sans-serif";
+    }
+    return size;
+  }
+
   function drawWheel() {
     var size = canvas.width;
     var cx = size / 2;
     var cy = size / 2;
-    var radius = size / 2 - 8;
-
+    var radius = size / 2 - 6;
     ctx.clearRect(0, 0, size, size);
 
-    if (items.length === 0) {
+    var n = items.length;
+    if (n < 1) {
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.fillStyle = "#e2e8f0";
+      ctx.fillStyle = "#e5e7eb";
       ctx.fill();
-      ctx.strokeStyle = "#94a3b8";
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      ctx.fillStyle = "#64748b";
-      ctx.font = "600 18px system-ui, sans-serif";
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "700 22px Inter, system-ui, sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText("Add items →", cx, cy);
       return;
     }
 
-    var slice = (Math.PI * 2) / items.length;
+    var arc = (Math.PI * 2) / n;
+    // Pointer is at top (−90°). rotation is CSS degrees of the wheel.
+    var startBase = (-Math.PI / 2) + (rotation * Math.PI / 180);
 
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(rotation);
-
-    for (var i = 0; i < items.length; i++) {
-      var start = i * slice - Math.PI / 2;
-      var end = start + slice;
+    for (var i = 0; i < n; i++) {
+      var start = startBase + i * arc;
+      var end = start + arc;
+      var used = items[i].used;
 
       ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.arc(0, 0, radius, start, end);
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, radius, start, end);
       ctx.closePath();
-      ctx.fillStyle = COLORS[i % COLORS.length];
+      ctx.fillStyle = used ? "#9ca3af" : COLORS[i % COLORS.length];
+      ctx.globalAlpha = used ? 0.45 : 1;
       ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(Math.cos(start) * radius, Math.sin(start) * radius);
-      ctx.strokeStyle = "rgba(255,255,255,0.35)";
-      ctx.lineWidth = 2;
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = "rgba(255,255,255,0.85)";
+      ctx.lineWidth = 3;
       ctx.stroke();
 
-      var mid = start + slice / 2;
-      var labelR = radius * 0.62;
+      // Label
+      var mid = start + arc / 2;
+      var label = items[i].text;
       ctx.save();
+      ctx.translate(cx, cy);
       ctx.rotate(mid);
-      ctx.translate(labelR, 0);
-      ctx.rotate(Math.PI / 2);
-      ctx.fillStyle = "#fff";
-      ctx.font =
-        "700 " +
-        Math.max(11, Math.min(16, 90 / items.length)) +
-        "px system-ui, sans-serif";
-      ctx.textAlign = "center";
+      ctx.textAlign = "right";
       ctx.textBaseline = "middle";
-      var label = items[i];
-      if (label.length > 14) label = label.slice(0, 12) + "…";
-      ctx.fillText(label, 0, 0);
+      var maxW = radius * 0.62;
+      var fontPx = fitFont(label, maxW, Math.min(42, Math.max(18, Math.floor(radius / (n > 20 ? 9 : n > 12 ? 7 : 5)))), 14);
+      ctx.font = "900 " + fontPx + "px Inter, system-ui, sans-serif";
+      ctx.fillStyle = used ? "rgba(255,255,255,0.55)" : "#fff";
+      ctx.shadowColor = "rgba(0,0,0,0.25)";
+      ctx.shadowBlur = 4;
+      ctx.fillText(label, radius - 18, 0);
       ctx.restore();
     }
 
+    // outer ring
     ctx.beginPath();
-    ctx.arc(0, 0, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.5)";
-    ctx.lineWidth = 6;
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(15,23,42,0.12)";
+    ctx.lineWidth = 8;
     ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(0, 0, 22, 0, Math.PI * 2);
-    ctx.fillStyle = "#1e1b4b";
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(0, 0, 12, 0, Math.PI * 2);
-    ctx.fillStyle = "#a78bfa";
-    ctx.fill();
-
-    ctx.restore();
   }
 
-  // ---- Spin ----
-  function spin() {
-    if (isSpinning || items.length < 1) return;
-
-    isSpinning = true;
-    spinBtn.disabled = true;
-    resultBanner.hidden = true;
-
-    getAudioCtx();
-    playSpinStart();
-
-    var turns = 4 + Math.random() * 3;
-    var extra = Math.random() * Math.PI * 2;
-    var targetRotation = rotation + turns * Math.PI * 2 + extra;
-    var duration = 4200 + Math.random() * 800;
-    var start = performance.now();
-    var startRot = rotation;
-    var lastTickSlice = -1;
-    var sliceAngle = (Math.PI * 2) / items.length;
-
-    function easeOutCubic(t) {
-      return 1 - Math.pow(1 - t, 3);
-    }
-
-    function frame(now) {
-      var t = Math.min(1, (now - start) / duration);
-      var eased = easeOutCubic(t);
-      rotation = startRot + (targetRotation - startRot) * eased;
-      drawWheel();
-
-      var currentSlice = Math.floor(
-        (((rotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)) / sliceAngle
-      );
-      if (currentSlice !== lastTickSlice) {
-        lastTickSlice = currentSlice;
-        playTick(t > 0.7 ? 0.5 + (t - 0.7) * 1.5 : 0.3);
-      }
-
-      if (t < 1) {
-        requestAnimationFrame(frame);
-      } else {
-        rotation = targetRotation;
-        drawWheel();
-        isSpinning = false;
-        spinBtn.disabled = false;
-        showWinner();
-        playWin();
-      }
-    }
-
-    requestAnimationFrame(frame);
+  function updateUsedCount() {
+    var used = items.filter(function (x) { return x.used; }).length;
+    var active = items.length - used;
+    usedCountEl.textContent = used
+      ? used + " used · " + active + " still available"
+      : active + " available";
+    spinBtn.disabled = isSpinning || active < 1;
+    resetUsedBtn.disabled = used < 1;
   }
 
-  function showWinner() {
-    if (items.length === 0) return;
-    var slice = (Math.PI * 2) / items.length;
-    var norm = ((rotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-    var index = Math.floor(((Math.PI * 2) - norm) / slice) % items.length;
-    if (index < 0) index += items.length;
-    resultValue.textContent = items[index];
-    resultBanner.hidden = false;
-  }
-
-  // ---- Rename ----
-  function startRename(index, textEl) {
-    var li = textEl.parentElement;
-    var input = document.createElement("input");
-    input.type = "text";
-    input.className = "item-edit-input";
-    input.value = items[index];
-    input.maxLength = 40;
-    input.setAttribute("aria-label", "Rename item");
-
-    function commit() {
-      var val = input.value.trim();
-      if (val && val !== items[index]) {
-        items[index] = val;
-        saveItems();
-        drawWheel();
-        resultBanner.hidden = true;
-      }
-      renderList();
-    }
-
-    function cancel() {
-      renderList();
-    }
-
-    input.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        commit();
-      } else if (e.key === "Escape") {
-        e.preventDefault();
-        cancel();
-      }
-    });
-    input.addEventListener("blur", commit);
-
-    textEl.replaceWith(input);
-    input.focus();
-    input.select();
-  }
-
-  // ---- List UI ----
   function renderList() {
     itemList.innerHTML = "";
-    items.forEach(function (text, i) {
+    items.forEach(function (it, i) {
       var li = document.createElement("li");
+      li.className = "item-row" + (it.used ? " is-used" : "");
 
       var swatch = document.createElement("span");
-      swatch.className = "item-swatch";
-      swatch.style.background = COLORS[i % COLORS.length];
+      swatch.className = "swatch";
+      swatch.style.background = it.used ? "#9ca3af" : COLORS[i % COLORS.length];
 
-      var span = document.createElement("span");
-      span.className = "item-text";
-      span.textContent = text;
-      span.title = "Click to rename";
-      span.setAttribute("role", "button");
-      span.setAttribute("tabindex", "0");
-      span.addEventListener("click", function () {
-        startRename(i, span);
+      var text = document.createElement("span");
+      text.className = "item-text";
+      text.textContent = it.text;
+      text.title = "Click to rename";
+      text.addEventListener("click", function () {
+        var next = prompt("Rename item", it.text);
+        if (next == null) return;
+        next = next.trim();
+        if (!next) return;
+        items[i].text = next;
+        save();
+        renderList();
+        drawWheel();
       });
-      span.addEventListener("keydown", function (e) {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          startRename(i, span);
-        }
+
+      var toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "item-toggle";
+      toggle.textContent = it.used ? "Restore" : "Use";
+      toggle.title = it.used ? "Make available again" : "Mark as used (won't be picked)";
+      toggle.addEventListener("click", function () {
+        items[i].used = !items[i].used;
+        save();
+        renderList();
+        drawWheel();
+        updateUsedCount();
       });
 
       var remove = document.createElement("button");
       remove.type = "button";
       remove.className = "item-remove";
-      remove.setAttribute("aria-label", "Remove " + text);
+      remove.setAttribute("aria-label", "Remove");
       remove.textContent = "×";
       remove.addEventListener("click", function () {
         items.splice(i, 1);
-        saveItems();
+        save();
         renderList();
         drawWheel();
-        resultBanner.hidden = true;
+        updateUsedCount();
       });
 
-      li.append(swatch, span, remove);
+      li.append(swatch, text, toggle, remove);
       itemList.appendChild(li);
     });
-    itemCountEl.textContent = items.length;
-    spinBtn.disabled = items.length < 1 || isSpinning;
+    itemCountEl.textContent = String(items.length);
+    updateUsedCount();
   }
 
-  // ---- Events ----
+  /** Index under the top pointer after current rotation */
+  function indexAtPointer() {
+    var n = items.length;
+    if (n < 1) return -1;
+    var deg = ((rotation % 360) + 360) % 360;
+    // Segment 0 starts at top when rotation=0; pointer fixed at top.
+    // As wheel rotates clockwise, pointer hits previous segments.
+    var slice = 360 / n;
+    var idx = Math.floor(((360 - deg) % 360) / slice) % n;
+    return idx;
+  }
+
+  function showResult(text) {
+    resultWord.textContent = text;
+    resultOverlay.hidden = false;
+    markUsedBtn.disabled = false;
+  }
+
+  function hideResult() {
+    resultOverlay.hidden = true;
+  }
+
+  function markLastUsed() {
+    if (lastIndex < 0 || lastIndex >= items.length) return;
+    items[lastIndex].used = true;
+    save();
+    renderList();
+    drawWheel();
+    updateUsedCount();
+    hideResult();
+    markUsedBtn.disabled = true;
+  }
+
+  function spin() {
+    var active = activeItems();
+    if (isSpinning || active.length < 1) return;
+    isSpinning = true;
+    spinBtn.disabled = true;
+    hideResult();
+
+    // Pick a random *active* item, then aim the wheel so it lands under the pointer
+    var pick = active[Math.floor(Math.random() * active.length)];
+    var targetIndex = items.indexOf(pick);
+    var n = items.length;
+    var slice = 360 / n;
+    // Center of target segment at pointer: rotation such that
+    // indexAtPointer() === targetIndex
+    // index = floor(((360 - deg) % 360) / slice)
+    // center of segment targetIndex: deg = 360 - (targetIndex + 0.5) * slice
+    var targetDeg = (360 - (targetIndex + 0.5) * slice) % 360;
+    var current = ((rotation % 360) + 360) % 360;
+    var delta = (targetDeg - current + 360) % 360;
+    var extraTurns = 4 + Math.floor(Math.random() * 3); // 4–6 full spins
+    var finalRotation = rotation + extraTurns * 360 + delta;
+
+    var start = rotation;
+    var change = finalRotation - start;
+    var duration = 4200;
+    var t0 = performance.now();
+
+    function easeOut(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function frame(now) {
+      var p = Math.min(1, (now - t0) / duration);
+      rotation = start + change * easeOut(p);
+      drawWheel();
+      if (p < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        rotation = finalRotation;
+        drawWheel();
+        isSpinning = false;
+        lastIndex = targetIndex;
+        showResult(items[targetIndex].text);
+        updateUsedCount();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function setupCanvas() {
+    // Large for TV / desktop
+    var max = Math.min(560, Math.max(280, window.innerWidth - 40));
+    if (window.innerWidth > 900) max = Math.min(620, window.innerHeight * 0.55);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.style.width = max + "px";
+    canvas.style.height = max + "px";
+    canvas.width = Math.round(max * dpr);
+    canvas.height = Math.round(max * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // draw uses canvas.width which is now * dpr — fix by using CSS size
+    // Override draw to use logical size
+    canvas._logical = max;
+    drawWheel = (function (orig) {
+      // Redefine draw using logical size stored on canvas style
+      return function () {
+        var size = canvas._logical || max;
+        // temporarily set transform and use size
+        var realW = canvas.width;
+        var realH = canvas.height;
+        // draw into CSS pixel space
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        var cx = size / 2;
+        var cy = size / 2;
+        var radius = size / 2 - 6;
+        ctx.clearRect(0, 0, size, size);
+
+        var n = items.length;
+        if (n < 1) {
+          ctx.beginPath();
+          ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+          ctx.fillStyle = "#e5e7eb";
+          ctx.fill();
+          ctx.fillStyle = "#6b7280";
+          ctx.font = "700 22px Inter, system-ui, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("Add items →", cx, cy);
+          return;
+        }
+
+        var arc = (Math.PI * 2) / n;
+        var startBase = (-Math.PI / 2) + (rotation * Math.PI / 180);
+
+        for (var i = 0; i < n; i++) {
+          var start = startBase + i * arc;
+          var end = start + arc;
+          var used = items[i].used;
+
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.arc(cx, cy, radius, start, end);
+          ctx.closePath();
+          ctx.fillStyle = used ? "#9ca3af" : COLORS[i % COLORS.length];
+          ctx.globalAlpha = used ? 0.4 : 1;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+          ctx.strokeStyle = "rgba(255,255,255,0.9)";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          var mid = start + arc / 2;
+          var label = items[i].text;
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(mid);
+          ctx.textAlign = "right";
+          ctx.textBaseline = "middle";
+          var maxW = radius * 0.64;
+          var fontPx = Math.min(48, Math.max(16, Math.floor(radius / (n > 24 ? 10 : n > 16 ? 7.5 : n > 10 ? 5.5 : 4.2))));
+          ctx.font = "900 " + fontPx + "px Inter, system-ui, sans-serif";
+          while (fontPx > 14 && ctx.measureText(label).width > maxW) {
+            fontPx -= 1;
+            ctx.font = "900 " + fontPx + "px Inter, system-ui, sans-serif";
+          }
+          ctx.fillStyle = used ? "rgba(255,255,255,0.5)" : "#ffffff";
+          ctx.shadowColor = "rgba(0,0,0,0.28)";
+          ctx.shadowBlur = 5;
+          ctx.fillText(label, radius - 16, 0);
+          ctx.restore();
+        }
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(15,23,42,0.1)";
+        ctx.lineWidth = 10;
+        ctx.stroke();
+      };
+    })(drawWheel);
+    drawWheel();
+  }
+
+  // Events
   addForm.addEventListener("submit", function (e) {
     e.preventDefault();
     var val = itemInput.value.trim();
     if (!val) return;
     if (items.length >= 40) {
-      alert("Maximum 40 items on the wheel.");
+      alert("Maximum 40 items.");
       return;
     }
-    items.push(val);
+    items.push({ text: val, used: false });
     itemInput.value = "";
-    saveItems();
+    save();
     renderList();
     drawWheel();
-    resultBanner.hidden = true;
     itemInput.focus();
   });
 
   spinBtn.addEventListener("click", spin);
+  markUsedBtn.addEventListener("click", markLastUsed);
+  overlayMarkBtn.addEventListener("click", markLastUsed);
+  overlayCloseBtn.addEventListener("click", hideResult);
+  resultOverlay.addEventListener("click", function (e) {
+    if (e.target === resultOverlay) hideResult();
+  });
+
+  resetUsedBtn.addEventListener("click", function () {
+    items.forEach(function (it) { it.used = false; });
+    save();
+    renderList();
+    drawWheel();
+    updateUsedCount();
+  });
 
   shuffleBtn.addEventListener("click", function () {
-    if (items.length < 2) return;
     for (var i = items.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
       var tmp = items[i];
       items[i] = items[j];
       items[j] = tmp;
     }
-    saveItems();
+    save();
     renderList();
     drawWheel();
-    resultBanner.hidden = true;
   });
 
   clearBtn.addEventListener("click", function () {
-    if (items.length === 0) return;
-    if (!confirm("Clear all items from the wheel?")) return;
+    if (!items.length) return;
+    if (!confirm("Clear all items?")) return;
     items = [];
-    saveItems();
+    save();
     renderList();
     drawWheel();
-    resultBanner.hidden = true;
+    hideResult();
   });
 
-  function setupCanvas() {
-    var max = Math.min(400, window.innerWidth - 48);
-    canvas.style.width = max + "px";
-    canvas.style.height = max + "px";
-    canvas.width = max;
-    canvas.height = max;
-    drawWheel();
-  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") hideResult();
+    if ((e.key === "Enter" || e.key === " ") && e.target === document.body) {
+      // don't steal from inputs
+    }
+  });
 
-  loadItems();
+  load();
   setupCanvas();
   renderList();
-
   window.addEventListener("resize", function () {
     if (!isSpinning) setupCanvas();
   });
