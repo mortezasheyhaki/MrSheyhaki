@@ -1,24 +1,7 @@
 /**
- * Resources — sign-in gate for game pages.
- *
- * Put this as a plain (not async/defer) script at the TOP of <head> on every
- * game page:
+ * Learning Arcade — login gate for resources games & tests
+ * Include as the FIRST script in <head>:
  *   <script src="/resources/auth-gate.js"></script>
- *
- * What it does
- *  - Hides the page immediately so the game never flashes before the check.
- *  - Loads the Appwrite SDK + the Learning Arcade account script (LAAuth) and
- *    asks the server whether the visitor is really signed in (LAAuth.verify).
- *  - Signed in  -> the page is revealed and plays normally.
- *  - Not signed in -> redirected to the login page, which returns the visitor
- *    to the game after they log in (?next=...). "Continue as Guest" on that
- *    page goes back to the Resources hub (?back=...).
- *  - If sign-in cannot be checked at all (e.g. the Appwrite CDN is blocked),
- *    the game stays hidden and a short message is shown (fails closed).
- *
- * Note: this is a client-side gate. It stops the game from being played in the
- * browser without an account, but the HTML files themselves are still public
- * on the web server.
  */
 (function () {
   "use strict";
@@ -26,7 +9,7 @@
   var LOGIN_PAGE = "/learningarcade/auth-system/login.html";
   var HUB_PAGE = "/resources/";
   var AUTH_SCRIPT = "/learningarcade/auth-system/auth.js";
-  var APPWRITE_SDK = "https://cdn.jsdelivr.net/npm/appwrite@26.2.0";
+  var SUPABASE_SDK = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
   var root = document.documentElement;
   root.classList.add("la-gate-pending");
@@ -58,10 +41,14 @@
 
   function sendToLogin() {
     var here = window.location.pathname + window.location.search + window.location.hash;
+    var back = HUB_PAGE;
+    if (here.indexOf("/tests/") !== -1) {
+      back = "/resources/american-english-file/tests/";
+    }
     window.location.replace(
       LOGIN_PAGE +
         "?next=" + encodeURIComponent(here) +
-        "&back=" + encodeURIComponent(HUB_PAGE)
+        "&back=" + encodeURIComponent(back)
     );
   }
 
@@ -88,16 +75,18 @@
     });
   }
 
-  var sdkReady = window.Appwrite
+  var sdkReady = (window.supabase && window.supabase.createClient)
     ? Promise.resolve()
-    : loadScript(APPWRITE_SDK);
+    : loadScript(SUPABASE_SDK);
 
   sdkReady
     .then(function () {
       if (!window.LAAuth) return loadScript(AUTH_SCRIPT);
     })
     .then(function () {
-      if (!window.LAAuth || !window.LAAuth.verify) throw new Error("LAAuth missing");
+      if (!window.LAAuth || typeof window.LAAuth.verify !== "function") {
+        throw new Error("LAAuth missing");
+      }
       return window.LAAuth.verify();
     })
     .then(
