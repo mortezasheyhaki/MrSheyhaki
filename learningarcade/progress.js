@@ -198,4 +198,9 @@
       });
     }
   };
+
+  // Alias used by LAFinish / la-stars
+  global.LAProgressSave = function (payload) {
+    return global.LAProgress.save(payload);
+  };
 })(typeof window !== "undefined" ? window : this);

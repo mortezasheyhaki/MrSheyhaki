@@ -570,8 +570,9 @@
   var PROGRESS_BASE = (function () {
     try {
       var cs = document.currentScript;
-      return cs && cs.src ? cs.src.replace(/[^\/]*$/, "") : "";
-    } catch (e) { return ""; }
+      if (cs && cs.src) return cs.src.replace(/[^\/]*$/, "");
+    } catch (e) {}
+    return "/learningarcade/";
   })();
   var progressLoad = null;
   var pendingFallback = {};
@@ -579,6 +580,8 @@
 
   function maybeLoggedIn() {
     try {
+      if (global.LAAuth && typeof LAAuth.isLoggedIn === "function" && LAAuth.isLoggedIn()) return true;
+      if (global.LAAuth && typeof LAAuth.currentUser === "function" && LAAuth.currentUser()) return true;
       return !!(localStorage.getItem("cookieFallback") || localStorage.getItem("laAuthSession"));
     } catch (e) { return false; }
   }

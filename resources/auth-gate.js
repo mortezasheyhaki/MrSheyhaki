@@ -91,8 +91,11 @@
     })
     .then(
       function (player) {
-        if (player) reveal();
-        else sendToLogin();
+        if (player) {
+          // Preload cloud progress so AEF / T2T games can save without racing
+          loadScript("/learningarcade/progress.js").catch(function () {});
+          reveal();
+        } else sendToLogin();
       },
       function () {
         showUnavailable();
