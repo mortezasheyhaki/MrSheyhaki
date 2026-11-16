@@ -232,14 +232,67 @@
     return idx;
   }
 
+
+  function pulseWheel(done) {
+    var wrap = document.querySelector(".wheel-wrap");
+    if (!wrap) {
+      if (done) done();
+      return;
+    }
+    wrap.classList.remove("is-settle");
+    void wrap.offsetWidth;
+    wrap.classList.add("is-settle");
+    setTimeout(function () {
+      wrap.classList.remove("is-settle");
+      if (done) done();
+    }, 420);
+  }
+
+  function burstConfetti() {
+    var layer = document.getElementById("confettiLayer");
+    if (!layer) return;
+    layer.innerHTML = "";
+    var colors = ["#a78bfa", "#f472b6", "#34d399", "#fbbf24", "#60a5fa", "#f87171", "#c084fc"];
+    var n = 48;
+    for (var i = 0; i < n; i++) {
+      var p = document.createElement("span");
+      p.className = "confetti-piece";
+      var x = 40 + Math.random() * 20;
+      var y = 35 + Math.random() * 15;
+      p.style.left = x + "%";
+      p.style.top = y + "%";
+      p.style.background = colors[i % colors.length];
+      p.style.setProperty("--dx", (Math.random() * 360 - 180) + "px");
+      p.style.setProperty("--dy", (Math.random() * 280 + 80) + "px");
+      p.style.setProperty("--rot", (Math.random() * 720 - 360) + "deg");
+      p.style.setProperty("--delay", (Math.random() * 0.15) + "s");
+      p.style.setProperty("--size", (6 + Math.random() * 8) + "px");
+      layer.appendChild(p);
+    }
+    setTimeout(function () { layer.innerHTML = ""; }, 1800);
+  }
+
   function showResult(text) {
     resultWord.textContent = text;
     resultOverlay.hidden = false;
+    resultOverlay.classList.remove("is-closing");
+    resultOverlay.classList.add("is-open");
     markUsedBtn.disabled = false;
+    // restart word pop animation
+    resultWord.classList.remove("pop");
+    void resultWord.offsetWidth;
+    resultWord.classList.add("pop");
+    burstConfetti();
   }
 
   function hideResult() {
-    resultOverlay.hidden = true;
+    if (resultOverlay.hidden) return;
+    resultOverlay.classList.add("is-closing");
+    resultOverlay.classList.remove("is-open");
+    setTimeout(function () {
+      resultOverlay.hidden = true;
+      resultOverlay.classList.remove("is-closing");
+    }, 280);
   }
 
   function markLastUsed() {
@@ -272,21 +325,23 @@
     var targetDeg = (360 - (targetIndex + 0.5) * slice) % 360;
     var current = ((rotation % 360) + 360) % 360;
     var delta = (targetDeg - current + 360) % 360;
-    var extraTurns = 4 + Math.floor(Math.random() * 3); // 4–6 full spins
+    var extraTurns = 5 + Math.floor(Math.random() * 3); // 5–7 full spins
     var finalRotation = rotation + extraTurns * 360 + delta;
 
     var start = rotation;
     var change = finalRotation - start;
-    var duration = 4200;
+    var duration = 5600;
     var t0 = performance.now();
 
-    function easeOut(t) {
-      return 1 - Math.pow(1 - t, 3);
+    // Smooth ease: slow start → long coast → soft stop (TV-friendly)
+    function easeOutQuint(t) {
+      return 1 - Math.pow(1 - t, 5);
     }
 
     function frame(now) {
       var p = Math.min(1, (now - t0) / duration);
-      rotation = start + change * easeOut(p);
+      var e = easeOutQuint(p);
+      rotation = start + change * e;
       drawWheel();
       if (p < 1) {
         requestAnimationFrame(frame);
@@ -295,8 +350,11 @@
         drawWheel();
         isSpinning = false;
         lastIndex = targetIndex;
-        showResult(items[targetIndex].text);
-        updateUsedCount();
+        // Soft settle pulse on the wheel, then reveal result
+        pulseWheel(function () {
+          showResult(items[targetIndex].text);
+          updateUsedCount();
+        });
       }
     }
     requestAnimationFrame(frame);
