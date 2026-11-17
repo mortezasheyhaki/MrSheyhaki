@@ -1,13 +1,65 @@
-INSTALL INSTRUCTIONS
-====================
+Mr. Sheyhaki — Multiplayer update (Phase 3: A or An Swipe)
+==========================================================
 
-1. Copy the folder "match-classroom-objects" into:
-   resources/american-english-file/starter/practical-english-1/games/
+WHAT IS INCLUDED
+----------------
+1) multiplayer/a-an-swipe/index.html
+   Player-facing page on the website.
+   Create room → share invite link → friend joins → play together.
 
-2. Replace the existing course-data.js with the one in this package:
-   resources/american-english-file/assets/course-data.js
+2) multiplayer-server/
+   Node.js Socket.IO server (auth + rooms + A or An game engine).
+   Source only — run npm install on the server.
 
-   (Or just add the new line if you prefer not to overwrite the whole file)
+UPLOAD TO THE WEBSITE
+---------------------
+Upload this folder:
 
-3. Done. The game will appear under Starter → Practical English 1 → Games.
+  multiplayer/a-an-swipe/index.html
+
+to:
+
+  https://mrsheyhaki.ir/multiplayer/a-an-swipe/index.html
+
+(so the public URL is /multiplayer/a-an-swipe/)
+
+The page uses existing site auth:
+  /learningarcade/auth-system/auth.js
+  /learningarcade/vendor/load-supabase.js
+
+Make sure those paths still work from the multiplayer page.
+
+RUN THE MULTIPLAYER SERVER
+--------------------------
+1. Copy multiplayer-server/ to your Node host (Railway, Render, VPS, etc.)
+
+2. Create .env from .env.example:
+
+   PORT=3001
+   NODE_ENV=production
+   CORS_ORIGINS=https://mrsheyhaki.ir,https://www.mrsheyhaki.ir
+   SUPABASE_URL=https://ezlcrygimvceusmnojgk.supabase.co
+   SUPABASE_ANON_KEY=...same anon key as the website...
+
+3. npm install
+4. npm start
+
+5. In multiplayer/a-an-swipe/index.html, set SERVER_URL to your
+   deployed server address (search for multiplayer.mrsheyhaki.ir
+   and replace it with your real URL).
+
+HOW PLAYERS USE IT
+------------------
+1. Open https://mrsheyhaki.ir/multiplayer/a-an-swipe/ (must be logged in)
+2. Click "Create room"
+3. Copy the invite link and send it to a friend
+4. Friend opens the link → joins automatically
+5. Both press "I'm ready"
+6. Host presses "Start game"
+7. Same words appear → choose a / an → live scores
+
+TEST CLIENT (optional)
+----------------------
+multiplayer-server/test-client.html is for developers only.
+Use the real page on the website for normal play.
 

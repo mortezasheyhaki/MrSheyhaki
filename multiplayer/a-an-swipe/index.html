@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>A or An · Multiplayer | Mr. Sheyhaki</title>
+  <meta name="description" content="Play A or An together with a friend. Create a room, share the link, and race." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card2: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #8b5cf6;
+      --accent2: #a78bfa;
+      --ok: #34d399;
+      --bad: #f87171;
+      --a: #3b82f6;
+      --an: #f59e0b;
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: "Nunito", system-ui, sans-serif;
+      background: radial-gradient(1200px 600px at 50% -10%, #312e81 0%, var(--bg) 55%);
+      color: var(--text);
+      padding: 1rem;
+      padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.75rem; margin-bottom: 1.25rem;
+    }
+    .back {
+      color: var(--muted); text-decoration: none; font-weight: 700; font-size: 0.95rem;
+      padding: 0.4rem 0.6rem; border-radius: 10px;
+    }
+    .back:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+    h1 { font-size: 1.35rem; margin: 0; font-weight: 800; letter-spacing: -0.02em; }
+    .badge {
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+      background: rgba(139, 92, 246, 0.25); color: var(--accent2);
+      padding: 0.25rem 0.55rem; border-radius: 999px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    }
+    .card h2 { margin: 0 0 0.5rem; font-size: 1.05rem; }
+    .muted { color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+      border: 0; border-radius: 999px; font-family: inherit; font-weight: 800;
+      padding: 0.75rem 1.25rem; cursor: pointer; font-size: 1rem;
+      transition: transform 0.12s, opacity 0.12s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.45; cursor: default; }
+    .btn-primary { background: var(--accent); color: #fff; width: 100%; }
+    .btn-secondary { background: var(--card2); color: var(--text); }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid rgba(255,255,255,0.1); }
+    .btn-a { background: var(--a); color: #fff; flex: 1; font-size: 1.35rem; padding: 1rem; }
+    .btn-an { background: var(--an); color: #fff; flex: 1; font-size: 1.35rem; padding: 1rem; }
+    .btn-row { display: flex; gap: 0.6rem; margin-top: 0.75rem; flex-wrap: wrap; }
+
+    input[type="text"] {
+      width: 100%; padding: 0.75rem 1rem; border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12); background: #0f172a;
+      color: var(--text); font-family: inherit; font-size: 1.05rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; text-align: center;
+    }
+    input::placeholder { color: var(--muted); letter-spacing: 0; text-transform: none; font-weight: 600; }
+
+    .user-pill {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(255,255,255,0.06); padding: 0.35rem 0.7rem; border-radius: 999px;
+      font-size: 0.85rem; font-weight: 700;
+    }
+    .user-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+
+    /* Lobby */
+    .room-code {
+      font-size: 2rem; font-weight: 800; letter-spacing: 0.18em; text-align: center;
+      margin: 0.75rem 0; color: var(--accent2);
+    }
+    .invite-box {
+      display: flex; gap: 0.5rem; margin-top: 0.75rem;
+    }
+    .invite-box input { flex: 1; font-size: 0.8rem; letter-spacing: 0; text-transform: none; font-weight: 600; text-align: left; }
+    .players { margin-top: 1rem; }
+    .player-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.55rem 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-weight: 700;
+    }
+    .player-row:last-child { border-bottom: 0; }
+    .tag { font-size: 0.75rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 999px; }
+    .tag-ready { background: rgba(52, 211, 153, 0.2); color: var(--ok); }
+    .tag-wait { background: rgba(148, 163, 184, 0.15); color: var(--muted); }
+    .tag-host { margin-left: 0.35rem; }
+
+    /* Game */
+    .word-card {
+      text-align: center; font-size: clamp(1.8rem, 8vw, 2.6rem); font-weight: 800;
+      padding: 1.75rem 1rem; background: #0f172a; border-radius: 16px;
+      border: 2px solid rgba(139, 92, 246, 0.35); margin: 1rem 0;
+      min-height: 5.5rem; display: flex; align-items: center; justify-content: center;
+    }
+    .q-meta { text-align: center; color: var(--muted); font-size: 0.9rem; font-weight: 700; }
+    .feedback {
+      text-align: center; font-weight: 800; min-height: 1.6rem; margin: 0.75rem 0 0.25rem;
+    }
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+    .scoreboard { margin-top: 1rem; }
+    .score-row {
+      display: flex; justify-content: space-between; padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06); font-weight: 700;
+    }
+    .score-row:last-child { border-bottom: 0; }
+    .rank { color: var(--muted); width: 1.5rem; }
+
+    .hidden { display: none !important; }
+    .status-line {
+      text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;
+    }
+    .status-line.error { color: var(--bad); }
+    .status-line.ok { color: var(--ok); }
+
+    .login-gate {
+      text-align: center; padding: 2rem 1rem;
+    }
+    .login-gate a {
+      color: var(--accent2); font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="back" href="/learningarcade/grammar/" id="backLink">← Grammar</a>
+      <span class="badge">Multiplayer</span>
+    </header>
+
+    <h1 style="margin-bottom: 0.35rem;">A or An Swipe</h1>
+    <p class="muted" style="margin-top: 0;">Race a friend — same words, live scores.</p>
+
+    <!-- Not logged in -->
+    <div id="loginGate" class="card login-gate hidden">
+      <p style="font-size: 1.1rem; font-weight: 700; margin: 0 0 0.5rem;">Log in to play together</p>
+      <p class="muted">You need an account so your friend can join your room.</p>
+      <p style="margin-top: 1.25rem;">
+        <a href="/learningarcade/auth-system/login.html?redirect=/multiplayer/a-an-swipe/">Log in / Register →</a>
+      </p>
+    </div>
+
+    <!-- Main app (logged in) -->
+    <div id="app" class="hidden">
+      <div class="user-pill" id="userPill" style="margin-bottom: 1rem;">
+        <span class="dot"></span>
+        <span id="userName">—</span>
+      </div>
+
+      <!-- Home: create or join -->
+      <div id="screenHome" class="card">
+        <h2>Play with a friend</h2>
+        <p class="muted">Create a room and share the link, or enter a code to join.</p>
+        <button class="btn btn-primary" id="btnCreate" style="margin-top: 1rem;">Create room</button>
+        <div style="margin: 1.25rem 0 0.5rem; text-align: center; color: var(--muted); font-size: 0.85rem; font-weight: 700;">OR</div>
+        <input type="text" id="joinCodeInput" placeholder="Enter room code" maxlength="8" autocomplete="off" />
+        <button class="btn btn-secondary" id="btnJoin" style="width: 100%; margin-top: 0.6rem;">Join with code</button>
+        <p class="status-line" id="homeStatus"></p>
+      </div>
+
+      <!-- Lobby -->
+      <div id="screenLobby" class="card hidden">
+        <h2>Room lobby</h2>
+        <div class="room-code" id="lobbyCode">————</div>
+        <p class="muted" style="text-align: center; margin: 0;">Share this link with your friend</p>
+        <div class="invite-box">
+          <input type="text" id="inviteLink" readonly />
+          <button class="btn btn-secondary" id="btnCopy" type="button">Copy</button>
+        </div>
+        <div class="players" id="playerList"></div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="btnReady" style="flex: 1;">I'm ready</button>
+          <button class="btn btn-primary hidden" id="btnStart" style="flex: 1;">Start game</button>
+        </div>
+        <button class="btn btn-ghost" id="btnLeave" style="width: 100%; margin-top: 0.75rem;">Leave room</button>
+        <p class="status-line" id="lobbyStatus"></p>
+      </div>
+
+      <!-- Playing -->
+      <div id="screenGame" class="card hidden">
+        <div class="q-meta" id="qMeta">Get ready…</div>
+        <div class="word-card" id="wordCard">—</div>
+        <div class="btn-row">
+          <button class="btn btn-a" id="btnA" disabled>a</button>
+          <button class="btn btn-an" id="btnAn" disabled>an</button>
+        </div>
+        <div class="feedback" id="feedback"></div>
+        <div class="scoreboard" id="scoreboard"></div>
+      </div>
+
+      <!-- Results -->
+      <div id="screenEnd" class="card hidden">
+        <h2 style="text-align: center;">Match over</h2>
+        <div class="scoreboard" id="finalBoard" style="margin: 1rem 0;"></div>
+        <button class="btn btn-primary hidden" id="btnAgain" style="width: 100%;">Play again (lobby)</button>
+        <button class="btn btn-ghost" id="btnEndLeave" style="width: 100%; margin-top: 0.6rem;">Leave</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase + Auth (same as site) -->
+  <script src="/learningarcade/vendor/load-supabase.js"></script>
+  <script src="/learningarcade/auth-system/auth.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+(function () {
+  "use strict";
+
+  // ── Config ────────────────────────────────────────────────────────
+  // Change this when you deploy the multiplayer server
+  var SERVER_URL = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+    ? "http://localhost:3001"
+    : "https://YOUR-MULTIPLAYER-SERVER-URL"; // ← update to your real server URL later
+
+  var socket = null;
+  var myId = null;
+  var lastRoom = null;
+  var answered = false;
+  var accessToken = null;
+
+  // ── DOM ───────────────────────────────────────────────────────────
+  var $ = function (id) { return document.getElementById(id); };
+  var loginGate = $("loginGate");
+  var app = $("app");
+  var screenHome = $("screenHome");
+  var screenLobby = $("screenLobby");
+  var screenGame = $("screenGame");
+  var screenEnd = $("screenEnd");
+
+  function showScreen(name) {
+    screenHome.classList.toggle("hidden", name !== "home");
+    screenLobby.classList.toggle("hidden", name !== "lobby");
+    screenGame.classList.toggle("hidden", name !== "game");
+    screenEnd.classList.toggle("hidden", name !== "end");
+  }
+
+  function setStatus(el, msg, type) {
+    el.textContent = msg || "";
+    el.className = "status-line" + (type ? " " + type : "");
+  }
+
+  function isHost() {
+    return lastRoom && myId && lastRoom.hostId === myId;
+  }
+
+  function inviteUrl(code) {
+    var u = new URL(location.href);
+    u.searchParams.set("room", code);
+    return u.toString();
+  }
+
+  function renderPlayers(room) {
+    var list = $("playerList");
+    if (!room || !room.players) {
+      list.innerHTML = "";
+      return;
+    }
+    list.innerHTML = room.players.map(function (p) {
+      var you = p.id === myId ? " (you)" : "";
+      var host = p.isHost ? '<span class="tag tag-host">HOST</span>' : "";
+      var ready = p.ready
+        ? '<span class="tag tag-ready">ready</span>'
+        : '<span class="tag tag-wait">waiting</span>';
+      return (
+        '<div class="player-row"><span>' +
+        (p.displayName || p.username) + you + host +
+        '</span>' + ready + '</div>'
+      );
+    }).join("");
+  }
+
+  function renderLobby(room) {
+    lastRoom = room;
+    $("lobbyCode").textContent = room.code;
+    $("inviteLink").value = inviteUrl(room.code);
+    renderPlayers(room);
+    $("btnStart").classList.toggle("hidden", !isHost());
+    var me = room.players.find(function (p) { return p.id === myId; });
+    $("btnReady").textContent = me && me.ready ? "Not ready" : "I'm ready";
+    showScreen("lobby");
+  }
+
+  function renderScoreboard(list, targetId) {
+    var el = $(targetId || "scoreboard");
+    if (!list || !list.length) {
+      el.innerHTML = "";
+      return;
+    }
+    el.innerHTML = list.map(function (s, i) {
+      return (
+        '<div class="score-row"><span><span class="rank">' + (i + 1) +
+        '.</span> ' + (s.displayName || s.username) +
+        (s.id === myId ? " (you)" : "") +
+        '</span><span>' + s.score + ' pts · ' + s.correct + '✓</span></div>'
+      );
+    }).join("");
+  }
+
+  function showQuestion(q) {
+    answered = false;
+    $("qMeta").textContent = "Question " + (q.index + 1) + " / " + q.total + "  ·  " + q.timeLimit + "s";
+    $("wordCard").textContent = q.word;
+    $("feedback").textContent = "";
+    $("feedback").className = "feedback";
+    $("btnA").disabled = false;
+    $("btnAn").disabled = false;
+    showScreen("game");
+  }
+
+  // ── Auth ──────────────────────────────────────────────────────────
+  async function getAccessToken() {
+    if (!window.LAAuth || !window.LAAuth.getClient) return null;
+    var client = window.LAAuth.getClient();
+    if (!client) return null;
+    try {
+      var res = await client.auth.getSession();
+      if (res.data && res.data.session && res.data.session.access_token) {
+        return res.data.session.access_token;
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  async function ensureLoggedIn() {
+    // Wait for supabase + LAAuth
+    await new Promise(function (resolve) {
+      if (window.LAAuth && window.supabase) return resolve();
+      document.addEventListener("supabase-ready", function () {
+        // give auth.js a tick to attach
+        setTimeout(resolve, 50);
+      }, { once: true });
+      setTimeout(resolve, 3000);
+    });
+
+    if (!window.LAAuth) {
+      loginGate.classList.remove("hidden");
+      return false;
+    }
+
+    var session = window.LAAuth.getSession();
+    if (!session) {
+      // try verify (refresh from supabase)
+      try { session = await window.LAAuth.verify(); } catch (e) {}
+    }
+
+    if (!session) {
+      loginGate.classList.remove("hidden");
+      app.classList.add("hidden");
+      return false;
+    }
+
+    accessToken = await getAccessToken();
+    if (!accessToken) {
+      loginGate.classList.remove("hidden");
+      app.classList.add("hidden");
+      setStatus($("homeStatus"), "Could not get session token. Try logging in again.", "error");
+      return false;
+    }
+
+    loginGate.classList.add("hidden");
+    app.classList.remove("hidden");
+    $("userName").textContent = session.displayName || session.username || "Player";
+    return true;
+  }
+
+  // ── Socket ────────────────────────────────────────────────────────
+  function connectSocket() {
+    if (socket) {
+      socket.disconnect();
+      socket = null;
+    }
+    socket = io(SERVER_URL, {
+      auth: { token: accessToken },
+      transports: ["websocket", "polling"],
+    });
+
+    socket.on("connect", function () {
+      setStatus($("homeStatus"), "Connected", "ok");
+    });
+
+    socket.on("connect_error", function (err) {
+      setStatus($("homeStatus"), "Connection failed: " + (err && err.message ? err.message : "error"), "error");
+      setStatus($("lobbyStatus"), "Connection failed", "error");
+    });
+
+    socket.on("server:hello", function (d) {
+      if (d && d.player) myId = d.player.id;
+    });
+
+    socket.on("room:update", function (room) {
+      lastRoom = room;
+      if (room.status === "lobby") {
+        renderLobby(room);
+      } else if (room.status === "playing") {
+        showScreen("game");
+        renderPlayers(room);
+      } else if (room.status === "ended") {
+        // wait for game:end for scoreboard
+      }
+    });
+
+    socket.on("room:error", function (e) {
+      var msg = (e && e.error) || "Error";
+      setStatus($("homeStatus"), msg, "error");
+      setStatus($("lobbyStatus"), msg, "error");
+    });
+
+    socket.on("game:question", function (q) {
+      showQuestion(q);
+    });
+
+    socket.on("game:answerResult", function (r) {
+      var fb = $("feedback");
+      if (r.correct) {
+        fb.textContent = "✓ Correct! +" + r.points;
+        fb.className = "feedback ok";
+      } else {
+        fb.textContent = "✗ Wrong — it's \"" + r.article + "\"";
+        fb.className = "feedback bad";
+      }
+      $("btnA").disabled = true;
+      $("btnAn").disabled = true;
+      if (r.scoreboard) renderScoreboard(r.scoreboard);
+    });
+
+    socket.on("game:scoreboard", function (list) {
+      renderScoreboard(list);
+    });
+
+    socket.on("game:end", function (data) {
+      $("btnA").disabled = true;
+      $("btnAn").disabled = true;
+      if (data && data.scoreboard) {
+        renderScoreboard(data.scoreboard, "finalBoard");
+      }
+      $("btnAgain").classList.toggle("hidden", !isHost());
+      showScreen("end");
+    });
+
+    socket.on("disconnect", function () {
+      setStatus($("lobbyStatus"), "Disconnected from server", "error");
+    });
+  }
+
+  // ── Actions ───────────────────────────────────────────────────────
+  $("btnCreate").onclick = function () {
+    if (!socket || !socket.connected) {
+      setStatus($("homeStatus"), "Not connected yet…", "error");
+      return;
+    }
+    setStatus($("homeStatus"), "Creating room…");
+    socket.emit("room:create", {}, function (res) {
+      if (!res || !res.ok) {
+        setStatus($("homeStatus"), (res && res.error) || "Could not create room", "error");
+        return;
+      }
+      renderLobby(res.room);
+      // Auto-ready the host for smoother flow
+      socket.emit("room:setReady", { ready: true });
+    });
+  };
+
+  $("btnJoin").onclick = function () {
+    var code = ($("joinCodeInput").value || "").trim().toUpperCase();
+    if (code.length < 4) {
+      setStatus($("homeStatus"), "Enter a valid room code", "error");
+      return;
+    }
+    if (!socket || !socket.connected) {
+      setStatus($("homeStatus"), "Not connected yet…", "error");
+      return;
+    }
+    setStatus($("homeStatus"), "Joining…");
+    socket.emit("room:join", { code: code }, function (res) {
+      if (!res || !res.ok) {
+        setStatus($("homeStatus"), (res && res.error) || "Could not join", "error");
+        return;
+      }
+      renderLobby(res.room);
+      socket.emit("room:setReady", { ready: true });
+    });
+  };
+
+  $("btnReady").onclick = function () {
+    if (!socket || !lastRoom || !myId) return;
+    var me = lastRoom.players.find(function (p) { return p.id === myId; });
+    socket.emit("room:setReady", { ready: !(me && me.ready) });
+  };
+
+  $("btnStart").onclick = function () {
+    if (!socket) return;
+    socket.emit("game:start", { questionCount: 8, timePerQuestion: 8 });
+  };
+
+  $("btnLeave").onclick = $("btnEndLeave").onclick = function () {
+    if (socket) socket.emit("room:leave", {});
+    lastRoom = null;
+    // clean URL
+    var u = new URL(location.href);
+    u.searchParams.delete("room");
+    history.replaceState(null, "", u.pathname + u.search);
+    showScreen("home");
+    setStatus($("homeStatus"), "");
+  };
+
+  $("btnAgain").onclick = function () {
+    if (!socket) return;
+    socket.emit("game:backToLobby", {}, function () {
+      // room:update will re-render lobby
+    });
+  };
+
+  $("btnCopy").onclick = function () {
+    var input = $("inviteLink");
+    input.select();
+    input.setSelectionRange(0, 999);
+    try {
+      navigator.clipboard.writeText(input.value);
+      $("btnCopy").textContent = "Copied!";
+      setTimeout(function () { $("btnCopy").textContent = "Copy"; }, 1500);
+    } catch (e) {
+      document.execCommand("copy");
+      $("btnCopy").textContent = "Copied!";
+      setTimeout(function () { $("btnCopy").textContent = "Copy"; }, 1500);
+    }
+  };
+
+  $("btnA").onclick = function () {
+    if (!socket || answered) return;
+    answered = true;
+    $("btnA").disabled = true;
+    $("btnAn").disabled = true;
+    socket.emit("game:answer", { answer: "a" });
+  };
+  $("btnAn").onclick = function () {
+    if (!socket || answered) return;
+    answered = true;
+    $("btnA").disabled = true;
+    $("btnAn").disabled = true;
+    socket.emit("game:answer", { answer: "an" });
+  };
+
+  // ── Boot ──────────────────────────────────────────────────────────
+  async function boot() {
+    var ok = await ensureLoggedIn();
+    if (!ok) return;
+
+    connectSocket();
+
+    // Auto-join from ?room=CODE
+    var params = new URLSearchParams(location.search);
+    var roomParam = (params.get("room") || "").trim().toUpperCase();
+    if (roomParam.length >= 4) {
+      // wait briefly for socket connect
+      var tries = 0;
+      var t = setInterval(function () {
+        tries++;
+        if (socket && socket.connected) {
+          clearInterval(t);
+          $("joinCodeInput").value = roomParam;
+          $("btnJoin").click();
+        } else if (tries > 40) {
+          clearInterval(t);
+          setStatus($("homeStatus"), "Could not connect to multiplayer server", "error");
+        }
+      }, 150);
+    } else {
+      showScreen("home");
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();
+  </script>
+</body>
+</html>

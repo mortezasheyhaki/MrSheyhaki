@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Phase 3 — A or An Swipe (multiplayer)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 680px; margin: 1.5rem auto; padding: 0 1rem; color: #0f172a; }
+    h1 { font-size: 1.35rem; margin-bottom: 0.25rem; }
+    label { display: block; font-weight: 700; font-size: 0.85rem; margin-top: 0.75rem; }
+    input { width: 100%; padding: 0.55rem 0.7rem; border-radius: 10px; border: 1px solid #cbd5e1; box-sizing: border-box; }
+    .row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+    button { padding: 0.55rem 0.9rem; border-radius: 10px; border: 0; background: #7c3aed; color: #fff; font-weight: 700; cursor: pointer; }
+    button.secondary { background: #334155; }
+    button.success { background: #059669; }
+    button.danger { background: #dc2626; }
+    button:disabled { opacity: 0.45; cursor: default; }
+    #log { background: #0f172a; color: #e2e8f0; padding: 1rem; border-radius: 12px; min-height: 120px; max-height: 200px; overflow: auto; white-space: pre-wrap; font-size: 13px; margin-top: 1rem; }
+    #room { margin-top: 1rem; padding: 1rem; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; }
+    .player { display: flex; justify-content: space-between; padding: 0.35rem 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; }
+    .hint { font-size: 0.85rem; color: #64748b; margin-top: 0.5rem; line-height: 1.45; }
+    code { background: #f1f5f9; padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.8rem; }
+
+    /* Game area */
+    #game { margin-top: 1rem; padding: 1.25rem; border-radius: 16px; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 2px solid #7dd3fc; display: none; }
+    #game.active { display: block; }
+    .word-card { text-align: center; font-size: 2.2rem; font-weight: 800; padding: 1.5rem; background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 1rem 0; }
+    .answer-row { display: flex; gap: 1rem; justify-content: center; }
+    .answer-btn { font-size: 1.4rem; padding: 1rem 2.5rem; border-radius: 999px; min-width: 120px; }
+    .answer-btn.a { background: #2563eb; }
+    .answer-btn.an { background: #d97706; }
+    .answer-btn:disabled { opacity: 0.5; }
+    #feedback { text-align: center; font-weight: 700; min-height: 1.5rem; margin-top: 0.75rem; }
+    #feedback.ok { color: #059669; }
+    #feedback.bad { color: #dc2626; }
+    #scoreboard { margin-top: 1rem; }
+    #scoreboard .row-score { display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid #e2e8f0; }
+    .q-meta { text-align: center; color: #64748b; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>Phase 3 — A or An Swipe (Multiplayer)</h1>
+  <p class="hint">
+    Log in on the website → copy access token → Connect → Create/Join room → Ready → Host starts the game.
+  </p>
+
+  <label>Server URL<input id="url" value="http://localhost:3001" /></label>
+  <label>Supabase access token<input id="token" placeholder="eyJ…" autocomplete="off" /></label>
+  <p class="hint">
+    Token: F12 → Application → Local Storage → key like <code>sb-ezlcrygimvceusmnojgk-auth-token</code> → <code>access_token</code>
+  </p>
+
+  <div class="row">
+    <button id="connect">Connect</button>
+    <button id="create" disabled>Create room</button>
+    <button id="ready" disabled>Toggle ready</button>
+    <button id="leave" disabled class="secondary">Leave</button>
+  </div>
+  <label>Join code<input id="code" placeholder="ABC123" maxlength="8" /></label>
+  <div class="row">
+    <button id="join" disabled>Join room</button>
+    <button id="startGame" disabled class="success">▶ Start A or An</button>
+    <button id="backLobby" disabled class="secondary">Back to lobby</button>
+  </div>
+
+  <div id="room" hidden></div>
+
+  <div id="game">
+    <div class="q-meta" id="qMeta">Question —</div>
+    <div class="word-card" id="wordCard">—</div>
+    <div class="answer-row">
+      <button class="answer-btn a" id="btnA" disabled>a</button>
+      <button class="answer-btn an" id="btnAn" disabled>an</button>
+    </div>
+    <div id="feedback"></div>
+    <div id="scoreboard"></div>
+  </div>
+
+  <pre id="log"></pre>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    const logEl = document.getElementById("log");
+    const roomEl = document.getElementById("room");
+    const gameEl = document.getElementById("game");
+    let socket = null;
+    let myId = null;
+    let lastRoom = null;
+    let answeredThisRound = false;
+
+    function log(msg) {
+      logEl.textContent += msg + "\n";
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    function setConnected(on) {
+      ["create", "join", "ready", "leave"].forEach(function (id) {
+        document.getElementById(id).disabled = !on;
+      });
+    }
+    function isHost() {
+      return lastRoom && myId && lastRoom.hostId === myId;
+    }
+    function updateHostButtons() {
+      const inLobby = lastRoom && lastRoom.status === "lobby";
+      const ended = lastRoom && lastRoom.status === "ended";
+      document.getElementById("startGame").disabled = !(isHost() && inLobby);
+      document.getElementById("backLobby").disabled = !(isHost() && ended);
+    }
+    function renderRoom(room) {
+      lastRoom = room;
+      if (!room) {
+        roomEl.hidden = true;
+        roomEl.innerHTML = "";
+        gameEl.classList.remove("active");
+        updateHostButtons();
+        return;
+      }
+      roomEl.hidden = false;
+      roomEl.innerHTML =
+        "<strong>Room " + room.code + "</strong> · " + room.status +
+        '<div style="margin-top:8px">' +
+        room.players.map(function (p) {
+          return (
+            '<div class="player"><span>' +
+            (p.isHost ? "👑 " : "") +
+            (p.displayName || p.username) +
+            (p.connected === false ? " (away)" : "") +
+            (p.id === myId ? " (you)" : "") +
+            "</span><span>" +
+            (p.ready ? "✅ ready" : "⏳ not ready") +
+            "</span></div>"
+          );
+        }).join("") +
+        "</div>";
+      updateHostButtons();
+
+      if (room.status === "playing" || room.status === "ended") {
+        gameEl.classList.add("active");
+      }
+    }
+    function renderScoreboard(list) {
+      if (!list || !list.length) {
+        document.getElementById("scoreboard").innerHTML = "";
+        return;
+      }
+      document.getElementById("scoreboard").innerHTML =
+        "<strong>Scoreboard</strong>" +
+        list.map(function (s, i) {
+          return (
+            '<div class="row-score"><span>' +
+            (i + 1) + ". " + (s.displayName || s.username) +
+            (s.id === myId ? " (you)" : "") +
+            "</span><span>" + s.score + " pts · " + s.correct + "✓</span></div>"
+          );
+        }).join("");
+    }
+    function showQuestion(q) {
+      if (!q) return;
+      answeredThisRound = false;
+      document.getElementById("qMeta").textContent =
+        "Question " + (q.index + 1) + " / " + q.total + "  ·  " + q.timeLimit + "s";
+      document.getElementById("wordCard").textContent = q.word;
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("feedback").className = "";
+      document.getElementById("btnA").disabled = false;
+      document.getElementById("btnAn").disabled = false;
+      gameEl.classList.add("active");
+    }
+    function lockAnswers() {
+      document.getElementById("btnA").disabled = true;
+      document.getElementById("btnAn").disabled = true;
+    }
+
+    document.getElementById("connect").onclick = function () {
+      if (socket) socket.disconnect();
+      myId = null;
+      lastRoom = null;
+      renderRoom(null);
+      const url = document.getElementById("url").value.trim();
+      const token = document.getElementById("token").value.trim();
+      if (!token) {
+        log("Paste access token first.");
+        return;
+      }
+      log("Connecting…");
+      socket = io(url, { auth: { token: token }, transports: ["websocket", "polling"] });
+      socket.on("connect", function () {
+        log("Connected: " + socket.id);
+        setConnected(true);
+      });
+      socket.on("connect_error", function (err) {
+        log("Auth/connect error: " + err.message);
+        setConnected(false);
+      });
+      socket.on("server:hello", function (d) {
+        if (d && d.player) myId = d.player.id;
+        log("hello phase " + (d && d.phase) + ": " + (d && d.message));
+      });
+      socket.on("room:update", function (room) {
+        log("room:update " + room.code + " · " + room.status + " · " + room.players.length + " player(s)");
+        renderRoom(room);
+      });
+      socket.on("room:error", function (e) {
+        log("room:error " + (e && e.error ? e.error : JSON.stringify(e)));
+      });
+      socket.on("game:question", function (q) {
+        log("question: " + q.word + " (" + (q.index + 1) + "/" + q.total + ")");
+        showQuestion(q);
+      });
+      socket.on("game:answerResult", function (r) {
+        const fb = document.getElementById("feedback");
+        if (r.correct) {
+          fb.textContent = "✓ Correct! +" + r.points + "  (article: " + r.article + ")";
+          fb.className = "ok";
+        } else {
+          fb.textContent = "✗ Wrong — correct is \"" + r.article + "\"";
+          fb.className = "bad";
+        }
+        lockAnswers();
+        if (r.scoreboard) renderScoreboard(r.scoreboard);
+      });
+      socket.on("game:scoreboard", function (list) {
+        renderScoreboard(list);
+      });
+      socket.on("game:end", function (data) {
+        log("GAME OVER");
+        lockAnswers();
+        document.getElementById("wordCard").textContent = "Finished!";
+        document.getElementById("qMeta").textContent = "Match complete";
+        if (data && data.scoreboard) renderScoreboard(data.scoreboard);
+        updateHostButtons();
+      });
+      socket.on("disconnect", function (r) {
+        log("Disconnected: " + r);
+        setConnected(false);
+      });
+    };
+
+    document.getElementById("create").onclick = function () {
+      if (!socket) return;
+      socket.emit("room:create", {}, function (res) {
+        log("create → " + JSON.stringify(res && res.ok));
+        if (res && res.room) renderRoom(res.room);
+      });
+    };
+    document.getElementById("join").onclick = function () {
+      if (!socket) return;
+      const code = document.getElementById("code").value.trim();
+      socket.emit("room:join", { code: code }, function (res) {
+        log("join → " + JSON.stringify(res && res.ok));
+        if (res && res.room) renderRoom(res.room);
+      });
+    };
+    document.getElementById("ready").onclick = function () {
+      if (!socket || !lastRoom || !myId) return;
+      const me = lastRoom.players.find(function (p) { return p.id === myId; });
+      socket.emit("room:setReady", { ready: !(me && me.ready) });
+    };
+    document.getElementById("leave").onclick = function () {
+      if (!socket) return;
+      socket.emit("room:leave", {}, function () {
+        renderRoom(null);
+        log("left room");
+      });
+    };
+    document.getElementById("startGame").onclick = function () {
+      if (!socket) return;
+      socket.emit("game:start", { questionCount: 8, timePerQuestion: 8 }, function (res) {
+        log("game:start → " + JSON.stringify(res && res.ok));
+      });
+    };
+    document.getElementById("backLobby").onclick = function () {
+      if (!socket) return;
+      socket.emit("game:backToLobby", {}, function (res) {
+        log("backToLobby → " + JSON.stringify(res && res.ok));
+        gameEl.classList.remove("active");
+      });
+    };
+    document.getElementById("btnA").onclick = function () {
+      if (!socket || answeredThisRound) return;
+      answeredThisRound = true;
+      lockAnswers();
+      socket.emit("game:answer", { answer: "a" });
+    };
+    document.getElementById("btnAn").onclick = function () {
+      if (!socket || answeredThisRound) return;
+      answeredThisRound = true;
+      lockAnswers();
+      socket.emit("game:answer", { answer: "an" });
+    };
+  </script>
+</body>
+</html>
