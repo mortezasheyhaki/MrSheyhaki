@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Joining room… | Mr. Sheyhaki</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/theme.css" />
+  <style>
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      font-family: system-ui, sans-serif;
+      background: var(--site-bg, #0b0f1a);
+      color: var(--site-text, #f1f5f9);
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .box {
+      max-width: 22rem;
+      background: var(--site-surface, #161d2e);
+      border: 1px solid var(--site-border, rgba(255,255,255,0.08));
+      border-radius: 16px;
+      padding: 1.5rem 1.25rem;
+    }
+    h1 { font-size: 1.15rem; margin: 0 0 0.5rem; }
+    p { margin: 0; color: var(--site-muted, #94a3b8); font-size: 0.92rem; line-height: 1.45; }
+    code {
+      display: inline-block; margin-top: 0.75rem; font-weight: 800;
+      letter-spacing: 0.12em; color: #fbbf24;
+    }
+    a { color: #ec4899; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="box" id="msg">
+    <h1>Joining multiplayer…</h1>
+    <p>One moment.</p>
+  </div>
+  <script>
+    (function () {
+      // Default game for short links (expand later when more games exist)
+      var GAME = "/resources/american-english-file/starter/unit-3/a/games/a-an-swipe/";
+
+      function codeFromLocation() {
+        // /j/ABC123  or  /j/ABC123/
+        var path = (location.pathname || "").replace(/\/+$/, "");
+        var parts = path.split("/").filter(Boolean);
+        // ["j", "ABC123"] or ["j"]
+        if (parts.length >= 2 && parts[0].toLowerCase() === "j") {
+          var fromPath = parts[1].toUpperCase().replace(/[^A-Z0-9]/g, "");
+          if (fromPath.length >= 4) return fromPath;
+        }
+        // ?c= / ?room= / ?code=
+        var q = new URLSearchParams(location.search);
+        var fromQ = (q.get("c") || q.get("room") || q.get("code") || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+        if (fromQ.length >= 4) return fromQ;
+        // #ABC123
+        var fromHash = (location.hash || "").replace(/^#/, "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+        if (fromHash.length >= 4) return fromHash;
+        return "";
+      }
+
+      var code = codeFromLocation();
+      var el = document.getElementById("msg");
+
+      if (!code) {
+        el.innerHTML = "<h1>Missing room code</h1><p>Open a full invite link, or enter a code on the <a href=\"/multiplayer/\">multiplayer</a> page.</p>";
+        return;
+      }
+
+      el.innerHTML = "<h1>Joining room</h1><p>Taking you to the game…</p><code>" + code + "</code>";
+      var target = GAME + (GAME.indexOf("?") >= 0 ? "&" : "?") + "room=" + encodeURIComponent(code);
+      location.replace(target);
+    })();
+  </script>
+</body>
+</html>

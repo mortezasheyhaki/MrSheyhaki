@@ -492,9 +492,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function inviteUrl(code) {
-    const u = new URL(location.href);
-    u.searchParams.set("room", code);
-    return u.toString();
+    // Short invite: https://mrsheyhaki.ir/j/ABC123
+    return location.origin + "/j/" + encodeURIComponent(code);
   }
 
   function renderMpPlayers(room) {

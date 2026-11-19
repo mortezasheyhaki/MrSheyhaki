@@ -1,0 +1,6 @@
+# If /j/ABC123 404s on Apache, this sends it to index.html
+RewriteEngine On
+RewriteBase /j/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([A-Za-z0-9]+)/?$ index.html [L,QSA]
