@@ -25,36 +25,57 @@ body[data-type="game"] {
 [hidden] { display: none !important; }
 
 :root {
-  --accent: #079d73;
-  --accent-dark: #068a64;
-  --accent-soft: #eaf8f4;
-  --accent-border: #dcefe9;
-  --bg: #f6fbf9;
-  --card: #ffffff;
-  --text: #202636;
-  --muted: #687184;
-  --soft: #8a938c;
-  --border: #dcefe9;
-  --success: #059669;
-  --danger: #e11d48;
-  --blue: #1cb0f6;
-  --blue-soft: #ddf4ff;
-  --blue-border: #84d8ff;
-  --shadow: 0 12px 32px rgba(7, 157, 115, 0.1);
+  --accent: #7c3aed;
+  --accent-dark: #6d28d9;
+  --accent-soft: rgba(124, 58, 237, 0.18);
+  --accent-border: rgba(167, 139, 250, 0.35);
+  --bg: #070b16;
+  --card: rgba(255,255,255,0.06);
+  --text: #e8eefc;
+  --muted: rgba(226, 232, 240, 0.65);
+  --soft: rgba(226, 232, 240, 0.45);
+  --border: rgba(255,255,255,0.1);
+  --success: #4ade80;
+  --danger: #f87171;
+  --blue: #a78bfa;
+  --blue-soft: rgba(124, 58, 237, 0.2);
+  --blue-border: rgba(167, 139, 250, 0.45);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
 }
 
 html[data-theme="dark"] {
-  --accent-soft: #14352c;
-  --accent-border: #24463b;
-  --bg: #0e1311;
-  --card: #17201c;
-  --text: #eef5f1;
-  --muted: #9aaba3;
-  --soft: #7a8f85;
-  --border: #24463b;
-  --shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-  --blue-soft: #1b3a4a;
-  --blue-border: #3a8fb7;
+  --accent: #7c3aed;
+  --accent-dark: #6d28d9;
+  --accent-soft: rgba(124, 58, 237, 0.22);
+  --accent-border: rgba(167, 139, 250, 0.4);
+  --bg: #070b16;
+  --card: rgba(255,255,255,0.07);
+  --text: #e8eefc;
+  --muted: rgba(226, 232, 240, 0.65);
+  --soft: rgba(226, 232, 240, 0.45);
+  --border: rgba(255,255,255,0.12);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --blue-soft: rgba(124, 58, 237, 0.25);
+  --blue-border: rgba(167, 139, 250, 0.5);
+}
+
+html[data-theme="light"] {
+  --accent: #6d28d9;
+  --accent-dark: #5b21b6;
+  --accent-soft: #f3e8ff;
+  --accent-border: #e9d5ff;
+  --bg: #f5f3ff;
+  --card: #ffffff;
+  --text: #1e1b4b;
+  --muted: #6b7280;
+  --soft: #9ca3af;
+  --border: #e9d5ff;
+  --success: #059669;
+  --danger: #e11d48;
+  --blue: #7c3aed;
+  --blue-soft: #f3e8ff;
+  --blue-border: #c4b5fd;
+  --shadow: 0 12px 32px rgba(109, 40, 217, 0.1);
 }
 
 html, body { height: 100%; }
@@ -675,4 +696,64 @@ html[data-theme="dark"] .audio-pill {
 .feedback {
   min-height: 20px;
   margin-top: 4px;
+}
+
+
+/* === Align with Movie Genres visual language + no-scroll friendly === */
+body.game-page {
+  background: var(--bg) !important;
+  color: var(--text);
+}
+body.game-locked,
+body.game-page {
+  overflow: hidden !important;
+  height: 100dvh !important;
+  max-height: 100dvh;
+}
+.game-header {
+  background: transparent !important;
+  border-bottom: 1px solid var(--border);
+}
+.hub-panel, .panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.hub-card {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: 14px;
+  color: var(--text);
+}
+.hub-card:hover {
+  border-color: var(--blue-border);
+}
+.pair-btn, .soft-square {
+  background: var(--accent-soft) !important;
+  border: 1px solid var(--accent-border) !important;
+  color: var(--text) !important;
+  border-radius: 12px !important;
+}
+.pair-btn.is-matched,
+.pair-btn.matched,
+.pair-btn:disabled {
+  opacity: 0.35 !important;
+  pointer-events: none;
+}
+.pair-btn.is-selected {
+  outline: 2px solid var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25);
+}
+/* Hearts (if present) — simpler solid style matching Movie Genres chips */
+.mc-hearts, .lives, .hearts {
+  display: flex;
+  gap: 4px;
+}
+.mc-heart, .heart {
+  color: #f472b6;
+  font-size: 1.1rem;
+}
+.mc-heart.is-broken, .heart.broken {
+  opacity: 0.35;
+  color: var(--soft);
 }

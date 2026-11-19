@@ -361,6 +361,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.games = [
 
 // Unit 7B – Games
 COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.games = [
+  { title: "Movie Genres", url: "movie-genres/", label: "Vocabulary" },
   { title: "Subject vs Object Pronouns", url: "subject-object-pronouns/" },
   { title: "Subject vs Object · Sentences", url: "subject-object-pronouns/sentences/", label: "Grammar" },
   { title: "Subject vs Object · Words", url: "subject-object-pronouns/words/", label: "Grammar" },

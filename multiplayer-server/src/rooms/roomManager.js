@@ -9,6 +9,13 @@ import {
   advanceQuestion,
   allAnswered,
 } from "../games/aAnSwipe.js";
+import {
+  createSnakesLaddersState,
+  publicSlState,
+  rollDice as slRollDice,
+  pickQuestion as slPickQuestion,
+  answerQuestion as slAnswerQuestion,
+} from "../games/snakesLadders.js";
 
 /** @type {Map<string, object>} */
 const rooms = new Map();
@@ -35,21 +42,30 @@ function publicRoom(room) {
   };
 
   if (room.game && room.status === "playing") {
-    base.game = {
-      type: room.game.type,
-      index: room.game.index,
-      total: room.game.questions.length,
-      question: publicQuestion(room.game),
-      scoreboard: publicScoreboard(room.game, room.players),
-    };
+    if (room.game.type === "snakes-ladders") {
+      base.game = publicSlState(room.game, room.players);
+    } else {
+      base.game = {
+        type: room.game.type,
+        index: room.game.index,
+        total: room.game.questions.length,
+        question: publicQuestion(room.game),
+        scoreboard: publicScoreboard(room.game, room.players),
+      };
+    }
   }
 
-  if (room.game && room.status === "ended") {
-    base.game = {
-      type: room.game.type,
-      finished: true,
-      scoreboard: publicScoreboard(room.game, room.players),
-    };
+  if (room.game && (room.status === "ended" || room.game.status === "finished")) {
+    if (room.game.type === "snakes-ladders") {
+      base.game = publicSlState(room.game, room.players);
+      base.status = room.status === "ended" ? "ended" : room.status;
+    } else {
+      base.game = {
+        type: room.game.type,
+        finished: true,
+        scoreboard: publicScoreboard(room.game, room.players),
+      };
+    }
   }
 
   return base;
@@ -117,6 +133,7 @@ export const roomManager = {
       status: "lobby",
       createdAt: Date.now(),
       game: null,
+      gameType: "a-an-swipe",
     };
 
     rooms.set(code, room);
@@ -200,6 +217,17 @@ export const roomManager = {
   },
 
   /** Internal: get raw room object (for game logic). */
+  setGameType(playerId, gameType) {
+    const room = findRoomByPlayerId(playerId);
+    if (!room) return { ok: false, error: "Not in a room" };
+    if (room.hostId !== playerId) return { ok: false, error: "Only host can set game type" };
+    if (room.status !== "lobby") return { ok: false, error: "Game already started" };
+    room.gameType = gameType || "a-an-swipe";
+    if (gameType === "snakes-ladders") room.maxPlayers = 2;
+    else room.maxPlayers = config.maxPlayersPerRoom;
+    return { ok: true, room: publicRoom(room) };
+  },
+
   getRawRoomForPlayer(playerId) {
     return findRoomByPlayerId(playerId);
   },
@@ -244,6 +272,26 @@ export const roomManager = {
       return { ok: false, error: "Need at least one player" };
     }
 
+    const gameType = settings.gameType || room.gameType || "a-an-swipe";
+
+    if (gameType === "snakes-ladders") {
+      if (room.players.length < 2) {
+        return { ok: false, error: "Snakes & Ladders needs 2 players" };
+      }
+      const ids = room.players.slice(0, 2).map((p) => p.id);
+      const game = createSnakesLaddersState(ids);
+      room.game = game;
+      room.gameType = "snakes-ladders";
+      room.maxPlayers = 2;
+      room.status = "playing";
+      room.players.forEach((p) => { p.ready = false; });
+      return {
+        ok: true,
+        room: publicRoom(room),
+        sl: publicSlState(game, room.players),
+      };
+    }
+
     const game = createGameState(settings);
     ensureScores(
       game,
@@ -251,8 +299,8 @@ export const roomManager = {
     );
 
     room.game = game;
+    room.gameType = "a-an-swipe";
     room.status = "playing";
-    // Reset ready flags for next lobby
     room.players.forEach((p) => {
       p.ready = false;
     });
@@ -262,6 +310,53 @@ export const roomManager = {
       room: publicRoom(room),
       question: publicQuestion(game),
       scoreboard: publicScoreboard(game, room.players),
+    };
+  },
+
+  /** Snakes & Ladders actions */
+  slRoll(playerId) {
+    const room = findRoomByPlayerId(playerId);
+    if (!room || !room.game || room.game.type !== "snakes-ladders") {
+      return { ok: false, error: "No snakes-ladders game" };
+    }
+    const result = slRollDice(room.game, playerId);
+    if (!result.ok) return result;
+    if (room.game.status === "finished") room.status = "ended";
+    return {
+      ok: true,
+      room: publicRoom(room),
+      events: result.events,
+      sl: publicSlState(room.game, room.players),
+    };
+  },
+
+  slPick(playerId, questionId) {
+    const room = findRoomByPlayerId(playerId);
+    if (!room || !room.game || room.game.type !== "snakes-ladders") {
+      return { ok: false, error: "No snakes-ladders game" };
+    }
+    const result = slPickQuestion(room.game, playerId, questionId);
+    if (!result.ok) return result;
+    return {
+      ok: true,
+      room: publicRoom(room),
+      sl: publicSlState(room.game, room.players),
+    };
+  },
+
+  slAnswer(playerId, choiceIndex) {
+    const room = findRoomByPlayerId(playerId);
+    if (!room || !room.game || room.game.type !== "snakes-ladders") {
+      return { ok: false, error: "No snakes-ladders game" };
+    }
+    const result = slAnswerQuestion(room.game, playerId, choiceIndex);
+    if (!result.ok) return result;
+    return {
+      ok: true,
+      room: publicRoom(room),
+      correct: result.correct,
+      answer: result.answer,
+      sl: publicSlState(room.game, room.players),
     };
   },
 

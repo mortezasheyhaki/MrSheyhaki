@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
+<meta name="theme-color" content="#0b1020" />
+<title>Snakes & Ladders · Multiplayer | Mr. Sheyhaki</title>
+<meta name="description" content="Snakes & Ladders — offline on one device or online with a friend. Grammar questions." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Fredoka:wght@600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="sl-page">
+
+<div class="sl-rotate" id="rotateGate" hidden>
+  <div class="sl-rotate-inner">
+    <div class="sl-rotate-phone" aria-hidden="true">📱</div>
+    <p>Turn your phone <strong>sideways</strong></p>
+    <span>This game plays in landscape</span>
+  </div>
+</div>
+
+<div class="sl-app" id="app">
+
+  <!-- MODE SELECT -->
+  <section class="sl-screen" id="screenMode">
+    <a class="sl-back" href="/multiplayer/">← Multiplayer</a>
+    <div class="sl-hero">
+      <div class="sl-logo">🐍🪜</div>
+      <h1>Snakes &amp; Ladders</h1>
+      <p class="sl-tagline">Present Simple vs Continuous</p>
+    </div>
+    <div class="sl-mode-grid">
+      <button type="button" class="sl-mode-card" id="btnOffline">
+        <span class="sl-mode-ico">📱</span>
+        <strong>Offline</strong>
+        <span>Two players on this device</span>
+      </button>
+      <button type="button" class="sl-mode-card" id="btnOnline">
+        <span class="sl-mode-ico">🌐</span>
+        <strong>Online</strong>
+        <span>Invite a friend with a link</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- OFFLINE SETUP -->
+  <section class="sl-screen" id="screenOffline" hidden>
+    <button type="button" class="sl-back" id="backFromOffline">← Modes</button>
+    <div class="sl-hero">
+      <h1>Offline · Same device</h1>
+      <p class="sl-tagline">Pass the phone each turn · questions are for the player who landed on ?</p>
+    </div>
+    <div class="sl-players-setup">
+      <div class="sl-psetup p1">
+        <span class="sl-dot"></span>
+        <input type="text" id="name1" maxlength="12" placeholder="Player 1" value="Player 1" />
+      </div>
+      <div class="sl-psetup p2">
+        <span class="sl-dot"></span>
+        <input type="text" id="name2" maxlength="12" placeholder="Player 2" value="Player 2" />
+      </div>
+    </div>
+    <button type="button" class="sl-btn primary" id="btnStartOffline">Start Game</button>
+  </section>
+
+  <!-- ONLINE HOME / LOGIN -->
+  <section class="sl-screen" id="screenOnlineHome" hidden>
+    <button type="button" class="sl-back" id="backFromOnline">← Modes</button>
+    <div class="sl-online-wrap">
+      <div class="sl-hero">
+        <div class="sl-logo">🌐</div>
+        <h1>Online</h1>
+        <p class="sl-tagline">Play with a friend over the internet</p>
+      </div>
+
+      <div id="loginGate" class="sl-online-card" hidden>
+        <div class="sl-online-card-ico">🔐</div>
+        <h2>Sign in required</h2>
+        <p>Log in so your friend can join your room with a shared link.</p>
+        <a class="sl-btn primary wide" id="loginLink" href="/learningarcade/auth-system/login.html">Log in</a>
+      </div>
+
+      <div id="onlineActions" class="sl-online-panel" hidden>
+        <div class="sl-online-card create">
+          <div class="sl-online-card-ico">✨</div>
+          <h2>Create a room</h2>
+          <p>Host a game and share the invite link with your friend.</p>
+          <button type="button" class="sl-btn primary wide" id="btnCreateRoom">Create room</button>
+        </div>
+
+        <div class="sl-online-divider"><span>or</span></div>
+
+        <div class="sl-online-card join">
+          <div class="sl-online-card-ico">🔑</div>
+          <h2>Join a room</h2>
+          <p>Enter the code your friend shared with you.</p>
+          <div class="sl-join-row">
+            <input type="text" id="joinCodeInput" maxlength="8" placeholder="ROOM CODE" autocomplete="off" enterkeyhint="go" />
+            <button type="button" class="sl-btn primary" id="btnJoinRoom">Join</button>
+          </div>
+        </div>
+
+        <p class="sl-status" id="onlineStatus"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ONLINE LOBBY -->
+  <section class="sl-screen" id="screenLobby" hidden>
+    <button type="button" class="sl-back" id="btnLeaveRoom">← Leave</button>
+    <div class="sl-online-wrap">
+      <div class="sl-hero">
+        <div class="sl-logo">🚪</div>
+        <h1>Room <span id="lobbyCode" class="sl-code-pill">————</span></h1>
+        <p class="sl-tagline">Share the link — 2 players max</p>
+      </div>
+      <div class="sl-online-card">
+        <h2>Invite link</h2>
+        <p>Send this to your friend so they can join.</p>
+        <div class="sl-invite">
+          <input type="text" id="inviteLink" readonly />
+          <button type="button" class="sl-btn primary" id="btnCopy">Copy</button>
+        </div>
+        <div class="sl-lobby-players" id="lobbyPlayers"></div>
+        <button type="button" class="sl-btn primary wide" id="btnStartOnline" hidden>Start Game</button>
+        <p class="sl-status" id="lobbyStatus">Waiting for opponent…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAY -->
+  <section class="sl-screen play" id="screenPlay" hidden>
+    <header class="sl-hud">
+      <button type="button" class="sl-back mini" id="btnExitPlay" title="Exit">←</button>
+      <div class="sl-player-chip p1" id="chip1">
+        <span class="sl-token-mini p1"></span>
+        <span class="sl-pname" id="hudName1">P1</span>
+        <span class="sl-pscore" id="hudPos1">1</span>
+      </div>
+      <div class="sl-turn" id="turnBanner">P1 rolls</div>
+      <div class="sl-player-chip p2" id="chip2">
+        <span class="sl-token-mini p2"></span>
+        <span class="sl-pname" id="hudName2">P2</span>
+        <span class="sl-pscore" id="hudPos2">1</span>
+      </div>
+    </header>
+
+    <div class="sl-board-wrap">
+      <div class="sl-board" id="board"></div>
+      <svg class="sl-snakes-svg" id="snakesSvg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg>
+      <svg class="sl-ladders-svg" id="laddersSvg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg>
+      <div class="sl-tokens" id="tokensLayer"></div>
+    </div>
+
+    <footer class="sl-controls">
+      <div class="sl-dice-area">
+        <button type="button" class="sl-dice" id="diceBtn" aria-label="Roll dice">
+          <span class="sl-dice-face" id="diceFace">🎲</span>
+        </button>
+        <span class="sl-dice-label" id="diceLabel">Tap to roll</span>
+      </div>
+      <div class="sl-msg" id="msgBar"></div>
+    </footer>
+  </section>
+
+  <!-- QUESTION MODAL -->
+  <div class="sl-modal" id="qModal" hidden>
+    <div class="sl-modal-card">
+      <div class="sl-modal-head">
+        <span class="sl-modal-who" id="qWho">Choose a question</span>
+        <p class="sl-modal-sub">Pick one for <strong id="qTarget">opponent</strong></p>
+      </div>
+      <div class="sl-qlist" id="qList"></div>
+    </div>
+  </div>
+
+  <div class="sl-modal" id="aModal" hidden>
+    <div class="sl-modal-card">
+      <div class="sl-modal-head">
+        <span class="sl-modal-who" id="aWho">Your question</span>
+      </div>
+      <div class="sl-qtext" id="aText"></div>
+      <div class="sl-choices" id="aChoices"></div>
+      <div class="sl-result" id="aResult" hidden></div>
+      <button type="button" class="sl-btn primary" id="aContinue" hidden>Continue</button>
+    </div>
+  </div>
+
+  <div class="sl-modal" id="winModal" hidden>
+    <div class="sl-modal-card win">
+      <div class="sl-win-emoji">🏆</div>
+      <h2 id="winTitle">Wins!</h2>
+      <p id="winSub">Reached Finish first</p>
+      <button type="button" class="sl-btn primary" id="btnAgain">Back to menu</button>
+      <a class="sl-link" href="/multiplayer/">← Multiplayer</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="/learningarcade/vendor/load-supabase.js"></script>
+<script src="/learningarcade/auth-system/auth.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -92,12 +92,16 @@ export function attachSocket(io) {
 
     // ── Lobby ──────────────────────────────────────────────────────
 
-    socket.on("room:create", (_payload, ack) => {
+    socket.on("room:create", (payload, ack) => {
       const result = roomManager.createRoom(player, socket.id);
       if (!result.ok) {
         socket.emit("room:error", { error: result.error });
         if (typeof ack === "function") ack(result);
         return;
+      }
+      if (payload?.gameType) {
+        const gt = roomManager.setGameType(player.id, payload.gameType);
+        if (gt.ok) result.room = gt.room;
       }
       socket.join(roomChannel(result.room.code));
       socket.emit("room:update", result.room);
@@ -152,6 +156,7 @@ export function attachSocket(io) {
       const settings = {};
       if (payload?.questionCount) settings.questionCount = Number(payload.questionCount);
       if (payload?.timePerQuestion) settings.timePerQuestion = Number(payload.timePerQuestion);
+      if (payload?.gameType) settings.gameType = payload.gameType;
 
       const result = roomManager.startGame(player.id, settings);
       if (!result.ok) {
@@ -230,6 +235,63 @@ export function attachSocket(io) {
       if (typeof ack === "function") ack(result);
       console.log(`[game] ${brief} returned room ${result.room.code} to lobby`);
     });
+
+    
+    // ── Snakes & Ladders ───────────────────────────────────────────
+    socket.on("room:setGameType", (payload, ack) => {
+      const result = roomManager.setGameType(player.id, payload?.gameType);
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitRoom(io, result.room);
+      if (typeof ack === "function") ack(result);
+    });
+
+    socket.on("sl:roll", (_payload, ack) => {
+      const result = roomManager.slRoll(player.id);
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitRoom(io, result.room);
+      io.to(roomChannel(result.room.code)).emit("sl:update", {
+        sl: result.sl,
+        events: result.events || [],
+      });
+      if (typeof ack === "function") ack(result);
+    });
+
+    socket.on("sl:pick", (payload, ack) => {
+      const result = roomManager.slPick(player.id, payload?.questionId);
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitRoom(io, result.room);
+      io.to(roomChannel(result.room.code)).emit("sl:update", { sl: result.sl });
+      if (typeof ack === "function") ack(result);
+    });
+
+    socket.on("sl:answer", (payload, ack) => {
+      const result = roomManager.slAnswer(player.id, payload?.choiceIndex);
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitRoom(io, result.room);
+      io.to(roomChannel(result.room.code)).emit("sl:update", {
+        sl: result.sl,
+        correct: result.correct,
+        answer: result.answer,
+      });
+      if (typeof ack === "function") ack(result);
+    });
+
 
     socket.on("disconnect", (reason) => {
       console.log(`[socket] ${brief} disconnected (${reason})`);

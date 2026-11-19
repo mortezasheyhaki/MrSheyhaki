@@ -1,38 +1,81 @@
+/* === Kill site header offset (empty top band on mobile) === */
+.arcade-header-bar,
+.arcade-nav,
+.nav-profile,
+.profile-fab,
+[data-theme-toggle],
+.theme-toggle,
+body > header,
+.site-footer {
+  display: none !important;
+}
+html, body {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+}
+body.game-page,
+body[data-type="game"] {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
 /* Subject vs Object Pronouns — Unit 7B */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 [hidden] { display: none !important; }
 
 :root {
-  --accent: #079d73;
-  --accent-dark: #068a64;
-  --accent-soft: #eaf8f4;
-  --accent-border: #dcefe9;
-  --bg: #f6fbf9;
-  --card: #ffffff;
-  --text: #202636;
-  --muted: #687184;
-  --soft: #8a938c;
-  --border: #dcefe9;
-  --success: #059669;
-  --danger: #e11d48;
-  --blue: #1cb0f6;
-  --blue-soft: #ddf4ff;
-  --blue-border: #84d8ff;
-  --shadow: 0 12px 32px rgba(7, 157, 115, 0.1);
+  --accent: #7c3aed;
+  --accent-dark: #6d28d9;
+  --accent-soft: rgba(124, 58, 237, 0.18);
+  --accent-border: rgba(167, 139, 250, 0.35);
+  --bg: #070b16;
+  --card: rgba(255,255,255,0.06);
+  --text: #e8eefc;
+  --muted: rgba(226, 232, 240, 0.65);
+  --soft: rgba(226, 232, 240, 0.45);
+  --border: rgba(255,255,255,0.1);
+  --success: #4ade80;
+  --danger: #f87171;
+  --blue: #a78bfa;
+  --blue-soft: rgba(124, 58, 237, 0.2);
+  --blue-border: rgba(167, 139, 250, 0.45);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
 }
 
 html[data-theme="dark"] {
-  --accent-soft: #14352c;
-  --accent-border: #24463b;
-  --bg: #0e1311;
-  --card: #17201c;
-  --text: #eef5f1;
-  --muted: #9aaba3;
-  --soft: #7a8f85;
-  --border: #24463b;
-  --shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-  --blue-soft: #1b3a4a;
-  --blue-border: #3a8fb7;
+  --accent: #7c3aed;
+  --accent-dark: #6d28d9;
+  --accent-soft: rgba(124, 58, 237, 0.22);
+  --accent-border: rgba(167, 139, 250, 0.4);
+  --bg: #070b16;
+  --card: rgba(255,255,255,0.07);
+  --text: #e8eefc;
+  --muted: rgba(226, 232, 240, 0.65);
+  --soft: rgba(226, 232, 240, 0.45);
+  --border: rgba(255,255,255,0.12);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --blue-soft: rgba(124, 58, 237, 0.25);
+  --blue-border: rgba(167, 139, 250, 0.5);
+}
+
+html[data-theme="light"] {
+  --accent: #6d28d9;
+  --accent-dark: #5b21b6;
+  --accent-soft: #f3e8ff;
+  --accent-border: #e9d5ff;
+  --bg: #f5f3ff;
+  --card: #ffffff;
+  --text: #1e1b4b;
+  --muted: #6b7280;
+  --soft: #9ca3af;
+  --border: #e9d5ff;
+  --success: #059669;
+  --danger: #e11d48;
+  --blue: #7c3aed;
+  --blue-soft: #f3e8ff;
+  --blue-border: #c4b5fd;
+  --shadow: 0 12px 32px rgba(109, 40, 217, 0.1);
 }
 
 html, body { height: 100%; }
@@ -96,15 +139,17 @@ body.game-locked {
 }
 
 .app {
-  max-width: 640px;
+  max-width: 720px;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px 14px calc(28px + env(safe-area-inset-bottom));
+  padding: 20px 16px calc(28px + env(safe-area-inset-bottom));
 }
 body.game-locked .app {
   flex: 1; min-height: 0;
   display: flex; flex-direction: column;
-  padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
+  padding: 12px 16px calc(14px + env(safe-area-inset-bottom));
   overflow: hidden;
+  max-width: 560px;
 }
 
 .panel {
@@ -118,7 +163,8 @@ body.game-locked .panel {
   flex: 1; min-height: 0;
   display: flex; flex-direction: column;
   overflow: hidden;
-  padding: 14px 12px 16px;
+  padding: 16px 16px 18px;
+  border-radius: 18px;
 }
 
 .hero-icon {
@@ -238,61 +284,95 @@ h1 {
 .feedback.ok { color: var(--success); }
 .feedback.bad { color: var(--danger); }
 
-/* Match grid */
+/* Match grid — two columns, interleaved tiles */
 .pairs-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   align-content: start;
+  padding: 4px 2px 8px;
+}
+.pairs-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 .pair-btn {
-  min-height: 56px;
-  padding: 12px 10px;
-  border-radius: 14px;
-  border: 2px solid var(--border);
+  min-height: 54px;
+  width: 100%;
+  padding: 14px 12px;
+  border-radius: 16px;
+  border: 2.5px solid var(--border);
   background: var(--card);
   color: var(--text);
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 1.12rem;
+  letter-spacing: -0.01em;
   cursor: pointer;
-  transition: border-color .12s, background .12s, transform .1s;
+  box-shadow: 0 3px 0 0 var(--border);
+  transition: border-color .12s, background .12s, transform .08s, box-shadow .08s, color .12s;
   -webkit-tap-highlight-color: transparent;
 }
-.pair-btn:hover:not(:disabled) { border-color: var(--soft); }
+.pair-btn:hover:not(:disabled) {
+  border-color: var(--soft);
+}
+.pair-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 0 var(--border);
+}
 .pair-btn.selected {
   border-color: var(--blue);
   background: var(--blue-soft);
-  box-shadow: 0 0 0 3px rgba(28, 176, 246, 0.2);
+  color: #1899d6;
+  box-shadow: 0 3px 0 0 var(--blue-border);
 }
 .pair-btn.matched {
-  border-color: var(--success);
-  background: rgba(5, 150, 105, 0.12);
+  border-color: #7ee2b8;
+  background: rgba(5, 150, 105, 0.1);
   color: var(--success);
+  box-shadow: 0 3px 0 0 #7ee2b8;
   cursor: default;
-  opacity: 0.85;
 }
 .pair-btn.wrong-flash {
   border-color: var(--danger);
   background: rgba(225, 29, 72, 0.1);
+  color: var(--danger);
+  box-shadow: 0 3px 0 0 rgba(225, 29, 72, 0.35);
   animation: shake .35s ease;
 }
 .pair-btn.is-playing {
   border-color: var(--accent);
   background: var(--accent-soft);
+  color: var(--accent);
+  box-shadow: 0 3px 0 0 var(--accent);
 }
 .pair-btn.audio-btn {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 0.88rem;
 }
-.pair-btn .spk { font-size: 1.4rem; }
+.pair-btn .spk { font-size: 1.45rem; line-height: 1; }
 @keyframes shake {
   0%,100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@media (min-width: 480px) {
+  .pair-btn {
+    min-height: 58px;
+    font-size: 1.18rem;
+    padding: 16px 14px;
+  }
+  .pairs-grid { gap: 14px; }
+  .pairs-col { gap: 12px; }
 }
 
 /* End */
@@ -403,4 +483,277 @@ h1 {
   .pair-btn { min-height: 50px; font-size: 0.92rem; }
   .prompt-text { font-size: 1.05rem; }
   .mode-label { font-size: 0.68rem; }
+}
+
+/* ===== Clothes-style Match Making overrides ===== */
+.game-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.modes-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 2px 0 0 var(--border);
+  flex-shrink: 0;
+}
+.modes-btn:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--accent-dark);
+}
+.modes-btn:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.modes-btn svg { display: block; pointer-events: none; }
+
+.stats-bar.stats-inline {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 0;
+}
+.stats-inline .stat {
+  background: #f0ecff;
+  border: 2px solid #ddd6fe;
+  border-radius: 14px;
+  padding: 8px 6px;
+}
+html[data-theme="dark"] .stats-inline .stat {
+  background: rgba(105, 55, 216, 0.18);
+  border-color: rgba(105, 55, 216, 0.35);
+}
+
+#gameScreen.panel-fill {
+  overflow: hidden;
+}
+
+.pairs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  align-content: stretch;
+  overflow: hidden;
+  padding: 0;
+}
+.pairs-grid.pairs-n {
+  grid-template-rows: repeat(var(--pair-rows, 7), minmax(0, 1fr));
+}
+
+.pair-btn,
+.pair-btn.soft-square {
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  background: var(--card);
+  box-shadow: 0 2px 0 0 var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  font-weight: 800;
+  font-size: clamp(0.82rem, 2.6vh, 1.08rem);
+  line-height: 1.15;
+  color: var(--text);
+  letter-spacing: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .08s, box-shadow .08s, border-color .12s, background .12s;
+  overflow: hidden;
+}
+.pair-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.pair-btn.selected {
+  border-color: var(--blue-border);
+  background: var(--blue-soft);
+  color: var(--text);
+  box-shadow: 0 2px 0 0 var(--blue-border);
+}
+.pair-btn.matched {
+  opacity: 0.4;
+  filter: grayscale(0.4);
+  pointer-events: none;
+  box-shadow: none;
+  border-color: var(--border);
+  background: var(--card);
+  color: var(--text);
+}
+.pair-btn.wrong {
+  border-color: var(--danger);
+  background: rgba(225, 29, 72, 0.1);
+  animation: shake .35s ease;
+}
+
+/* Audio pill — same as Clothes */
+.pair-btn.audio-side {
+  padding: 8px;
+}
+.audio-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 72px;
+  padding: clamp(6px, 1.2vh, 10px) clamp(12px, 3vw, 18px);
+  border-radius: 999px;
+  background: #d6f0ff;
+  border: 2px solid #9ed4f5;
+  color: #1cb0f6;
+  box-shadow: 0 2px 0 0 #84d8ff;
+  transition: background .15s, border-color .15s, box-shadow .15s;
+}
+html[data-theme="dark"] .audio-pill {
+  background: rgba(28,176,246,.18);
+  border-color: rgba(28,176,246,.4);
+  box-shadow: 0 2px 0 0 rgba(28,176,246,.25);
+  color: #5ec8f8;
+}
+.audio-speaker {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: inherit;
+}
+.audio-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+}
+.audio-bars i {
+  display: block;
+  width: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  height: 6px;
+  opacity: .85;
+  transform-origin: bottom center;
+}
+.audio-bars i:nth-child(1) { height: 7px; }
+.audio-bars i:nth-child(2) { height: 14px; }
+.audio-bars i:nth-child(3) { height: 10px; }
+.audio-bars i:nth-child(4) { height: 16px; }
+
+.pair-btn.is-playing .audio-pill {
+  background: #b8e6ff;
+  border-color: #1cb0f6;
+  box-shadow: 0 0 0 3px rgba(28,176,246,.25), 0 2px 0 0 #1cb0f6;
+}
+.pair-btn.is-playing .audio-bars i {
+  animation: audio-bar 0.55s ease-in-out infinite;
+}
+.pair-btn.is-playing .audio-bars i:nth-child(1) { animation-delay: 0s; }
+.pair-btn.is-playing .audio-bars i:nth-child(2) { animation-delay: 0.12s; }
+.pair-btn.is-playing .audio-bars i:nth-child(3) { animation-delay: 0.24s; }
+.pair-btn.is-playing .audio-bars i:nth-child(4) { animation-delay: 0.08s; }
+@keyframes audio-bar {
+  0%, 100% { transform: scaleY(0.45); opacity: .7; }
+  50% { transform: scaleY(1.15); opacity: 1; }
+}
+.pair-btn.audio-side.selected .audio-pill {
+  background: #a8deff;
+  border-color: #1cb0f6;
+}
+.pair-btn.audio-side.selected {
+  background: var(--blue-soft);
+  border-color: var(--blue-border);
+}
+
+.prompt {
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+.instruction {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+.feedback {
+  min-height: 20px;
+  margin-top: 4px;
+}
+
+
+/* === Align with Movie Genres visual language + no-scroll friendly === */
+body.game-page {
+  background: var(--bg) !important;
+  color: var(--text);
+}
+body.game-locked,
+body.game-page {
+  overflow: hidden !important;
+  height: 100dvh !important;
+  max-height: 100dvh;
+}
+.game-header {
+  background: transparent !important;
+  border-bottom: 1px solid var(--border);
+}
+.hub-panel, .panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.hub-card {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: 14px;
+  color: var(--text);
+}
+.hub-card:hover {
+  border-color: var(--blue-border);
+}
+.pair-btn, .soft-square {
+  background: var(--accent-soft) !important;
+  border: 1px solid var(--accent-border) !important;
+  color: var(--text) !important;
+  border-radius: 12px !important;
+}
+.pair-btn.is-matched,
+.pair-btn.matched,
+.pair-btn:disabled {
+  opacity: 0.35 !important;
+  pointer-events: none;
+}
+.pair-btn.is-selected {
+  outline: 2px solid var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25);
+}
+/* Hearts (if present) — simpler solid style matching Movie Genres chips */
+.mc-hearts, .lives, .hearts {
+  display: flex;
+  gap: 4px;
+}
+.mc-heart, .heart {
+  color: #f472b6;
+  font-size: 1.1rem;
+}
+.mc-heart.is-broken, .heart.broken {
+  opacity: 0.35;
+  color: var(--soft);
 }
