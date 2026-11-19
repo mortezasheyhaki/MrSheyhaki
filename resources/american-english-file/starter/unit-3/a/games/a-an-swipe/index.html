@@ -11,47 +11,210 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Exo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Multiplayer panels — match arcade look */
-    .mp-actions { display: flex; flex-direction: column; gap: 0.65rem; margin-top: 1rem; width: 100%; }
-    .mp-actions .start-button { width: 100%; }
-    .mp-btn-secondary {
-      background: transparent; border: 2px solid rgba(255,255,255,0.25); color: #e2e8f0;
-      font-family: inherit; font-weight: 800; font-size: 0.95rem; padding: 0.75rem 1rem;
-      border-radius: 999px; cursor: pointer; letter-spacing: 0.04em;
+    /* Multiplayer lobby — clean stacked controls */
+    .mp-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-top: 1rem;
+      width: 100%;
     }
-    .mp-btn-secondary:hover { border-color: rgba(255,255,255,0.5); }
+    .mp-actions .start-button,
+    .mp-lobby-panel .start-button,
+    .mp-lobby-panel .mp-btn-secondary {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .mp-btn-secondary {
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.22);
+      color: #e2e8f0;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 0.92rem;
+      padding: 0.8rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+    }
+    .mp-btn-secondary:hover { border-color: rgba(255,255,255,0.45); }
+
+    #mpLobbyOverlay .panel {
+      width: min(100%, 360px);
+      max-width: 360px;
+      padding: 1.35rem 1.25rem 1.4rem;
+      box-sizing: border-box;
+    }
+    #mpLobbyOverlay .panel > .exit-back {
+      display: inline-block;
+      margin: 0 0 0.5rem;
+      padding: 0;
+      background: none;
+      border: 0;
+      color: rgba(226, 232, 240, 0.75);
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    #mpLobbyOverlay .panel-badge {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #mpLobbyOverlay h2 {
+      font-size: 1.35rem;
+      margin: 0.35rem 0 0.25rem;
+    }
+    #mpLobbyOverlay .mp-hint {
+      margin: 0 0 1rem;
+      font-size: 0.88rem;
+      opacity: 0.8;
+      line-height: 1.4;
+    }
+
+    .mp-lobby-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      width: 100%;
+    }
+    .mp-lobby-panel.hidden { display: none !important; }
+
+    .mp-join-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.45rem;
+      width: 100%;
+      align-items: stretch;
+    }
+    .mp-join-row input {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 800;
+      font-family: Orbitron, Exo 2, sans-serif;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: #fff;
+      border-radius: 12px;
+      padding: 0.7rem 0.6rem;
+      font-size: 0.95rem;
+    }
+    .mp-join-row button {
+      border: 0;
+      border-radius: 12px;
+      background: #7c3aed;
+      color: #fff;
+      font-weight: 800;
+      font-family: inherit;
+      padding: 0 1rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .mp-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(148, 163, 184, 0.9);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0.15rem 0;
+    }
+    .mp-divider::before,
+    .mp-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.12);
+    }
+
     .mp-code {
-      font-family: Orbitron, monospace; font-size: 1.75rem; font-weight: 800;
-      letter-spacing: 0.2em; text-align: center; color: #fbbf24; margin: 0.5rem 0;
+      font-family: Orbitron, monospace;
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      text-align: center;
+      color: #fbbf24;
+      margin: 0.15rem 0 0.35rem;
+    }
+    .mp-share-label {
+      margin: 0;
+      font-size: 0.78rem;
+      opacity: 0.75;
+      text-align: center;
     }
     .mp-invite {
-      display: flex; gap: 0.4rem; margin: 0.5rem 0 0.75rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.45rem;
+      width: 100%;
     }
     .mp-invite input {
-      flex: 1; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15);
-      color: #e2e8f0; border-radius: 10px; padding: 0.55rem 0.65rem; font-size: 0.72rem;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 0.6rem 0.65rem;
+      font-size: 0.7rem;
     }
-    .mp-invite button, .mp-join-row button {
-      background: #7c3aed; color: #fff; border: 0; border-radius: 10px;
-      font-weight: 800; padding: 0.55rem 0.75rem; cursor: pointer; font-family: inherit;
+    .mp-invite button {
+      border: 0;
+      border-radius: 12px;
+      background: #7c3aed;
+      color: #fff;
+      font-weight: 800;
+      font-family: inherit;
+      padding: 0 0.85rem;
+      cursor: pointer;
     }
-    .mp-join-row { display: flex; gap: 0.4rem; margin-top: 0.5rem; }
-    .mp-join-row input {
-      flex: 1; text-align: center; text-transform: uppercase; letter-spacing: 0.12em;
-      font-weight: 800; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15);
-      color: #fff; border-radius: 10px; padding: 0.55rem; font-size: 1rem;
+
+    .mp-players {
+      text-align: left;
+      margin: 0.15rem 0;
+      font-size: 0.88rem;
+      background: rgba(0,0,0,0.22);
+      border-radius: 12px;
+      padding: 0.45rem 0.65rem;
     }
-    .mp-players { text-align: left; margin: 0.75rem 0; font-size: 0.9rem; }
     .mp-player {
-      display: flex; justify-content: space-between; padding: 0.35rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.08); font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-weight: 700;
     }
-    .mp-status { font-size: 0.8rem; color: #94a3b8; margin-top: 0.5rem; min-height: 1.2em; }
+    .mp-player:last-child { border-bottom: 0; }
+
+    .mp-status {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin: 0.35rem 0 0;
+      min-height: 1.2em;
+      text-align: center;
+    }
     .mp-status.err { color: #f87171; }
     .mp-status.ok { color: #34d399; }
+
     .mp-scoreboard { margin-top: 0.75rem; text-align: left; font-size: 0.9rem; }
     .mp-score-row { display: flex; justify-content: space-between; padding: 0.3rem 0; font-weight: 700; }
-    .hud-box.mp-box .hud-label { font-size: 0.65rem; }
+
+    @media (max-width: 420px) {
+      #mpLobbyOverlay .panel {
+        width: min(100%, 340px);
+        padding: 1.15rem 1rem 1.25rem;
+      }
+      .mp-code { font-size: 1.35rem; letter-spacing: 0.16em; }
+    }
   </style>
 </head>
 <body class="game-page">
@@ -197,30 +360,31 @@
     <!-- MULTIPLAYER LOBBY -->
     <div class="overlay hidden" id="mpLobbyOverlay">
       <div class="panel">
-        <button type="button" class="exit-back" id="mpLobbyBack" style="background:none;border:0;color:inherit;cursor:pointer;">← Back</button>
+        <button type="button" class="exit-back" id="mpLobbyBack">← Back</button>
         <div class="panel-badge">MULTIPLAYER</div>
         <h2 id="mpLobbyTitle">Play together</h2>
-        <p id="mpLobbyHint">Create a room or join with a code.</p>
+        <p class="mp-hint" id="mpLobbyHint">Create a room or join with a code.</p>
 
-        <div id="mpHomePanel">
+        <div id="mpHomePanel" class="mp-lobby-panel">
           <button class="start-button" id="mpCreateBtn" type="button">CREATE ROOM</button>
+          <div class="mp-divider">or join</div>
           <div class="mp-join-row">
-            <input type="text" id="mpJoinInput" maxlength="8" placeholder="CODE" autocomplete="off" />
+            <input type="text" id="mpJoinInput" maxlength="8" placeholder="CODE" autocomplete="off" enterkeyhint="go" />
             <button type="button" id="mpJoinBtn">JOIN</button>
           </div>
         </div>
 
-        <div id="mpRoomPanel" class="hidden">
+        <div id="mpRoomPanel" class="mp-lobby-panel hidden">
           <div class="mp-code" id="mpRoomCode">————</div>
-          <p style="margin:0;font-size:0.85rem;opacity:0.8;">Share this link</p>
+          <p class="mp-share-label">Share this link</p>
           <div class="mp-invite">
             <input type="text" id="mpInviteLink" readonly />
             <button type="button" id="mpCopyBtn">Copy</button>
           </div>
           <div class="mp-players" id="mpPlayerList"></div>
           <button class="start-button" id="mpReadyBtn" type="button">I'M READY</button>
-          <button class="start-button hidden" id="mpStartBtn" type="button" style="margin-top:0.5rem;">START GAME</button>
-          <button class="mp-btn-secondary" id="mpLeaveBtn" type="button" style="margin-top:0.5rem;width:100%;">LEAVE ROOM</button>
+          <button class="start-button hidden" id="mpStartBtn" type="button">START GAME</button>
+          <button class="mp-btn-secondary" id="mpLeaveBtn" type="button">LEAVE ROOM</button>
         </div>
 
         <p class="mp-status" id="mpStatus"></p>
