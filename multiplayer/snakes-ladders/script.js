@@ -523,10 +523,19 @@
       var host = p.isHost ? '<span class="tag">HOST</span>' : "";
       return '<div class="sl-lobby-row"><span>' + (p.displayName || p.username) + you + "</span>" + host + "</div>";
     }).join("");
-    var isHost = room.hostId === myId;
-    $("btnStartOnline").hidden = !isHost || (room.players || []).length < 2;
-    $("lobbyStatus").textContent =
-      (room.players || []).length < 2 ? "Waiting for opponent…" : isHost ? "Ready — start when you want" : "Waiting for host to start…";
+    var isHost = !!(myId && room.hostId && String(room.hostId) === String(myId));
+    var nPlayers = (room.players || []).length;
+    var canStart = isHost && nPlayers >= 2;
+    $("btnStartOnline").hidden = !canStart;
+    $("btnStartOnline").disabled = false;
+    $("btnStartOnline").textContent = "Start Game";
+    if (nPlayers < 2) {
+      $("lobbyStatus").textContent = "Waiting for opponent… (" + nPlayers + "/2)";
+    } else if (isHost) {
+      $("lobbyStatus").textContent = "Both players ready — tap Start Game";
+    } else {
+      $("lobbyStatus").textContent = "Waiting for host to start…";
+    }
   }
 
   function wireSocketHandlers() {
@@ -554,6 +563,8 @@
           showScreen("screenPlay");
           if (!$("board").children.length) initBoardUI();
           applyOnlineState(room.game);
+        } else if (room.game && room.game.type === "a-an-swipe") {
+          $("lobbyStatus").textContent = "Server started A/An instead — redeploy multiplayer server with Snakes & Ladders support";
         }
       }
     });
@@ -856,8 +867,44 @@
     }
   };
   $("btnStartOnline").onclick = function () {
-    if (!socket) return;
-    socket.emit("game:start", { gameType: "snakes-ladders" });
+    if (!socket) {
+      $("lobbyStatus").textContent = "Not connected — go back and try again";
+      return;
+    }
+    if (!lastRoom || (lastRoom.players || []).length < 2) {
+      $("lobbyStatus").textContent = "Need 2 players to start";
+      return;
+    }
+    var btn = $("btnStartOnline");
+    btn.disabled = true;
+    btn.textContent = "Starting…";
+    $("lobbyStatus").textContent = "Starting game…";
+    socket.emit("game:start", { gameType: "snakes-ladders" }, function (res) {
+      btn.disabled = false;
+      btn.textContent = "Start Game";
+      if (!res || !res.ok) {
+        $("lobbyStatus").textContent = (res && res.error) || "Could not start — is the multiplayer server updated for Snakes & Ladders?";
+        return;
+      }
+      // Prefer SL payload from server
+      var room = res.room;
+      var sl = res.sl || (room && room.game);
+      if (room) lastRoom = room;
+      if (sl && (sl.type === "snakes-ladders" || (room && room.game && room.game.type === "snakes-ladders"))) {
+        mode = "online";
+        showScreen("screenPlay");
+        if (!$("board").children.length) initBoardUI();
+        applyOnlineState(sl.type ? sl : room.game);
+      } else if (room && room.status === "playing") {
+        // Fallback if public room shape differs
+        mode = "online";
+        showScreen("screenPlay");
+        if (!$("board").children.length) initBoardUI();
+        if (room.game) applyOnlineState(room.game);
+      } else {
+        $("lobbyStatus").textContent = "Started — waiting for board sync…";
+      }
+    });
   };
   $("btnCopy").onclick = function () {
     var input = $("inviteLink");
@@ -882,17 +929,7 @@
     $("winModal").hidden = true;
     showScreen("screenMode");
   };
-
-  // Orientation
-  function checkOrient() {
-    var portrait = window.matchMedia("(orientation: portrait) and (max-width: 900px)").matches;
-    $("rotateGate").hidden = !portrait;
-  }
-  window.addEventListener("resize", checkOrient);
-  window.addEventListener("orientationchange", checkOrient);
-  checkOrient();
-
-  // Deep link ?room=
+// Deep link ?room=
   if (new URLSearchParams(location.search).get("room")) {
     startOnlineFlow();
   } else {

@@ -14,54 +14,26 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   font-family: Nunito, system-ui, sans-serif;
   background: var(--bg);
   color: #e2e8f0;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+  -webkit-overflow-scrolling: touch;
 }
 [hidden] { display: none !important; }
 
-/* —— Rotate gate (phones in portrait) —— */
-.sl-rotate {
-  position: fixed; inset: 0; z-index: 9999;
-  display: grid; place-items: center;
-  background: #070b16;
-  padding: 1.5rem;
-  text-align: center;
-}
-.sl-rotate-inner { max-width: 16rem; }
-.sl-rotate-phone {
-  font-size: 3rem;
-  animation: spinPhone 1.6s ease-in-out infinite;
-  margin-bottom: 0.75rem;
-}
-@keyframes spinPhone {
-  0%, 100% { transform: rotate(0deg); }
-  40%, 60% { transform: rotate(90deg); }
-}
-.sl-rotate p { font-size: 1.15rem; font-weight: 800; margin-bottom: 0.35rem; }
-.sl-rotate span { font-size: 0.9rem; color: #94a3b8; }
-
-/* Force landscape UI on narrow portrait phones */
-@media (orientation: portrait) and (max-width: 900px) {
-  .sl-rotate { display: grid; }
-  .sl-app { visibility: hidden; pointer-events: none; }
-}
-@media (orientation: landscape), (min-width: 901px) {
-  .sl-rotate { display: none !important; }
-  .sl-app { visibility: visible; pointer-events: auto; }
-}
-
 .sl-app {
-  height: 100dvh;
-  height: 100svh;
+  min-height: 100dvh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   max-width: 1200px;
   margin: 0 auto;
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .sl-screen {
@@ -69,9 +41,15 @@ html, body {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  padding: 0.6rem 0.75rem 0.7rem;
+  padding: 0.6rem 0.75rem 1rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
-.sl-screen.play { padding-bottom: 0.4rem; }
+.sl-screen.play {
+  padding-bottom: 0.6rem;
+  /* play can grow; allow page scroll on small phones */
+  overflow: visible;
+}
 
 .sl-back {
   align-self: flex-start;
@@ -192,16 +170,20 @@ html, body {
 /* Board */
 .sl-board-wrap {
   position: relative;
-  flex: 1 1 auto;
-  min-height: 0;
+  flex: 0 0 auto;
   aspect-ratio: 1;
-  max-height: 100%;
-  width: min(100%, calc(100dvh - 7.5rem));
-  margin: 0 auto;
+  width: min(100%, 520px);
+  max-width: 100%;
+  margin: 0.35rem auto;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 0 0 3px rgba(167,139,250,0.25);
   background: #0f172a;
+}
+@media (max-width: 600px) {
+  .sl-board-wrap {
+    width: min(100%, calc(100vw - 1.5rem));
+  }
 }
 
 .sl-board {

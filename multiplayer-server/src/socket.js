@@ -168,15 +168,24 @@ export function attachSocket(io) {
       const room = result.room;
       emitRoom(io, room);
 
-      // Broadcast first question to the whole room
+      // Snakes & Ladders — no question timer / A-An events
+      if (room.game && room.game.type === "snakes-ladders") {
+        io.to(roomChannel(room.code)).emit("sl:update", { sl: result.sl || room.game });
+        console.log(`[game] ${brief} started Snakes & Ladders in ${room.code}`);
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+
+      // A or An Swipe
       io.to(roomChannel(room.code)).emit("game:question", result.question);
       io.to(roomChannel(room.code)).emit("game:scoreboard", result.scoreboard);
 
       console.log(`[game] ${brief} started A/An in ${room.code}`);
       if (typeof ack === "function") ack(result);
 
-      // Auto-advance when time is up
-      scheduleQuestionTimer(io, room.code, result.question.timeLimit);
+      if (result.question && result.question.timeLimit) {
+        scheduleQuestionTimer(io, room.code, result.question.timeLimit);
+      }
     });
 
     socket.on("game:answer", (payload, ack) => {
