@@ -10,14 +10,55 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Exo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-<!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
+  <style>
+    /* Multiplayer panels — match arcade look */
+    .mp-actions { display: flex; flex-direction: column; gap: 0.65rem; margin-top: 1rem; width: 100%; }
+    .mp-actions .start-button { width: 100%; }
+    .mp-btn-secondary {
+      background: transparent; border: 2px solid rgba(255,255,255,0.25); color: #e2e8f0;
+      font-family: inherit; font-weight: 800; font-size: 0.95rem; padding: 0.75rem 1rem;
+      border-radius: 999px; cursor: pointer; letter-spacing: 0.04em;
+    }
+    .mp-btn-secondary:hover { border-color: rgba(255,255,255,0.5); }
+    .mp-code {
+      font-family: Orbitron, monospace; font-size: 1.75rem; font-weight: 800;
+      letter-spacing: 0.2em; text-align: center; color: #fbbf24; margin: 0.5rem 0;
+    }
+    .mp-invite {
+      display: flex; gap: 0.4rem; margin: 0.5rem 0 0.75rem;
+    }
+    .mp-invite input {
+      flex: 1; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15);
+      color: #e2e8f0; border-radius: 10px; padding: 0.55rem 0.65rem; font-size: 0.72rem;
+    }
+    .mp-invite button, .mp-join-row button {
+      background: #7c3aed; color: #fff; border: 0; border-radius: 10px;
+      font-weight: 800; padding: 0.55rem 0.75rem; cursor: pointer; font-family: inherit;
+    }
+    .mp-join-row { display: flex; gap: 0.4rem; margin-top: 0.5rem; }
+    .mp-join-row input {
+      flex: 1; text-align: center; text-transform: uppercase; letter-spacing: 0.12em;
+      font-weight: 800; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15);
+      color: #fff; border-radius: 10px; padding: 0.55rem; font-size: 1rem;
+    }
+    .mp-players { text-align: left; margin: 0.75rem 0; font-size: 0.9rem; }
+    .mp-player {
+      display: flex; justify-content: space-between; padding: 0.35rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08); font-weight: 700;
+    }
+    .mp-status { font-size: 0.8rem; color: #94a3b8; margin-top: 0.5rem; min-height: 1.2em; }
+    .mp-status.err { color: #f87171; }
+    .mp-status.ok { color: #34d399; }
+    .mp-scoreboard { margin-top: 0.75rem; text-align: left; font-size: 0.9rem; }
+    .mp-score-row { display: flex; justify-content: space-between; padding: 0.3rem 0; font-weight: 700; }
+    .hud-box.mp-box .hud-label { font-size: 0.65rem; }
+  </style>
 </head>
 <body class="game-page">
   <div class="game-shell" id="app">
 
     <a class="game-back" href="../" aria-label="Back to Unit 3A Games">← Games</a>
 
-    <!-- TOP HUD -->
     <header class="topbar">
       <div class="hud-box time-box">
         <div class="hud-icon">⏱</div>
@@ -45,16 +86,12 @@
       </div>
     </header>
 
-    <!-- PROGRESS -->
     <div class="progress-wrap">
       <div class="progress-bar" id="progressFill"></div>
     </div>
     <div class="counter" id="counter">0 / 24</div>
 
-    <!-- MAIN -->
     <main class="game-area">
-
-      <!-- TOP TARGETS -->
       <div class="targets">
         <button class="target target-a" id="targetA" type="button" aria-label="Choose a">
           <span class="article">a</span>
@@ -66,17 +103,14 @@
         </button>
       </div>
 
-      <!-- CARD ZONE -->
       <section class="card-zone">
         <div class="side-arrows left-arrows" aria-hidden="true">
           <span></span><span></span><span></span>
         </div>
-
         <div class="swipe-card" id="swipeCard" role="button" tabindex="0"
              aria-label="Swipe left for a or right for an">
           <span class="word" id="word">—</span>
         </div>
-
         <div class="side-arrows right-arrows" aria-hidden="true">
           <span></span><span></span><span></span>
         </div>
@@ -98,7 +132,6 @@
       <p class="status sr-only" id="status" aria-live="polite"></p>
     </main>
 
-    <!-- BOTTOM CONTROLS -->
     <footer class="bottom-bar">
       <div class="stat-box accuracy-box">
         <span class="stat-icon">◎</span>
@@ -108,7 +141,6 @@
         </div>
       </div>
 
-      <!-- Virtual stick (left / right only) -->
       <div class="stick-wrap">
         <div class="stick-ring">
           <div class="stick-label left">A &lt;</div>
@@ -137,7 +169,7 @@
       </div>
     </footer>
 
-    <!-- START OVERLAY -->
+    <!-- START: Solo or Multiplayer -->
     <div class="overlay" id="startOverlay">
       <div class="panel">
         <a class="exit-back" href="../" aria-label="Back to Unit 3A Games">← Games</a>
@@ -154,8 +186,44 @@
             <span>vowel sound</span>
           </div>
         </div>
-        <button class="start-button" id="startBtn">START GAME</button>
+        <div class="mp-actions">
+          <button class="start-button" id="startBtn">SOLO PLAY</button>
+          <button class="mp-btn-secondary" id="btnMultiplayer">PLAY WITH A FRIEND</button>
+        </div>
         <p class="keyboard-note">Desktop: ← and → keys work too</p>
+      </div>
+    </div>
+
+    <!-- MULTIPLAYER LOBBY -->
+    <div class="overlay hidden" id="mpLobbyOverlay">
+      <div class="panel">
+        <button type="button" class="exit-back" id="mpLobbyBack" style="background:none;border:0;color:inherit;cursor:pointer;">← Back</button>
+        <div class="panel-badge">MULTIPLAYER</div>
+        <h2 id="mpLobbyTitle">Play together</h2>
+        <p id="mpLobbyHint">Create a room or join with a code.</p>
+
+        <div id="mpHomePanel">
+          <button class="start-button" id="mpCreateBtn" type="button">CREATE ROOM</button>
+          <div class="mp-join-row">
+            <input type="text" id="mpJoinInput" maxlength="8" placeholder="CODE" autocomplete="off" />
+            <button type="button" id="mpJoinBtn">JOIN</button>
+          </div>
+        </div>
+
+        <div id="mpRoomPanel" class="hidden">
+          <div class="mp-code" id="mpRoomCode">————</div>
+          <p style="margin:0;font-size:0.85rem;opacity:0.8;">Share this link</p>
+          <div class="mp-invite">
+            <input type="text" id="mpInviteLink" readonly />
+            <button type="button" id="mpCopyBtn">Copy</button>
+          </div>
+          <div class="mp-players" id="mpPlayerList"></div>
+          <button class="start-button" id="mpReadyBtn" type="button">I'M READY</button>
+          <button class="start-button hidden" id="mpStartBtn" type="button" style="margin-top:0.5rem;">START GAME</button>
+          <button class="mp-btn-secondary" id="mpLeaveBtn" type="button" style="margin-top:0.5rem;width:100%;">LEAVE ROOM</button>
+        </div>
+
+        <p class="mp-status" id="mpStatus"></p>
       </div>
     </div>
 
@@ -170,6 +238,7 @@
           <div><span>Accuracy</span><strong id="accuracy">0%</strong></div>
           <div><span>Best Combo</span><strong id="bestCombo">0</strong></div>
         </div>
+        <div class="mp-scoreboard hidden" id="mpFinalBoard"></div>
         <div class="end-actions">
           <a class="soft-sq back" href="../" id="endBackBtn" aria-label="Back to games" title="Back">←</a>
           <button class="soft-sq again" type="button" id="playAgain" aria-label="Play again" title="Again">↻</button>
@@ -177,7 +246,6 @@
       </div>
     </div>
 
-    <!-- PAUSE OVERLAY -->
     <div class="overlay hidden" id="pauseOverlay">
       <div class="panel">
         <div class="panel-badge">⏸</div>
@@ -189,9 +257,12 @@
     </div>
   </div>
 
+  <script src="/learningarcade/vendor/load-supabase.js"></script>
+  <script src="/learningarcade/auth-system/auth.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script src="script.js"></script>
-<script src="/learningarcade/la-stars.js" data-la-stars></script>
-<script src="/learningarcade/la-finish.js"></script>
-<script src="/visit-counter.js" defer></script>
+  <script src="/learningarcade/la-stars.js" data-la-stars></script>
+  <script src="/learningarcade/la-finish.js"></script>
+  <script src="/visit-counter.js" defer></script>
 </body>
 </html>

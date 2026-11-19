@@ -139,62 +139,9 @@ document.addEventListener("DOMContentLoaded", () => {
   "use strict";
 
   const GAME_ID = "starter-3a-a-an-swipe";
-
-
-  /* ---------- sound effects (Web Audio) ---------- */
-  var sfxCtx = null;
-  function getSfxCtx() {
-    if (!sfxCtx) {
-      try { sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
-    }
-    if (sfxCtx.state === "suspended") sfxCtx.resume().catch(function () {});
-    return sfxCtx;
-  }
-  function sfxTone(freq, start, dur, type, gain, slideTo) {
-    var ctx = getSfxCtx();
-    if (!ctx) return;
-    var osc = ctx.createOscillator();
-    var g = ctx.createGain();
-    osc.type = type || "sine";
-    osc.frequency.setValueAtTime(freq, start);
-    if (slideTo) osc.frequency.linearRampToValueAtTime(slideTo, start + dur * 0.85);
-    g.gain.setValueAtTime(0.0001, start);
-    g.gain.exponentialRampToValueAtTime(Math.max(0.001, gain || 0.1), start + 0.015);
-    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
-    osc.connect(g);
-    g.connect(ctx.destination);
-    osc.start(start);
-    osc.stop(start + dur + 0.02);
-  }
-  function sfxCorrect() { if (window.ArcadeFX && ArcadeFX.snd) { ArcadeFX.snd.correct(); return; } (function () {
-    var ctx = getSfxCtx();
-    if (!ctx) return;
-    var t = ctx.currentTime;
-    sfxTone(523.25, t, 0.1, "triangle", 0.1);
-    sfxTone(659.25, t + 0.08, 0.12, "triangle", 0.1);
-    sfxTone(783.99, t + 0.16, 0.16, "sine", 0.09);
-  }).apply(this, arguments); }
-  function sfxWrong() { if (window.ArcadeFX && ArcadeFX.snd) { ArcadeFX.snd.wrong(); return; } (function () {
-    var ctx = getSfxCtx();
-    if (!ctx) return;
-    var t = ctx.currentTime;
-    sfxTone(220, t, 0.14, "sawtooth", 0.05, 140);
-    sfxTone(180, t + 0.05, 0.14, "triangle", 0.04, 120);
-  }).apply(this, arguments); }
-  function sfxClick() { if (window.ArcadeFX && ArcadeFX.snd) { ArcadeFX.snd.tap(); return; } (function () {
-    var ctx = getSfxCtx();
-    if (!ctx) return;
-    sfxTone(720, ctx.currentTime, 0.045, "sine", 0.04);
-  }).apply(this, arguments); }
-  function sfxComplete() { if (window.ArcadeFX && ArcadeFX.snd) { ArcadeFX.snd.celebrate(); return; } (function () {
-    var ctx = getSfxCtx();
-    if (!ctx) return;
-    var t = ctx.currentTime;
-    sfxTone(523.25, t, 0.1, "triangle", 0.09);
-    sfxTone(659.25, t + 0.1, 0.1, "triangle", 0.09);
-    sfxTone(783.99, t + 0.2, 0.12, "triangle", 0.1);
-    sfxTone(1046.5, t + 0.32, 0.22, "sine", 0.08);
-  }).apply(this, arguments); }
+  const MP_SERVER = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+    ? "http://localhost:3001"
+    : "https://mrsheyhaki-multiplayer.onrender.com";
 
   const WORDS = [
     { word: "apple", article: "an" },
@@ -207,7 +154,6 @@ document.addEventListener("DOMContentLoaded", () => {
     { word: "octopus", article: "an" },
     { word: "umbrella", article: "an" },
     { word: "uncle", article: "an" },
-
     { word: "phone", article: "a" },
     { word: "newspaper", article: "a" },
     { word: "charger", article: "a" },
@@ -222,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { word: "bank card", article: "a" }
   ];
 
-  const TOTAL = WORDS.length;
+  const TOTAL_SOLO = WORDS.length;
   const START_TIME = 60;
 
   const $ = id => document.getElementById(id);
@@ -230,6 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const startOverlay = $("startOverlay");
   const endModal = $("endModal");
   const pauseOverlay = $("pauseOverlay");
+  const mpLobbyOverlay = $("mpLobbyOverlay");
   const startBtn = $("startBtn");
   const playAgain = $("playAgain");
   const resumeBtn = $("resumeBtn");
@@ -254,6 +201,12 @@ document.addEventListener("DOMContentLoaded", () => {
   let state = null;
   let soundOn = true;
   let paused = false;
+  let mode = "solo"; // solo | multi
+  let socket = null;
+  let myId = null;
+  let lastRoom = null;
+  let accessToken = null;
+  let mpAnswered = false;
 
   function shuffle(array) {
     const copy = [...array];
@@ -277,14 +230,24 @@ document.addEventListener("DOMContentLoaded", () => {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "en-US";
       utterance.rate = 0.92;
-      utterance.pitch = 1.03;
       speechSynthesis.speak(utterance);
-    } catch (_) {}
+    } catch (e) {}
   }
 
+  function sfxCorrect() { if (window.ArcadeFX && ArcadeFX.snd) ArcadeFX.snd.correct(); }
+  function sfxWrong() { if (window.ArcadeFX && ArcadeFX.snd) ArcadeFX.snd.wrong(); }
+
+  function setMpStatus(msg, kind) {
+    const el = $("mpStatus");
+    if (!el) return;
+    el.textContent = msg || "";
+    el.className = "mp-status" + (kind ? " " + kind : "");
+  }
+
+  /* ---------- Solo game ---------- */
   function startGame() {
-    if (window.LAFinish) LAFinish.startTimer();
-    if (state?.timer) clearInterval(state.timer);
+    mode = "solo";
+    if (state && state.timer) clearInterval(state.timer);
 
     state = {
       questions: shuffle(WORDS),
@@ -295,25 +258,25 @@ document.addEventListener("DOMContentLoaded", () => {
       combo: 0,
       bestCombo: 0,
       time: START_TIME,
-      dragging: false,
+      done: false,
       answering: false,
-      startX: 0,
-      startY: 0,
+      dragging: false,
       timer: null,
-      done: false
+      total: TOTAL_SOLO,
     };
 
-    paused = false;
     startOverlay.classList.add("hidden");
+    mpLobbyOverlay.classList.add("hidden");
     endModal.classList.add("hidden");
     pauseOverlay.classList.add("hidden");
     card.style.pointerEvents = "auto";
+    $("mpFinalBoard").classList.add("hidden");
 
     showCard();
     updateHUD();
 
     state.timer = setInterval(() => {
-      if (!state || state.done || paused) return;
+      if (!state || state.done || paused || mode !== "solo") return;
       state.time--;
       updateHUD();
       if (state.time <= 0) finish(false);
@@ -321,12 +284,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function showCard() {
+    const total = state.total || state.questions.length;
     const item = state.questions[state.index];
 
-    if (!item) {
+    if (!item && mode === "solo") {
       finish(true);
       return;
     }
+    if (!item) return;
 
     wordEl.textContent = item.word;
     card.className = "swipe-card";
@@ -338,6 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clearHighlights();
     feedback.className = "feedback";
     feedback.textContent = "";
+    mpAnswered = false;
 
     card.animate(
       [
@@ -349,7 +315,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getDirection(dx, dy) {
-    // Only left / right — ignore pure vertical
     if (Math.abs(dx) < 20 && Math.abs(dy) > Math.abs(dx) * 1.5) return null;
     return dx < 0 ? "left" : "right";
   }
@@ -363,11 +328,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function highlight(dx) {
     clearHighlights();
     if (Math.abs(dx) < 25) return;
-
     const direction = dx < 0 ? "left" : "right";
     const target = targetFor(direction);
     if (target) target.classList.add("active");
-
     card.classList.toggle("swiping-left", direction === "left");
     card.classList.toggle("swiping-right", direction === "right");
   }
@@ -390,56 +353,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function attempt(direction) {
     if (!state || state.done || state.answering || paused) return;
-
     if (direction !== "left" && direction !== "right") {
       returnCard();
       return;
     }
 
-    state.attempts++;
+    if (mode === "multi") {
+      if (mpAnswered) return;
+      mpAnswered = true;
+      state.answering = true;
+      const selected = direction === "left" ? "a" : "an";
+      card.classList.add(`exit-${direction}`);
+      if (socket) socket.emit("game:answer", { answer: selected });
+      return;
+    }
 
+    // Solo
+    state.attempts++;
     const item = state.questions[state.index];
     const selected = direction === "left" ? "a" : "an";
-
-    if (selected === item.article) {
-      handleCorrect(direction, item);
-    } else {
-      handleWrong(direction);
-    }
+    if (selected === item.article) handleCorrect(direction, item);
+    else handleWrong(direction);
   }
 
   function handleCorrect(direction, item) {
     state.answering = true;
-    sfxCorrect(); state.correct++;
+    sfxCorrect();
+    state.correct++;
     state.combo++;
     state.bestCombo = Math.max(state.bestCombo, state.combo);
-
     const points = 10 + Math.max(0, state.combo - 1) * 2;
     state.score += points;
-
     const target = targetFor(direction);
     if (target) target.classList.add("correct");
-
     feedback.textContent = `+${points}`;
     feedback.className = "feedback show correct";
     status.textContent = `Correct: ${item.article} ${item.word}.`;
-
     speak(`${item.article} ${item.word}`);
     updateHUD();
-
     card.classList.add(`exit-${direction}`);
-
     setTimeout(() => {
       if (!state || state.done) return;
-
       state.index++;
-      if (window.ArcadeFX && TOTAL >= 8 && state.index === Math.floor(TOTAL / 2)) ArcadeFX.cheer(0, 2, "Halfway there — " + state.index + " of " + TOTAL + " done");
-
-      if (state.index >= TOTAL) {
+      if (state.index >= state.total) {
         finish(true);
         return;
       }
-
       state.answering = false;
       showCard();
     }, 450);
@@ -447,29 +406,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function handleWrong(direction) {
     state.combo = 0;
-
     const target = targetFor(direction);
     sfxWrong();
     if (target) target.classList.add("wrong");
-
     feedback.textContent = "Try again!";
     feedback.className = "feedback show wrong";
     status.textContent = "Wrong article. Try again.";
-
     speak("Try again");
     updateHUD();
-
     returnCard();
   }
 
   function updateHUD() {
     if (!state) return;
-
+    const total = state.total || 1;
     scoreEl.textContent = state.score;
     timerEl.textContent = formatTime(Math.max(0, state.time));
-    progress.style.width = `${(state.index / TOTAL) * 100}%`;
-    counter.textContent = `${state.index} / ${TOTAL}`;
-
+    progress.style.width = `${(state.index / total) * 100}%`;
+    counter.textContent = `${state.index} / ${total}`;
     const acc = state.attempts
       ? Math.round((state.correct / state.attempts) * 100)
       : 100;
@@ -479,97 +433,324 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function finish(won) {
     if (!state || state.done) return;
-
     state.done = true;
     if (state.timer) clearInterval(state.timer);
-
     card.style.pointerEvents = "none";
-
+    const total = state.total || 1;
     const accuracy = state.attempts
       ? Math.round((state.correct / state.attempts) * 100)
       : 0;
-
     $("finalScore").textContent = state.score;
     $("accuracy").textContent = `${accuracy}%`;
+    $("bestCombo").textContent = state.bestCombo;
     try {
-      if (window.LAStars) {
+      if (window.LAStars && mode === "solo") {
         LAStars.recordPlay(GAME_ID);
         LAStars.saveFromAccuracy(GAME_ID, accuracy);
       }
     } catch (e) {}
-    if (window.LAFinish) {
-      const stars = accuracy >= 90 ? 3 : accuracy >= 70 ? 2 : accuracy >= 40 ? 1 : 0;
-      const timeMs = LAFinish.stopTimer ? LAFinish.stopTimer() : null;
-      LAFinish.show({
-        gameId: GAME_ID,
-        score: state.correct,
-        total: TOTAL,
-        stars: stars,
-        timeMs: timeMs,
-        onAgain: () => startGame(),
-        onModes: () => startGame(),
-        backHref: "../",
-        save: false,
-      });
-    }
-    $("bestCombo").textContent = state.bestCombo;
     $("endTitle").textContent = won ? "Excellent!" : "Time's up!";
     $("endMessage").textContent = won
-      ? `You matched all ${TOTAL} words.`
-      : `You matched ${state.correct} of ${TOTAL}.`;
+      ? `You matched all ${total} words.`
+      : `You matched ${state.correct} of ${total}.`;
     $("resultIcon").textContent = won ? "🏆" : "⏱";
-
     endModal.classList.remove("hidden");
   }
 
-  /* ---- Card drag ---- */
+  /* ---------- Multiplayer ---------- */
+  async function getAccessToken() {
+    if (!window.LAAuth || !window.LAAuth.getClient) return null;
+    const client = window.LAAuth.getClient();
+    if (!client) return null;
+    try {
+      const res = await client.auth.getSession();
+      if (res.data && res.data.session) return res.data.session.access_token;
+    } catch (e) {}
+    return null;
+  }
+
+  function inviteUrl(code) {
+    const u = new URL(location.href);
+    u.searchParams.set("room", code);
+    return u.toString();
+  }
+
+  function renderMpPlayers(room) {
+    const list = $("mpPlayerList");
+    if (!room || !room.players) {
+      list.innerHTML = "";
+      return;
+    }
+    list.innerHTML = room.players.map((p) => {
+      const you = p.id === myId ? " (you)" : "";
+      const host = p.isHost ? " 👑" : "";
+      const ready = p.ready ? "✅ ready" : "⏳ waiting";
+      return `<div class="mp-player"><span>${p.displayName || p.username}${you}${host}</span><span>${ready}</span></div>`;
+    }).join("");
+  }
+
+  function showMpRoom(room) {
+    lastRoom = room;
+    $("mpHomePanel").classList.add("hidden");
+    $("mpRoomPanel").classList.remove("hidden");
+    $("mpRoomCode").textContent = room.code;
+    $("mpInviteLink").value = inviteUrl(room.code);
+    renderMpPlayers(room);
+    const isHost = room.hostId === myId;
+    $("mpStartBtn").classList.toggle("hidden", !isHost);
+    const me = room.players.find((p) => p.id === myId);
+    $("mpReadyBtn").textContent = me && me.ready ? "NOT READY" : "I'M READY";
+  }
+
+  function connectSocket() {
+    return new Promise(async (resolve, reject) => {
+      accessToken = await getAccessToken();
+      if (!accessToken) {
+        reject(new Error("Please log in first"));
+        return;
+      }
+      if (socket) {
+        socket.disconnect();
+        socket = null;
+      }
+      socket = io(MP_SERVER, {
+        auth: { token: accessToken },
+        transports: ["websocket", "polling"],
+      });
+      socket.on("connect", () => resolve());
+      socket.on("connect_error", (err) => reject(err));
+      socket.on("server:hello", (d) => {
+        if (d && d.player) myId = d.player.id;
+      });
+      socket.on("room:update", (room) => {
+        lastRoom = room;
+        if (room.status === "lobby") showMpRoom(room);
+      });
+      socket.on("room:error", (e) => setMpStatus((e && e.error) || "Error", "err"));
+      socket.on("game:question", (q) => {
+        startOverlay.classList.add("hidden");
+        mpLobbyOverlay.classList.add("hidden");
+        endModal.classList.add("hidden");
+        mode = "multi";
+        if (!state || state.done) {
+          state = {
+            questions: [],
+            index: q.index,
+            score: 0,
+            correct: 0,
+            attempts: 0,
+            combo: 0,
+            bestCombo: 0,
+            time: q.timeLimit || 8,
+            done: false,
+            answering: false,
+            dragging: false,
+            timer: null,
+            total: q.total,
+          };
+        }
+        state.index = q.index;
+        state.total = q.total;
+        state.answering = false;
+        state.done = false;
+        state.questions[q.index] = { word: q.word, article: null };
+        state.time = q.timeLimit || 8;
+        mpAnswered = false;
+        card.style.pointerEvents = "auto";
+        showCard();
+        updateHUD();
+        if (state.timer) clearInterval(state.timer);
+        state.timer = setInterval(() => {
+          if (!state || state.done || paused || mode !== "multi") return;
+          state.time--;
+          updateHUD();
+        }, 1000);
+      });
+      socket.on("game:answerResult", (r) => {
+        state.attempts++;
+        if (r.correct) {
+          sfxCorrect();
+          state.correct++;
+          state.combo++;
+          state.bestCombo = Math.max(state.bestCombo, state.combo);
+          state.score += r.points || 0;
+          feedback.textContent = `+${r.points}`;
+          feedback.className = "feedback show correct";
+          speak(`${r.article} ${r.word}`);
+        } else {
+          sfxWrong();
+          state.combo = 0;
+          feedback.textContent = `Wrong — "${r.article}"`;
+          feedback.className = "feedback show wrong";
+        }
+        updateHUD();
+        state.answering = true;
+      });
+      socket.on("game:scoreboard", (list) => {
+        // live scores in counter area via status
+        if (!list || !list.length) return;
+        const me = list.find((s) => s.id === myId);
+        if (me) {
+          state.score = me.score;
+          state.correct = me.correct;
+          updateHUD();
+        }
+      });
+      socket.on("game:end", (data) => {
+        mode = "multi";
+        if (state && state.timer) clearInterval(state.timer);
+        if (state) state.done = true;
+        card.style.pointerEvents = "none";
+        const board = $("mpFinalBoard");
+        board.classList.remove("hidden");
+        if (data && data.scoreboard) {
+          board.innerHTML = "<strong>Ranking</strong>" + data.scoreboard.map((s, i) =>
+            `<div class="mp-score-row"><span>${i + 1}. ${s.displayName || s.username}${s.id === myId ? " (you)" : ""}</span><span>${s.score} pts</span></div>`
+          ).join("");
+          const me = data.scoreboard.find((s) => s.id === myId);
+          if (me) {
+            $("finalScore").textContent = me.score;
+            $("accuracy").textContent = me.correct + " correct";
+          }
+        }
+        $("endTitle").textContent = "Match over!";
+        $("endMessage").textContent = "Great game — check the ranking.";
+        $("resultIcon").textContent = "🏆";
+        $("bestCombo").textContent = state ? state.bestCombo : 0;
+        endModal.classList.remove("hidden");
+      });
+    });
+  }
+
+  async function openMultiplayer() {
+    setMpStatus("Connecting…");
+    $("mpHomePanel").classList.remove("hidden");
+    $("mpRoomPanel").classList.add("hidden");
+    startOverlay.classList.add("hidden");
+    mpLobbyOverlay.classList.remove("hidden");
+    try {
+      await connectSocket();
+      setMpStatus("Connected", "ok");
+      // Auto-join from ?room=
+      const roomParam = (new URLSearchParams(location.search).get("room") || "").trim().toUpperCase();
+      if (roomParam.length >= 4) {
+        $("mpJoinInput").value = roomParam;
+        $("mpJoinBtn").click();
+      }
+    } catch (e) {
+      setMpStatus((e && e.message) || "Could not connect. Log in first.", "err");
+    }
+  }
+
+  $("btnMultiplayer").addEventListener("click", openMultiplayer);
+  $("mpLobbyBack").addEventListener("click", () => {
+    if (socket) socket.emit("room:leave", {});
+    mpLobbyOverlay.classList.add("hidden");
+    startOverlay.classList.remove("hidden");
+  });
+
+  $("mpCreateBtn").addEventListener("click", () => {
+    if (!socket) return;
+    setMpStatus("Creating room…");
+    socket.emit("room:create", {}, (res) => {
+      if (!res || !res.ok) {
+        setMpStatus((res && res.error) || "Failed", "err");
+        return;
+      }
+      showMpRoom(res.room);
+      socket.emit("room:setReady", { ready: true });
+      setMpStatus("Room created — share the link", "ok");
+    });
+  });
+
+  $("mpJoinBtn").addEventListener("click", () => {
+    if (!socket) return;
+    const code = ($("mpJoinInput").value || "").trim().toUpperCase();
+    if (code.length < 4) {
+      setMpStatus("Enter a valid code", "err");
+      return;
+    }
+    setMpStatus("Joining…");
+    socket.emit("room:join", { code }, (res) => {
+      if (!res || !res.ok) {
+        setMpStatus((res && res.error) || "Could not join", "err");
+        return;
+      }
+      showMpRoom(res.room);
+      socket.emit("room:setReady", { ready: true });
+      setMpStatus("Joined — wait for host to start", "ok");
+    });
+  });
+
+  $("mpReadyBtn").addEventListener("click", () => {
+    if (!socket || !lastRoom || !myId) return;
+    const me = lastRoom.players.find((p) => p.id === myId);
+    socket.emit("room:setReady", { ready: !(me && me.ready) });
+  });
+
+  $("mpStartBtn").addEventListener("click", () => {
+    if (!socket) return;
+    socket.emit("game:start", { questionCount: 8, timePerQuestion: 8 });
+  });
+
+  $("mpLeaveBtn").addEventListener("click", () => {
+    if (socket) socket.emit("room:leave", {});
+    $("mpRoomPanel").classList.add("hidden");
+    $("mpHomePanel").classList.remove("hidden");
+    const u = new URL(location.href);
+    u.searchParams.delete("room");
+    history.replaceState(null, "", u.pathname + u.search);
+    setMpStatus("");
+  });
+
+  $("mpCopyBtn").addEventListener("click", () => {
+    const input = $("mpInviteLink");
+    input.select();
+    try {
+      navigator.clipboard.writeText(input.value);
+      $("mpCopyBtn").textContent = "OK";
+      setTimeout(() => { $("mpCopyBtn").textContent = "Copy"; }, 1200);
+    } catch (e) {
+      document.execCommand("copy");
+    }
+  });
+
+  /* ---------- Pointer / stick / keys (same as solo) ---------- */
   function onPointerDown(e) {
     if (!state || state.done || state.dragging || state.answering || paused) return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
-
     e.preventDefault();
     state.dragging = true;
     state.startX = e.clientX;
     state.startY = e.clientY;
     card.classList.add("dragging");
-
     try { card.setPointerCapture(e.pointerId); } catch (_) {}
   }
 
   function onPointerMove(e) {
     if (!state?.dragging || state.done || paused) return;
-
     e.preventDefault();
-
     const dx = e.clientX - state.startX;
     const dy = e.clientY - state.startY;
-    // Limit vertical drift a bit for visual feel
     const clampedDy = Math.max(-40, Math.min(40, dy * 0.35));
     const rotation = Math.max(-14, Math.min(14, dx * 0.045));
-
     card.style.transform = `translate3d(${dx}px,${clampedDy}px,0) rotate(${rotation}deg)`;
     highlight(dx);
   }
 
   function onPointerUp(e) {
     if (!state?.dragging || state.done) return;
-
     e.preventDefault();
     state.dragging = false;
     card.classList.remove("dragging");
-
     const dx = e.clientX - state.startX;
     const dy = e.clientY - state.startY;
-
     try { card.releasePointerCapture(e.pointerId); } catch (_) {}
-
     clearHighlights();
-
     if (Math.abs(dx) < 55) {
       returnCard();
       return;
     }
-
     attempt(getDirection(dx, dy));
   }
 
@@ -586,7 +767,6 @@ document.addEventListener("DOMContentLoaded", () => {
   card.addEventListener("pointerup", onPointerUp);
   card.addEventListener("pointercancel", onPointerCancel);
 
-  /* ---- Target buttons ---- */
   targetA.addEventListener("click", () => {
     if (!state || state.done || state.answering || paused) return;
     attempt("left");
@@ -596,7 +776,6 @@ document.addEventListener("DOMContentLoaded", () => {
     attempt("right");
   });
 
-  /* ---- Virtual stick (left / right only) ---- */
   let stickDragging = false;
   let stickOrigin = { x: 0, y: 0 };
 
@@ -605,7 +784,7 @@ document.addEventListener("DOMContentLoaded", () => {
     stickKnob.classList.remove("dragging");
   }
 
-  function onStickDown(e) {
+  stickKnob.addEventListener("pointerdown", (e) => {
     if (!state || state.done || state.answering || paused) return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
     e.preventDefault();
@@ -614,53 +793,33 @@ document.addEventListener("DOMContentLoaded", () => {
     stickOrigin = { x: e.clientX, y: e.clientY };
     stickKnob.classList.add("dragging");
     try { stickKnob.setPointerCapture(e.pointerId); } catch (_) {}
-  }
-
-  function onStickMove(e) {
+  });
+  stickKnob.addEventListener("pointermove", (e) => {
     if (!stickDragging) return;
     e.preventDefault();
     const dx = e.clientX - stickOrigin.x;
-    // Only horizontal movement
     const max = 42;
     const clampedX = Math.max(-max, Math.min(max, dx));
     stickKnob.style.transform = `translate(${clampedX}px, 0)`;
-
-    // Preview highlight on card
-    if (Math.abs(clampedX) > 12) {
-      highlight(clampedX);
-    } else {
-      clearHighlights();
-    }
-  }
-
-  function onStickUp(e) {
+    if (Math.abs(clampedX) > 12) highlight(clampedX);
+    else clearHighlights();
+  });
+  stickKnob.addEventListener("pointerup", (e) => {
     if (!stickDragging) return;
     e.preventDefault();
     stickDragging = false;
-
     const dx = e.clientX - stickOrigin.x;
-    try { stickKnob.releasePointerCapture(e.pointerId); } catch (_) {}
-
-    clearHighlights();
     resetStick();
-
-    if (Math.abs(dx) < 28) return;
-    attempt(dx < 0 ? "left" : "right");
-  }
-
-  function onStickCancel() {
+    clearHighlights();
+    if (Math.abs(dx) > 28) attempt(dx < 0 ? "left" : "right");
+  });
+  stickKnob.addEventListener("pointercancel", () => {
     stickDragging = false;
-    clearHighlights();
     resetStick();
-  }
+    clearHighlights();
+  });
 
-  stickKnob.addEventListener("pointerdown", onStickDown);
-  stickKnob.addEventListener("pointermove", onStickMove);
-  stickKnob.addEventListener("pointerup", onStickUp);
-  stickKnob.addEventListener("pointercancel", onStickCancel);
-
-  /* ---- Keyboard ---- */
-  document.addEventListener("keydown", e => {
+  document.addEventListener("keydown", (e) => {
     if (!state || state.done || state.answering || paused) return;
     if (e.key === "ArrowLeft") {
       e.preventDefault();
@@ -671,63 +830,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  /* ---- Sound toggle ---- */
   soundBtn.addEventListener("click", () => {
     soundOn = !soundOn;
     soundIcon.textContent = soundOn ? "🔊" : "🔇";
     soundState.textContent = soundOn ? "ON" : "OFF";
-    if (!soundOn && "speechSynthesis" in window) {
-      speechSynthesis.cancel();
-    }
+    if (!soundOn && "speechSynthesis" in window) speechSynthesis.cancel();
   });
 
-  /* ---- Pause ---- */
   pauseBtn.addEventListener("click", () => {
     if (!state || state.done) return;
     paused = true;
     pauseOverlay.classList.remove("hidden");
   });
-
   resumeBtn.addEventListener("click", () => {
     paused = false;
     pauseOverlay.classList.add("hidden");
   });
 
   startBtn.addEventListener("click", startGame);
-  playAgain.addEventListener("click", startGame);
-});
-
-/* keyboard fix */
-(function(){
-
-  function ensureFieldVisible(el) {
-    if (!el) return;
-    var target = el.closest(".ll-card, .lsp-card, .sp-card, .qa-card, .wi-card, .lw-card, .ll-stage, .lsp-stage, .sp-stage, .qa-stage, .wi-stage") || el;
-    try { target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) { try { target.scrollIntoView(true); } catch (e2) {} }
-    setTimeout(function () {
-      try { target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e3) {}
-    }, 350);
-  }
-  function bindKeyboardFix(root) {
-    root = root || document;
-    var inputs = root.querySelectorAll('input[type="text"], input.ll-input, input.lsp-input, input.sp-input, input.qa-input, input.lw-input, input.wi-input');
-    inputs.forEach(function (inp) {
-      if (inp.dataset.kbFix) return;
-      inp.dataset.kbFix = "1";
-      inp.addEventListener("focus", function () { ensureFieldVisible(inp); });
-      inp.addEventListener("click", function () { ensureFieldVisible(inp); });
-    });
-    if (window.visualViewport && !window.__proKbVV) {
-      window.__proKbVV = true;
-      var onVV = function () {
-        var ae = document.activeElement;
-        if (ae && ae.tagName === "INPUT") ensureFieldVisible(ae);
-      };
-      window.visualViewport.addEventListener("resize", onVV);
-      window.visualViewport.addEventListener("scroll", onVV);
+  playAgain.addEventListener("click", () => {
+    if (mode === "multi" && socket && lastRoom && lastRoom.hostId === myId) {
+      socket.emit("game:backToLobby", {});
+      endModal.classList.add("hidden");
+      mpLobbyOverlay.classList.remove("hidden");
+      return;
     }
-  }
+    startGame();
+  });
 
-  document.addEventListener('focusin', function(e){ if(e.target && e.target.tagName==='INPUT') ensureFieldVisible(e.target); });
-  if(window.visualViewport){ window.visualViewport.addEventListener('resize', function(){ var ae=document.activeElement; if(ae&&ae.tagName==='INPUT') ensureFieldVisible(ae); }); }
-})();
+  // Deep link: ?room=CODE opens multiplayer
+  const roomQ = (new URLSearchParams(location.search).get("room") || "").trim();
+  if (roomQ.length >= 4) {
+    // slight delay for auth scripts
+    setTimeout(() => openMultiplayer(), 400);
+  }
+});
