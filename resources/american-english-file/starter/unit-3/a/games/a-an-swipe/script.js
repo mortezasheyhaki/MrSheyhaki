@@ -459,12 +459,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ---------- Multiplayer ---------- */
   async function getAccessToken() {
-    if (!window.LAAuth || !window.LAAuth.getClient) return null;
-    const client = window.LAAuth.getClient();
-    if (!client) return null;
+    // 1) Official auth helper if available
     try {
-      const res = await client.auth.getSession();
-      if (res.data && res.data.session) return res.data.session.access_token;
+      if (window.LAAuth && window.LAAuth.getClient) {
+        const client = window.LAAuth.getClient();
+        if (client) {
+          const res = await client.auth.getSession();
+          if (res && res.data && res.data.session && res.data.session.access_token) {
+            return res.data.session.access_token;
+          }
+        }
+      }
+    } catch (e) {}
+
+    // 2) Fallback: Supabase token in localStorage (same as site login)
+    try {
+      const keys = Object.keys(localStorage);
+      for (let i = 0; i < keys.length; i++) {
+        const k = keys[i];
+        if (k.indexOf("sb-") === 0 && k.indexOf("-auth-token") > 0) {
+          const raw = localStorage.getItem(k);
+          if (!raw) continue;
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.access_token) return parsed.access_token;
+          if (parsed && parsed.currentSession && parsed.currentSession.access_token) {
+            return parsed.currentSession.access_token;
+          }
+        }
+      }
     } catch (e) {}
     return null;
   }
@@ -623,34 +645,59 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function openMultiplayer() {
+    // Always open the lobby UI first
+    try {
+      if ($("mpHomePanel")) $("mpHomePanel").classList.remove("hidden");
+      if ($("mpRoomPanel")) $("mpRoomPanel").classList.add("hidden");
+      if (startOverlay) startOverlay.classList.add("hidden");
+      if (mpLobbyOverlay) mpLobbyOverlay.classList.remove("hidden");
+    } catch (e) {}
+
     setMpStatus("Connecting…");
-    $("mpHomePanel").classList.remove("hidden");
-    $("mpRoomPanel").classList.add("hidden");
-    startOverlay.classList.add("hidden");
-    mpLobbyOverlay.classList.remove("hidden");
+
+    if (typeof io !== "function") {
+      setMpStatus("Multiplayer library failed to load. Refresh the page.", "err");
+      return;
+    }
+
     try {
       await connectSocket();
-      setMpStatus("Connected", "ok");
-      // Auto-join from ?room=
+      setMpStatus("Connected — create or join a room", "ok");
       const roomParam = (new URLSearchParams(location.search).get("room") || "").trim().toUpperCase();
-      if (roomParam.length >= 4) {
+      if (roomParam.length >= 4 && $("mpJoinInput") && $("mpJoinBtn")) {
         $("mpJoinInput").value = roomParam;
         $("mpJoinBtn").click();
       }
     } catch (e) {
-      setMpStatus((e && e.message) || "Could not connect. Log in first.", "err");
+      const msg = (e && e.message) ? e.message : "Could not connect";
+      setMpStatus(msg + " — log in on the site, then try again.", "err");
     }
   }
 
-  $("btnMultiplayer").addEventListener("click", openMultiplayer);
-  $("mpLobbyBack").addEventListener("click", () => {
-    if (socket) socket.emit("room:leave", {});
-    mpLobbyOverlay.classList.add("hidden");
-    startOverlay.classList.remove("hidden");
-  });
+  const btnMp = $("btnMultiplayer");
+  if (btnMp) {
+    btnMp.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      openMultiplayer();
+    });
+  }
+
+  const btnLobbyBack = $("mpLobbyBack");
+  if (btnLobbyBack) {
+    btnLobbyBack.addEventListener("click", function (e) {
+      e.preventDefault();
+      try { if (socket) socket.emit("room:leave", {}); } catch (err) {}
+      if (mpLobbyOverlay) mpLobbyOverlay.classList.add("hidden");
+      if (startOverlay) startOverlay.classList.remove("hidden");
+    });
+  }
 
   $("mpCreateBtn").addEventListener("click", () => {
-    if (!socket) return;
+    if (!socket || !socket.connected) {
+      setMpStatus("Not connected. Log in, then open Play with a friend again.", "err");
+      return;
+    }
     setMpStatus("Creating room…");
     socket.emit("room:create", {}, (res) => {
       if (!res || !res.ok) {
