@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Multiplayer | Mr. Sheyhaki</title>
+  <meta name="description" content="Play English games together. Create a room, share the link, and compete with friends." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700;800&family=Orbitron:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/theme.css" />
+  <style>
+    :root {
+      --mp-bg: #07071a;
+      --mp-card: #12122a;
+      --mp-line: rgba(255,255,255,0.08);
+      --mp-text: #f1f5f9;
+      --mp-muted: #94a3b8;
+      --mp-accent: #a78bfa;
+      --mp-accent2: #38bdf8;
+      --mp-gold: #fbbf24;
+    }
+    body.mp-hub {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: "Exo 2", system-ui, sans-serif;
+      background:
+        radial-gradient(900px 500px at 50% -10%, #2e1065 0%, transparent 55%),
+        radial-gradient(700px 400px at 100% 20%, #0c4a6e33 0%, transparent 50%),
+        var(--mp-bg);
+      color: var(--mp-text);
+    }
+    .mp-wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 3rem;
+      padding-top: max(1.25rem, env(safe-area-inset-top));
+    }
+    .mp-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .mp-back {
+      color: var(--mp-muted);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .mp-back:hover { color: var(--mp-text); }
+    .mp-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(167, 139, 250, 0.2);
+      color: var(--mp-accent);
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+    }
+    .mp-hero h1 {
+      font-family: Orbitron, "Exo 2", sans-serif;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      margin: 0 0 0.4rem;
+      letter-spacing: 0.04em;
+    }
+    .mp-hero p {
+      margin: 0;
+      color: var(--mp-muted);
+      line-height: 1.5;
+      max-width: 36rem;
+    }
+
+    .mp-join {
+      margin: 1.5rem 0;
+      padding: 1rem 1.1rem;
+      background: var(--mp-card);
+      border: 1px solid var(--mp-line);
+      border-radius: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+    }
+    .mp-join label {
+      width: 100%;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--mp-muted);
+    }
+    .mp-join input {
+      flex: 1;
+      min-width: 140px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--mp-line);
+      border-radius: 12px;
+      color: var(--mp-text);
+      font-family: Orbitron, monospace;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 0.7rem 0.85rem;
+    }
+    .mp-join button {
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: #fff;
+      font-family: inherit;
+      font-weight: 800;
+      padding: 0.7rem 1.2rem;
+      cursor: pointer;
+    }
+    .mp-join button:hover { filter: brightness(1.08); }
+
+    .mp-section-title {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mp-muted);
+      margin: 1.75rem 0 0.85rem;
+    }
+
+    .mp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .mp-card {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      background: var(--mp-card);
+      border: 1px solid var(--mp-line);
+      border-radius: 18px;
+      padding: 1.15rem 1.2rem 1.25rem;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      min-height: 150px;
+    }
+    .mp-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(167, 139, 250, 0.45);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    }
+    .mp-card-tag {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--mp-accent2);
+      background: rgba(56, 189, 248, 0.12);
+      padding: 0.25rem 0.5rem;
+      border-radius: 999px;
+      margin-bottom: 0.65rem;
+    }
+    .mp-card h2 {
+      font-family: Orbitron, "Exo 2", sans-serif;
+      font-size: 1.05rem;
+      margin: 0 0 0.4rem;
+      letter-spacing: 0.03em;
+      line-height: 1.25;
+    }
+    .mp-card p {
+      margin: 0;
+      flex: 1;
+      font-size: 0.9rem;
+      color: var(--mp-muted);
+      line-height: 1.45;
+    }
+    .mp-card-cta {
+      margin-top: 1rem;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--mp-accent);
+    }
+    .mp-card.is-soon {
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .mp-card.is-soon .mp-card-cta { color: var(--mp-muted); }
+
+    .mp-note {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: var(--mp-muted);
+      line-height: 1.5;
+    }
+    .mp-note a { color: var(--mp-accent2); }
+  </style>
+</head>
+<body class="mp-hub">
+  <div class="mp-wrap">
+    <div class="mp-top">
+      <a class="mp-back" href="/">← Home</a>
+      <span class="mp-badge">Multiplayer</span>
+    </div>
+
+    <header class="mp-hero">
+      <h1>Play together</h1>
+      <p>Create a room, share the link, and race a friend. Same questions, live scores — only games built for multiplayer are listed here.</p>
+    </header>
+
+    <section class="mp-join" aria-label="Join with a room code">
+      <label for="joinCode">Have a room code?</label>
+      <input id="joinCode" type="text" maxlength="8" placeholder="ABC123" autocomplete="off" />
+      <button type="button" id="joinBtn">Join</button>
+    </section>
+
+    <h2 class="mp-section-title">Available now</h2>
+    <div class="mp-grid" id="gameGrid">
+      <!-- A or An — live -->
+      <a class="mp-card" id="card-a-an" href="/resources/american-english-file/starter/unit-3/a/games/a-an-swipe/">
+        <span class="mp-card-tag">Starter · Unit 3A</span>
+        <h2>A or An Swipe</h2>
+        <p>Swipe each word to <b>a</b> or <b>an</b>. Same cards for everyone — fastest accurate answers win.</p>
+        <span class="mp-card-cta">Open game →</span>
+      </a>
+    </div>
+
+    <h2 class="mp-section-title">Coming next</h2>
+    <div class="mp-grid">
+      <div class="mp-card is-soon">
+        <span class="mp-card-tag">Starter</span>
+        <h2>Adj / Adv Swipe</h2>
+        <p>Same swipe race — adjectives vs adverbs.</p>
+        <span class="mp-card-cta">Soon</span>
+      </div>
+      <div class="mp-card is-soon">
+        <span class="mp-card-tag">Grammar</span>
+        <h2>Am / Is / Are</h2>
+        <p>Pick the correct form — live rounds.</p>
+        <span class="mp-card-cta">Soon</span>
+      </div>
+      <div class="mp-card is-soon">
+        <span class="mp-card-tag">Vocabulary</span>
+        <h2>Spelling Bee</h2>
+        <p>Hear or see the word — type it before time runs out.</p>
+        <span class="mp-card-cta">Soon</span>
+      </div>
+    </div>
+
+    <p class="mp-note">
+      You need to be <a href="/learningarcade/auth-system/login.html?redirect=/multiplayer/">logged in</a> to create or join a room.
+      Free multiplayer server may take a few seconds to wake up if it was sleeping.
+    </p>
+  </div>
+
+  <script>
+    (function () {
+      // Default: A or An game handles ?room= when opened
+      var GAME_JOIN = {
+        // When we have multiple games, map codes via server or ask user which game.
+        // For now all rooms are A or An — join sends player to that game with ?room=
+        default: "/resources/american-english-file/starter/unit-3/a/games/a-an-swipe/"
+      };
+
+      var input = document.getElementById("joinCode");
+      var btn = document.getElementById("joinBtn");
+
+      function go() {
+        var code = (input.value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+        if (code.length < 4) {
+          input.focus();
+          return;
+        }
+        var base = GAME_JOIN.default;
+        var url = base + (base.indexOf("?") >= 0 ? "&" : "?") + "room=" + encodeURIComponent(code);
+        location.href = url;
+      }
+
+      btn.addEventListener("click", go);
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") go();
+      });
+    })();
+  </script>
+</body>
+</html>
