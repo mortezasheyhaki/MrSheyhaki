@@ -1,0 +1,270 @@
+/* Movie Genres — Unit 7B · no-scroll shell */
+html, body.mg-page {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+body.mg-page {
+  font-family: "Exo 2", system-ui, sans-serif;
+  color: #e8eefc;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124, 58, 237, 0.28), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(236, 72, 153, 0.12), transparent 45%),
+    #070b16;
+}
+
+.mg-shell {
+  height: 100dvh;
+  height: 100svh;
+  max-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: max(0.55rem, env(safe-area-inset-top)) 1rem max(0.75rem, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.mg-back {
+  align-self: flex-start;
+  color: rgba(226, 232, 240, 0.7);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+  flex: 0 0 auto;
+}
+.mg-back:hover { color: #fff; }
+
+.mg-top {
+  flex: 0 0 auto;
+  margin-bottom: 0.55rem;
+}
+.mg-progress-wrap {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.mg-progress {
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #a78bfa, #ec4899);
+  transition: width 0.4s cubic-bezier(.22,1,.36,1);
+}
+.mg-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(226, 232, 240, 0.65);
+}
+
+.mg-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.mg-prompt-label {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #67e8f9;
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.mg-card {
+  flex: 0 1 auto;
+  background: rgba(18, 22, 40, 0.92);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 18px;
+  padding: 1.1rem 1.15rem;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 5.5rem;
+  max-height: 38%;
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(.22,1,.36,1), opacity 0.35s ease;
+}
+.mg-card.is-out {
+  opacity: 0;
+  transform: translateY(-12px) scale(0.98);
+}
+.mg-card.is-in {
+  animation: mgIn 0.4s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes mgIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+.mg-sentence {
+  margin: 0;
+  font-size: clamp(0.98rem, 2.8vw, 1.2rem);
+  line-height: 1.45;
+  font-weight: 700;
+  text-align: center;
+  color: #f8fafc;
+}
+
+.mg-feedback {
+  margin: 0;
+  min-height: 1.25rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex: 0 0 auto;
+  transition: opacity 0.2s;
+}
+.mg-feedback.ok { color: #34d399; }
+.mg-feedback.bad { color: #f87171; }
+
+.mg-chips {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0 0.25rem;
+  overflow: hidden;
+}
+
+.mg-chip {
+  appearance: none;
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  background: linear-gradient(165deg, rgba(91, 33, 182, 0.35), rgba(30, 27, 54, 0.9));
+  color: #f1eaff;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: clamp(0.78rem, 2.4vw, 0.92rem);
+  padding: 0.65rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: opacity 0.35s ease, transform 0.15s ease, border-color 0.15s, filter 0.2s;
+  box-shadow: 0 4px 14px rgba(76, 29, 149, 0.25);
+  max-width: 100%;
+}
+.mg-chip:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: rgba(236, 72, 153, 0.55);
+  filter: brightness(1.08);
+}
+.mg-chip:active:not(:disabled) { transform: scale(0.97); }
+.mg-chip:disabled {
+  cursor: default;
+}
+.mg-chip.used {
+  opacity: 0.28;
+  filter: grayscale(0.4);
+  transform: none;
+  box-shadow: none;
+}
+.mg-chip.correct-flash {
+  border-color: #34d399;
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.35);
+}
+.mg-chip.wrong-flash {
+  border-color: #f87171;
+  animation: mgShake 0.4s ease;
+}
+@keyframes mgShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Overlay */
+.mg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(5, 8, 18, 0.72);
+  backdrop-filter: blur(8px);
+  box-sizing: border-box;
+}
+.mg-overlay.hidden { display: none; }
+.mg-panel {
+  width: min(100%, 360px);
+  background: linear-gradient(165deg, #1a1530, #0f1220);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 22px;
+  padding: 1.4rem 1.25rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+  box-sizing: border-box;
+}
+.mg-panel-back {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  color: rgba(226,232,240,0.7);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.mg-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  margin-bottom: 0.55rem;
+}
+.mg-panel h1 {
+  font-family: Orbitron, "Exo 2", sans-serif;
+  font-size: 1.35rem;
+  margin: 0 0 0.45rem;
+  letter-spacing: 0.04em;
+}
+.mg-panel p {
+  margin: 0 0 1.15rem;
+  color: rgba(226,232,240,0.75);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+.mg-btn {
+  width: 100%;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  color: #fff;
+  padding: 0.85rem 1rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #8b5cf6, #db2777);
+  box-shadow: 0 8px 24px rgba(219, 39, 119, 0.3);
+}
+.mg-btn:hover { filter: brightness(1.06); }
+
+@media (max-height: 640px) {
+  .mg-card { padding: 0.85rem 1rem; min-height: 4.2rem; }
+  .mg-sentence { font-size: 0.95rem; }
+  .mg-chip { padding: 0.55rem 0.75rem; font-size: 0.8rem; }
+  .mg-chips { gap: 0.4rem; }
+}
+@media (max-width: 380px) {
+  .mg-shell { padding-left: 0.75rem; padding-right: 0.75rem; }
+  .mg-chip { font-size: 0.76rem; padding: 0.55rem 0.7rem; }
+}
