@@ -1,50 +1,71 @@
-/* Homepage section cards: one row of tall cards on desktop,
-   square cards with icon + very short text on phones. Text is unchanged. */
+/* =========================================================
+   Homepage cards — 3-column grid (fixes style.css conflicts)
+   Loaded after style.css so these rules win where needed.
+   ========================================================= */
 
+/* Kill the old "center last odd card" rule (About full-width bug) */
+body.home-page .hub-main .hub-cards.hub-cards--2col .hub-card:last-child:nth-child(odd),
+body.home-page .hub-cards--2col .hub-card:last-child:nth-child(odd),
+.hub-cards--2col .hub-card:last-child:nth-child(odd) {
+  grid-column: auto !important;
+  max-width: none !important;
+  justify-self: stretch !important;
+  width: auto !important;
+}
+
+/* Force 3 columns on desktop */
+body.home-page .hub-main .hub-cards.hub-cards--2col,
+body.home-page .hub-cards.hub-cards--2col,
 .hub-main .hub-cards.hub-cards--2col {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  width: min(1180px, 100%);
-  max-width: 1180px;
-  margin: 26px auto 0;
-  padding: 0 16px;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-rows: none !important;
+  gap: 18px !important;
+  width: min(920px, 100%) !important;
+  max-width: 920px !important;
+  margin: 26px auto 0 !important;
+  padding: 0 16px !important;
   box-sizing: border-box;
 }
 
+body.home-page .hub-main .hub-cards--2col .hub-card,
 .hub-main .hub-cards--2col .hub-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  text-align: center;
-  aspect-ratio: 1 / 1;
-  height: auto;
-  min-height: 0;
-  max-height: none;
-  padding: 16px 14px 14px;
-  border-radius: 24px;
-  gap: 0;
-  box-sizing: border-box;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  text-align: center !important;
+  aspect-ratio: 1 / 1 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  height: auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  padding: 18px 14px 14px !important;
+  border-radius: 24px !important;
+  box-sizing: border-box !important;
+  grid-column: auto !important;
 }
 
 .hub-main .hub-cards--2col .hub-card-icon {
   width: 52px !important;
   height: 52px !important;
   border-radius: 16px !important;
-  margin-bottom: 10px;
+  margin-bottom: 10px !important;
   flex: 0 0 auto;
   display: grid;
   place-items: center;
 }
-.hub-main .hub-cards--2col .hub-card-icon svg { width: 30px; height: 30px; }
+.hub-main .hub-cards--2col .hub-card-icon svg {
+  width: 30px !important;
+  height: 30px !important;
+}
 
 .hub-main .hub-cards--2col .hub-card h2 {
-  margin: 0;
-  font-size: clamp(.78rem, 1vw, .9rem);
-  line-height: 1.25;
-  letter-spacing: .08em;
-  white-space: normal;
+  margin: 0 !important;
+  font-size: clamp(0.75rem, 1.1vw, 0.9rem) !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0.06em !important;
 }
 
 .hub-main .hub-cards--2col .hub-card-rule {
@@ -52,71 +73,139 @@
   width: 28px;
   height: 3px;
   border-radius: 3px;
-  margin: 6px auto 8px;
+  margin: 6px auto 8px !important;
 }
 
 .hub-main .hub-cards--2col .hub-card p {
-  margin: 0 0 8px;
-  font-size: .76rem;
-  line-height: 1.38;
-  max-width: 100%;
+  margin: 0 0 8px !important;
+  font-size: 0.74rem !important;
+  line-height: 1.35 !important;
   flex: 1 1 auto;
 }
 
 .hub-main .hub-cards--2col .hub-card-btn {
-  padding: 6px 14px;
+  padding: 6px 14px !important;
   border-radius: 999px;
-  white-space: nowrap;
-  font-size: .72rem;
+  font-size: 0.7rem !important;
 }
 
-/* short text is only for phones */
-.hub-main .hub-cards--2col .hub-card-short { display: none; }
+.hub-main .hub-cards--2col .hub-card-short { display: none !important; }
 
-/* ---------- phones: 2 × 2 square cards ---------- */
+/* Multiplayer card accent (matches other hub cards) */
+.hub-card--multiplayer {
+  border-color: #ddd6fe;
+  background: linear-gradient(165deg, #f5f3ff 0%, #ffffff 55%);
+  box-shadow: 0 10px 28px rgba(124, 58, 237, 0.1);
+}
+.hub-card--multiplayer .hub-card-icon {
+  background: rgba(124, 58, 237, 0.12);
+  color: #7c3aed;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.15);
+}
+.hub-card--multiplayer .hub-card-rule {
+  background: linear-gradient(90deg, #a78bfa, #7c3aed);
+}
+.hub-card--multiplayer .hub-card-btn {
+  color: #fff !important;
+  border: none !important;
+  background: linear-gradient(180deg, #8b5cf6, #6d28d9) !important;
+  box-shadow: 0 4px 0 #5b21b6, 0 8px 18px rgba(109, 40, 217, 0.3) !important;
+}
+.hub-card--multiplayer:hover {
+  border-color: #c4b5fd;
+  box-shadow: 0 16px 40px rgba(124, 58, 237, 0.18);
+}
+
+html[data-theme="dark"] .hub-card--multiplayer {
+  border-color: rgba(167, 139, 250, 0.35);
+  background: linear-gradient(165deg, rgba(124, 58, 237, 0.14), rgba(15, 18, 32, 0.92) 50%);
+}
+html[data-theme="dark"] .hub-card--multiplayer .hub-card-icon {
+  background: rgba(167, 139, 250, 0.15);
+  color: #c4b5fd;
+}
+html[data-theme="dark"] .hub-card--multiplayer .hub-card-rule {
+  background: linear-gradient(90deg, #c4b5fd, #a78bfa);
+}
+
+/* Phones: 2 columns */
 @media (max-width: 719px) {
+  body.home-page .hub-main .hub-cards.hub-cards--2col,
+  body.home-page .hub-cards.hub-cards--2col,
   .hub-main .hub-cards.hub-cards--2col {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    padding: 0 12px;
-    margin-top: 18px;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    max-width: 100% !important;
+    padding: 0 12px !important;
+    margin-top: 18px !important;
   }
   .hub-main .hub-cards--2col .hub-card {
-    aspect-ratio: 1 / 1;
-    min-height: 0;
-    padding: 12px 10px;
-    justify-content: center;
-    gap: 6px;
-    border-radius: 20px;
+    padding: 12px 10px !important;
+    justify-content: center !important;
   }
-  .hub-main .hub-cards--2col .hub-card-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 16px;
-    margin-bottom: 0;
-  }
-  .hub-main .hub-cards--2col .hub-card-icon svg { width: 30px; height: 30px; }
-  .hub-main .hub-cards--2col .hub-card h2 {
-    font-size: .72rem;
-    letter-spacing: .06em;
-  }
-  .hub-main .hub-cards--2col .hub-card-rule { margin: 4px auto 0; width: 26px; }
   .hub-main .hub-cards--2col .hub-card p,
-  .hub-main .hub-cards--2col .hub-card-btn { display: none; }
+  .hub-main .hub-cards--2col .hub-card-btn {
+    display: none !important;
+  }
   .hub-main .hub-cards--2col .hub-card-short {
-    display: block;
-    font-size: .78rem;
+    display: block !important;
+    font-size: 0.78rem;
     font-weight: 600;
-    opacity: .8;
+    opacity: 0.8;
     margin-top: 2px;
   }
 }
 
-@media (max-width: 380px) {
-  .hub-main .hub-cards--2col .hub-card h2 { font-size: .66rem; }
-  .hub-main .hub-cards--2col .hub-card-short { font-size: .72rem; }
+/* —— Multiplayer: violet (same system as Arcade / Resources / About) —— */
+body.home-page .hub-card--multiplayer {
+  border-color: rgba(139, 92, 246, 0.42) !important;
+  background:
+    linear-gradient(160deg, rgba(237, 233, 254, 0.95) 0%, rgba(221, 214, 254, 0.7) 42%, rgba(245, 243, 255, 0.92) 100%) !important;
+  box-shadow:
+    0 14px 36px rgba(124, 58, 237, 0.15),
+    0 0 0 1px rgba(167, 139, 250, 0.14) inset !important;
+}
+body.home-page .hub-card--multiplayer::before {
+  background: linear-gradient(90deg, #c4b5fd, #8b5cf6, #6d28d9) !important;
+}
+body.home-page .hub-card--multiplayer .hub-card-icon {
+  background: linear-gradient(145deg, #ede9fe, #c4b5fd) !important;
+  color: #6d28d9 !important;
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.28) !important;
+}
+body.home-page .hub-card--multiplayer .hub-card-rule {
+  background: #8b5cf6 !important;
+}
+body.home-page .hub-card--multiplayer .hub-card-btn {
+  color: #fff !important;
+  border: none !important;
+  background: linear-gradient(180deg, #a78bfa, #7c3aed) !important;
+  box-shadow: 0 4px 0 #5b21b6, 0 10px 22px rgba(124, 58, 237, 0.32) !important;
+}
+body.home-page .hub-card--multiplayer:hover {
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 20px 48px rgba(124, 58, 237, 0.24), 0 0 40px rgba(124, 58, 237, 0.1) !important;
+}
+body.home-page .hub-card--multiplayer:hover .hub-card-btn {
+  background: linear-gradient(180deg, #8b5cf6, #6d28d9) !important;
+  filter: brightness(1.03);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hub-main .hub-cards--2col .hub-card { transition: none; }
+html[data-theme="dark"] body.home-page .hub-card--multiplayer {
+  border-color: rgba(167, 139, 250, 0.4) !important;
+  background:
+    linear-gradient(160deg, rgba(91, 33, 182, 0.35) 0%, rgba(15, 18, 32, 0.92) 55%) !important;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.4), 0 0 28px rgba(139, 92, 246, 0.12) !important;
+}
+html[data-theme="dark"] body.home-page .hub-card--multiplayer .hub-card-icon {
+  background: rgba(167, 139, 250, 0.18) !important;
+  color: #c4b5fd !important;
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.25) !important;
+}
+html[data-theme="dark"] body.home-page .hub-card--multiplayer .hub-card-rule {
+  background: #a78bfa !important;
+}
+html[data-theme="dark"] body.home-page .hub-card--multiplayer .hub-card-btn {
+  background: linear-gradient(180deg, #a78bfa, #7c3aed) !important;
+  box-shadow: 0 4px 0 #5b21b6, 0 10px 22px rgba(124, 58, 237, 0.35) !important;
 }

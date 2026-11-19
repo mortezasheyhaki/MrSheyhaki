@@ -5,367 +5,485 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Multiplayer · Play together | Mr. Sheyhaki</title>
   <meta name="description" content="Play English games with friends. Create a room, share a link, and compete with live scores." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,500&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/theme.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,500;0,9..40,600;0,9..40,700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <style>
-    /* Self-contained professional hub — works even if theme differs */
-    .mpv2 {
-      --bg: #0b0f1a;
-      --bg2: #121826;
-      --surface: #161d2e;
-      --surface2: #1c2538;
-      --border: rgba(255,255,255,0.07);
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --faint: #64748b;
-      --violet: #8b5cf6;
-      --violet2: #a78bfa;
-      --cyan: #22d3ee;
-      --green: #34d399;
-      --radius: 20px;
-      font-family: "DM Sans", system-ui, sans-serif;
-      color: var(--text);
-      background: var(--bg);
+    body.mp-page {
+      margin: 0;
       min-height: 100dvh;
+      font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+      color: var(--site-text);
+      background: var(--site-bg);
+      -webkit-font-smoothing: antialiased;
     }
-    .mpv2 * { box-sizing: border-box; }
-    .mpv2 a { color: inherit; }
-
-    .mpv2-bg {
-      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    body.mp-page::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
       background:
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.22), transparent 50%),
-        radial-gradient(ellipse 50% 40% at 100% 0%, rgba(34, 211, 238, 0.08), transparent 45%),
-        radial-gradient(ellipse 40% 30% at 0% 100%, rgba(139, 92, 246, 0.1), transparent 40%),
-        var(--bg);
+        radial-gradient(ellipse 70% 45% at 50% -15%, var(--site-glow-a), transparent 55%),
+        radial-gradient(ellipse 40% 30% at 100% 10%, var(--site-glow-b), transparent 50%),
+        radial-gradient(ellipse 35% 25% at 0% 80%, var(--site-glow-c), transparent 45%);
     }
 
-    .mpv2-shell {
-      position: relative; z-index: 1;
-      max-width: 1080px;
+    /* Clear fixed arcade header */
+    .mp-page .mp-shell {
+      position: relative;
+      z-index: 1;
+      width: min(960px, 100%);
       margin: 0 auto;
-      padding: 1.25rem 1.25rem 4rem;
-    }
-
-    /* Nav row */
-    .mpv2-nav {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 1rem; margin-bottom: 2.5rem;
-    }
-    .mpv2-nav a.back {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      text-decoration: none; font-weight: 600; font-size: 0.9rem;
-      color: var(--muted); padding: 0.45rem 0.7rem; border-radius: 10px;
-      transition: color .15s, background .15s;
-    }
-    .mpv2-nav a.back:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .mpv2-pill {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--violet2);
-      background: rgba(139, 92, 246, 0.15);
-      border: 1px solid rgba(139, 92, 246, 0.25);
-      padding: 0.35rem 0.75rem; border-radius: 999px;
+      padding: 6.25rem 1.25rem 3.5rem;
+      box-sizing: border-box;
     }
 
     /* Hero */
-    .mpv2-hero {
+    .mp-hero {
       text-align: center;
-      max-width: 640px;
-      margin: 0 auto 2.25rem;
+      max-width: 34rem;
+      margin: 0 auto 1.75rem;
     }
-    .mpv2-hero .eyebrow {
-      display: inline-flex; align-items: center; gap: 0.45rem;
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--cyan);
-      margin-bottom: 0.85rem;
+    .mp-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #0891b2;
+      margin-bottom: 0.65rem;
     }
-    .mpv2-hero .eyebrow::before {
-      content: ""; width: 6px; height: 6px; border-radius: 50%;
-      background: var(--green); box-shadow: 0 0 10px var(--green);
+    html[data-theme="dark"] .mp-eyebrow { color: #22d3ee; }
+    .mp-eyebrow i {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #22c55e; box-shadow: 0 0 8px #22c55e;
+      font-style: normal; flex-shrink: 0;
     }
-    .mpv2-hero h1 {
+    .mp-hero h1 {
       font-family: Syne, "DM Sans", sans-serif;
       font-weight: 800;
-      font-size: clamp(2rem, 5vw, 2.75rem);
-      line-height: 1.1;
-      margin: 0 0 0.75rem;
+      font-size: clamp(1.75rem, 4.5vw, 2.35rem);
+      line-height: 1.15;
       letter-spacing: -0.03em;
+      margin: 0 0 0.6rem;
+      color: var(--site-text);
     }
-    .mpv2-hero h1 span {
-      background: linear-gradient(135deg, #fff 30%, var(--violet2));
-      -webkit-background-clip: text; background-clip: text;
+    .mp-hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, #7c3aed 10%, #ec4899 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
       color: transparent;
     }
-    .mpv2-hero p {
+    html[data-theme="dark"] .mp-hero h1 em {
+      background: linear-gradient(135deg, #c4b5fd, #f9a8d4);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    .mp-hero p {
       margin: 0 auto;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      color: var(--muted);
-      max-width: 32rem;
+      max-width: 28rem;
+      font-size: clamp(0.92rem, 2.2vw, 1.02rem);
+      line-height: 1.55;
+      color: var(--site-muted);
+      font-weight: 500;
     }
 
-    /* Join strip */
-    .mpv2-join {
-      display: flex; flex-wrap: wrap; align-items: stretch; gap: 0.65rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 0.65rem;
-      max-width: 520px;
-      margin: 0 auto 2.75rem;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    /* Join bar */
+    .mp-join {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0.5rem;
+      align-items: stretch;
+      width: min(100%, 400px);
+      margin: 0 auto 2.25rem;
+      padding: 0.4rem;
+      background: var(--site-surface);
+      border: 1px solid var(--site-border);
+      border-radius: 14px;
+      box-shadow: 0 10px 28px var(--site-shadow);
+      box-sizing: border-box;
     }
-    .mpv2-join input {
-      flex: 1; min-width: 140px;
-      border: 0; outline: none;
-      background: var(--bg2);
-      border-radius: 12px;
-      color: var(--text);
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    .mp-join input {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: auto;
+      border: 0;
+      outline: none;
+      background: var(--site-surface-2);
+      border-radius: 10px;
+      color: var(--site-text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-weight: 700;
-      font-size: 1rem;
-      letter-spacing: 0.2em;
+      font-size: 0.9rem;
+      letter-spacing: 0.14em;
       text-align: center;
       text-transform: uppercase;
-      padding: 0.85rem 1rem;
+      padding: 0.75rem 0.65rem;
     }
-    .mpv2-join input::placeholder {
-      letter-spacing: 0.06em;
+    .mp-join input::placeholder {
+      letter-spacing: 0.02em;
       text-transform: none;
       font-weight: 500;
-      color: var(--faint);
+      font-size: 0.85rem;
+      color: var(--site-muted);
+      opacity: 0.8;
     }
-    .mpv2-join button {
-      border: 0; cursor: pointer;
-      border-radius: 12px;
-      padding: 0.85rem 1.35rem;
+    .mp-join button {
+      flex: 0 0 auto;
+      border: 0;
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
       font-family: inherit;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.88rem;
+      white-space: nowrap;
       color: #fff;
-      background: linear-gradient(135deg, #7c3aed, #6d28d9);
-      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
-      transition: transform .12s, filter .12s;
+      background: linear-gradient(135deg, #ec4899, #db2777);
+      box-shadow: 0 4px 14px rgba(219, 39, 119, 0.28);
+      transition: transform 0.12s, filter 0.12s;
     }
-    .mpv2-join button:hover { filter: brightness(1.08); transform: translateY(-1px); }
-    .mpv2-join button:active { transform: translateY(0); }
+    .mp-join button:hover { filter: brightness(1.05); transform: translateY(-1px); }
+    .mp-join button:active { transform: translateY(0); }
 
-    /* Sections */
-    .mpv2-label {
-      display: flex; align-items: center; gap: 0.75rem;
-      font-size: 0.72rem; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--faint);
-      margin: 0 0 1rem;
+    /* Section labels */
+    .mp-label {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--site-muted);
+      margin: 0 0 0.75rem;
     }
-    .mpv2-label::after {
-      content: ""; flex: 1; height: 1px;
-      background: linear-gradient(90deg, var(--border), transparent);
-    }
-
-    .mpv2-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2.5rem;
-    }
-
-    /* Game card */
-    .mpv2-card {
-      position: relative;
-      display: flex; flex-direction: column;
-      text-decoration: none;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.35rem 1.35rem 1.25rem;
-      overflow: hidden;
-      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-    }
-    .mpv2-card::before {
+    .mp-label::after {
       content: "";
-      position: absolute; inset: 0;
-      background: linear-gradient(145deg, rgba(139,92,246,0.12), transparent 42%);
-      opacity: 0; transition: opacity .18s;
+      flex: 1;
+      height: 1px;
+      background: var(--site-border);
     }
-    .mpv2-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(139, 92, 246, 0.4);
-      box-shadow: 0 16px 48px rgba(0,0,0,0.35);
-    }
-    .mpv2-card:hover::before { opacity: 1; }
-    .mpv2-card > * { position: relative; z-index: 1; }
 
-    .mpv2-card-top {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 0.5rem; margin-bottom: 1rem;
+    /* Cards grid */
+    .mp-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+      margin-bottom: 2rem;
     }
-    .mpv2-tag {
-      font-size: 0.68rem; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--cyan);
+
+    .mp-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      background: var(--site-surface);
+      border: 1px solid var(--site-border);
+      border-radius: 16px;
+      padding: 1.1rem 1.1rem 1rem;
+      box-shadow: 0 6px 22px var(--site-shadow);
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      overflow: hidden;
+      min-width: 0;
+    }
+    .mp-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #f9a8d4, #ec4899, #db2777);
+      opacity: 0.9;
+    }
+    a.mp-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(236, 72, 153, 0.35);
+      box-shadow: 0 14px 36px var(--site-shadow);
+    }
+
+    .mp-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.4rem;
+      margin-bottom: 0.7rem;
+      flex-wrap: wrap;
+    }
+    .mp-tag {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #0e7490;
+      background: rgba(14, 116, 144, 0.1);
+      border: 1px solid rgba(14, 116, 144, 0.16);
+      padding: 0.22rem 0.45rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    html[data-theme="dark"] .mp-tag {
+      color: #22d3ee;
       background: rgba(34, 211, 238, 0.1);
-      border: 1px solid rgba(34, 211, 238, 0.2);
-      padding: 0.28rem 0.55rem; border-radius: 999px;
+      border-color: rgba(34, 211, 238, 0.2);
     }
-    .mpv2-live {
-      display: inline-flex; align-items: center; gap: 0.35rem;
-      font-size: 0.68rem; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--green);
+    .mp-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #16a34a;
     }
-    .mpv2-live i {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 8px var(--green);
-      font-style: normal;
+    html[data-theme="dark"] .mp-live { color: #34d399; }
+    .mp-live i {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: currentColor; box-shadow: 0 0 6px currentColor;
+      font-style: normal; flex-shrink: 0;
     }
-    .mpv2-card h2 {
-      font-family: Syne, sans-serif;
-      font-size: 1.25rem; font-weight: 800;
-      margin: 0 0 0.5rem;
+
+    .mp-card h2 {
+      font-family: Syne, "DM Sans", sans-serif;
+      font-size: clamp(1rem, 2.5vw, 1.12rem);
+      font-weight: 800;
+      margin: 0 0 0.35rem;
       letter-spacing: -0.02em;
+      line-height: 1.25;
+      color: var(--site-text);
+      word-wrap: break-word;
     }
-    .mpv2-card p {
+    .mp-card p {
       margin: 0;
       flex: 1;
-      font-size: 0.92rem;
-      line-height: 1.55;
-      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.5;
+      color: var(--site-muted);
+      font-weight: 500;
     }
-    .mpv2-card-foot {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-top: 1.25rem; padding-top: 1rem;
-      border-top: 1px solid var(--border);
+    .mp-card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 0.95rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--site-border);
     }
-    .mpv2-cta {
-      font-weight: 700; font-size: 0.9rem; color: var(--violet2);
-      display: inline-flex; align-items: center; gap: 0.35rem;
+    .mp-cta {
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: #db2777;
+      white-space: nowrap;
     }
-    .mpv2-card:hover .mpv2-cta { color: #c4b5fd; }
-    .mpv2-meta { font-size: 0.78rem; color: var(--faint); font-weight: 600; }
-
-    /* Soon cards */
-    .mpv2-card.soon {
-      opacity: 0.5;
-      pointer-events: none;
-      background: var(--bg2);
-    }
-    .mpv2-card.soon .mpv2-tag {
-      color: var(--faint);
-      background: rgba(255,255,255,0.04);
-      border-color: var(--border);
-    }
-    .mpv2-card.soon h2 { color: var(--muted); }
-    .mpv2-card.soon .mpv2-cta { color: var(--faint); }
-    .mpv2-card.soon::before { display: none; }
-
-    /* Footer note */
-    .mpv2-note {
-      text-align: center;
-      font-size: 0.88rem;
-      color: var(--faint);
-      line-height: 1.55;
-      max-width: 420px;
-      margin: 0 auto;
-    }
-    .mpv2-note a {
-      color: var(--violet2);
+    html[data-theme="dark"] .mp-cta { color: #f9a8d4; }
+    .mp-meta {
+      font-size: 0.72rem;
       font-weight: 600;
-      text-decoration: none;
-      border-bottom: 1px solid rgba(167, 139, 250, 0.35);
+      color: var(--site-muted);
+      white-space: nowrap;
     }
-    .mpv2-note a:hover { color: #c4b5fd; }
 
-    @media (max-width: 560px) {
-      .mpv2-shell { padding: 1rem 1rem 3rem; }
-      .mpv2-hero { margin-bottom: 1.75rem; }
-      .mpv2-join { margin-bottom: 2rem; }
+    .mp-card.soon {
+      opacity: 0.52;
+      pointer-events: none;
+      box-shadow: none;
+    }
+    .mp-card.soon::before {
+      background: var(--site-border);
+      opacity: 1;
+    }
+    .mp-card.soon .mp-cta { color: var(--site-muted); }
+
+    /* Available now: single card shouldn't stretch full 3-col */
+    .mp-grid--live {
+      grid-template-columns: minmax(0, 340px);
+      justify-content: start;
+    }
+
+    .mp-note {
+      text-align: center;
+      font-size: 0.84rem;
+      color: var(--site-muted);
+      line-height: 1.55;
+      max-width: 22rem;
+      margin: 0 auto;
+      font-weight: 500;
+    }
+    .mp-note a {
+      color: #db2777;
+      font-weight: 700;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(219, 39, 119, 0.35);
+    }
+    html[data-theme="dark"] .mp-note a {
+      color: #f9a8d4;
+      border-bottom-color: rgba(249, 168, 212, 0.35);
+    }
+
+    /* —— Tablet —— */
+    @media (max-width: 860px) {
+      .mp-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .mp-grid--live {
+        grid-template-columns: minmax(0, 1fr);
+        max-width: 360px;
+      }
+    }
+
+    /* —— Mobile —— */
+    @media (max-width: 600px) {
+      .mp-page .mp-shell {
+        padding: 5.5rem 1rem 2.75rem;
+        padding-bottom: max(2.75rem, env(safe-area-inset-bottom));
+      }
+      .mp-hero {
+        margin-bottom: 1.35rem;
+      }
+      .mp-hero h1 {
+        font-size: 1.65rem;
+      }
+      .mp-hero p {
+        font-size: 0.9rem;
+        max-width: 100%;
+      }
+      .mp-join {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 1.75rem;
+        flex-wrap: wrap;
+      }
+      .mp-join input {
+        flex: 1 1 100%;
+        letter-spacing: 0.12em;
+        font-size: 0.95rem;
+        padding: 0.85rem 0.75rem;
+      }
+      .mp-join button {
+        flex: 1 1 100%;
+        padding: 0.85rem 1rem;
+        font-size: 0.92rem;
+      }
+      .mp-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+      .mp-grid--live {
+        max-width: none;
+        grid-template-columns: 1fr;
+      }
+      .mp-card {
+        padding: 1rem 1rem 0.95rem;
+      }
+      .mp-card h2 {
+        font-size: 1.05rem;
+      }
+      .mp-card p {
+        font-size: 0.86rem;
+      }
+      .mp-label {
+        margin-bottom: 0.65rem;
+      }
+      .mp-note {
+        font-size: 0.82rem;
+        max-width: 100%;
+        padding: 0 0.25rem;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .mp-hero h1 { font-size: 1.45rem; }
+      .mp-card-foot { flex-wrap: wrap; }
     }
   </style>
 </head>
-<body class="mpv2">
-  <div class="mpv2-bg" aria-hidden="true"></div>
-  <div class="mpv2-shell">
-    <div class="mpv2-nav">
-      <a class="back" href="/">← Home</a>
-      <span class="mpv2-pill">Multiplayer</span>
-    </div>
+<body class="mp-page home-page">
 
-    <header class="mpv2-hero">
-      <div class="eyebrow">Live with friends</div>
-      <h1>Play <span>together</span></h1>
-      <p>Create a room, share the link, and compete on the same questions. Built for real-time English practice.</p>
+  <header class="arcade-header-bar">
+    <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
+      <a href="/" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
+      <a href="/learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
+      <a href="/multiplayer/" class="nav-link active" aria-current="page" aria-label="Multiplayer" data-icon="👥"><span class="nav-ico" aria-hidden="true">👥</span><span class="nav-text">Multiplayer</span></a>
+      <a href="/resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
+      <a href="/about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
+      <a href="/learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+    </nav>
+  </header>
+
+  <div class="mp-shell">
+    <header class="mp-hero">
+      <div class="mp-eyebrow"><i></i> Live with friends</div>
+      <h1>Play <em>together</em></h1>
+      <p>Create a room, share the link, and compete on the same questions — real-time English practice.</p>
     </header>
 
-    <div class="mpv2-join" role="search">
-      <input id="joinCode" type="text" maxlength="8" placeholder="Enter room code" autocomplete="off" aria-label="Room code" />
+    <div class="mp-join" role="search">
+      <input id="joinCode" type="text" maxlength="8" placeholder="Enter room code" autocomplete="off" enterkeyhint="go" aria-label="Room code" />
       <button type="button" id="joinBtn">Join room</button>
     </div>
 
-    <div class="mpv2-label">Available now</div>
-    <div class="mpv2-grid">
-      <a class="mpv2-card" href="/resources/american-english-file/starter/unit-3/a/games/a-an-swipe/">
-        <div class="mpv2-card-top">
-          <span class="mpv2-tag">Starter · Unit 3A</span>
-          <span class="mpv2-live"><i></i> Live</span>
+    <div class="mp-label">Available now</div>
+    <div class="mp-grid mp-grid--live">
+      <a class="mp-card" href="/resources/american-english-file/starter/unit-3/a/games/a-an-swipe/">
+        <div class="mp-card-top">
+          <span class="mp-tag">Starter · Unit 3A</span>
+          <span class="mp-live"><i></i> Live</span>
         </div>
         <h2>A or An Swipe</h2>
-        <p>Swipe each word to the correct article. Everyone gets the same cards — accuracy and speed decide the winner.</p>
-        <div class="mpv2-card-foot">
-          <span class="mpv2-cta">Start playing →</span>
-          <span class="mpv2-meta">2–10 players</span>
+        <p>Swipe each word to the correct article. Same cards for everyone — accuracy and speed win.</p>
+        <div class="mp-card-foot">
+          <span class="mp-cta">Start playing →</span>
+          <span class="mp-meta">2–10 players</span>
         </div>
       </a>
     </div>
 
-    <div class="mpv2-label">Coming soon</div>
-    <div class="mpv2-grid">
-      <div class="mpv2-card soon">
-        <div class="mpv2-card-top">
-          <span class="mpv2-tag">Starter</span>
-        </div>
+    <div class="mp-label">Coming soon</div>
+    <div class="mp-grid">
+      <div class="mp-card soon">
+        <div class="mp-card-top"><span class="mp-tag">Starter</span></div>
         <h2>Adj / Adv Swipe</h2>
         <p>Swipe race for adjectives and adverbs — same format as A or An.</p>
-        <div class="mpv2-card-foot">
-          <span class="mpv2-cta">Coming soon</span>
-          <span class="mpv2-meta">Grammar</span>
+        <div class="mp-card-foot">
+          <span class="mp-cta">Coming soon</span>
+          <span class="mp-meta">Grammar</span>
         </div>
       </div>
-      <div class="mpv2-card soon">
-        <div class="mpv2-card-top">
-          <span class="mpv2-tag">Grammar</span>
-        </div>
+      <div class="mp-card soon">
+        <div class="mp-card-top"><span class="mp-tag">Grammar</span></div>
         <h2>Am / Is / Are</h2>
         <p>Choose the correct form in timed rounds with a shared scoreboard.</p>
-        <div class="mpv2-card-foot">
-          <span class="mpv2-cta">Coming soon</span>
-          <span class="mpv2-meta">Grammar</span>
+        <div class="mp-card-foot">
+          <span class="mp-cta">Coming soon</span>
+          <span class="mp-meta">Grammar</span>
         </div>
       </div>
-      <div class="mpv2-card soon">
-        <div class="mpv2-card-top">
-          <span class="mpv2-tag">Vocabulary</span>
-        </div>
+      <div class="mp-card soon">
+        <div class="mp-card-top"><span class="mp-tag">Vocabulary</span></div>
         <h2>Spelling Bee</h2>
         <p>Type the word before time runs out. Great for class competitions.</p>
-        <div class="mpv2-card-foot">
-          <span class="mpv2-cta">Coming soon</span>
-          <span class="mpv2-meta">Spelling</span>
+        <div class="mp-card-foot">
+          <span class="mp-cta">Coming soon</span>
+          <span class="mp-meta">Spelling</span>
         </div>
       </div>
     </div>
 
-    <p class="mpv2-note">
+    <p class="mp-note">
       <a href="/learningarcade/auth-system/login.html?redirect=/multiplayer/">Log in</a>
-      to create or join a room.
-      The free server may take a few seconds to wake if it was idle.
+      to create or join a room. The free server may take a few seconds to wake if it was idle.
     </p>
   </div>
 
+  <script src="/theme.js"></script>
   <script>
     (function () {
       var GAME = "/resources/american-english-file/starter/unit-3/a/games/a-an-swipe/";
