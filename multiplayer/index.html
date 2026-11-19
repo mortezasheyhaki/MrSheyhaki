@@ -3,282 +3,379 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Multiplayer | Mr. Sheyhaki</title>
-  <meta name="description" content="Play English games together. Create a room, share the link, and compete with friends." />
+  <title>Multiplayer · Play together | Mr. Sheyhaki</title>
+  <meta name="description" content="Play English games with friends. Create a room, share a link, and compete with live scores." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700;800&family=Orbitron:wght@700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,500&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/theme.css" />
   <style>
-    :root {
-      --mp-bg: #07071a;
-      --mp-card: #12122a;
-      --mp-line: rgba(255,255,255,0.08);
-      --mp-text: #f1f5f9;
-      --mp-muted: #94a3b8;
-      --mp-accent: #a78bfa;
-      --mp-accent2: #38bdf8;
-      --mp-gold: #fbbf24;
-    }
-    body.mp-hub {
-      margin: 0;
+    /* Self-contained professional hub — works even if theme differs */
+    .mpv2 {
+      --bg: #0b0f1a;
+      --bg2: #121826;
+      --surface: #161d2e;
+      --surface2: #1c2538;
+      --border: rgba(255,255,255,0.07);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --faint: #64748b;
+      --violet: #8b5cf6;
+      --violet2: #a78bfa;
+      --cyan: #22d3ee;
+      --green: #34d399;
+      --radius: 20px;
+      font-family: "DM Sans", system-ui, sans-serif;
+      color: var(--text);
+      background: var(--bg);
       min-height: 100dvh;
-      font-family: "Exo 2", system-ui, sans-serif;
+    }
+    .mpv2 * { box-sizing: border-box; }
+    .mpv2 a { color: inherit; }
+
+    .mpv2-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background:
-        radial-gradient(900px 500px at 50% -10%, #2e1065 0%, transparent 55%),
-        radial-gradient(700px 400px at 100% 20%, #0c4a6e33 0%, transparent 50%),
-        var(--mp-bg);
-      color: var(--mp-text);
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.22), transparent 50%),
+        radial-gradient(ellipse 50% 40% at 100% 0%, rgba(34, 211, 238, 0.08), transparent 45%),
+        radial-gradient(ellipse 40% 30% at 0% 100%, rgba(139, 92, 246, 0.1), transparent 40%),
+        var(--bg);
     }
-    .mp-wrap {
-      max-width: 920px;
+
+    .mpv2-shell {
+      position: relative; z-index: 1;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 1.25rem 1rem 3rem;
-      padding-top: max(1.25rem, env(safe-area-inset-top));
+      padding: 1.25rem 1.25rem 4rem;
     }
-    .mp-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+
+    /* Nav row */
+    .mpv2-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; margin-bottom: 2.5rem;
     }
-    .mp-back {
-      color: var(--mp-muted);
-      text-decoration: none;
+    .mpv2-nav a.back {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      text-decoration: none; font-weight: 600; font-size: 0.9rem;
+      color: var(--muted); padding: 0.45rem 0.7rem; border-radius: 10px;
+      transition: color .15s, background .15s;
+    }
+    .mpv2-nav a.back:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .mpv2-pill {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--violet2);
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      padding: 0.35rem 0.75rem; border-radius: 999px;
+    }
+
+    /* Hero */
+    .mpv2-hero {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 2.25rem;
+    }
+    .mpv2-hero .eyebrow {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--cyan);
+      margin-bottom: 0.85rem;
+    }
+    .mpv2-hero .eyebrow::before {
+      content: ""; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 10px var(--green);
+    }
+    .mpv2-hero h1 {
+      font-family: Syne, "DM Sans", sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      line-height: 1.1;
+      margin: 0 0 0.75rem;
+      letter-spacing: -0.03em;
+    }
+    .mpv2-hero h1 span {
+      background: linear-gradient(135deg, #fff 30%, var(--violet2));
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+    }
+    .mpv2-hero p {
+      margin: 0 auto;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 32rem;
+    }
+
+    /* Join strip */
+    .mpv2-join {
+      display: flex; flex-wrap: wrap; align-items: stretch; gap: 0.65rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 0.65rem;
+      max-width: 520px;
+      margin: 0 auto 2.75rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    }
+    .mpv2-join input {
+      flex: 1; min-width: 140px;
+      border: 0; outline: none;
+      background: var(--bg2);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.2em;
+      text-align: center;
+      text-transform: uppercase;
+      padding: 0.85rem 1rem;
+    }
+    .mpv2-join input::placeholder {
+      letter-spacing: 0.06em;
+      text-transform: none;
+      font-weight: 500;
+      color: var(--faint);
+    }
+    .mpv2-join button {
+      border: 0; cursor: pointer;
+      border-radius: 12px;
+      padding: 0.85rem 1.35rem;
+      font-family: inherit;
       font-weight: 700;
       font-size: 0.95rem;
-    }
-    .mp-back:hover { color: var(--mp-text); }
-    .mp-badge {
-      font-size: 0.7rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: rgba(167, 139, 250, 0.2);
-      color: var(--mp-accent);
-      padding: 0.3rem 0.65rem;
-      border-radius: 999px;
-    }
-    .mp-hero h1 {
-      font-family: Orbitron, "Exo 2", sans-serif;
-      font-size: clamp(1.5rem, 4vw, 2rem);
-      margin: 0 0 0.4rem;
-      letter-spacing: 0.04em;
-    }
-    .mp-hero p {
-      margin: 0;
-      color: var(--mp-muted);
-      line-height: 1.5;
-      max-width: 36rem;
-    }
-
-    .mp-join {
-      margin: 1.5rem 0;
-      padding: 1rem 1.1rem;
-      background: var(--mp-card);
-      border: 1px solid var(--mp-line);
-      border-radius: 18px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      align-items: center;
-    }
-    .mp-join label {
-      width: 100%;
-      font-size: 0.8rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--mp-muted);
-    }
-    .mp-join input {
-      flex: 1;
-      min-width: 140px;
-      background: rgba(0,0,0,0.35);
-      border: 1px solid var(--mp-line);
-      border-radius: 12px;
-      color: var(--mp-text);
-      font-family: Orbitron, monospace;
-      font-weight: 700;
-      font-size: 1.05rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      text-align: center;
-      padding: 0.7rem 0.85rem;
-    }
-    .mp-join button {
-      border: 0;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #7c3aed, #4f46e5);
       color: #fff;
-      font-family: inherit;
-      font-weight: 800;
-      padding: 0.7rem 1.2rem;
-      cursor: pointer;
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+      transition: transform .12s, filter .12s;
     }
-    .mp-join button:hover { filter: brightness(1.08); }
+    .mpv2-join button:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .mpv2-join button:active { transform: translateY(0); }
 
-    .mp-section-title {
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--mp-muted);
-      margin: 1.75rem 0 0.85rem;
+    /* Sections */
+    .mpv2-label {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--faint);
+      margin: 0 0 1rem;
+    }
+    .mpv2-label::after {
+      content: ""; flex: 1; height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
     }
 
-    .mp-grid {
+    .mpv2-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1rem;
+      margin-bottom: 2.5rem;
     }
-    .mp-card {
-      display: flex;
-      flex-direction: column;
+
+    /* Game card */
+    .mpv2-card {
+      position: relative;
+      display: flex; flex-direction: column;
       text-decoration: none;
-      color: inherit;
-      background: var(--mp-card);
-      border: 1px solid var(--mp-line);
-      border-radius: 18px;
-      padding: 1.15rem 1.2rem 1.25rem;
-      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-      min-height: 150px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.35rem 1.35rem 1.25rem;
+      overflow: hidden;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
     }
-    .mp-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(167, 139, 250, 0.45);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    .mpv2-card::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(145deg, rgba(139,92,246,0.12), transparent 42%);
+      opacity: 0; transition: opacity .18s;
     }
-    .mp-card-tag {
-      display: inline-block;
-      align-self: flex-start;
-      font-size: 0.68rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--mp-accent2);
-      background: rgba(56, 189, 248, 0.12);
-      padding: 0.25rem 0.5rem;
-      border-radius: 999px;
-      margin-bottom: 0.65rem;
+    .mpv2-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.35);
     }
-    .mp-card h2 {
-      font-family: Orbitron, "Exo 2", sans-serif;
-      font-size: 1.05rem;
-      margin: 0 0 0.4rem;
-      letter-spacing: 0.03em;
-      line-height: 1.25;
+    .mpv2-card:hover::before { opacity: 1; }
+    .mpv2-card > * { position: relative; z-index: 1; }
+
+    .mpv2-card-top {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.5rem; margin-bottom: 1rem;
     }
-    .mp-card p {
+    .mpv2-tag {
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--cyan);
+      background: rgba(34, 211, 238, 0.1);
+      border: 1px solid rgba(34, 211, 238, 0.2);
+      padding: 0.28rem 0.55rem; border-radius: 999px;
+    }
+    .mpv2-live {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--green);
+    }
+    .mpv2-live i {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      font-style: normal;
+    }
+    .mpv2-card h2 {
+      font-family: Syne, sans-serif;
+      font-size: 1.25rem; font-weight: 800;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .mpv2-card p {
       margin: 0;
       flex: 1;
-      font-size: 0.9rem;
-      color: var(--mp-muted);
-      line-height: 1.45;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      color: var(--muted);
     }
-    .mp-card-cta {
-      margin-top: 1rem;
-      font-weight: 800;
-      font-size: 0.85rem;
-      color: var(--mp-accent);
+    .mpv2-card-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 1.25rem; padding-top: 1rem;
+      border-top: 1px solid var(--border);
     }
-    .mp-card.is-soon {
-      opacity: 0.55;
-      pointer-events: none;
+    .mpv2-cta {
+      font-weight: 700; font-size: 0.9rem; color: var(--violet2);
+      display: inline-flex; align-items: center; gap: 0.35rem;
     }
-    .mp-card.is-soon .mp-card-cta { color: var(--mp-muted); }
+    .mpv2-card:hover .mpv2-cta { color: #c4b5fd; }
+    .mpv2-meta { font-size: 0.78rem; color: var(--faint); font-weight: 600; }
 
-    .mp-note {
-      margin-top: 2rem;
-      font-size: 0.85rem;
-      color: var(--mp-muted);
-      line-height: 1.5;
+    /* Soon cards */
+    .mpv2-card.soon {
+      opacity: 0.5;
+      pointer-events: none;
+      background: var(--bg2);
     }
-    .mp-note a { color: var(--mp-accent2); }
+    .mpv2-card.soon .mpv2-tag {
+      color: var(--faint);
+      background: rgba(255,255,255,0.04);
+      border-color: var(--border);
+    }
+    .mpv2-card.soon h2 { color: var(--muted); }
+    .mpv2-card.soon .mpv2-cta { color: var(--faint); }
+    .mpv2-card.soon::before { display: none; }
+
+    /* Footer note */
+    .mpv2-note {
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--faint);
+      line-height: 1.55;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .mpv2-note a {
+      color: var(--violet2);
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(167, 139, 250, 0.35);
+    }
+    .mpv2-note a:hover { color: #c4b5fd; }
+
+    @media (max-width: 560px) {
+      .mpv2-shell { padding: 1rem 1rem 3rem; }
+      .mpv2-hero { margin-bottom: 1.75rem; }
+      .mpv2-join { margin-bottom: 2rem; }
+    }
   </style>
 </head>
-<body class="mp-hub">
-  <div class="mp-wrap">
-    <div class="mp-top">
-      <a class="mp-back" href="/">← Home</a>
-      <span class="mp-badge">Multiplayer</span>
+<body class="mpv2">
+  <div class="mpv2-bg" aria-hidden="true"></div>
+  <div class="mpv2-shell">
+    <div class="mpv2-nav">
+      <a class="back" href="/">← Home</a>
+      <span class="mpv2-pill">Multiplayer</span>
     </div>
 
-    <header class="mp-hero">
-      <h1>Play together</h1>
-      <p>Create a room, share the link, and race a friend. Same questions, live scores — only games built for multiplayer are listed here.</p>
+    <header class="mpv2-hero">
+      <div class="eyebrow">Live with friends</div>
+      <h1>Play <span>together</span></h1>
+      <p>Create a room, share the link, and compete on the same questions. Built for real-time English practice.</p>
     </header>
 
-    <section class="mp-join" aria-label="Join with a room code">
-      <label for="joinCode">Have a room code?</label>
-      <input id="joinCode" type="text" maxlength="8" placeholder="ABC123" autocomplete="off" />
-      <button type="button" id="joinBtn">Join</button>
-    </section>
+    <div class="mpv2-join" role="search">
+      <input id="joinCode" type="text" maxlength="8" placeholder="Enter room code" autocomplete="off" aria-label="Room code" />
+      <button type="button" id="joinBtn">Join room</button>
+    </div>
 
-    <h2 class="mp-section-title">Available now</h2>
-    <div class="mp-grid" id="gameGrid">
-      <!-- A or An — live -->
-      <a class="mp-card" id="card-a-an" href="/resources/american-english-file/starter/unit-3/a/games/a-an-swipe/">
-        <span class="mp-card-tag">Starter · Unit 3A</span>
+    <div class="mpv2-label">Available now</div>
+    <div class="mpv2-grid">
+      <a class="mpv2-card" href="/resources/american-english-file/starter/unit-3/a/games/a-an-swipe/">
+        <div class="mpv2-card-top">
+          <span class="mpv2-tag">Starter · Unit 3A</span>
+          <span class="mpv2-live"><i></i> Live</span>
+        </div>
         <h2>A or An Swipe</h2>
-        <p>Swipe each word to <b>a</b> or <b>an</b>. Same cards for everyone — fastest accurate answers win.</p>
-        <span class="mp-card-cta">Open game →</span>
+        <p>Swipe each word to the correct article. Everyone gets the same cards — accuracy and speed decide the winner.</p>
+        <div class="mpv2-card-foot">
+          <span class="mpv2-cta">Start playing →</span>
+          <span class="mpv2-meta">2–10 players</span>
+        </div>
       </a>
     </div>
 
-    <h2 class="mp-section-title">Coming next</h2>
-    <div class="mp-grid">
-      <div class="mp-card is-soon">
-        <span class="mp-card-tag">Starter</span>
+    <div class="mpv2-label">Coming soon</div>
+    <div class="mpv2-grid">
+      <div class="mpv2-card soon">
+        <div class="mpv2-card-top">
+          <span class="mpv2-tag">Starter</span>
+        </div>
         <h2>Adj / Adv Swipe</h2>
-        <p>Same swipe race — adjectives vs adverbs.</p>
-        <span class="mp-card-cta">Soon</span>
+        <p>Swipe race for adjectives and adverbs — same format as A or An.</p>
+        <div class="mpv2-card-foot">
+          <span class="mpv2-cta">Coming soon</span>
+          <span class="mpv2-meta">Grammar</span>
+        </div>
       </div>
-      <div class="mp-card is-soon">
-        <span class="mp-card-tag">Grammar</span>
+      <div class="mpv2-card soon">
+        <div class="mpv2-card-top">
+          <span class="mpv2-tag">Grammar</span>
+        </div>
         <h2>Am / Is / Are</h2>
-        <p>Pick the correct form — live rounds.</p>
-        <span class="mp-card-cta">Soon</span>
+        <p>Choose the correct form in timed rounds with a shared scoreboard.</p>
+        <div class="mpv2-card-foot">
+          <span class="mpv2-cta">Coming soon</span>
+          <span class="mpv2-meta">Grammar</span>
+        </div>
       </div>
-      <div class="mp-card is-soon">
-        <span class="mp-card-tag">Vocabulary</span>
+      <div class="mpv2-card soon">
+        <div class="mpv2-card-top">
+          <span class="mpv2-tag">Vocabulary</span>
+        </div>
         <h2>Spelling Bee</h2>
-        <p>Hear or see the word — type it before time runs out.</p>
-        <span class="mp-card-cta">Soon</span>
+        <p>Type the word before time runs out. Great for class competitions.</p>
+        <div class="mpv2-card-foot">
+          <span class="mpv2-cta">Coming soon</span>
+          <span class="mpv2-meta">Spelling</span>
+        </div>
       </div>
     </div>
 
-    <p class="mp-note">
-      You need to be <a href="/learningarcade/auth-system/login.html?redirect=/multiplayer/">logged in</a> to create or join a room.
-      Free multiplayer server may take a few seconds to wake up if it was sleeping.
+    <p class="mpv2-note">
+      <a href="/learningarcade/auth-system/login.html?redirect=/multiplayer/">Log in</a>
+      to create or join a room.
+      The free server may take a few seconds to wake if it was idle.
     </p>
   </div>
 
   <script>
     (function () {
-      // Default: A or An game handles ?room= when opened
-      var GAME_JOIN = {
-        // When we have multiple games, map codes via server or ask user which game.
-        // For now all rooms are A or An — join sends player to that game with ?room=
-        default: "/resources/american-english-file/starter/unit-3/a/games/a-an-swipe/"
-      };
-
+      var GAME = "/resources/american-english-file/starter/unit-3/a/games/a-an-swipe/";
       var input = document.getElementById("joinCode");
       var btn = document.getElementById("joinBtn");
-
       function go() {
         var code = (input.value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-        if (code.length < 4) {
-          input.focus();
-          return;
-        }
-        var base = GAME_JOIN.default;
-        var url = base + (base.indexOf("?") >= 0 ? "&" : "?") + "room=" + encodeURIComponent(code);
-        location.href = url;
+        if (code.length < 4) { input.focus(); return; }
+        location.href = GAME + "?room=" + encodeURIComponent(code);
       }
-
       btn.addEventListener("click", go);
       input.addEventListener("keydown", function (e) {
         if (e.key === "Enter") go();
