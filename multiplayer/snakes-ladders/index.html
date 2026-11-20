@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
-<meta name="theme-color" content="#0b1020" />
+<meta name="theme-color" content="#0b1020" id="themeColorMeta" />
+<meta name="color-scheme" content="dark light" />
 <title>Snakes & Ladders · Multiplayer | Mr. Sheyhaki</title>
 <meta name="description" content="Snakes & Ladders — offline on one device or online with a friend. Grammar questions." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,24 +17,32 @@
 <div class="sl-app" id="app">
 
   <!-- MODE SELECT -->
-  <section class="sl-screen" id="screenMode">
-    <a class="sl-back" href="/multiplayer/">← Multiplayer</a>
-    <div class="sl-hero">
-      <div class="sl-logo">🐍🪜</div>
-      <h1>Snakes &amp; Ladders</h1>
-      <p class="sl-tagline">Present Simple vs Continuous</p>
+  <section class="sl-screen sl-screen--mode" id="screenMode">
+    <div class="sl-mode-bg" aria-hidden="true">
+      <span class="sl-orb sl-orb-a"></span>
+      <span class="sl-orb sl-orb-b"></span>
+      <span class="sl-orb sl-orb-c"></span>
+      <span class="sl-grid-fade"></span>
     </div>
-    <div class="sl-mode-grid">
-      <button type="button" class="sl-mode-card" id="btnOffline">
-        <span class="sl-mode-ico">📱</span>
-        <strong>Offline</strong>
-        <span>Two players on this device</span>
-      </button>
-      <button type="button" class="sl-mode-card" id="btnOnline">
-        <span class="sl-mode-ico">🌐</span>
-        <strong>Online</strong>
-        <span>Invite a friend with a link</span>
-      </button>
+    <a class="sl-back" href="/multiplayer/">← Multiplayer</a>
+    <div class="sl-mode-center">
+      <div class="sl-hero">
+        <div class="sl-logo" aria-hidden="true">🐍🪜</div>
+        <h1>Snakes &amp; Ladders</h1>
+        <p class="sl-tagline">Present Simple vs Continuous</p>
+      </div>
+      <div class="sl-mode-grid">
+        <button type="button" class="sl-mode-card offline" id="btnOffline">
+          <span class="sl-mode-ico">📱</span>
+          <strong>Offline</strong>
+          <span>Up to 4 players on this device</span>
+        </button>
+        <button type="button" class="sl-mode-card online" id="btnOnline">
+          <span class="sl-mode-ico">🌐</span>
+          <strong>Online</strong>
+          <span>Invite a friend with a link</span>
+        </button>
+      </div>
     </div>
   </section>
 
@@ -44,15 +53,20 @@
       <h1>Offline · Same device</h1>
       <p class="sl-tagline">Pass the phone each turn · questions are for the player who landed on ?</p>
     </div>
+    <div class="sl-seg" id="segCount" aria-label="Number of players">
+      <button type="button" data-n="2">2 players</button>
+      <button type="button" data-n="3">3 players</button>
+      <button type="button" data-n="4">4 players</button>
+    </div>
+    <div class="sl-seg" id="segLevel" aria-label="Level">
+      <button type="button" data-lvl="beginner">Beginner</button>
+      <button type="button" data-lvl="elementary" disabled>Elementary · coming soon</button>
+    </div>
     <div class="sl-players-setup">
-      <div class="sl-psetup p1">
-        <span class="sl-dot"></span>
-        <input type="text" id="name1" maxlength="12" placeholder="Player 1" value="Player 1" />
-      </div>
-      <div class="sl-psetup p2">
-        <span class="sl-dot"></span>
-        <input type="text" id="name2" maxlength="12" placeholder="Player 2" value="Player 2" />
-      </div>
+      <div class="sl-psetup p1"><span class="sl-dot"></span><input type="text" id="name1" maxlength="12" placeholder="Player 1" value="Player 1" /><div class="sl-icons" data-p="0"></div></div>
+      <div class="sl-psetup p2"><span class="sl-dot"></span><input type="text" id="name2" maxlength="12" placeholder="Player 2" value="Player 2" /><div class="sl-icons" data-p="1"></div></div>
+      <div class="sl-psetup p3" hidden><span class="sl-dot"></span><input type="text" id="name3" maxlength="12" placeholder="Player 3" value="Player 3" /><div class="sl-icons" data-p="2"></div></div>
+      <div class="sl-psetup p4" hidden><span class="sl-dot"></span><input type="text" id="name4" maxlength="12" placeholder="Player 4" value="Player 4" /><div class="sl-icons" data-p="3"></div></div>
     </div>
     <button type="button" class="sl-btn primary" id="btnStartOffline">Start Game</button>
   </section>
@@ -106,7 +120,7 @@
       <div class="sl-hero">
         <div class="sl-logo">🚪</div>
         <h1>Room <span id="lobbyCode" class="sl-code-pill">————</span></h1>
-        <p class="sl-tagline">Share the link — 2 players max</p>
+        <p class="sl-tagline">Share the link — up to 4 players</p>
       </div>
       <div class="sl-online-card">
         <h2>Invite link</h2>
@@ -126,17 +140,8 @@
   <section class="sl-screen play" id="screenPlay" hidden>
     <header class="sl-hud">
       <button type="button" class="sl-back mini" id="btnExitPlay" title="Exit">←</button>
-      <div class="sl-player-chip p1" id="chip1">
-        <span class="sl-token-mini p1"></span>
-        <span class="sl-pname" id="hudName1">P1</span>
-        <span class="sl-pscore" id="hudPos1">1</span>
-      </div>
-      <div class="sl-turn" id="turnBanner">P1 rolls</div>
-      <div class="sl-player-chip p2" id="chip2">
-        <span class="sl-token-mini p2"></span>
-        <span class="sl-pname" id="hudName2">P2</span>
-        <span class="sl-pscore" id="hudPos2">1</span>
-      </div>
+      <div class="sl-hud-players" id="hudPlayers"></div>
+      <button type="button" class="sl-mute" id="btnMute" aria-label="Mute sound">🔊</button>
     </header>
 
     <div class="sl-board-wrap">
@@ -149,7 +154,7 @@
     <footer class="sl-controls">
       <div class="sl-dice-area">
         <button type="button" class="sl-dice" id="diceBtn" aria-label="Roll dice">
-          <span class="sl-dice-face" id="diceFace">🎲</span>
+          <span class="sl-scene"><span class="sl-cube" id="diceFace"></span></span>
         </button>
         <span class="sl-dice-label" id="diceLabel">Tap to roll</span>
       </div>

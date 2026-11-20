@@ -224,7 +224,7 @@ export const roomManager = {
     if (room.hostId !== playerId) return { ok: false, error: "Only host can set game type" };
     if (room.status !== "lobby") return { ok: false, error: "Game already started" };
     room.gameType = gameType || "a-an-swipe";
-    if (gameType === "snakes-ladders") room.maxPlayers = 2;
+    if (gameType === "snakes-ladders") room.maxPlayers = 4;
     else room.maxPlayers = config.maxPlayersPerRoom;
     return { ok: true, room: publicRoom(room) };
   },
@@ -277,13 +277,13 @@ export const roomManager = {
 
     if (gameType === "snakes-ladders") {
       if (room.players.length < 2) {
-        return { ok: false, error: "Snakes & Ladders needs 2 players" };
+        return { ok: false, error: "Snakes & Ladders needs 2 to 4 players" };
       }
-      const ids = room.players.slice(0, 2).map((p) => p.id);
-      const game = createSnakesLaddersState(ids);
+      const ids = room.players.slice(0, 4).map((p) => p.id);
+      const game = createSnakesLaddersState(ids, settings.level);
       room.game = game;
       room.gameType = "snakes-ladders";
-      room.maxPlayers = 2;
+      room.maxPlayers = 4;
       room.status = "playing";
       room.players.forEach((p) => { p.ready = false; });
       return {
@@ -345,12 +345,12 @@ export const roomManager = {
     };
   },
 
-  slAnswer(playerId, choiceIndex) {
+  slAnswer(playerId, payload) {
     const room = findRoomByPlayerId(playerId);
     if (!room || !room.game || room.game.type !== "snakes-ladders") {
       return { ok: false, error: "No snakes-ladders game" };
     }
-    const result = slAnswerQuestion(room.game, playerId, choiceIndex);
+    const result = slAnswerQuestion(room.game, playerId, payload);
     if (!result.ok) return result;
     return {
       ok: true,

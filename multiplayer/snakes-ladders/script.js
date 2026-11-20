@@ -2,6 +2,36 @@
 (function () {
   "use strict";
 
+  /* Auto day / night — no toggle. Uses local hour + prefers-color-scheme. */
+  function applyAutoTheme() {
+    var hour = new Date().getHours();
+    var isNight = hour < 7 || hour >= 19;
+    // If OS clearly prefers light during day hours, stay light; at night prefer dark
+    try {
+      if (window.matchMedia) {
+        if (isNight && window.matchMedia("(prefers-color-scheme: light)").matches && hour >= 7 && hour < 19) {
+          isNight = false;
+        }
+        // Between 7–19: light unless OS prefers dark strongly at evening edge
+        if (!isNight && window.matchMedia("(prefers-color-scheme: dark)").matches && (hour >= 17 || hour < 8)) {
+          isNight = true;
+        }
+      }
+    } catch (e) {}
+    var theme = isNight ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", theme);
+    var meta = document.getElementById("themeColorMeta");
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#070b16" : "#eef2ff");
+  }
+  applyAutoTheme();
+  // Re-check periodically (theme can flip at 7:00 / 19:00 without reload)
+  setInterval(applyAutoTheme, 60 * 1000);
+  try {
+    if (window.matchMedia) {
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyAutoTheme);
+    }
+  } catch (e) {}
+
   var SERVER_URL =
     location.hostname === "localhost" || location.hostname === "127.0.0.1"
       ? "http://localhost:3001"
@@ -38,6 +68,36 @@
     { id: 20, q: "Correct: Who are George live with?", choices: ["Who does George live with?", "Who is George live with?", "Who George lives with?"], answer: 0 },
   ];
 
+  var BEGINNER_EXTRA = [
+    { id: 21, q: "Which of these words is commonly used with the Present Continuous?", choices: ["Yesterday", "Now", "Every morning"], answer: 1 },
+    { id: 22, q: "Which sentence is correct? Why?", choices: ["I'm watching a movie right now.", "I watching a movie right now."], answer: 0 },
+    { id: 23, q: "Complete the question: Where [[0]] your friends going?", type: "type", blanks: [function (t) { return t === "are"; }], model: "Where are your friends going?" },
+    { id: 24, q: "Which time expression is NOT suitable for the Present Continuous?", choices: ["At the moment", "Right now", "Every weekend"], answer: 2 },
+    { id: 25, q: "Choose the correct form: 'She ______ a book.'", choices: ["is reading", "are reading", "reading"], answer: 0 },
+    { id: 26, q: "Why is the Present Continuous used here? 'Look! The children are playing in the garden.'", choices: ["It's happening now", "It's a permanent fact", "It's a past action"], answer: 0 },
+    { id: 27, q: "I can't talk right now because I [[0]] (do) my homework.", type: "type", blanks: [function (t) { return t === "am doing"; }], model: "I can't talk right now because I am doing my homework." },
+    { id: 28, q: "Correct the mistake: Sarah and Michael watching a film at the moment.", type: "type", check: function (t) { return /^sarah and michael (are|'re) watching a film at the moment\.?$/.test(t); }, model: "Sarah and Michael are watching a film at the moment." },
+    { id: 29, q: "Which sentence is correct? Why?", choices: ["They aren't playing basketball now.", "They not playing basketball now.", "They isn't playing basketball now."], answer: 0 },
+    { id: 30, q: "Make a correct question: What / you / do / right now?", type: "type", check: function (t) { return /^what are you doing right now\??$/.test(t); }, model: "What are you doing right now?" },
+    { id: 31, q: "Correct the mistake: I'm not understanding this exercise.", type: "type", check: function (t) { return /^i (do not|don't) understand this exercise\.?$/.test(t); }, model: "I don't understand this exercise." },
+    { id: 32, q: "Emma and Jack [[0]] (not / study) for the exam. They [[1]] (play) video games.", type: "type", blanks: [function (t) { return /^(aren'?t|are not) studying$/.test(t); }, function (t) { return t === "are playing"; }], model: "Emma and Jack aren't studying for the exam. They are playing video games." },
+    { id: 33, q: "I [[0]] (wear) my favorite T-shirt today, but my brother [[1]] (wear) his school uniform.", type: "type", blanks: [function (t) { return /^(am|'m) wearing$/.test(t); }, function (t) { return /^(is|'s) wearing$/.test(t); }], model: "I'm wearing my favorite T-shirt today, but my brother is wearing his school uniform." },
+    { id: 34, q: "Correct the mistake: What is your friends doing?", type: "type", check: function (t) { return /^what are your friends doing\??$/.test(t); }, model: "What are your friends doing?" },
+    { id: 35, q: "What is the difference in meaning between 'He's sitting on the sofa.' and 'He's standing next to the sofa.'?", choices: ["Sitting vs. standing position", "Past vs. future action", "No difference"], answer: 0 },
+    { id: 36, q: "Finish the sentence: 'My parents are cooking dinner…' (write 'at the moment' or 'right now')", type: "type", check: function (t) { return /(at the moment|right now)/.test(t); }, model: "at the moment / right now" },
+    { id: 37, q: "Lilly [[0]] (not / watch) TV right now. She [[1]] (write) an email to her friend.", type: "type", blanks: [function (t) { return /^(isn'?t|is not) watching$/.test(t); }, function (t) { return t === "is writing"; }], model: "Lilly isn't watching TV right now. She is writing an email to her friend." },
+    { id: 38, q: "Choose the best ending: 'I'm not going to school today because…'", choices: ["… I'm feeling sick.", "… I am feel sick."], answer: 0 },
+    { id: 39, q: "Put the words in the correct order: Where / Lana / go / right now?", type: "type", check: function (t) { return /^where is lana going right now\??$/.test(t); }, model: "Where is Lana going right now?" },
+    { id: 40, q: "Correct the mistake: Who are George talking to?", type: "type", check: function (t) { return /^who is george talking to\??$/.test(t); }, model: "Who is George talking to?" },
+    { id: 41, q: "Which sentence has the correct negative form?", choices: ["He isn't wearing a jacket.", "He doesn't wearing a jacket.", "He not is wearing a jacket."], answer: 0 },
+    { id: 42, q: "Complete the question: [[0]] they having lunch at the moment?", type: "type", blanks: [function (t) { return t === "are"; }], model: "Are they having lunch at the moment?" },
+    { id: 43, q: "Put the words in the correct order: is / why / crying / the baby / ?", type: "type", check: function (t) { return /^why is the baby crying\??$/.test(t); }, model: "Why is the baby crying?" },
+    { id: 44, q: "Correct TWO mistakes: My friends is playing football, and I am siting on the bench.", type: "type", check: function (t) { return /friends are playing/.test(t) && /sitting on the bench/.test(t); }, model: "My friends are playing football, and I am sitting on the bench." },
+    { id: 45, q: "Your best friend is in the kitchen. He has a cake, some eggs, and a bowl. What is he doing? Write a Present Continuous sentence.", type: "type", check: function (t) { return /\b(i'?m|am|is|are|'s|'re)\s+\w+ing\b/.test(t); }, model: "He is making a cake." }
+  ];
+  QUESTIONS = QUESTIONS.concat(BEGINNER_EXTRA);
+  var LEVELS = { beginner: QUESTIONS, elementary: [] };   // add Elementary questions to LEVELS.elementary
+
   var $ = function (id) { return document.getElementById(id); };
   var DICE_FACES = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
   var cellCenters = {};
@@ -57,10 +117,16 @@
   };
 
   // —— SFX ——
-  var audioCtx = null;
+  var audioCtx = null, master = null, muted = false, musicOn = false, musicNext = 0, musicStep = 0;
+  try { muted = localStorage.getItem("sl-muted") === "1"; } catch (e) {}
   function ctx() {
     if (!audioCtx) {
-      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        master = audioCtx.createGain();
+        master.gain.value = muted ? 0 : 0.8;
+        master.connect(audioCtx.destination);
+      } catch (e) { return null; }
     }
     if (audioCtx.state === "suspended") audioCtx.resume().catch(function () {});
     return audioCtx;
@@ -68,27 +134,166 @@
   function tone(freq, dur, type, vol, when) {
     var c = ctx(); if (!c) return;
     var t0 = c.currentTime + (when || 0);
-    var o = c.createOscillator();
-    var g = c.createGain();
+    var o = c.createOscillator(), g = c.createGain();
     o.type = type || "sine";
-    o.frequency.value = freq;
+    o.frequency.setValueAtTime(freq, t0);
     g.gain.setValueAtTime(vol || 0.1, t0);
     g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
-    o.connect(g); g.connect(c.destination);
-    o.start(t0); o.stop(t0 + dur + 0.02);
+    o.connect(g); g.connect(master);
+    o.start(t0); o.stop(t0 + dur + 0.05);
+  }
+  function noise(dur, vol, when, freq) {
+    var c = ctx(); if (!c) return;
+    var t0 = c.currentTime + (when || 0), n = Math.floor(c.sampleRate * dur);
+    var buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+    for (var i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    var src = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    src.buffer = buf; f.type = "bandpass"; f.frequency.value = freq || 1500; f.Q.value = 0.9;
+    g.gain.value = vol || 0.2;
+    src.connect(f); f.connect(g); g.connect(master); src.start(t0);
   }
   function sfx(name) {
     try {
-      if (name === "roll") { tone(200, 0.05, "square", 0.06); tone(320, 0.08, "square", 0.05, 0.1); }
-      else if (name === "move") tone(440, 0.06, "triangle", 0.07);
-      else if (name === "ladder") { tone(523, 0.1, "sine", 0.1); tone(784, 0.15, "sine", 0.1, 0.12); }
-      else if (name === "snake") { tone(300, 0.2, "sawtooth", 0.07); tone(160, 0.25, "sawtooth", 0.06, 0.12); }
-      else if (name === "correct") { tone(523, 0.1, "sine", 0.11); tone(784, 0.15, "sine", 0.1, 0.12); }
-      else if (name === "wrong") { tone(220, 0.15, "sawtooth", 0.08); tone(160, 0.2, "sawtooth", 0.07, 0.1); }
-      else if (name === "win") [523, 659, 784, 1047].forEach(function (f, i) { tone(f, 0.15, "sine", 0.1, i * 0.09); });
-      else if (name === "click") tone(600, 0.04, "triangle", 0.05);
-      else if (name === "question") { tone(480, 0.08, "sine", 0.08); tone(620, 0.1, "sine", 0.07, 0.1); }
+      if (name === "roll") { for (var i = 0; i < 7; i++) noise(0.035, 0.22, i * 0.07, 3200); tone(180, 0.3, "triangle", 0.05, 0.45); }
+      else if (name === "move") tone(620, 0.06, "triangle", 0.07);
+      else if (name === "ladder") [523, 659, 784, 1047].forEach(function (f, i) { tone(f, 0.16, "sine", 0.1, i * 0.07); });
+      else if (name === "snake") { noise(0.6, 0.2, 0, 1700); tone(260, 0.5, "sawtooth", 0.04, 0.05); tone(130, 0.5, "sawtooth", 0.04, 0.3); }
+      else if (name === "correct") { tone(660, 0.12, "sine", 0.12); tone(990, 0.22, "sine", 0.1, 0.1); }
+      else if (name === "wrong") { tone(220, 0.18, "square", 0.05); tone(165, 0.26, "square", 0.05, 0.14); }
+      else if (name === "win") [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.28, "sine", 0.12, i * 0.1); });
+      else if (name === "click") tone(700, 0.035, "triangle", 0.06);
+      else if (name === "question") { tone(480, 0.1, "sine", 0.1); tone(640, 0.14, "sine", 0.09, 0.11); }
     } catch (e) {}
+  }
+  // Background loop: bass + arpeggio + hi-hat, generated live (no audio files)
+  var PROG = [[261.63, 329.63, 392], [220, 261.63, 329.63], [174.61, 220, 261.63], [196, 246.94, 293.66]];
+  var BASS = [130.81, 110, 87.31, 98];
+  function musicTick() {
+    var c = ctx(); if (!c || !musicOn) return;
+    while (musicNext < c.currentTime + 0.5) {
+      var s = musicStep, bar = Math.floor(s / 8) % 4, beat = s % 8, when = Math.max(0, musicNext - c.currentTime);
+      if (beat === 0) tone(BASS[bar], 0.55, "sine", 0.09, when);
+      if (beat % 2 === 0) tone(PROG[bar][(beat / 2) % 3] * 2, 0.24, "triangle", 0.03, when);
+      if (beat === 4 && bar % 2 === 0) tone(PROG[bar][2] * 4, 0.18, "sine", 0.018, when);
+      noise(0.025, 0.015, when, 7000);
+      musicStep++; musicNext += 0.28;
+    }
+  }
+  function startMusic() {
+    if (musicOn) return;
+    var c = ctx(); if (!c) return;
+    musicOn = true; musicNext = c.currentTime + 0.1; musicStep = 0;
+    setInterval(musicTick, 110);
+  }
+  function paintMute() {
+    var b = $("btnMute"); if (!b) return;
+    b.textContent = muted ? "🔇" : "🔊";
+    b.setAttribute("aria-label", muted ? "Unmute sound" : "Mute sound");
+    b.setAttribute("aria-pressed", muted ? "true" : "false");
+  }
+  function setMuted(v) {
+    muted = v;
+    try { localStorage.setItem("sl-muted", v ? "1" : "0"); } catch (e) {}
+    var c = ctx();
+    if (c) master.gain.setTargetAtTime(v ? 0 : 0.8, c.currentTime, 0.05);
+    if (!v) startMusic();
+    paintMute();
+  }
+
+  // Player icons
+  var ICONS = ["🦊", "🦄", "🐼", "🐸", "🐯", "🐙", "🚀", "🐧", "🦖", "👾"];
+  state.icons = ["🦊", "🦄", "🐼", "🐸"];
+  state.count = 2; state.level = "beginner";
+  function buildIconPickers() {
+    document.querySelectorAll(".sl-icons").forEach(function (box) {
+      var p = +box.getAttribute("data-p");
+      box.innerHTML = "";
+      ICONS.forEach(function (ic) {
+        var b = document.createElement("button");
+        b.type = "button"; b.textContent = ic; b.setAttribute("data-ic", ic);
+        b.onclick = function () { pickIcon(p, ic); };
+        box.appendChild(b);
+      });
+    });
+    paintPickers();
+  }
+  function pickIcon(p, ic) {
+    for (var q = 0; q < state.count; q++) if (q !== p && state.icons[q] === ic) state.icons[q] = state.icons[p];
+    state.icons[p] = ic;
+    sfx("click");
+    paintPickers();
+  }
+  function paintPickers() {
+    document.querySelectorAll(".sl-icons").forEach(function (box) {
+      var p = +box.getAttribute("data-p");
+      Array.prototype.forEach.call(box.children, function (b) {
+        var ic = b.getAttribute("data-ic"), taken = false;
+        for (var q = 0; q < state.count; q++) if (q !== p && state.icons[q] === ic) taken = true;
+        b.classList.toggle("on", ic === state.icons[p]);
+        b.classList.toggle("taken", taken);
+      });
+    });
+  }
+
+  // 3D dice
+  var PIPS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+  var DIE_ROT = { 1: [0, 0], 2: [-90, 0], 3: [0, -90], 4: [0, 90], 5: [90, 0], 6: [0, 180] };
+  var dieRot = { x: 0, y: 0 };
+  function buildDie() {
+    var cube = $("diceFace"); if (!cube) return;
+    cube.innerHTML = "";
+    for (var f = 1; f <= 6; f++) {
+      var face = document.createElement("span");
+      face.className = "f f" + f;
+      for (var i = 0; i < 9; i++) {
+        var pip = document.createElement("span");
+        if (PIPS[f].indexOf(i) >= 0) pip.className = "pip";
+        face.appendChild(pip);
+      }
+      cube.appendChild(face);
+    }
+    showDie(1);
+  }
+  function showDie(n, spin) {
+    var cube = $("diceFace"); if (!cube) return;
+    var t = DIE_ROT[n] || DIE_ROT[1];
+    var dx = ((t[0] - dieRot.x) % 360 + 360) % 360, dy = ((t[1] - dieRot.y) % 360 + 360) % 360;
+    if (spin) { dx += 1080; dy += 1440; }        // extra full turns so it visibly tumbles
+    dieRot.x += dx; dieRot.y += dy;
+    cube.style.transform = "rotateX(" + dieRot.x + "deg) rotateY(" + dieRot.y + "deg)";
+    var scene = cube.parentElement;
+    if (spin && scene) {
+      scene.classList.remove("hop"); void scene.offsetWidth; scene.classList.add("hop");
+    }
+  }
+
+  // SVG helpers
+  var NS = "http://www.w3.org/2000/svg";
+  function svgEl(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function polyAttrs(poly, stroke, w, extra) {
+    var o = { points: poly, fill: "none", "stroke-linecap": "round", "stroke-linejoin": "round", stroke: stroke, "stroke-width": w };
+    for (var k in extra) o[k] = extra[k];
+    return o;
+  }
+  var SNAKE_COLORS = [["#16a34a", "#bbf7d0", "#14532d"], ["#0891b2", "#a5f3fc", "#164e63"], ["#ca8a04", "#fef08a", "#713f12"], ["#db2777", "#fbcfe8", "#831843"], ["#7c3aed", "#ddd6fe", "#4c1d95"]];
+  function snakePoints(x1, y1, x2, y2, k) {
+    var dx = x2 - x1, dy = y2 - y1, len = Math.sqrt(dx * dx + dy * dy) || 1;
+    var nx = -dy / len, ny = dx / len, bow = len * 0.3 * (k % 2 ? 1 : -1);
+    var cx = (x1 + x2) / 2 + nx * bow, cy = (y1 + y2) / 2 + ny * bow, pts = [];
+    for (var i = 0; i <= 48; i++) {
+      var t = i / 48, a = (1 - t) * (1 - t), b = 2 * (1 - t) * t, c = t * t;
+      var px = a * x1 + b * cx + c * x2, py = a * y1 + b * cy + c * y2;
+      var tx = 2 * (1 - t) * (cx - x1) + 2 * t * (x2 - cx), ty = 2 * (1 - t) * (cy - y1) + 2 * t * (y2 - cy);
+      var tl = Math.sqrt(tx * tx + ty * ty) || 1;
+      var w = Math.sin(t * Math.PI * 4) * 22 * (1 - t * 0.5);
+      pts.push([px - ty / tl * w, py + tx / tl * w]);
+    }
+    return pts;
   }
 
   function showScreen(id) {
@@ -96,6 +301,7 @@
       var el = $(s);
       if (el) el.hidden = s !== id;
     });
+    if (id === "screenPlay") startMusic();
   }
 
   function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
@@ -133,91 +339,197 @@
   }
 
   function drawLadders() {
-    var svg = $("laddersSvg");
-    svg.innerHTML = "";
-    Object.keys(LADDERS).forEach(function (fromStr) {
-      var from = +fromStr, to = LADDERS[from];
-      var a = cellCenters[from], b = cellCenters[to];
+    var svg = $("laddersSvg"); svg.innerHTML = "";
+    Object.keys(LADDERS).forEach(function (fs) {
+      var from = +fs, to = LADDERS[from], a = cellCenters[from], b = cellCenters[to];
       if (!a || !b) return;
       var x1 = a.x * 10, y1 = a.y * 10, x2 = b.x * 10, y2 = b.y * 10;
       var dx = x2 - x1, dy = y2 - y1, len = Math.sqrt(dx * dx + dy * dy) || 1;
-      var px = (-dy / len) * 10, py = (dx / len) * 10;
-      [[x1 + px, y1 + py, x2 + px, y2 + py], [x1 - px, y1 - py, x2 - px, y2 - py]].forEach(function (r) {
-        var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", r[0]); line.setAttribute("y1", r[1]);
-        line.setAttribute("x2", r[2]); line.setAttribute("y2", r[3]);
-        line.setAttribute("stroke", "#b45309"); line.setAttribute("stroke-width", "5");
-        line.setAttribute("stroke-linecap", "round");
-        svg.appendChild(line);
+      var ux = dx / len, uy = dy / len, px = -uy * 15, py = ux * 15;
+      var g = svgEl("g", {}, svg);
+      var rails = [[px, py], [-px, -py]];
+      var steps = Math.max(3, Math.floor(len / 40)), i, t, cx, cy;
+      rails.forEach(function (o) {
+        svgEl("line", { x1: x1 + o[0] + 6, y1: y1 + o[1] + 8, x2: x2 + o[0] + 6, y2: y2 + o[1] + 8, style: "stroke:rgba(15,23,42,.3);stroke-width:8px;stroke-linecap:round" }, g);
       });
-      var steps = Math.max(3, Math.floor(len / 45));
-      for (var i = 1; i < steps; i++) {
-        var t = i / steps, cx = x1 + dx * t, cy = y1 + dy * t;
-        var rung = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        rung.setAttribute("x1", cx + px); rung.setAttribute("y1", cy + py);
-        rung.setAttribute("x2", cx - px); rung.setAttribute("y2", cy - py);
-        rung.setAttribute("stroke", "#d97706"); rung.setAttribute("stroke-width", "4");
-        svg.appendChild(rung);
+      for (i = 1; i < steps; i++) {
+        t = i / steps; cx = x1 + dx * t; cy = y1 + dy * t;
+        svgEl("line", { x1: cx + px + 6, y1: cy + py + 8, x2: cx - px + 6, y2: cy - py + 8, style: "stroke:rgba(15,23,42,.3);stroke-width:6px;stroke-linecap:round" }, g);
+      }
+      rails.forEach(function (o) {
+        svgEl("line", { x1: x1 + o[0], y1: y1 + o[1], x2: x2 + o[0], y2: y2 + o[1], style: "stroke:#a16207;stroke-width:8px;stroke-linecap:round" }, g);
+      });
+      for (i = 1; i < steps; i++) {
+        t = i / steps; cx = x1 + dx * t; cy = y1 + dy * t;
+        svgEl("line", { x1: cx + px, y1: cy + py, x2: cx - px, y2: cy - py, style: "stroke:#fbbf24;stroke-width:5px;stroke-linecap:round" }, g);
       }
     });
   }
 
   function drawSnakes() {
-    var svg = $("snakesSvg");
-    svg.innerHTML = "";
-    var colors = ["#10b981", "#06b6d4", "#f59e0b", "#ec4899", "#8b5cf6"];
-    var i = 0;
-    Object.keys(SNAKES).forEach(function (fromStr) {
-      var from = +fromStr, to = SNAKES[from];
-      var a = cellCenters[from], b = cellCenters[to];
+    var svg = $("snakesSvg"); svg.innerHTML = "";
+    var bodies = svgEl("g", {}, svg), heads = svgEl("g", {}, svg);  // all bodies first, heads on top
+    var k = 0;
+    Object.keys(SNAKES).forEach(function (fs) {
+      var from = +fs, to = SNAKES[from], a = cellCenters[from], b = cellCenters[to];
       if (!a || !b) return;
-      var x1 = a.x * 10, y1 = a.y * 10, x2 = b.x * 10, y2 = b.y * 10;
-      var mx = (x1 + x2) / 2 + (y1 - y2) * 0.2;
-      var my = (y1 + y2) / 2 + (x2 - x1) * 0.15;
-      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", "M " + x1 + " " + y1 + " Q " + mx + " " + my + " " + x2 + " " + y2);
-      path.setAttribute("stroke", colors[i % colors.length]);
-      path.setAttribute("class", "snake-body");
-      path.style.strokeWidth = "12";
-      path.setAttribute("fill", "none");
-      svg.appendChild(path);
-      var head = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      head.setAttribute("cx", x1); head.setAttribute("cy", y1); head.setAttribute("r", "11");
-      head.setAttribute("fill", colors[i % colors.length]);
-      svg.appendChild(head);
-      i++;
+      k++;
+      var col = SNAKE_COLORS[k % SNAKE_COLORS.length];
+      var pts = snakePoints(a.x * 10, a.y * 10, b.x * 10, b.y * 10, k);
+      var poly = pts.map(function (p) { return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" ");
+      var g = svgEl("g", {}, bodies);
+      svgEl("polyline", polyAttrs(poly, "rgba(15,23,42,.35)", 26, { transform: "translate(7,9)" }), g);
+      svgEl("polyline", polyAttrs(poly, col[2], 24), g);
+      svgEl("polyline", polyAttrs(poly, col[0], 18), g);
+      svgEl("polyline", polyAttrs(poly, col[1], 7, { "stroke-dasharray": "10 12", opacity: ".8", "class": "snake-scales" }), g);
+      var p0 = pts[0], p1 = pts[2];
+      var ang = Math.atan2(p0[1] - p1[1], p0[0] - p1[0]) * 180 / Math.PI;
+      var hg = svgEl("g", { transform: "translate(" + p0[0].toFixed(1) + "," + p0[1].toFixed(1) + ") rotate(" + ang.toFixed(1) + ")" }, heads);
+      var hb = svgEl("g", { "class": "head-bob" }, hg);
+      var tg = svgEl("g", { "class": "tongue" }, hb);
+      svgEl("line", { x1: 14, y1: 0, x2: 30, y2: 0, stroke: "#f43f5e", "stroke-width": 3, "stroke-linecap": "round" }, tg);
+      svgEl("line", { x1: 30, y1: 0, x2: 38, y2: -6, stroke: "#f43f5e", "stroke-width": 3, "stroke-linecap": "round" }, tg);
+      svgEl("line", { x1: 30, y1: 0, x2: 38, y2: 6, stroke: "#f43f5e", "stroke-width": 3, "stroke-linecap": "round" }, tg);
+      svgEl("ellipse", { cx: 0, cy: 0, rx: 19, ry: 16, fill: col[0], stroke: col[2], "stroke-width": 3 }, hb);
+      svgEl("ellipse", { cx: -5, cy: -6, rx: 7, ry: 4, fill: "#fff", opacity: ".25" }, hb);
+      [-8, 8].forEach(function (y) {
+        svgEl("circle", { cx: 6, cy: y, r: 6.5, fill: "#fef9c3", stroke: col[2], "stroke-width": 1.5 }, hb);
+        svgEl("ellipse", { cx: 8, cy: y, rx: 2, ry: 3.6, fill: "#0f172a" }, hb);
+      });
     });
   }
 
+  var STACK = [[-2.6, -2.6], [2.6, -2.6], [-2.6, 2.6], [2.6, 2.6]];
   function placeTokensFromPositions(posArr) {
-    var layer = $("tokensLayer");
-    layer.innerHTML = "";
-    for (var p = 0; p < 2; p++) {
-      var n = posArr[p];
-      var c = cellCenters[n];
-      if (!c) continue;
-      var tok = document.createElement("div");
+    var layer = $("tokensLayer"), n = state.count || 2;
+    for (var p = 0; p < n; p++) {
+      var pos = posArr[p], c = cellCenters[pos]; if (!c) continue;
+      var k = 0; for (var q = 0; q < p; q++) if (posArr[q] === pos) k++;
+      var tok = $("token" + p);
+      if (!tok) { tok = document.createElement("div"); tok.id = "token" + p; layer.appendChild(tok); }
       tok.className = "sl-token p" + (p + 1);
-      tok.id = "token" + p;
-      var offset = posArr[0] === posArr[1] ? (p === 0 ? -1.2 : 1.2) : 0;
-      tok.style.left = (c.x + offset) + "%";
-      tok.style.top = (c.y + offset) + "%";
-      layer.appendChild(tok);
+      tok.textContent = state.icons[p];
+      tok.style.left = (c.x + STACK[k][0]) + "%";
+      tok.style.top = (c.y + STACK[k][1]) + "%";
     }
   }
-
-  function placeTokens() {
-    placeTokensFromPositions(state.positions);
+  function placeTokens() { placeTokensFromPositions(state.positions); }
+  function norm(s) { return String(s).replace(/\u2019/g, "'").replace(/\s+/g, " ").trim().toLowerCase(); }
+  function typedOk(q, vals) {
+    if (q.blanks) return q.blanks.every(function (f, i) { return !!f(norm(vals[i])); });
+    return !!q.check(norm(vals[0]));
+  }
+  function showTypedResult(ok, model) {
+    var res = $("aResult"); res.hidden = false; res.className = "sl-result " + (ok ? "ok" : "bad");
+    res.textContent = ok ? "Correct! Stay put." : "Wrong! Back 3 squares.";
+    if (!ok && model) { var m = document.createElement("div"); m.className = "sl-model"; m.textContent = "Model answer: " + model; res.appendChild(m); }
+    sfx(ok ? "correct" : "wrong");
+    $("aContinue").hidden = false;
+  }
+  // Builds the typing UI: inline boxes inside the sentence for blank questions, one box otherwise
+  function typedBox(q, onSubmit) {
+    var box = $("aChoices"); box.innerHTML = "";
+    var wrap = document.createElement("div"); wrap.className = "sl-typewrap";
+    var inputs = [], done = false, go = document.createElement("button");
+    function submit() {
+      if (done) return;
+      var empty = inputs.filter(function (i) { return !i.value.trim(); })[0];
+      if (empty) { empty.focus(); return; }
+      done = true;
+      inputs.forEach(function (i) { i.disabled = true; }); go.disabled = true;
+      onSubmit(inputs.map(function (i) { return i.value; }));
+    }
+    function makeInput(blank) {
+      var inp = document.createElement("input");
+      inp.type = "text"; inp.autocomplete = "off"; inp.autocapitalize = "off"; inp.spellcheck = false;
+      inp.className = blank ? "sl-blank" : "sl-typebox";
+      inp.placeholder = blank ? "…" : "Type your answer here";
+      inp.onkeydown = function (e) { if (e.key === "Enter") submit(); };
+      return inp;
+    }
+    if (q.blanks) {
+      $("aText").textContent = "";
+      var line = document.createElement("div"); line.className = "sl-fill";
+      String(q.q).split(/\[\[(\d+)\]\]/).forEach(function (part, i) {
+        if (i % 2 === 0) line.appendChild(document.createTextNode(part));
+        else { var inp = makeInput(true); inputs[+part] = inp; line.appendChild(inp); }
+      });
+      wrap.appendChild(line);
+    } else {
+      $("aText").textContent = formatQuestionText(q.q);
+      var one = makeInput(false); inputs.push(one); wrap.appendChild(one);
+    }
+    go.type = "button"; go.className = "sl-btn primary wide"; go.textContent = "Check answer";
+    go.onclick = submit;
+    wrap.appendChild(go); box.appendChild(wrap);
+    $("aResult").hidden = true; $("aContinue").hidden = true; $("aModal").hidden = false;
+    setTimeout(function () { if (inputs[0]) inputs[0].focus(); }, 150);
+  }
+  function askTypedOffline(player, q) {
+    return new Promise(function (resolve) {
+      sfx("question");
+      $("aWho").textContent = "Question for " + state.names[player];
+      typedBox(q, function (vals) {
+        var ok = typedOk(q, vals);
+        showTypedResult(ok, q.model);
+        $("aContinue").onclick = function () { $("aModal").hidden = true; resolve(ok); };
+      });
+    });
   }
 
+  function celebrate() {
+    var box = document.createElement("div");
+    box.className = "sl-confetti";
+    var cols = ["#f472b6", "#22d3ee", "#fde047", "#a78bfa", "#34d399", "#fb923c"];
+    for (var i = 0; i < 110; i++) {
+      var p = document.createElement("i");
+      p.style.left = (Math.random() * 100) + "%";
+      p.style.background = cols[i % cols.length];
+      p.style.setProperty("--dx", (Math.random() * 200 - 100) + "px");
+      p.style.animationDelay = (Math.random() * 0.8) + "s";
+      box.appendChild(p);
+    }
+    document.body.appendChild(box);
+    setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 4200);
+  }
+  buildDie();
+  buildIconPickers();
+  paintMute();
+  $("btnMute").onclick = function () { setMuted(!muted); };
+  document.querySelectorAll("#segCount button").forEach(function (b) { b.onclick = function () { setCount(+b.getAttribute("data-n")); }; });
+  document.querySelectorAll("#segLevel button").forEach(function (b) { b.onclick = function () { setLevel(b.getAttribute("data-lvl")); }; });
+  function setCount(n) {
+    state.count = n;
+    var blocks = document.querySelectorAll(".sl-players-setup > .sl-psetup");
+    for (var p = 0; p < blocks.length; p++) blocks[p].hidden = p >= n;
+    var used = {};
+    for (var q = 0; q < n; q++) {
+      if (used[state.icons[q]]) state.icons[q] = ICONS.filter(function (ic) { return !used[ic]; })[0];
+      used[state.icons[q]] = true;
+    }
+    paintSeg(); paintPickers();
+  }
+  function setLevel(lvl) { if (!LEVELS[lvl] || !LEVELS[lvl].length) return; state.level = lvl; paintSeg(); }
+  function paintSeg() {
+    document.querySelectorAll("#segCount button").forEach(function (b) { b.classList.toggle("on", +b.getAttribute("data-n") === state.count); });
+    document.querySelectorAll("#segLevel button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-lvl") === state.level); });
+  }
+  setCount(2);
+
   function updateHUD() {
-    $("hudName1").textContent = state.names[0];
-    $("hudName2").textContent = state.names[1];
-    $("hudPos1").textContent = state.positions[0];
-    $("hudPos2").textContent = state.positions[1];
-    $("chip1").classList.toggle("active", state.turn === 0);
-    $("chip2").classList.toggle("active", state.turn === 1);
-    $("turnBanner").textContent = state.names[state.turn] + "'s turn";
+    var box = $("hudPlayers"); if (!box) return;
+    box.innerHTML = "";
+    for (var p = 0; p < state.count; p++) {
+      var c = document.createElement("div");
+      c.className = "sl-hc c" + p + (p === state.turn ? " active" : "");
+      c.innerHTML = "<span></span><span class=\"sl-hc-name\"></span><span class=\"sl-hc-pos\"></span>";
+      c.children[0].textContent = state.icons[p];
+      c.children[1].textContent = state.names[p];
+      c.children[2].textContent = state.positions[p];
+      box.appendChild(c);
+    }
+    // status line takes the colour of the player whose turn it is
+    $("msgBar").style.setProperty("--pc", ["#f472b6", "#22d3ee", "#fbbf24", "#a78bfa"][state.turn] || "#a78bfa");
   }
 
   function setMsg(t) { $("msgBar").textContent = t || ""; }
@@ -274,24 +586,58 @@
   }
 
   function pickOneOffline() {
-    var pool = QUESTIONS.filter(function (q) { return !state.usedQ[q.id]; });
-    if (pool.length < 1) { state.usedQ = {}; pool = QUESTIONS.slice(); }
+    var pool = LEVELS[state.level].filter(function (q) { return !state.usedQ[q.id]; });
+    if (pool.length < 1) { state.usedQ = {}; pool = LEVELS[state.level].slice(); }
     var item = pool[Math.floor(Math.random() * pool.length)];
     state.usedQ[item.id] = true;
     return item;
   }
 
+
+  function formatQuestionText(q) {
+    var s = String(q || "");
+    // Line-break before a) b) c) d) so options stack vertically
+    s = s.replace(/\s+([a-dA-D]\))\s*/g, "\n$1 ");
+    // Also support "a. " / "b. " style
+    s = s.replace(/\s+([a-dA-D])\.\s+/g, "\n$1. ");
+    return s.trim();
+  }
+
+  /** Shuffle choices; returns { choices, answer, originalIndexMap } */
+  function shuffleQuestionChoices(question) {
+    var choices = (question.choices || []).slice();
+    var answer = typeof question.answer === "number" ? question.answer : 0;
+    var order = choices.map(function (_, i) { return i; });
+    for (var i = order.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+    }
+    var shuffled = order.map(function (oi) { return choices[oi]; });
+    var newAnswer = order.indexOf(answer);
+    if (newAnswer < 0) newAnswer = 0;
+    // displayIndex -> originalIndex
+    return {
+      choices: shuffled,
+      answer: newAnswer,
+      toOriginal: function (displayIndex) {
+        return order[displayIndex];
+      },
+    };
+  }
+
   function askQuestionOffline(player, question) {
+    if (question.type === "type") return askTypedOffline(player, question);
     return new Promise(function (resolve) {
       sfx("question");
       $("aWho").textContent = "Question for " + state.names[player];
-      $("aText").textContent = question.q;
+      $("aText").textContent = formatQuestionText(question.q);
       var box = $("aChoices");
       box.innerHTML = "";
       $("aResult").hidden = true;
       $("aContinue").hidden = true;
       var answered = false;
-      question.choices.forEach(function (c, i) {
+      var shuffled = shuffleQuestionChoices(question);
+      shuffled.choices.forEach(function (c, i) {
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "sl-choice";
@@ -299,10 +645,10 @@
         btn.onclick = function () {
           if (answered) return;
           answered = true;
-          var ok = i === question.answer;
+          var ok = i === shuffled.answer;
           Array.prototype.forEach.call(box.children, function (b, j) {
             b.disabled = true;
-            if (j === question.answer) b.classList.add("correct");
+            if (j === shuffled.answer) b.classList.add("correct");
             if (j === i && !ok) b.classList.add("wrong");
           });
           var res = $("aResult");
@@ -329,11 +675,8 @@
     $("diceBtn").classList.add("rolling");
     sfx("roll");
     var final = 1 + Math.floor(Math.random() * 6);
-    for (var i = 0; i < 8; i++) {
-      $("diceFace").textContent = DICE_FACES[Math.floor(Math.random() * 6)];
-      await sleep(55);
-    }
-    $("diceFace").textContent = DICE_FACES[final - 1];
+    showDie(final, true);
+    await sleep(1300);
     $("diceBtn").classList.remove("rolling");
     $("diceLabel").textContent = "Rolled " + final;
 
@@ -342,7 +685,7 @@
     if (final > 100 - pos) {
       setMsg("Need exact number to finish. Turn skipped.");
       await sleep(800);
-      state.turn = 1 - state.turn;
+      state.turn = (state.turn + 1) % state.count;
       state.busy = false;
       $("diceBtn").disabled = false;
       $("diceLabel").textContent = "Tap to roll";
@@ -353,7 +696,7 @@
     if (landed >= 100) {
       sfx("win");
       $("winTitle").textContent = state.names[player] + " wins!";
-      $("winModal").hidden = false;
+      $("winModal").hidden = false; celebrate();
       return;
     }
     if (QUESTION_SQUARES.indexOf(landed) >= 0) {
@@ -371,7 +714,7 @@
         await sleep(350);
       }
     }
-    state.turn = 1 - state.turn;
+    state.turn = (state.turn + 1) % state.count;
     state.busy = false;
     $("diceBtn").disabled = false;
     $("diceLabel").textContent = "Tap to roll";
@@ -381,20 +724,19 @@
 
   function startOffline() {
     mode = "offline";
-    state.names[0] = ($("name1").value || "Player 1").trim().slice(0, 12);
-    state.names[1] = ($("name2").value || "Player 2").trim().slice(0, 12);
-    state.positions = [1, 1];
-    state.turn = 0;
-    state.busy = false;
-    state.usedQ = {};
+    var n = state.count, p;
+    state.names = [];
+    for (p = 0; p < n; p++) state.names.push((($("name" + (p + 1)).value) || ("Player " + (p + 1))).trim().slice(0, 12));
+    state.positions = [];
+    for (p = 0; p < n; p++) state.positions.push(1);
+    state.turn = 0; state.busy = false; state.usedQ = {};
     showScreen("screenPlay");
-    $("winModal").hidden = true;
-    $("qModal").hidden = true;
-    $("aModal").hidden = true;
+    $("winModal").hidden = true; $("qModal").hidden = true; $("aModal").hidden = true;
+    $("tokensLayer").innerHTML = "";
     initBoardUI();
-    $("diceFace").textContent = "🎲";
-    $("diceLabel").textContent = "Tap to roll";
+    showDie(1);
     $("diceBtn").disabled = false;
+    $("diceLabel").textContent = "Tap to roll";
     setMsg(state.names[0] + " starts");
   }
 
@@ -416,15 +758,17 @@
     if (!sl) return;
     onlineSl = sl;
     var ids = sl.playerIds || [];
-    state.names[0] = (sl.names && sl.names[ids[0]]) || "Player 1";
-    state.names[1] = (sl.names && sl.names[ids[1]]) || "Player 2";
-    state.positions[0] = sl.positions[ids[0]] || 1;
-    state.positions[1] = sl.positions[ids[1]] || 1;
+    state.count = ids.length || 2;
+    state.names = []; state.positions = [];
+    ids.forEach(function (id, i) {
+      state.names[i] = (sl.names && sl.names[id]) || ("Player " + (i + 1));
+      state.positions[i] = sl.positions[id] || 1;
+    });
     state.turn = sl.turnIndex || 0;
     placeTokens();
     updateHUD();
     if (sl.lastDice) {
-      $("diceFace").textContent = DICE_FACES[sl.lastDice - 1];
+      showDie(sl.lastDice);
       $("diceLabel").textContent = "Rolled " + sl.lastDice;
     }
     setMsg(sl.message || "");
@@ -450,9 +794,20 @@
     if (sl.status === "finished" || sl.winnerId) {
       var wname = (sl.names && sl.names[sl.winnerId]) || "Player";
       $("winTitle").textContent = wname + " wins!";
-      $("winModal").hidden = false;
+      $("winModal").hidden = false; celebrate();
       sfx("win");
     }
+  }
+
+  function showOnlineTyped(question) {
+    $("aWho").textContent = "Your question";
+    typedBox(question, function (vals) {
+      var payload = question.blanks ? { texts: vals } : { text: vals[0] };
+      socket.emit("sl:answer", payload, function (res) {
+        if (res && res.correct != null) showTypedResult(!!res.correct, res.answer);
+        $("aContinue").onclick = function () { $("aModal").hidden = true; };
+      });
+    });
   }
 
   function showOnlinePicker(sl) {
@@ -477,32 +832,33 @@
   }
 
   function showOnlineAnswer(question) {
+    if (question.type === "type") return showOnlineTyped(question);
     $("aWho").textContent = "Your question";
-    $("aText").textContent = question.q;
+    $("aText").textContent = formatQuestionText(question.q);
     var box = $("aChoices");
     box.innerHTML = "";
     $("aResult").hidden = true;
     $("aContinue").hidden = true;
-    question.choices.forEach(function (c, i) {
+    var shuffled = shuffleQuestionChoices(question);
+    shuffled.choices.forEach(function (c, i) {
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "sl-choice";
       btn.textContent = c;
       btn.onclick = function () {
         Array.prototype.forEach.call(box.children, function (b) { b.disabled = true; });
-        socket.emit("sl:answer", { choiceIndex: i }, function (res) {
+        var originalIndex = shuffled.toOriginal(i);
+        socket.emit("sl:answer", { choiceIndex: originalIndex }, function (res) {
           if (res && res.correct != null) {
             var resEl = $("aResult");
             resEl.hidden = false;
             resEl.className = "sl-result " + (res.correct ? "ok" : "bad");
             resEl.textContent = res.correct ? "Correct!" : "Wrong — back 3";
             sfx(res.correct ? "correct" : "wrong");
-            if (typeof res.answer === "number") {
-              Array.prototype.forEach.call(box.children, function (b, j) {
-                if (j === res.answer) b.classList.add("correct");
-                if (j === i && !res.correct) b.classList.add("wrong");
-              });
-            }
+            Array.prototype.forEach.call(box.children, function (b, j) {
+              if (j === shuffled.answer) b.classList.add("correct");
+              if (j === i && !res.correct) b.classList.add("wrong");
+            });
           }
           $("aContinue").hidden = false;
           $("aContinue").onclick = function () { $("aModal").hidden = true; };
@@ -576,7 +932,7 @@
         if (payload.events && payload.events.length) {
           var ev = payload.events[0];
           if (ev.dice) {
-            $("diceFace").textContent = DICE_FACES[ev.dice - 1];
+            showDie(ev.dice, true);
             sfx("roll");
           }
           if (ev.type === "ladder" || (ev.path && ev.path.some(function (p) { return p.event === "ladder"; }))) sfx("ladder");
@@ -882,7 +1238,7 @@
     btn.disabled = true;
     btn.textContent = "Starting…";
     $("lobbyStatus").textContent = "Starting game…";
-    socket.emit("sl:start", {}, function (res) {
+    socket.emit("sl:start", { level: state.level }, function (res) {
       btn.disabled = false;
       btn.textContent = "Start Game";
       if (!res || !res.ok) {

@@ -154,8 +154,8 @@ export function attachSocket(io) {
 
     
     // Dedicated Snakes & Ladders start (avoids A/An path entirely)
-    socket.on("sl:start", (_payload, ack) => {
-      const result = roomManager.startGame(player.id, { gameType: "snakes-ladders" });
+    socket.on("sl:start", (payload, ack) => {
+      const result = roomManager.startGame(player.id, { gameType: "snakes-ladders", level: payload?.level });
       if (!result.ok) {
         socket.emit("room:error", { error: result.error });
         if (typeof ack === "function") ack(result);
@@ -302,7 +302,7 @@ socket.on("game:start", (payload, ack) => {
     });
 
     socket.on("sl:answer", (payload, ack) => {
-      const result = roomManager.slAnswer(player.id, payload?.choiceIndex);
+      const result = roomManager.slAnswer(player.id, payload);
       if (!result.ok) {
         socket.emit("room:error", { error: result.error });
         if (typeof ack === "function") ack(result);
