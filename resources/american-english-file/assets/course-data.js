@@ -970,6 +970,20 @@ COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.a.audio = (
     { track: "7.1", url: "https://cdn.imgurl.ir/uploads/o040399_.mp3", title: "Unit 7 practice", label: "Workbook" },
 ]);
 
+// Unit 7B (lesson b) – Student's Book audio
+COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.audio || []).concat([
+    { track: "7.10", url: "https://cdn.imgurl.ir/uploads/q474014_.mp3", label: "Student's Book" },
+    { track: "7.11", url: "https://cdn.imgurl.ir/uploads/y033137_.mp3", label: "Student's Book" },
+    { track: "7.12", url: "https://cdn.imgurl.ir/uploads/i863602_.mp3", label: "Student's Book" },
+    { track: "7.13", url: "https://cdn.imgurl.ir/uploads/r72772_.mp3", label: "Student's Book" },
+    { track: "7.14", url: "https://cdn.imgurl.ir/uploads/y685042_.mp3", label: "Student's Book" },
+    { track: "7.15", url: "https://cdn.imgurl.ir/uploads/y11530_.mp3", label: "Student's Book" },
+    { track: "7.16", url: "https://cdn.imgurl.ir/uploads/u02911_.mp3", label: "Student's Book" },
+    { track: "7.17", url: "https://cdn.imgurl.ir/uploads/a2218_.mp3", label: "Student's Book" },
+    { track: "7.18", url: "https://cdn.imgurl.ir/uploads/b656745_.mp3", label: "Student's Book" },
+    { track: "7.19", url: "https://cdn.imgurl.ir/uploads/n706864_.mp3", label: "Student's Book" },
+]);
+
 // Unit 7B (lesson b)
 COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.audio = (COURSE_DATA["american-english-file"].levels.starter.units[7].lessons.b.audio || []).concat([
     { track: "7.2", url: "https://cdn.imgurl.ir/uploads/y2413_.mp3", title: "Unit 7 practice", label: "Workbook" },
