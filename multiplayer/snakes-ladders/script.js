@@ -551,6 +551,9 @@
     });
     socket.on("server:hello", function (d) {
       if (d && d.player) myId = d.player.id;
+      if (d && d.phase != null && Number(d.phase) < 4) {
+        setOnlineStatus("Server is outdated (phase " + d.phase + "). Redeploy multiplayer-server with Snakes & Ladders.");
+      }
     });
     socket.on("room:update", function (room) {
       lastRoom = room;
@@ -879,7 +882,7 @@
     btn.disabled = true;
     btn.textContent = "Starting…";
     $("lobbyStatus").textContent = "Starting game…";
-    socket.emit("game:start", { gameType: "snakes-ladders" }, function (res) {
+    socket.emit("sl:start", {}, function (res) {
       btn.disabled = false;
       btn.textContent = "Start Game";
       if (!res || !res.ok) {

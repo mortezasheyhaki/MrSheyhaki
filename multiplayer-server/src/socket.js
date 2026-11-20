@@ -75,8 +75,8 @@ export function attachSocket(io) {
 
     socket.emit("server:hello", {
       ok: true,
-      phase: 3,
-      message: "Authenticated multiplayer server — A or An Swipe ready",
+      phase: 4,
+      message: "Authenticated multiplayer server — A or An + Snakes & Ladders ready",
       player: {
         id: player.id,
         username: player.username,
@@ -152,7 +152,23 @@ export function attachSocket(io) {
 
     // ── Game (Phase 3) ─────────────────────────────────────────────
 
-    socket.on("game:start", (payload, ack) => {
+    
+    // Dedicated Snakes & Ladders start (avoids A/An path entirely)
+    socket.on("sl:start", (_payload, ack) => {
+      const result = roomManager.startGame(player.id, { gameType: "snakes-ladders" });
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      const room = result.room;
+      emitRoom(io, room);
+      io.to(roomChannel(room.code)).emit("sl:update", { sl: result.sl || room.game });
+      console.log(`[game] ${brief} started Snakes & Ladders (sl:start) in ${room.code}`);
+      if (typeof ack === "function") ack(result);
+    });
+
+socket.on("game:start", (payload, ack) => {
       const settings = {};
       if (payload?.questionCount) settings.questionCount = Number(payload.questionCount);
       if (payload?.timePerQuestion) settings.timePerQuestion = Number(payload.timePerQuestion);

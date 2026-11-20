@@ -23,7 +23,7 @@ app.use(
 app.get("/health", (_req, res) => {
   res.json({
     ok: true,
-    phase: 3,
+    phase: 4,
     service: "mrsheyhaki-multiplayer",
     time: new Date().toISOString(),
     rooms: roomManager.stats().rooms,
@@ -36,7 +36,7 @@ app.get("/", (_req, res) => {
 <html lang="en"><head><meta charset="utf-8"><title>Multiplayer server</title></head>
 <body style="font-family:system-ui;padding:2rem">
   <h1>MrSheyhaki multiplayer server</h1>
-  <p>Phase 3 — A or An Swipe. <a href="/health">/health</a></p>
+  <p>Phase 4 — A or An Swipe + Snakes & Ladders. <a href="/health">/health</a></p>
 </body></html>`);
 });
 
@@ -53,7 +53,7 @@ const io = new Server(server, {
 attachSocket(io);
 
 server.listen(config.port, () => {
-  console.log(`[server] phase 3 listening on :${config.port} (env=${config.nodeEnv})`);
+  console.log(`[server] phase 4 listening on :${config.port} (env=${config.nodeEnv})`);
   console.log(`[server] CORS: ${config.corsOrigins.join(", ")}`);
   console.log(
     `[server] Supabase: ${config.supabaseUrl ? "URL set" : "MISSING URL"} / key ${

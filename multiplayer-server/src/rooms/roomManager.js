@@ -39,6 +39,7 @@ function publicRoom(room) {
     players: room.players.map(publicPlayer),
     status: room.status, // lobby | playing | ended
     createdAt: room.createdAt,
+    gameType: room.gameType || null,
   };
 
   if (room.game && room.status === "playing") {
