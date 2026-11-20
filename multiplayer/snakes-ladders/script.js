@@ -404,13 +404,15 @@
     var layer = $("tokensLayer"), n = state.count || 2;
     for (var p = 0; p < n; p++) {
       var pos = posArr[p], c = cellCenters[pos]; if (!c) continue;
-      var k = 0; for (var q = 0; q < p; q++) if (posArr[q] === pos) k++;
+      var k = 0, sharing = 0;
+      for (var q = 0; q < n; q++) if (posArr[q] === pos) { sharing++; if (q < p) k++; }
+      var off = sharing > 1 ? STACK[k] : [0, 0];   // only spread tokens when players share a square
       var tok = $("token" + p);
       if (!tok) { tok = document.createElement("div"); tok.id = "token" + p; layer.appendChild(tok); }
       tok.className = "sl-token p" + (p + 1);
       tok.textContent = state.icons[p];
-      tok.style.left = (c.x + STACK[k][0]) + "%";
-      tok.style.top = (c.y + STACK[k][1]) + "%";
+      tok.style.left = (c.x + off[0]) + "%";
+      tok.style.top = (c.y + off[1]) + "%";
     }
   }
   function placeTokens() { placeTokensFromPositions(state.positions); }
