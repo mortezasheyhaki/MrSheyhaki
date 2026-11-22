@@ -162,7 +162,6 @@ COURSE_DATA["american-english-file"].levels.starter.units[2].lessons.b.games = [
   { title: "Personal Interview", url: "personal-interview/", label: "Speaking" },
   { title: "Phone Numbers · 3 Parts", url: "phone-3parts/", label: "Vocabulary" },
   { title: "Phone Number", url: "phone-number/", label: "Vocabulary" },
-  { title: "Question Words", url: "question-words/", label: "Grammar" },
   { title: "Student Card", url: "student-card/", label: "Vocabulary" },
   { title: "Word Order Questions", url: "word-order-questions/", label: "Grammar" },
 ];
@@ -529,3 +528,11 @@ COURSE_DATA["teen2teen"].levels["2"].units[2].games = [
 if (typeof module !== "undefined" && module.exports) {
   module.exports = COURSE_DATA;
 }
+
+// T2T2 Unit 3 – Extra-curricular activities & present continuous games
+// T2T2 Unit 3 – Extra-curricular activities & present continuous games
+COURSE_DATA["teen2teen"].levels["2"].units[3].games = [
+  { title: "Activities Flashcards", url: "games/extracurricular-flashcards/", label: "Vocabulary" },
+  { title: "Picture Choice", url: "games/picture-choice/", label: "Vocabulary" },
+  { title: "Type the Phrase", url: "games/type-the-phrase/", label: "Vocabulary" },
+];
