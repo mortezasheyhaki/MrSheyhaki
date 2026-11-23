@@ -8,22 +8,22 @@
  */
 
 export const FAMILY_PICTURES = [
-  { label: "A brother", image: "https://cdn.imgurl.ir/uploads/a058161_.png" },
-  { label: "A daughter", image: "https://cdn.imgurl.ir/uploads/r77090_.png" },
-  { label: "A husband", image: "https://cdn.imgurl.ir/uploads/o891156_.png" },
-  { label: "A sister", image: "https://cdn.imgurl.ir/uploads/b94256_.png" },
-  { label: "A son", image: "https://cdn.imgurl.ir/uploads/t241587_.png" },
-  { label: "A wife", image: "https://cdn.imgurl.ir/uploads/y3594_.png" },
-  { label: "A boy", image: "https://cdn.imgurl.ir/uploads/x06536_.png" },
-  { label: "Children", image: "https://cdn.imgurl.ir/uploads/z113036_.png" },
-  { label: "Father", image: "https://cdn.imgurl.ir/uploads/n9668_.png" },
-  { label: "Friends", image: "https://cdn.imgurl.ir/uploads/x330610_.png" },
-  { label: "A girl", image: "https://cdn.imgurl.ir/uploads/q13810_.png" },
-  { label: "Grandfather", image: "https://cdn.imgurl.ir/uploads/g29662_.png" },
-  { label: "Grandmother", image: "https://cdn.imgurl.ir/uploads/a774121_.png" },
-  { label: "A man", image: "https://cdn.imgurl.ir/uploads/h20643_.png" },
-  { label: "A mother", image: "https://cdn.imgurl.ir/uploads/l966851_.png" },
-  { label: "A woman", image: "https://cdn.imgurl.ir/uploads/c565823_.png" },
+  { label: "A brother", image: "https://cdn.imgurl.ir/uploads/a058161_.png", audio: "https://cdn.imgurl.ir/uploads/l88386_.mp3" },
+  { label: "A daughter", image: "https://cdn.imgurl.ir/uploads/r77090_.png", audio: "https://cdn.imgurl.ir/uploads/i61968_.mp3" },
+  { label: "A husband", image: "https://cdn.imgurl.ir/uploads/o891156_.png", audio: "https://cdn.imgurl.ir/uploads/i37202_.mp3" },
+  { label: "A sister", image: "https://cdn.imgurl.ir/uploads/b94256_.png", audio: "https://cdn.imgurl.ir/uploads/d501248_.mp3" },
+  { label: "A son", image: "https://cdn.imgurl.ir/uploads/t241587_.png", audio: "https://cdn.imgurl.ir/uploads/c386216_.mp3" },
+  { label: "A wife", image: "https://cdn.imgurl.ir/uploads/y3594_.png", audio: "https://cdn.imgurl.ir/uploads/j864986_.mp3" },
+  { label: "A boy", image: "https://cdn.imgurl.ir/uploads/x06536_.png", audio: "https://cdn.imgurl.ir/uploads/h11316_.mp3" },
+  { label: "Children", image: "https://cdn.imgurl.ir/uploads/z113036_.png", audio: "https://cdn.imgurl.ir/uploads/m904387_.mp3" },
+  { label: "Father", image: "https://cdn.imgurl.ir/uploads/n9668_.png", audio: "https://cdn.imgurl.ir/uploads/t33466_.mp3" },
+  { label: "Friends", image: "https://cdn.imgurl.ir/uploads/x330610_.png", audio: "https://cdn.imgurl.ir/uploads/q93660_.mp3" },
+  { label: "A girl", image: "https://cdn.imgurl.ir/uploads/q13810_.png", audio: "https://cdn.imgurl.ir/uploads/s440128_.mp3" },
+  { label: "Grandfather", image: "https://cdn.imgurl.ir/uploads/g29662_.png", audio: "https://cdn.imgurl.ir/uploads/68184_.mp3" },
+  { label: "Grandmother", image: "https://cdn.imgurl.ir/uploads/a774121_.png", audio: "https://cdn.imgurl.ir/uploads/d245930_.mp3" },
+  { label: "A man", image: "https://cdn.imgurl.ir/uploads/h20643_.png", audio: "https://cdn.imgurl.ir/uploads/r824979_.mp3" },
+  { label: "A mother", image: "https://cdn.imgurl.ir/uploads/l966851_.png", audio: "https://cdn.imgurl.ir/uploads/a552621_.mp3" },
+  { label: "A woman", image: "https://cdn.imgurl.ir/uploads/c565823_.png", audio: "https://cdn.imgurl.ir/uploads/f67737_.mp3" },
 ];
 
 export const FW_TIME_OPTIONS = [60, 90, 120];
@@ -59,7 +59,7 @@ export function createFamilyState(playerIds, { timeLimit = FW_DEFAULT_SECONDS } 
       .slice(0, 2)
       .map((p) => p.label);
     const choices = shuffle([pic.label, ...others]);
-    return { image: pic.image, choices, correct: choices.indexOf(pic.label) };
+    return { image: pic.image, audio: pic.audio, choices, correct: choices.indexOf(pic.label) };
   });
 
   const scores = {};
@@ -135,7 +135,7 @@ export function submitAnswer(game, playerId, choice) {
   }
   game.answers[playerId] = { choice: pick, correct, points, ms };
 
-  return { ok: true, correct, points, label: q.choices[q.correct], ms };
+  return { ok: true, correct, points, label: q.choices[q.correct], audio: q.audio, ms };
 }
 
 /** True once every connected player has answered the current picture. */

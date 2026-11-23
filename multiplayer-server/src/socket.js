@@ -363,6 +363,7 @@ socket.on("game:start", (payload, ack) => {
         correct: result.correct,
         points: result.points,
         label: result.label,
+        audio: result.audio,
         ms: result.ms,
       });
       io.to(roomChannel(result.roomCode)).emit("fw:scoreboard", { scoreboard: result.scoreboard });

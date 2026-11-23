@@ -291,6 +291,8 @@
       });
       socket.on("fw:result", function (d) {
         answered = true;
+        // say the correct word, like the other games
+        if (d.audio) { try { var snd = new Audio(d.audio); var pr = snd.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {} }
         var fb = $("gFeedback");
         if (d.correct) { fb.textContent = "Yes! +" + d.points + " 🎉"; fb.className = "feedback ok"; }
         else { fb.textContent = "Not quite — the answer is “" + d.label + "”"; fb.className = "feedback no"; }
