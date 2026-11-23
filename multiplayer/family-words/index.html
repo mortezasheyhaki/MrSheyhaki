@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Family Words · Multiplayer | Mr. Sheyhaki</title>
+  <meta name="description" content="Family Words – multiplayer picture game. Create a lobby, choose the time, and match the picture with the right family word." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f172a; --card: #1e293b; --card2: #334155; --text: #f1f5f9; --muted: #94a3b8;
+      --accent: #8b5cf6; --accent2: #a78bfa; --ok: #34d399; --bad: #f87171; --gold: #fbbf24;
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100dvh; font-family: "Nunito", system-ui, sans-serif; color: var(--text);
+      background: radial-gradient(1200px 600px at 50% -10%, #312e81 0%, var(--bg) 55%);
+      padding: 1rem; padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+    .wrap { max-width: 520px; margin: 0 auto; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1rem; }
+    .back { color: var(--muted); text-decoration: none; font-weight: 700; font-size: .95rem; padding: .4rem .6rem; border-radius: 10px; }
+    .back:hover { color: var(--text); background: rgba(255,255,255,.06); }
+    .badge { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; background: rgba(139,92,246,.25); color: var(--accent2); padding: .25rem .55rem; border-radius: 999px; }
+    h1 { font-size: 1.5rem; margin: 0 0 .25rem; font-weight: 800; }
+    h2 { font-size: 1.15rem; margin: 0 0 .5rem; font-weight: 800; }
+    .muted { color: var(--muted); font-size: .92rem; margin: 0; }
+    .card { background: var(--card); border: 1px solid rgba(255,255,255,.06); border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1rem; box-shadow: 0 12px 40px rgba(0,0,0,.25); }
+    .hidden { display: none !important; }
+    .btn { font: inherit; font-weight: 800; font-size: 1rem; border: 0; border-radius: 14px; padding: .8rem 1rem; cursor: pointer; color: #fff; background: var(--card2); }
+    .btn:disabled { opacity: .45; cursor: default; }
+    .btn-primary { background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 6px 0 #4c1d95; }
+    .btn-secondary { background: var(--card2); }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid rgba(255,255,255,.12); }
+    .btn-row { display: flex; gap: .6rem; flex-wrap: wrap; }
+    .btn-row > * { flex: 1; }
+    input[type=text], input[type=number] {
+      width: 100%; font: inherit; font-size: 1.05rem; padding: .75rem .9rem; border-radius: 12px;
+      border: 2px solid rgba(255,255,255,.12); background: #0f172a; color: var(--text);
+    }
+    .status { font-size: .9rem; min-height: 1.2rem; margin: .6rem 0 0; color: var(--muted); }
+    .status.error { color: var(--bad); } .status.ok { color: var(--ok); }
+    .room-code { text-align: center; font-size: 2rem; font-weight: 800; letter-spacing: .25em; background: #0f172a; border-radius: 14px; padding: .6rem; margin: .4rem 0 .8rem; }
+
+    /* lobby */
+    .players { display: flex; flex-direction: column; gap: .4rem; margin: .6rem 0; }
+    .player { display: flex; align-items: center; justify-content: space-between; background: #0f172a; border-radius: 12px; padding: .55rem .75rem; font-weight: 700; }
+    .pill { font-size: .72rem; font-weight: 800; padding: .2rem .5rem; border-radius: 999px; background: rgba(255,255,255,.08); color: var(--muted); }
+    .pill.ready { background: rgba(52,211,153,.2); color: var(--ok); }
+    .pill.host { background: rgba(251,191,36,.2); color: var(--gold); }
+    .pill.off { background: rgba(248,113,113,.18); color: var(--bad); }
+    .game-pick { display: flex; align-items: center; gap: .7rem; background: #0f172a; border: 2px solid var(--accent); border-radius: 14px; padding: .7rem .8rem; margin: .4rem 0 .9rem; }
+    .game-pick .ico { font-size: 1.6rem; }
+    .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-top: .4rem; }
+    .time-btn { font: inherit; font-weight: 800; border: 2px solid rgba(255,255,255,.12); background: #0f172a; color: var(--text); border-radius: 12px; padding: .65rem .3rem; cursor: pointer; }
+    .time-btn.on { border-color: var(--gold); background: rgba(251,191,36,.15); color: var(--gold); }
+    .time-btn:disabled { opacity: .5; cursor: default; }
+    .custom-row { display: flex; gap: .5rem; margin-top: .55rem; }
+    .custom-row input { flex: 1; }
+    .custom-row button { flex: none; width: auto; padding: .7rem 1rem; }
+    .time-note { font-size: .85rem; color: var(--muted); margin: .5rem 0 0; }
+
+    /* game */
+    .g-top { display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin-bottom: .6rem; }
+    .g-count { font-weight: 800; color: var(--accent2); }
+    .g-timer { font-weight: 800; font-variant-numeric: tabular-nums; background: #0f172a; border-radius: 999px; padding: .3rem .8rem; }
+    .g-timer.low { color: var(--bad); }
+    .pic-wrap { background: #fff; border-radius: 16px; padding: .4rem; display: flex; align-items: center; justify-content: center; min-height: 180px; max-height: 42dvh; }
+    .pic-wrap img { max-width: 100%; max-height: 40dvh; object-fit: contain; display: block; }
+    .chips { display: grid; grid-template-columns: 1fr; gap: .6rem; margin-top: .8rem; }
+    .chip {
+      font: inherit; font-weight: 800; font-size: 1.15rem; color: var(--text);
+      background: linear-gradient(135deg, #3b2f6b, #2a2250); border: 2px solid rgba(167,139,250,.35);
+      border-radius: 16px; padding: .9rem 1rem; min-height: 56px; cursor: pointer; box-shadow: 0 5px 0 #151032;
+      transition: transform .1s ease, background .15s, border-color .15s;
+    }
+    .chip:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--accent2); }
+    .chip:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 #151032; }
+    .chip:disabled { cursor: default; }
+    .chip.right { background: rgba(52,211,153,.22); border-color: var(--ok); color: #d1fae5; }
+    .chip.wrong { background: rgba(248,113,113,.2); border-color: var(--bad); color: #fecaca; }
+    .chip.dim { opacity: .45; }
+    .feedback { min-height: 1.6rem; text-align: center; font-weight: 800; font-size: 1.1rem; margin: .6rem 0 0; }
+    .feedback.ok { color: var(--ok); } .feedback.no { color: var(--bad); }
+    .board { margin-top: .9rem; display: flex; flex-direction: column; gap: .35rem; }
+    .row { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border-radius: 12px; padding: .5rem .75rem; font-weight: 700; }
+    .row .pts { color: var(--gold); font-weight: 800; }
+    .row .done { font-size: .72rem; color: var(--ok); margin-left: .4rem; }
+    .row .off { font-size: .72rem; color: var(--bad); margin-left: .4rem; }
+
+    /* end */
+    .end-title { text-align: center; font-size: 1.6rem; font-weight: 800; margin: .2rem 0 .8rem; }
+    .end-row { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border-radius: 12px; padding: .6rem .85rem; margin-bottom: .4rem; font-weight: 800; }
+    .end-row.first { border: 2px solid var(--gold); }
+    @media (min-width: 640px) {
+      .chips { grid-template-columns: repeat(3, 1fr); }
+      .chip { font-size: 1.1rem; }
+    }
+    @media (max-height: 700px) and (max-width: 639px) {
+      .pic-wrap { min-height: 140px; max-height: 34dvh; }
+      .pic-wrap img { max-height: 32dvh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="back" href="/learningarcade/" id="backLink">← Back</a>
+      <span class="badge">Multiplayer</span>
+    </header>
+
+    <h1>Family Words</h1>
+    <p class="muted" style="margin-bottom: 1rem;">Create a lobby, pick the time, and match each picture with the right family word.</p>
+
+    <!-- Not logged in -->
+    <div id="loginGate" class="card hidden">
+      <p style="font-size: 1.1rem; font-weight: 700; margin: 0 0 .5rem;">Log in to play together</p>
+      <p class="muted">You need an account so your friends can join your lobby.</p>
+      <p style="margin-top: 1.1rem;">
+        <a href="/learningarcade/auth-system/login.html?redirect=/multiplayer/family-words/" style="color: var(--accent2); font-weight: 800;">Log in / Register →</a>
+      </p>
+    </div>
+
+    <div id="app" class="hidden">
+      <!-- Home -->
+      <div id="screenHome" class="card">
+        <h2>Start a lobby</h2>
+        <p class="muted">Create a lobby and share the code, or join a friend's lobby.</p>
+        <button class="btn btn-primary" id="btnCreate" style="width: 100%; margin-top: .9rem;">Create lobby</button>
+        <p class="muted" style="text-align: center; margin: 1.1rem 0 .5rem; font-weight: 700;">OR</p>
+        <input type="text" id="joinCode" placeholder="Enter lobby code" maxlength="8" autocomplete="off" autocapitalize="characters" />
+        <button class="btn btn-secondary" id="btnJoin" style="width: 100%; margin-top: .6rem;">Join with code</button>
+        <p class="status" id="homeStatus"></p>
+      </div>
+
+      <!-- Lobby -->
+      <div id="screenLobby" class="card hidden">
+        <h2>Lobby</h2>
+        <div class="room-code" id="lobbyCode">——</div>
+        <p class="muted" style="text-align: center;">Share this code with your friends</p>
+
+        <div class="players" id="playerList"></div>
+
+        <h2 style="margin-top: 1.1rem;">Game</h2>
+        <div class="game-pick"><span class="ico">🏠</span><div><b>Picture Match</b><div class="muted">Pick the family word for each picture</div></div></div>
+
+        <div id="hostSettings">
+          <h2 style="margin-top: .3rem;">Time limit</h2>
+          <div class="time-grid" id="timeGrid">
+            <button class="time-btn" data-sec="60">1 min</button>
+            <button class="time-btn" data-sec="90">1 min 30</button>
+            <button class="time-btn" data-sec="120">2 min</button>
+          </div>
+          <div class="custom-row">
+            <input type="number" id="customSec" min="30" max="600" placeholder="Your own time (seconds, 30–600)" />
+            <button class="btn btn-secondary" id="btnCustom">Set</button>
+          </div>
+          <p class="time-note" id="timeNote"></p>
+        </div>
+        <p class="time-note hidden" id="guestTime"></p>
+
+        <div class="btn-row" style="margin-top: 1rem;">
+          <button class="btn btn-secondary" id="btnReady">I'm ready</button>
+          <button class="btn btn-primary hidden" id="btnStart">Start game</button>
+        </div>
+        <button class="btn btn-ghost" id="btnLeave" style="width: 100%; margin-top: .7rem;">Leave lobby</button>
+        <p class="status" id="lobbyStatus"></p>
+      </div>
+
+      <!-- Game -->
+      <div id="screenGame" class="card hidden">
+        <div class="g-top">
+          <span class="g-count" id="gCount">Picture 1 / 16</span>
+          <span class="g-timer" id="gTimer">--:--</span>
+        </div>
+        <div class="pic-wrap"><img id="gPic" alt="" /></div>
+        <div class="chips" id="gChips"></div>
+        <p class="feedback" id="gFeedback"></p>
+        <div class="board" id="gBoard"></div>
+      </div>
+
+      <!-- End -->
+      <div id="screenEnd" class="card hidden">
+        <div class="end-title">Game over! 🎉</div>
+        <div id="endBoard"></div>
+        <button class="btn btn-primary hidden" id="btnBackLobby" style="width: 100%; margin-top: .9rem;">Back to lobby</button>
+        <button class="btn btn-ghost" id="btnEndLeave" style="width: 100%; margin-top: .6rem;">Leave</button>
+        <p class="status" id="endStatus"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase + auth (same as the rest of the site) -->
+  <script src="/learningarcade/vendor/load-supabase.js"></script>
+  <script src="/learningarcade/auth-system/auth.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+  (function () {
+    "use strict";
+
+    var SERVER_URL = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+      ? "http://localhost:3001"
+      : "https://mrsheyhaki-multiplayer.onrender.com";
+    var TIME_OPTIONS = [60, 90, 120];
+
+    var $ = function (id) { return document.getElementById(id); };
+    var socket = null, accessToken = null, myId = null;
+    var room = null, question = null, endsAt = 0, answered = false, timerHandle = null, pickedLabel = null;
+
+    function setStatus(el, text, kind) {
+      el.textContent = text || "";
+      el.className = "status" + (kind ? " " + kind : "");
+    }
+    function show(name) {
+      $("screenHome").classList.toggle("hidden", name !== "home");
+      $("screenLobby").classList.toggle("hidden", name !== "lobby");
+      $("screenGame").classList.toggle("hidden", name !== "game");
+      $("screenEnd").classList.toggle("hidden", name !== "end");
+    }
+    function fmtTime(sec) {
+      sec = Math.max(0, Math.ceil(sec));
+      var m = Math.floor(sec / 60), s = sec % 60;
+      return m + ":" + (s < 10 ? "0" : "") + s;
+    }
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+    function me() {
+      return room ? room.players.filter(function (p) { return p.id === myId; })[0] : null;
+    }
+    function isHost() { return room && myId && room.hostId === myId; }
+
+    /* ---------- auth ---------- */
+    async function getAccessToken() {
+      if (!window.LAAuth || !window.LAAuth.getClient) return null;
+      var client = window.LAAuth.getClient();
+      if (!client) return null;
+      try {
+        var res = await client.auth.getSession();
+        if (res.data && res.data.session && res.data.session.access_token) return res.data.session.access_token;
+      } catch (e) {}
+      return null;
+    }
+
+    async function ensureLoggedIn() {
+      await new Promise(function (resolve) {
+        if (window.LAAuth && window.supabase) return resolve();
+        document.addEventListener("supabase-ready", function () { setTimeout(resolve, 50); }, { once: true });
+        setTimeout(resolve, 3000);
+      });
+      if (!window.LAAuth) { $("loginGate").classList.remove("hidden"); return false; }
+      var session = window.LAAuth.getSession();
+      if (!session) { try { session = await window.LAAuth.verify(); } catch (e) {} }
+      if (!session) { $("loginGate").classList.remove("hidden"); $("app").classList.add("hidden"); return false; }
+      accessToken = await getAccessToken();
+      if (!accessToken) {
+        $("loginGate").classList.remove("hidden"); $("app").classList.add("hidden");
+        return false;
+      }
+      $("loginGate").classList.add("hidden");
+      $("app").classList.remove("hidden");
+      return true;
+    }
+
+    /* ---------- socket ---------- */
+    function connectSocket() {
+      if (socket) { socket.disconnect(); socket = null; }
+      socket = io(SERVER_URL, { auth: { token: accessToken }, transports: ["websocket", "polling"] });
+
+      socket.on("connect_error", function (err) {
+        setStatus($("homeStatus"), "Connection failed: " + (err && err.message ? err.message : "error"), "error");
+      });
+      socket.on("server:hello", function (d) { if (d && d.player) myId = d.player.id; });
+      socket.on("room:error", function (d) {
+        var msg = d && d.error ? d.error : "Something went wrong";
+        setStatus($("lobbyStatus"), msg, "error");
+        setStatus($("homeStatus"), msg, "error");
+        setStatus($("endStatus"), msg, "error");
+      });
+      socket.on("room:update", function (r) { applyRoom(r); });
+      socket.on("fw:question", function (d) {
+        question = d.question;
+        if (d.endsAt) endsAt = d.endsAt;
+        answered = false;
+        renderQuestion();
+      });
+      socket.on("fw:result", function (d) {
+        answered = true;
+        var fb = $("gFeedback");
+        if (d.correct) { fb.textContent = "Yes! +" + d.points + " 🎉"; fb.className = "feedback ok"; }
+        else { fb.textContent = "Not quite — the answer is “" + d.label + "”"; fb.className = "feedback no"; }
+        markChips(d.label, pickedLabel, d.correct);
+      });
+      socket.on("fw:scoreboard", function (d) { renderBoard(d.scoreboard); });
+      socket.on("fw:end", function (d) { showEnd(d.scoreboard); });
+    }
+
+    /* ---------- room state ---------- */
+    function applyRoom(r) {
+      room = r;
+      if (r.familySettings && !isHost()) {
+        $("guestTime").textContent = "Time limit: " + r.familySettings.timeLimit + " seconds (set by the host)";
+      }
+      if (r.status === "lobby") {
+        stopTimer();
+        renderLobby();
+        show("lobby");
+        return;
+      }
+      if (r.status === "playing" && r.game && r.game.type === "family-words") {
+        endsAt = r.game.endsAt || endsAt;
+        if (r.game.question && !question) { question = r.game.question; renderQuestion(); }
+        else if (r.game.question && question && r.game.question.index !== question.index) {
+          question = r.game.question; answered = false; renderQuestion();
+        }
+        renderBoard(r.game.scoreboard);
+        show("game");
+        startTimer();
+        return;
+      }
+      if (r.status === "ended" && r.game) {
+        stopTimer();
+        showEnd(r.game.scoreboard);
+      }
+    }
+
+    /* ---------- lobby ---------- */
+    function renderLobby() {
+      $("lobbyCode").textContent = room.code;
+      $("playerList").innerHTML = room.players.map(function (p) {
+        var tags = "";
+        if (p.isHost) tags += '<span class="pill host">Host</span> ';
+        tags += p.ready ? '<span class="pill ready">Ready</span>' : '<span class="pill">Not ready</span>';
+        if (!p.connected) tags += ' <span class="pill off">Offline</span>';
+        return '<div class="player"><span>' + esc(p.displayName || p.username) + (p.id === myId ? " (you)" : "") + "</span><span>" + tags + "</span></div>";
+      }).join("");
+
+      var host = isHost();
+      $("hostSettings").classList.toggle("hidden", !host);
+      $("guestTime").classList.toggle("hidden", host);
+      var sec = room.familySettings ? room.familySettings.timeLimit : 90;
+      var known = TIME_OPTIONS.indexOf(sec) > -1;
+      document.querySelectorAll(".time-btn").forEach(function (b) {
+        b.classList.toggle("on", Number(b.getAttribute("data-sec")) === sec);
+        b.disabled = !host;
+      });
+      $("customSec").disabled = !host;
+      $("btnCustom").disabled = !host;
+      $("timeNote").textContent = "Current time: " + sec + " seconds" + (known ? "" : " (your own time)");
+      $("btnStart").classList.toggle("hidden", !host);
+      $("btnStart").disabled = !host || room.players.length < 1;
+      var mine = me();
+      $("btnReady").textContent = mine && mine.ready ? "Not ready" : "I'm ready";
+    }
+
+    function setTime(sec) {
+      if (!socket) return;
+      socket.emit("fw:settings", { timeLimit: sec }, function (res) {
+        if (res && res.ok === false) setStatus($("lobbyStatus"), res.error, "error");
+      });
+    }
+
+    /* ---------- game ---------- */
+    function renderQuestion() {
+      if (!question) return;
+      $("gCount").textContent = "Picture " + (question.index + 1) + " / " + question.total;
+      $("gPic").src = question.image;
+      $("gPic").alt = "Picture";
+      $("gChips").innerHTML = question.choices.map(function (label, i) {
+        return '<button class="chip" data-i="' + i + '">' + esc(label) + "</button>";
+      }).join("");
+      $("gFeedback").textContent = "";
+      $("gFeedback").className = "feedback";
+      pickedLabel = null;
+      document.querySelectorAll(".chip").forEach(function (c) { c.disabled = answered; });
+    }
+
+    // green = the right word; red = the word this player picked, if it was wrong; the rest fade
+    function markChips(correctLabel, pickedText, wasCorrect) {
+      document.querySelectorAll(".chip").forEach(function (c) {
+        c.disabled = true;
+        var text = c.textContent;
+        if (text === correctLabel) c.classList.add("right");
+        else if (!wasCorrect && text === pickedText) c.classList.add("wrong");
+        else c.classList.add("dim");
+      });
+    }
+
+    function renderBoard(rows) {
+      if (!rows) return;
+      $("gBoard").innerHTML = rows.map(function (r) {
+        var tag = r.answered ? '<span class="done">✓</span>' : "";
+        var off = r.connected ? "" : '<span class="off">offline</span>';
+        return '<div class="row"><span>' + esc(r.displayName) + tag + off + '</span><span class="pts">' + r.points + " pts</span></div>";
+      }).join("");
+    }
+
+    function startTimer() {
+      stopTimer();
+      tick();
+      timerHandle = setInterval(tick, 250);
+    }
+    function stopTimer() {
+      if (timerHandle) { clearInterval(timerHandle); timerHandle = null; }
+    }
+    function tick() {
+      var left = (endsAt - Date.now()) / 1000;
+      var el = $("gTimer");
+      el.textContent = fmtTime(left);
+      el.classList.toggle("low", left <= 10);
+    }
+
+    /* ---------- end ---------- */
+    function showEnd(rows) {
+      stopTimer();
+      $("endBoard").innerHTML = (rows || []).map(function (r, i) {
+        return '<div class="end-row' + (i === 0 ? " first" : "") + '"><span>' + (i + 1) + ". " + esc(r.displayName) +
+          '</span><span class="pts" style="color: var(--gold);">' + r.points + " pts · " + r.correct + " right</span></div>";
+      }).join("") || '<p class="muted">No scores yet.</p>';
+      $("btnBackLobby").classList.toggle("hidden", !isHost());
+      show("end");
+    }
+
+    /* ---------- buttons ---------- */
+    function bind() {
+      $("btnCreate").addEventListener("click", function () {
+        if (!socket) return;
+        setStatus($("homeStatus"), "Creating lobby…");
+        socket.emit("room:create", {}, function (res) {
+          if (res && res.ok === false) setStatus($("homeStatus"), res.error, "error");
+        });
+      });
+      $("btnJoin").addEventListener("click", function () {
+        var code = ($("joinCode").value || "").trim().toUpperCase();
+        if (!code || !socket) return setStatus($("homeStatus"), "Enter the lobby code", "error");
+        socket.emit("room:join", { code: code }, function (res) {
+          if (res && res.ok === false) setStatus($("homeStatus"), res.error, "error");
+        });
+      });
+      document.querySelectorAll(".time-btn").forEach(function (b) {
+        b.addEventListener("click", function () { setTime(Number(b.getAttribute("data-sec"))); });
+      });
+      $("btnCustom").addEventListener("click", function () {
+        var v = Math.round(Number($("customSec").value));
+        if (!v || v < 30 || v > 600) return setStatus($("lobbyStatus"), "Choose between 30 and 600 seconds", "error");
+        setTime(v);
+      });
+      $("btnReady").addEventListener("click", function () {
+        var mine = me();
+        socket.emit("room:setReady", { ready: !(mine && mine.ready) });
+      });
+      $("btnStart").addEventListener("click", function () {
+        setStatus($("lobbyStatus"), "");
+        socket.emit("fw:start", {}, function (res) {
+          if (res && res.ok === false) setStatus($("lobbyStatus"), res.error, "error");
+        });
+      });
+      $("btnLeave").addEventListener("click", leave);
+      $("btnEndLeave").addEventListener("click", leave);
+      $("btnBackLobby").addEventListener("click", function () {
+        socket.emit("game:backToLobby", {}, function (res) {
+          if (res && res.ok === false) setStatus($("endStatus"), res.error, "error");
+          else { question = null; answered = false; }
+        });
+      });
+      $("gChips").addEventListener("click", function (ev) {
+        var c = ev.target.closest(".chip");
+        if (!c || answered) return;
+        answered = true;
+        pickedLabel = c.textContent;
+        socket.emit("fw:answer", { choice: Number(c.getAttribute("data-i")) }, function (res) {
+          if (res && res.ok === false) { answered = false; setStatus($("lobbyStatus"), res.error, "error"); }
+        });
+        document.querySelectorAll(".chip").forEach(function (x) { x.disabled = true; });
+      });
+    }
+
+    function leave() {
+      if (!socket) return;
+      socket.emit("room:leave", {}, function () {
+        room = null; question = null; answered = false; stopTimer();
+        show("home");
+      });
+    }
+
+    /* ---------- start ---------- */
+    (async function init() {
+      bind();
+      var ok = await ensureLoggedIn();
+      if (!ok) return;
+      connectSocket();
+      setStatus($("homeStatus"), "Connecting…");
+      socket.on("connect", function () {
+        setStatus($("homeStatus"), "");
+        socket.emit("room:sync", {}, function (res) {
+          if (res && res.room) applyRoom(res.room);
+          else show("home");
+        });
+      });
+    })();
+  })();
+  </script>
+</body>
+</html>

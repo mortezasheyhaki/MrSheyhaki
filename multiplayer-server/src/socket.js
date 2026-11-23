@@ -318,6 +318,60 @@ socket.on("game:start", (payload, ack) => {
     });
 
 
+    // ── Family Words (Picture Match) ───────────────────────────────
+
+    socket.on("fw:settings", (payload, ack) => {
+      const result = roomManager.setFamilySettings(player.id, payload?.timeLimit);
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitRoom(io, result.room);
+      if (typeof ack === "function") ack(result);
+    });
+
+    socket.on("fw:start", (_payload, ack) => {
+      const result = roomManager.startGame(player.id, { gameType: "family-words" });
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      const room = result.room;
+      emitRoom(io, room);
+      io.to(roomChannel(room.code)).emit("fw:question", {
+        question: result.question,
+        endsAt: result.endsAt,
+        timeLimit: result.timeLimit,
+      });
+      io.to(roomChannel(room.code)).emit("fw:scoreboard", { scoreboard: result.scoreboard });
+      scheduleFamilyEnd(io, room.code, result.timeLimit);
+      console.log(`[game] ${brief} started Family Words in ${room.code} (${result.timeLimit}s)`);
+      if (typeof ack === "function") ack(result);
+    });
+
+    socket.on("fw:answer", (payload, ack) => {
+      const result = roomManager.fwAnswer(player.id, payload?.choice);
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      // the player who answered gets their own result straight away
+      socket.emit("fw:result", {
+        correct: result.correct,
+        points: result.points,
+        label: result.label,
+        ms: result.ms,
+      });
+      io.to(roomChannel(result.roomCode)).emit("fw:scoreboard", { scoreboard: result.scoreboard });
+      emitRoom(io, result.room);
+      if (typeof ack === "function") ack(result);
+      // everyone answered: show the next picture after a short pause
+      if (result.everyoneAnswered) scheduleFamilyNext(io, result.roomCode, 1200);
+    });
+
     socket.on("disconnect", (reason) => {
       console.log(`[socket] ${brief} disconnected (${reason})`);
       const info = roomManager.markDisconnected(socket.id);
@@ -366,4 +420,58 @@ function doNextQuestion(io, roomCode) {
 
   scheduleQuestionTimer(io, roomCode, result.question.timeLimit);
   return result;
+}
+
+// ── Family Words timers (in-memory) ───────────────────────────────
+const familyTimers = new Map(); // room code -> { end, next }
+
+function familyEntry(code) {
+  if (!familyTimers.has(code)) familyTimers.set(code, {});
+  return familyTimers.get(code);
+}
+
+function scheduleFamilyEnd(io, roomCode, seconds) {
+  const entry = familyEntry(roomCode);
+  if (entry.end) clearTimeout(entry.end);
+  entry.end = setTimeout(() => endFamily(io, roomCode), Math.max(1, Number(seconds) || 90) * 1000 + 300);
+}
+
+function scheduleFamilyNext(io, roomCode, ms) {
+  const entry = familyEntry(roomCode);
+  if (entry.next) clearTimeout(entry.next);
+  entry.next = setTimeout(() => doFamilyNext(io, roomCode), ms);
+}
+
+function clearFamilyTimers(roomCode) {
+  const entry = familyTimers.get(roomCode);
+  if (!entry) return;
+  if (entry.end) clearTimeout(entry.end);
+  if (entry.next) clearTimeout(entry.next);
+  familyTimers.delete(roomCode);
+}
+
+function endFamily(io, roomCode) {
+  clearFamilyTimers(roomCode);
+  const r = roomManager.fwForceEnd(roomCode);
+  if (!r.ok) return;
+  io.to(roomChannel(roomCode)).emit("fw:end", { scoreboard: r.scoreboard });
+  io.to(roomChannel(roomCode)).emit("room:update", r.room);
+  console.log(`[game] Family Words in ${roomCode} finished (time)`);
+}
+
+function doFamilyNext(io, roomCode) {
+  const entry = familyTimers.get(roomCode);
+  if (entry && entry.next) { clearTimeout(entry.next); entry.next = null; }
+  const r = roomManager.fwNext(roomCode);
+  if (!r.ok) return;
+  if (r.finished) {
+    clearFamilyTimers(roomCode);
+    io.to(roomChannel(roomCode)).emit("fw:end", { scoreboard: r.scoreboard });
+    io.to(roomChannel(roomCode)).emit("room:update", r.room);
+    console.log(`[game] Family Words in ${roomCode} finished (all pictures)`);
+    return;
+  }
+  io.to(roomChannel(roomCode)).emit("fw:question", { question: r.question });
+  io.to(roomChannel(roomCode)).emit("fw:scoreboard", { scoreboard: r.scoreboard });
+  io.to(roomChannel(roomCode)).emit("room:update", r.room);
 }
