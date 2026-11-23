@@ -275,7 +275,14 @@
       socket.on("connect_error", function (err) {
         setStatus($("homeStatus"), "Connection failed: " + (err && err.message ? err.message : "error"), "error");
       });
-      socket.on("server:hello", function (d) { if (d && d.player) myId = d.player.id; });
+      socket.on("server:hello", function (d) {
+        if (d && d.player) myId = d.player.id;
+        var hasFamily = d && d.features && d.features.indexOf("family-words") > -1;
+        if (!hasFamily) {
+          setStatus($("homeStatus"), "The game server is out of date. Please redeploy the updated multiplayer server.", "error");
+          setStatus($("lobbyStatus"), "The game server is out of date. Please redeploy the updated multiplayer server.", "error");
+        }
+      });
       socket.on("room:error", function (d) {
         var msg = d && d.error ? d.error : "Something went wrong";
         setStatus($("lobbyStatus"), msg, "error");
@@ -360,11 +367,22 @@
       $("btnReady").textContent = mine && mine.ready ? "Not ready" : "I'm ready";
     }
 
-    function setTime(sec) {
+    // Send an event and show a clear message if the server never answers (usually: old server still running).
+    function emitChecked(event, payload, statusEl, onOk) {
       if (!socket) return;
-      socket.emit("fw:settings", { timeLimit: sec }, function (res) {
-        if (res && res.ok === false) setStatus($("lobbyStatus"), res.error, "error");
+      var answered = false;
+      var timer = setTimeout(function () {
+        if (!answered) setStatus(statusEl, "No answer from the game server. Please make sure the updated multiplayer server is running.", "error");
+      }, 4000);
+      socket.emit(event, payload, function (res) {
+        answered = true; clearTimeout(timer);
+        if (res && res.ok === false) setStatus(statusEl, res.error, "error");
+        else if (onOk) onOk(res);
       });
+    }
+
+    function setTime(sec) {
+      emitChecked("fw:settings", { timeLimit: sec }, $("lobbyStatus"));
     }
 
     /* ---------- game ---------- */
@@ -458,9 +476,7 @@
       });
       $("btnStart").addEventListener("click", function () {
         setStatus($("lobbyStatus"), "");
-        socket.emit("fw:start", {}, function (res) {
-          if (res && res.ok === false) setStatus($("lobbyStatus"), res.error, "error");
-        });
+        emitChecked("fw:start", {}, $("lobbyStatus"));
       });
       $("btnLeave").addEventListener("click", leave);
       $("btnEndLeave").addEventListener("click", leave);
