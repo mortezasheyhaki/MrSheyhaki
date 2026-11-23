@@ -76,8 +76,8 @@ export function attachSocket(io) {
     socket.emit("server:hello", {
       ok: true,
       phase: 4,
-      features: ["family-words"],
-      message: "Authenticated multiplayer server — A or An + Snakes & Ladders ready",
+      features: ["a-an-swipe", "snakes-ladders", "family-words"],
+      message: "Authenticated multiplayer server — A or An + Snakes & Ladders + Family Words ready",
       player: {
         id: player.id,
         username: player.username,

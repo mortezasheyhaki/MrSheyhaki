@@ -2,11 +2,12 @@
 
 Realtime backend for multiplayer games on mrsheyhaki.ir.
 
-## Phase 3 (current)
+## Phase 4 (current)
 
 - Supabase access-token authentication on every socket
 - Create / join rooms (6-character codes)
 - Host role, ready/not-ready, leave, disconnect marking
+- **Snakes & Ladders** and **Family Words** game engines (Family Words: host picks 60/90/120 s, players match each picture with the right family word)
 - **A or An Swipe** game engine
   - Host starts the match
   - Same word sent to all players
@@ -29,7 +30,7 @@ npm install
 npm start
 ```
 
-Open http://localhost:3001/health — should show `"phase": 3`.
+Open http://localhost:3001/health — should show `"phase": 4`.
 
 ## Test with two accounts
 
@@ -41,7 +42,7 @@ Open http://localhost:3001/health — should show `"phase": 3`.
 6. Host clicks **Start A or An**  
 7. Both players see the word and choose **a** / **an**
 
-## Socket events (Phase 3)
+## Socket events (Phase 4)
 
 | Client → server | Server → client |
 |-----------------|-----------------|
@@ -52,6 +53,10 @@ Open http://localhost:3001/health — should show `"phase": 3`.
 | `game:start` | `game:answerResult` |
 | `game:answer` `{ answer: "a"\|"an" }` | `game:scoreboard` |
 | `game:backToLobby` | `game:end` |
+| `fw:settings` `{ timeLimit }` | `fw:question` |
+| `fw:start` | `fw:result` |
+| `fw:answer` | `fw:scoreboard` |
+|  | `fw:end` |
 | `client:ping` | `server:pong` |
 
 Connect with:
