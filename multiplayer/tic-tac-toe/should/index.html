@@ -460,7 +460,8 @@
       return;
     }
     game = r.game;
-    renderGame();
+    try { renderGame(); }
+    catch (err) { console.error(err); setStatus($("gameStatus"), "Display error: " + err.message, "error"); }
     show("game");
   }
 
@@ -527,7 +528,7 @@
     if (game.rps.round !== lastRpsRound) { lastRpsRound = game.rps.round; myHand = null; }
 
     var mine = game.rps.chosen[myId], theirs = game.rps.chosen[opponentId()];
-    var theirBtn = $("theirHand");
+    var myBtn = $("myHand"), theirBtn = $("theirHand");
     paintMyHand();
     $("theirHint").textContent = theirs ? "Locked in" : "Choosing…";
     var rev = game.rps.reveal;
