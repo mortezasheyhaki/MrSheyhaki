@@ -170,6 +170,12 @@
     .confetti { position: fixed; top: -14px; width: 10px; height: 14px; border-radius: 3px; z-index: 11; pointer-events: none; animation: fall var(--d, 1.8s) ease-in forwards; }
     @keyframes fall { to { transform: translate(var(--dx, 0), 110vh) rotate(680deg); opacity: 0; } }
 
+    /* answering: the question card sits in the middle and the screen behind it is blurred */
+    .blur-layer { position: fixed; inset: 0; z-index: 7; background: rgba(2,6,23,.32); backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); animation: fade .25s ease; }
+    html[data-theme="light"] .blur-layer { background: rgba(248,250,252,.45); }
+    .qcard.is-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(92vw, 440px); max-height: 88dvh; overflow-y: auto; z-index: 8; animation: rise .35s cubic-bezier(.2,.9,.3,1.2); }
+    .qslot { flex: none; min-height: 0; }
+
     @media (max-height: 640px) {
       .app { gap: 6px; padding-top: 6px; padding-bottom: 6px; }
       .hand { width: 92px; height: 92px; font-size: 2.8rem; border-radius: 22px; }
@@ -258,7 +264,7 @@
       <!-- question + board -->
       <div id="playArea" class="hidden" style="display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0;">
         <div class="turnbar" id="turnBar"></div>
-        <div class="qcard" id="qcard"></div>
+        <div class="qslot"><div class="qcard" id="qcard"></div></div>
         <div class="board-wrap">
           <div class="board" id="board"></div>
         </div>
@@ -271,6 +277,8 @@
     </div>
   </div>
 </div>
+
+<div class="blur-layer hidden" id="blurLayer"></div>
 
 <!-- End of game -->
 <div class="overlay hidden" id="endOverlay">
@@ -557,7 +565,10 @@
     }
 
     if (prevTurnKey !== key) { sfx("whoosh"); prevTurnKey = key; }
+    var answering = t.stage === "answer";
     renderQuestion(t, iAnswer);
+    $("qcard").classList.toggle("is-modal", answering);
+    $("blurLayer").classList.toggle("hidden", !answering);
     renderBoard(t, iMark);
     $("gameFoot").innerHTML = (iAnswer && t.stage === "answer" ? '<button class="btn" id="btnCant">I can\'t answer</button>' : "") +
       '<button class="btn btn-ghost" id="btnLeaveGame">Leave game</button>';
@@ -680,6 +691,8 @@
   }
 
   function renderOver() {
+    $("qcard").classList.remove("is-modal");
+    $("blurLayer").classList.add("hidden");
     $("rpsArea").classList.add("hidden");
     $("playArea").classList.remove("hidden");
     $("turnBar").textContent = game.winnerId === "draw" ? "It's a draw." : (game.winnerId === myId ? "You won!" : label(game.winnerId) + " won.");
