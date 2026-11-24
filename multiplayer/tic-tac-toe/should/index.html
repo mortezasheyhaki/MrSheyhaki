@@ -301,7 +301,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var socket = null, accessToken = null, myId = null;
   var room = null, game = null;
-  var myHand = "rock", lockedHand = null, shakeTimer = null;
+  var myHand = null, lastRpsRound = -1;
   var prevBoard = null, prevTurnKey = null, prevPhase = null, prevResult = null, shownEnd = false;
 
   /* ================= sound effects (generated, no files) ================= */
@@ -503,13 +503,16 @@
     $("gameFoot").classList.remove("hidden");
     $("stepLine").textContent = "Rock · Paper · Scissors";
 
+    // a new round (after a tie) clears the hands so both players choose again
+    if (game.rps.round !== lastRpsRound) { lastRpsRound = game.rps.round; myHand = null; }
+
     var mine = game.rps.chosen[myId], theirs = game.rps.chosen[opponentId()];
     var myBtn = $("myHand"), theirBtn = $("theirHand");
-    myBtn.textContent = ICON[myHand];
+    myBtn.textContent = myHand ? ICON[myHand] : "❔";
     myBtn.classList.toggle("mute", !!mine);
-    $("myHandHint").textContent = mine ? "Locked in" : "Tap to change";
-    $("btnLock").disabled = !!mine;
-    $("btnLock").textContent = mine ? "Waiting for friend…" : "Lock in";
+    $("myHandHint").textContent = mine ? "Locked in" : (myHand ? "Tap to change" : "Tap to choose");
+    $("btnLock").disabled = !!mine || !myHand;
+    $("btnLock").textContent = mine ? "Waiting for friend…" : (myHand ? "Lock in" : "Choose a hand");
     $("theirHint").textContent = theirs ? "Locked in" : "Choosing…";
 
     var rev = game.rps.reveal;
@@ -732,6 +735,7 @@
     $("btnRematch").addEventListener("click", function () {
       sfx("tap");
       shownEnd = false; prevBoard = null; prevPhase = null; prevTurnKey = null; prevResult = null; orderState = { key: null, placed: [] };
+      myHand = null; lastRpsRound = -1;
       $("endOverlay").classList.add("hidden");
       socket.emit("ttt:rematch", {}, function (res) { if (res && res.ok === false) setStatus($("endStatus"), res.error, "error"); });
     });
@@ -740,13 +744,13 @@
     $("myHand").addEventListener("click", function () {
       if (game && game.rps && game.rps.chosen[myId]) return;
       sfx("cycle");
-      myHand = HANDS[(HANDS.indexOf(myHand) + 1) % 3];
+      myHand = myHand ? HANDS[(HANDS.indexOf(myHand) + 1) % 3] : "rock";
       var el = $("myHand");
       el.textContent = ICON[myHand];
       el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake");
     });
     $("btnLock").addEventListener("click", function () {
-      if (!socket) return;
+      if (!socket || !myHand) return;
       sfx("shake");
       var el = $("myHand"); el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake");
       socket.emit("ttt:rps", { choice: myHand }, function (res) { if (res && res.ok === false) setStatus($("gameStatus"), res.error, "error"); });
