@@ -505,6 +505,17 @@
     prevPhase = game.phase;
   }
 
+  // shows my hand, the hint and the Lock in button; called on every tap and every server update
+  function paintMyHand() {
+    var locked = !!(game && game.rps && game.rps.chosen[myId]);
+    var myBtn = $("myHand");
+    myBtn.textContent = myHand ? ICON[myHand] : "❔";
+    myBtn.classList.toggle("mute", locked);
+    $("myHandHint").textContent = locked ? "Locked in" : (myHand ? "Tap to change" : "Tap to choose");
+    $("btnLock").disabled = locked || !myHand;
+    $("btnLock").textContent = locked ? "Waiting for friend…" : (myHand ? "Lock in" : "Choose a hand");
+  }
+
   function renderRps() {
     $("rpsArea").classList.remove("hidden");
     $("playArea").classList.add("hidden");
@@ -515,14 +526,9 @@
     if (game.rps.round !== lastRpsRound) { lastRpsRound = game.rps.round; myHand = null; }
 
     var mine = game.rps.chosen[myId], theirs = game.rps.chosen[opponentId()];
-    var myBtn = $("myHand"), theirBtn = $("theirHand");
-    myBtn.textContent = myHand ? ICON[myHand] : "❔";
-    myBtn.classList.toggle("mute", !!mine);
-    $("myHandHint").textContent = mine ? "Locked in" : (myHand ? "Tap to change" : "Tap to choose");
-    $("btnLock").disabled = !!mine || !myHand;
-    $("btnLock").textContent = mine ? "Waiting for friend…" : (myHand ? "Lock in" : "Choose a hand");
+    var theirBtn = $("theirHand");
+    paintMyHand();
     $("theirHint").textContent = theirs ? "Locked in" : "Choosing…";
-
     var rev = game.rps.reveal;
     if (rev && rev[myId] && rev[opponentId()]) {
       myBtn.textContent = ICON[rev[myId]];
@@ -758,8 +764,8 @@
       if (game && game.rps && game.rps.chosen[myId]) return;
       sfx("cycle");
       myHand = myHand ? HANDS[(HANDS.indexOf(myHand) + 1) % 3] : "rock";
+      paintMyHand();
       var el = $("myHand");
-      el.textContent = ICON[myHand];
       el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake");
     });
     $("btnLock").addEventListener("click", function () {
