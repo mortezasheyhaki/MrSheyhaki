@@ -192,6 +192,7 @@
           <p class="feedback" id="gFeedback"></p>
         </div>
         <div class="board" id="gBoard"></div>
+        <button class="btn btn-ghost" id="btnGameLeave" style="width: 100%; margin-top: .9rem;">Leave game</button>
       </div>
 
       <!-- End -->
@@ -509,6 +510,9 @@
         emitChecked("fw:start", {}, $("lobbyStatus"));
       });
       $("btnLeave").addEventListener("click", leave);
+      $("btnGameLeave").addEventListener("click", function () {
+        if (window.confirm("Leave this game?")) leave();
+      });
       $("btnEndLeave").addEventListener("click", leave);
       $("btnBackLobby").addEventListener("click", function () {
         socket.emit("game:backToLobby", {}, function (res) {
