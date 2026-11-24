@@ -248,14 +248,21 @@
     function isHost() { return room && myId && room.hostId === myId; }
 
     /* ---------- auth ---------- */
+    // Read the login token once. Supabase allows only one session request at a time,
+    // so a busy lock is retried instead of failing (this caused "Create lobby" to do nothing).
     async function getAccessToken() {
       if (!window.LAAuth || !window.LAAuth.getClient) return null;
       var client = window.LAAuth.getClient();
       if (!client) return null;
-      try {
-        var res = await client.auth.getSession();
-        if (res.data && res.data.session && res.data.session.access_token) return res.data.session.access_token;
-      } catch (e) {}
+      for (var i = 0; i < 6; i++) {
+        try {
+          var res = await client.auth.getSession();
+          if (res.data && res.data.session && res.data.session.access_token) return res.data.session.access_token;
+          return null;
+        } catch (e) {
+          await new Promise(function (resolve) { setTimeout(resolve, 350 + i * 250); });
+        }
+      }
       return null;
     }
 
@@ -266,9 +273,6 @@
         setTimeout(resolve, 3000);
       });
       if (!window.LAAuth) { $("loginGate").classList.remove("hidden"); return false; }
-      var session = window.LAAuth.getSession();
-      if (!session) { try { session = await window.LAAuth.verify(); } catch (e) {} }
-      if (!session) { $("loginGate").classList.remove("hidden"); $("app").classList.add("hidden"); return false; }
       accessToken = await getAccessToken();
       if (!accessToken) {
         $("loginGate").classList.remove("hidden"); $("app").classList.add("hidden");
