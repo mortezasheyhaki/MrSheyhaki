@@ -36,7 +36,7 @@ app.get("/", (_req, res) => {
 <html lang="en"><head><meta charset="utf-8"><title>Multiplayer server</title></head>
 <body style="font-family:system-ui;padding:2rem">
   <h1>MrSheyhaki multiplayer server</h1>
-  <p>Phase 4 — A or An Swipe + Snakes &amp; Ladders + Family Words. <a href="/health">/health</a></p>
+  <p>Phase 4 — A or An Swipe + Snakes & Ladders. <a href="/health">/health</a></p>
 </body></html>`);
 });
 
