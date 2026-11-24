@@ -115,7 +115,7 @@
     .rps-note { font-weight: 800; min-height: 1.4rem; text-align: center; }
 
     /* question */
-    .qcard { flex: none; background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: .85rem 1rem; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: .5rem; }
+    .qcard { flex: none; background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: .7rem .9rem; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: .4rem; }
     .qmeta { display: flex; justify-content: space-between; align-items: center; gap: .5rem; font-size: .78rem; font-weight: 800; color: var(--accent2); text-transform: uppercase; letter-spacing: .05em; }
     .subject { font-family: "Fredoka", sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--muted); }
     .qline { font-family: "Fredoka", sans-serif; font-size: clamp(1.15rem, 4.6vw, 1.5rem); font-weight: 600; line-height: 1.25; }
@@ -135,10 +135,11 @@
     .result.ok { color: var(--ok); } .result.bad { color: var(--bad); } .result.mid { color: var(--gold); }
     .reveal-line { font-family: "Fredoka", sans-serif; font-size: 1.05rem; text-align: center; color: var(--text); }
     .waiting { text-align: center; color: var(--muted); font-weight: 800; padding: .5rem; }
+    .waiting-banner { text-align: center; font-weight: 800; font-size: .95rem; padding: .45rem .6rem; border-radius: 12px; background: rgba(167,139,250,.2); color: var(--text); }
 
     /* board */
-    .board-wrap { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
-    .board { width: min(86vw, 46dvh, 380px); aspect-ratio: 1 / 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 10px; }
+    .board-wrap { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .board { width: min(84vw, calc(100dvh - 400px), 380px); min-width: 200px; aspect-ratio: 1 / 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 10px; }
     .cell {
       border: 0; border-radius: 20px; cursor: default; display: grid; place-items: center; padding: 0;
       background: var(--card); box-shadow: 0 6px 0 var(--card2), inset 0 1px 0 rgba(255,255,255,.06);
@@ -590,24 +591,25 @@
     var q = t.question;
     if (!q) { $("qcard").innerHTML = ""; return; }
     var head = '<div class="qmeta"><span>' + (q.type === "choice" ? "Yes or no" : "Put the words in order") + "</span><span>" + q.number + " / " + q.total + "</span></div>";
+    if (t.stage === "answer" && !iAnswer) {
+      head += '<div class="waiting-banner">' + esc(label(t.activeId)) + " is answering…</div>";
+    }
 
     if (q.type === "choice") {
       var subj = '<div class="subject">A: ' + esc(q.subject) + (q.note ? ' <span class="hint">(' + esc(q.note) + ")</span>" : "") + "</div>";
       var qline = '<div class="qline">' + esc(q.q) + "</div>";
       var hint = '<div class="hint">Hint: ' + esc(q.hint) + "</div>";
-      var answerRow;
+      var answerRow = "";
       if (t.stage === "answer" && iAnswer) {
         answerRow = '<div class="answers">' + q.options.map(function (o, i) {
           return '<button class="btn" data-choice="' + i + '">' + esc(o) + "</button>";
         }).join("") + "</div>";
-      } else {
-        answerRow = '<div class="answers">' + q.options.map(function (o, i) {
-          var cls = "btn";
-          if (t.stage === "mark" && t.reveal === o) cls += " right";
-          else if (t.stage === "mark" && t.result === "wrong" && t.activeId && t.reveal !== o) cls += " dim";
-          return '<button class="' + cls + '" disabled>' + esc(o) + "</button>";
+      } else if (t.stage === "answer") {
+        answerRow = '<div class="answers">' + q.options.map(function (o) {
+          return '<button class="btn" disabled>' + esc(o) + "</button>";
         }).join("") + "</div>";
       }
+      // after the answer: only the result (the options are not needed any more)
       $("qcard").innerHTML = head + subj + qline + hint + answerRow + resultLine(t);
       $("qcard").querySelectorAll("[data-choice]").forEach(function (b) {
         b.addEventListener("click", function () { sfx("tap"); socket.emit("ttt:answer", { choice: Number(b.getAttribute("data-choice")) }, onAck); });
@@ -615,7 +617,7 @@
     } else {
       // word order: show B, then tap the chips to build A
       var bLine = '<div class="reveal-line">B: ' + esc(q.b) + "</div>";
-      var builder = orderBuilder(q, t, iAnswer);
+      var builder = t.stage === "answer" ? orderBuilder(q, t, iAnswer) : "";
       $("qcard").innerHTML = head + '<div class="hint">Answer the question by putting the words in order.</div>' + bLine + builder + resultLine(t);
       if (iAnswer) wireOrder(q);
     }
@@ -638,7 +640,7 @@
     }).join("");
     var left = "";
     if (iAnswer) left = '<div class="row" style="margin-top: .2rem;"><button class="btn btn-ghost" id="orderClear" style="flex: 0 0 auto; padding: .6rem .9rem;">Clear</button></div>';
-    var note = t.stage === "answer" && !iAnswer ? '<div class="waiting">' + esc(label(t.activeId)) + " is putting the words in order…</div>" : "";
+    var note = "";
     return '<div class="slots">' + placedHtml + "</div>" + (iAnswer ? '<div class="chips" id="orderChips">' + chipsHtml + "</div>" : note) + left;
   }
   function wireOrder(q) {
