@@ -76,8 +76,8 @@ export function attachSocket(io) {
     socket.emit("server:hello", {
       ok: true,
       phase: 4,
-      features: ["a-an-swipe", "snakes-ladders", "family-words"],
-      message: "Authenticated multiplayer server — A or An + Snakes & Ladders + Family Words ready",
+      features: ["family-words"],
+      message: "Authenticated multiplayer server — A or An + Snakes & Ladders ready",
       player: {
         id: player.id,
         username: player.username,
@@ -322,7 +322,8 @@ socket.on("game:start", (payload, ack) => {
     // ── Family Words (Picture Match) ───────────────────────────────
 
     socket.on("fw:settings", (payload, ack) => {
-      const result = roomManager.setFamilySettings(player.id, payload?.timeLimit);
+      // payload: { timeLimit?, gameType? } — the host picks the game and the time
+      const result = roomManager.setFamilySettings(player.id, payload || {});
       if (!result.ok) {
         socket.emit("room:error", { error: result.error });
         if (typeof ack === "function") ack(result);
@@ -333,7 +334,9 @@ socket.on("game:start", (payload, ack) => {
     });
 
     socket.on("fw:start", (_payload, ack) => {
-      const result = roomManager.startGame(player.id, { gameType: "family-words" });
+      const raw = roomManager.getRawRoomForPlayer(player.id);
+      const gameType = (raw && raw.familySettings && raw.familySettings.gameType) || "family-words";
+      const result = roomManager.startGame(player.id, { gameType });
       if (!result.ok) {
         socket.emit("room:error", { error: result.error });
         if (typeof ack === "function") ack(result);
@@ -348,7 +351,7 @@ socket.on("game:start", (payload, ack) => {
       });
       io.to(roomChannel(room.code)).emit("fw:scoreboard", { scoreboard: result.scoreboard });
       scheduleFamilyEnd(io, room.code, result.timeLimit);
-      console.log(`[game] ${brief} started Family Words in ${room.code} (${result.timeLimit}s)`);
+      console.log(`[game] ${brief} started ${gameType} in ${room.code} (${result.timeLimit}s)`);
       if (typeof ack === "function") ack(result);
     });
 

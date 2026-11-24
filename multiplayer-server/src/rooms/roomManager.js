@@ -21,6 +21,13 @@ import {
   FW_DEFAULT_SECONDS,
 } from "../games/familyWords.js";
 import {
+  createPluralState,
+  publicQuestion as plPublicQuestion,
+  submitAnswer as plSubmitAnswer,
+  advanceQuestion as plAdvance,
+  finishGame as plFinish,
+} from "../games/pluralForms.js";
+import {
   createSnakesLaddersState,
   publicSlState,
   rollDice as slRollDice,
@@ -51,10 +58,11 @@ function publicRoom(room) {
     status: room.status, // lobby | playing | ended
     createdAt: room.createdAt,
     gameType: room.gameType || null,
-    familySettings: room.familySettings || { timeLimit: FW_DEFAULT_SECONDS },
+    familySettings: room.familySettings || { timeLimit: FW_DEFAULT_SECONDS, gameType: "family-words" },
+    familyGames: FAMILY_GAME_CHOICES,
   };
 
-  if (room.game && room.game.type === "family-words") {
+  if (isFamilyGame(room.game)) {
     base.game = publicFamilyState(room.game, room.players);
     if (room.status !== "playing") base.status = room.status;
     return base;
@@ -90,15 +98,33 @@ function publicRoom(room) {
   return base;
 }
 
+const FAMILY_GAMES = ["family-words", "plural-forms"];
+const FAMILY_GAME_CHOICES = [
+  { id: "family-words", title: "Picture Match" },
+  { id: "plural-forms", title: "Singular & Plural" },
+];
+
+function isFamilyGame(game) {
+  return !!game && FAMILY_GAMES.includes(game.type);
+}
+
+/** The engine functions for whichever Family Words game is running. */
+function familyEngine(game) {
+  if (game.type === "plural-forms") {
+    return { question: plPublicQuestion, submit: plSubmitAnswer, advance: plAdvance, finish: plFinish };
+  }
+  return { question: fwPublicQuestion, submit: fwSubmitAnswer, advance: fwAdvance, finish: fwFinish };
+}
+
 function publicFamilyState(game, players) {
   return {
-    type: "family-words",
+    type: game.type,
     status: game.status,
     timeLimit: game.timeLimit,
     endsAt: game.endsAt,
     index: game.index,
     total: game.questions.length,
-    question: game.status === "playing" ? fwPublicQuestion(game) : null,
+    question: game.status === "playing" ? familyEngine(game).question(game) : null,
     scoreboard: fwPublicScoreboard(game, players),
   };
 }
@@ -261,12 +287,15 @@ export const roomManager = {
   },
 
   /** Host sets the Family Words time limit (seconds) in the lobby. */
-  setFamilySettings(playerId, timeLimit) {
+  setFamilySettings(playerId, settings = {}) {
     const room = findRoomByPlayerId(playerId);
     if (!room) return { ok: false, error: "Not in a room" };
-    if (room.hostId !== playerId) return { ok: false, error: "Only the host can set the time" };
+    if (room.hostId !== playerId) return { ok: false, error: "Only the host can change the game settings" };
     if (room.status !== "lobby") return { ok: false, error: "Game already started" };
-    room.familySettings = { timeLimit: normalizeTimeLimit(timeLimit) };
+    const current = room.familySettings || { timeLimit: FW_DEFAULT_SECONDS, gameType: "family-words" };
+    const gameType = FAMILY_GAMES.includes(settings.gameType) ? settings.gameType : current.gameType;
+    const timeLimit = settings.timeLimit != null ? normalizeTimeLimit(settings.timeLimit) : current.timeLimit;
+    room.familySettings = { timeLimit, gameType };
     return { ok: true, room: publicRoom(room) };
   },
 
@@ -316,19 +345,22 @@ export const roomManager = {
 
     const gameType = settings.gameType || room.gameType || "a-an-swipe";
 
-    if (gameType === "family-words") {
+    if (FAMILY_GAMES.includes(gameType)) {
       const timeLimit = normalizeTimeLimit(
         settings.timeLimit || (room.familySettings && room.familySettings.timeLimit) || FW_DEFAULT_SECONDS
       );
-      const game = createFamilyState(room.players.map((p) => p.id), { timeLimit });
+      const ids = room.players.map((p) => p.id);
+      const game = gameType === "plural-forms"
+        ? createPluralState(ids, { timeLimit })
+        : createFamilyState(ids, { timeLimit });
       room.game = game;
-      room.gameType = "family-words";
+      room.gameType = gameType;
       room.status = "playing";
       room.players.forEach((p) => { p.ready = false; });
       return {
         ok: true,
         room: publicRoom(room),
-        question: fwPublicQuestion(game),
+        question: familyEngine(game).question(game),
         scoreboard: fwPublicScoreboard(game, room.players),
         endsAt: game.endsAt,
         timeLimit: game.timeLimit,
@@ -500,10 +532,10 @@ export const roomManager = {
   fwAnswer(playerId, choice) {
     const room = findRoomByPlayerId(playerId);
     if (!room) return { ok: false, error: "Not in a room" };
-    if (!room.game || room.game.type !== "family-words" || room.status !== "playing") {
+    if (!isFamilyGame(room.game) || room.status !== "playing") {
       return { ok: false, error: "No Family Words game running" };
     }
-    const result = fwSubmitAnswer(room.game, playerId, choice);
+    const result = familyEngine(room.game).submit(room.game, playerId, choice);
     if (!result.ok) return result;
     return {
       ok: true,
@@ -518,10 +550,10 @@ export const roomManager = {
   /** Show the next picture, or finish. Called when everyone answered or the timer runs out. */
   fwNext(roomCode) {
     const room = rooms.get(normalizeRoomCode(roomCode));
-    if (!room || !room.game || room.game.type !== "family-words" || room.status !== "playing") {
+    if (!room || !isFamilyGame(room.game) || room.status !== "playing") {
       return { ok: false, error: "No Family Words game running" };
     }
-    const adv = fwAdvance(room.game);
+    const adv = familyEngine(room.game).advance(room.game);
     if (adv.done) {
       room.status = "ended";
       return {
@@ -543,10 +575,10 @@ export const roomManager = {
   /** Time is up: finish the game now. */
   fwForceEnd(roomCode) {
     const room = rooms.get(normalizeRoomCode(roomCode));
-    if (!room || !room.game || room.game.type !== "family-words" || room.status !== "playing") {
+    if (!room || !isFamilyGame(room.game) || room.status !== "playing") {
       return { ok: false, error: "No Family Words game running" };
     }
-    fwFinish(room.game);
+    familyEngine(room.game).finish(room.game);
     room.status = "ended";
     return {
       ok: true,

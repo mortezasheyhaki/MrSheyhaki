@@ -52,7 +52,10 @@
     .pill.ready { background: rgba(52,211,153,.2); color: var(--ok); }
     .pill.host { background: rgba(251,191,36,.2); color: var(--gold); }
     .pill.off { background: rgba(248,113,113,.18); color: var(--bad); }
-    .game-pick { display: flex; align-items: center; gap: .7rem; background: #0f172a; border: 2px solid var(--accent); border-radius: 14px; padding: .7rem .8rem; margin: .4rem 0 .9rem; }
+    .game-picks { display: flex; flex-direction: column; gap: .5rem; margin: .4rem 0 .9rem; }
+    .game-pick { appearance: none; width: 100%; font: inherit; color: var(--text); text-align: left; display: flex; align-items: center; gap: .7rem; background: #0f172a; border: 2px solid rgba(255,255,255,.12); border-radius: 14px; padding: .7rem .8rem; cursor: pointer; }
+    .game-pick.on { border-color: var(--accent); background: rgba(139,92,246,.12); }
+    .game-pick:disabled { cursor: default; opacity: .85; }
     .game-pick .ico { font-size: 1.6rem; }
     .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-top: .4rem; }
     .time-btn { font: inherit; font-weight: 800; border: 2px solid rgba(255,255,255,.12); background: #0f172a; color: var(--text); border-radius: 12px; padding: .65rem .3rem; cursor: pointer; }
@@ -71,6 +74,12 @@
     .pic-wrap { background: #fff; border-radius: 16px; padding: .4rem; display: flex; align-items: center; justify-content: center; min-height: 180px; max-height: 42dvh; }
     .pic-wrap img { max-width: 100%; max-height: 40dvh; object-fit: contain; display: block; }
     .chips { display: grid; grid-template-columns: 1fr; gap: .6rem; margin-top: .8rem; }
+    .g-stage { display: block; }
+    .g-stage.swap-in { animation: swapIn .38s cubic-bezier(.2,.8,.2,1) both; }
+    @keyframes swapIn { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+    .word-wrap { background: #fff; border-radius: 16px; min-height: 170px; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .big-word { margin: 0; color: #1e1b4b; font-size: clamp(2rem, 9vw, 3.2rem); font-weight: 800; text-align: center; line-height: 1.15; }
+    @media (prefers-reduced-motion: reduce) { .g-stage.swap-in { animation: none; } }
     .chip {
       font: inherit; font-weight: 800; font-size: 1.15rem; color: var(--text);
       background: linear-gradient(135deg, #3b2f6b, #2a2250); border: 2px solid rgba(167,139,250,.35);
@@ -145,7 +154,7 @@
         <div class="players" id="playerList"></div>
 
         <h2 style="margin-top: 1.1rem;">Game</h2>
-        <div class="game-pick"><span class="ico">🏠</span><div><b>Picture Match</b><div class="muted">Pick the family word for each picture</div></div></div>
+        <div class="game-picks" id="gamePicks"></div>
 
         <div id="hostSettings">
           <h2 style="margin-top: .3rem;">Time limit</h2>
@@ -176,9 +185,12 @@
           <span class="g-count" id="gCount">Picture 1 / 16</span>
           <span class="g-timer" id="gTimer">--:--</span>
         </div>
-        <div class="pic-wrap"><img id="gPic" alt="" /></div>
-        <div class="chips" id="gChips"></div>
-        <p class="feedback" id="gFeedback"></p>
+        <div class="g-stage" id="gStage">
+          <div class="pic-wrap" id="picWrap"><img id="gPic" alt="" /></div>
+          <div class="word-wrap hidden" id="wordWrap"><p class="big-word" id="gWord"></p></div>
+          <div class="chips" id="gChips"></div>
+          <p class="feedback" id="gFeedback"></p>
+        </div>
         <div class="board" id="gBoard"></div>
       </div>
 
@@ -350,6 +362,14 @@
       }).join("");
 
       var host = isHost();
+      var cur = (room.familySettings && room.familySettings.gameType) || "family-words";
+      var choices = room.familyGames || [{ id: "family-words", title: "Picture Match" }, { id: "plural-forms", title: "Singular & Plural" }];
+      $("gamePicks").innerHTML = choices.map(function (g) {
+        var desc = g.id === "plural-forms" ? "Choose the plural form of each word" : "Pick the family word for each picture";
+        var ico = g.id === "plural-forms" ? "🔤" : "🖼️";
+        return '<button class="game-pick' + (g.id === cur ? " on" : "") + '" data-game="' + esc(g.id) + '"' + (host ? "" : " disabled") + ">" +
+          '<span class="ico">' + ico + '</span><div><b>' + esc(g.title) + '</b><div class="muted">' + desc + "</div></div></button>";
+      }).join("");
       $("hostSettings").classList.toggle("hidden", !host);
       $("guestTime").classList.toggle("hidden", host);
       var sec = room.familySettings ? room.familySettings.timeLimit : 90;
@@ -388,9 +408,15 @@
     /* ---------- game ---------- */
     function renderQuestion() {
       if (!question) return;
-      $("gCount").textContent = "Picture " + (question.index + 1) + " / " + question.total;
-      $("gPic").src = question.image;
-      $("gPic").alt = "Picture";
+      var isWord = !!question.prompt;
+      $("gCount").textContent = (isWord ? "Word " : "Picture ") + (question.index + 1) + " / " + question.total;
+      $("picWrap").classList.toggle("hidden", isWord);
+      $("wordWrap").classList.toggle("hidden", !isWord);
+      if (isWord) { $("gWord").textContent = question.prompt; }
+      else { $("gPic").src = question.image; $("gPic").alt = "Picture"; }
+      // slide the new word or picture in
+      var stage = $("gStage");
+      stage.classList.remove("swap-in"); void stage.offsetWidth; stage.classList.add("swap-in");
       $("gChips").innerHTML = question.choices.map(function (label, i) {
         return '<button class="chip" data-i="' + i + '">' + esc(label) + "</button>";
       }).join("");
@@ -484,6 +510,13 @@
         socket.emit("game:backToLobby", {}, function (res) {
           if (res && res.ok === false) setStatus($("endStatus"), res.error, "error");
           else { question = null; answered = false; }
+        });
+      });
+      $("gamePicks").addEventListener("click", function (ev) {
+        var b = ev.target.closest(".game-pick");
+        if (!b || b.disabled || !socket) return;
+        socket.emit("fw:settings", { gameType: b.getAttribute("data-game") }, function (res) {
+          if (res && res.ok === false) setStatus($("lobbyStatus"), res.error, "error");
         });
       });
       $("gChips").addEventListener("click", function (ev) {
