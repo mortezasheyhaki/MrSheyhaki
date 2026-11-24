@@ -479,19 +479,31 @@
 
     /* ---------- buttons ---------- */
     function bind() {
-      $("btnCreate").addEventListener("click", function () {
+      // If the server still has an old room for this player, leave it first and try again.
+      function sendRoomAction(event, payload, statusEl) {
         if (!socket) return;
-        setStatus($("homeStatus"), "Creating lobby…");
-        socket.emit("room:create", {}, function (res) {
-          if (res && res.ok === false) setStatus($("homeStatus"), res.error, "error");
+        socket.emit(event, payload, function (res) {
+          if (res && res.ok === false && /already in a room/i.test(res.error || "")) {
+            setStatus(statusEl, "Leaving your old room…");
+            socket.emit("room:leave", {}, function () {
+              room = null; question = null; answered = false; stopTimer();
+              socket.emit(event, payload, function (res2) {
+                if (res2 && res2.ok === false) setStatus(statusEl, res2.error, "error");
+              });
+            });
+            return;
+          }
+          if (res && res.ok === false) setStatus(statusEl, res.error, "error");
         });
+      }
+      $("btnCreate").addEventListener("click", function () {
+        setStatus($("homeStatus"), "Creating lobby…");
+        sendRoomAction("room:create", {}, $("homeStatus"));
       });
       $("btnJoin").addEventListener("click", function () {
         var code = ($("joinCode").value || "").trim().toUpperCase();
         if (!code || !socket) return setStatus($("homeStatus"), "Enter the lobby code", "error");
-        socket.emit("room:join", { code: code }, function (res) {
-          if (res && res.ok === false) setStatus($("homeStatus"), res.error, "error");
-        });
+        sendRoomAction("room:join", { code: code }, $("homeStatus"));
       });
       document.querySelectorAll(".time-btn").forEach(function (b) {
         b.addEventListener("click", function () { setTime(Number(b.getAttribute("data-sec"))); });
