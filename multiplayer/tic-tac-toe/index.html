@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Tic-Tac-Toe · Games | Mr. Sheyhaki</title>
+  <meta name="description" content="Tic-Tac-Toe games for two players. Pick a game, then create a lobby and play a friend." />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("mrsheyhaki-theme");
+        if (t !== "dark" && t !== "light") t = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg: #0f172a; --glow: #312e81; --card: #1e293b; --text: #f1f5f9; --muted: #94a3b8; --line: rgba(255,255,255,.12); --accent2: #a78bfa; --shadow: 0 16px 40px rgba(0,0,0,.35); }
+    html[data-theme="light"] { --bg: #f8fafc; --glow: #ddd6fe; --card: #ffffff; --text: #0f172a; --muted: #475569; --line: rgba(15,23,42,.12); --accent2: #6d28d9; --shadow: 0 16px 40px rgba(15,23,42,.12); }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body { font-family: "Nunito", system-ui, sans-serif; color: var(--text); background: radial-gradient(1100px 620px at 50% -12%, var(--glow) 0%, var(--bg) 58%); min-height: 100dvh; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 1.2rem 1.1rem 2.5rem; }
+    .top { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin-bottom: 1.2rem; }
+    .back { color: var(--muted); text-decoration: none; font-weight: 800; padding: .35rem .55rem; border-radius: 10px; }
+    .back:hover { color: var(--text); }
+    .badge { font-size: .68rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; padding: .3rem .6rem; border-radius: 999px; background: rgba(139,92,246,.2); color: var(--accent2); }
+    h1 { font-family: "Fredoka", sans-serif; font-size: clamp(1.8rem, 6vw, 2.4rem); margin: 0 0 .3rem; }
+    .sub { color: var(--muted); margin: 0 0 1.4rem; }
+    .games { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: flex-start; gap: .9rem; }
+    .slot { width: min(30vw, 160px); aspect-ratio: 1 / 1; border-radius: 22px; border: 2px dashed var(--line); background: transparent; }
+    .sq {
+      width: min(30vw, 160px); aspect-ratio: 1 / 1; border-radius: 22px; text-decoration: none; color: var(--text);
+      background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow);
+      container-type: inline-size; padding: 10px; align-self: flex-start;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 4px;
+      position: relative; overflow: hidden; transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .sq::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, #f472b6, #a78bfa); }
+    .sq:hover { transform: translateY(-4px); box-shadow: 0 20px 44px rgba(167,139,250,.35); }
+    .sq .emo { font-size: 20cqw; line-height: 1; }
+    .sq .name { font-family: "Fredoka", sans-serif; font-size: 12cqw; font-weight: 700; line-height: 1.1; }
+    .sq .desc { font-size: 7.4cqw; color: var(--muted); line-height: 1.3; }
+    .sq .tag { margin-top: 1cqw; font-size: 6.4cqw; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 1.4cqw 4cqw; border-radius: 999px; background: rgba(167,139,250,.18); color: var(--accent2); }
+    .soon { opacity: .55; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="back" href="/multiplayer/">← Multiplayer</a>
+      <span class="badge">2 players · online</span>
+    </div>
+    <h1>Tic-Tac-Toe</h1>
+    <p class="sub">Pick a game, then create a lobby and play a friend.</p>
+    <div class="games">
+      <a class="sq" href="/multiplayer/tic-tac-toe/should/">
+        <span class="emo">📝</span>
+        <span class="name">Should</span>
+        <span class="desc">Answer Should questions to place your mark</span>
+        <span class="tag">Play</span>
+      </a>
+      <div class="slot" aria-hidden="true"></div>
+      <div class="slot" aria-hidden="true"></div>
+      <div class="slot" aria-hidden="true"></div>
+    </div>
+  </div>
+</body>
+</html>
