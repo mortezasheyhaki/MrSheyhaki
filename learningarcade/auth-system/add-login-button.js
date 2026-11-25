@@ -129,6 +129,29 @@
   }
 
   function render() {
+    var authBase = getAuthBase();
+    var loginHref = authBase + "login.html";
+    var profileHref = getProfileHref();
+    var user = window.LAAuth && LAAuth.currentUser ? LAAuth.currentUser() : null;
+
+    var headerCta = document.getElementById("headerAccountCta");
+    if (document.querySelector("header.site-topbar") && headerCta) {
+      var oldFab = document.getElementById("la-login-fab");
+      if (oldFab) oldFab.remove();
+      if (user) {
+        var display = user.displayName || user.username || "Player";
+        headerCta.textContent = display;
+        headerCta.setAttribute("href", profileHref);
+        headerCta.setAttribute("title", "My Profile (" + display + ")");
+      } else {
+        headerCta.textContent = "Sign in";
+        var cur = (window.location.pathname || "/") + (window.location.search || "");
+        headerCta.setAttribute("href", loginHref + "?redirect=" + encodeURIComponent(cur));
+        headerCta.setAttribute("title", "Sign in or create account");
+      }
+      return;
+    }
+
     injectStyles();
     document.body.classList.add("la-has-auth");
 
@@ -136,11 +159,6 @@
     var old = document.getElementById("la-login-fab");
     if (old) old.remove();
 
-    var authBase = getAuthBase();
-    var loginHref = authBase + "login.html";
-    var profileHref = getProfileHref();
-
-    var user = window.LAAuth && LAAuth.currentUser ? LAAuth.currentUser() : null;
     var fab = document.createElement("div");
     fab.id = "la-login-fab";
     fab.className = "la-login-fab";

@@ -44,7 +44,14 @@ html[data-theme="light"] {
   --accent: #7c3aed;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; }
+.sl-screen:not(.mp-shell) h1,
+.sl-screen:not(.mp-shell) h2,
+.sl-screen:not(.mp-shell) p,
+.sl-modal h2,
+.sl-modal p {
+  margin: 0;
+}
 html, body {
   min-height: 100%;
   overflow-x: hidden;
@@ -57,26 +64,52 @@ html, body {
   -webkit-overflow-scrolling: touch;
   transition: background 0.45s ease, color 0.35s ease;
 }
+body.mp-lobby-body:not(.mp-playing) {
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--site-bg);
+  color: var(--site-text);
+  user-select: text;
+}
+body.mp-lobby-body:not(.mp-playing) button {
+  user-select: none;
+}
 [hidden] { display: none !important; }
 
 .sl-app {
-  min-height: 100dvh;
-  min-height: 100svh;
+  flex: 1 0 auto;
+  width: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  max-width: 1200px;
+  max-width: none;
   margin: 0 auto;
+}
+body.mp-playing .sl-app {
+  min-height: 100dvh;
+  min-height: 100svh;
+  max-width: 1200px;
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .sl-screen {
-  flex: 1;
+  flex: 1 0 auto;
   display: flex;
   flex-direction: column;
   min-height: 0;
   padding: 0.6rem 0.75rem 1rem;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: visible;
+}
+.sl-screen.mp-shell {
+  flex: 1 0 auto;
+  width: min(1000px, 100%);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  overflow-y: visible;
+}
+@media (max-width: 520px) {
+  .sl-screen.mp-shell {
+    padding: 1.15rem 0.9rem 2.25rem;
+  }
 }
 .sl-screen.play {
   padding-bottom: 0.6rem;
@@ -555,71 +588,6 @@ html[data-theme="dark"] .sl-result.bad { color: #f87171; }
 
 
 
-/* ── Online home redesign ── */
-.sl-online-wrap {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 0;
-  width: 100%;
-  max-width: 26rem;
-  margin: 0 auto;
-  padding: 0.5rem 0 1rem;
-  gap: 1rem;
-}
-
-.sl-online-wrap .sl-hero {
-  margin-bottom: 0.25rem;
-}
-.sl-online-wrap .sl-hero h1 {
-  font-size: clamp(1.6rem, 4vw, 2rem);
-}
-
-.sl-online-panel {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.sl-online-card {
-  width: 100%;
-  background: linear-gradient(165deg, rgba(30, 27, 54, 0.95), rgba(15, 23, 42, 0.98));
-  border: 1px solid rgba(167, 139, 250, 0.22);
-  border-radius: 18px;
-  padding: 1.25rem 1.2rem 1.3rem;
-  text-align: center;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
-}
-.sl-online-card.create {
-  border-color: rgba(236, 72, 153, 0.3);
-  background: linear-gradient(165deg, rgba(76, 29, 149, 0.35), rgba(15, 23, 42, 0.98));
-}
-.sl-online-card.join {
-  border-color: rgba(34, 211, 238, 0.28);
-  background: linear-gradient(165deg, rgba(8, 47, 73, 0.5), rgba(15, 23, 42, 0.98));
-}
-.sl-online-card-ico {
-  font-size: 1.6rem;
-  margin-bottom: 0.35rem;
-  line-height: 1;
-}
-.sl-online-card h2 {
-  font-family: Fredoka, Nunito, sans-serif;
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin: 0 0 0.3rem;
-  color: #f1f5f9;
-}
-.sl-online-card p {
-  font-size: 0.82rem;
-  color: #94a3b8;
-  line-height: 1.4;
-  margin: 0 0 1rem;
-}
-
 .sl-btn.wide {
   width: 100%;
   display: block;
@@ -628,139 +596,17 @@ html[data-theme="dark"] .sl-result.bad { color: #f87171; }
   box-sizing: border-box;
 }
 
-.sl-online-divider {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 0.85rem 0;
-  color: #64748b;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.sl-online-divider::before,
-.sl-online-divider::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: rgba(148, 163, 184, 0.2);
-}
-.sl-online-divider span {
-  flex: 0 0 auto;
-}
-
-.sl-join-row {
-  display: flex;
-  gap: 0.5rem;
-  width: 100%;
-  max-width: none;
-  margin: 0;
-}
-.sl-join-row input {
-  flex: 1;
-  min-width: 0;
-  border-radius: 12px;
-  border: 1px solid rgba(34, 211, 238, 0.3);
-  background: rgba(0, 0, 0, 0.35);
-  color: #e0f2fe;
-  padding: 0.7rem 0.85rem;
-  font: inherit;
-  font-weight: 800;
-  font-size: 0.95rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-align: center;
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.sl-join-row input::placeholder {
-  color: rgba(148, 163, 184, 0.55);
-  letter-spacing: 0.08em;
-  font-weight: 700;
-}
-.sl-join-row input:focus {
-  border-color: rgba(34, 211, 238, 0.65);
-  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
-}
-.sl-join-row .sl-btn {
-  flex: 0 0 auto;
-  padding: 0.7rem 1.15rem;
-  border-radius: 12px;
-  white-space: nowrap;
-}
-
-.sl-online-panel .sl-status {
-  margin-top: 0.9rem;
-  min-height: 1.2rem;
-  font-size: 0.8rem;
-  color: #a78bfa;
-}
-
-/* Login card */
-#loginGate.sl-online-card {
-  max-width: 100%;
-}
-
-@media (orientation: landscape) and (max-height: 480px) {
-  .sl-online-wrap {
-    justify-content: flex-start;
-    padding-top: 0.25rem;
-  }
-  .sl-online-card {
-    padding: 0.85rem 1rem 1rem;
-  }
-  .sl-online-card p {
-    margin-bottom: 0.65rem;
-  }
-  .sl-online-divider {
-    margin: 0.5rem 0;
-  }
-  .sl-online-wrap .sl-logo {
-    font-size: 1.5rem;
-  }
-}
-
-.sl-code-pill {
-  display: inline-block;
-  font-family: ui-monospace, monospace;
-  letter-spacing: 0.12em;
-  padding: 0.15rem 0.55rem;
-  border-radius: 8px;
-  background: rgba(167, 139, 250, 0.2);
-  color: #c4b5fd;
-  font-size: 0.9em;
-  vertical-align: middle;
-}
-.sl-online-card .sl-invite {
-  max-width: none;
-  margin: 0 0 1rem;
-}
-.sl-online-card .sl-lobby-players {
-  max-width: none;
-  margin: 0 0 0.85rem;
-  text-align: left;
-}
-.sl-online-card .sl-status {
-  margin-top: 0.65rem;
-}
-.sl-online-card .sl-btn.wide {
-  margin-top: 0.25rem;
-}
-
-
-/* ════════ Mode select — no-scroll, centered, neon ════════ */
+/* ════════ Mode select — centered between topbar & footer ════════ */
 .sl-screen--mode {
   position: relative;
-  min-height: 100dvh;
-  min-height: 100svh;
-  height: 100dvh;
-  height: 100svh;
-  max-height: 100dvh;
+  flex: 1 0 auto;
+  min-height: min(560px, calc(100dvh - 130px));
+  height: auto;
+  max-height: none;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: max(0.75rem, env(safe-area-inset-top)) 1rem max(0.75rem, env(safe-area-inset-bottom));
+  padding: 1.15rem 1rem 1.5rem;
   box-sizing: border-box;
 }
 
@@ -1004,15 +850,17 @@ html[data-theme="dark"] .sl-result.bad { color: #f87171; }
 
 /* ════════ Theme-aware Online / Offline / Play polish ════════ */
 
-/* Offline setup — centered no-scroll friendly */
+/* Offline setup — centered between topbar & footer */
 #screenOffline {
-  min-height: 100dvh;
+  position: relative;
+  flex: 1 0 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1.1rem;
-  padding: max(0.75rem, env(safe-area-inset-top)) 1rem 1.25rem;
+  padding: 2.85rem 1rem 1.75rem;
   background:
     radial-gradient(ellipse 80% 50% at 50% -10%, var(--orb-a), transparent 55%),
     radial-gradient(ellipse 40% 30% at 100% 80%, var(--orb-b), transparent 50%),
@@ -1020,7 +868,7 @@ html[data-theme="dark"] .sl-result.bad { color: #f87171; }
 }
 #screenOffline .sl-back {
   position: absolute;
-  top: max(0.65rem, env(safe-area-inset-top));
+  top: 0.75rem;
   left: 0.75rem;
 }
 #screenOffline .sl-hero h1 {
@@ -1066,64 +914,6 @@ html[data-theme="dark"] .sl-result.bad { color: #f87171; }
   box-shadow: 0 0 24px rgba(168, 85, 247, 0.35), 0 8px 22px rgba(124, 58, 237, 0.25);
 }
 
-/* Online home + lobby — theme cards */
-#screenOnlineHome,
-#screenLobby {
-  min-height: 100dvh;
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, var(--orb-a), transparent 55%),
-    radial-gradient(ellipse 40% 30% at 100% 80%, var(--orb-c), transparent 50%),
-    var(--bg);
-}
-.sl-online-wrap .sl-hero h1 {
-  background: var(--hero-grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-family: Fredoka, Nunito, sans-serif;
-}
-.sl-online-wrap .sl-tagline { color: var(--muted); }
-
-.sl-online-card {
-  background: var(--card) !important;
-  border: 1.5px solid var(--card-border) !important;
-  color: var(--text);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12);
-}
-.sl-online-card.create {
-  border-color: color-mix(in srgb, var(--neon-online) 45%, transparent) !important;
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--neon-online) 20%, transparent),
-    0 0 28px color-mix(in srgb, var(--neon-online) 18%, transparent),
-    0 14px 36px rgba(0,0,0,0.1);
-}
-.sl-online-card.join {
-  border-color: color-mix(in srgb, var(--neon-offline) 45%, transparent) !important;
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--neon-offline) 18%, transparent),
-    0 0 28px color-mix(in srgb, var(--neon-offline) 15%, transparent),
-    0 14px 36px rgba(0,0,0,0.1);
-}
-.sl-online-card h2 { color: var(--text) !important; }
-.sl-online-card p { color: var(--muted) !important; }
-.sl-online-divider { color: var(--muted); }
-.sl-online-divider::before,
-.sl-online-divider::after {
-  background: color-mix(in srgb, var(--muted) 35%, transparent);
-}
-.sl-join-row input {
-  background: color-mix(in srgb, var(--bg) 70%, #000 10%) !important;
-  border: 1.5px solid color-mix(in srgb, var(--neon-offline) 40%, transparent) !important;
-  color: var(--text) !important;
-}
-html[data-theme="light"] .sl-join-row input {
-  background: rgba(255,255,255,0.9) !important;
-  color: #0f172a !important;
-}
-.sl-join-row input::placeholder { color: var(--muted) !important; }
-.sl-status { color: var(--accent) !important; }
 .sl-btn:not(.primary) {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
   color: var(--text);
@@ -1133,20 +923,6 @@ html[data-theme="light"] .sl-join-row input {
   background: linear-gradient(135deg, #7c3aed, #ec4899);
   color: #fff;
   box-shadow: 0 0 22px rgba(168, 85, 247, 0.35), 0 8px 22px rgba(124, 58, 237, 0.28);
-}
-.sl-lobby-row {
-  background: color-mix(in srgb, var(--bg) 55%, transparent);
-  color: var(--text);
-  border: 1px solid var(--card-border);
-}
-.sl-invite input {
-  background: color-mix(in srgb, var(--bg) 65%, transparent) !important;
-  color: var(--text) !important;
-  border: 1px solid var(--card-border) !important;
-}
-.sl-code-pill {
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
-  color: var(--accent);
 }
 
 /* Play screen layout + bigger desktop board */

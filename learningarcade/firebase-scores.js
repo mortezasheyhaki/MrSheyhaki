@@ -1,6 +1,6 @@
 /**
  * Learning Arcade — Scoreboard helper on Supabase
- * Public API: global.LAScores  (same shape as the old Appwrite version)
+ * Public API: global.LAScores
  *
  * Load AFTER Supabase SDK (optional if only submitting as guest):
  *   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

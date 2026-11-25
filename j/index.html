@@ -41,23 +41,24 @@
   </div>
   <script>
     (function () {
-      // Default game for short links (expand later when more games exist)
-      var GAME = "/multiplayer/a-an-swipe/";
+      var GAME_ROUTES = {
+        "a-an-swipe": "/multiplayer/a-an-swipe/",
+        "family-words": "/multiplayer/family-words/",
+        "plural-forms": "/multiplayer/family-words/",
+        "tictactoe-should": "/multiplayer/tic-tac-toe/should/",
+        "snakes-ladders": "/multiplayer/snakes-ladders/"
+      };
 
       function codeFromLocation() {
-        // /j/ABC123  or  /j/ABC123/
         var path = (location.pathname || "").replace(/\/+$/, "");
         var parts = path.split("/").filter(Boolean);
-        // ["j", "ABC123"] or ["j"]
         if (parts.length >= 2 && parts[0].toLowerCase() === "j") {
           var fromPath = parts[1].toUpperCase().replace(/[^A-Z0-9]/g, "");
           if (fromPath.length >= 4) return fromPath;
         }
-        // ?c= / ?room= / ?code=
         var q = new URLSearchParams(location.search);
         var fromQ = (q.get("c") || q.get("room") || q.get("code") || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
         if (fromQ.length >= 4) return fromQ;
-        // #ABC123
         var fromHash = (location.hash || "").replace(/^#/, "").toUpperCase().replace(/[^A-Z0-9]/g, "");
         if (fromHash.length >= 4) return fromHash;
         return "";
@@ -71,9 +72,16 @@
         return;
       }
 
-      el.innerHTML = "<h1>Joining room</h1><p>Taking you to the game…</p><code>" + code + "</code>";
-      var target = GAME + (GAME.indexOf("?") >= 0 ? "&" : "?") + "room=" + encodeURIComponent(code);
-      location.replace(target);
+      el.innerHTML = "<h1>Joining room</h1><p>Taking you to the lobby…</p><code>" + code + "</code>";
+
+      fetch("/api/rooms/" + encodeURIComponent(code), { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; })
+        .then(function (data) {
+          var route = (data && data.ok && GAME_ROUTES[data.gameType]) || GAME_ROUTES["a-an-swipe"];
+          var target = route + "?room=" + encodeURIComponent(code);
+          location.replace(target);
+        });
     })();
   </script>
 </body>

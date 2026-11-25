@@ -1,4577 +1,623 @@
-
 /* =========================================================
-   MR. SHEYHAKI — RESOURCES LIBRARY
-   Shared styles for /resources/ and everything nested under
-   it (coursebooks, units, games/worksheets/audio listings).
-   Follows the same header/card/footer system as Learning
-   Arcade, using the site's purple accent throughout.
-========================================================= */
+   Mr. Sheyhaki — Resources & American English File Styles
+   Covers /resources/ hub and all course-render.js pages
+   ========================================================= */
 
-* { box-sizing: border-box; }
-
-:root {
-  --purple: #6937d8;
-  --purple-light: #f1edff;
-  --purple-border: #e6ddfa;
-  --text: #202636;
-  --muted: #687184;
-  --border: #e7e9ef;
-  --container: 1180px;
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  margin: 0;
-  /* Atmosphere comes from ../theme.css — do not paint solid bg here */
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ---------- HEADER ---------- */
-
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  height: 78px;
-  background: rgba(255,255,255,.96);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid #eef0f4;
-}
-
-.header-inner {
-  width: min(calc(100% - 48px), var(--container));
-  height: 78px;
+.res-hub-main,
+main#app {
+  width: min(1120px, 100%);
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
+  padding: 36px 20px 64px;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  color: var(--text);
-  text-decoration: none;
-}
-
-.brand-mark {
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-  display: grid;
-  place-items: center;
-  border-radius: 12px;
-  background: var(--purple);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 900;
-}
-
-.brand-text { display: flex; flex-direction: column; gap: 2px; }
-.brand-text strong { font-size: 14px; line-height: 1.15; font-weight: 800; }
-.brand-text small { color: #7d8595; font-size: 10px; line-height: 1.15; }
-
-.main-nav { display: flex; align-items: center; gap: 27px; }
-.main-nav a {
-  color: #6d7587;
-  font-size: 13px;
-  line-height: 1;
-  font-weight: 700;
-  text-decoration: none;
-  transition: color .2s ease;
-}
-.main-nav a:hover, .main-nav a.active { color: var(--purple); }
-
-/* ---------- INTRO / HERO ---------- */
-
+.res-hero,
 .arcade-intro {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto;
-  padding: 60px 0 30px;
+  margin-bottom: 28px;
 }
 
-.eyebrow {
-  color: var(--purple);
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 1.7px;
+.aef-back-row {
+  margin-bottom: 14px;
 }
 
-.arcade-intro h1 {
-  margin: 9px 0 9px;
-  font-size: clamp(36px, 5vw, 54px);
-  line-height: 1;
-  letter-spacing: -2px;
-}
-
-.arcade-intro p {
-  max-width: 680px;
-  margin: 0;
-  color: var(--muted);
-  font-size: 15px;
-  line-height: 1.7;
-}
-
-/* Match site-wide back button (arcade / grammar pages) */
-.back-link,
-.back-button,
-a.back-link,
-a.back-button {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 6px !important;
-  margin-bottom: 17px;
-  min-height: 40px !important;
-  padding: 10px 14px !important;
-  border-radius: 12px !important;
-  border: 1px solid #e7e9ef !important;
-  background: #ffffff !important;
-  color: #202636 !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  line-height: 1.2 !important;
-  text-decoration: none !important;
-  box-shadow: 0 2px 10px rgba(32, 38, 54, 0.06) !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease !important;
-  cursor: pointer;
-}
-.back-link:hover,
-.back-button:hover,
-a.back-link:hover,
-a.back-button:hover {
-  transform: translateY(-1px) !important;
-  border-color: #c4b5fd !important;
-  background: #ffffff !important;
-  color: #202636 !important;
-  box-shadow: 0 6px 16px rgba(124, 92, 255, 0.12) !important;
-}
-html[data-theme="dark"] .back-link,
-html[data-theme="dark"] .back-button,
-html[data-theme="dark"] a.back-link,
-html[data-theme="dark"] a.back-button {
-  background: #1a1f2c !important;
-  border-color: #2e3448 !important;
-  color: #f4f6fb !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25) !important;
-}
-html[data-theme="dark"] .back-link:hover,
-html[data-theme="dark"] .back-button:hover {
-  border-color: #7c5cff !important;
-  background: #1a1f2c !important;
-  box-shadow: 0 6px 16px rgba(124, 92, 255, 0.2) !important;
-}
-
-/* ---------- UNIT HERO (big unit number) ---------- */
-
-.unit-hero {
-  width: min(calc(100% - 48px), var(--container));
-  min-height: 200px;
-  margin: 0 auto 25px;
-  padding: 38px 40px;
-  display: flex;
+.back-link {
+  display: inline-flex;
   align-items: center;
-  gap: 28px;
-  border-radius: 25px;
-  border: 1px solid var(--purple-border);
-  background: var(--purple-light);
-  overflow: hidden;
+  gap: 6px;
+  min-height: 38px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--site-border);
+  background: var(--site-surface);
+  color: var(--site-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
 }
 
-.unit-hero .unit-index {
-  flex: 0 0 auto;
-  color: var(--purple);
-  font-size: clamp(56px, 9vw, 96px);
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -3px;
+.back-link:hover {
+  border-color: var(--hm-accent, #6d28d9);
+  color: var(--hm-accent, #6d28d9);
+  transform: translateY(-1px);
 }
 
-.unit-hero .unit-details h1 {
-  margin: 0 0 8px;
-  font-size: clamp(20px, 2.6vw, 28px);
-  line-height: 1.2;
-  letter-spacing: -0.5px;
-  color: var(--text);
+.eyebrow,
+.res-kicker {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--hm-accent, #6d28d9);
 }
 
-.unit-hero .unit-name-placeholder {
-  font-style: italic;
-  color: #8a92a5;
+.res-hero h1,
+.arcade-intro h1 {
+  margin: 0 0 10px;
+  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--site-text);
+  text-wrap: balance;
 }
 
-.unit-hero .unit-details p {
-  max-width: 560px;
+.res-hero p,
+.arcade-intro p {
   margin: 0;
-  color: #475063;
-  font-size: 13px;
-  line-height: 1.7;
+  max-width: 62ch;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--site-muted);
 }
 
-/* ---------- SECTION HEADING ---------- */
+/* ── Resources Hub Coursebooks Grid ────────────────────────────── */
 
-.section-heading {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 42px auto 17px;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
+.res-section-head {
+  margin-bottom: 16px;
 }
-.section-heading h2 { margin: 0 0 5px; font-size: 22px; }
-.section-heading p { margin: 0; color: var(--muted); font-size: 12px; }
 
-/* ---------- CARD GRIDS (books / units) ---------- */
+.res-section-head h2 {
+  margin: 0 0 4px;
+  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+  font-size: 1.45rem;
+  color: var(--site-text);
+}
 
-.resource-grid,
-.unit-grid {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto 70px;
+.res-section-head p {
+  margin: 0;
+  font-size: 0.94rem;
+  color: var(--site-muted);
+}
+
+.res-books-section {
+  margin-bottom: 36px;
+}
+
+.res-books-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 17px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
 }
 
-.resource-grid { grid-template-columns: repeat(2, 1fr); }
-
-.resource-card,
-.unit-card {
-  min-height: 150px;
-  padding: 23px;
+.book-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--border);
-  border-radius: 17px;
-  background: #fff;
-  box-shadow: 0 8px 25px rgba(32,38,54,.04);
-  text-decoration: none;
-  color: inherit;
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 24px 20px 20px;
+  border-radius: 20px;
+  background: var(--site-surface);
+  border: 1px solid var(--site-border);
+  box-shadow: 0 10px 26px var(--site-shadow);
+  overflow: hidden;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease, box-shadow 0.18s ease;
 }
-.resource-card:hover,
-.unit-card:hover {
+
+.book-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--book-accent, #6d28d9);
+}
+
+.book-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 15px 34px rgba(32,38,54,.08);
-  border-color: var(--purple-border);
+  box-shadow: 0 16px 34px var(--site-shadow);
 }
 
-.resource-card { min-height: 190px; flex-direction: row; align-items: flex-start; gap: 18px; }
+.book-card--teal {
+  --book-accent: #0f766e;
+  --book-accent-hover: #115e59;
+  --book-soft: rgba(15, 118, 110, 0.12);
+}
 
-.resource-icon {
-  flex: 0 0 52px;
-  width: 52px;
-  height: 52px;
+.book-card--blue {
+  --book-accent: #2563eb;
+  --book-accent-hover: #1d4ed8;
+  --book-soft: rgba(37, 99, 235, 0.12);
+}
+
+.book-card--orange {
+  --book-accent: #ea580c;
+  --book-accent-hover: #c2410c;
+  --book-soft: rgba(234, 88, 12, 0.12);
+}
+
+.book-card--violet {
+  --book-accent: #6d28d9;
+  --book-accent-hover: #5b21b6;
+  --book-soft: rgba(109, 40, 217, 0.12);
+}
+
+html[data-theme="dark"] .book-card--teal { --book-accent: #14b8a6; --book-accent-hover: #0d9488; --book-soft: rgba(20, 184, 166, 0.18); }
+html[data-theme="dark"] .book-card--blue { --book-accent: #3b82f6; --book-accent-hover: #2563eb; --book-soft: rgba(59, 130, 246, 0.18); }
+html[data-theme="dark"] .book-card--orange { --book-accent: #f97316; --book-accent-hover: #ea580c; --book-soft: rgba(249, 115, 22, 0.18); }
+html[data-theme="dark"] .book-card--violet { --book-accent: #8b5cf6; --book-accent-hover: #7c3aed; --book-soft: rgba(139, 92, 246, 0.2); }
+
+.book-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
-  border-radius: 14px;
-  background: var(--purple-light);
-  font-size: 24px;
+  background: var(--book-soft);
+  color: var(--book-accent);
+  margin-bottom: 4px;
 }
 
-.resource-card h3 { margin: 0 0 8px; font-size: 18px; }
-.resource-card p { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.65; }
-
-.unit-card .unit-card-index {
-  align-self: flex-start;
-  padding: 5px 8px;
-  border-radius: 7px;
-  background: var(--purple-light);
-  color: var(--purple);
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: .7px;
-  text-transform: uppercase;
+.book-card-icon svg {
+  width: 22px;
+  height: 22px;
 }
 
-.unit-card h3 { margin: 14px 0 0; font-size: 19px; }
-.unit-card .unit-card-name {
-  margin: 4px 0 0;
-  font-style: italic;
-  color: #8a92a5;
-  font-size: 12px;
+.book-card h3 {
+  margin: 0;
+  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  color: var(--site-text);
 }
 
-.card-tag {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: 5px 8px;
-  border-radius: 7px;
-  background: var(--purple-light);
-  color: var(--purple);
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: .7px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
+.book-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--site-muted);
 }
 
-.card-link {
+.book-meta {
   margin-top: auto;
-  padding-top: 14px;
-  color: var(--purple);
-  font-size: 10px;
-  font-weight: 900;
+  padding-top: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--book-accent);
 }
 
-/* ---------- LEVEL GRID (Starter / 1 / 2 / 3 / 4 / 5) ---------- */
+.book-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  width: 100%;
+  padding: 8px 16px;
+  margin-top: 4px;
+  border-radius: 10px;
+  background: var(--book-accent);
+  color: #ffffff !important;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.16s ease, transform 0.16s ease;
+}
+
+.book-cta:hover {
+  background: var(--book-accent-hover);
+  transform: translateY(-1px);
+}
+
+/* ── Section Heading ───────────────────────────────────────────── */
+
+main#app .section-heading {
+  margin: 28px 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--site-border);
+}
+
+main#app .section-heading h2 {
+  margin: 0 0 4px;
+  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+  font-size: 1.4rem;
+  color: var(--site-text);
+}
+
+main#app .section-heading p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--site-muted);
+}
+
+/* ── Level Grid ────────────────────────────────────────────────── */
 
 .level-grid {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto 70px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 17px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
 }
 
 .level-card {
-  min-height: 120px;
-  padding: 23px;
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  border: 1px solid var(--border);
-  border-radius: 17px;
-  background: #fff;
-  box-shadow: 0 8px 25px rgba(32,38,54,.04);
+  gap: 8px;
+  padding: 22px 22px 20px;
+  border-radius: 18px;
+  background: var(--site-surface);
+  border: 1px solid var(--site-border);
+  box-shadow: 0 8px 22px var(--site-shadow);
   text-decoration: none;
   color: inherit;
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease, box-shadow 0.18s ease;
 }
-.level-card:hover {
+
+a.level-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 15px 34px rgba(32,38,54,.08);
-  border-color: var(--purple-border);
+  border-color: var(--hm-border-strong, rgba(109, 40, 217, 0.35));
+  box-shadow: 0 14px 32px var(--site-shadow);
 }
-.level-card h3 { margin: 0 0 6px; font-size: 19px; }
-.level-card p { margin: 0; color: var(--muted); font-size: 11px; }
+
+.level-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--hm-accent, #6d28d9);
+}
+
+.level-card h3 {
+  margin: 0;
+  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+  font-size: 1.3rem;
+  color: var(--site-text);
+}
+
+.level-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--site-muted);
+}
+
+.level-arrow {
+  margin-top: auto;
+  padding-top: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--hm-accent, #6d28d9);
+}
 
 .level-card.level-locked {
+  opacity: 0.58;
   cursor: default;
-  background: #fbfbfd;
-  border-style: dashed;
-  color: #9199a9;
-}
-.level-card.level-locked:hover {
-  transform: none;
-  box-shadow: 0 8px 25px rgba(32,38,54,.04);
-  border-color: var(--border);
-}
-.level-card.level-locked h3 { color: #9199a9; display: flex; align-items: center; gap: 7px; }
-.level-card .lock-tag {
-  align-self: flex-start;
-  margin-top: 10px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  background: #eef0f4;
-  color: #838ba0;
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: .6px;
-  text-transform: uppercase;
 }
 
-/* ---------- ITEM GRID (units + Practical English on a level page) ---------- */
+/* ── Units & Practical English Grid ────────────────────────────── */
 
 .item-grid {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto 70px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 16px;
 }
 
 .item-card {
-  min-height: 130px;
-  padding: 20px;
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 8px 25px rgba(32,38,54,.04);
+  gap: 6px;
+  padding: 20px;
+  border-radius: 18px;
+  background: var(--site-surface);
+  border: 1px solid var(--site-border);
+  box-shadow: 0 8px 22px var(--site-shadow);
   text-decoration: none;
   color: inherit;
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease, box-shadow 0.18s ease;
 }
+
 .item-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 15px 34px rgba(32,38,54,.08);
-  border-color: var(--purple-border);
-}
-.item-card .item-index {
-  align-self: flex-start;
-  margin-bottom: 12px;
-  color: var(--purple-border);
-  font-size: 30px;
-  font-weight: 900;
-  line-height: 1;
-}
-.item-card h3 { margin: 0; font-size: 16px; }
-.item-card .item-name-placeholder {
-  margin: 3px 0 0;
-  font-style: italic;
-  color: #8a92a5;
-  font-size: 11px;
+  border-color: var(--hm-border-strong, rgba(109, 40, 217, 0.35));
+  box-shadow: 0 14px 30px var(--site-shadow);
 }
 
-.item-card.item-card--pe {
-  background: var(--purple-light);
-  border-color: var(--purple-border);
+.unit-number {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--hm-accent, #6d28d9);
 }
-.item-card.item-card--pe .item-index { color: #d5c7f7; }
 
-/* ---------- A/B PICKER PAGE ---------- */
+.unit-color--purple .unit-number { color: #7c3aed; }
+.unit-color--teal .unit-number { color: #0f766e; }
+.unit-color--orange .unit-number { color: #c2410c; }
+.unit-color--blue .unit-number { color: #1d4ed8; }
+.item-card--pe .unit-number { color: #be185d; }
+
+html[data-theme="dark"] .unit-color--purple .unit-number { color: #c4b5fd; }
+html[data-theme="dark"] .unit-color--teal .unit-number { color: #5eead4; }
+html[data-theme="dark"] .unit-color--orange .unit-number { color: #fdba74; }
+html[data-theme="dark"] .unit-color--blue .unit-number { color: #93c5fd; }
+html[data-theme="dark"] .item-card--pe .unit-number { color: #f9a8d4; }
+
+.item-card h3 {
+  margin: 0;
+  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+  font-size: 1.2rem;
+  color: var(--site-text);
+}
+
+.item-name-placeholder {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--site-muted);
+}
+
+.unit-arrow {
+  margin-top: auto;
+  padding-top: 8px;
+  font-weight: 700;
+  color: var(--hm-accent, #6d28d9);
+}
+
+/* ── Unit A/B/C Lesson Cards ───────────────────────────────────── */
 
 .ab-grid {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto 70px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 17px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 18px;
 }
 
 .ab-card {
-  min-height: 160px;
-  padding: 28px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  border: 1px solid var(--border);
+  gap: 10px;
+  padding: 22px;
   border-radius: 20px;
-  background: #fff;
-  box-shadow: 0 8px 25px rgba(32,38,54,.04);
+  background: var(--site-surface);
+  border: 1px solid var(--site-border);
+  box-shadow: 0 10px 26px var(--site-shadow);
   text-decoration: none;
   color: inherit;
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease;
 }
+
 .ab-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 15px 34px rgba(32,38,54,.08);
-  border-color: var(--purple-border);
-}
-.ab-card .ab-letter {
-  color: var(--purple);
-  font-size: 40px;
-  font-weight: 900;
-  line-height: 1;
-  margin-bottom: 10px;
-}
-.ab-card p { margin: 6px 0 0; color: var(--muted); font-size: 12px; }
-
-/* ---------- CONTENT TYPE SECTIONS (games / worksheets / audio) ---------- */
-
-.content-grid {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto 50px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 17px;
+  border-color: var(--hm-border-strong, rgba(109, 40, 217, 0.35));
 }
 
-.content-card {
-  min-height: 150px;
-  padding: 23px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--border);
-  border-radius: 17px;
-  background: #fff;
-  box-shadow: 0 8px 25px rgba(32,38,54,.04);
-}
-.content-card h3 { margin: 14px 0 7px; font-size: 16px; }
-.content-card p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
-.content-meta { margin-top: auto; padding-top: 17px; color: #8a92a2; font-size: 10px; }
-
-.empty-state {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto 50px;
-  padding: 34px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  border: 1.5px dashed var(--border);
-  border-radius: 17px;
-  background: #fbfbfd;
-}
-.empty-state .empty-icon {
-  flex: 0 0 42px;
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  border-radius: 12px;
-  background: var(--purple-light);
-  color: var(--purple);
-  font-size: 19px;
-}
-.empty-state p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
-.empty-state strong { display: block; color: var(--text); font-size: 13px; margin-bottom: 3px; }
-
-/* ---------- FOOTER ---------- */
-
-.site-footer {
-  border-top: 1px solid #edf0f4;
-  text-align: center;
-  padding: 25px;
-  color: #8991a1;
-  font-size: 10px;
-}
-
-/* ---------- MOBILE MENU TOGGLE ---------- */
-
-.menu-toggle{display:none;width:38px;height:38px;padding:0;border:none;background:transparent;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px}
-.menu-toggle span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:transform .2s ease,opacity .2s ease}
-.menu-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.menu-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
-.menu-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-@media(max-width:700px){
-  .menu-toggle{display:flex}
-  .main-nav{display:flex;flex-direction:column;align-items:flex-start;gap:4px;position:absolute;top:78px;left:0;right:0;background:#fff;border-bottom:1px solid #eef0f4;padding:14px 24px 20px;max-height:0;overflow:hidden;opacity:0;pointer-events:none;transition:max-height .25s ease,opacity .2s ease}
-  .main-nav.open{max-height:400px;opacity:1;pointer-events:auto}
-  .main-nav a{padding:8px 0;width:100%}
-}
-
-/* ---------- DARK MODE (new components not covered by the global theme.css) ---------- */
-
-html[data-theme="dark"] .level-card,
-html[data-theme="dark"] .item-card,
-html[data-theme="dark"] .ab-card,
-html[data-theme="dark"] .unit-hero,
-html[data-theme="dark"] .empty-state{
-  background:var(--site-surface)!important;
-  color:var(--site-text)!important;
-  border-color:var(--site-border)!important;
-}
-html[data-theme="dark"] .level-card.level-locked{
-  background:var(--site-surface-2)!important;
-}
-html[data-theme="dark"] .level-card p,
-html[data-theme="dark"] .item-card .item-name-placeholder,
-html[data-theme="dark"] .ab-card p,
-html[data-theme="dark"] .unit-hero p,
-html[data-theme="dark"] .unit-details p,
-html[data-theme="dark"] .empty-state p,
-html[data-theme="dark"] .content-card p{
-  color:var(--site-muted)!important;
-}
-html[data-theme="dark"] .item-card--pe{
-  background:#241c3a!important;
-  border-color:#3a2c5c!important;
-}
-html[data-theme="dark"] .resource-icon,
-html[data-theme="dark"] .empty-state .empty-icon{
-  background:#241c3a!important;
-}
-
-/* ---------- RESPONSIVE ---------- */
-
-@media (max-width: 900px) {
-  .content-grid,
-  .unit-grid,
-  .level-grid,
-  .item-grid { grid-template-columns: repeat(2, 1fr); }
-  .unit-hero { padding: 30px; }
-}
-
-@media (max-width: 700px) {
-  .main-nav { display: none; }
-  .header-inner,
-  .arcade-intro,
-  .unit-hero,
-  .section-heading,
-  .resource-grid,
-  .unit-grid,
-  .content-grid,
-  .level-grid,
-  .item-grid,
-  .ab-grid,
-  .empty-state {
-    width: min(calc(100% - 28px), var(--container));
-  }
-  .unit-hero { flex-direction: column; align-items: flex-start; text-align: left; }
-  .resource-grid { grid-template-columns: 1fr; }
-  .ab-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 560px) {
-  .content-grid,
-  .unit-grid,
-  .item-grid { grid-template-columns: 1fr; }
-}
-/* =========================================
-   UNIT RESOURCE CARDS
-   ========================================= */
-
-.unit-resource-grid {
-  margin-top: 25px;
-}
-
-.resource-card {
-  text-decoration: none;
-  display: block;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.resource-card:hover {
-  transform: translateY(-5px);
-}
-
-.resource-icon {
-  font-size: 42px;
-  margin-bottom: 15px;
-}
-
-.resource-card h3 {
-  margin-bottom: 8px;
-}
-
-.resource-card p {
-  margin-bottom: 20px;
-}
-
-.resource-button {
-  display: inline-block;
-  font-weight: 700;
-}
-
-
-/* =========================================
-   AUDIO CARDS
-   ========================================= */
-
-.audio-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.25rem;
-}
-
-.audio-player {
-  margin: 0.75rem 0;
-}
-
-.audio-player audio {
-  width: 100%;
-}
-
-.audio-card {
-  position: relative;
-}
-
-.audio-card-header {
+.ab-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 15px;
+  gap: 8px;
 }
 
-.audio-card-header h3 {
-  margin: 3px 0 0;
+.ab-letter-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-family: "Fredoka", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  background: var(--hm-accent-soft, rgba(109, 40, 217, 0.1));
+  color: var(--hm-accent, #6d28d9);
+}
+
+.ab-card--blue .ab-letter-badge { background: rgba(37, 99, 235, 0.12); color: #1d4ed8; }
+.ab-card--green .ab-letter-badge { background: rgba(5, 150, 105, 0.12); color: #047857; }
+.ab-card--purple .ab-letter-badge { background: rgba(124, 58, 237, 0.12); color: #6d28d9; }
+
+html[data-theme="dark"] .ab-card--blue .ab-letter-badge { background: rgba(96, 165, 250, 0.16); color: #93c5fd; }
+html[data-theme="dark"] .ab-card--green .ab-letter-badge { background: rgba(52, 211, 153, 0.16); color: #6ee7b7; }
+html[data-theme="dark"] .ab-card--purple .ab-letter-badge { background: rgba(167, 139, 250, 0.18); color: #c4b5fd; }
+
+.ab-card-tag {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--site-muted);
+}
+
+.ab-card-title {
+  margin: 0;
+  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+  font-size: 1.35rem;
+  color: var(--site-text);
+}
+
+.ab-card-blurb {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--site-muted);
+}
+
+.ab-card-btn {
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--hm-accent, #6d28d9);
+}
+
+/* ── Lesson Resource Types (Games / Worksheets / Audio) ────────── */
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.lesson-type-card,
+.content-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+  border-radius: 18px;
+  background: var(--site-surface);
+  border: 1px solid var(--site-border);
+  box-shadow: 0 8px 22px var(--site-shadow);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease;
+}
+
+.lesson-type-card:hover,
+a.content-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--hm-border-strong, rgba(109, 40, 217, 0.35));
+}
+
+.lesson-type-icon,
+.resource-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
   font-size: 1.5rem;
+  background: var(--site-surface-2);
+  flex-shrink: 0;
+}
+
+.lesson-type-card h3,
+.content-card h3 {
+  margin: 0;
+  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+  font-size: 1.2rem;
+  color: var(--site-text);
+}
+
+.lesson-type-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--site-muted);
+}
+
+.lesson-type-btn,
+.resource-button {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--hm-accent, #6d28d9);
+}
+
+.resource-card-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.resource-card-body h3 {
+  margin: 0;
+}
+
+/* ── Audio Cards ───────────────────────────────────────────────── */
+
+.audio-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .audio-label {
   font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  opacity: 0.65;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--site-muted);
 }
 
 .audio-icon {
-  font-size: 30px;
-}
-
-.audio-card audio {
-  width: 100%;
-  margin-top: 12px;
+  font-size: 1.4rem;
 }
 
 .audio-actions {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
-  margin-top: 15px;
+  margin-top: auto;
 }
 
 .audio-play-btn,
 .audio-download-btn {
-  flex: 1;
-  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 16px;
   border-radius: 10px;
-  padding: 10px 15px;
-  font: inherit;
+  font-family: inherit;
+  font-size: 0.86rem;
   font-weight: 700;
-  text-align: center;
-  text-decoration: none;
   cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
-}
-
-.audio-play-btn:hover,
-.audio-download-btn:hover {
-  transform: translateY(-2px);
-  opacity: 0.9;
+  text-decoration: none;
+  transition: background-color 0.16s ease, border-color 0.16s ease;
 }
 
 .audio-play-btn {
-  border: none;
-  background: var(--accent, #6c63ff);
-  color: white;
+  border: 0;
+  background: var(--hm-accent, #6d28d9);
+  color: #ffffff;
+}
+
+.audio-play-btn:hover {
+  background: var(--hm-accent-hover, #5b21b6);
+}
+
+.audio-play-btn.is-playing {
+  background: #0f766e;
 }
 
 .audio-download-btn {
-  border: 1px solid currentColor;
-  color: inherit;
-  background: transparent;
+  border: 1px solid var(--site-border);
+  background: var(--site-surface-2);
+  color: var(--site-text);
 }
 
+.audio-download-btn:hover {
+  border-color: var(--hm-accent, #6d28d9);
+  color: var(--hm-accent, #6d28d9);
+}
 
-@media (max-width: 600px) {
-
-  .audio-actions {
-    flex-direction: column;
+@media (max-width: 1020px) {
+  .res-books-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-}
-
-/* =========================================================
-   UNIT-STYLE CARDS (match Multiple Choice unit cards)
-========================================================= */
-
-.item-grid {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto 70px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-}
-
-@media (max-width: 900px) {
-  .item-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 520px) {
-  .item-grid { grid-template-columns: 1fr; }
-}
-
-.item-card.unit-style-card {
-  position: relative;
-  min-height: 155px;
-  padding: 22px;
-  border-radius: 20px;
-  border: 1px solid rgba(105, 55, 216, 0.12);
-  background: linear-gradient(145deg, #ffffff, #f8f6ff);
-  color: #171c30;
-  cursor: pointer;
-  text-align: left;
-  overflow: hidden;
-  box-shadow: 0 8px 25px rgba(30, 40, 70, 0.06);
-  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
-}
-
-.item-card.unit-style-card::after {
-  content: "";
-  position: absolute;
-  width: 90px;
-  height: 90px;
-  right: -35px;
-  bottom: -35px;
-  border-radius: 50%;
-  background: rgba(108, 99, 255, 0.12);
-  transition: transform 0.3s ease;
-  pointer-events: none;
-}
-
-.item-card.unit-style-card:hover {
-  transform: translateY(-6px);
-  border-color: rgba(139, 124, 255, 0.45);
-  box-shadow: 0 18px 40px rgba(80, 60, 160, 0.14);
-}
-
-.item-card.unit-style-card:hover::after {
-  transform: scale(1.6);
-}
-
-.item-card.unit-style-card .unit-number {
-  display: block;
-  color: #6937d8;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  margin-bottom: 13px;
-}
-
-.item-card.unit-style-card h3 {
-  font-size: 21px;
-  margin: 0 0 7px;
-  font-weight: 800;
-}
-
-.item-card.unit-style-card .item-name-placeholder,
-.item-card.unit-style-card p {
-  color: #747b90;
-  font-size: 13px;
-  line-height: 1.45;
-  margin: 0;
-}
-
-.item-card.unit-style-card .unit-arrow {
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9px;
-  background: rgba(105, 55, 216, 0.1);
-  color: #6937d8;
-  font-weight: 800;
-  font-size: 14px;
-}
-
-.item-card.unit-style-card .item-index {
-  display: none; /* replaced by unit-number */
-}
-
-.item-card.unit-style-card.item-card--pe .unit-number {
-  color: #9b6dff;
-}
-
-/* Practical English — gold (from book PE banner) */
-a.item-card.unit-style-card.item-card--pe,
-.item-card.unit-style-card.item-card--pe {
-  border-color: rgba(202, 138, 4, 0.4) !important;
-  background: linear-gradient(145deg, #a16207, #713f12) !important;
-  color: #fffbeb !important;
-  box-shadow: 0 10px 28px rgba(161, 98, 7, 0.3) !important;
-}
-.item-card.unit-style-card.item-card--pe::after {
-  background: rgba(250, 204, 21, 0.22) !important;
-}
-.item-card.unit-style-card.item-card--pe .unit-number {
-  color: #fde68a !important;
-}
-.item-card.unit-style-card.item-card--pe h3 {
-  color: #fffbeb !important;
-}
-.item-card.unit-style-card.item-card--pe .item-name-placeholder,
-.item-card.unit-style-card.item-card--pe p {
-  color: #fcd34d !important;
-}
-.item-card.unit-style-card.item-card--pe .unit-arrow {
-  background: rgba(250, 204, 21, 0.28) !important;
-  color: #fef3c7 !important;
-}
-.item-card.unit-style-card.item-card--pe:hover {
-  border-color: rgba(253, 224, 71, 0.55) !important;
-  box-shadow: 0 18px 40px rgba(161, 98, 7, 0.4) !important;
-}
-
-/* —— AEF unit color groups (from book design) —— */
-/* Units 1, 5, 9 — purple (matches book 1A artwork) */
-a.item-card.unit-style-card.unit-color--purple,
-.item-card.unit-style-card.unit-color--purple {
-  border-color: rgba(147, 51, 234, 0.35) !important;
-  background: linear-gradient(145deg, #5b21b6, #3b0764) !important;
-  color: #faf5ff !important;
-  box-shadow: 0 10px 28px rgba(91, 33, 182, 0.28) !important;
-}
-.item-card.unit-style-card.unit-color--purple::after {
-  background: rgba(192, 132, 252, 0.25) !important;
-}
-.item-card.unit-style-card.unit-color--purple .unit-number {
-  color: #e9d5ff !important;
-}
-.item-card.unit-style-card.unit-color--purple h3 {
-  color: #faf5ff !important;
-}
-.item-card.unit-style-card.unit-color--purple .item-name-placeholder,
-.item-card.unit-style-card.unit-color--purple p {
-  color: #d8b4fe !important;
-}
-.item-card.unit-style-card.unit-color--purple .unit-arrow {
-  background: rgba(192, 132, 252, 0.28) !important;
-  color: #f3e8ff !important;
-}
-.item-card.unit-style-card.unit-color--purple:hover {
-  border-color: rgba(216, 180, 254, 0.55) !important;
-  box-shadow: 0 18px 40px rgba(91, 33, 182, 0.38) !important;
-}
-
-/* Units 2, 6, 10 — teal */
-a.item-card.unit-style-card.unit-color--teal,
-.item-card.unit-style-card.unit-color--teal {
-  border-color: rgba(20, 184, 166, 0.35) !important;
-  background: linear-gradient(145deg, #0f766e, #134e4a) !important;
-  color: #f0fdfa !important;
-  box-shadow: 0 10px 28px rgba(15, 118, 110, 0.28) !important;
-}
-.item-card.unit-style-card.unit-color--teal::after {
-  background: rgba(45, 212, 191, 0.22) !important;
-}
-.item-card.unit-style-card.unit-color--teal .unit-number { color: #99f6e4 !important; }
-.item-card.unit-style-card.unit-color--teal h3 { color: #f0fdfa !important; }
-.item-card.unit-style-card.unit-color--teal .item-name-placeholder,
-.item-card.unit-style-card.unit-color--teal p { color: #5eead4 !important; }
-.item-card.unit-style-card.unit-color--teal .unit-arrow {
-  background: rgba(45, 212, 191, 0.28) !important;
-  color: #ccfbf1 !important;
-}
-.item-card.unit-style-card.unit-color--teal:hover {
-  border-color: rgba(94, 234, 212, 0.55) !important;
-  box-shadow: 0 18px 40px rgba(15, 118, 110, 0.38) !important;
-}
-
-/* Units 3, 7, 11 — orange */
-a.item-card.unit-style-card.unit-color--orange,
-.item-card.unit-style-card.unit-color--orange {
-  border-color: rgba(249, 115, 22, 0.35) !important;
-  background: linear-gradient(145deg, #c2410c, #7c2d12) !important;
-  color: #fff7ed !important;
-  box-shadow: 0 10px 28px rgba(194, 65, 12, 0.28) !important;
-}
-.item-card.unit-style-card.unit-color--orange::after {
-  background: rgba(251, 146, 60, 0.22) !important;
-}
-.item-card.unit-style-card.unit-color--orange .unit-number { color: #fed7aa !important; }
-.item-card.unit-style-card.unit-color--orange h3 { color: #fff7ed !important; }
-.item-card.unit-style-card.unit-color--orange .item-name-placeholder,
-.item-card.unit-style-card.unit-color--orange p { color: #fdba74 !important; }
-.item-card.unit-style-card.unit-color--orange .unit-arrow {
-  background: rgba(251, 146, 60, 0.28) !important;
-  color: #ffedd5 !important;
-}
-.item-card.unit-style-card.unit-color--orange:hover {
-  border-color: rgba(253, 186, 116, 0.55) !important;
-  box-shadow: 0 18px 40px rgba(194, 65, 12, 0.38) !important;
-}
-
-/* Units 4, 8, 12 — blue */
-a.item-card.unit-style-card.unit-color--blue,
-.item-card.unit-style-card.unit-color--blue {
-  border-color: rgba(59, 130, 246, 0.35) !important;
-  background: linear-gradient(145deg, #1d4ed8, #1e3a8a) !important;
-  color: #eff6ff !important;
-  box-shadow: 0 10px 28px rgba(29, 78, 216, 0.28) !important;
-}
-.item-card.unit-style-card.unit-color--blue::after {
-  background: rgba(96, 165, 250, 0.22) !important;
-}
-.item-card.unit-style-card.unit-color--blue .unit-number { color: #bfdbfe !important; }
-.item-card.unit-style-card.unit-color--blue h3 { color: #eff6ff !important; }
-.item-card.unit-style-card.unit-color--blue .item-name-placeholder,
-.item-card.unit-style-card.unit-color--blue p { color: #93c5fd !important; }
-.item-card.unit-style-card.unit-color--blue .unit-arrow {
-  background: rgba(96, 165, 250, 0.28) !important;
-  color: #dbeafe !important;
-}
-.item-card.unit-style-card.unit-color--blue:hover {
-  border-color: rgba(147, 197, 253, 0.55) !important;
-  box-shadow: 0 18px 40px rgba(29, 78, 216, 0.38) !important;
-}
-
-/* Dark mode — unit-style cards */
-html[data-theme="dark"] .item-card.unit-style-card {
-  background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
-  color: #f5f7ff;
-  border-color: rgba(255,255,255,0.08);
-  box-shadow: none;
-}
-
-html[data-theme="dark"] .item-card.unit-style-card .unit-number {
-  color: #b4a7ff;
-}
-
-html[data-theme="dark"] .item-card.unit-style-card .item-name-placeholder,
-html[data-theme="dark"] .item-card.unit-style-card p {
-  color: #929bb8;
-}
-
-html[data-theme="dark"] .item-card.unit-style-card .unit-arrow {
-  background: rgba(255,255,255,0.07);
-  color: #c4bbff;
-}
-
-html[data-theme="dark"] .item-card.unit-style-card:hover {
-  border-color: rgba(139, 124, 255, 0.55);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-}
-
-/* =========================================================
-   IMPROVED DARK MODE (global resources)
-========================================================= */
-
-html[data-theme="dark"] body,
-html[data-theme="dark"] {
-  /* keep shared atmosphere; only set text color */
-  color: #f5f7ff;
-}
-
-html[data-theme="dark"] .site-header {
-  background: rgba(11, 16, 32, 0.92);
-  border-bottom-color: rgba(255,255,255,0.08);
-}
-
-html[data-theme="dark"] .brand,
-html[data-theme="dark"] .brand-text strong {
-  color: #f5f7ff;
-}
-
-html[data-theme="dark"] .brand-text small {
-  color: #929bb8;
-}
-
-html[data-theme="dark"] .main-nav a {
-  color: #c5cbe0;
-}
-
-html[data-theme="dark"] .main-nav a:hover,
-html[data-theme="dark"] .main-nav a.active {
-  color: #fff;
-}
-
-html[data-theme="dark"] .arcade-intro h1,
-html[data-theme="dark"] .section-heading h2,
-html[data-theme="dark"] .unit-hero h1 {
-  color: #f5f7ff;
-}
-
-html[data-theme="dark"] .arcade-intro p,
-html[data-theme="dark"] .section-heading p {
-  color: #929bb8;
-}
-
-/* dark back-link handled with unified back button rules */
-
-html[data-theme="dark"] .level-card {
-  background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
-  border-color: rgba(255,255,255,0.08);
-  color: #f5f7ff;
-  box-shadow: none;
-}
-
-html[data-theme="dark"] .level-card:hover {
-  border-color: rgba(139, 124, 255, 0.55);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-}
-
-html[data-theme="dark"] .level-card h3 {
-  color: #f5f7ff;
-}
-
-html[data-theme="dark"] .site-footer {
-  color: #7a8299;
-  border-top-color: rgba(255,255,255,0.06);
-}
-
-html[data-theme="dark"] .theme-toggle {
-  background: rgba(255,255,255,0.07);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-
-/* BACK BUTTON — handled above (matches site-wide pill style) */
-
-
-/* Fix: ensure download/play remain clickable and visible */
-.audio-actions a.audio-download-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  cursor: pointer;
-  pointer-events: auto;
-}
-.audio-download-btn[aria-busy="true"] {
-  opacity: 0.7;
-  pointer-events: none;
-}
-/* ---------- Resource Cards (BE-style layout) ---------- */
-
-.resource-card {
-  position: relative;
-  min-height: 260px;
-  padding: 22px 22px 20px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #e7e9ef;
-  border-radius: 22px;
-  background: linear-gradient(180deg, #ffffff 0%, #fbfaff 100%);
-  box-shadow: 0 10px 30px rgba(32, 38, 54, 0.05);
-  text-decoration: none;
-  color: inherit;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  overflow: hidden;
-}
-
-/* Soft decorative circle (top-right) */
-.resource-card::before {
-  content: "";
-  position: absolute;
-  right: -30px;
-  top: -30px;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  background: rgba(124, 108, 240, 0.08);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.resource-card:hover {
-  transform: translateY(-4px);
-  border-color: #c4b5fd;
-  box-shadow: 0 16px 40px rgba(32, 38, 54, 0.1);
-}
-
-/* Icon */
-.resource-icon {
-  position: relative;
-  z-index: 1;
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  background: #7c6cf0;
-  color: #fff;
-  font-size: 22px;
-  box-shadow: 0 8px 18px rgba(124, 108, 240, 0.25);
-  margin-bottom: 4px;
-  flex: 0 0 48px;
-}
-
-/* Tag (like BE · A1) */
-.card-tag {
-  position: relative;
-  z-index: 1;
-  align-self: flex-start;
-  margin-top: 12px;
-  padding: 5px 9px;
-  border-radius: 8px;
-  background: rgba(124, 108, 240, 0.1);
-  color: #7c6cf0;
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: 0.7px;
-  text-transform: uppercase;
-}
-
-/* Title & text */
-.resource-card h3 {
-  position: relative;
-  z-index: 1;
-  margin: 12px 0 8px;
-  font-size: 20px;
-  line-height: 1.2;
-  letter-spacing: -0.3px;
-  color: #202636;
-}
-
-.resource-card p {
-  position: relative;
-  z-index: 1;
-  margin: 0;
-  color: #687184;
-  font-size: 13px;
-  line-height: 1.65;
-}
-
-/* Meta text */
-.resource-meta {
-  position: relative;
-  z-index: 1;
-  margin-top: auto;
-  padding-top: 16px;
-  color: #8a92a2;
-  font-size: 11px;
-  font-weight: 600;
-}
-
-/* Play / Open button */
-.card-link {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 14px;
-  padding: 11px 20px;
-  border-radius: 12px;
-  background: #7c6cf0;
-  color: #fff !important;
-  font-size: 14px;
-  font-weight: 700;
-  text-decoration: none;
-  box-shadow: 0 6px 16px rgba(124, 108, 240, 0.3);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  align-self: flex-start;
-}
-
-.card-link:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(124, 108, 240, 0.4);
-}
-
-/* =========================================================
-   RESOURCES HUB — polished to match site arcade look
-========================================================= */
-
-body {
-  min-height: 100dvh;
-  /* shared atmosphere from theme.css */
-}
-
-.arcade-intro {
-  padding: 36px 0 20px;
-}
-
-.arcade-intro .eyebrow {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(59, 130, 246, 0.12);
-  color: #2563eb;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 1.2px;
-}
-
-html[data-theme="dark"] .arcade-intro .eyebrow {
-  background: rgba(59, 130, 246, 0.2);
-  color: #93c5fd;
-}
-
-.arcade-intro h1 {
-  margin: 14px 0 10px;
-  font-size: clamp(28px, 4.5vw, 44px);
-  letter-spacing: -1.5px;
-  line-height: 1.1;
-  color: var(--text);
-}
-
-.section-heading {
-  margin-top: 28px;
-  margin-bottom: 14px;
-}
-
-.section-heading h2 {
-  font-size: 20px;
-  font-weight: 850;
-  letter-spacing: -0.3px;
-}
-
-/* Restore proper card layout (overrides earlier display:block conflict) */
-.resource-grid {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto 36px;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-a.resource-card,
-.resource-card {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: flex-start !important;
-  gap: 16px !important;
-  min-height: 160px;
-  padding: 22px 20px !important;
-  border-radius: 20px !important;
-  border: 2px solid rgba(59, 130, 246, 0.22) !important;
-  background: linear-gradient(165deg, #eff6ff 0%, #ffffff 55%) !important;
-  box-shadow: 0 10px 28px rgba(59, 130, 246, 0.08) !important;
-  text-decoration: none !important;
-  color: inherit !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
-  cursor: pointer;
-}
-
-a.resource-card:hover,
-.resource-card:hover {
-  transform: translateY(-4px) !important;
-  border-color: #3b82f6 !important;
-  box-shadow: 0 16px 36px rgba(59, 130, 246, 0.16) !important;
-}
-
-.resource-card .resource-icon {
-  flex: 0 0 52px !important;
-  width: 52px !important;
-  height: 52px !important;
-  margin: 0 !important;
-  display: grid !important;
-  place-items: center !important;
-  border-radius: 14px !important;
-  background: rgba(59, 130, 246, 0.12) !important;
-  font-size: 24px !important;
-  box-shadow: 0 0 16px rgba(59, 130, 246, 0.15);
-}
-
-.resource-card > div {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.resource-card h3 {
-  margin: 0 0 6px !important;
-  font-size: 17px !important;
-  font-weight: 850 !important;
-  color: var(--text);
-}
-
-.resource-card p {
-  margin: 0 0 12px !important;
-  color: var(--muted) !important;
-  font-size: 13px !important;
-  line-height: 1.55 !important;
-}
-
-.resource-card .card-tag {
-  display: inline-flex !important;
-  margin: 0 0 10px !important;
-  padding: 5px 10px !important;
-  border-radius: 8px !important;
-  background: rgba(59, 130, 246, 0.12) !important;
-  color: #2563eb !important;
-  font-size: 10px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.5px !important;
-  text-transform: uppercase !important;
-}
-
-.resource-card .card-link {
-  margin-top: auto !important;
-  padding: 10px 16px !important;
-  border-radius: 12px !important;
-  background: #3b82f6 !important;
-  color: #fff !important;
-  font-size: 12px !important;
-  font-weight: 800 !important;
-  box-shadow: 0 6px 14px rgba(59, 130, 246, 0.3) !important;
-  align-self: flex-start !important;
-}
-
-.resource-card:hover .card-link {
-  background: #2563eb !important;
-}
-
-/* Worksheets card — green accent */
-.resource-card--worksheets {
-  border-color: rgba(34, 197, 94, 0.28) !important;
-  background: linear-gradient(165deg, #f0fdf4 0%, #ffffff 55%) !important;
-  box-shadow: 0 10px 28px rgba(34, 197, 94, 0.08) !important;
-}
-
-.resource-card--worksheets:hover {
-  border-color: #22c55e !important;
-  box-shadow: 0 16px 36px rgba(34, 197, 94, 0.16) !important;
-}
-
-.resource-card--worksheets .resource-icon {
-  background: rgba(34, 197, 94, 0.12) !important;
-  box-shadow: 0 0 16px rgba(34, 197, 94, 0.15) !important;
-}
-
-.resource-card--worksheets .card-tag {
-  background: rgba(34, 197, 94, 0.12) !important;
-  color: #16a34a !important;
-}
-
-.resource-card--worksheets .card-link {
-  background: #22c55e !important;
-  box-shadow: 0 6px 14px rgba(34, 197, 94, 0.3) !important;
-}
-
-.resource-card--worksheets:hover .card-link {
-  background: #16a34a !important;
-}
-
-/* Dark mode cards */
-html[data-theme="dark"] a.resource-card,
-html[data-theme="dark"] .resource-card {
-  background: linear-gradient(165deg, #0c1a32 0%, #0c1220 70%) !important;
-  border-color: rgba(59, 130, 246, 0.35) !important;
-  box-shadow: 0 0 24px rgba(59, 130, 246, 0.1), 0 12px 28px rgba(0, 0, 0, 0.35) !important;
-}
-
-html[data-theme="dark"] .resource-card h3 {
-  color: #f1f5f9 !important;
-}
-
-html[data-theme="dark"] .resource-card p {
-  color: #94a3b8 !important;
-}
-
-html[data-theme="dark"] .resource-card--worksheets {
-  background: linear-gradient(165deg, #0b2014 0%, #0c1220 70%) !important;
-  border-color: rgba(34, 197, 94, 0.35) !important;
-}
-
-.site-footer {
-  text-align: center;
-  padding: 28px 16px 100px;
-  color: var(--muted);
-  font-size: 13px;
-  border-top: 1px solid var(--border);
-  background: transparent;
-}
-
-html[data-theme="dark"] .site-footer {
-  border-top-color: rgba(255, 255, 255, 0.06);
-  color: #7a8299;
 }
 
-@media (max-width: 700px) {
-  .arcade-intro {
-    width: min(calc(100% - 28px), var(--container));
-    padding: 24px 0 16px;
+@media (max-width: 680px) {
+  .res-hub-main,
+  main#app {
+    padding: 24px 16px 48px;
   }
+}
 
-  .arcade-intro h1 {
-    font-size: 26px;
-  }
-
-  .section-heading,
-  .resource-grid {
-    width: min(calc(100% - 28px), var(--container));
-  }
-
-  .resource-grid {
+@media (max-width: 580px) {
+  .res-books-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
-    margin-bottom: 28px;
-  }
-
-  a.resource-card,
-  .resource-card {
-    min-height: 0;
-    padding: 16px 14px !important;
-  }
-
-  .resource-card .resource-icon {
-    width: 44px !important;
-    height: 44px !important;
-    flex-basis: 44px !important;
-    font-size: 20px !important;
-  }
-
-  .resource-card h3 {
-    font-size: 15px !important;
-  }
-
-  .resource-card p {
-    font-size: 12px !important;
-  }
-}
-
-/* =========================================================
-   UNIT A / B — arcade lesson cards
-========================================================= */
-
-.ab-grid--arcade {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 8px auto 80px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 18px;
-}
-
-a.ab-card--arcade,
-.ab-card--arcade {
-  position: relative;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 10px !important;
-  min-height: 200px;
-  padding: 24px 22px 22px !important;
-  border-radius: 22px !important;
-  border: 2px solid transparent !important;
-  text-decoration: none !important;
-  color: inherit !important;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
-}
-
-.ab-card--arcade::before {
-  content: "";
-  position: absolute;
-  right: -24px;
-  top: -24px;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  opacity: 0.85;
-  pointer-events: none;
-}
-
-.ab-card--blue {
-  border-color: rgba(59, 130, 246, 0.3) !important;
-  background: linear-gradient(165deg, #eff6ff 0%, #ffffff 55%) !important;
-  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.1) !important;
-}
-.ab-card--blue::before { background: rgba(59, 130, 246, 0.12); }
-.ab-card--blue:hover {
-  transform: translateY(-5px) !important;
-  border-color: #3b82f6 !important;
-  box-shadow: 0 18px 40px rgba(59, 130, 246, 0.2) !important;
-}
-
-.ab-card--green {
-  border-color: rgba(34, 197, 94, 0.3) !important;
-  background: linear-gradient(165deg, #f0fdf4 0%, #ffffff 55%) !important;
-  box-shadow: 0 12px 32px rgba(34, 197, 94, 0.1) !important;
-}
-.ab-card--green::before { background: rgba(34, 197, 94, 0.12); }
-.ab-card--green:hover {
-  transform: translateY(-5px) !important;
-  border-color: #22c55e !important;
-  box-shadow: 0 18px 40px rgba(34, 197, 94, 0.2) !important;
-}
-
-.ab-card-top {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-}
-
-.ab-letter-badge {
-  width: 52px;
-  height: 52px;
-  display: grid;
-  place-items: center;
-  border-radius: 16px;
-  font-size: 22px;
-  font-weight: 900;
-  color: #fff;
-  letter-spacing: 0;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-}
-
-.ab-card--blue .ab-letter-badge {
-  background: linear-gradient(180deg, #60a5fa, #2563eb);
-}
-.ab-card--green .ab-letter-badge {
-  background: linear-gradient(180deg, #4ade80, #16a34a);
-}
-
-.ab-card-tag {
-  display: inline-flex;
-  padding: 5px 10px;
-  border-radius: 8px;
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-}
-
-.ab-card--blue .ab-card-tag {
-  background: rgba(59, 130, 246, 0.12);
-  color: #2563eb;
-}
-.ab-card--green .ab-card-tag {
-  background: rgba(34, 197, 94, 0.12);
-  color: #16a34a;
-}
-
-.ab-card-title {
-  position: relative;
-  z-index: 1;
-  margin: 6px 0 0 !important;
-  font-size: 22px !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.5px;
-  color: var(--text, #202636);
-}
-
-.ab-card-blurb {
-  position: relative;
-  z-index: 1;
-  margin: 0 !important;
-  color: var(--muted, #687184) !important;
-  font-size: 13px !important;
-  line-height: 1.5 !important;
-  flex: 1;
-}
-
-.ab-card-btn {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 12px;
-  min-width: 100px;
-  min-height: 42px;
-  padding: 0 20px;
-  border-radius: 999px;
-  color: #fff !important;
-  font-size: 13px;
-  font-weight: 900;
-  letter-spacing: 0.5px;
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.12);
-  transition: transform 0.15s ease, filter 0.15s ease;
-}
-
-.ab-card--blue .ab-card-btn {
-  background: linear-gradient(180deg, #60a5fa, #2563eb 50%, #1d4ed8);
-}
-.ab-card--green .ab-card-btn {
-  background: linear-gradient(180deg, #4ade80, #22c55e 50%, #16a34a);
-}
-
-/* Lesson C – purple */
-.ab-card--purple {
-  border-color: rgba(168, 85, 247, 0.3) !important;
-  background: linear-gradient(165deg, #faf5ff 0%, #ffffff 55%) !important;
-  box-shadow: 0 12px 32px rgba(168, 85, 247, 0.1) !important;
-}
-.ab-card--purple::before { background: rgba(168, 85, 247, 0.12); }
-.ab-card--purple:hover {
-  transform: translateY(-5px) !important;
-  border-color: #a855f7 !important;
-  box-shadow: 0 18px 40px rgba(168, 85, 247, 0.2) !important;
-}
-.ab-card--purple .ab-letter-badge {
-  background: linear-gradient(180deg, #c084fc, #9333ea);
-}
-.ab-card--purple .ab-card-tag {
-  background: rgba(168, 85, 247, 0.12);
-  color: #9333ea;
-}
-.ab-card--purple .ab-card-btn {
-  background: linear-gradient(180deg, #c084fc, #a855f7 50%, #9333ea);
-}
-
-.ab-card--arcade:hover .ab-card-btn {
-  transform: translateY(-2px);
-  filter: brightness(1.05);
-}
-
-/* Dark mode */
-html[data-theme="dark"] .ab-card--blue {
-  background: linear-gradient(165deg, #0c1a32 0%, #0c1220 70%) !important;
-  border-color: rgba(59, 130, 246, 0.4) !important;
-}
-html[data-theme="dark"] .ab-card--green {
-  background: linear-gradient(165deg, #0b2014 0%, #0c1220 70%) !important;
-  border-color: rgba(34, 197, 94, 0.4) !important;
-}
-html[data-theme="dark"] .ab-card--purple {
-  background: linear-gradient(165deg, #1a0f2e 0%, #0c1220 70%) !important;
-  border-color: rgba(168, 85, 247, 0.4) !important;
-}
-html[data-theme="dark"] .ab-card-title {
-  color: #f1f5f9 !important;
-}
-html[data-theme="dark"] .ab-card-blurb {
-  color: #94a3b8 !important;
-}
-
-@media (max-width: 700px) {
-  .ab-grid--arcade {
-    width: min(calc(100% - 28px), var(--container));
-    grid-template-columns: 1fr;
-    gap: 12px;
-    margin-bottom: 90px;
-  }
-  .ab-card--arcade {
-    min-height: 0;
-    padding: 18px 16px !important;
-  }
-  .ab-card-title {
-    font-size: 18px !important;
-  }
-}
-
-/* =========================================================
-   LESSON TYPE CARDS (Games / Worksheets / Audio)
-   Dedicated class — does not conflict with hub resource-card
-========================================================= */
-.lesson-type-grid {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 8px auto 80px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-a.lesson-type-card,
-.lesson-type-card {
-  position: relative;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 10px !important;
-  min-height: 200px;
-  padding: 22px 20px !important;
-  border-radius: 20px !important;
-  border: 2px solid transparent !important;
-  text-decoration: none !important;
-  color: inherit !important;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
-}
-
-.lesson-type-card::before {
-  content: "";
-  position: absolute;
-  right: -28px;
-  top: -28px;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  pointer-events: none;
-  opacity: 0.9;
-}
-
-.lesson-type-icon {
-  position: relative;
-  z-index: 1;
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  font-size: 22px;
-  margin: 0 !important;
-  flex: 0 0 48px !important;
-}
-
-.lesson-type-card h3 {
-  position: relative;
-  z-index: 1;
-  margin: 4px 0 0 !important;
-  font-size: 18px !important;
-  font-weight: 850 !important;
-  line-height: 1.2 !important;
-  color: var(--text, #202636);
-}
-
-.lesson-type-card p {
-  position: relative;
-  z-index: 1;
-  margin: 0 !important;
-  flex: 1;
-  font-size: 13px !important;
-  line-height: 1.55 !important;
-  color: var(--muted, #687184) !important;
-}
-
-.lesson-type-btn {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 8px;
-  min-height: 40px;
-  padding: 0 16px;
-  border-radius: 999px;
-  color: #fff !important;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-  box-shadow: 0 5px 0 rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.1);
-}
-
-.lesson-type-card--blue {
-  border-color: rgba(59,130,246,0.28) !important;
-  background: linear-gradient(165deg, #eff6ff 0%, #fff 55%) !important;
-  box-shadow: 0 10px 28px rgba(59,130,246,0.08) !important;
-}
-.lesson-type-card--blue::before { background: rgba(59,130,246,0.12); }
-.lesson-type-card--blue .lesson-type-icon { background: rgba(59,130,246,0.14); }
-.lesson-type-card--blue .lesson-type-btn { background: linear-gradient(180deg,#60a5fa,#2563eb 55%,#1d4ed8); }
-.lesson-type-card--blue:hover { transform: translateY(-4px) !important; border-color: #3b82f6 !important; }
-
-.lesson-type-card--green {
-  border-color: rgba(34,197,94,0.28) !important;
-  background: linear-gradient(165deg, #f0fdf4 0%, #fff 55%) !important;
-  box-shadow: 0 10px 28px rgba(34,197,94,0.08) !important;
-}
-.lesson-type-card--green::before { background: rgba(34,197,94,0.12); }
-.lesson-type-card--green .lesson-type-icon { background: rgba(34,197,94,0.14); }
-.lesson-type-card--green .lesson-type-btn { background: linear-gradient(180deg,#4ade80,#22c55e 55%,#16a34a); }
-.lesson-type-card--green:hover { transform: translateY(-4px) !important; border-color: #22c55e !important; }
-
-.lesson-type-card--purple {
-  border-color: rgba(124,92,255,0.28) !important;
-  background: linear-gradient(165deg, #f5f0ff 0%, #fff 55%) !important;
-  box-shadow: 0 10px 28px rgba(124,92,255,0.08) !important;
-}
-.lesson-type-card--purple::before { background: rgba(124,92,255,0.12); }
-.lesson-type-card--purple .lesson-type-icon { background: rgba(124,92,255,0.14); }
-.lesson-type-card--purple .lesson-type-btn { background: linear-gradient(180deg,#a78bfa,#7c5cff 55%,#5b3fd4); }
-.lesson-type-card--purple:hover { transform: translateY(-4px) !important; border-color: #7c5cff !important; }
-
-html[data-theme="dark"] .lesson-type-card--blue {
-  background: linear-gradient(165deg,#0c1a32,#0c1220) !important;
-  border-color: rgba(59,130,246,0.4) !important;
-}
-html[data-theme="dark"] .lesson-type-card--green {
-  background: linear-gradient(165deg,#0b2014,#0c1220) !important;
-  border-color: rgba(34,197,94,0.4) !important;
-}
-html[data-theme="dark"] .lesson-type-card--purple {
-  background: linear-gradient(165deg,#16122a,#0c1220) !important;
-  border-color: rgba(124,92,255,0.4) !important;
-}
-html[data-theme="dark"] .lesson-type-card h3 { color: #f1f5f9 !important; }
-html[data-theme="dark"] .lesson-type-card p { color: #94a3b8 !important; }
-
-@media (max-width: 700px) {
-  .lesson-type-grid {
-    width: min(calc(100% - 28px), var(--container));
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  .lesson-type-card { min-height: 0; }
-}
-
-/* =========================================================
-   AEF — round back button + polished level cards
-========================================================= */
-.aef-back-row,
-.skill-intro-top.aef-back-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.aef-round-back,
-a.skill-back-btn.aef-round-back {
-  display: grid !important;
-  place-items: center !important;
-  width: 44px !important;
-  height: 44px !important;
-  min-width: 44px !important;
-  min-height: 44px !important;
-  padding: 0 !important;
-  border-radius: 50% !important;
-  background: #3b82f6 !important;
-  color: #fff !important;
-  text-decoration: none !important;
-  font-size: 20px !important;
-  font-weight: 800 !important;
-  line-height: 1 !important;
-  border: none !important;
-  box-shadow: 0 5px 16px rgba(59, 130, 246, 0.35) !important;
-  transition: transform 0.15s ease, filter 0.15s ease !important;
-}
-.aef-round-back:hover {
-  transform: scale(1.06) !important;
-  filter: brightness(1.05);
-  color: #fff !important;
-}
-.aef-back-label {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--muted, #687184);
-}
-
-/* Level cards — arcade polish */
-.level-grid {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto 40px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-}
-a.level-card,
-.level-card {
-  min-height: 120px !important;
-  padding: 22px 20px !important;
-  border-radius: 18px !important;
-  border: 2px solid rgba(59, 130, 246, 0.2) !important;
-  background: linear-gradient(165deg, #eff6ff 0%, #ffffff 60%) !important;
-  box-shadow: 0 10px 28px rgba(59, 130, 246, 0.06) !important;
-  text-decoration: none !important;
-  color: inherit !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
-}
-a.level-card:hover,
-.level-card:hover {
-  transform: translateY(-3px) !important;
-  border-color: #3b82f6 !important;
-  box-shadow: 0 16px 36px rgba(59, 130, 246, 0.14) !important;
-}
-.level-card h3 {
-  margin: 0 0 6px !important;
-  font-size: 18px !important;
-  font-weight: 850 !important;
-  color: var(--text, #202636) !important;
-}
-.level-card p {
-  margin: 0 !important;
-  color: var(--muted, #687184) !important;
-  font-size: 13px !important;
-}
-.level-card.level-locked {
-  background: #f8fafc !important;
-  border-style: dashed !important;
-  border-color: #e2e8f0 !important;
-  box-shadow: none !important;
-  cursor: default !important;
-}
-.level-card.level-locked:hover {
-  transform: none !important;
-  border-color: #e2e8f0 !important;
-  box-shadow: none !important;
-}
-.level-card.level-locked h3 {
-  color: #94a3b8 !important;
-}
-.level-card .lock-tag {
-  margin-top: 10px !important;
-  background: #eef2f7 !important;
-  color: #64748b !important;
-}
-
-html[data-theme="dark"] a.level-card,
-html[data-theme="dark"] .level-card {
-  background: linear-gradient(165deg, #0c1a32, #0c1220) !important;
-  border-color: rgba(59, 130, 246, 0.35) !important;
-}
-html[data-theme="dark"] .level-card h3 { color: #f1f5f9 !important; }
-html[data-theme="dark"] .level-card p { color: #94a3b8 !important; }
-html[data-theme="dark"] .level-card.level-locked {
-  background: #12151f !important;
-  border-color: rgba(148, 163, 184, 0.2) !important;
-}
-html[data-theme="dark"] .aef-back-label { color: #94a3b8; }
-
-@media (max-width: 700px) {
-  .level-grid {
-    width: min(calc(100% - 28px), var(--container));
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Level card illustration (e.g. Starter character) */
-a.level-card.level-card--has-art,
-.level-card.level-card--has-art {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 16px !important;
-  min-height: 140px !important;
-  overflow: hidden !important;
-}
-
-.level-card-body {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  min-width: 0;
-}
-
-.level-card-art {
-  position: relative;
-  z-index: 1;
-  flex: 0 0 auto;
-  width: 110px;
-  height: 110px;
-  display: grid;
-  place-items: center;
-  pointer-events: none;
-}
-
-.level-card-art img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center right;
-  display: block;
-  filter: drop-shadow(0 8px 16px rgba(32, 38, 54, 0.12));
-}
-
-@media (max-width: 700px) {
-  .level-card-art {
-    width: 88px;
-    height: 88px;
-  }
-}
-
-/* =========================================================
-   PHONE cards — match skill-card sizing (2-col, ~140px)
-========================================================= */
-@media (max-width: 700px) {
-  .resource-grid,
-  .unit-grid,
-  .level-grid,
-  .item-grid,
-  .ab-grid,
-  .ab-grid--arcade,
-  .content-grid {
-    width: min(calc(100% - 16px), var(--container, 1180px)) !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    margin-bottom: 16px !important;
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
-    grid-auto-rows: minmax(140px, auto);
-    gap: 10px !important;
-  }
-
-  /* Resource / coursebook cards */
-  a.resource-card,
-  .resource-card {
-    min-height: 140px !important;
-    height: auto !important;
-    padding: 12px !important;
-    border-radius: 16px !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    align-items: flex-start !important;
-  }
-
-  .resource-card .resource-icon {
-    width: 40px !important;
-    height: 40px !important;
-    flex: 0 0 40px !important;
-    border-radius: 12px !important;
-    font-size: 18px !important;
-  }
-
-  .resource-card h3 {
-    font-size: clamp(15px, 4.2vw, 18px) !important;
-    line-height: 1.15 !important;
-    margin: 0 0 4px !important;
-  }
-
-  .resource-card p {
-    display: none !important;
-  }
-
-  .resource-card .card-tag {
-    font-size: 8px !important;
-    padding: 3px 7px !important;
-    margin-bottom: 6px !important;
-  }
-
-  .resource-card .card-link {
-    font-size: 9px !important;
-    padding-top: 6px !important;
-    margin-top: auto !important;
-  }
-
-  /* Unit cards */
-  a.unit-card,
-  .unit-card {
-    min-height: 140px !important;
-    height: auto !important;
-    padding: 12px !important;
-    border-radius: 16px !important;
-  }
-
-  .unit-card h3 {
-    font-size: clamp(15px, 4.2vw, 18px) !important;
-    margin: 8px 0 0 !important;
-    line-height: 1.15 !important;
-  }
-
-  .unit-card .unit-card-name {
-    font-size: 10px !important;
-  }
-
-  .unit-card .unit-card-index {
-    font-size: 8px !important;
-    padding: 3px 7px !important;
-  }
-
-  /* Level cards */
-  a.level-card,
-  .level-card {
-    min-height: 140px !important;
-    height: auto !important;
-    padding: 12px !important;
-    border-radius: 16px !important;
-  }
-
-  .level-card h3 {
-    font-size: clamp(15px, 4.2vw, 18px) !important;
-    line-height: 1.15 !important;
-  }
-
-  .level-card p {
-    display: none !important;
-  }
-
-  a.level-card.level-card--has-art,
-  .level-card.level-card--has-art {
-    min-height: 140px !important;
-    gap: 8px !important;
-  }
-
-  .level-card-art {
-    width: 56px !important;
-    height: 56px !important;
-  }
-
-  /* Item cards (units list / PE) */
-  a.item-card,
-  .item-card {
-    min-height: 140px !important;
-    height: auto !important;
-    padding: 12px !important;
-    border-radius: 16px !important;
-  }
-
-  .item-card h3 {
-    font-size: clamp(14px, 4vw, 16px) !important;
-    line-height: 1.15 !important;
-  }
-
-  .item-card .item-name-placeholder {
-    font-size: 10px !important;
-  }
-
-  /* A/B lesson cards */
-  a.ab-card,
-  .ab-card,
-  a.ab-card--arcade,
-  .ab-card--arcade {
-    min-height: 140px !important;
-    height: auto !important;
-    padding: 12px !important;
-    border-radius: 16px !important;
-  }
-
-  .ab-card .ab-letter,
-  .ab-card--arcade .ab-letter {
-    font-size: 22px !important;
-  }
-
-  .ab-card p,
-  .ab-card--arcade p {
-    display: none !important;
-  }
-
-  /* Lesson type cards if present */
-  a.lesson-type-card,
-  .lesson-type-card {
-    min-height: 140px !important;
-    height: auto !important;
-    padding: 12px !important;
-    border-radius: 16px !important;
-  }
-}
-
-@media (max-width: 380px) {
-  .resource-grid,
-  .unit-grid,
-  .level-grid,
-  .item-grid,
-  .ab-grid,
-  .ab-grid--arcade,
-  .content-grid {
-    gap: 6px !important;
-  }
-
-  a.resource-card,
-  .resource-card,
-  a.unit-card,
-  .unit-card,
-  a.level-card,
-  .level-card,
-  a.item-card,
-  .item-card,
-  a.ab-card,
-  .ab-card,
-  a.ab-card--arcade,
-  .ab-card--arcade {
-    padding: 10px !important;
-  }
-
-  .resource-card .resource-icon {
-    width: 34px !important;
-    height: 34px !important;
-    flex-basis: 34px !important;
-    font-size: 16px !important;
-  }
-
-  .resource-card h3,
-  .unit-card h3,
-  .level-card h3,
-  .item-card h3 {
-    font-size: 14px !important;
-  }
-}
-
-/* =========================================================
-   DARK MODE — resources page cards & surfaces
-========================================================= */
-html[data-theme="dark"] {
-  --page-bg: #0f1117;
-  --text: #f4f6fb;
-  --muted: #aeb6c8;
-  --border: #2b3040;
-  --purple: #a78bfa;
-  --purple-light: rgba(167, 139, 250, 0.15);
-  --purple-border: rgba(167, 139, 250, 0.4);
-}
-
-html[data-theme="dark"] body {
-  background: var(--page-bg, #0f1117) !important;
-  color: var(--text, #f4f6fb) !important;
-}
-
-html[data-theme="dark"] .arcade-intro h1,
-html[data-theme="dark"] .section-heading h2 {
-  color: #f5f7ff !important;
-}
-
-html[data-theme="dark"] .arcade-intro p,
-html[data-theme="dark"] .section-heading p {
-  color: #9aa3b8 !important;
-}
-
-html[data-theme="dark"] .eyebrow {
-  background: rgba(167, 139, 250, 0.15) !important;
-  color: #c4b5ff !important;
-}
-
-/* Resource / coursebook cards */
-html[data-theme="dark"] a.resource-card,
-html[data-theme="dark"] .resource-card {
-  background: linear-gradient(165deg, #1a1f2e 0%, #141824 100%) !important;
-  border-color: #2a3044 !important;
-  color: #f0f2f8 !important;
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35) !important;
-}
-
-html[data-theme="dark"] a.resource-card:hover,
-html[data-theme="dark"] .resource-card:hover {
-  border-color: rgba(167, 139, 250, 0.45) !important;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45) !important;
-  background: linear-gradient(165deg, #1e2436 0%, #181c2a 100%) !important;
-}
-
-html[data-theme="dark"] .resource-card h3 {
-  color: #f8fafc !important;
-}
-
-html[data-theme="dark"] .resource-card p {
-  color: #94a3b8 !important;
-}
-
-html[data-theme="dark"] .resource-icon {
-  background: rgba(167, 139, 250, 0.18) !important;
-}
-
-html[data-theme="dark"] .card-tag {
-  background: rgba(167, 139, 250, 0.18) !important;
-  color: #c4b5ff !important;
-}
-
-html[data-theme="dark"] .card-link {
-  color: #c4b5ff !important;
-}
-
-/* Unit cards */
-html[data-theme="dark"] a.unit-card,
-html[data-theme="dark"] .unit-card {
-  background: linear-gradient(165deg, #1a1f2e 0%, #141824 100%) !important;
-  border-color: #2a3044 !important;
-  color: #f0f2f8 !important;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3) !important;
-}
-
-html[data-theme="dark"] a.unit-card:hover,
-html[data-theme="dark"] .unit-card:hover {
-  border-color: rgba(167, 139, 250, 0.4) !important;
-}
-
-html[data-theme="dark"] .unit-card h3 {
-  color: #f8fafc !important;
-}
-
-html[data-theme="dark"] .unit-card .unit-card-name {
-  color: #94a3b8 !important;
-}
-
-html[data-theme="dark"] .unit-card .unit-card-index {
-  background: rgba(167, 139, 250, 0.18) !important;
-  color: #c4b5ff !important;
-}
-
-/* Level cards */
-html[data-theme="dark"] a.level-card,
-html[data-theme="dark"] .level-card {
-  background: linear-gradient(165deg, #1a1f2e 0%, #141824 100%) !important;
-  border-color: #2a3044 !important;
-  color: #f0f2f8 !important;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3) !important;
-}
-
-html[data-theme="dark"] a.level-card:hover,
-html[data-theme="dark"] .level-card:hover {
-  border-color: rgba(167, 139, 250, 0.4) !important;
-  transform: translateY(-3px);
-}
-
-html[data-theme="dark"] .level-card h3 {
-  color: #f8fafc !important;
-}
-
-html[data-theme="dark"] .level-card p {
-  color: #94a3b8 !important;
-}
-
-html[data-theme="dark"] .level-card.level-locked {
-  background: #12151f !important;
-  border-color: rgba(148, 163, 184, 0.2) !important;
-  opacity: 0.75;
-}
-
-html[data-theme="dark"] .level-card.level-locked h3 {
-  color: #64748b !important;
-}
-
-html[data-theme="dark"] .level-card .lock-tag {
-  background: rgba(148, 163, 184, 0.15) !important;
-  color: #94a3b8 !important;
-}
-
-/* Item cards */
-html[data-theme="dark"] a.item-card,
-html[data-theme="dark"] .item-card {
-  background: linear-gradient(165deg, #1a1f2e 0%, #141824 100%) !important;
-  border-color: #2a3044 !important;
-  color: #f0f2f8 !important;
-}
-
-html[data-theme="dark"] a.item-card:hover,
-html[data-theme="dark"] .item-card:hover {
-  border-color: rgba(167, 139, 250, 0.4) !important;
-}
-
-html[data-theme="dark"] .item-card h3 {
-  color: #f8fafc !important;
-}
-
-html[data-theme="dark"] .item-card .item-index {
-  color: #a78bfa !important;
-}
-
-html[data-theme="dark"] .item-card .item-name-placeholder {
-  color: #94a3b8 !important;
-}
-
-html[data-theme="dark"] .item-card.item-card--pe {
-  border-color: rgba(167, 139, 250, 0.3) !important;
-}
-
-html[data-theme="dark"] .item-card.item-card--pe .item-index {
-  color: #c4b5ff !important;
-}
-
-/* A/B lesson cards */
-html[data-theme="dark"] a.ab-card,
-html[data-theme="dark"] .ab-card,
-html[data-theme="dark"] a.ab-card--arcade,
-html[data-theme="dark"] .ab-card--arcade {
-  background: linear-gradient(165deg, #1a1f2e 0%, #141824 100%) !important;
-  border-color: #2a3044 !important;
-  color: #f0f2f8 !important;
-}
-
-html[data-theme="dark"] a.ab-card:hover,
-html[data-theme="dark"] .ab-card:hover,
-html[data-theme="dark"] a.ab-card--arcade:hover,
-html[data-theme="dark"] .ab-card--arcade:hover {
-  border-color: rgba(167, 139, 250, 0.4) !important;
-}
-
-html[data-theme="dark"] .ab-card p,
-html[data-theme="dark"] .ab-card--arcade p {
-  color: #94a3b8 !important;
-}
-
-html[data-theme="dark"] .ab-card--blue {
-  border-color: rgba(59, 130, 246, 0.35) !important;
-  background: linear-gradient(165deg, #0f1a2e 0%, #141824 55%) !important;
-}
-
-html[data-theme="dark"] .ab-card--green,
-html[data-theme="dark"] .ab-card--teal {
-  border-color: rgba(16, 185, 129, 0.35) !important;
-  background: linear-gradient(165deg, #0f1f1a 0%, #141824 55%) !important;
-}
-
-/* Unit hero */
-html[data-theme="dark"] .unit-hero {
-  background: linear-gradient(165deg, #1a1f2e 0%, #12151f 100%) !important;
-  border-color: #2a3044 !important;
-}
-
-html[data-theme="dark"] .unit-hero .unit-index {
-  color: #a78bfa !important;
-}
-
-html[data-theme="dark"] .unit-hero h1,
-html[data-theme="dark"] .unit-details h1 {
-  color: #f5f7ff !important;
-}
-
-html[data-theme="dark"] .unit-hero p,
-html[data-theme="dark"] .unit-details p {
-  color: #94a3b8 !important;
-}
-
-/* Content / empty states */
-html[data-theme="dark"] .content-card,
-html[data-theme="dark"] .empty-state {
-  background: #141824 !important;
-  border-color: #2a3044 !important;
-  color: #f0f2f8 !important;
-}
-
-html[data-theme="dark"] .empty-state p,
-html[data-theme="dark"] .content-card p {
-  color: #94a3b8 !important;
-}
-
-html[data-theme="dark"] .site-footer {
-  border-top-color: rgba(255, 255, 255, 0.06) !important;
-  color: #7a8299 !important;
-}
-
-/* Phone — keep 2-col tiles readable in dark */
-@media (max-width: 700px) {
-  html[data-theme="dark"] a.resource-card,
-  html[data-theme="dark"] .resource-card,
-  html[data-theme="dark"] a.unit-card,
-  html[data-theme="dark"] .unit-card,
-  html[data-theme="dark"] a.level-card,
-  html[data-theme="dark"] .level-card,
-  html[data-theme="dark"] a.item-card,
-  html[data-theme="dark"] .item-card,
-  html[data-theme="dark"] a.ab-card,
-  html[data-theme="dark"] .ab-card,
-  html[data-theme="dark"] a.ab-card--arcade,
-  html[data-theme="dark"] .ab-card--arcade {
-    background: rgba(24, 28, 40, 0.9) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-  }
-}
-
-/* =========================================================
-   DARK MODE FIX — Resource library cards (high contrast)
-========================================================= */
-html[data-theme="dark"] body {
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59, 130, 246, 0.12), transparent 55%),
-    radial-gradient(ellipse 40% 35% at 100% 20%, rgba(34, 197, 94, 0.05), transparent 50%),
-    #070b16 !important;
-}
-
-html[data-theme="dark"] .arcade-intro h1,
-html[data-theme="dark"] .section-heading h2 {
-  color: #f8fafc !important;
-}
-
-html[data-theme="dark"] .arcade-intro p,
-html[data-theme="dark"] .section-heading p {
-  color: #94a3b8 !important;
-}
-
-html[data-theme="dark"] .arcade-intro .eyebrow {
-  background: rgba(99, 102, 241, 0.22) !important;
-  color: #a5b4fc !important;
-}
-
-/* Main coursebook / worksheet cards */
-html[data-theme="dark"] a.resource-card,
-html[data-theme="dark"] .resource-card {
-  background: linear-gradient(165deg, #12182a 0%, #0d1220 100%) !important;
-  border: 1px solid rgba(148, 163, 184, 0.18) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45) !important;
-  color: #f1f5f9 !important;
-}
-
-html[data-theme="dark"] a.resource-card:hover,
-html[data-theme="dark"] .resource-card:hover {
-  border-color: rgba(99, 102, 241, 0.55) !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(99, 102, 241, 0.2) !important;
-  background: linear-gradient(165deg, #161e34 0%, #101628 100%) !important;
-  transform: translateY(-3px);
-}
-
-html[data-theme="dark"] .resource-card::before {
-  background: rgba(99, 102, 241, 0.12) !important;
-}
-
-html[data-theme="dark"] .resource-card h3 {
-  color: #f8fafc !important;
-}
-
-html[data-theme="dark"] .resource-card p {
-  color: #cbd5e1 !important;
-}
-
-html[data-theme="dark"] .resource-icon {
-  background: rgba(99, 102, 241, 0.25) !important;
-  color: #e0e7ff !important;
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25) !important;
-}
-
-html[data-theme="dark"] .card-tag {
-  background: rgba(99, 102, 241, 0.22) !important;
-  color: #c7d2fe !important;
-}
-
-/* Blue CTA button (coursebooks) */
-html[data-theme="dark"] .resource-card .card-link {
-  background: #3b82f6 !important;
-  color: #ffffff !important;
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
-}
-
-html[data-theme="dark"] .resource-card:hover .card-link {
-  background: #2563eb !important;
-}
-
-/* Worksheets card — green accent in dark */
-html[data-theme="dark"] .resource-card--worksheets {
-  background: linear-gradient(165deg, #0d1f16 0%, #0d1220 100%) !important;
-  border-color: rgba(34, 197, 94, 0.3) !important;
-}
-
-html[data-theme="dark"] .resource-card--worksheets:hover {
-  border-color: rgba(34, 197, 94, 0.55) !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(34, 197, 94, 0.2) !important;
-  background: linear-gradient(165deg, #102618 0%, #101628 100%) !important;
-}
-
-html[data-theme="dark"] .resource-card--worksheets .resource-icon {
-  background: rgba(34, 197, 94, 0.22) !important;
-  color: #bbf7d0 !important;
-  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.25) !important;
-}
-
-html[data-theme="dark"] .resource-card--worksheets .card-tag {
-  background: rgba(34, 197, 94, 0.2) !important;
-  color: #86efac !important;
-}
-
-html[data-theme="dark"] .resource-card--worksheets .card-link {
-  background: #22c55e !important;
-  color: #ffffff !important;
-  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4) !important;
-}
-
-html[data-theme="dark"] .resource-card--worksheets:hover .card-link {
-  background: #16a34a !important;
-}
-
-/* Also fix unit / level cards that share similar styles */
-html[data-theme="dark"] a.unit-card,
-html[data-theme="dark"] .unit-card,
-html[data-theme="dark"] a.level-card,
-html[data-theme="dark"] .level-card {
-  background: linear-gradient(165deg, #12182a 0%, #0d1220 100%) !important;
-  border-color: rgba(148, 163, 184, 0.18) !important;
-  color: #f1f5f9 !important;
-}
-
-html[data-theme="dark"] .unit-card h3,
-html[data-theme="dark"] .level-card h3 {
-  color: #f8fafc !important;
-}
-
-html[data-theme="dark"] .unit-card .unit-card-name {
-  color: #94a3b8 !important;
-}
-
-/* =========================================================
-   Hover SHINE — Starter, Level 1, units, A/B, lesson types, games
-   Uses ::before for the light sweep when ::after is already used
-   (e.g. unit-style-card blob decoration).
-   ========================================================= */
-
-/* Shared shine keyframes */
-@keyframes resourceCardShine {
-  0%   { left: -70%; }
-  100% { left: 130%; }
-}
-
-/* Base: cards that can use ::after for shine */
-.resource-card,
-.unit-card,
-.level-card,
-.item-card:not(.unit-style-card),
-.ab-card,
-.content-card,
-.lesson-type-card,
-a.resource-card,
-a.unit-card,
-a.level-card,
-a.item-card:not(.unit-style-card),
-a.ab-card,
-a.content-card,
-a.lesson-type-card {
-  position: relative;
-  overflow: hidden;
-}
-
-.resource-card::after,
-.unit-card::after,
-.level-card::after,
-.item-card:not(.unit-style-card)::after,
-.ab-card::after,
-.content-card::after,
-.lesson-type-card::after,
-a.resource-card::after,
-a.unit-card::after,
-a.level-card::after,
-a.item-card:not(.unit-style-card)::after,
-a.ab-card::after,
-a.content-card::after,
-a.lesson-type-card::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -70%;
-  width: 55%;
-  height: 100%;
-  background: linear-gradient(
-    100deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 35%,
-    rgba(255, 255, 255, 0.55) 50%,
-    rgba(255, 255, 255, 0.1) 65%,
-    transparent 100%
-  );
-  transform: skewX(-18deg);
-  transition: left 0.55s ease;
-  pointer-events: none;
-  z-index: 4;
-}
-
-.resource-card:hover::after,
-.unit-card:hover::after,
-.level-card:hover::after,
-.item-card:not(.unit-style-card):hover::after,
-.ab-card:hover::after,
-.content-card:hover::after,
-.lesson-type-card:hover::after,
-a.resource-card:hover::after,
-a.unit-card:hover::after,
-a.level-card:hover::after,
-a.item-card:not(.unit-style-card):hover::after,
-a.ab-card:hover::after,
-a.content-card:hover::after,
-a.lesson-type-card:hover::after {
-  left: 130%;
-}
-
-/* unit-style-card (Starter / Level 1 unit tiles) — ::after is blob, use ::before for shine */
-.item-card.unit-style-card,
-a.item-card.unit-style-card {
-  position: relative;
-  overflow: hidden;
-}
-
-.item-card.unit-style-card::before,
-a.item-card.unit-style-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -70%;
-  width: 55%;
-  height: 100%;
-  background: linear-gradient(
-    100deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.12) 35%,
-    rgba(255, 255, 255, 0.6) 50%,
-    rgba(255, 255, 255, 0.12) 65%,
-    transparent 100%
-  );
-  transform: skewX(-18deg);
-  transition: left 0.55s ease;
-  pointer-events: none;
-  z-index: 4;
-}
-
-.item-card.unit-style-card:hover::before,
-a.item-card.unit-style-card:hover::before {
-  left: 130%;
-}
-
-/* Keep content above shine */
-.resource-card > *,
-.unit-card > *,
-.level-card > *,
-.item-card > *,
-.ab-card > *,
-.content-card > *,
-.lesson-type-card > *,
-.item-card.unit-style-card > * {
-  position: relative;
-  z-index: 5;
-}
-
-/* Stronger hover glow */
-.resource-card:hover,
-.unit-card:hover,
-.level-card:hover,
-.item-card:hover,
-.ab-card:hover,
-.content-card:hover,
-.lesson-type-card:hover {
-  box-shadow:
-    0 15px 34px rgba(32, 38, 54, 0.1),
-    0 0 0 1px rgba(124, 92, 255, 0.14),
-    0 0 28px rgba(124, 92, 255, 0.14);
-}
-
-/* Dark theme softer shine */
-html[data-theme="dark"] .resource-card::after,
-html[data-theme="dark"] .unit-card::after,
-html[data-theme="dark"] .level-card::after,
-html[data-theme="dark"] .item-card:not(.unit-style-card)::after,
-html[data-theme="dark"] .ab-card::after,
-html[data-theme="dark"] .content-card::after,
-html[data-theme="dark"] .lesson-type-card::after,
-html[data-theme="dark"] .item-card.unit-style-card::before {
-  background: linear-gradient(
-    100deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.04) 35%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.04) 65%,
-    transparent 100%
-  );
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .resource-card::after,
-  .unit-card::after,
-  .level-card::after,
-  .item-card::after,
-  .ab-card::after,
-  .content-card::after,
-  .lesson-type-card::after,
-  .item-card.unit-style-card::before {
-    transition: none !important;
-  }
-}
-
-
-/* =========================================================
-   RESOURCES HUB v3 — light + dark (matches home cards)
-========================================================= */
-
-body.page-calm main {
-  padding-bottom: 48px;
-}
-
-/* Eyebrow pill */
-body.page-calm .arcade-intro .eyebrow,
-.arcade-intro .eyebrow {
-  display: inline-flex;
-  align-items: center;
-  padding: 7px 14px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(124, 92, 255, 0.12), rgba(59, 130, 246, 0.1));
-  color: #6d28d9;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  border: 1px solid rgba(124, 92, 255, 0.18);
-}
-
-.arcade-intro h1 {
-  letter-spacing: -0.03em;
-  color: #0f172a;
-}
-
-.section-heading h2 {
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  color: #0f172a;
-}
-
-/* Card layout */
-.resource-grid {
-  gap: 20px;
-}
-
-a.resource-card,
-.resource-card {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  min-height: 200px;
-  padding: 26px 24px;
-  border-radius: 22px;
-  border: 1.5px solid rgba(148, 163, 184, 0.25);
-  background: linear-gradient(160deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-}
-a.resource-card:hover,
-.resource-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 44px rgba(15, 23, 42, 0.1);
-}
-
-.resource-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 4px;
-  border-radius: 22px 22px 0 0;
-  z-index: 1;
-  background: linear-gradient(90deg, #a78bfa, #3b82f6);
-}
-
-.resource-card-body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-  position: relative;
-  z-index: 2;
-}
-
-.resource-icon {
-  position: relative;
-  z-index: 2;
-  flex: 0 0 56px;
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  font-size: 26px;
-  border: 1px solid rgba(255,255,255,0.6);
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
-}
-
-.resource-card h3 {
-  font-size: 1.15rem;
-  font-weight: 900;
-  color: #0f172a;
-  margin: 0 0 8px;
-}
-
-.resource-card p {
-  color: #64748b;
-  font-size: 0.88rem;
-  line-height: 1.55;
-  margin: 0 0 12px;
-  font-weight: 600;
-}
-
-.card-tag {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-bottom: 14px;
-}
-
-/* Solid CTA like home page */
-.card-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-start;
-  margin-top: auto;
-  padding: 11px 18px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  color: #fff !important;
-  text-decoration: none;
-  border: none;
-  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
-}
-.resource-card:hover .card-link {
-  transform: scale(1.04);
-  filter: brightness(1.05);
-}
-
-/* —— Pre-starter: teal —— */
-.resource-card--pre-starter {
-  border-color: rgba(20, 184, 166, 0.35);
-  background: linear-gradient(160deg, rgba(204, 251, 241, 0.85) 0%, rgba(240, 253, 250, 0.95) 45%, #fff 100%);
-}
-.resource-card--pre-starter::before {
-  background: linear-gradient(90deg, #5eead4, #14b8a6, #0d9488);
-}
-.resource-card--pre-starter .resource-icon {
-  background: linear-gradient(145deg, #ccfbf1, #5eead4);
-  color: #0f766e;
-}
-.resource-card--pre-starter .card-tag {
-  background: rgba(20, 184, 166, 0.15);
-  color: #0f766e;
-}
-.resource-card--pre-starter .card-link {
-  background: linear-gradient(180deg, #2dd4bf, #0d9488) !important;
-  box-shadow: 0 4px 0 #0f766e, 0 10px 20px rgba(13, 148, 136, 0.3);
-}
-.resource-card--pre-starter:hover {
-  border-color: #14b8a6;
-  box-shadow: 0 20px 44px rgba(20, 184, 166, 0.2);
-}
-
-/* —— AEF: blue —— */
-.resource-card--aef {
-  border-color: rgba(59, 130, 246, 0.35);
-  background: linear-gradient(160deg, rgba(219, 234, 254, 0.85) 0%, rgba(239, 246, 255, 0.95) 45%, #fff 100%);
-}
-.resource-card--aef::before {
-  background: linear-gradient(90deg, #93c5fd, #3b82f6, #2563eb);
-}
-.resource-card--aef .resource-icon {
-  background: linear-gradient(145deg, #dbeafe, #93c5fd);
-  color: #1d4ed8;
-}
-.resource-card--aef .card-tag {
-  background: rgba(59, 130, 246, 0.12);
-  color: #1d4ed8;
-}
-.resource-card--aef .card-link {
-  background: linear-gradient(180deg, #60a5fa, #2563eb) !important;
-  box-shadow: 0 4px 0 #1e40af, 0 10px 20px rgba(37, 99, 235, 0.3);
-}
-.resource-card--aef:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 20px 44px rgba(59, 130, 246, 0.2);
-}
-
-/* —— Teen2Teen: coral —— */
-.resource-card--teen-2-teen {
-  border-color: rgba(249, 115, 22, 0.35);
-  background: linear-gradient(160deg, rgba(255, 237, 213, 0.85) 0%, rgba(255, 247, 237, 0.95) 45%, #fff 100%);
-}
-.resource-card--teen-2-teen::before {
-  background: linear-gradient(90deg, #fdba74, #f97316, #ea580c);
-}
-.resource-card--teen-2-teen .resource-icon {
-  background: linear-gradient(145deg, #ffedd5, #fdba74);
-  color: #c2410c;
-}
-.resource-card--teen-2-teen .card-tag {
-  background: rgba(249, 115, 22, 0.14);
-  color: #c2410c;
-}
-.resource-card--teen-2-teen .card-link {
-  background: linear-gradient(180deg, #fb923c, #ea580c) !important;
-  box-shadow: 0 4px 0 #c2410c, 0 10px 20px rgba(234, 88, 12, 0.3);
-}
-.resource-card--teen-2-teen:hover {
-  border-color: #f97316;
-  box-shadow: 0 20px 44px rgba(249, 115, 22, 0.2);
-}
-
-/* —— Tactics for Listening: indigo / violet —— */
-.resource-card--tactics {
-  border-color: rgba(99, 102, 241, 0.35);
-  background: linear-gradient(160deg, rgba(224, 231, 255, 0.9) 0%, rgba(238, 242, 255, 0.95) 45%, #fff 100%);
-}
-.resource-card--tactics::before {
-  background: linear-gradient(90deg, #a5b4fc, #6366f1, #4f46e5);
-}
-.resource-card--tactics .resource-icon {
-  background: linear-gradient(145deg, #e0e7ff, #a5b4fc);
-  color: #4338ca;
-}
-.resource-card--tactics .card-tag {
-  background: rgba(99, 102, 241, 0.14);
-  color: #4338ca;
-}
-.resource-card--tactics .card-link {
-  background: linear-gradient(180deg, #818cf8, #4f46e5) !important;
-  box-shadow: 0 4px 0 #3730a3, 0 10px 20px rgba(79, 70, 229, 0.3);
-}
-.resource-card--tactics:hover {
-  border-color: #6366f1;
-  box-shadow: 0 20px 44px rgba(99, 102, 241, 0.22);
-}
-
-
-/* —— Worksheets: green —— */
-.resource-card--worksheets {
-  border-color: rgba(34, 197, 94, 0.35);
-  background: linear-gradient(160deg, rgba(220, 252, 231, 0.85) 0%, rgba(240, 253, 244, 0.95) 45%, #fff 100%);
-}
-.resource-card--worksheets::before {
-  background: linear-gradient(90deg, #86efac, #22c55e, #16a34a);
-}
-.resource-card--worksheets .resource-icon {
-  background: linear-gradient(145deg, #dcfce7, #86efac);
-  color: #15803d;
-}
-.resource-card--worksheets .card-tag {
-  background: rgba(34, 197, 94, 0.14);
-  color: #15803d;
-}
-.resource-card--worksheets .card-link {
-  background: linear-gradient(180deg, #4ade80, #16a34a) !important;
-  box-shadow: 0 4px 0 #166534, 0 10px 20px rgba(22, 163, 74, 0.3);
-}
-.resource-card--worksheets:hover {
-  border-color: #22c55e;
-  box-shadow: 0 20px 44px rgba(34, 197, 94, 0.2);
-}
-
-.resource-grid--worksheets {
-  grid-template-columns: minmax(0, 1fr);
-  max-width: min(calc(100% - 48px), 560px);
-  margin-left: auto;
-  margin-right: auto;
-  width: min(calc(100% - 48px), var(--container));
-}
-
-/* ========== DARK MODE ========== */
-html[data-theme="dark"] body.page-calm .arcade-intro .eyebrow,
-html[data-theme="dark"] .arcade-intro .eyebrow {
-  background: rgba(124, 92, 255, 0.18);
-  color: #c4b5fd;
-  border-color: rgba(167, 139, 250, 0.3);
-}
-
-html[data-theme="dark"] .arcade-intro h1,
-html[data-theme="dark"] .section-heading h2 {
-  color: #f8fafc !important;
-}
-
-html[data-theme="dark"] .arcade-intro p,
-html[data-theme="dark"] .section-heading p {
-  color: #94a3b8 !important;
-}
-
-html[data-theme="dark"] a.resource-card,
-html[data-theme="dark"] .resource-card {
-  background: linear-gradient(165deg, rgba(30, 35, 55, 0.95) 0%, rgba(12, 16, 32, 0.98) 100%);
-  border-color: rgba(148, 163, 184, 0.18);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
-}
-
-html[data-theme="dark"] .resource-card h3 {
-  color: #f8fafc !important;
-}
-
-html[data-theme="dark"] .resource-card p {
-  color: #94a3b8 !important;
-}
-
-html[data-theme="dark"] .resource-card--pre-starter {
-  border-color: rgba(45, 212, 191, 0.4);
-  background: linear-gradient(160deg, rgba(19, 78, 74, 0.5) 0%, rgba(12, 16, 32, 0.95) 100%);
-  box-shadow: 0 0 28px rgba(20, 184, 166, 0.12), 0 14px 40px rgba(0, 0, 0, 0.45);
-}
-html[data-theme="dark"] .resource-card--pre-starter .resource-icon {
-  background: rgba(20, 184, 166, 0.22);
-  color: #5eead4;
-  border-color: rgba(45, 212, 191, 0.25);
-}
-html[data-theme="dark"] .resource-card--pre-starter .card-tag {
-  background: rgba(20, 184, 166, 0.18);
-  color: #5eead4;
-}
-html[data-theme="dark"] .resource-card--pre-starter .card-link {
-  background: linear-gradient(180deg, #2dd4bf, #0d9488) !important;
-  box-shadow: 0 4px 0 #115e59, 0 10px 22px rgba(13, 148, 136, 0.35);
-}
-
-html[data-theme="dark"] .resource-card--aef {
-  border-color: rgba(96, 165, 250, 0.45);
-  background: linear-gradient(160deg, rgba(30, 64, 175, 0.4) 0%, rgba(12, 16, 32, 0.95) 100%);
-  box-shadow: 0 0 28px rgba(59, 130, 246, 0.15), 0 14px 40px rgba(0, 0, 0, 0.45);
-}
-html[data-theme="dark"] .resource-card--aef .resource-icon {
-  background: rgba(59, 130, 246, 0.22);
-  color: #93c5fd;
-  border-color: rgba(147, 197, 253, 0.25);
-}
-html[data-theme="dark"] .resource-card--aef .card-tag {
-  background: rgba(59, 130, 246, 0.18);
-  color: #93c5fd;
-}
-html[data-theme="dark"] .resource-card--aef .card-link {
-  background: linear-gradient(180deg, #60a5fa, #2563eb) !important;
-  box-shadow: 0 4px 0 #1e3a8a, 0 10px 22px rgba(37, 99, 235, 0.35);
-}
-
-html[data-theme="dark"] .resource-card--teen-2-teen {
-  border-color: rgba(251, 146, 60, 0.45);
-  background: linear-gradient(160deg, rgba(154, 52, 18, 0.4) 0%, rgba(12, 16, 32, 0.95) 100%);
-  box-shadow: 0 0 28px rgba(249, 115, 22, 0.15), 0 14px 40px rgba(0, 0, 0, 0.45);
-}
-html[data-theme="dark"] .resource-card--teen-2-teen .resource-icon {
-  background: rgba(249, 115, 22, 0.22);
-  color: #fdba74;
-  border-color: rgba(253, 186, 116, 0.25);
-}
-html[data-theme="dark"] .resource-card--teen-2-teen .card-tag {
-  background: rgba(249, 115, 22, 0.18);
-  color: #fdba74;
-}
-html[data-theme="dark"] .resource-card--teen-2-teen .card-link {
-  background: linear-gradient(180deg, #fb923c, #ea580c) !important;
-  box-shadow: 0 4px 0 #9a3412, 0 10px 22px rgba(234, 88, 12, 0.35);
-}
-
-html[data-theme="dark"] .resource-card--tactics {
-  border-color: rgba(165, 180, 252, 0.45);
-  background: linear-gradient(160deg, rgba(67, 56, 202, 0.4) 0%, rgba(12, 16, 32, 0.95) 100%);
-  box-shadow: 0 0 28px rgba(99, 102, 241, 0.15), 0 14px 40px rgba(0, 0, 0, 0.45);
-}
-html[data-theme="dark"] .resource-card--tactics .resource-icon {
-  background: rgba(99, 102, 241, 0.22);
-  color: #a5b4fc;
-  border-color: rgba(165, 180, 252, 0.25);
-}
-html[data-theme="dark"] .resource-card--tactics .card-tag {
-  background: rgba(99, 102, 241, 0.18);
-  color: #a5b4fc;
-}
-html[data-theme="dark"] .resource-card--tactics .card-link {
-  background: linear-gradient(180deg, #818cf8, #4f46e5) !important;
-  box-shadow: 0 4px 0 #312e81, 0 10px 22px rgba(79, 70, 229, 0.35);
-}
-
-
-html[data-theme="dark"] .resource-card--worksheets {
-  border-color: rgba(74, 222, 128, 0.4);
-  background: linear-gradient(160deg, rgba(20, 83, 45, 0.4) 0%, rgba(12, 16, 32, 0.95) 100%);
-  box-shadow: 0 0 28px rgba(34, 197, 94, 0.12), 0 14px 40px rgba(0, 0, 0, 0.45);
-}
-html[data-theme="dark"] .resource-card--worksheets .resource-icon {
-  background: rgba(34, 197, 94, 0.2);
-  color: #86efac;
-  border-color: rgba(134, 239, 172, 0.25);
-}
-html[data-theme="dark"] .resource-card--worksheets .card-tag {
-  background: rgba(34, 197, 94, 0.16);
-  color: #86efac;
-}
-html[data-theme="dark"] .resource-card--worksheets .card-link {
-  background: linear-gradient(180deg, #4ade80, #16a34a) !important;
-  box-shadow: 0 4px 0 #14532d, 0 10px 22px rgba(22, 163, 74, 0.35);
-}
-
-html[data-theme="dark"] .site-footer {
-  color: #94a3b8;
-  border-top-color: rgba(255,255,255,0.06);
-}
-
-@media (max-width: 700px) {
-  .resource-grid {
-    grid-template-columns: 1fr !important;
-  }
-  a.resource-card,
-  .resource-card {
-    min-height: 0;
-  }
-}
-
-
-/* =========================================================
-   FINAL DARK MODE — coursebook cards (definitive colors)
-========================================================= */
-
-/* Neutralize generic purple icon/tag rules on typed cards */
-html[data-theme="dark"] .resource-card--pre-starter .resource-icon,
-html[data-theme="dark"] .resource-card--aef .resource-icon,
-html[data-theme="dark"] .resource-card--teen-2-teen .resource-icon,
-html[data-theme="dark"] .resource-card--tactics .resource-icon,
-html[data-theme="dark"] .resource-card--worksheets .resource-icon,
-html[data-theme="dark"] .resource-card--pre-starter .card-tag,
-html[data-theme="dark"] .resource-card--aef .card-tag,
-html[data-theme="dark"] .resource-card--teen-2-teen .card-tag,
-html[data-theme="dark"] .resource-card--tactics .card-tag,
-html[data-theme="dark"] .resource-card--worksheets .card-tag,
-html[data-theme="dark"] .resource-card--pre-starter .card-link,
-html[data-theme="dark"] .resource-card--aef .card-link,
-html[data-theme="dark"] .resource-card--teen-2-teen .card-link,
-html[data-theme="dark"] .resource-card--tactics .card-link,
-html[data-theme="dark"] .resource-card--worksheets .card-link {
-  /* specificity anchors — values below */
-}
-
-/* —— Pre-starter: TEAL —— */
-html[data-theme="dark"] a.resource-card.resource-card--pre-starter,
-html[data-theme="dark"] .resource-card.resource-card--pre-starter {
-  border: 1.5px solid rgba(45, 212, 191, 0.55) !important;
-  background:
-    linear-gradient(155deg,
-      rgba(13, 148, 136, 0.35) 0%,
-      rgba(15, 40, 45, 0.92) 40%,
-      rgba(10, 16, 28, 0.98) 100%) !important;
-  box-shadow:
-    0 0 0 1px rgba(45, 212, 191, 0.12) inset,
-    0 0 36px rgba(20, 184, 166, 0.18),
-    0 16px 40px rgba(0, 0, 0, 0.5) !important;
-}
-html[data-theme="dark"] .resource-card--pre-starter::before {
-  content: "" !important;
-  height: 4px !important;
-  background: linear-gradient(90deg, #5eead4, #14b8a6, #0f766e) !important;
-  opacity: 1 !important;
-}
-html[data-theme="dark"] .resource-card--pre-starter .resource-icon {
-  background: linear-gradient(145deg, #0d9488, #115e59) !important;
-  color: #ccfbf1 !important;
-  border: 1px solid rgba(94, 234, 212, 0.35) !important;
-  box-shadow: 0 0 20px rgba(45, 212, 191, 0.35) !important;
-}
-html[data-theme="dark"] .resource-card--pre-starter .card-tag {
-  background: rgba(45, 212, 191, 0.18) !important;
-  color: #5eead4 !important;
-  border: 1px solid rgba(45, 212, 191, 0.25) !important;
-}
-html[data-theme="dark"] .resource-card--pre-starter .card-link {
-  background: linear-gradient(180deg, #2dd4bf 0%, #0d9488 100%) !important;
-  color: #ffffff !important;
-  font-weight: 900 !important;
-  box-shadow: 0 4px 0 #115e59, 0 10px 24px rgba(13, 148, 136, 0.4) !important;
-}
-
-/* —— American English File: BLUE —— */
-html[data-theme="dark"] a.resource-card.resource-card--aef,
-html[data-theme="dark"] .resource-card.resource-card--aef {
-  border: 1.5px solid rgba(96, 165, 250, 0.55) !important;
-  background:
-    linear-gradient(155deg,
-      rgba(37, 99, 235, 0.38) 0%,
-      rgba(20, 35, 70, 0.92) 40%,
-      rgba(10, 16, 28, 0.98) 100%) !important;
-  box-shadow:
-    0 0 0 1px rgba(96, 165, 250, 0.12) inset,
-    0 0 36px rgba(59, 130, 246, 0.2),
-    0 16px 40px rgba(0, 0, 0, 0.5) !important;
-}
-html[data-theme="dark"] .resource-card--aef::before {
-  content: "" !important;
-  height: 4px !important;
-  background: linear-gradient(90deg, #93c5fd, #3b82f6, #1d4ed8) !important;
-  opacity: 1 !important;
-}
-html[data-theme="dark"] .resource-card--aef .resource-icon {
-  background: linear-gradient(145deg, #2563eb, #1e40af) !important;
-  color: #dbeafe !important;
-  border: 1px solid rgba(147, 197, 253, 0.35) !important;
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.35) !important;
-}
-html[data-theme="dark"] .resource-card--aef .card-tag {
-  background: rgba(59, 130, 246, 0.2) !important;
-  color: #93c5fd !important;
-  border: 1px solid rgba(96, 165, 250, 0.28) !important;
-}
-html[data-theme="dark"] .resource-card--aef .card-link {
-  background: linear-gradient(180deg, #60a5fa 0%, #1d4ed8 100%) !important;
-  color: #ffffff !important;
-  font-weight: 900 !important;
-  box-shadow: 0 4px 0 #1e3a8a, 0 10px 24px rgba(29, 78, 216, 0.4) !important;
-}
-
-/* —— Teen2Teen: CORAL —— */
-html[data-theme="dark"] a.resource-card.resource-card--teen-2-teen,
-html[data-theme="dark"] .resource-card.resource-card--teen-2-teen {
-  border: 1.5px solid rgba(251, 146, 60, 0.55) !important;
-  background:
-    linear-gradient(155deg,
-      rgba(234, 88, 12, 0.38) 0%,
-      rgba(60, 30, 15, 0.92) 40%,
-      rgba(10, 16, 28, 0.98) 100%) !important;
-  box-shadow:
-    0 0 0 1px rgba(251, 146, 60, 0.12) inset,
-    0 0 36px rgba(249, 115, 22, 0.2),
-    0 16px 40px rgba(0, 0, 0, 0.5) !important;
-}
-html[data-theme="dark"] .resource-card--teen-2-teen::before {
-  content: "" !important;
-  height: 4px !important;
-  background: linear-gradient(90deg, #fdba74, #f97316, #c2410c) !important;
-  opacity: 1 !important;
-}
-html[data-theme="dark"] .resource-card--teen-2-teen .resource-icon {
-  background: linear-gradient(145deg, #ea580c, #c2410c) !important;
-  color: #ffedd5 !important;
-  border: 1px solid rgba(253, 186, 116, 0.35) !important;
-  box-shadow: 0 0 20px rgba(249, 115, 22, 0.35) !important;
-}
-html[data-theme="dark"] .resource-card--teen-2-teen .card-tag {
-  background: rgba(249, 115, 22, 0.2) !important;
-  color: #fdba74 !important;
-  border: 1px solid rgba(251, 146, 60, 0.28) !important;
-}
-html[data-theme="dark"] .resource-card--teen-2-teen .card-link {
-  background: linear-gradient(180deg, #fb923c 0%, #ea580c 100%) !important;
-  color: #ffffff !important;
-  font-weight: 900 !important;
-  box-shadow: 0 4px 0 #9a3412, 0 10px 24px rgba(234, 88, 12, 0.4) !important;
-}
-
-
-/* Generic purple fallback must not win on typed cards — explicit reset of global dark tag */
-html[data-theme="dark"] .resource-card--pre-starter span.card-tag,
-html[data-theme="dark"] .resource-card--aef span.card-tag,
-html[data-theme="dark"] .resource-card--teen-2-teen span.card-tag {
-  background-image: none !important;
-}
-
-
-/* =========================================================
-   FINAL LIGHT MODE — coursebook cards (match dark themes)
-========================================================= */
-
-/* —— Pre-starter: TEAL —— */
-a.resource-card.resource-card--pre-starter,
-.resource-card.resource-card--pre-starter {
-  border: 1.5px solid rgba(20, 184, 166, 0.4) !important;
-  background:
-    linear-gradient(155deg,
-      rgba(204, 251, 241, 0.95) 0%,
-      rgba(240, 253, 250, 0.98) 45%,
-      #ffffff 100%) !important;
-  box-shadow:
-    0 0 0 1px rgba(20, 184, 166, 0.08) inset,
-    0 12px 32px rgba(20, 184, 166, 0.12) !important;
-}
-.resource-card--pre-starter::before {
-  content: "" !important;
-  height: 4px !important;
-  background: linear-gradient(90deg, #5eead4, #14b8a6, #0d9488) !important;
-  opacity: 1 !important;
-}
-.resource-card--pre-starter .resource-icon {
-  background: linear-gradient(145deg, #ccfbf1, #5eead4) !important;
-  color: #0f766e !important;
-  border: 1px solid rgba(45, 212, 191, 0.4) !important;
-  box-shadow: 0 8px 18px rgba(20, 184, 166, 0.2) !important;
-}
-.resource-card--pre-starter .card-tag {
-  background: rgba(20, 184, 166, 0.14) !important;
-  color: #0f766e !important;
-  border: 1px solid rgba(20, 184, 166, 0.2) !important;
-}
-.resource-card--pre-starter .card-link {
-  background: linear-gradient(180deg, #2dd4bf 0%, #0d9488 100%) !important;
-  color: #ffffff !important;
-  font-weight: 900 !important;
-  box-shadow: 0 4px 0 #0f766e, 0 10px 22px rgba(13, 148, 136, 0.3) !important;
-}
-a.resource-card--pre-starter:hover,
-.resource-card--pre-starter:hover {
-  border-color: #14b8a6 !important;
-  box-shadow: 0 18px 40px rgba(20, 184, 166, 0.2) !important;
-}
-
-/* —— American English File: BLUE —— */
-a.resource-card.resource-card--aef,
-.resource-card.resource-card--aef {
-  border: 1.5px solid rgba(59, 130, 246, 0.4) !important;
-  background:
-    linear-gradient(155deg,
-      rgba(219, 234, 254, 0.95) 0%,
-      rgba(239, 246, 255, 0.98) 45%,
-      #ffffff 100%) !important;
-  box-shadow:
-    0 0 0 1px rgba(59, 130, 246, 0.08) inset,
-    0 12px 32px rgba(59, 130, 246, 0.12) !important;
-}
-.resource-card--aef::before {
-  content: "" !important;
-  height: 4px !important;
-  background: linear-gradient(90deg, #93c5fd, #3b82f6, #2563eb) !important;
-  opacity: 1 !important;
-}
-.resource-card--aef .resource-icon {
-  background: linear-gradient(145deg, #dbeafe, #93c5fd) !important;
-  color: #1d4ed8 !important;
-  border: 1px solid rgba(147, 197, 253, 0.45) !important;
-  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.2) !important;
-}
-.resource-card--aef .card-tag {
-  background: rgba(59, 130, 246, 0.12) !important;
-  color: #1d4ed8 !important;
-  border: 1px solid rgba(59, 130, 246, 0.2) !important;
-}
-.resource-card--aef .card-link {
-  background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%) !important;
-  color: #ffffff !important;
-  font-weight: 900 !important;
-  box-shadow: 0 4px 0 #1e40af, 0 10px 22px rgba(37, 99, 235, 0.3) !important;
-}
-a.resource-card--aef:hover,
-.resource-card--aef:hover {
-  border-color: #3b82f6 !important;
-  box-shadow: 0 18px 40px rgba(59, 130, 246, 0.2) !important;
-}
-
-
-/* =========================================================
-   HUB-STYLE resource cards (match main page)
-========================================================= */
-
-.resource-grid--hub {
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 340px)) !important;
-  gap: 24px !important;
-  justify-content: center !important;
-  width: min(calc(100% - 48px), 1100px) !important;
-  margin: 0 auto 70px !important;
-}
-
-/* Tablet: keep 2 cols if space is tight — T2T still near AEF on wide tablets */
-@media (max-width: 980px) and (min-width: 701px) {
-  .resource-grid--hub {
-    grid-template-columns: repeat(2, minmax(0, 340px)) !important;
-    width: min(calc(100% - 40px), 760px) !important;
-  }
-}
-
-a.resource-card.resource-card--hub,
-.resource-card.resource-card--hub {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  text-align: center !important;
-  min-height: 320px !important;
-  padding: 28px 24px 26px !important;
-  border-radius: 24px !important;
-  gap: 0 !important;
-  overflow: hidden !important;
-  isolation: isolate !important;
-  position: relative !important;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease !important;
-}
-
-.resource-card--hub > * {
-  position: relative;
-  z-index: 2;
-}
-
-.resource-card--hub::after {
-  content: "";
-  position: absolute;
-  top: -35%;
-  left: -15%;
-  width: 70%;
-  height: 70%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.55) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.65;
-}
-
-.resource-card--hub .resource-icon {
-  flex: 0 0 auto !important;
-  width: 64px !important;
-  height: 64px !important;
-  margin: 0 auto 16px !important;
-  border-radius: 18px !important;
-  font-size: 28px !important;
-  display: grid !important;
-  place-items: center !important;
-}
-
-.resource-card--hub h3 {
-  margin: 0 0 10px !important;
-  font-size: 15px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.06em !important;
-  text-transform: uppercase !important;
-  color: #1e1b4b !important;
-}
-
-.resource-card--hub .card-rule {
-  display: block !important;
-  width: 40px !important;
-  height: 3px !important;
-  border-radius: 999px !important;
-  margin: 0 auto 14px !important;
-}
-
-.resource-card--hub p {
-  margin: 0 0 14px !important;
-  font-size: 0.9rem !important;
-  line-height: 1.5 !important;
-  font-weight: 600 !important;
-  color: #64748b !important;
-  max-width: 280px !important;
-}
-
-.resource-card--hub .card-tag {
-  margin: 0 auto 18px !important;
-  align-self: center !important;
-}
-
-.resource-card--hub .card-link {
-  margin-top: auto !important;
-  align-self: center !important;
-  min-width: 160px !important;
-  justify-content: center !important;
-  padding: 12px 22px !important;
-  border-radius: 999px !important;
-  font-size: 12px !important;
-  letter-spacing: 0.04em !important;
-}
-
-.resource-card--hub:hover {
-  transform: translateY(-7px) scale(1.02) !important;
-}
-
-/* Light: Pre-starter teal */
-.resource-card--hub.resource-card--pre-starter {
-  border-color: rgba(20, 184, 166, 0.4) !important;
-  background: linear-gradient(160deg, rgba(204, 251, 241, 0.95) 0%, rgba(240, 253, 250, 0.9) 45%, #fff 100%) !important;
-  box-shadow: 0 14px 36px rgba(20, 184, 166, 0.14) !important;
-}
-.resource-card--hub.resource-card--pre-starter::before {
-  background: linear-gradient(90deg, #5eead4, #14b8a6, #0d9488) !important;
-}
-.resource-card--hub.resource-card--pre-starter .resource-icon {
-  background: linear-gradient(145deg, #ccfbf1, #5eead4) !important;
-  color: #0f766e !important;
-  box-shadow: 0 8px 20px rgba(20, 184, 166, 0.25) !important;
-}
-.resource-card--hub.resource-card--pre-starter .card-rule {
-  background: #14b8a6 !important;
-}
-.resource-card--hub.resource-card--pre-starter .card-tag {
-  background: rgba(20, 184, 166, 0.14) !important;
-  color: #0f766e !important;
-}
-.resource-card--hub.resource-card--pre-starter .card-link {
-  background: linear-gradient(180deg, #2dd4bf, #0d9488) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 0 #0f766e, 0 10px 22px rgba(13, 148, 136, 0.32) !important;
-}
-
-/* Light: AEF blue */
-.resource-card--hub.resource-card--aef {
-  border-color: rgba(59, 130, 246, 0.4) !important;
-  background: linear-gradient(160deg, rgba(219, 234, 254, 0.95) 0%, rgba(239, 246, 255, 0.9) 45%, #fff 100%) !important;
-  box-shadow: 0 14px 36px rgba(59, 130, 246, 0.14) !important;
-}
-.resource-card--hub.resource-card--aef::before {
-  background: linear-gradient(90deg, #93c5fd, #3b82f6, #2563eb) !important;
-}
-.resource-card--hub.resource-card--aef .resource-icon {
-  background: linear-gradient(145deg, #dbeafe, #93c5fd) !important;
-  color: #1d4ed8 !important;
-  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25) !important;
-}
-.resource-card--hub.resource-card--aef .card-rule {
-  background: #3b82f6 !important;
-}
-.resource-card--hub.resource-card--aef .card-tag {
-  background: rgba(59, 130, 246, 0.12) !important;
-  color: #1d4ed8 !important;
-}
-.resource-card--hub.resource-card--aef .card-link {
-  background: linear-gradient(180deg, #60a5fa, #2563eb) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 0 #1e40af, 0 10px 22px rgba(37, 99, 235, 0.32) !important;
-}
-
-/* Dark hub cards */
-html[data-theme="dark"] .resource-card--hub.resource-card--pre-starter {
-  border-color: rgba(45, 212, 191, 0.5) !important;
-  background: linear-gradient(160deg, rgba(13, 148, 136, 0.4) 0%, rgba(15, 40, 45, 0.92) 45%, rgba(10, 16, 28, 0.98) 100%) !important;
-  box-shadow: 0 0 36px rgba(20, 184, 166, 0.18), 0 16px 40px rgba(0,0,0,0.5) !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--pre-starter h3 {
-  color: #f0fdfa !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--pre-starter p {
-  color: #99f6e4 !important;
-  opacity: 0.85;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--pre-starter .resource-icon {
-  background: linear-gradient(145deg, #0d9488, #115e59) !important;
-  color: #ccfbf1 !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--pre-starter .card-tag {
-  background: rgba(45, 212, 191, 0.18) !important;
-  color: #5eead4 !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--pre-starter .card-link {
-  color: #ffffff !important;
-  background: linear-gradient(180deg, #2dd4bf, #0d9488) !important;
-}
-
-html[data-theme="dark"] .resource-card--hub.resource-card--aef {
-  border-color: rgba(96, 165, 250, 0.5) !important;
-  background: linear-gradient(160deg, rgba(37, 99, 235, 0.4) 0%, rgba(20, 35, 70, 0.92) 45%, rgba(10, 16, 28, 0.98) 100%) !important;
-  box-shadow: 0 0 36px rgba(59, 130, 246, 0.2), 0 16px 40px rgba(0,0,0,0.5) !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--aef h3 {
-  color: #eff6ff !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--aef p {
-  color: #bfdbfe !important;
-  opacity: 0.85;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--aef .resource-icon {
-  background: linear-gradient(145deg, #2563eb, #1e40af) !important;
-  color: #dbeafe !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--aef .card-tag {
-  background: rgba(59, 130, 246, 0.2) !important;
-  color: #93c5fd !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--aef .card-link {
-  color: #ffffff !important;
-  background: linear-gradient(180deg, #60a5fa, #1d4ed8) !important;
-}
-
-/* Light: Teen 2 Teen coral/orange */
-.resource-card--hub.resource-card--teen-2-teen {
-  border-color: rgba(249, 115, 22, 0.4) !important;
-  background: linear-gradient(160deg, rgba(255, 237, 213, 0.95) 0%, rgba(255, 247, 237, 0.9) 45%, #fff 100%) !important;
-  box-shadow: 0 14px 36px rgba(249, 115, 22, 0.14) !important;
-}
-.resource-card--hub.resource-card--teen-2-teen::before {
-  background: linear-gradient(90deg, #fdba74, #f97316, #ea580c) !important;
-}
-.resource-card--hub.resource-card--teen-2-teen .resource-icon {
-  background: linear-gradient(145deg, #ffedd5, #fdba74) !important;
-  color: #c2410c !important;
-  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.25) !important;
-}
-.resource-card--hub.resource-card--teen-2-teen .card-rule {
-  background: #f97316 !important;
-}
-.resource-card--hub.resource-card--teen-2-teen .card-tag {
-  background: rgba(249, 115, 22, 0.14) !important;
-  color: #c2410c !important;
-}
-.resource-card--hub.resource-card--teen-2-teen .card-link {
-  background: linear-gradient(180deg, #fb923c, #ea580c) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 0 #c2410c, 0 10px 22px rgba(234, 88, 12, 0.32) !important;
-}
-
-/* Dark: Teen 2 Teen coral/orange */
-html[data-theme="dark"] .resource-card--hub.resource-card--teen-2-teen {
-  border-color: rgba(251, 146, 60, 0.5) !important;
-  background: linear-gradient(160deg, rgba(194, 65, 12, 0.4) 0%, rgba(50, 30, 20, 0.92) 45%, rgba(10, 16, 28, 0.98) 100%) !important;
-  box-shadow: 0 0 36px rgba(249, 115, 22, 0.18), 0 16px 40px rgba(0,0,0,0.5) !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--teen-2-teen h3 {
-  color: #fff7ed !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--teen-2-teen p {
-  color: #fed7aa !important;
-  opacity: 0.85;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--teen-2-teen .resource-icon {
-  background: linear-gradient(145deg, #ea580c, #c2410c) !important;
-  color: #ffedd5 !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--teen-2-teen .card-tag {
-  background: rgba(251, 146, 60, 0.18) !important;
-  color: #fdba74 !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--teen-2-teen .card-link {
-  color: #ffffff !important;
-  background: linear-gradient(180deg, #fb923c, #ea580c) !important;
-}
-
-html[data-theme="dark"] .resource-card--hub::after {
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-  opacity: 0.5;
-}
-
-
-@media (max-width: 700px) {
-  /* Compact hub intro */
-  .arcade-intro {
-    padding: 12px 0 8px !important;
-  }
-  .arcade-intro .eyebrow {
-    font-size: 0.65rem !important;
-    margin-bottom: 4px !important;
-  }
-  .arcade-intro h1 {
-    font-size: 1.25rem !important;
-    line-height: 1.25 !important;
-    margin-bottom: 6px !important;
-  }
-  .arcade-intro p {
-    font-size: 0.8rem !important;
-    line-height: 1.4 !important;
-  }
-  .section-heading {
-    margin-bottom: 8px !important;
-  }
-  .section-heading h2 {
-    font-size: 1.05rem !important;
-    margin-bottom: 2px !important;
-  }
-  .section-heading p {
-    font-size: 0.75rem !important;
-  }
-
-  /* Compact 1-column hub cards that fit above the dock */
-  .resource-grid--hub {
-    grid-template-columns: 1fr !important;
-    max-width: 320px !important;
-    gap: 10px !important;
-    justify-content: center !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    margin-bottom: 24px !important;
-    width: min(calc(100% - 20px), 320px) !important;
-  }
-  a.resource-card.resource-card--hub,
-  .resource-card.resource-card--hub {
-    min-height: 0 !important;
-    padding: 12px 14px 14px !important;
-    border-radius: 18px !important;
-  }
-  .resource-card--hub .resource-icon {
-    width: 44px !important;
-    height: 44px !important;
-    margin: 0 auto 8px !important;
-    border-radius: 12px !important;
-    font-size: 20px !important;
-  }
-  .resource-card--hub h3 {
-    margin: 0 0 4px !important;
-    font-size: 12px !important;
-    letter-spacing: 0.04em !important;
-  }
-  .resource-card--hub .card-rule {
-    width: 28px !important;
-    height: 2px !important;
-    margin: 0 auto 8px !important;
-  }
-  /* Hide long descriptions on phone so both cards fit */
-  .resource-card--hub p {
-    display: none !important;
-  }
-  .resource-card--hub .card-tag {
-    margin: 0 auto 10px !important;
-    padding: 4px 8px !important;
-    font-size: 9px !important;
-  }
-  .resource-card--hub .card-link {
-    min-width: 0 !important;
-    padding: 8px 16px !important;
-    font-size: 11px !important;
-  }
-
-  /* Clear bottom dock + theme switch */
-  body.page-calm {
-    padding-bottom: max(88px, calc(72px + env(safe-area-inset-bottom, 0px))) !important;
-  }
-  .site-footer {
-    padding-bottom: max(12px, env(safe-area-inset-bottom, 0px)) !important;
-    margin-bottom: 8px !important;
-  }
-}
-
-
-/* =========================================================
-   AEF LEVEL CARDS — unit-style (horizontal, no covers)
-========================================================= */
-
-.level-grid--hub {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
-  gap: 16px !important;
-  justify-content: start !important;
-  width: min(calc(100% - 48px), var(--container)) !important;
-  margin: 0 auto 70px !important;
-}
-
-a.level-card.level-card--hub,
-.level-card.level-card--hub {
-  position: relative !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  justify-content: flex-end !important;
-  text-align: left !important;
-  min-height: 155px !important;
-  max-width: none !important;
-  width: 100% !important;
-  aspect-ratio: auto !important;
-  padding: 22px !important;
-  border-radius: 20px !important;
-  border: 1px solid rgba(105, 55, 216, 0.12);
-  background: linear-gradient(145deg, #ffffff, #f8f6ff);
-  box-shadow: 0 8px 25px rgba(30, 40, 70, 0.06);
-  overflow: hidden !important;
-  isolation: isolate !important;
-  text-decoration: none !important;
-  color: #171c30;
-  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease !important;
-  gap: 0 !important;
-}
-
-.level-card--hub::after {
-  content: "" !important;
-  position: absolute !important;
-  width: 90px !important;
-  height: 90px !important;
-  right: -35px !important;
-  bottom: -35px !important;
-  border-radius: 50% !important;
-  background: rgba(108, 99, 255, 0.12);
-  transition: transform 0.3s ease !important;
-  pointer-events: none !important;
-  z-index: 0 !important;
-  top: auto !important;
-  left: auto !important;
-  opacity: 1 !important;
-}
-
-.level-card--hub::before {
-  display: none !important;
-}
-
-.level-card--hub > * {
-  position: relative !important;
-  z-index: 2 !important;
-}
-
-.level-card--hub:hover {
-  transform: translateY(-6px) !important;
-  border-color: rgba(139, 124, 255, 0.45) !important;
-  box-shadow: 0 18px 40px rgba(80, 60, 160, 0.14) !important;
-}
-
-.level-card--hub:hover::after {
-  transform: scale(1.6) !important;
-}
-
-.level-card--hub .level-badge {
-  display: block !important;
-  font-size: 20px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.8px !important;
-  margin-bottom: 8px !important;
-  color: #6937d8;
-  text-transform: uppercase !important;
-  line-height: 1.15 !important;
-}
-
-.level-card--hub h3 {
-  font-size: 14px !important;
-  margin: 0 0 6px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-  color: #171c30;
-  line-height: 1.25 !important;
-}
-
-.level-card--hub p {
-  color: #747b90;
-  font-size: 13px !important;
-  line-height: 1.45 !important;
-  margin: 0 !important;
-  display: block !important;
-  -webkit-line-clamp: unset !important;
-  overflow: visible !important;
-}
-
-.level-card--hub .level-arrow {
-  position: absolute !important;
-  right: 20px !important;
-  top: 20px !important;
-  width: 30px !important;
-  height: 30px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  border-radius: 9px !important;
-  background: rgba(105, 55, 216, 0.1);
-  color: #6937d8;
-  font-weight: 800 !important;
-  font-size: 14px !important;
-  margin: 0 !important;
-  min-width: 0 !important;
-  padding: 0 !important;
-  box-shadow: none !important;
-}
-
-/* Hide old hub elements if any remain */
-.level-card--hub .resource-icon,
-.level-card--hub .card-rule,
-.level-card--hub .card-tag,
-.level-card--hub .card-link,
-.level-card--hub .level-cover {
-  display: none !important;
-}
-
-/* —— Book cover colors (rich, same look in light + dark) —— */
-/* Starter — purple */
-.level-card--hub.level-card--starter {
-  border-color: rgba(167, 139, 250, 0.35) !important;
-  background: linear-gradient(145deg, #2e1a5e, #1e1240) !important;
-  color: #f5f3ff !important;
-  box-shadow: 0 10px 28px rgba(88, 28, 135, 0.28) !important;
-}
-.level-card--hub.level-card--starter::after { background: rgba(167, 139, 250, 0.22) !important; }
-.level-card--hub.level-card--starter .level-badge { color: #e9d5ff !important; }
-.level-card--hub.level-card--starter h3 { color: #f5f3ff !important; }
-.level-card--hub.level-card--starter p { color: #c4b5fd !important; }
-.level-card--hub.level-card--starter .level-arrow {
-  background: rgba(167, 139, 250, 0.28) !important;
-  color: #ede9fe !important;
-}
-.level-card--hub.level-card--starter:hover {
-  border-color: rgba(196, 181, 253, 0.55) !important;
-  box-shadow: 0 18px 40px rgba(88, 28, 135, 0.35) !important;
-}
-
-/* Level 1 — red */
-.level-card--hub.level-card--1 {
-  border-color: rgba(248, 113, 113, 0.35) !important;
-  background: linear-gradient(145deg, #5c1515, #3b0d0d) !important;
-  color: #fef2f2 !important;
-  box-shadow: 0 10px 28px rgba(153, 27, 27, 0.28) !important;
-}
-.level-card--hub.level-card--1::after { background: rgba(248, 113, 113, 0.22) !important; }
-.level-card--hub.level-card--1 .level-badge { color: #fecaca !important; }
-.level-card--hub.level-card--1 h3 { color: #fef2f2 !important; }
-.level-card--hub.level-card--1 p { color: #fca5a5 !important; }
-.level-card--hub.level-card--1 .level-arrow {
-  background: rgba(248, 113, 113, 0.28) !important;
-  color: #fee2e2 !important;
-}
-.level-card--hub.level-card--1:hover {
-  border-color: rgba(252, 165, 165, 0.55) !important;
-  box-shadow: 0 18px 40px rgba(153, 27, 27, 0.35) !important;
-}
-
-/* Level 2 — blue */
-.level-card--hub.level-card--2 {
-  border-color: rgba(96, 165, 250, 0.35) !important;
-  background: linear-gradient(145deg, #1e3a5f, #12263d) !important;
-  color: #eff6ff !important;
-  box-shadow: 0 10px 28px rgba(30, 64, 175, 0.28) !important;
-}
-.level-card--hub.level-card--2::after { background: rgba(96, 165, 250, 0.22) !important; }
-.level-card--hub.level-card--2 .level-badge { color: #bfdbfe !important; }
-.level-card--hub.level-card--2 h3 { color: #eff6ff !important; }
-.level-card--hub.level-card--2 p { color: #93c5fd !important; }
-.level-card--hub.level-card--2 .level-arrow {
-  background: rgba(96, 165, 250, 0.28) !important;
-  color: #dbeafe !important;
-}
-.level-card--hub.level-card--2:hover {
-  border-color: rgba(147, 197, 253, 0.55) !important;
-  box-shadow: 0 18px 40px rgba(30, 64, 175, 0.35) !important;
-}
-
-/* Level 3 — green */
-.level-card--hub.level-card--3 {
-  border-color: rgba(74, 222, 128, 0.35) !important;
-  background: linear-gradient(145deg, #14532d, #0c3b1e) !important;
-  color: #f0fdf4 !important;
-  box-shadow: 0 10px 28px rgba(21, 128, 61, 0.28) !important;
-}
-.level-card--hub.level-card--3::after { background: rgba(74, 222, 128, 0.22) !important; }
-.level-card--hub.level-card--3 .level-badge { color: #bbf7d0 !important; }
-.level-card--hub.level-card--3 h3 { color: #f0fdf4 !important; }
-.level-card--hub.level-card--3 p { color: #86efac !important; }
-.level-card--hub.level-card--3 .level-arrow {
-  background: rgba(74, 222, 128, 0.28) !important;
-  color: #dcfce7 !important;
-}
-.level-card--hub.level-card--3:hover {
-  border-color: rgba(134, 239, 172, 0.55) !important;
-  box-shadow: 0 18px 40px rgba(21, 128, 61, 0.35) !important;
-}
-
-/* Level 4 — orange */
-.level-card--hub.level-card--4 {
-  border-color: rgba(251, 146, 60, 0.35) !important;
-  background: linear-gradient(145deg, #7c2d12, #5c1f0a) !important;
-  color: #fff7ed !important;
-  box-shadow: 0 10px 28px rgba(194, 65, 12, 0.28) !important;
-}
-.level-card--hub.level-card--4::after { background: rgba(251, 146, 60, 0.22) !important; }
-.level-card--hub.level-card--4 .level-badge { color: #fed7aa !important; }
-.level-card--hub.level-card--4 h3 { color: #fff7ed !important; }
-.level-card--hub.level-card--4 p { color: #fdba74 !important; }
-.level-card--hub.level-card--4 .level-arrow {
-  background: rgba(251, 146, 60, 0.28) !important;
-  color: #ffedd5 !important;
-}
-.level-card--hub.level-card--4:hover {
-  border-color: rgba(253, 186, 116, 0.55) !important;
-  box-shadow: 0 18px 40px rgba(194, 65, 12, 0.35) !important;
-}
-
-/* Level 5 — sky */
-.level-card--hub.level-card--5 {
-  border-color: rgba(56, 189, 248, 0.35) !important;
-  background: linear-gradient(145deg, #0c4a6e, #082f49) !important;
-  color: #f0f9ff !important;
-  box-shadow: 0 10px 28px rgba(3, 105, 161, 0.28) !important;
-}
-.level-card--hub.level-card--5::after { background: rgba(56, 189, 248, 0.22) !important; }
-.level-card--hub.level-card--5 .level-badge { color: #bae6fd !important; }
-.level-card--hub.level-card--5 h3 { color: #f0f9ff !important; }
-.level-card--hub.level-card--5 p { color: #7dd3fc !important; }
-.level-card--hub.level-card--5 .level-arrow {
-  background: rgba(56, 189, 248, 0.28) !important;
-  color: #e0f2fe !important;
-}
-.level-card--hub.level-card--5:hover {
-  border-color: rgba(125, 211, 252, 0.55) !important;
-  box-shadow: 0 18px 40px rgba(3, 105, 161, 0.35) !important;
-}
-
-/* Quiz */
-.level-card--hub.level-card--quiz {
-  border-color: rgba(167, 139, 250, 0.35) !important;
-  background: linear-gradient(145deg, #3b1d6e, #2a1450) !important;
-  color: #f5f3ff !important;
-  box-shadow: 0 10px 28px rgba(109, 40, 217, 0.28) !important;
-}
-.level-card--hub.level-card--quiz::after { background: rgba(167, 139, 250, 0.22) !important; }
-.level-card--hub.level-card--quiz .level-badge { color: #e9d5ff !important; }
-.level-card--hub.level-card--quiz h3 { color: #f5f3ff !important; }
-.level-card--hub.level-card--quiz p { color: #c4b5fd !important; }
-.level-card--hub.level-card--quiz .level-arrow {
-  background: rgba(167, 139, 250, 0.28) !important;
-  color: #ede9fe !important;
-}
-.level-card--hub.level-card--quiz:hover {
-  border-color: rgba(196, 181, 253, 0.55) !important;
-  box-shadow: 0 18px 40px rgba(109, 40, 217, 0.35) !important;
-}
-
-/* Locked */
-.level-card--hub.level-locked {
-  cursor: default !important;
-  opacity: 0.72;
-  filter: grayscale(0.2);
-}
-.level-card--hub.level-locked:hover {
-  transform: none !important;
-  box-shadow: 0 8px 25px rgba(30, 40, 70, 0.06) !important;
-}
-.level-card--hub.level-locked .level-arrow--locked {
-  font-size: 12px !important;
-}
-
-/* ========== DARK MODE ========== */
-html[data-theme="dark"] .level-card--hub {
-  background: linear-gradient(145deg, #1a1f35, #12162a) !important;
-  border-color: rgba(139, 124, 255, 0.2) !important;
-  color: #e8eaf0 !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35) !important;
-}
-html[data-theme="dark"] .level-card--hub h3 { color: #f1f5f9 !important; }
-html[data-theme="dark"] .level-card--hub p { color: #94a3b8 !important; }
-html[data-theme="dark"] .level-card--hub::after { background: rgba(139, 124, 255, 0.15) !important; }
-html[data-theme="dark"] .level-card--hub:hover {
-  border-color: rgba(167, 139, 250, 0.45) !important;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45) !important;
-}
-
-/* Dark arrows / buttons — high contrast */
-html[data-theme="dark"] .level-card--hub .level-arrow {
-  background: rgba(167, 139, 250, 0.22) !important;
-  color: #c4b5fd !important;
-}
-
-html[data-theme="dark"] .level-card--hub.level-card--starter {
-  background: linear-gradient(145deg, #1e1535, #15102a) !important;
-  border-color: rgba(167, 139, 250, 0.25) !important;
-}
-html[data-theme="dark"] .level-card--hub.level-card--starter::after { background: rgba(124, 58, 237, 0.2) !important; }
-html[data-theme="dark"] .level-card--hub.level-card--starter .level-badge { color: #c4b5fd !important; }
-html[data-theme="dark"] .level-card--hub.level-card--starter .level-arrow {
-  background: rgba(124, 58, 237, 0.25) !important;
-  color: #ddd6fe !important;
-}
-
-html[data-theme="dark"] .level-card--hub.level-card--1 {
-  background: linear-gradient(145deg, #2a1515, #1f1010) !important;
-  border-color: rgba(248, 113, 113, 0.25) !important;
-}
-html[data-theme="dark"] .level-card--hub.level-card--1::after { background: rgba(239, 68, 68, 0.18) !important; }
-html[data-theme="dark"] .level-card--hub.level-card--1 .level-badge { color: #fca5a5 !important; }
-html[data-theme="dark"] .level-card--hub.level-card--1 .level-arrow {
-  background: rgba(239, 68, 68, 0.25) !important;
-  color: #fecaca !important;
-}
-
-html[data-theme="dark"] .level-card--hub.level-card--2 {
-  background: linear-gradient(145deg, #152035, #101828) !important;
-  border-color: rgba(96, 165, 250, 0.25) !important;
-}
-html[data-theme="dark"] .level-card--hub.level-card--2::after { background: rgba(59, 130, 246, 0.18) !important; }
-html[data-theme="dark"] .level-card--hub.level-card--2 .level-badge { color: #93c5fd !important; }
-html[data-theme="dark"] .level-card--hub.level-card--2 .level-arrow {
-  background: rgba(59, 130, 246, 0.25) !important;
-  color: #bfdbfe !important;
-}
-
-html[data-theme="dark"] .level-card--hub.level-card--3 {
-  background: linear-gradient(145deg, #152a1a, #101f14) !important;
-  border-color: rgba(74, 222, 128, 0.25) !important;
-}
-html[data-theme="dark"] .level-card--hub.level-card--3::after { background: rgba(34, 197, 94, 0.18) !important; }
-html[data-theme="dark"] .level-card--hub.level-card--3 .level-badge { color: #86efac !important; }
-html[data-theme="dark"] .level-card--hub.level-card--3 .level-arrow {
-  background: rgba(34, 197, 94, 0.25) !important;
-  color: #bbf7d0 !important;
-}
-
-html[data-theme="dark"] .level-card--hub.level-card--4 {
-  background: linear-gradient(145deg, #2a1a10, #1f140c) !important;
-  border-color: rgba(251, 146, 60, 0.25) !important;
-}
-html[data-theme="dark"] .level-card--hub.level-card--4::after { background: rgba(249, 115, 22, 0.18) !important; }
-html[data-theme="dark"] .level-card--hub.level-card--4 .level-badge { color: #fdba74 !important; }
-html[data-theme="dark"] .level-card--hub.level-card--4 .level-arrow {
-  background: rgba(249, 115, 22, 0.25) !important;
-  color: #fed7aa !important;
-}
-
-html[data-theme="dark"] .level-card--hub.level-card--5 {
-  background: linear-gradient(145deg, #102030, #0c1824) !important;
-  border-color: rgba(56, 189, 248, 0.25) !important;
-}
-html[data-theme="dark"] .level-card--hub.level-card--5::after { background: rgba(14, 165, 233, 0.18) !important; }
-html[data-theme="dark"] .level-card--hub.level-card--5 .level-badge { color: #7dd3fc !important; }
-html[data-theme="dark"] .level-card--hub.level-card--5 .level-arrow {
-  background: rgba(14, 165, 233, 0.25) !important;
-  color: #bae6fd !important;
-}
-
-html[data-theme="dark"] .level-card--hub.level-card--quiz {
-  background: linear-gradient(145deg, #1e1535, #15102a) !important;
-  border-color: rgba(167, 139, 250, 0.25) !important;
-}
-html[data-theme="dark"] .level-card--hub.level-card--quiz::after { background: rgba(139, 92, 246, 0.18) !important; }
-html[data-theme="dark"] .level-card--hub.level-card--quiz .level-badge { color: #c4b5fd !important; }
-html[data-theme="dark"] .level-card--hub.level-card--quiz .level-arrow {
-  background: rgba(139, 92, 246, 0.25) !important;
-  color: #ddd6fe !important;
-}
-
-html[data-theme="dark"] .level-card--hub.level-locked {
-  opacity: 0.6;
-  filter: grayscale(0.35);
-}
-
-@media (max-width: 700px) {
-  .level-grid--hub {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-    max-width: none !important;
-  }
-  a.level-card.level-card--hub,
-  .level-card.level-card--hub {
-    min-height: 140px !important;
-    padding: 18px !important;
-  }
-  .level-card--hub .level-badge { font-size: 18px !important; }
-  .level-card--hub h3 { font-size: 13px !important; }
-  .level-card--hub p { font-size: 12px !important; }
-  .level-card--hub .level-arrow {
-    width: 28px !important;
-    height: 28px !important;
-    right: 16px !important;
-    top: 16px !important;
-  }
-}
-
-/* =========================================================
-   RESOURCES ATMOSPHERE POLISH
-   Match the main site + Learning Arcade background language:
-   soft purple/blue/pink/cyan glows with a subtle grid.
-   Applies to the Resources hub and every nested resource page
-   that loads this shared stylesheet.
-========================================================= */
-body.page-calm,
-body[data-course="american-english-file"],
-body[data-course="pre-starter"] {
-  background-color: #f0f4ff !important;
-  background-image:
-    radial-gradient(ellipse 78% 48% at 10% 4%, rgba(99,102,241,.18), transparent 58%),
-    radial-gradient(ellipse 62% 42% at 92% 14%, rgba(236,72,153,.10), transparent 56%),
-    radial-gradient(ellipse 58% 42% at 50% 100%, rgba(34,211,238,.10), transparent 58%),
-    linear-gradient(180deg, rgba(248,250,255,.76) 0%, rgba(240,244,255,.92) 52%, rgba(238,244,255,.98) 100%),
-    linear-gradient(rgba(99,102,241,.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99,102,241,.045) 1px, transparent 1px) !important;
-  background-size: auto, auto, auto, auto, 48px 48px, 48px 48px !important;
-  background-attachment: fixed !important;
-  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat !important;
-}
-
-html[data-theme="dark"] body.page-calm,
-html[data-theme="dark"] body[data-course="american-english-file"],
-html[data-theme="dark"] body[data-course="pre-starter"] {
-  background-color: #07080f !important;
-  background-image:
-    radial-gradient(ellipse 78% 48% at 10% 4%, rgba(99,102,241,.28), transparent 58%),
-    radial-gradient(ellipse 62% 42% at 92% 14%, rgba(236,72,153,.14), transparent 56%),
-    radial-gradient(ellipse 58% 42% at 50% 100%, rgba(34,211,238,.11), transparent 58%),
-    radial-gradient(ellipse 72% 58% at 50% 42%, rgba(15,23,42,.72), #07080f 76%),
-    linear-gradient(rgba(148,163,184,.038) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148,163,184,.038) 1px, transparent 1px) !important;
-  background-size: auto, auto, auto, auto, 48px 48px, 48px 48px !important;
-  background-attachment: fixed !important;
-  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat !important;
-}
-
-/* Keep the atmosphere visible around cards without washing out the page. */
-body.page-calm main,
-body[data-course="american-english-file"] main,
-body[data-course="pre-starter"] main {
-  background: transparent !important;
-}
-
-/* Slightly more glass-like resource surfaces so the new atmosphere reads
-   consistently with the main page and Arcade. */
-a.resource-card,
-.resource-card,
-.level-card,
-.unit-card,
-.item-card,
-.ab-card,
-.content-card,
-.lesson-type-card {
-  backdrop-filter: blur(12px) saturate(1.08);
-  -webkit-backdrop-filter: blur(12px) saturate(1.08);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body.page-calm,
-  body[data-course="american-english-file"],
-  body[data-course="pre-starter"] {
-    background-attachment: scroll !important;
-  }
-}
-
-
-/* =========================================================
-   COMPACT HUB CARDS — small, side by side, left-aligned
-   under the "Coursebooks" heading (desktop/tablet only)
-========================================================= */
-@media (min-width: 701px) {
-  .resource-grid.resource-grid--hub {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: flex-start !important;
-    align-items: stretch !important;
-    gap: 14px !important;
-    /* same left edge/width as the "Coursebooks" heading */
-    width: min(calc(100% - 48px), var(--container, 1180px)) !important;
-    margin: 0 auto 50px !important;
-  }
-
-  a.resource-card.resource-card--hub,
-  .resource-card.resource-card--hub {
-    flex: 0 0 205px !important;
-    width: 205px !important;
-    min-height: 0 !important;
-    padding: 16px 14px 14px !important;
-    border-radius: 16px !important;
-  }
-
-  .resource-card--hub .resource-icon {
-    width: 40px !important;
-    height: 40px !important;
-    margin: 0 auto 8px !important;
-    border-radius: 11px !important;
-    font-size: 18px !important;
-  }
-
-  .resource-card--hub h3 {
-    margin: 0 0 6px !important;
-    font-size: 12px !important;
-    letter-spacing: 0.04em !important;
-  }
-
-  .resource-card--hub .card-rule {
-    width: 28px !important;
-    height: 2px !important;
-    margin: 0 auto 8px !important;
-  }
-
-  .resource-card--hub p {
-    margin: 0 0 10px !important;
-    font-size: 0.72rem !important;
-    line-height: 1.4 !important;
-    max-width: none !important;
-  }
-
-  .resource-card--hub .card-tag {
-    margin: 0 auto 12px !important;
-    padding: 3px 8px !important;
-    font-size: 9px !important;
-  }
-
-  .resource-card--hub .card-link {
-    min-width: 0 !important;
-    padding: 7px 14px !important;
-    font-size: 10.5px !important;
-  }
-
-  .resource-card--hub:hover {
-    transform: translateY(-4px) !important;
-  }
-}
-
-
-/* =========================================================
-   TACTICS FOR LISTENING hub card — indigo/violet
-   (mirrors the Pre-starter / AEF / Teen2Teen hub card rules)
-========================================================= */
-.resource-card--hub.resource-card--tactics {
-  border-color: rgba(99, 102, 241, 0.4) !important;
-  background: linear-gradient(160deg, rgba(224, 231, 255, 0.95) 0%, rgba(238, 242, 255, 0.9) 45%, #fff 100%) !important;
-  box-shadow: 0 14px 36px rgba(99, 102, 241, 0.14) !important;
-}
-.resource-card--hub.resource-card--tactics::before {
-  background: linear-gradient(90deg, #a5b4fc, #6366f1, #4f46e5) !important;
-}
-.resource-card--hub.resource-card--tactics .resource-icon {
-  background: linear-gradient(145deg, #e0e7ff, #a5b4fc) !important;
-  color: #4338ca !important;
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25) !important;
-}
-.resource-card--hub.resource-card--tactics .card-rule {
-  background: #6366f1 !important;
-}
-.resource-card--hub.resource-card--tactics .card-tag {
-  background: rgba(99, 102, 241, 0.14) !important;
-  color: #4338ca !important;
-}
-.resource-card--hub.resource-card--tactics .card-link {
-  background: linear-gradient(180deg, #818cf8, #4f46e5) !important;
-  color: #fff !important;
-  opacity: 1 !important;
-  filter: none !important;
-  box-shadow: 0 4px 0 #3730a3, 0 10px 22px rgba(79, 70, 229, 0.32) !important;
-}
-
-/* Dark: Tactics indigo */
-html[data-theme="dark"] .resource-card--hub.resource-card--tactics {
-  border-color: rgba(165, 180, 252, 0.5) !important;
-  background: linear-gradient(160deg, rgba(67, 56, 202, 0.4) 0%, rgba(25, 25, 55, 0.92) 45%, rgba(10, 16, 28, 0.98) 100%) !important;
-  box-shadow: 0 0 36px rgba(99, 102, 241, 0.18), 0 16px 40px rgba(0,0,0,0.5) !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--tactics h3 {
-  color: #eef2ff !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--tactics p {
-  color: #c7d2fe !important;
-  opacity: 0.85;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--tactics .resource-icon {
-  background: linear-gradient(145deg, #4f46e5, #3730a3) !important;
-  color: #e0e7ff !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--tactics .card-rule {
-  background: #818cf8 !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--tactics .card-tag {
-  background: rgba(129, 140, 248, 0.2) !important;
-  color: #c7d2fe !important;
-}
-html[data-theme="dark"] .resource-card--hub.resource-card--tactics .card-link {
-  color: #ffffff !important;
-  opacity: 1 !important;
-  filter: none !important;
-  background: linear-gradient(180deg, #818cf8, #4f46e5) !important;
-}
-
-
-/* =========================================================
-   ALIGN hub cards — icon, name, rule, description, tag and
-   button sit at the same height in every card (desktop/tablet)
-========================================================= */
-@media (min-width: 701px) {
-  /* fixed-size icon box so a wrapping emoji pair can't push the rest down */
-  .resource-card--hub .resource-icon {
-    height: 40px !important;
-    min-height: 40px !important;
-    max-height: 40px !important;
-    overflow: hidden !important;
-    line-height: 1 !important;
-    white-space: nowrap !important;
-  }
-  .resource-card--hub.resource-card--teen-2-teen .resource-icon {
-    font-size: 15px !important;
-    letter-spacing: -2px !important;
-  }
-
-  /* one-line names, same box height */
-  .resource-card--hub h3 {
-    min-height: 1.3em !important;
-    line-height: 1.3 !important;
-  }
-
-  /* description reserves room for 4 lines, so tags start at the same y */
-  .resource-card--hub p {
-    min-height: 5.6em !important;   /* 4 lines × 1.4 line-height */
-    line-height: 1.4 !important;
-    margin-bottom: 8px !important;
-  }
-
-  /* tag in a fixed-height slot */
-  .resource-card--hub .card-tag {
-    display: inline-flex !important;
-    align-items: center !important;
-    min-height: 22px !important;
-    white-space: nowrap !important;
-  }
-}
-
-
-/* =========================================================
-   TACTICS — dark mode definitive rules (same pattern/specificity
-   as Pre-starter / AEF / Teen2Teen): tinted gradient + inner glow
-========================================================= */
-html[data-theme="dark"] a.resource-card.resource-card--tactics,
-html[data-theme="dark"] a.resource-card.resource-card--hub.resource-card--tactics,
-html[data-theme="dark"] .resource-card.resource-card--tactics {
-  border: 1.5px solid rgba(165, 180, 252, 0.55) !important;
-  background:
-    linear-gradient(155deg,
-      rgba(79, 70, 229, 0.38) 0%,
-      rgba(30, 27, 75, 0.92) 40%,
-      rgba(10, 16, 28, 0.98) 100%) !important;
-  box-shadow:
-    0 0 0 1px rgba(165, 180, 252, 0.12) inset,
-    0 0 36px rgba(99, 102, 241, 0.2),
-    0 16px 40px rgba(0, 0, 0, 0.5) !important;
-}
-html[data-theme="dark"] .resource-card--tactics::before {
-  content: "" !important;
-  height: 4px !important;
-  background: linear-gradient(90deg, #c7d2fe, #6366f1, #4338ca) !important;
-  opacity: 1 !important;
-}
-html[data-theme="dark"] .resource-card--tactics .resource-icon {
-  background: linear-gradient(145deg, #4f46e5, #3730a3) !important;
-  color: #e0e7ff !important;
-  border: 1px solid rgba(165, 180, 252, 0.35) !important;
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4) !important;
-}
-html[data-theme="dark"] .resource-card--tactics .card-tag {
-  background: rgba(99, 102, 241, 0.22) !important;
-  background-image: none !important;
-  color: #c7d2fe !important;
-  border: 1px solid rgba(165, 180, 252, 0.28) !important;
-}
-html[data-theme="dark"] .resource-card--tactics .card-link {
-  background: linear-gradient(180deg, #818cf8 0%, #4f46e5 100%) !important;
-  color: #ffffff !important;
-  font-weight: 900 !important;
-  box-shadow: 0 4px 0 #312e81, 0 10px 24px rgba(79, 70, 229, 0.4) !important;
-}
-
-
-/* =========================================================
-   BACK BUTTON — same pill + spacing as Tactics For Listening
-   Applies to Pre-starter, American English File, Teen2Teen and
-   the pages inside them.
-========================================================= */
-html body a.back-link,
-html body a.back-button {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 6px !important;
-  min-height: 0 !important;
-  margin-bottom: 0 !important;
-  padding: 8px 14px 8px 11px !important;
-  border-radius: 999px !important;
-  background: #ffffff !important;
-  border: 1px solid #e3e8f2 !important;
-  color: #1c2333 !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  line-height: 1.2 !important;
-  text-decoration: none !important;
-  box-shadow: 0 1px 2px rgba(20, 28, 50, 0.05) !important;
-  transition: all 0.2s ease !important;
-}
-html body a.back-link:hover,
-html body a.back-button:hover {
-  color: #3b5bdb !important;
-  background: #ffffff !important;
-  border-color: #c3d0ff !important;
-  transform: translateX(-2px) !important;
-}
-html[data-theme="dark"] body a.back-link,
-html[data-theme="dark"] body a.back-button {
-  background: #1a1e2b !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-  color: #eef1f8 !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
-}
-html[data-theme="dark"] body a.back-link:hover,
-html[data-theme="dark"] body a.back-button:hover {
-  background: #1a1e2b !important;
-  color: #8aa2ff !important;
-  border-color: rgba(138, 162, 255, 0.3) !important;
-}
-
-/* Wrapper rows: no extra margins, space below the pill like Tactics */
-.aef-back-row,
-.skill-intro-top.aef-back-row {
-  margin-bottom: 14px !important;
-}
-.arcade-intro p:has(> a.back-link) {
-  margin: 0 0 14px !important;
-}
-
-/* Top spacing — Tactics: 12px page padding + 28px intro padding.
-   (:not(#x) only raises specificity above the older !important
-   body rules; it matches every page.) */
-@media (min-width: 701px) {
-  html body:has(.arcade-intro a.back-link):not(#x) {
-    padding-top: 12px !important;
-  }
-  html body:has(.arcade-intro a.back-link):not(#x) .arcade-intro {
-    padding-top: 28px !important;
-  }
-}
-@media (max-width: 700px) {
-  html body:has(.arcade-intro a.back-link):not(#x) {
-    padding-top: max(8px, env(safe-area-inset-top, 0px)) !important;
-  }
-  html body:has(.arcade-intro a.back-link):not(#x) .arcade-intro {
-    padding-top: 10px !important;
   }
 }

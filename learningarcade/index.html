@@ -18,6 +18,7 @@
     href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
     rel="stylesheet"
   >
+  <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="theme.css">
 
@@ -35,14 +36,12 @@
 
     html,
     body {
-      height: 100%;
-      max-height: 100dvh;
-      overflow: hidden;
+      min-height: 100%;
     }
 
     body {
       font-family:
-        Inter,
+        "Plus Jakarta Sans",
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
@@ -51,10 +50,8 @@
 
       background: var(--la-bg, #07080f);
       color: var(--la-text, #f4f6fb);
-      height: 100dvh;
-      max-height: 100dvh;
-      min-height: 0;
-      overflow: hidden;
+      min-height: 100dvh;
+      overflow-x: hidden;
       transition: background-color 0.25s ease, color 0.25s ease;
     }
 
@@ -96,17 +93,14 @@
 
     .arcade-bg {
       position: relative;
-
-      height: 100dvh;
-      min-height: 100dvh;
-      max-height: 100dvh;
-
+      flex: 1 0 auto;
+      min-height: calc(100dvh - 130px);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
 
-      padding: 72px 16px 56px;
+      padding: 32px 16px 48px;
       box-sizing: border-box;
 
       overflow: hidden;
@@ -1191,45 +1185,47 @@
       -webkit-user-drag: none;
     }
 
-    /* No-scroll lock + vertical center content (desktop) */
+    /* Scroll-safe layout with sticky topbar */
     html, body {
-      overflow: hidden !important;
-      height: 100% !important;
-      max-height: 100dvh !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
     }
     .arcade-bg {
-      height: 100dvh !important;
-      max-height: 100dvh !important;
+      height: auto !important;
+      max-height: none !important;
+      min-height: calc(100dvh - 120px) !important;
       overflow: hidden !important;
       justify-content: center !important;
     }
-    @media (max-width: 700px) {
-      html, body {
-        overflow: hidden !important;
-      }
-      .arcade-bg {
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-        justify-content: flex-start !important;
-        -webkit-overflow-scrolling: touch;
-      }
-    }
     .arcade-footer {
-      margin-top: 16px;
+      margin-top: 20px;
       flex: 0 0 auto;
     }
-    /* Hide broken float icons boxes if images missing */
     .float-icons img {
       background: transparent;
     }
-    .card-image.no-img {
+    .card-image {
+      position: relative;
+    }
+    .card-image-fallback {
       display: none;
+      place-items: center;
+      font-family: "Fredoka", sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      text-align: center;
+    }
+    .card-image.no-img img {
+      display: none;
+    }
+    .card-image.no-img .card-image-fallback {
+      display: grid;
     }
     .choice-card {
       justify-content: center;
-    }
-    .float-icons img[src]:not([src=""]) {
-      /* keep */
     }
 
     .card-emoji {
@@ -1703,43 +1699,49 @@
 </head>
 
 
-<body>
+<body class="has-site-topbar">
 
-  <!-- =================================
-       FLOATING ARCADE-STYLE HEADER
-  ================================== -->
-<header class="arcade-header-bar">
-  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
-      <a href="../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
-      <a href="./" class="nav-link active" aria-current="page" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
-      <a href="../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-      <a href="../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
-      <a href="./profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+<header class="site-topbar">
+  <div class="topbar-inner">
+    <a href="../" class="brand-mark">Mr. Sheyhaki</a>
+
+    <nav class="topbar-nav" aria-label="Main navigation">
+      <a href="../" class="topbar-link">Home</a>
+      <a href="./" class="topbar-link active" aria-current="page">Arcade</a>
+      <a href="../multiplayer/" class="topbar-link">Multiplayer</a>
+      <a href="../resources/" class="topbar-link">Resources</a>
+      <a href="../about/" class="topbar-link">About</a>
     </nav>
+
+    <div class="topbar-actions">
+      <button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <a href="./profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>
+    </div>
+  </div>
+  <nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+    <a href="../">Home</a>
+    <a href="./" class="active" aria-current="page">Arcade</a>
+    <a href="../multiplayer/">Multiplayer</a>
+    <a href="../resources/">Resources</a>
+    <a href="../about/">About</a>
+  </nav>
 </header>
 
+  <main class="arcade-bg">
 
-
-  <div class="arcade-bg">
-
-
-    <!-- =====================================================
-         FLOATING ARCADE ICONS
-    ====================================================== -->
-
-        <div class="float-icons" aria-hidden="true">
-      <!-- LEFT SIDE — bouncing icons -->
-      <img class="fi fi-left fi-1" src="https://cdn.imgurl.ir/uploads/f232610_trophy.png" alt="" width="68" height="68">
-      <img class="fi fi-left fi-2" src="https://cdn.imgurl.ir/uploads/n156413_rocket.png" alt="" width="50" height="50">
-      <img class="fi fi-left fi-3" src="https://cdn.imgurl.ir/uploads/f7198_star.png" alt="" width="64" height="64">
-      <img class="fi fi-left fi-4" src="https://cdn.imgurl.ir/uploads/j55307_controller.png" alt="" width="54" height="54">
-      <img class="fi fi-left fi-5" src="https://cdn.imgurl.ir/uploads/q389948_books.png" alt="" width="48" height="48">
-      <!-- RIGHT SIDE -->
-      <img class="fi fi-right fi-1" src="https://cdn.imgurl.ir/uploads/u099192_arrow.png" alt="" width="68" height="68">
-      <img class="fi fi-right fi-2" src="https://cdn.imgurl.ir/uploads/r628606_heart.png" alt="" width="50" height="50">
-      <img class="fi fi-right fi-3" src="https://cdn.imgurl.ir/uploads/j52846_level-up.png" alt="" width="64" height="64">
-      <img class="fi fi-right fi-4" src="https://cdn.imgurl.ir/uploads/a81537_headphone.png" alt="" width="54" height="54">
-      <img class="fi fi-right fi-5" src="https://cdn.imgurl.ir/uploads/m08707_medal.png" alt="" width="48" height="48">
+    <div class="float-icons" aria-hidden="true">
+      <img class="fi fi-left fi-1" src="https://cdn.imgurl.ir/uploads/f232610_trophy.png" alt="" width="68" height="68" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      <img class="fi fi-left fi-2" src="https://cdn.imgurl.ir/uploads/n156413_rocket.png" alt="" width="50" height="50" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      <img class="fi fi-left fi-3" src="https://cdn.imgurl.ir/uploads/f7198_star.png" alt="" width="64" height="64" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      <img class="fi fi-left fi-4" src="https://cdn.imgurl.ir/uploads/j55307_controller.png" alt="" width="54" height="54" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      <img class="fi fi-left fi-5" src="https://cdn.imgurl.ir/uploads/q389948_books.png" alt="" width="48" height="48" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      <img class="fi fi-right fi-1" src="https://cdn.imgurl.ir/uploads/u099192_arrow.png" alt="" width="68" height="68" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      <img class="fi fi-right fi-2" src="https://cdn.imgurl.ir/uploads/r628606_heart.png" alt="" width="50" height="50" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      <img class="fi fi-right fi-3" src="https://cdn.imgurl.ir/uploads/j52846_level-up.png" alt="" width="64" height="64" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      <img class="fi fi-right fi-4" src="https://cdn.imgurl.ir/uploads/a81537_headphone.png" alt="" width="54" height="54" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      <img class="fi fi-right fi-5" src="https://cdn.imgurl.ir/uploads/m08707_medal.png" alt="" width="48" height="48" referrerpolicy="no-referrer" onerror="this.style.display='none'">
     </div>
 
 <!-- =====================================================
@@ -1790,7 +1792,7 @@
         href="adult/"
       >
 
-        <div class="card-image"><img src="https://cdn.imgurl.ir/uploads/w637221_adults-card.jpg" onerror="this.parentElement.classList.add('no-img')" alt="Adults" width="720" height="480" loading="lazy"></div>
+        <div class="card-image"><img src="https://cdn.imgurl.ir/uploads/w637221_adults-card.jpg" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('no-img')" alt="Adults" width="720" height="480" loading="lazy"><span class="card-image-fallback" aria-hidden="true">A+</span></div>
 
         <h2 class="card-title">
           Adults
@@ -1820,7 +1822,7 @@
         href="kids/select-teacher/"
       >
 
-        <div class="card-image"><img src="https://cdn.imgurl.ir/uploads/w394679_kids-card.jpg" onerror="this.parentElement.classList.add('no-img')" alt="Kids and Teens" width="720" height="788" loading="lazy"></div>
+        <div class="card-image"><img src="https://cdn.imgurl.ir/uploads/w394679_kids-card.jpg" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('no-img')" alt="Kids and Teens" width="720" height="788" loading="lazy"><span class="card-image-fallback" aria-hidden="true">★</span></div>
 
         <h2 class="card-title">
 
@@ -1850,22 +1852,22 @@
     </div>
 
 
-    <!-- =====================================================
-         FOOTER
-    ====================================================== -->
-
     <p class="arcade-footer">
-
-      <strong>
-        Fun Games
-      </strong>
-
-      for English Learners
-
+      <strong>Fun Games</strong> for English Learners · <a href="leaderboard/" style="color:inherit;text-decoration:underline;">Leaderboard</a>
     </p>
 
+  </main>
 
-  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · Learning Arcade</p>
+      <div class="footer-links">
+        <a class="footer-link" href="../contact/">Contact</a>
+        <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
+      </div>
+    </div>
+  </footer>
 
 
   <!-- =======================================================
@@ -2103,7 +2105,7 @@
 <!-- swipe-nav.js optional -->
 
   <!-- Auth system (login / register) -->
-  <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
+  <script src="/learningarcade/vendor/supabase.min.js"></script>
   <script src="auth-system/auth.js"></script>
   <script src="auth-system/add-login-button.js"></script>
 

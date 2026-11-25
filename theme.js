@@ -1,12 +1,13 @@
 /* =========================================================
-   MR. SHEYHAKI — GLOBAL THEME TOGGLE (JS)
-   Wall light-switch UI + LED edges. Persists light/dark
-   across every page and game (localStorage: mrsheyhaki-theme).
-========================================================= */
+   Mr. Sheyhaki — Shared Theme, Topbar Upgrade & Session CTA
+   Works across /, /learningarcade/**, /multiplayer/**,
+   /resources/**, /about/, and /contact/
+   ========================================================= */
 (function () {
   "use strict";
 
   var STORAGE_KEY = "mrsheyhaki-theme";
+  var SESSION_KEY = "laAuthSession";
   var root = document.documentElement;
 
   function getPreferred() {
@@ -21,206 +22,264 @@
   }
 
   function currentTheme() {
-    return root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    var attr = root.getAttribute("data-theme");
+    if (attr === "dark" || attr === "light") return attr;
+    return getPreferred();
+  }
+
+  function syncThemeControls(theme) {
+    document.querySelectorAll("#themeToggle, [data-theme-toggle]").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+      btn.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+      if (btn.classList.contains("theme-switch-btn")) {
+        btn.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+      } else if (
+        btn.classList.contains("theme-toggle") ||
+        btn.classList.contains("nav-theme-toggle") ||
+        btn.getAttribute("data-icon-only") === "true"
+      ) {
+        btn.textContent = theme === "dark" ? "☀️" : "🌙";
+      } else if (btn.id === "themeToggle") {
+        btn.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+      }
+    });
   }
 
   function applyTheme(theme) {
-    if (theme !== "dark" && theme !== "light") theme = "light";
     root.setAttribute("data-theme", theme);
+    if (document.body && document.body.classList.contains("quiz-page")) {
+      document.body.classList.toggle("light-mode", theme === "light");
+    }
     try {
       localStorage.setItem(STORAGE_KEY, theme);
     } catch (e) {}
+    syncThemeControls(theme);
+  }
 
-    // Sync header emoji toggle + ARIA
-    document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
-      btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
-      btn.setAttribute(
-        "aria-label",
-        theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
-      );
-      // Header emoji button (🌙 in light mode → click for dark; ☀️ in dark → click for light)
-      if (
-        !btn.classList.contains("wall-switch") &&
-        !btn.querySelector(".switch-handle") &&
-        (btn.classList.contains("theme-toggle") ||
-          btn.classList.contains("nav-theme-toggle") ||
-          btn.getAttribute("data-icon-only") === "true" ||
-          btn.classList.contains("icon-btn") ||
-          btn.classList.contains("theme-icon-only"))
-      ) {
-        btn.textContent = theme === "dark" ? "☀️" : "🌙";
+  applyTheme(getPreferred());
+
+  function ensureSharedAssets() {
+    if (!document.querySelector('link[href*="fonts.googleapis.com"][href*="Fredoka"]')) {
+      var fl = document.createElement("link");
+      fl.rel = "stylesheet";
+      fl.href = "https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap";
+      document.head.appendChild(fl);
+    }
+
+    var hasRootStyle = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).some(function (l) {
+      try {
+        return new URL(l.getAttribute("href") || "", location.href).pathname === "/style.css";
+      } catch (e) {
+        return false;
       }
     });
-
-    // Ensure LED strips exist and reflect theme
-    ensureLedStrips();
-  }
-
-  function toggleTheme() {
-    applyTheme(currentTheme() === "dark" ? "light" : "dark");
-  }
-
-  function ensureLedStrips() {
-    if (!document.body) return;
-    document.body.classList.add("site-led-ambient");
-    if (!document.getElementById("site-led-left")) {
-      var left = document.createElement("div");
-      left.id = "site-led-left";
-      left.className = "site-led-strip left";
-      left.setAttribute("aria-hidden", "true");
-      document.body.appendChild(left);
-    }
-    if (!document.getElementById("site-led-right")) {
-      var right = document.createElement("div");
-      right.id = "site-led-right";
-      right.className = "site-led-strip right";
-      right.setAttribute("aria-hidden", "true");
-      document.body.appendChild(right);
+    if (!hasRootStyle && document.head) {
+      var sl = document.createElement("link");
+      sl.rel = "stylesheet";
+      sl.href = "/style.css";
+      document.head.appendChild(sl);
     }
   }
 
-  function buildNavThemeToggle() {
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "theme-toggle nav-theme-toggle";
-    btn.setAttribute("data-theme-toggle", "true");
-    btn.setAttribute("data-icon-only", "true");
-    btn.setAttribute("aria-label", "Toggle color theme");
-    btn.setAttribute("aria-pressed", currentTheme() === "dark" ? "true" : "false");
-    btn.textContent = currentTheme() === "dark" ? "☀️" : "🌙";
-    return btn;
+  function activeSectionForPath() {
+    var p = (window.location.pathname || "/").toLowerCase();
+    if (p.indexOf("/multiplayer") !== -1) return "multiplayer";
+    if (p.indexOf("/learningarcade") !== -1) return "arcade";
+    if (p.indexOf("/resources") !== -1) return "resources";
+    if (p.indexOf("/about") !== -1 || p.indexOf("/contact") !== -1) return "about";
+    return "home";
   }
 
-  function findHeaderNav() {
-    return (
-      document.querySelector(".arcade-nav") ||
-      document.querySelector(".arcade-header-bar nav") ||
-      document.querySelector("header.arcade-header-bar nav") ||
-      document.querySelector("header nav.arcade-nav") ||
-      document.querySelector("header .main-nav") ||
-      document.querySelector("nav.arcade-nav")
-    );
+  function readSession() {
+    try {
+      if (window.LAAuth && typeof window.LAAuth.getSession === "function") {
+        return window.LAAuth.getSession();
+      }
+      var raw = localStorage.getItem(SESSION_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
   }
 
-  function ensureThemeFab() {
-    // Remove bottom wall-switch / floating theme FABs
-    document.querySelectorAll(".site-theme-fab, [data-theme-toggle].wall-switch, button.wall-switch").forEach(function (el) {
+  function buildTopbarElement() {
+    var active = activeSectionForPath();
+    var header = document.createElement("header");
+    header.className = "site-topbar";
+
+    var navLinks = [
+      { key: "home", href: "/", label: "Home" },
+      { key: "arcade", href: "/learningarcade/", label: "Arcade" },
+      { key: "multiplayer", href: "/multiplayer/", label: "Multiplayer" },
+      { key: "resources", href: "/resources/", label: "Resources" },
+      { key: "about", href: "/about/", label: "About" },
+    ];
+
+    var navHtml = navLinks
+      .map(function (item) {
+        var isCurrent = item.key === active;
+        return (
+          '<a href="' +
+          item.href +
+          '" class="topbar-link' +
+          (isCurrent ? " active" : "") +
+          '"' +
+          (isCurrent ? ' aria-current="page"' : "") +
+          ">" +
+          item.label +
+          "</a>"
+        );
+      })
+      .join("");
+
+    var drawerHtml = navLinks
+      .map(function (item) {
+        var isCurrent = item.key === active;
+        return (
+          '<a href="' +
+          item.href +
+          '" class="' +
+          (isCurrent ? "active" : "") +
+          '"' +
+          (isCurrent ? ' aria-current="page"' : "") +
+          ">" +
+          item.label +
+          "</a>"
+        );
+      })
+      .join("");
+
+    header.innerHTML =
+      '<div class="topbar-inner">' +
+        '<a href="/" class="brand-mark">Mr. Sheyhaki</a>' +
+        '<nav class="topbar-nav" aria-label="Main navigation">' + navHtml + "</nav>" +
+        '<div class="topbar-actions">' +
+          '<button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>' +
+          "</button>" +
+          '<a href="/learningarcade/profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>' +
+        "</div>" +
+      "</div>" +
+      '<nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">' + drawerHtml + "</nav>";
+
+    return header;
+  }
+
+  function upgradeLegacyHeader() {
+    var legacy = document.querySelector("header.arcade-header-bar");
+    var existingTopbar = document.querySelector("header.site-topbar");
+
+    if (legacy && !existingTopbar) {
+      var topbar = buildTopbarElement();
+      legacy.replaceWith(topbar);
+      existingTopbar = topbar;
+    }
+
+    if (existingTopbar) {
+      document.body.classList.add("has-site-topbar");
+    }
+
+    document.querySelectorAll(".site-theme-fab, a.profile-fab, .profile-fab").forEach(function (el) {
       el.remove();
     });
+  }
 
-    var nav = findHeaderNav();
-    if (!nav) {
-      // No header on this page (e.g. game pages) — nothing to inject
-      applyTheme(root.getAttribute("data-theme") || getPreferred());
+  function wireMobileMenu() {
+    var btn = document.getElementById("mobileMenuBtn");
+    var drawer = document.getElementById("mobileNavDrawer");
+    if (!btn || !drawer || btn.dataset.menuBound === "1") return;
+    btn.dataset.menuBound = "1";
+
+    btn.addEventListener("click", function () {
+      var open = drawer.classList.toggle("is-open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+
+    drawer.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () {
+        drawer.classList.remove("is-open");
+        btn.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    document.addEventListener("click", function (ev) {
+      if (!drawer.classList.contains("is-open")) return;
+      if (btn.contains(ev.target) || drawer.contains(ev.target)) return;
+      drawer.classList.remove("is-open");
+      btn.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  function syncAccountCta() {
+    var cta = document.getElementById("headerAccountCta");
+    if (!cta) return;
+    var user = readSession();
+    if (user && (user.displayName || user.username)) {
+      cta.textContent = user.displayName || user.username;
+      cta.href = "/learningarcade/profile/";
+    } else {
+      cta.textContent = "Sign in";
+      var cur = (window.location.pathname || "/") + (window.location.search || "");
+      cta.href = "/learningarcade/auth-system/login.html?redirect=" + encodeURIComponent(cur);
+    }
+  }
+
+  function ensureFooterThemeButton() {
+    var footer = document.querySelector("footer.site-footer");
+    if (!footer) return;
+    if (footer.querySelector("#themeToggle, [data-theme-toggle]")) return;
+
+    var inner = footer.querySelector(".footer-inner");
+    if (!inner) {
+      var existingP = footer.querySelector("p");
+      var copyText = existingP ? existingP.innerHTML : '© <span id="year"></span> Mr. Sheyhaki · English Teacher';
+      footer.innerHTML =
+        '<div class="footer-inner">' +
+          '<p class="footer-copy">' + copyText + "</p>" +
+          '<div class="footer-links">' +
+            '<a class="footer-link" href="/contact/">Contact</a>' +
+            '<a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>' +
+            '<button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>' +
+          "</div>" +
+        "</div>";
       return;
     }
 
-    var existing = nav.querySelector("[data-theme-toggle], .theme-toggle, .nav-theme-toggle");
-    if (!existing) {
-      var btn = buildNavThemeToggle();
-      var profile = nav.querySelector(".nav-profile");
-      if (profile) nav.insertBefore(btn, profile);
-      else nav.appendChild(btn);
-    } else {
-      existing.classList.remove("site-theme-fab", "wall-switch");
-      existing.classList.add("theme-toggle", "nav-theme-toggle");
-      existing.setAttribute("data-theme-toggle", "true");
-      existing.setAttribute("data-icon-only", "true");
-      if (existing.tagName === "BUTTON") existing.type = "button";
-      // Clear any fixed bottom positioning left over from old FAB
-      existing.style.position = "";
-      existing.style.top = "";
-      existing.style.right = "";
-      existing.style.bottom = "";
-      existing.style.left = "";
-      existing.style.zIndex = "";
-      existing.style.width = "";
-      existing.style.height = "";
-      existing.style.minWidth = "";
-      existing.style.minHeight = "";
-      existing.style.display = "";
-      existing.removeAttribute("hidden");
-      // Ensure emoji content (not wall-switch HTML)
-      if (existing.querySelector(".switch-handle") || existing.querySelector(".switch-plate")) {
-        existing.innerHTML = "";
-        existing.textContent = currentTheme() === "dark" ? "☀️" : "🌙";
-      }
+    var linksWrap = inner.querySelector(".footer-links");
+    if (!linksWrap) {
+      linksWrap = document.createElement("div");
+      linksWrap.className = "footer-links";
+      inner.appendChild(linksWrap);
     }
-
-    // Profile icon — only inside arcade-nav
-    if (nav && !nav.querySelector(".nav-profile")) {
-      var profile = document.createElement("a");
-      var path = (window.location.pathname || "").replace(/\\/g, "/");
-      if (/\/learningarcade(\/|$)/i.test(path)) {
-        profile.href = path.match(/\/learningarcade\/?$/i) ? "profile/" : "../profile/";
-      } else {
-        profile.href = "learningarcade/profile/";
-      }
-      profile.className = "nav-link nav-profile";
-      profile.setAttribute("aria-label", "Profile");
-      profile.title = "My Profile";
-      profile.setAttribute("data-icon", "👤");
-      profile.innerHTML =
-        '<span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span>';
-      nav.appendChild(profile);
-    } else if (nav) {
-      var existingProfile = nav.querySelector(".nav-profile");
-      if (existingProfile) nav.appendChild(existingProfile);
-    }
-
-    // Remove any leftover floating profile FABs
-    document.querySelectorAll("a.profile-fab, .profile-fab").forEach(function (el) {
-      el.remove();
-    });
-
-    applyTheme(root.getAttribute("data-theme") || getPreferred());
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "theme-switch-btn";
+    btn.id = "themeToggle";
+    linksWrap.appendChild(btn);
   }
 
-  function bindToggles() {
-    ensureThemeFab();
-
-    document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
+  function bindThemeButtons() {
+    document.querySelectorAll("#themeToggle, [data-theme-toggle]").forEach(function (btn) {
       if (btn.dataset.themeBound === "1") return;
       btn.dataset.themeBound = "1";
-      btn.addEventListener("click", function (e) {
-        e.preventDefault();
-        toggleTheme();
+      btn.addEventListener("click", function () {
+        var next = currentTheme() === "dark" ? "light" : "dark";
+        applyTheme(next);
       });
     });
+    syncThemeControls(currentTheme());
   }
-
-  // Apply preferred theme ASAP (before paint if script is early)
-  applyTheme(getPreferred());
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", bindToggles);
-  } else {
-    bindToggles();
-  }
-
-  // Expose for debugging / other scripts
-  window.MrSheyhakiTheme = {
-    apply: applyTheme,
-    toggle: toggleTheme,
-    current: currentTheme,
-  };
-})();
-
-/* =========================================================
-   SMOOTH PAGE TRANSITIONS (global)
-========================================================= */
-(function () {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-  var DURATION = 280;
 
   function boot() {
-    document.documentElement.classList.add("pt-ready");
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () {
-        document.documentElement.classList.add("pt-enter");
-      });
-    });
+    ensureSharedAssets();
+    upgradeLegacyHeader();
+    wireMobileMenu();
+    ensureFooterThemeButton();
+    bindThemeButtons();
+    syncAccountCta();
+
+    var y = document.getElementById("year");
+    if (y) y.textContent = String(new Date().getFullYear());
   }
 
   if (document.readyState === "loading") {
@@ -229,159 +288,11 @@
     boot();
   }
 
-  function sameOrigin(href) {
-    try {
-      return new URL(href, location.href).origin === location.origin;
-    } catch (e) {
-      return false;
+  document.addEventListener("supabase-ready", function () {
+    if (window.LAAuth && typeof window.LAAuth.verify === "function") {
+      window.LAAuth.verify().then(syncAccountCta).catch(function () {});
+    } else {
+      syncAccountCta();
     }
-  }
-
-  function shouldSkip(a) {
-    if (!a || !a.getAttribute("href")) return true;
-    var href = a.getAttribute("href");
-    if (a.target === "_blank" || a.hasAttribute("download")) return true;
-    if (href === "#" || href.charAt(0) === "#") return true;
-    if (a.hasAttribute("data-no-transition")) return true;
-    if (!sameOrigin(a.href)) return true;
-    try {
-      var u = new URL(a.href, location.href);
-      if (u.pathname === location.pathname && u.search === location.search) return true;
-    } catch (e) {}
-    return false;
-  }
-
-  document.addEventListener(
-    "click",
-    function (e) {
-      if (e.defaultPrevented || e.button !== 0) return;
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      var a = e.target.closest && e.target.closest("a[href]");
-      if (!a || shouldSkip(a)) return;
-      e.preventDefault();
-      document.documentElement.classList.remove("pt-enter");
-      document.documentElement.classList.add("pt-exit");
-      var href = a.href;
-      setTimeout(function () {
-        location.href = href;
-      }, DURATION);
-    },
-    true
-  );
-})();
-
-/* Floating nav shrink on scroll */
-(function () {
-  var nav = null;
-  function onScroll() {
-    if (!nav) nav = document.querySelector(".arcade-nav");
-    if (!nav) return;
-    if (window.scrollY > 24) nav.classList.add("nav-scrolled");
-    else nav.classList.remove("nav-scrolled");
-  }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", onScroll);
-  } else {
-    onScroll();
-  }
-})();
-
-/* Fill © year on every page */
-(function () {
-  function setYear() {
-    var y = String(new Date().getFullYear());
-    document.querySelectorAll("#year, [data-year], .js-year").forEach(function (el) {
-      el.textContent = y;
-    });
-  }
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", setYear);
-  } else {
-    setYear();
-  }
-})();
-
-/* Re-parent floating nav to <body> so position:fixed is not broken by
-   ancestor transform/filter. Layout (top/bottom) is pure CSS in style.css. */
-(function () {
-  function pinNavToBody() {
-    var nav = document.querySelector(".arcade-nav");
-    if (!nav) return;
-    if (nav.parentElement !== document.body) {
-      document.body.appendChild(nav);
-    }
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", pinNavToBody);
-  } else {
-    pinNavToBody();
-  }
-  window.addEventListener("load", pinNavToBody);
-})();
-
-
-/* =========================================================
-   Profile shortcut on every page
-   Uses a root-absolute URL so depth (games/resources/arcade)
-   never breaks the link.
-========================================================= */
-(function () {
-  var PROFILE_HREF = "/learningarcade/profile/";
-
-  function ensureProfileLink() {
-    try {
-      // Already has a working profile control in the main nav
-      if (document.querySelector(".arcade-nav .nav-profile, a.profile-fab, a[href*='learningarcade/profile']")) {
-        // Fix any relative profile links that point to the wrong folder
-        document.querySelectorAll("a[href*='profile']").forEach(function (a) {
-          var h = a.getAttribute("href") || "";
-          if (/profile\/?$/i.test(h) || /\/profile\//i.test(h) || h.indexOf("profile") !== -1) {
-            // Only rewrite if it looks like an internal profile nav link
-            if (a.classList.contains("profile-fab") || a.classList.contains("nav-profile") ||
-                (a.getAttribute("aria-label") || "").toLowerCase().indexOf("profile") !== -1) {
-              a.setAttribute("href", PROFILE_HREF);
-            }
-          }
-        });
-        return;
-      }
-
-      // Inject floating profile button
-      if (document.querySelector("a.profile-fab-global")) return;
-      var a = document.createElement("a");
-      a.href = PROFILE_HREF;
-      a.className = "profile-fab profile-fab-global";
-      a.setAttribute("aria-label", "My Profile");
-      a.title = "My Profile";
-      a.textContent = "👤";
-      a.style.cssText = [
-        "position:fixed",
-        "top:max(12px, env(safe-area-inset-top))",
-        "right:max(12px, env(safe-area-inset-right))",
-        "z-index:9998",
-        "width:44px",
-        "height:44px",
-        "border-radius:50%",
-        "display:flex",
-        "align-items:center",
-        "justify-content:center",
-        "font-size:1.25rem",
-        "text-decoration:none",
-        "background:rgba(105,55,216,.92)",
-        "color:#fff",
-        "box-shadow:0 4px 14px rgba(84,37,184,.35)",
-        "backdrop-filter:blur(6px)"
-      ].join(";");
-      document.body.appendChild(a);
-    } catch (e) {}
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", ensureProfileLink);
-  } else {
-    ensureProfileLink();
-  }
-  window.addEventListener("load", ensureProfileLink);
+  });
 })();

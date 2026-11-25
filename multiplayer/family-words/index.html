@@ -2,212 +2,344 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <script>
-    (function () {
-      try {
-        var t = localStorage.getItem("mrsheyhaki-theme");
-        if (t !== "dark" && t !== "light") t = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-        document.documentElement.setAttribute("data-theme", t);
-      } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
-    })();
-  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Family Words · Multiplayer | Mr. Sheyhaki</title>
-  <meta name="description" content="Family Words – multiplayer picture game. Create a lobby, choose the time, and match the picture with the right family word." />
+  <meta name="description" content="Family Words – multiplayer picture & plural game. Create a lobby, set the time, and race friends live." />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/theme.css" />
+  <link rel="stylesheet" href="/multiplayer/lobby.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* colours: dark by default; light when the site is in light mode */
-    :root {
-      --bg: #0f172a; --glow: #312e81; --card: #1e293b; --card2: #334155; --panel: #0f172a;
-      --text: #f1f5f9; --muted: #94a3b8; --line: rgba(255,255,255,.12); --soft: rgba(255,255,255,.06);
-      --chip-bg: linear-gradient(135deg, #3b2f6b, #2a2250); --chip-shadow: #151032;
-      --accent: #8b5cf6; --accent2: #a78bfa; --ok: #34d399; --bad: #f87171; --gold: #fbbf24;
-      --radius: 18px;
-    }
-    html[data-theme="light"] {
-      --bg: #f8fafc; --glow: #ddd6fe; --card: #ffffff; --card2: #e2e8f0; --panel: #f1f5f9;
-      --text: #0f172a; --muted: #475569; --line: rgba(15,23,42,.14); --soft: rgba(15,23,42,.05);
-      --chip-bg: linear-gradient(135deg, #ede9fe, #e0e7ff); --chip-shadow: #c4b5fd;
-      --accent: #7c3aed; --accent2: #6d28d9; --ok: #059669; --bad: #dc2626; --gold: #b45309;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; min-height: 100dvh; font-family: "Nunito", system-ui, sans-serif; color: var(--text);
-      background: radial-gradient(1200px 600px at 50% -10%, var(--glow) 0%, var(--bg) 55%);
-      padding: 1rem; padding-bottom: max(1rem, env(safe-area-inset-bottom));
-    }
-    .wrap { max-width: 520px; margin: 0 auto; }
-    header { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1rem; }
-    .back { color: var(--muted); text-decoration: none; font-weight: 700; font-size: .95rem; padding: .4rem .6rem; border-radius: 10px; }
-    .back:hover { color: var(--text); background: var(--soft); }
-    .badge { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; background: rgba(139,92,246,.25); color: var(--accent2); padding: .25rem .55rem; border-radius: 999px; }
-    h1 { font-size: 1.5rem; margin: 0 0 .25rem; font-weight: 800; }
-    h2 { font-size: 1.15rem; margin: 0 0 .5rem; font-weight: 800; }
-    .muted { color: var(--muted); font-size: .92rem; margin: 0; }
-    .card { background: var(--card); border: 1px solid var(--soft); border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1rem; box-shadow: 0 12px 40px rgba(0,0,0,.25); }
     .hidden { display: none !important; }
-    .btn { font: inherit; font-weight: 800; font-size: 1rem; border: 0; border-radius: 14px; padding: .8rem 1rem; cursor: pointer; color: #fff; background: var(--card2); }
-    .btn:disabled { opacity: .45; cursor: default; }
-    .btn-primary { background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 6px 0 #4c1d95; }
-    .btn-secondary { background: var(--card2); }
-    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
-    .btn-row { display: flex; gap: .6rem; flex-wrap: wrap; }
-    .btn-row > * { flex: 1; }
-    input[type=text], input[type=number] {
-      width: 100%; font: inherit; font-size: 1.05rem; padding: .75rem .9rem; border-radius: 12px;
-      border: 2px solid var(--line); background: var(--panel); color: var(--text);
+
+    /* Game & Results panels */
+    .fw-game-card,
+    .fw-end-card {
+      max-width: 620px;
+      margin: 0 auto;
     }
-    .status { font-size: .9rem; min-height: 1.2rem; margin: .6rem 0 0; color: var(--muted); }
-    .status.error { color: var(--bad); } .status.ok { color: var(--ok); }
-    .room-code { text-align: center; font-size: 2rem; font-weight: 800; letter-spacing: .25em; background: var(--panel); border-radius: 14px; padding: .6rem; margin: .4rem 0 .8rem; }
-
-    /* lobby */
-    .players { display: flex; flex-direction: column; gap: .4rem; margin: .6rem 0; }
-    .player { display: flex; align-items: center; justify-content: space-between; background: var(--panel); border-radius: 12px; padding: .55rem .75rem; font-weight: 700; }
-    .pill { font-size: .72rem; font-weight: 800; padding: .2rem .5rem; border-radius: 999px; background: var(--soft); color: var(--muted); }
-    .pill.ready { background: rgba(52,211,153,.2); color: var(--ok); }
-    .pill.host { background: rgba(251,191,36,.2); color: var(--gold); }
-    .pill.off { background: rgba(248,113,113,.18); color: var(--bad); }
-    .game-picks { display: flex; flex-direction: column; gap: .5rem; margin: .4rem 0 .9rem; }
-    .game-pick { appearance: none; width: 100%; font: inherit; color: var(--text); text-align: left; display: flex; align-items: center; gap: .7rem; background: var(--panel); border: 2px solid var(--line); border-radius: 14px; padding: .7rem .8rem; cursor: pointer; }
-    .game-pick.on { border-color: var(--accent); background: rgba(139,92,246,.12); }
-    .game-pick:disabled { cursor: default; opacity: .85; }
-    .game-pick .ico { font-size: 1.6rem; }
-    .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-top: .4rem; }
-    .time-btn { font: inherit; font-weight: 800; border: 2px solid var(--line); background: var(--panel); color: var(--text); border-radius: 12px; padding: .65rem .3rem; cursor: pointer; }
-    .time-btn.on { border-color: var(--gold); background: rgba(251,191,36,.15); color: var(--gold); }
-    .time-btn:disabled { opacity: .5; cursor: default; }
-    .custom-row { display: flex; gap: .5rem; margin-top: .55rem; }
-    .custom-row input { flex: 1; }
-    .custom-row button { flex: none; width: auto; padding: .7rem 1rem; }
-    .time-note { font-size: .85rem; color: var(--muted); margin: .5rem 0 0; }
-
-    /* game */
-    .g-top { display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin-bottom: .6rem; }
-    .g-count { font-weight: 800; color: var(--accent2); }
-    .g-timer { font-weight: 800; font-variant-numeric: tabular-nums; background: var(--panel); border-radius: 999px; padding: .3rem .8rem; }
-    .g-timer.low { color: var(--bad); }
-    .pic-wrap { background: #fff; border-radius: 16px; padding: .4rem; display: flex; align-items: center; justify-content: center; min-height: 180px; max-height: 42dvh; }
-    .pic-wrap img { max-width: 100%; max-height: 40dvh; object-fit: contain; display: block; }
-    .chips { display: grid; grid-template-columns: 1fr; gap: .6rem; margin-top: .8rem; }
+    .g-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+    }
+    .g-count {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--mp-accent);
+      font-variant-numeric: tabular-nums;
+    }
+    .g-timer {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      background: var(--site-surface-2);
+      border: 1px solid var(--site-border);
+      border-radius: 9px;
+      padding: 0.3rem 0.75rem;
+      color: var(--site-text);
+    }
+    .g-timer.low {
+      color: var(--mp-bad);
+      border-color: color-mix(in srgb, var(--mp-bad) 35%, transparent);
+    }
+    .pic-wrap {
+      background: #ffffff;
+      border: 1px solid var(--site-border);
+      border-radius: 14px;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 185px;
+      max-height: 40dvh;
+    }
+    .pic-wrap img {
+      max-width: 100%;
+      max-height: 38dvh;
+      object-fit: contain;
+      display: block;
+    }
     .g-stage { display: block; }
-    .g-stage.swap-in { animation: swapIn .38s cubic-bezier(.2,.8,.2,1) both; }
-    @keyframes swapIn { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
-    .word-wrap { background: #fff; border-radius: 16px; min-height: 170px; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-    .big-word { margin: 0; color: #1e1b4b; font-size: clamp(2rem, 9vw, 3.2rem); font-weight: 800; text-align: center; line-height: 1.15; }
-    @media (prefers-reduced-motion: reduce) { .g-stage.swap-in { animation: none; } }
-    .chip {
-      font: inherit; font-weight: 800; font-size: 1.15rem; color: var(--text);
-      background: var(--chip-bg); border: 2px solid rgba(167,139,250,.35);
-      border-radius: 16px; padding: .9rem 1rem; min-height: 56px; cursor: pointer; box-shadow: 0 5px 0 var(--chip-shadow);
-      transition: transform .1s ease, background .15s, border-color .15s;
+    .g-stage.swap-in { animation: swapIn 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+    @keyframes swapIn {
+      from { opacity: 0; transform: translateX(22px); }
+      to { opacity: 1; transform: none; }
     }
-    .chip:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--accent2); }
-    .chip:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--chip-shadow); }
-    .chip:disabled { cursor: default; }
-    .chip.right { background: rgba(52,211,153,.22); border-color: var(--ok); color: var(--text); }
-    .chip.wrong { background: rgba(248,113,113,.2); border-color: var(--bad); color: var(--text); }
-    .chip.dim { opacity: .45; }
-    .feedback { min-height: 1.6rem; text-align: center; font-weight: 800; font-size: 1.1rem; margin: .6rem 0 0; }
-    .feedback.ok { color: var(--ok); } .feedback.no { color: var(--bad); }
-    .board { margin-top: .9rem; display: flex; flex-direction: column; gap: .35rem; }
-    .row { display: flex; justify-content: space-between; align-items: center; background: var(--panel); border-radius: 12px; padding: .5rem .75rem; font-weight: 700; }
-    .row .pts { color: var(--gold); font-weight: 800; }
-    .row .done { font-size: .72rem; color: var(--ok); margin-left: .4rem; }
-    .row .off { font-size: .72rem; color: var(--bad); margin-left: .4rem; }
-
-    /* end */
-    .end-title { text-align: center; font-size: 1.6rem; font-weight: 800; margin: .2rem 0 .8rem; }
-    .end-row { display: flex; justify-content: space-between; align-items: center; background: var(--panel); border-radius: 12px; padding: .6rem .85rem; margin-bottom: .4rem; font-weight: 800; }
-    .end-row.first { border: 2px solid var(--gold); }
-    @media (min-width: 640px) {
+    .word-wrap {
+      background: var(--site-surface-2);
+      border: 1px solid var(--site-border);
+      border-radius: 14px;
+      min-height: 165px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+    .big-word {
+      margin: 0;
+      color: var(--site-text);
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.15;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .g-stage.swap-in { animation: none; }
+    }
+    .chips {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+      margin-top: 0.9rem;
+    }
+    @media (min-width: 600px) {
       .chips { grid-template-columns: repeat(3, 1fr); }
-      .chip { font-size: 1.1rem; }
     }
-    @media (max-height: 700px) and (max-width: 639px) {
-      .pic-wrap { min-height: 140px; max-height: 34dvh; }
-      .pic-wrap img { max-height: 32dvh; }
+    .chip {
+      font: inherit;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--site-text);
+      background: var(--site-surface-2);
+      border: 1.5px solid var(--site-border);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      min-height: 54px;
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.15s ease, background-color 0.15s ease;
     }
-      /* light mode: text follows the theme; only the purple primary button keeps white text */
-    h1, h2, h3 { color: var(--text); }
-    .btn { color: var(--text); }
-    .btn-primary { color: #fff; }
-    .btn-secondary { color: var(--text); }
-    html[data-theme="light"] .btn-primary { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
-    html[data-theme="light"] .btn-primary { box-shadow: 0 6px 0 #4c1d95; }
-    .big-word { color: var(--text); }
-    html[data-theme="light"] .word-wrap { background: var(--card); border: 1px solid var(--line); }
+    .chip:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: var(--mp-accent);
+      background: var(--mp-accent-soft);
+    }
+    .chip:disabled { cursor: default; }
+    .chip.right {
+      background: var(--mp-ok-soft);
+      border-color: var(--mp-ok);
+      color: var(--mp-ok);
+    }
+    .chip.wrong {
+      background: var(--mp-bad-soft);
+      border-color: var(--mp-bad);
+      color: var(--mp-bad);
+    }
+    .chip.dim { opacity: 0.45; }
+
+    .feedback {
+      min-height: 1.6rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1rem;
+      margin: 0.75rem 0 0;
+    }
+    .feedback.ok { color: var(--mp-ok); }
+    .feedback.no { color: var(--mp-bad); }
+
+    .board {
+      margin-top: 1rem;
+      border: 1px solid var(--site-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .board .row,
+    .end-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0.85rem;
+      background: var(--site-surface);
+      border-bottom: 1px solid var(--site-border);
+      font-weight: 700;
+      font-size: 0.9rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .board .row:last-child,
+    .end-row:last-child { border-bottom: 0; }
+    .row .pts,
+    .end-row .pts { color: var(--mp-warn); font-weight: 700; }
+    .row .done { font-size: 0.78rem; color: var(--mp-ok); margin-left: 0.4rem; }
+    .row .off { font-size: 0.75rem; color: var(--mp-bad); margin-left: 0.4rem; }
+    .end-board-box {
+      border: 1px solid var(--site-border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 1rem 0 1.25rem;
+    }
+    .end-row.first {
+      background: var(--mp-warn-soft);
+    }
+    .time-note {
+      font-size: 0.82rem;
+      color: var(--site-muted);
+      margin: 0.35rem 0 0;
+      font-weight: 500;
+    }
   </style>
 </head>
-<body>
-  <div class="wrap">
-    <header>
-      <a class="back" href="/multiplayer/" id="backLink">← Multiplayer</a>
-      <span class="badge">Multiplayer</span>
-    </header>
+<body class="mp-lobby-body has-site-topbar">
 
-    <h1>Family Words</h1>
-    <p class="muted" style="margin-bottom: 1rem;">Create a lobby, pick the time, and match each picture with the right family word.</p>
+  <header class="site-topbar">
+    <div class="topbar-inner">
+      <a href="/" class="brand-mark">Mr. Sheyhaki</a>
+      <nav class="topbar-nav" aria-label="Main navigation">
+        <a href="/" class="topbar-link">Home</a>
+        <a href="/learningarcade/" class="topbar-link">Arcade</a>
+        <a href="/multiplayer/" class="topbar-link active" aria-current="page">Multiplayer</a>
+        <a href="/resources/" class="topbar-link">Resources</a>
+        <a href="/about/" class="topbar-link">About</a>
+      </nav>
+      <div class="topbar-actions">
+        <button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <a href="/learningarcade/profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>
+      </div>
+    </div>
+    <nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+      <a href="/">Home</a>
+      <a href="/learningarcade/">Arcade</a>
+      <a href="/multiplayer/" class="active" aria-current="page">Multiplayer</a>
+      <a href="/resources/">Resources</a>
+      <a href="/about/">About</a>
+    </nav>
+  </header>
+
+  <main class="mp-shell">
+    <div class="mp-subhead">
+      <div class="mp-subhead-left">
+        <a class="mp-back-link" href="/multiplayer/" id="backLink">← Multiplayer</a>
+        <h1 class="mp-title">Family Words</h1>
+        <p class="mp-subtitle">Vocabulary · Picture Match &amp; Singular/Plural · Host sets match timer</p>
+      </div>
+      <div class="mp-identity hidden" id="userIdentity">
+        <div class="mp-identity-avatar" id="userAvatar">P</div>
+        <div class="mp-identity-meta">
+          <span class="mp-identity-name" id="userName">—</span>
+          <span class="mp-conn-state" id="connBadge"><span class="mp-conn-dot"></span><span id="connText">Connecting…</span></span>
+        </div>
+      </div>
+    </div>
 
     <!-- Not logged in -->
-    <div id="loginGate" class="card hidden">
-      <p style="font-size: 1.1rem; font-weight: 700; margin: 0 0 .5rem;">Log in to play together</p>
-      <p class="muted">You need an account so your friends can join your lobby.</p>
-      <p style="margin-top: 1.1rem;">
-        <a href="/learningarcade/auth-system/login.html?redirect=/multiplayer/family-words/" style="color: var(--accent2); font-weight: 800;">Log in / Register →</a>
-      </p>
+    <div id="loginGate" class="mp-panel mp-gate-card hidden">
+      <div class="mp-gate-ico" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h2>Sign in to play online</h2>
+      <p>Sign in to host a lobby or join a friend's room with live scores.</p>
+      <a class="mp-btn mp-btn-primary mp-btn-full" id="loginLink" href="/learningarcade/auth-system/login.html?redirect=/multiplayer/family-words/">Sign in / Create account</a>
     </div>
 
     <div id="app" class="hidden">
-      <!-- Home -->
-      <div id="screenHome" class="card">
-        <h2>Start a lobby</h2>
-        <p class="muted">Create a lobby and share the code, or join a friend's lobby.</p>
-        <button class="btn btn-primary" id="btnCreate" style="width: 100%; margin-top: .9rem;">Create lobby</button>
-        <p class="muted" style="text-align: center; margin: 1.1rem 0 .5rem; font-weight: 700;">OR</p>
-        <input type="text" id="joinCode" placeholder="Enter lobby code" maxlength="8" autocomplete="off" autocapitalize="characters" />
-        <button class="btn btn-secondary" id="btnJoin" style="width: 100%; margin-top: .6rem;">Join with code</button>
-        <p class="status" id="homeStatus"></p>
-      </div>
 
-      <!-- Lobby -->
-      <div id="screenLobby" class="card hidden">
-        <h2>Lobby</h2>
-        <div class="room-code" id="lobbyCode">——</div>
-        <p class="muted" style="text-align: center;">Share this code with your friends</p>
-
-        <div class="players" id="playerList"></div>
-
-        <h2 style="margin-top: 1.1rem;">Game</h2>
-        <div class="game-picks" id="gamePicks"></div>
-
-        <div id="hostSettings">
-          <h2 style="margin-top: .3rem;">Time limit</h2>
-          <div class="time-grid" id="timeGrid">
-            <button class="time-btn" data-sec="60">1 min</button>
-            <button class="time-btn" data-sec="90">1 min 30</button>
-            <button class="time-btn" data-sec="120">2 min</button>
+      <!-- Home: Create or Join -->
+      <section id="screenHome" aria-label="Create or join a lobby">
+        <div class="mp-entry-grid">
+          <div class="mp-panel mp-entry-card">
+            <div class="mp-entry-head">
+              <div class="mp-entry-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              </div>
+              <div>
+                <h2 class="mp-panel-title">Create a lobby</h2>
+                <p class="mp-panel-desc">Pick Picture Match or Singular &amp; Plural, set the countdown timer, and invite your class.</p>
+              </div>
+            </div>
+            <button type="button" class="mp-btn mp-btn-primary mp-btn-full" id="btnCreate">Create lobby</button>
           </div>
-          <div class="custom-row">
-            <input type="number" id="customSec" min="30" max="600" placeholder="Your own time (seconds, 30–600)" />
-            <button class="btn btn-secondary" id="btnCustom">Set</button>
-          </div>
-          <p class="time-note" id="timeNote"></p>
-        </div>
-        <p class="time-note hidden" id="guestTime"></p>
 
-        <div class="btn-row" style="margin-top: 1rem;">
-          <button class="btn btn-secondary" id="btnReady">I'm ready</button>
-          <button class="btn btn-primary hidden" id="btnStart">Start game</button>
+          <div class="mp-panel mp-entry-card">
+            <div class="mp-entry-head">
+              <div class="mp-entry-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              </div>
+              <div>
+                <h2 class="mp-panel-title">Join with code</h2>
+                <p class="mp-panel-desc">Enter the room code shared by the host to join their vocabulary match.</p>
+              </div>
+            </div>
+            <div class="mp-join-form">
+              <input class="mp-code-input" type="text" id="joinCode" placeholder="Lobby code" maxlength="8" autocomplete="off" autocapitalize="characters" enterkeyhint="go" aria-label="Lobby code" />
+              <button type="button" class="mp-btn mp-btn-secondary" id="btnJoin">Join room</button>
+            </div>
+          </div>
         </div>
-        <button class="btn btn-ghost" id="btnLeave" style="width: 100%; margin-top: .7rem;">Leave lobby</button>
-        <p class="status" id="lobbyStatus"></p>
-      </div>
+        <p class="mp-status mp-status-center" id="homeStatus" aria-live="polite"></p>
+      </section>
+
+      <!-- Active Lobby -->
+      <section id="screenLobby" class="hidden" aria-label="Match lobby">
+        <div class="mp-lobby-grid">
+          <!-- Left: Roster -->
+          <div class="mp-panel">
+            <div class="mp-panel-head">
+              <div>
+                <h2 class="mp-panel-title">Players</h2>
+                <p class="mp-panel-desc" id="lobbyRoleNote">Share the code or invite link so friends can join</p>
+              </div>
+              <span class="mp-count-badge" id="playerCount">1 / 10</span>
+            </div>
+            <div class="mp-roster-list" id="playerList"></div>
+          </div>
+
+          <!-- Right: Room Access + Settings + Controls -->
+          <div class="mp-panel mp-setup-panel">
+            <div class="mp-code-block">
+              <span class="mp-field-label">Room code</span>
+              <div class="mp-code-row">
+                <span class="mp-room-code" id="lobbyCode">————</span>
+                <button type="button" class="mp-btn mp-btn-secondary mp-btn-sm" id="btnCopyCode">Copy code</button>
+              </div>
+              <div class="mp-invite-row">
+                <input class="mp-invite-input" type="text" id="inviteLink" readonly aria-label="Invite link" />
+                <button type="button" class="mp-btn mp-btn-secondary mp-btn-sm" id="btnCopy">Copy link</button>
+              </div>
+            </div>
+
+            <div class="mp-config-section">
+              <div>
+                <span class="mp-field-label">Game mode</span>
+                <div class="mp-pick-list" id="gamePicks"></div>
+              </div>
+
+              <div id="hostSettings">
+                <span class="mp-field-label">Time limit</span>
+                <div class="mp-seg-group" id="timeGrid">
+                  <button type="button" class="mp-seg-btn time-btn" data-sec="60">1 min</button>
+                  <button type="button" class="mp-seg-btn time-btn" data-sec="90">1 min 30</button>
+                  <button type="button" class="mp-seg-btn time-btn" data-sec="120">2 min</button>
+                </div>
+                <div class="mp-custom-time">
+                  <input type="number" id="customSec" min="30" max="600" placeholder="Custom seconds (30–600)" aria-label="Custom time in seconds" />
+                  <button type="button" class="mp-btn mp-btn-secondary mp-btn-sm" id="btnCustom">Set</button>
+                </div>
+                <p class="time-note" id="timeNote"></p>
+              </div>
+
+              <div class="mp-rules-summary hidden" id="guestTime"></div>
+            </div>
+
+            <div class="mp-lobby-actions">
+              <p class="mp-status" id="lobbyStatus" aria-live="polite"></p>
+              <div class="mp-action-pair">
+                <button type="button" class="mp-btn mp-btn-ready" id="btnReady">I'm ready</button>
+                <button type="button" class="mp-btn mp-btn-primary hidden" id="btnStart">Start game</button>
+              </div>
+              <button type="button" class="mp-btn mp-btn-ghost mp-btn-full" id="btnLeave">Leave lobby</button>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <!-- Game -->
-      <div id="screenGame" class="card hidden">
+      <section id="screenGame" class="mp-panel fw-game-card hidden">
         <div class="g-top">
           <span class="g-count" id="gCount">Picture 1 / 16</span>
           <span class="g-timer" id="gTimer">--:--</span>
@@ -219,21 +351,35 @@
           <p class="feedback" id="gFeedback"></p>
         </div>
         <div class="board" id="gBoard"></div>
-        <button class="btn btn-ghost" id="btnGameLeave" style="width: 100%; margin-top: .9rem;">Leave game</button>
-      </div>
+        <button type="button" class="mp-btn mp-btn-ghost mp-btn-full" id="btnGameLeave" style="margin-top: 0.9rem;">Leave game</button>
+      </section>
 
       <!-- End -->
-      <div id="screenEnd" class="card hidden">
-        <div class="end-title">Game over! 🎉</div>
-        <div id="endBoard"></div>
-        <button class="btn btn-primary hidden" id="btnBackLobby" style="width: 100%; margin-top: .9rem;">Back to lobby</button>
-        <button class="btn btn-ghost" id="btnEndLeave" style="width: 100%; margin-top: .6rem;">Leave</button>
-        <p class="status" id="endStatus"></p>
+      <section id="screenEnd" class="mp-panel fw-end-card hidden">
+        <h2 class="mp-panel-title" style="text-align:center;font-size:1.5rem;">Match complete</h2>
+        <p class="mp-panel-desc" style="text-align:center;">Final standings</p>
+        <div class="end-board-box" id="endBoard"></div>
+        <div style="display:flex;flex-direction:column;gap:0.55rem;">
+          <button type="button" class="mp-btn mp-btn-primary mp-btn-full hidden" id="btnBackLobby">Back to lobby</button>
+          <button type="button" class="mp-btn mp-btn-ghost mp-btn-full" id="btnEndLeave">Leave lobby</button>
+        </div>
+        <p class="mp-status mp-status-center" id="endStatus"></p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · Multiplayer</p>
+      <div class="footer-links">
+        <a class="footer-link" href="/contact/">Contact</a>
+        <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
       </div>
     </div>
-  </div>
+  </footer>
 
-  <!-- Supabase + auth (same as the rest of the site) -->
+  <script src="/theme.js"></script>
   <script src="/learningarcade/vendor/load-supabase.js"></script>
   <script src="/learningarcade/auth-system/auth.js"></script>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
@@ -252,14 +398,23 @@
     var room = null, question = null, endsAt = 0, answered = false, timerHandle = null, pickedLabel = null;
 
     function setStatus(el, text, kind) {
+      if (!el) return;
       el.textContent = text || "";
-      el.className = "status" + (kind ? " " + kind : "");
+      el.className = "mp-status" + (el.id === "homeStatus" || el.id === "endStatus" ? " mp-status-center" : "") + (kind ? " " + kind : "");
+    }
+    function setConnBadge(state, label) {
+      var badge = $("connBadge");
+      var txt = $("connText");
+      if (!badge || !txt) return;
+      badge.className = "mp-conn-state" + (state === "live" ? " is-live" : state === "err" ? " is-err" : "");
+      txt.textContent = label;
     }
     function show(name) {
       $("screenHome").classList.toggle("hidden", name !== "home");
       $("screenLobby").classList.toggle("hidden", name !== "lobby");
       $("screenGame").classList.toggle("hidden", name !== "game");
       $("screenEnd").classList.toggle("hidden", name !== "end");
+      document.body.classList.toggle("mp-playing", name === "game");
     }
     function fmtTime(sec) {
       sec = Math.max(0, Math.ceil(sec));
@@ -271,14 +426,32 @@
         return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
       });
     }
+    function initials(name) {
+      var parts = String(name || "P").trim().split(/\s+/);
+      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+      return String(parts[0] || "P").slice(0, 2).toUpperCase();
+    }
+    function inviteUrl(code) {
+      var u = new URL(location.href);
+      u.searchParams.set("room", code);
+      return u.toString();
+    }
+    function copyText(text, btnEl, resetText) {
+      var finish = function () {
+        btnEl.textContent = "Copied!";
+        setTimeout(function () { btnEl.textContent = resetText; }, 1500);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(finish).catch(finish);
+      } else {
+        finish();
+      }
+    }
     function me() {
       return room ? room.players.filter(function (p) { return p.id === myId; })[0] : null;
     }
     function isHost() { return room && myId && room.hostId === myId; }
 
-    /* ---------- auth ---------- */
-    // Read the login token once. Supabase allows only one session request at a time,
-    // so a busy lock is retried instead of failing (this caused "Create lobby" to do nothing).
     async function getAccessToken() {
       if (!window.LAAuth || !window.LAAuth.getClient) return null;
       var client = window.LAAuth.getClient();
@@ -301,23 +474,41 @@
         document.addEventListener("supabase-ready", function () { setTimeout(resolve, 50); }, { once: true });
         setTimeout(resolve, 3000);
       });
+      var loginUrl = "/learningarcade/auth-system/login.html?redirect=" + encodeURIComponent(location.pathname + location.search);
+      if ($("loginLink")) $("loginLink").href = loginUrl;
+
       if (!window.LAAuth) { $("loginGate").classList.remove("hidden"); return false; }
+      var session = window.LAAuth.getSession();
+      if (!session) {
+        try { session = await window.LAAuth.verify(); } catch (e) {}
+      }
       accessToken = await getAccessToken();
       if (!accessToken) {
         $("loginGate").classList.remove("hidden"); $("app").classList.add("hidden");
         return false;
       }
+      var display = (session && (session.displayName || session.username)) || "Player";
       $("loginGate").classList.add("hidden");
       $("app").classList.remove("hidden");
+      $("userIdentity").classList.remove("hidden");
+      $("userName").textContent = display;
+      $("userAvatar").textContent = initials(display);
       return true;
     }
 
-    /* ---------- socket ---------- */
     function connectSocket() {
       if (socket) { socket.disconnect(); socket = null; }
+      setConnBadge("", "Connecting…");
       socket = io(SERVER_URL, { auth: { token: accessToken }, transports: ["websocket", "polling"] });
 
+      socket.on("connect", function () {
+        setConnBadge("live", "Connected");
+      });
+      socket.on("disconnect", function () {
+        setConnBadge("err", "Disconnected");
+      });
       socket.on("connect_error", function (err) {
+        setConnBadge("err", "Disconnected");
         setStatus($("homeStatus"), "Connection failed: " + (err && err.message ? err.message : "error"), "error");
       });
       socket.on("server:hello", function (d) {
@@ -343,7 +534,6 @@
       });
       socket.on("fw:result", function (d) {
         answered = true;
-        // say the correct word, like the other games
         if (d.audio) { try { var snd = new Audio(d.audio); var pr = snd.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {} }
         var fb = $("gFeedback");
         if (d.correct) { fb.textContent = "Yes! +" + d.points + " 🎉"; fb.className = "feedback ok"; }
@@ -354,11 +544,10 @@
       socket.on("fw:end", function (d) { showEnd(d.scoreboard); });
     }
 
-    /* ---------- room state ---------- */
     function applyRoom(r) {
       room = r;
       if (r.familySettings && !isHost()) {
-        $("guestTime").textContent = "Time limit: " + r.familySettings.timeLimit + " seconds (set by the host)";
+        $("guestTime").innerHTML = "<strong>Time limit:</strong> " + r.familySettings.timeLimit + " seconds (set by host)";
       }
       if (r.status === "lobby") {
         stopTimer();
@@ -383,15 +572,36 @@
       }
     }
 
-    /* ---------- lobby ---------- */
     function renderLobby() {
       $("lobbyCode").textContent = room.code;
-      $("playerList").innerHTML = room.players.map(function (p) {
-        var tags = "";
-        if (p.isHost) tags += '<span class="pill host">Host</span> ';
-        tags += p.ready ? '<span class="pill ready">Ready</span>' : '<span class="pill">Not ready</span>';
-        if (!p.connected) tags += ' <span class="pill off">Offline</span>';
-        return '<div class="player"><span>' + esc(p.displayName || p.username) + (p.id === myId ? " (you)" : "") + "</span><span>" + tags + "</span></div>";
+      $("inviteLink").value = inviteUrl(room.code);
+      $("playerCount").textContent = room.players.length + " / " + (room.maxPlayers || 10);
+
+      var readyCount = room.players.filter(function (p) { return p.ready; }).length;
+      $("lobbyRoleNote").textContent = room.players.length < 2
+        ? "Share the room code or invite link so friends can join"
+        : readyCount + " of " + room.players.length + " players ready";
+
+      $("playerList").innerHTML = room.players.map(function (p, idx) {
+        var name = p.displayName || p.username || "Player";
+        var cls = idx % 4 === 1 ? " c1" : idx % 4 === 2 ? " c2" : idx % 4 === 3 ? " c3" : "";
+        var you = p.id === myId ? '<span class="mp-you-tag">(you)</span>' : "";
+        var hostTag = p.isHost ? '<span class="mp-host-tag">Host</span>' : "";
+        var stateCls = !p.connected ? "is-off" : (p.ready ? "is-ready" : "");
+        var stateTxt = !p.connected ? "Offline" : (p.ready ? "Ready" : "Waiting");
+        return (
+          '<div class="mp-roster-row">' +
+            '<div class="mp-roster-player">' +
+              '<div class="mp-avatar' + cls + '">' + esc(initials(name)) + '</div>' +
+              '<div class="mp-player-info">' +
+                '<div class="mp-player-name-line">' +
+                  '<span class="mp-player-name">' + esc(name) + '</span>' + you + hostTag +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<span class="mp-state-label ' + stateCls + '"><span class="mp-state-dot"></span>' + stateTxt + '</span>' +
+          '</div>'
+        );
       }).join("");
 
       var host = isHost();
@@ -399,36 +609,39 @@
       var choices = room.familyGames || [{ id: "family-words", title: "Picture Match" }, { id: "plural-forms", title: "Singular & Plural" }];
       $("gamePicks").innerHTML = choices.map(function (g) {
         var desc = g.id === "plural-forms" ? "Choose the plural form of each word" : "Pick the family word for each picture";
-        var ico = g.id === "plural-forms" ? "🔤" : "🖼️";
-        return '<button class="game-pick' + (g.id === cur ? " on" : "") + '" data-game="' + esc(g.id) + '"' + (host ? "" : " disabled") + ">" +
-          '<span class="ico">' + ico + '</span><div><b>' + esc(g.title) + '</b><div class="muted">' + desc + "</div></div></button>";
+        var active = g.id === cur;
+        return '<button type="button" class="mp-pick-btn game-pick' + (active ? " on" : "") + '" data-game="' + esc(g.id) + '"' + (host ? "" : " disabled") + ">" +
+          '<div><strong>' + esc(g.title) + '</strong><span>' + desc + '</span></div>' +
+          '<span class="mp-pick-check" aria-hidden="true">' + (active ? "✓" : "") + "</span></button>";
       }).join("");
+
       $("hostSettings").classList.toggle("hidden", !host);
       $("guestTime").classList.toggle("hidden", host);
       var sec = room.familySettings ? room.familySettings.timeLimit : 90;
       var known = TIME_OPTIONS.indexOf(sec) > -1;
       document.querySelectorAll(".time-btn").forEach(function (b) {
-        b.classList.toggle("on", Number(b.getAttribute("data-sec")) === sec);
+        b.classList.toggle("is-active", Number(b.getAttribute("data-sec")) === sec);
         b.disabled = !host;
       });
       $("customSec").disabled = !host;
       $("btnCustom").disabled = !host;
-      $("timeNote").textContent = "Current time: " + sec + " seconds" + (known ? "" : " (your own time)");
+      $("timeNote").textContent = "Current time: " + sec + " seconds" + (known ? "" : " (custom)");
       $("btnStart").classList.toggle("hidden", !host);
       $("btnStart").disabled = !host || room.players.length < 1;
       var mine = me();
-      $("btnReady").textContent = mine && mine.ready ? "Not ready" : "I'm ready";
+      var isReady = !!(mine && mine.ready);
+      $("btnReady").textContent = isReady ? "Ready ✓" : "I'm ready";
+      $("btnReady").classList.toggle("is-ready", isReady);
     }
 
-    // Send an event and show a clear message if the server never answers (usually: old server still running).
     function emitChecked(event, payload, statusEl, onOk) {
       if (!socket) return;
-      var answered = false;
+      var answeredAck = false;
       var timer = setTimeout(function () {
-        if (!answered) setStatus(statusEl, "No answer from the game server. Please make sure the updated multiplayer server is running.", "error");
+        if (!answeredAck) setStatus(statusEl, "No response from the game server.", "error");
       }, 4000);
       socket.emit(event, payload, function (res) {
-        answered = true; clearTimeout(timer);
+        answeredAck = true; clearTimeout(timer);
         if (res && res.ok === false) setStatus(statusEl, res.error, "error");
         else if (onOk) onOk(res);
       });
@@ -438,7 +651,6 @@
       emitChecked("fw:settings", { timeLimit: sec }, $("lobbyStatus"));
     }
 
-    /* ---------- game ---------- */
     function renderQuestion() {
       if (!question) return;
       var isWord = !!question.prompt;
@@ -447,11 +659,10 @@
       $("wordWrap").classList.toggle("hidden", !isWord);
       if (isWord) { $("gWord").textContent = question.prompt; }
       else { $("gPic").src = question.image; $("gPic").alt = "Picture"; }
-      // slide the new word or picture in
       var stage = $("gStage");
       stage.classList.remove("swap-in"); void stage.offsetWidth; stage.classList.add("swap-in");
       $("gChips").innerHTML = question.choices.map(function (label, i) {
-        return '<button class="chip" data-i="' + i + '">' + esc(label) + "</button>";
+        return '<button type="button" class="chip" data-i="' + i + '">' + esc(label) + "</button>";
       }).join("");
       $("gFeedback").textContent = "";
       $("gFeedback").className = "feedback";
@@ -459,7 +670,6 @@
       document.querySelectorAll(".chip").forEach(function (c) { c.disabled = answered; });
     }
 
-    // green = the right word; red = the word this player picked, if it was wrong; the rest fade
     function markChips(correctLabel, pickedText, wasCorrect) {
       document.querySelectorAll(".chip").forEach(function (c) {
         c.disabled = true;
@@ -494,45 +704,70 @@
       el.classList.toggle("low", left <= 10);
     }
 
-    /* ---------- end ---------- */
     function showEnd(rows) {
       stopTimer();
       $("endBoard").innerHTML = (rows || []).map(function (r, i) {
         return '<div class="end-row' + (i === 0 ? " first" : "") + '"><span>' + (i + 1) + ". " + esc(r.displayName) +
-          '</span><span class="pts" style="color: var(--gold);">' + r.points + " pts · " + r.correct + " right</span></div>";
-      }).join("") || '<p class="muted">No scores yet.</p>';
+          '</span><span class="pts">' + r.points + " pts · " + r.correct + " right</span></div>";
+      }).join("") || '<p class="muted" style="padding:1rem;text-align:center;">No scores yet.</p>';
       $("btnBackLobby").classList.toggle("hidden", !isHost());
       show("end");
     }
 
-    /* ---------- buttons ---------- */
     function bind() {
-      // If the server still has an old room for this player, leave it first and try again.
       function sendRoomAction(event, payload, statusEl) {
         if (!socket) return;
         socket.emit(event, payload, function (res) {
-          if (res && res.ok === false && /already in a room/i.test(res.error || "")) {
-            setStatus(statusEl, "Leaving your old room…");
+          if (res && res.ok === false && /already in/i.test(res.error || "")) {
+            setStatus(statusEl, "Leaving previous room…");
             socket.emit("room:leave", {}, function () {
               room = null; question = null; answered = false; stopTimer();
               socket.emit(event, payload, function (res2) {
                 if (res2 && res2.ok === false) setStatus(statusEl, res2.error, "error");
+                else setStatus(statusEl, "");
               });
             });
             return;
           }
           if (res && res.ok === false) setStatus(statusEl, res.error, "error");
+          else setStatus(statusEl, "");
         });
       }
+
       $("btnCreate").addEventListener("click", function () {
+        if (!socket || !socket.connected) {
+          setStatus($("homeStatus"), "Still connecting to server…", "error");
+          return;
+        }
         setStatus($("homeStatus"), "Creating lobby…");
-        sendRoomAction("room:create", {}, $("homeStatus"));
+        sendRoomAction("room:create", { gameType: "family-words" }, $("homeStatus"));
       });
+
       $("btnJoin").addEventListener("click", function () {
-        var code = ($("joinCode").value || "").trim().toUpperCase();
-        if (!code || !socket) return setStatus($("homeStatus"), "Enter the lobby code", "error");
+        var code = ($("joinCode").value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+        if (code.length < 4) return setStatus($("homeStatus"), "Enter a valid lobby code", "error");
+        if (!socket || !socket.connected) return setStatus($("homeStatus"), "Still connecting to server…", "error");
+        setStatus($("homeStatus"), "Joining lobby " + code + "…");
         sendRoomAction("room:join", { code: code }, $("homeStatus"));
       });
+
+      $("joinCode").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") $("btnJoin").click();
+      });
+
+      $("btnCopyCode").addEventListener("click", function () {
+        var code = ($("lobbyCode").textContent || "").trim();
+        if (!code || code.indexOf("—") !== -1) return;
+        copyText(code, $("btnCopyCode"), "Copy code");
+      });
+
+      $("btnCopy").addEventListener("click", function () {
+        var input = $("inviteLink");
+        input.select();
+        input.setSelectionRange(0, 999);
+        copyText(input.value, $("btnCopy"), "Copy link");
+      });
+
       document.querySelectorAll(".time-btn").forEach(function (b) {
         b.addEventListener("click", function () { setTime(Number(b.getAttribute("data-sec"))); });
       });
@@ -583,11 +818,13 @@
       if (!socket) return;
       socket.emit("room:leave", {}, function () {
         room = null; question = null; answered = false; stopTimer();
+        var u = new URL(location.href);
+        u.searchParams.delete("room");
+        history.replaceState(null, "", u.pathname + u.search);
         show("home");
       });
     }
 
-    /* ---------- start ---------- */
     (async function init() {
       bind();
       var ok = await ensureLoggedIn();
@@ -596,6 +833,15 @@
       setStatus($("homeStatus"), "Connecting…");
       socket.on("connect", function () {
         setStatus($("homeStatus"), "");
+        var params = new URLSearchParams(location.search);
+        var roomParam = (params.get("room") || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+        if (roomParam.length >= 4) {
+          $("joinCode").value = roomParam;
+          socket.emit("room:join", { code: roomParam }, function (res) {
+            if (!res || !res.ok) setStatus($("homeStatus"), (res && res.error) || "Could not join room", "error");
+          });
+          return;
+        }
         socket.emit("room:sync", {}, function (res) {
           if (res && res.room) applyRoom(res.room);
           else show("home");

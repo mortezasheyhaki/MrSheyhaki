@@ -2,17 +2,25 @@
 (function () {
   "use strict";
 
-  /* Auto day / night — no toggle. Uses local hour + prefers-color-scheme. */
+  /* Sync theme with global /theme.js preference; fall back to local hour only if unset. */
+  function syncThemeMeta(theme) {
+    var meta = document.getElementById("themeColorMeta");
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#070b16" : "#eef2ff");
+  }
   function applyAutoTheme() {
+    var saved = null;
+    try { saved = localStorage.getItem("mrsheyhaki-theme"); } catch (e) {}
+    if (saved === "dark" || saved === "light") {
+      syncThemeMeta(saved);
+      return;
+    }
     var hour = new Date().getHours();
     var isNight = hour < 7 || hour >= 19;
-    // If OS clearly prefers light during day hours, stay light; at night prefer dark
     try {
       if (window.matchMedia) {
         if (isNight && window.matchMedia("(prefers-color-scheme: light)").matches && hour >= 7 && hour < 19) {
           isNight = false;
         }
-        // Between 7–19: light unless OS prefers dark strongly at evening edge
         if (!isNight && window.matchMedia("(prefers-color-scheme: dark)").matches && (hour >= 17 || hour < 8)) {
           isNight = true;
         }
@@ -20,13 +28,17 @@
     } catch (e) {}
     var theme = isNight ? "dark" : "light";
     document.documentElement.setAttribute("data-theme", theme);
-    var meta = document.getElementById("themeColorMeta");
-    if (meta) meta.setAttribute("content", theme === "dark" ? "#070b16" : "#eef2ff");
+    syncThemeMeta(theme);
   }
   applyAutoTheme();
-  // Re-check periodically (theme can flip at 7:00 / 19:00 without reload)
   setInterval(applyAutoTheme, 60 * 1000);
   try {
+    if (window.MutationObserver) {
+      new MutationObserver(function () {
+        var t = document.documentElement.getAttribute("data-theme");
+        if (t === "dark" || t === "light") syncThemeMeta(t);
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    }
     if (window.matchMedia) {
       window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyAutoTheme);
     }
@@ -301,6 +313,7 @@
       var el = $(s);
       if (el) el.hidden = s !== id;
     });
+    document.body.classList.toggle("mp-playing", id === "screenPlay");
     if (id === "screenPlay") startMusic();
   }
 
@@ -746,17 +759,56 @@
   }
 
   // —— Online ——
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function initials(name) {
+    var parts = String(name || "P").trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return String(parts[0] || "P").slice(0, 2).toUpperCase();
+  }
+
+  function setConnBadge(state, label) {
+    var badge = $("connBadge");
+    var txt = $("connText");
+    if (!badge || !txt) return;
+    badge.className = "mp-conn-state" + (state === "live" ? " is-live" : state === "err" ? " is-err" : "");
+    txt.textContent = label;
+  }
+
+  function copyText(text, btnEl, resetText) {
+    var finish = function () {
+      if (!btnEl) return;
+      btnEl.textContent = "Copied!";
+      setTimeout(function () { btnEl.textContent = resetText; }, 1500);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(finish).catch(finish);
+    } else {
+      finish();
+    }
+  }
+
   function inviteUrl(code) {
     var u = new URL(location.href);
     u.searchParams.set("room", code);
     return u.toString();
   }
 
-  function setOnlineStatus(msg) {
+  function setOnlineStatus(msg, isError) {
     var el = $("onlineStatus");
-    if (el) el.textContent = msg || "";
+    if (el) {
+      el.textContent = msg || "";
+      el.className = "mp-status mp-status-center" + (isError ? " error" : "");
+    }
     var el2 = $("lobbyStatus");
-    if (el2 && msg) el2.textContent = msg;
+    if (el2 && msg) {
+      el2.textContent = msg;
+      el2.className = "mp-status" + (isError ? " error" : "");
+    }
   }
 
   function applyOnlineState(sl) {
@@ -879,24 +931,64 @@
     lastRoom = room;
     $("lobbyCode").textContent = room.code;
     $("inviteLink").value = inviteUrl(room.code);
+    var players = room.players || [];
+    var nPlayers = players.length;
+    var maxP = room.maxPlayers || 4;
+    if ($("playerCount")) $("playerCount").textContent = nPlayers + " / " + maxP;
+
     var list = $("lobbyPlayers");
-    list.innerHTML = (room.players || []).map(function (p) {
-      var you = p.id === myId ? " (you)" : "";
-      var host = p.isHost ? '<span class="tag">HOST</span>' : "";
-      return '<div class="sl-lobby-row"><span>' + (p.displayName || p.username) + you + "</span>" + host + "</div>";
-    }).join("");
-    var isHost = !!(myId && room.hostId && String(room.hostId) === String(myId));
-    var nPlayers = (room.players || []).length;
-    var canStart = isHost && nPlayers >= 2;
-    $("btnStartOnline").hidden = !canStart;
-    $("btnStartOnline").disabled = false;
-    $("btnStartOnline").textContent = "Start Game";
+    var rows = players.map(function (p, idx) {
+      var name = p.displayName || p.username || "Player";
+      var cls = idx % 4 === 1 ? " c1" : idx % 4 === 2 ? " c2" : idx % 4 === 3 ? " c3" : "";
+      var you = p.id === myId ? '<span class="mp-you-tag">(you)</span>' : "";
+      var isHostPlayer = !!(p.isHost || (room.hostId && String(p.id) === String(room.hostId)));
+      var host = isHostPlayer ? '<span class="mp-host-tag">Host</span>' : "";
+      var offline = p.connected === false;
+      var stateCls = offline ? "is-off" : "is-ready";
+      var stateTxt = offline ? "Offline" : "Connected";
+      return (
+        '<div class="mp-roster-row">' +
+          '<div class="mp-roster-player">' +
+            '<div class="mp-avatar' + cls + '">' + esc(initials(name)) + '</div>' +
+            '<div class="mp-player-info">' +
+              '<div class="mp-player-name-line">' +
+                '<span class="mp-player-name">' + esc(name) + '</span>' + you + host +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<span class="mp-state-label ' + stateCls + '"><span class="mp-state-dot"></span>' + stateTxt + '</span>' +
+        '</div>'
+      );
+    });
+
     if (nPlayers < 2) {
-      $("lobbyStatus").textContent = "Waiting for opponent… (" + nPlayers + "/2)";
+      rows.push(
+        '<div class="mp-roster-row is-empty">' +
+          '<div class="mp-roster-player">' +
+            '<div class="mp-avatar">?</div>' +
+            '<div class="mp-player-info"><span class="mp-player-name" style="color:var(--site-muted);font-weight:600;">Waiting for opponent to join…</span></div>' +
+          '</div>' +
+          '<span class="mp-state-label">Open slot</span>' +
+        '</div>'
+      );
+    }
+    list.innerHTML = rows.join("");
+
+    var isHost = !!(myId && room.hostId && String(room.hostId) === String(myId));
+    var canStart = isHost && nPlayers >= 2;
+    $("btnStartOnline").hidden = !isHost;
+    $("btnStartOnline").disabled = !canStart;
+    $("btnStartOnline").textContent = "Start Game";
+    var statusEl = $("lobbyStatus");
+    if (nPlayers < 2) {
+      statusEl.textContent = "Waiting for opponent… (" + nPlayers + " / 2 minimum)";
+      statusEl.className = "mp-status";
     } else if (isHost) {
-      $("lobbyStatus").textContent = "Both players ready — tap Start Game";
+      statusEl.textContent = nPlayers + " players in room — ready to start";
+      statusEl.className = "mp-status ok";
     } else {
-      $("lobbyStatus").textContent = "Waiting for host to start…";
+      statusEl.textContent = nPlayers + " players in room — waiting for host to start…";
+      statusEl.className = "mp-status ok";
     }
   }
 
@@ -904,17 +996,22 @@
     if (!socket || socket.__slWired) return;
     socket.__slWired = true;
     socket.on("connect", function () {
+      setConnBadge("live", "Connected");
       setOnlineStatus("Connected");
     });
+    socket.on("disconnect", function () {
+      setConnBadge("err", "Disconnected");
+    });
     socket.on("connect_error", function (err) {
-      setOnlineStatus("Connection failed: " + (err && err.message ? err.message : "error"));
+      setConnBadge("err", "Disconnected");
+      setOnlineStatus("Connection failed: " + (err && err.message ? err.message : "error"), true);
       var btn = $("btnCreateRoom");
       if (btn) { btn.disabled = false; btn.textContent = "Create room"; }
     });
     socket.on("server:hello", function (d) {
       if (d && d.player) myId = d.player.id;
       if (d && d.phase != null && Number(d.phase) < 4) {
-        setOnlineStatus("Server is outdated (phase " + d.phase + "). Redeploy multiplayer-server with Snakes & Ladders.");
+        setOnlineStatus("Server is outdated (phase " + d.phase + "). Redeploy multiplayer-server with Snakes & Ladders.", true);
       }
     });
     socket.on("room:update", function (room) {
@@ -930,6 +1027,7 @@
           applyOnlineState(room.game);
         } else if (room.game && room.game.type === "a-an-swipe") {
           $("lobbyStatus").textContent = "Server started A/An instead — redeploy multiplayer server with Snakes & Ladders support";
+          $("lobbyStatus").className = "mp-status error";
         }
       }
     });
@@ -949,7 +1047,7 @@
       }
     });
     socket.on("room:error", function (e) {
-      setOnlineStatus((e && e.error) || "Room error");
+      setOnlineStatus((e && e.error) || "Room error", true);
       var btn = $("btnCreateRoom");
       if (btn) { btn.disabled = false; btn.textContent = "Create room"; }
     });
@@ -1059,7 +1157,8 @@
     if (!window.LAAuth) {
       loginGate.hidden = false;
       actions.hidden = true;
-      setOnlineStatus("Auth system not loaded");
+      if ($("userIdentity")) $("userIdentity").hidden = true;
+      setOnlineStatus("Auth system not loaded", true);
       return false;
     }
 
@@ -1073,6 +1172,7 @@
     if (!session) {
       loginGate.hidden = false;
       actions.hidden = true;
+      if ($("userIdentity")) $("userIdentity").hidden = true;
       return false;
     }
 
@@ -1080,9 +1180,15 @@
     if (!accessToken) {
       loginGate.hidden = false;
       actions.hidden = true;
-      setOnlineStatus("Could not get session token. Try logging in again.");
+      if ($("userIdentity")) $("userIdentity").hidden = true;
+      setOnlineStatus("Could not get session token. Try logging in again.", true);
       return false;
     }
+
+    var display = session.displayName || session.username || "Player";
+    if ($("userIdentity")) $("userIdentity").hidden = false;
+    if ($("userName")) $("userName").textContent = display;
+    if ($("userAvatar")) $("userAvatar").textContent = initials(display);
 
     loginGate.hidden = true;
     actions.hidden = false;
@@ -1092,6 +1198,7 @@
   async function startOnlineFlow() {
     mode = "online";
     showScreen("screenOnlineHome");
+    setConnBadge("", "Connecting…");
     setOnlineStatus("Checking login…");
     var ok = await ensureLoggedIn();
     if (!ok) return;
@@ -1105,7 +1212,7 @@
       if (room) {
         setOnlineStatus("Joining " + room + "…");
         socket.emit("room:join", { code: room }, function (res) {
-          if (!res || !res.ok) setOnlineStatus((res && res.error) || "Join failed");
+          if (!res || !res.ok) setOnlineStatus((res && res.error) || "Join failed", true);
           else if (res.room) {
             lastRoom = res.room;
             showScreen("screenLobby");
@@ -1113,10 +1220,10 @@
           }
         });
       } else {
-        setOnlineStatus("Ready — create or join a room");
+        setOnlineStatus("");
       }
     } catch (e) {
-      setOnlineStatus("Could not connect: " + ((e && e.message) || "error"));
+      setOnlineStatus("Could not connect: " + ((e && e.message) || "error"), true);
     }
   }
 
@@ -1184,9 +1291,9 @@
     } catch (e) {
       var msg = (e && e.message) ? e.message : "error";
       if (/timeout|waking|too long/i.test(msg)) {
-        setOnlineStatus("Server is slow to wake — wait a few seconds and try again");
+        setOnlineStatus("Server is slow to wake — wait a few seconds and try again", true);
       } else {
-        setOnlineStatus("Create failed: " + msg);
+        setOnlineStatus("Create failed: " + msg, true);
       }
     } finally {
       btn.disabled = false;
@@ -1194,9 +1301,10 @@
     }
   };
   $("btnJoinRoom").onclick = async function () {
-    var code = ($("joinCodeInput").value || "").trim().toUpperCase();
+    var code = ($("joinCodeInput").value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
     if (!code) {
-      setOnlineStatus("Enter a room code");
+      setOnlineStatus("Enter a room code", true);
+      $("joinCodeInput").focus();
       return;
     }
     setOnlineStatus("Checking login…");
@@ -1229,27 +1337,34 @@
         });
       });
     } catch (e) {
-      setOnlineStatus("Join failed: " + ((e && e.message) || "error"));
+      setOnlineStatus("Join failed: " + ((e && e.message) || "error"), true);
     }
   };
+  $("joinCodeInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") $("btnJoinRoom").click();
+  });
   $("btnStartOnline").onclick = function () {
     if (!socket) {
       $("lobbyStatus").textContent = "Not connected — go back and try again";
+      $("lobbyStatus").className = "mp-status error";
       return;
     }
     if (!lastRoom || (lastRoom.players || []).length < 2) {
       $("lobbyStatus").textContent = "Need 2 players to start";
+      $("lobbyStatus").className = "mp-status error";
       return;
     }
     var btn = $("btnStartOnline");
     btn.disabled = true;
     btn.textContent = "Starting…";
     $("lobbyStatus").textContent = "Starting game…";
+    $("lobbyStatus").className = "mp-status";
     socket.emit("sl:start", { level: state.level }, function (res) {
       btn.disabled = false;
       btn.textContent = "Start Game";
       if (!res || !res.ok) {
         $("lobbyStatus").textContent = (res && res.error) || "Could not start — is the multiplayer server updated for Snakes & Ladders?";
+        $("lobbyStatus").className = "mp-status error";
         return;
       }
       // Prefer SL payload from server
@@ -1272,26 +1387,41 @@
       }
     });
   };
+  if ($("btnCopyCode")) {
+    $("btnCopyCode").onclick = function () {
+      var code = ($("lobbyCode").textContent || "").trim();
+      if (!code || code.indexOf("—") !== -1) return;
+      copyText(code, $("btnCopyCode"), "Copy code");
+    };
+  }
   $("btnCopy").onclick = function () {
     var input = $("inviteLink");
     input.select();
-    try {
-      navigator.clipboard.writeText(input.value);
-      setOnlineStatus("Link copied!");
-    } catch (e) {
-      document.execCommand("copy");
-    }
+    input.setSelectionRange(0, 999);
+    copyText(input.value, $("btnCopy"), "Copy link");
   };
+  function clearRoomParam() {
+    lastRoom = null;
+    try {
+      var u = new URL(location.href);
+      u.searchParams.delete("room");
+      history.replaceState(null, "", u.pathname + u.search);
+    } catch (e) {}
+  }
   $("btnLeaveRoom").onclick = function () {
     if (socket) socket.emit("room:leave");
+    clearRoomParam();
+    setOnlineStatus("");
     showScreen("screenOnlineHome");
   };
   $("btnExitPlay").onclick = function () {
     if (mode === "online" && socket) socket.emit("room:leave");
+    clearRoomParam();
     $("winModal").hidden = true;
     showScreen("screenMode");
   };
   $("btnAgain").onclick = function () {
+    clearRoomParam();
     $("winModal").hidden = true;
     showScreen("screenMode");
   };

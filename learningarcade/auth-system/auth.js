@@ -1,6 +1,6 @@
 /**
  * Learning Arcade — Auth (username + password) on Supabase Auth
- * Public API: window.LAAuth  (same shape as the old Appwrite version)
+ * Public API: window.LAAuth
  *
  * Username is mapped to a private login email:
  *   ali_7a  ->  ali_7a@players.mrsheyhaki.ir
@@ -234,7 +234,7 @@
     }
   }
 
-  /** Kept for login.html compatibility — no Appwrite legacy table on Supabase. */
+  /** Kept for login.html compatibility. */
   async function upgradeLegacy(username, oldPassword, newPassword) {
     if (!newPassword || newPassword.length < MIN_PASSWORD) {
       return { ok: false, error: "New password must be at least " + MIN_PASSWORD + " characters" };
@@ -244,7 +244,7 @@
     if (!logged.ok) {
       return {
         ok: false,
-        error: "This old Appwrite account is not on Supabase yet. Please Register a new account.",
+        error: "Account not found. Please Register a new account.",
       };
     }
     try {

@@ -1122,51 +1122,30 @@ function loadTheme() {
         return;
     }
 
+    let savedTheme = document.documentElement.getAttribute("data-theme");
 
-    let savedTheme = null;
-
-    try {
-
-        savedTheme =
-            localStorage.getItem(
-                "learningArcadeTheme"
-            );
-
-    } catch (error) {
-
-        console.error(
-            "Could not load theme:",
-            error
-        );
-
-        savedTheme = null;
-
+    if (savedTheme !== "light" && savedTheme !== "dark") {
+        try {
+            savedTheme =
+                localStorage.getItem("mrsheyhaki-theme") ||
+                localStorage.getItem("learningArcadeTheme");
+        } catch (error) {
+            savedTheme = null;
+        }
     }
 
-
-    if (
-        savedTheme === "light"
-    ) {
-
-        document.body.classList.add(
-            "light-mode"
-        );
-
-
-        themeToggle.textContent =
-            "🌙";
-
+    if (savedTheme === "light") {
+        document.body.classList.add("light-mode");
+        themeToggle.textContent = "🌙";
     } else {
-
-        themeToggle.textContent =
-            "☀️";
-
+        document.body.classList.remove("light-mode");
+        themeToggle.textContent = "☀️";
     }
 
 }
 
 
-if (themeToggle) {
+if (themeToggle && themeToggle.dataset.themeBound !== "1") {
 
     themeToggle.addEventListener(
         "click",
@@ -1176,31 +1155,23 @@ if (themeToggle) {
                 "light-mode"
             );
 
-
             const lightMode =
                 document.body.classList.contains(
                     "light-mode"
                 );
 
+            const nextTheme = lightMode ? "light" : "dark";
+            document.documentElement.setAttribute("data-theme", nextTheme);
 
             try {
-
-                localStorage.setItem(
-                    "learningArcadeTheme",
-                    lightMode
-                        ? "light"
-                        : "dark"
-                );
-
+                localStorage.setItem("mrsheyhaki-theme", nextTheme);
+                localStorage.setItem("learningArcadeTheme", nextTheme);
             } catch (error) {
-
                 console.error(
                     "Could not save theme:",
                     error
                 );
-
             }
-
 
             themeToggle.textContent =
                 lightMode

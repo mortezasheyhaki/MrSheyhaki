@@ -1,7 +1,7 @@
 SUPABASE MIGRATION APPLIED
 ==========================
 
-This project has been migrated from Appwrite to Supabase for:
+This project uses Supabase for:
 - Login / Register (username + password)
 - Scoreboard / leaderboard
 

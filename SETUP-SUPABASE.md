@@ -1,7 +1,6 @@
-# Finish Supabase migration — Mr. Sheyhaki Learning Arcade
+# Supabase setup — Mr. Sheyhaki Learning Arcade
 
-Signup is broken because Appwrite Cloud returned **402 billing_limit_exceeded**.
-This package replaces Appwrite auth + scores with Supabase.
+This package configures Supabase auth and scores.
 
 ## 1. Create a free Supabase project
 
@@ -66,6 +65,5 @@ Same as before — no real email is needed:
 
 ## Notes
 
-- Legacy Appwrite “short password upgrade” is not ported. New accounts must use 8+ character passwords.
-- Old Appwrite accounts will not transfer automatically. Students register once on Supabase.
+- Accounts use 8+ character passwords on Supabase.
 - `LAAuth` and `LAScores` public APIs are unchanged so games and profile pages keep working.

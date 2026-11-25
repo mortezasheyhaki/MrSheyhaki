@@ -43,9 +43,8 @@ The repaired Unit 1A Games page was also loaded in a browser. It rendered the he
 ```
 Place it inside a container that has the section class (e.g. `<main class="grammar">`) so the correct color is applied.
 
-## Appwrite scores fix (TablesDB constructor)
-- CDN upgraded to appwrite@26.2.0 (TablesDB export).
-- firebase-scores.js hardened with TablesDB/Databases fallback.
+## Scores & auth notes
+- Auth and scores use Supabase (`LAAuth` / `LAScores`).
 
 ## Profile in header + mobile polish
 - Profile icon moved into `.arcade-nav` (end of header) via theme.js; floating `.profile-fab` hidden.

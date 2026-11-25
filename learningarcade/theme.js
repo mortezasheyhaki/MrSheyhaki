@@ -55,6 +55,12 @@
     return "light";
   }
 
+  function currentTheme() {
+    var attr = root.getAttribute("data-theme");
+    if (attr === "dark" || attr === "light") return attr;
+    return getPreferred();
+  }
+
   function applyTheme(theme) {
     root.setAttribute("data-theme", theme);
     try {
@@ -106,15 +112,159 @@
     );
   }
 
+  function ensureTopbarAssets() {
+    if (!document.querySelector('link[href*="fonts.googleapis.com"][href*="Fredoka"]')) {
+      var fl = document.createElement("link");
+      fl.rel = "stylesheet";
+      fl.href = "https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap";
+      document.head.appendChild(fl);
+    }
+    var hasRootStyle = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).some(function (l) {
+      try {
+        return new URL(l.getAttribute("href") || "", location.href).pathname === "/style.css";
+      } catch (e) {
+        return false;
+      }
+    });
+    if (!hasRootStyle && document.head) {
+      var sl = document.createElement("link");
+      sl.rel = "stylesheet";
+      sl.href = "/style.css";
+      document.head.appendChild(sl);
+    }
+  }
+
+  function buildSharedTopbar() {
+    var path = (window.location.pathname || "/").toLowerCase();
+    var active = "arcade";
+    if (path.indexOf("/multiplayer") !== -1) active = "multiplayer";
+    else if (path.indexOf("/resources") !== -1) active = "resources";
+    else if (path.indexOf("/about") !== -1 || path.indexOf("/contact") !== -1) active = "about";
+
+    var links = [
+      { key: "home", href: "/", label: "Home" },
+      { key: "arcade", href: "/learningarcade/", label: "Arcade" },
+      { key: "multiplayer", href: "/multiplayer/", label: "Multiplayer" },
+      { key: "resources", href: "/resources/", label: "Resources" },
+      { key: "about", href: "/about/", label: "About" },
+    ];
+
+    var navHtml = links
+      .map(function (it) {
+        var cur = it.key === active;
+        return '<a href="' + it.href + '" class="topbar-link' + (cur ? " active" : "") + '"' + (cur ? ' aria-current="page"' : "") + ">" + it.label + "</a>";
+      })
+      .join("");
+
+    var drawerHtml = links
+      .map(function (it) {
+        var cur = it.key === active;
+        return '<a href="' + it.href + '" class="' + (cur ? "active" : "") + '"' + (cur ? ' aria-current="page"' : "") + ">" + it.label + "</a>";
+      })
+      .join("");
+
+    var header = document.createElement("header");
+    header.className = "site-topbar";
+    header.innerHTML =
+      '<div class="topbar-inner">' +
+        '<a href="/" class="brand-mark">Mr. Sheyhaki</a>' +
+        '<nav class="topbar-nav" aria-label="Main navigation">' + navHtml + "</nav>" +
+        '<div class="topbar-actions">' +
+          '<button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>' +
+          "</button>" +
+          '<a href="/learningarcade/profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>' +
+        "</div>" +
+      "</div>" +
+      '<nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">' + drawerHtml + "</nav>";
+    return header;
+  }
+
+  function wireTopbarInteractions() {
+    var btn = document.getElementById("mobileMenuBtn");
+    var drawer = document.getElementById("mobileNavDrawer");
+    if (btn && drawer && btn.dataset.menuBound !== "1") {
+      btn.dataset.menuBound = "1";
+      btn.addEventListener("click", function () {
+        var open = drawer.classList.toggle("is-open");
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      document.addEventListener("click", function (ev) {
+        if (!drawer.classList.contains("is-open")) return;
+        if (btn.contains(ev.target) || drawer.contains(ev.target)) return;
+        drawer.classList.remove("is-open");
+        btn.setAttribute("aria-expanded", "false");
+      });
+    }
+
+    var cta = document.getElementById("headerAccountCta");
+    if (cta) {
+      try {
+        var sess = null;
+        if (window.LAAuth && typeof window.LAAuth.getSession === "function") {
+          sess = window.LAAuth.getSession();
+        } else {
+          var raw = localStorage.getItem("laAuthSession");
+          sess = raw ? JSON.parse(raw) : null;
+        }
+        if (sess && (sess.displayName || sess.username)) {
+          cta.textContent = sess.displayName || sess.username;
+          cta.href = "/learningarcade/profile/";
+        } else {
+          cta.textContent = "Sign in";
+          cta.href = "/learningarcade/auth-system/login.html?redirect=" + encodeURIComponent((location.pathname || "/") + (location.search || ""));
+        }
+      } catch (e) {}
+    }
+  }
+
+  function ensureFooterThemeControl() {
+    var footer = document.querySelector("footer.site-footer");
+    if (!footer) return;
+    if (footer.querySelector("#themeToggle, [data-theme-toggle]")) return;
+    var inner = footer.querySelector(".footer-inner");
+    if (!inner) {
+      var p = footer.querySelector("p");
+      var copy = p ? p.innerHTML : '© <span id="year"></span> Mr. Sheyhaki · Learning Arcade';
+      footer.innerHTML =
+        '<div class="footer-inner">' +
+          '<p class="footer-copy">' + copy + "</p>" +
+          '<div class="footer-links">' +
+            '<a class="footer-link" href="/contact/">Contact</a>' +
+            '<a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>' +
+            '<button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>' +
+          "</div>" +
+        "</div>";
+    }
+  }
+
   function ensureThemeFab() {
-    // Remove bottom wall-switch / floating theme FABs
     document.querySelectorAll(".site-theme-fab, [data-theme-toggle].wall-switch, button.wall-switch").forEach(function (el) {
       el.remove();
     });
 
+    ensureTopbarAssets();
+
+    var legacyBar = document.querySelector("header.arcade-header-bar");
+    var isProfileApp = document.body && document.body.classList.contains("profile-app");
+    if (legacyBar && !isProfileApp && !document.querySelector("header.site-topbar")) {
+      legacyBar.replaceWith(buildSharedTopbar());
+    }
+
+    if (document.querySelector("header.site-topbar")) {
+      document.body.classList.add("has-site-topbar");
+      document.querySelectorAll("a.profile-fab, .profile-fab").forEach(function (el) {
+        el.remove();
+      });
+      wireTopbarInteractions();
+      ensureFooterThemeControl();
+      applyTheme(currentTheme());
+      return;
+    }
+
     var nav = findHeaderNav();
     if (!nav) {
-      applyTheme(root.getAttribute("data-theme") || getPreferred());
+      applyTheme(currentTheme());
       return;
     }
 
@@ -124,69 +274,31 @@
       var profile = nav.querySelector(".nav-profile");
       if (profile) nav.insertBefore(btn, profile);
       else nav.appendChild(btn);
-    } else {
-      existing.classList.remove("site-theme-fab", "wall-switch");
-      existing.classList.add("theme-toggle", "nav-theme-toggle");
-      existing.setAttribute("data-theme-toggle", "true");
-      existing.setAttribute("data-icon-only", "true");
-      if (existing.tagName === "BUTTON") existing.type = "button";
-      existing.style.position = "";
-      existing.style.top = "";
-      existing.style.right = "";
-      existing.style.bottom = "";
-      existing.style.left = "";
-      existing.style.zIndex = "";
-      existing.style.width = "";
-      existing.style.height = "";
-      existing.style.minWidth = "";
-      existing.style.minHeight = "";
-      existing.style.display = "";
-      existing.removeAttribute("hidden");
-      if (existing.querySelector(".switch-handle") || existing.querySelector(".switch-plate")) {
-        existing.innerHTML = "";
-        existing.textContent = currentTheme() === "dark" ? "☀️" : "🌙";
-      }
-    }
-
-    // Profile icon — only inside arcade-nav (skip kids worlds)
-    var path = (window.location.pathname || "").replace(/\\/g, "/");
-    var isKidsWorld = /\/kids\//i.test(path);
-    if (nav && !isKidsWorld && !nav.querySelector(".nav-profile")) {
-      var profile = document.createElement("a");
-      if (/\/learningarcade(\/|$)/i.test(path)) {
-        profile.href = path.match(/\/learningarcade\/?$/i) ? "profile/" : "../profile/";
-      } else {
-        profile.href = "learningarcade/profile/";
-      }
-      profile.className = "nav-link nav-profile";
-      profile.setAttribute("aria-label", "Profile");
-      profile.title = "My Profile";
-      profile.setAttribute("data-icon", "👤");
-      profile.innerHTML =
-        '<span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span>';
-      nav.appendChild(profile);
-    } else if (nav) {
-      var existingProfile = nav.querySelector(".nav-profile");
-      if (existingProfile) nav.appendChild(existingProfile);
     }
 
     document.querySelectorAll("a.profile-fab, .profile-fab").forEach(function (el) {
       el.remove();
     });
 
-    applyTheme(root.getAttribute("data-theme") || getPreferred());
+    applyTheme(currentTheme());
   }
 
   function bindToggles() {
     ensureThemeFab();
 
-    document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
+    document.querySelectorAll("[data-theme-toggle], #themeToggle").forEach(function (btn) {
       if (btn.dataset.themeBound === "1") return;
       btn.dataset.themeBound = "1";
       btn.addEventListener("click", function () {
-        var current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
-        applyTheme(current === "dark" ? "light" : "dark");
+        var next = currentTheme() === "dark" ? "light" : "dark";
+        applyTheme(next);
+        if (btn.id === "themeToggle" || btn.classList.contains("theme-switch-btn")) {
+          btn.textContent = next === "dark" ? "Light mode" : "Dark mode";
+        }
       });
+      if (btn.id === "themeToggle" || btn.classList.contains("theme-switch-btn")) {
+        btn.textContent = currentTheme() === "dark" ? "Light mode" : "Dark mode";
+      }
     });
   }
 
@@ -195,6 +307,14 @@
   } else {
     bindToggles();
   }
+
+  document.addEventListener("supabase-ready", function () {
+    if (window.LAAuth && typeof window.LAAuth.verify === "function") {
+      window.LAAuth.verify().then(wireTopbarInteractions).catch(function () {});
+    } else {
+      wireTopbarInteractions();
+    }
+  });
 
   /* data-back-one links use their href (one logical parent page).
      Handled by normal navigation + page transitions. */
@@ -292,6 +412,14 @@
 
   function ensureProfileLink() {
     try {
+      // Topbar already owns the account/profile CTA
+      if (document.querySelector("header.site-topbar")) {
+        document.querySelectorAll("a.profile-fab-global, a.profile-fab").forEach(function (el) {
+          el.remove();
+        });
+        return;
+      }
+
       // Already has a working profile control in the main nav
       if (document.querySelector(".arcade-nav .nav-profile, a.profile-fab, a[href*='learningarcade/profile']")) {
         // Fix any relative profile links that point to the wrong folder
