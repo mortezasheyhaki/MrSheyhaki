@@ -1,0 +1,191 @@
+/* Home Spelling – Teen2Teen 1 Unit 7. Same look as the Unit 12 games. Light and dark. */
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap");
+
+:root {
+  --sh-ink: #1b2a4a;
+  --sh-blue: #0f8fd6;
+  --sh-blue-dark: #0a5f9e;
+  --sh-orange: #f7941d;
+  --sh-orange-dark: #d9720a;
+  --sh-green: #1f9d55;
+  --sh-red: #e5484d;
+  --sh-card: #fff;
+  --sh-text: #1b2a4a;
+  --sh-muted: #cfe6f7;
+  --sh-pic: #f1f7fd;
+  --sh-bg: linear-gradient(165deg, #3cb4f0 0%, #0f8fd6 45%, #0a6cb8 100%);
+}
+html[data-theme="dark"] {
+  --sh-blue: #38bdf8;
+  --sh-blue-dark: #7dd3fc;
+  --sh-orange: #fb923c;
+  --sh-orange-dark: #c2410c;
+  --sh-green: #4ade80;
+  --sh-red: #f87171;
+  --sh-card: #1f2a40;
+  --sh-text: #e2e8f0;
+  --sh-muted: #33466b;
+  --sh-pic: #17233a;
+  --sh-bg: linear-gradient(165deg, #0b1a2e 0%, #0c2a46 50%, #07131f 100%);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  padding-top: 0 !important; padding-bottom: 0 !important;
+  font-family: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+  color: var(--sh-text);
+  background: radial-gradient(circle at 18px 18px, rgba(255,255,255,.2) 0 9px, transparent 10px) 0 0 / 44px 44px, var(--sh-bg);
+  overflow: hidden;
+}
+
+/* whole game fits the screen: no scrolling */
+.sh {
+  height: 100vh;
+  height: 100dvh;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 12px 16px 14px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+/* top bar */
+.sh-topbar { flex: none; display: flex; align-items: center; gap: 10px; }
+.sh-back {
+  flex: none; width: 44px; height: 44px; border-radius: 14px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #fff; color: var(--sh-blue-dark); text-decoration: none;
+  font-size: 22px; font-weight: 700;
+  box-shadow: 0 4px 0 rgba(0,0,0,.25);
+}
+.sh-back:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,.25); }
+.sh-title { flex: 1; min-width: 0; color: #fff; font-size: 22px; font-weight: 700; text-shadow: 2px 2px 0 rgba(0,0,0,.15); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sh-title-ico { font-size: 20px; }
+
+/* light / dark switch */
+.sh-switch {
+  position: relative; flex: none;
+  width: 84px; height: 42px;
+  border: none; border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 4px 0 #0a5f9e, inset 0 0 0 3px #cfe6f7;
+  cursor: pointer; padding: 0 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 17px;
+}
+.sh-switch:active { transform: translateY(3px); }
+.sh-sw-ico { position: relative; z-index: 1; line-height: 1; pointer-events: none; }
+.sh-knob {
+  position: absolute; top: 3px; left: 3px;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, #ffd166, #f7941d);
+  box-shadow: 0 2px 0 rgba(0,0,0,.2);
+  transition: transform .3s cubic-bezier(.2,.8,.2,1), background .3s;
+}
+html[data-theme="dark"] .sh-switch { background: #0f1a2b; box-shadow: 0 4px 0 #050a14, inset 0 0 0 3px #33466b; }
+html[data-theme="dark"] .sh-knob { transform: translateX(42px); background: linear-gradient(135deg, #7dd3fc, #38bdf8); }
+
+/* progress */
+.sh-progress { flex: none; height: 12px; border-radius: 99px; background: rgba(255,255,255,.35); overflow: hidden; }
+.sh-progress span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ffd166, #f7941d); border-radius: 99px; transition: width .4s cubic-bezier(.2,.8,.2,1); }
+
+/* stage: the card fills the free space and is centred */
+.sh-stage { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.sh-card {
+  width: 100%;
+  background: var(--sh-card);
+  border: 4px solid #fff;
+  border-radius: 24px;
+  box-shadow: 0 8px 0 rgba(10,95,158,.35), 0 14px 30px rgba(0,0,0,.15);
+  padding: 18px 18px 20px;
+  display: flex; flex-direction: column; gap: 14px;
+  max-height: 100%;
+}
+html[data-theme="dark"] .sh-card { border-color: #223049; box-shadow: 0 8px 0 #050a14, 0 14px 30px rgba(0,0,0,.4); }
+.sh-card.pc-enter { animation: shIn .45s cubic-bezier(.2,.8,.2,1) both; }
+.sh-card.pc-leave { animation: shOut .3s ease both; }
+@keyframes shIn { from { opacity: 0; transform: translateX(60px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes shOut { to { opacity: 0; transform: translateX(-60px) scale(.96); } }
+
+.sh-feedback { flex: none; margin: 0; min-height: 28px; color: #fff; font-size: 20px; font-weight: 700; text-align: center; text-shadow: 0 2px 0 rgba(0,0,0,.2); }
+
+/* ---------- Home Spelling ---------- */
+.hs-label { margin: 0; text-align: center; font-size: 15px; font-weight: 700; color: var(--sh-blue-dark); }
+.hs-pic {
+  position: relative;
+  height: clamp(130px, 32dvh, 250px);
+  border-radius: 18px;
+  background: var(--sh-pic);
+  border: 3px solid var(--sh-muted);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.hs-img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; padding: 8px; user-select: none; -webkit-user-drag: none; }
+.hs-pic-fallback { display: none; font-size: 64px; }
+.hs-pic.is-broken .hs-img { display: none; }
+.hs-pic.is-broken .hs-pic-fallback { display: block; }
+
+/* letter boxes: one box per letter, a bigger gap between words */
+.hs-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 22px; }
+.hs-word { display: inline-flex; gap: 5px; }
+.hs-box {
+  box-sizing: border-box;
+  flex: none;
+  width: clamp(30px, 8.4vw, 44px);
+  height: clamp(42px, 11vw, 54px);
+  padding: 0;
+  border: 3px solid #cbbcf2;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--sh-ink);
+  font: inherit;
+  font-size: clamp(20px, 5vw, 26px);
+  font-weight: 700;
+  text-align: center;
+  text-transform: lowercase;
+  box-shadow: 0 4px 0 #d6cbef;
+  outline: none;
+  caret-color: transparent;
+  transition: border-color .2s, background .2s, transform .15s;
+}
+.hs-box::selection { background: transparent; }
+.hs-box:focus { border-color: #ff6fb1; transform: translateY(-2px); }
+.hs-box.is-right { border-color: #1fa86b; background: #d9ffe9; color: #053d25; box-shadow: 0 4px 0 #1fa86b; }
+.hs-box.is-wrong { border-color: #e0453f; background: #ffe3e3; animation: hsShake .45s ease; }
+.hs-box:read-only { cursor: default; }
+@keyframes hsShake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(3px)} }
+html[data-theme="dark"] .hs-box { background: #1a1d27; color: #f5f0ff; border-color: #4a3f73; box-shadow: 0 4px 0 #120c24; }
+html[data-theme="dark"] .hs-box:focus { border-color: #ff6fb1; }
+html[data-theme="dark"] .hs-box.is-right { background: #15402d; color: #bbf7d0; border-color: #1fa86b; }
+html[data-theme="dark"] .hs-box.is-wrong { background: #4a1d1d; border-color: #e0453f; }
+
+.hs-check {
+  appearance: none; border: none; border-radius: 999px;
+  padding: 12px 28px;
+  font: inherit; font-weight: 700; font-size: 18px;
+  color: #1c0f04; background: var(--sh-orange);
+  box-shadow: 0 6px 0 var(--sh-orange-dark);
+  cursor: pointer; align-self: center;
+}
+.hs-check:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--sh-orange-dark); }
+.hs-check:disabled { opacity: .45; cursor: default; transform: none; }
+
+@media (max-width: 420px) {
+  .sh { padding: 10px 12px 12px; gap: 10px; }
+  .sh-title { font-size: 18px; }
+  .sh-card { padding: 14px; gap: 12px; }
+  .hs-row { gap: 10px 16px; }
+  .hs-word { gap: 4px; }
+}
+@media (max-height: 640px) {
+  .sh-card { gap: 10px; padding: 12px; }
+}
+
+/* ---------- phone: never clip or lock the content; the page scrolls if it needs to ---------- */
+@media (max-width: 860px) {
+  html, body { height: auto !important; min-height: 100%; overflow-y: auto !important; overflow-x: hidden !important; }
+  .sh { height: auto !important; min-height: 100dvh; padding-bottom: 24px; }
+  .sh-stage { overflow: visible !important; flex: 0 0 auto; }
+  .sh-card { max-height: none !important; }
+  .sh-feedback { min-height: 28px; }
+}
