@@ -76,8 +76,8 @@ export function attachSocket(io) {
     socket.emit("server:hello", {
       ok: true,
       phase: 4,
-      features: ["family-words"],
-      message: "Authenticated multiplayer server — A or An + Snakes & Ladders ready",
+      features: ["family-words", "tictactoe-should"],
+      message: "Authenticated multiplayer server — A or An + Snakes & Ladders + Family Words + Tic-Tac-Toe ready",
       player: {
         id: player.id,
         username: player.username,
@@ -128,6 +128,7 @@ export function attachSocket(io) {
       const result = roomManager.leaveRoom(player.id);
       if (result.leftCode) {
         socket.leave(roomChannel(result.leftCode));
+        clearTttTimer(result.leftCode);
         if (result.room) emitRoom(io, result.room);
       }
       if (typeof ack === "function") ack(result);
@@ -377,6 +378,80 @@ socket.on("game:start", (payload, ack) => {
       if (result.everyoneAnswered) scheduleFamilyNext(io, result.roomCode, 1200);
     });
 
+    // ── Tic-Tac-Toe (Should) ───────────────────────────────────────
+
+    socket.on("ttt:start", (_payload, ack) => {
+      const result = roomManager.tttStart(player.id);
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      clearTttTimer(result.room.code);
+      emitRoom(io, result.room);
+      console.log(`[game] ${brief} started Tic-Tac-Toe (Should) in ${result.room.code}`);
+      if (typeof ack === "function") ack(result);
+    });
+
+    socket.on("ttt:rps", (payload, ack) => {
+      const result = roomManager.tttRps(player.id, payload?.choice);
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitRoom(io, result.room);
+      if (typeof ack === "function") ack(result);
+      if (result.resolved && !result.tie) {
+        scheduleTttTurnStart(io, result.roomCode, 1600);
+      }
+    });
+
+    socket.on("ttt:answer", (payload, ack) => {
+      const result = roomManager.tttAnswer(player.id, payload || {});
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitRoom(io, result.room);
+      if (typeof ack === "function") ack(result);
+    });
+
+    socket.on("ttt:cant", (_payload, ack) => {
+      const result = roomManager.tttCant(player.id);
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitRoom(io, result.room);
+      if (typeof ack === "function") ack(result);
+    });
+
+    socket.on("ttt:mark", (payload, ack) => {
+      const result = roomManager.tttMark(player.id, payload?.cell);
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitRoom(io, result.room);
+      if (typeof ack === "function") ack(result);
+    });
+
+    socket.on("ttt:rematch", (_payload, ack) => {
+      const result = roomManager.tttRematch(player.id);
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      clearTttTimer(result.room.code);
+      emitRoom(io, result.room);
+      if (typeof ack === "function") ack(result);
+    });
+
     socket.on("disconnect", (reason) => {
       console.log(`[socket] ${brief} disconnected (${reason})`);
       const info = roomManager.markDisconnected(socket.id);
@@ -479,4 +554,27 @@ function doFamilyNext(io, roomCode) {
   io.to(roomChannel(roomCode)).emit("fw:question", { question: r.question });
   io.to(roomChannel(roomCode)).emit("fw:scoreboard", { scoreboard: r.scoreboard });
   io.to(roomChannel(roomCode)).emit("room:update", r.room);
+}
+
+// ── Tic-Tac-Toe RPS reveal timers (in-memory) ──────────────────────
+const tttTimers = new Map();
+
+function clearTttTimer(roomCode) {
+  const t = tttTimers.get(roomCode);
+  if (t) {
+    clearTimeout(t);
+    tttTimers.delete(roomCode);
+  }
+}
+
+function scheduleTttTurnStart(io, roomCode, ms = 1600) {
+  clearTttTimer(roomCode);
+  const t = setTimeout(() => {
+    tttTimers.delete(roomCode);
+    const res = roomManager.tttEnterTurns(roomCode);
+    if (res.ok && res.room) {
+      emitRoom(io, res.room);
+    }
+  }, ms);
+  tttTimers.set(roomCode, t);
 }

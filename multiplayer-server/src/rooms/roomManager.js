@@ -34,6 +34,15 @@ import {
   pickQuestion as slPickQuestion,
   answerQuestion as slAnswerQuestion,
 } from "../games/snakesLadders.js";
+import {
+  createTttShouldState,
+  publicTttState,
+  submitRps as tttSubmitRps,
+  startTurnPhase as tttStartTurnPhase,
+  submitAnswer as tttSubmitAnswer,
+  cantAnswer as tttCantAnswer,
+  markCell as tttMarkCell,
+} from "../games/tictactoeShould.js";
 
 /** @type {Map<string, object>} */
 const rooms = new Map();
@@ -65,6 +74,11 @@ function publicRoom(room) {
   if (isFamilyGame(room.game)) {
     base.game = publicFamilyState(room.game, room.players);
     if (room.status !== "playing") base.status = room.status;
+    return base;
+  }
+
+  if (room.game && room.game.type === "tictactoe-should") {
+    base.game = publicTttState(room.game);
     return base;
   }
 
@@ -282,6 +296,7 @@ export const roomManager = {
     if (room.status !== "lobby") return { ok: false, error: "Game already started" };
     room.gameType = gameType || "a-an-swipe";
     if (gameType === "snakes-ladders") room.maxPlayers = 4;
+    else if (gameType === "tictactoe-should") room.maxPlayers = 2;
     else room.maxPlayers = config.maxPlayersPerRoom;
     return { ok: true, room: publicRoom(room) };
   },
@@ -586,6 +601,94 @@ export const roomManager = {
       scoreboard: fwPublicScoreboard(room.game, room.players),
       room: publicRoom(room),
     };
+  },
+
+  // ─── Tic-Tac-Toe (Should) ───────────────────────────────────────
+
+  tttStart(playerId) {
+    const room = findRoomByPlayerId(playerId);
+    if (!room) return { ok: false, error: "Not in a room" };
+    if (room.hostId !== playerId) return { ok: false, error: "Only the host can start the game" };
+    if (room.status !== "lobby") return { ok: false, error: "Game already started" };
+    if (room.players.length !== 2) return { ok: false, error: "You need 2 players to start." };
+
+    const ids = room.players.map((p) => p.id);
+    room.game = createTttShouldState(ids);
+    room.gameType = "tictactoe-should";
+    room.maxPlayers = 2;
+    room.status = "playing";
+    room.players.forEach((p) => { p.ready = false; });
+    return { ok: true, room: publicRoom(room) };
+  },
+
+  tttRps(playerId, choice) {
+    const room = findRoomByPlayerId(playerId);
+    if (!room || !room.game || room.game.type !== "tictactoe-should") {
+      return { ok: false, error: "No Tic-Tac-Toe game running" };
+    }
+    const res = tttSubmitRps(room.game, playerId, choice);
+    if (!res.ok) return res;
+    return {
+      ok: true,
+      room: publicRoom(room),
+      roomCode: room.code,
+      resolved: res.resolved,
+      tie: res.tie,
+    };
+  },
+
+  tttEnterTurns(roomCode) {
+    const room = rooms.get(normalizeRoomCode(roomCode));
+    if (!room || !room.game || room.game.type !== "tictactoe-should") {
+      return { ok: false, error: "No Tic-Tac-Toe game running" };
+    }
+    const res = tttStartTurnPhase(room.game);
+    if (!res.ok) return res;
+    return { ok: true, room: publicRoom(room) };
+  },
+
+  tttAnswer(playerId, payload) {
+    const room = findRoomByPlayerId(playerId);
+    if (!room || !room.game || room.game.type !== "tictactoe-should") {
+      return { ok: false, error: "No Tic-Tac-Toe game running" };
+    }
+    const res = tttSubmitAnswer(room.game, playerId, payload);
+    if (!res.ok) return res;
+    return { ok: true, room: publicRoom(room), correct: res.correct };
+  },
+
+  tttCant(playerId) {
+    const room = findRoomByPlayerId(playerId);
+    if (!room || !room.game || room.game.type !== "tictactoe-should") {
+      return { ok: false, error: "No Tic-Tac-Toe game running" };
+    }
+    const res = tttCantAnswer(room.game, playerId);
+    if (!res.ok) return res;
+    return { ok: true, room: publicRoom(room) };
+  },
+
+  tttMark(playerId, cell) {
+    const room = findRoomByPlayerId(playerId);
+    if (!room || !room.game || room.game.type !== "tictactoe-should") {
+      return { ok: false, error: "No Tic-Tac-Toe game running" };
+    }
+    const res = tttMarkCell(room.game, playerId, cell);
+    if (!res.ok) return res;
+    if (res.over) room.status = "ended";
+    return { ok: true, room: publicRoom(room), over: res.over };
+  },
+
+  tttRematch(playerId) {
+    const room = findRoomByPlayerId(playerId);
+    if (!room) return { ok: false, error: "Not in a room" };
+    if (room.hostId !== playerId) return { ok: false, error: "Only the host can start a rematch" };
+    if (room.players.length !== 2) return { ok: false, error: "Need 2 players for a rematch" };
+
+    const ids = room.players.map((p) => p.id);
+    room.game = createTttShouldState(ids);
+    room.gameType = "tictactoe-should";
+    room.status = "playing";
+    return { ok: true, room: publicRoom(room) };
   },
 
   stats() {

@@ -250,11 +250,11 @@
   </script>
   <script>
     (function () {
-      // Smart return URL: ?next= / home
+      // Smart return URL: ?next= / ?redirect= / home
       function getReturnUrl() {
         try {
           var params = new URLSearchParams(window.location.search);
-          var next = params.get("next");
+          var next = params.get("next") || params.get("redirect");
           if (next && next.charAt(0) === "/" && next.indexOf("//") === -1) {
             return next;
           }

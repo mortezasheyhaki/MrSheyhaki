@@ -33,8 +33,8 @@
   } catch (e) {}
 
   var SERVER_URL =
-    location.hostname === "localhost" || location.hostname === "127.0.0.1"
-      ? "http://localhost:3001"
+    location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname.endsWith(".run.app")
+      ? location.origin
       : "https://mrsheyhaki-multiplayer.onrender.com";
 
   var LADDERS = { 8: 31, 21: 42, 25: 34, 66: 73, 70: 89 };
@@ -624,6 +624,9 @@
       toOriginal: function (displayIndex) {
         return order[displayIndex];
       },
+      toDisplay: function (originalIndex) {
+        return order.indexOf(originalIndex);
+      },
     };
   }
 
@@ -789,7 +792,7 @@
     // Answer
     if (sl.phase === "answer" && sl.answerFor === myId && sl.currentQuestion) {
       showOnlineAnswer(sl.currentQuestion);
-    } else if (sl.phase !== "answer") {
+    } else if (sl.phase !== "answer" && $("aResult").hidden) {
       $("aModal").hidden = true;
     }
 
@@ -857,8 +860,9 @@
             resEl.className = "sl-result " + (res.correct ? "ok" : "bad");
             resEl.textContent = res.correct ? "Correct!" : "Wrong — back 3";
             sfx(res.correct ? "correct" : "wrong");
+            var correctDisplay = typeof res.answer === "number" ? shuffled.toDisplay(res.answer) : shuffled.answer;
             Array.prototype.forEach.call(box.children, function (b, j) {
-              if (j === shuffled.answer) b.classList.add("correct");
+              if (j === correctDisplay) b.classList.add("correct");
               if (j === i && !res.correct) b.classList.add("wrong");
             });
           }
@@ -1063,11 +1067,12 @@
     if (!session) {
       try { session = await window.LAAuth.verify(); } catch (e) {}
     }
+    var redirect = encodeURIComponent(location.pathname + location.search);
+    if ($("loginLink")) $("loginLink").href = "/learningarcade/auth-system/login.html?redirect=" + redirect;
+
     if (!session) {
       loginGate.hidden = false;
       actions.hidden = true;
-      var redirect = encodeURIComponent(location.pathname + location.search);
-      $("loginLink").href = "/learningarcade/auth-system/login.html?redirect=" + redirect;
       return false;
     }
 
