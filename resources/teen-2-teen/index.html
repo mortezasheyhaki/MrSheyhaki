@@ -20,87 +20,195 @@
   .level-grid,
   .level-grid--hub {
     display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
-    gap: 18px !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 20px !important;
     width: 100%;
     max-width: 100%;
   }
-  .level-card--hub {
-    min-height: 160px;
-  }
 
-  :root {
-    --t2t-coral: #f97316;
-  }
-  html[data-theme="dark"] {
-    --t2t-coral: #fb923c;
-  }
+  :root { --t2t-coral: #f97316; }
+  html[data-theme="dark"] { --t2t-coral: #fb923c; }
   .arcade-intro .eyebrow { color: var(--t2t-coral) !important; }
-  .back-link { color: var(--t2t-coral); font-weight: 800; text-decoration: none; font-size: 13px; }
+  .back-link {
+    color: var(--t2t-coral);
+    font-weight: 800;
+    text-decoration: none;
+    font-size: 13px;
+  }
 
-  /* —— Teen2Teen level cards = same hub layout as AEF —— */
-  /* T2T1 — orange (book cover) */
+  /* ── Professional level cards ── */
+  .level-card--hub {
+    position: relative;
+    overflow: hidden;
+    min-height: 168px;
+    padding: 22px 24px 20px !important;
+    border: 1px solid transparent !important;
+    border-radius: 18px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-decoration: none;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.2s ease,
+                border-color 0.2s ease;
+  }
+  .level-card--hub:hover {
+    transform: translateY(-3px);
+  }
+
+  /* Soft corner glow — no hard edge */
+  .level-card--hub::before {
+    content: "";
+    position: absolute;
+    top: -40%;
+    right: -30%;
+    width: 75%;
+    height: 120%;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(40px);
+    opacity: 0.55;
+  }
+
+  /* Very subtle dots */
+  .level-card--hub::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.2;
+    background-image:
+      radial-gradient(circle at 88% 22%, rgba(255,255,255,0.9) 0 3px, transparent 4px),
+      radial-gradient(circle at 94% 48%, rgba(255,255,255,0.5) 0 2px, transparent 3px),
+      radial-gradient(circle at 78% 68%, rgba(255,255,255,0.7) 0 2.5px, transparent 3.5px),
+      radial-gradient(circle at 96% 78%, rgba(255,255,255,0.4) 0 3px, transparent 4px);
+  }
+
+  .level-card--hub .level-badge,
+  .level-card--hub h3,
+  .level-card--hub p,
+  .level-card--hub .level-arrow {
+    position: relative;
+    z-index: 1;
+  }
+
+  .level-card--hub .level-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+  .level-card--hub h3 {
+    margin: 4px 0 0;
+    font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .level-card--hub p {
+    margin: 6px 0 0;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    opacity: 0.8;
+  }
+
+  .level-card--hub .level-arrow {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    margin-top: auto !important;
+    width: auto !important;
+    min-width: 40px;
+    height: 36px;
+    padding: 0 14px !important;
+    border-radius: 999px !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.18) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .level-card--hub:hover .level-arrow {
+    background: rgba(255,255,255,0.3) !important;
+    border-color: rgba(255,255,255,0.5);
+  }
+
+  /* ═══ T2T1 — book orange, refined ═══ */
   .level-card--hub.level-card--t2t1 {
-    border-color: rgba(251, 146, 60, 0.4) !important;
-    background: linear-gradient(145deg, #9a3412, #7c2d12) !important;
-    color: #fff7ed !important;
-    box-shadow: 0 10px 28px rgba(194, 65, 12, 0.3) !important;
+    background: linear-gradient(145deg, #ff8c1a 0%, #ff6b00 100%) !important;
+    border-color: rgba(255, 180, 80, 0.35) !important;
+    color: #1a0a00 !important;
+    box-shadow:
+      0 4px 6px rgba(255, 107, 0, 0.12),
+      0 12px 28px rgba(255, 107, 0, 0.28) !important;
   }
-  .level-card--hub.level-card--t2t1::after { background: rgba(251, 146, 60, 0.25) !important; }
-  .level-card--hub.level-card--t2t1 .level-badge { color: #fed7aa !important; }
-  .level-card--hub.level-card--t2t1 h3 { color: #fff7ed !important; }
-  .level-card--hub.level-card--t2t1 p { color: #fdba74 !important; }
-  .level-card--hub.level-card--t2t1 .level-arrow {
-    background: rgba(251, 146, 60, 0.3) !important;
-    color: #ffedd5 !important;
+  .level-card--hub.level-card--t2t1::before {
+    background: #38bdf8;
   }
+  .level-card--hub.level-card--t2t1 .level-badge { color: rgba(60, 20, 0, 0.7) !important; }
+  .level-card--hub.level-card--t2t1 h3 { color: #1a0a00 !important; }
+  .level-card--hub.level-card--t2t1 p { color: rgba(60, 25, 0, 0.75) !important; }
+  .level-card--hub.level-card--t2t1 .level-arrow { color: #1a0a00 !important; }
   .level-card--hub.level-card--t2t1:hover {
-    border-color: rgba(253, 186, 116, 0.6) !important;
-    box-shadow: 0 18px 40px rgba(194, 65, 12, 0.4) !important;
+    box-shadow:
+      0 6px 10px rgba(255, 107, 0, 0.15),
+      0 18px 40px rgba(255, 107, 0, 0.38) !important;
   }
 
-  /* T2T2 — teal (book cover) */
+  /* ═══ T2T2 — book green, refined ═══ */
   .level-card--hub.level-card--t2t2 {
-    border-color: rgba(45, 212, 191, 0.4) !important;
-    background: linear-gradient(145deg, #115e59, #0f766e) !important;
-    color: #f0fdfa !important;
-    box-shadow: 0 10px 28px rgba(13, 148, 136, 0.3) !important;
+    background: linear-gradient(145deg, #22c55e 0%, #16a34a 100%) !important;
+    border-color: rgba(134, 239, 172, 0.3) !important;
+    color: #052e16 !important;
+    box-shadow:
+      0 4px 6px rgba(22, 163, 74, 0.12),
+      0 12px 28px rgba(22, 163, 74, 0.28) !important;
   }
-  .level-card--hub.level-card--t2t2::after { background: rgba(45, 212, 191, 0.25) !important; }
-  .level-card--hub.level-card--t2t2 .level-badge { color: #99f6e4 !important; }
-  .level-card--hub.level-card--t2t2 h3 { color: #f0fdfa !important; }
-  .level-card--hub.level-card--t2t2 p { color: #5eead4 !important; }
-  .level-card--hub.level-card--t2t2 .level-arrow {
-    background: rgba(45, 212, 191, 0.3) !important;
-    color: #ccfbf1 !important;
+  .level-card--hub.level-card--t2t2::before {
+    background: #f97316;
   }
+  .level-card--hub.level-card--t2t2 .level-badge { color: rgba(5, 46, 22, 0.7) !important; }
+  .level-card--hub.level-card--t2t2 h3 { color: #052e16 !important; }
+  .level-card--hub.level-card--t2t2 p { color: rgba(5, 46, 22, 0.75) !important; }
+  .level-card--hub.level-card--t2t2 .level-arrow { color: #052e16 !important; }
   .level-card--hub.level-card--t2t2:hover {
-    border-color: rgba(94, 234, 212, 0.6) !important;
-    box-shadow: 0 18px 40px rgba(13, 148, 136, 0.4) !important;
+    box-shadow:
+      0 6px 10px rgba(22, 163, 74, 0.15),
+      0 18px 40px rgba(22, 163, 74, 0.38) !important;
   }
 
-  /* Future levels (locked style placeholders) */
+  /* Future levels */
   .level-card--hub.level-card--t2t3 {
-    border-color: rgba(167, 139, 250, 0.35) !important;
-    background: linear-gradient(145deg, #4c1d95, #5b21b6) !important;
+    background: linear-gradient(145deg, #8b5cf6 0%, #6d28d9 100%) !important;
+    border-color: rgba(196, 181, 253, 0.25) !important;
     color: #f5f3ff !important;
-    box-shadow: 0 10px 28px rgba(91, 33, 182, 0.28) !important;
+    box-shadow: 0 12px 28px rgba(109, 40, 217, 0.28) !important;
   }
-  .level-card--hub.level-card--t2t3::after { background: rgba(167, 139, 250, 0.22) !important; }
-  .level-card--hub.level-card--t2t3 .level-badge { color: #e9d5ff !important; }
+  .level-card--hub.level-card--t2t3::before { background: #f472b6; }
+  .level-card--hub.level-card--t2t3 .level-badge { color: rgba(245, 243, 255, 0.7) !important; }
   .level-card--hub.level-card--t2t3 h3 { color: #f5f3ff !important; }
-  .level-card--hub.level-card--t2t3 p { color: #c4b5fd !important; }
+  .level-card--hub.level-card--t2t3 p { color: rgba(196, 181, 253, 0.9) !important; }
+  .level-card--hub.level-card--t2t3 .level-arrow { color: #f5f3ff !important; }
 
   .level-card--hub.level-card--t2t4 {
-    border-color: rgba(74, 222, 128, 0.35) !important;
-    background: linear-gradient(145deg, #14532d, #166534) !important;
-    color: #f0fdf4 !important;
-    box-shadow: 0 10px 28px rgba(21, 128, 61, 0.28) !important;
+    background: linear-gradient(145deg, #06b6d4 0%, #0891b2 100%) !important;
+    border-color: rgba(165, 243, 252, 0.25) !important;
+    color: #ecfeff !important;
+    box-shadow: 0 12px 28px rgba(8, 145, 178, 0.28) !important;
   }
-  .level-card--hub.level-card--t2t4::after { background: rgba(74, 222, 128, 0.22) !important; }
-  .level-card--hub.level-card--t2t4 .level-badge { color: #bbf7d0 !important; }
-  .level-card--hub.level-card--t2t4 h3 { color: #f0fdf4 !important; }
-  .level-card--hub.level-card--t2t4 p { color: #86efac !important; }
+  .level-card--hub.level-card--t2t4::before { background: #fbbf24; }
+  .level-card--hub.level-card--t2t4 .level-badge { color: rgba(236, 254, 255, 0.7) !important; }
+  .level-card--hub.level-card--t2t4 h3 { color: #ecfeff !important; }
+  .level-card--hub.level-card--t2t4 p { color: rgba(165, 243, 252, 0.9) !important; }
+  .level-card--hub.level-card--t2t4 .level-arrow { color: #ecfeff !important; }
 </style>
 <!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
 </head>

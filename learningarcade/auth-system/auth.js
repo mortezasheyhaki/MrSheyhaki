@@ -111,6 +111,17 @@
     try {
       localStorage.removeItem(SESSION_KEY);
     } catch (e) {}
+    // Also clear Supabase persisted auth tokens so verify() cannot restore the session
+    try {
+      var keys = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && (k.indexOf("sb-") === 0 || k.indexOf("supabase") !== -1)) keys.push(k);
+      }
+      keys.forEach(function (k) {
+        try { localStorage.removeItem(k); } catch (e2) {}
+      });
+    } catch (e) {}
   }
 
   function getSession() {
@@ -259,11 +270,29 @@
   function logout() {
     var done = Promise.resolve();
     if (init() && sb) {
-      done = sb.auth.signOut().catch(function () {});
+      done = sb.auth.signOut({ scope: "local" }).catch(function () {
+        return sb.auth.signOut().catch(function () {});
+      });
     }
     clearSession();
     notifyAccountChanged();
     return { ok: true, done: done };
+  }
+
+  /** Promise-based logout for UI buttons — always clears local state */
+  async function logoutAsync() {
+    try {
+      if (init() && sb) {
+        try {
+          await sb.auth.signOut({ scope: "local" });
+        } catch (e1) {
+          try { await sb.auth.signOut(); } catch (e2) {}
+        }
+      }
+    } catch (e) {}
+    clearSession();
+    notifyAccountChanged();
+    return { ok: true };
   }
 
   function isLoggedIn() {
@@ -309,6 +338,7 @@
     login: login,
     upgradeLegacy: upgradeLegacy,
     logout: logout,
+    logoutAsync: logoutAsync,
     verify: verify,
     isLoggedIn: isLoggedIn,
     currentUser: currentUser,

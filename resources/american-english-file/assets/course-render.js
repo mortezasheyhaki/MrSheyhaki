@@ -688,11 +688,11 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     quizGrid.appendChild(
       el(
         "a",
-        { class: "level-card level-card--hub level-card--quiz", href: "1/unit-5/tests/" },
+        { class: "level-card level-card--hub level-card--quiz", href: "tests/" },
         [
           el("span", { class: "level-badge", text: "TESTS" }),
           el("h3", { text: "Tests & Exams" }),
-          el("p", { text: "Unit 5 progress tests, listening exams, and exam-style games." }),
+          el("p", { text: "Progress tests, listening exams, and exam-style games by level." }),
           el("span", { class: "level-arrow", "aria-hidden": "true", text: "→" }),
         ]
       )

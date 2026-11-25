@@ -44,12 +44,27 @@
     // Insert at top of body
     document.body.insertBefore(bar, document.body.firstChild);
 
-    // Logout handler
+    // Logout handler — await full sign-out so session cannot restore
     var logoutBtn = document.getElementById("la-auth-logout");
     if (logoutBtn) {
       logoutBtn.onclick = function () {
-        if (window.LAAuth) LAAuth.logout();
-        window.location.reload();
+        logoutBtn.disabled = true;
+        logoutBtn.textContent = "…";
+        var finish = function () {
+          window.location.href = "/";
+        };
+        if (window.LAAuth && typeof LAAuth.logoutAsync === "function") {
+          LAAuth.logoutAsync().then(finish).catch(finish);
+        } else if (window.LAAuth) {
+          var r = LAAuth.logout();
+          if (r && r.done && typeof r.done.then === "function") {
+            r.done.then(finish).catch(finish);
+          } else {
+            finish();
+          }
+        } else {
+          finish();
+        }
       };
     }
   }

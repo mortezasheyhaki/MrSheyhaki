@@ -303,10 +303,7 @@
     .mp-card.soon .mp-cta { color: var(--site-muted); }
 
     /* Available now: single card shouldn't stretch full 3-col */
-    .mp-grid--live {
-      grid-template-columns: minmax(0, 340px);
-      justify-content: start;
-    }
+    /* live grid uses same 3-col layout as .mp-grid (see redesign below) */
 
     .mp-note {
       text-align: center;
@@ -330,12 +327,10 @@
 
     /* —— Tablet —— */
     @media (max-width: 860px) {
-      .mp-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .mp-grid,
       .mp-grid--live {
-        grid-template-columns: minmax(0, 1fr);
-        max-width: 360px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-width: none;
       }
     }
 
@@ -372,13 +367,11 @@
         padding: 0.85rem 1rem;
         font-size: 0.92rem;
       }
-      .mp-grid {
+      .mp-grid,
+      .mp-grid--live {
         grid-template-columns: 1fr;
         gap: 0.75rem;
-      }
-      .mp-grid--live {
         max-width: none;
-        grid-template-columns: 1fr;
       }
       .mp-card {
         padding: 1rem 1rem 0.95rem;
@@ -404,20 +397,20 @@
       .mp-card-foot { flex-wrap: wrap; }
     }
   
-    /* ── Redesign: game cards side by side, site theme colours (light & dark) ── */
+    /* ── Redesign: 3 cards per row; 4th sits under the first ── */
     .mp-grid,
     .mp-grid--live {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      grid-template-columns: none;
-      gap: 1.4rem;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
       margin-bottom: 2.5rem;
+      justify-content: stretch;
+      max-width: 1100px;
     }
     .mp-grid > .mp-card,
     .mp-grid--live > .mp-card {
-      flex: 0 1 290px;
-      width: 290px;
+      width: auto;
+      min-width: 0;
       min-height: 280px;
       padding: 1.35rem 1.35rem 1.2rem;
       border-radius: 24px;
@@ -460,12 +453,33 @@
       --card-glow: rgba(52, 211, 153, .35);
       --tag-color: #047857; --tag-bg: rgba(52, 211, 153, .15); --cta-color: #059669;
     }
+    .mp-grid--live > .mp-card:nth-child(4),
+    .mp-grid > .mp-card:nth-child(4) {
+      --card-accent: linear-gradient(90deg, #60a5fa, #818cf8);
+      --card-glow: rgba(96, 165, 250, .35);
+      --tag-color: #1d4ed8; --tag-bg: rgba(96, 165, 250, .14); --cta-color: #2563eb;
+    }
     html[data-theme="dark"] .mp-grid > .mp-card:nth-child(1),
     html[data-theme="dark"] .mp-grid--live > .mp-card:nth-child(1) { --tag-color: #fbcfe8; --tag-bg: rgba(244, 114, 182, .18); --cta-color: #f9a8d4; }
     html[data-theme="dark"] .mp-grid > .mp-card:nth-child(2),
     html[data-theme="dark"] .mp-grid--live > .mp-card:nth-child(2) { --tag-color: #ddd6fe; --tag-bg: rgba(167, 139, 250, .2); --cta-color: #c4b5fd; }
     html[data-theme="dark"] .mp-grid > .mp-card:nth-child(3),
     html[data-theme="dark"] .mp-grid--live > .mp-card:nth-child(3) { --tag-color: #a7f3d0; --tag-bg: rgba(52, 211, 153, .18); --cta-color: #6ee7b7; }
+    html[data-theme="dark"] .mp-grid > .mp-card:nth-child(4),
+    html[data-theme="dark"] .mp-grid--live > .mp-card:nth-child(4) { --tag-color: #bfdbfe; --tag-bg: rgba(96, 165, 250, .18); --cta-color: #93c5fd; }
+
+    @media (max-width: 960px) {
+      .mp-grid,
+      .mp-grid--live {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 600px) {
+      .mp-grid,
+      .mp-grid--live {
+        grid-template-columns: 1fr;
+      }
+    }
 
     .mp-grid .mp-card-top { margin-bottom: .9rem; }
     .mp-grid .mp-tag {
