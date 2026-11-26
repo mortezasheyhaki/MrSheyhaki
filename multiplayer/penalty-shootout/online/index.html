@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0b1020" />
+<meta name="color-scheme" content="dark light" />
+<title>Penalty Shootout · Online | Mr. Sheyhaki</title>
+<meta name="description" content="Penalty Shootout online — create a room, share the code, and answer English questions to score with a friend." />
+<link rel="stylesheet" href="/style.css" />
+<link rel="stylesheet" href="/theme.css" />
+<link rel="stylesheet" href="/multiplayer/lobby.css" />
+<link rel="stylesheet" href="/multiplayer/penalty-shootout/style.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* online-only layout bits (everything else comes from the offline game's style.css) */
+  .po-status { min-height: 1.2rem; margin: .6rem 0 0; text-align: center; font-weight: 700; font-size: .88rem; color: var(--pk-muted); }
+  .po-status.err { color: #ef4444; }
+  .po-roster { display: grid; gap: .6rem; }
+  .po-seat { display: flex; align-items: center; gap: .7rem; padding: .75rem .9rem; border-radius: 14px; border: 2px solid var(--pk-border); background: var(--pk-surface2); font-weight: 800; }
+  .po-seat .pk-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .po-seat .po-tag { margin-left: auto; font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: .2rem .5rem; border-radius: 999px; background: var(--pk-border); }
+  .po-seat .po-ready { margin-left: auto; font-size: .78rem; font-weight: 800; color: var(--pk-muted); }
+  .po-seat.is-ready .po-ready { color: var(--pk-ok); }
+  .po-empty { border-style: dashed; color: var(--pk-muted); font-weight: 700; }
+  .po-hud-names { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+  .po-hud-side { min-width: 0; flex: 1; font-weight: 800; font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .po-hud-side.right { text-align: right; }
+  .po-hud-goals { font-family: Fredoka, Nunito, sans-serif; font-size: 1.6rem; font-weight: 700; padding: 0 .4rem; }
+  .po-hud-mid { text-align: center; font-size: .72rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--pk-muted); }
+  .po-wait { margin: .6rem 0 0; font-size: .84rem; font-weight: 700; color: var(--pk-muted); text-align: center; }
+  .po-timer { font-family: Fredoka, Nunito, sans-serif; font-weight: 700; color: #facc15; font-size: .95rem; }
+  .po-reveal { font-family: Fredoka, Nunito, sans-serif; font-weight: 700; font-size: 1.5rem; margin: 0 0 .2rem; }
+  .po-end-title { font-family: Fredoka, Nunito, sans-serif; font-weight: 700; font-size: 1.7rem; margin: 0 0 .4rem; }
+  .po-ok { color: var(--pk-ok); }
+  .po-bad { color: var(--pk-bad); }
+  .po-lock-row { display: grid; gap: .5rem; margin-top: .9rem; }
+  .po-subject-meta { font-size: .78rem; font-weight: 700; color: var(--pk-muted); }
+  .po-linkish { background: none; border: 0; color: var(--pk-muted); font: inherit; font-weight: 700; cursor: pointer; text-decoration: underline; padding: .3rem; }
+  .po-hide { display: none !important; }
+</style>
+</head>
+<body class="pk-page mp-lobby-body mp-theme-green has-site-topbar">
+
+  <header class="site-topbar">
+    <div class="topbar-inner">
+      <a href="/" class="brand-mark">Mr. Sheyhaki</a>
+      <nav class="topbar-nav" aria-label="Main navigation">
+        <a href="/" class="topbar-link">Home</a>
+        <a href="/learningarcade/" class="topbar-link">Arcade</a>
+        <a href="/multiplayer/" class="topbar-link active" aria-current="page">Multiplayer</a>
+        <a href="/resources/" class="topbar-link">Resources</a>
+        <a href="/about/" class="topbar-link">About</a>
+      </nav>
+      <div class="topbar-actions">
+        <button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <a href="/learningarcade/profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>
+      </div>
+    </div>
+    <nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+      <a href="/">Home</a>
+      <a href="/learningarcade/">Arcade</a>
+      <a href="/multiplayer/" class="active" aria-current="page">Multiplayer</a>
+      <a href="/resources/">Resources</a>
+      <a href="/about/">About</a>
+    </nav>
+  </header>
+
+<div class="pk-app" id="app">
+
+  <!-- LOGIN GATE -->
+  <section class="mp-shell pk-screen po-hide" id="loginGate">
+    <div class="mp-subhead"><div class="mp-subhead-left">
+      <a class="mp-back-link" href="/multiplayer/penalty-shootout/">← Penalty Shootout</a>
+      <h1 class="mp-title">⚽ Online · Sign in</h1>
+      <p class="mp-subtitle">Online games need an account, so you can invite a friend.</p>
+    </div></div>
+    <div class="mp-panel"><div class="mp-panel-head"><div>
+      <h2 class="mp-panel-title">Sign in to play</h2>
+      <p class="mp-panel-desc">Log in, then come back here to create or join a room.</p>
+    </div></div>
+      <a class="mp-btn mp-btn-primary mp-btn-full" id="loginLink" href="/learningarcade/auth-system/login.html">Sign in</a>
+    </div>
+  </section>
+
+  <!-- HOME: create or join -->
+  <section class="mp-shell pk-screen po-hide" id="screenHome">
+    <div class="mp-subhead"><div class="mp-subhead-left">
+      <a class="mp-back-link" href="/multiplayer/penalty-shootout/">← Penalty Shootout</a>
+      <h1 class="mp-title">⚽ Penalty Shootout · Online</h1>
+      <p class="mp-subtitle">2 players · Create a room, or join with a friend's code</p>
+    </div></div>
+    <div class="pk-setup-grid">
+      <div class="mp-panel">
+        <div class="mp-panel-head"><div>
+          <h2 class="mp-panel-title">Create a room</h2>
+          <p class="mp-panel-desc">You get a code to share with your friend.</p>
+        </div></div>
+        <button type="button" class="mp-btn mp-btn-primary mp-btn-full" id="btnCreate">Create room</button>
+      </div>
+      <div class="mp-panel">
+        <div class="mp-panel-head"><div>
+          <h2 class="mp-panel-title">Join with code</h2>
+          <p class="mp-panel-desc">Type the 6-character code from your friend.</p>
+        </div></div>
+        <div class="mp-join-form">
+          <input class="mp-code-input" id="joinCode" placeholder="Room code" maxlength="8" autocomplete="off" autocapitalize="characters" enterkeyhint="go" aria-label="Room code" />
+          <button type="button" class="mp-btn mp-btn-secondary" id="btnJoin">Join room</button>
+        </div>
+      </div>
+    </div>
+    <p class="po-status" id="homeStatus" aria-live="polite"></p>
+  </section>
+
+  <!-- LOBBY -->
+  <section class="mp-shell pk-screen po-hide" id="screenLobby">
+    <div class="mp-subhead"><div class="mp-subhead-left">
+      <h1 class="mp-title">Match lobby</h1>
+      <p class="mp-subtitle">Both players ready up. The host picks the subject and kicks.</p>
+    </div></div>
+    <div class="pk-setup-grid">
+      <div class="mp-panel">
+        <div class="mp-panel-head"><div>
+          <h2 class="mp-panel-title">Players</h2>
+          <p class="mp-panel-desc">Both players must be ready to start</p>
+        </div><span class="mp-count-badge" id="playerCount">1 / 2</span></div>
+        <div class="po-roster" id="roster"></div>
+        <div class="mp-code-block" style="margin-top:1rem">
+          <span class="mp-field-label">Room code</span>
+          <div class="mp-code-row">
+            <span class="mp-room-code" id="lobbyCode">————</span>
+            <button type="button" class="mp-btn mp-btn-secondary mp-btn-sm" id="btnCopyCode">Copy code</button>
+          </div>
+          <div class="mp-invite-row">
+            <input class="mp-invite-input" type="text" id="inviteLink" readonly aria-label="Invite link" />
+            <button type="button" class="mp-btn mp-btn-secondary mp-btn-sm" id="btnCopy">Copy link</button>
+          </div>
+        </div>
+      </div>
+      <div class="mp-panel">
+        <div class="mp-panel-head"><div>
+          <h2 class="mp-panel-title">Subject</h2>
+          <p class="mp-panel-desc" id="subjectHint">Host chooses what to practise</p>
+        </div></div>
+        <div class="pk-subjects" id="subjectList" role="radiogroup" aria-label="Subject"></div>
+        <div class="mp-panel-head" style="margin-top:1rem"><div>
+          <h2 class="mp-panel-title">Kicks each</h2>
+          <p class="mp-panel-desc">Both players shoot the same number</p>
+        </div></div>
+        <div class="pk-seg" id="segRounds" role="group" aria-label="Kicks each">
+          <button type="button" data-n="3">3</button>
+          <button type="button" data-n="5">5</button>
+          <button type="button" data-n="7">7</button>
+        </div>
+        <div class="po-lock-row">
+          <p class="po-status" id="lobbyStatus" aria-live="polite"></p>
+          <button type="button" class="mp-btn mp-btn-secondary mp-btn-full" id="btnReady">I'm ready</button>
+          <button type="button" class="mp-btn mp-btn-primary mp-btn-full" id="btnStart" disabled>Start match ⚽</button>
+          <button type="button" class="mp-btn mp-btn-ghost mp-btn-full" id="btnLeaveLobby">Leave room</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAY -->
+  <section class="pk-play po-hide" id="screenPlay">
+    <header class="pk-hud">
+      <button type="button" class="pk-iconbtn" id="btnExit" aria-label="Leave match" title="Leave">←</button>
+      <div class="pk-board" id="board" aria-live="polite">
+        <div class="po-hud-names">
+          <span class="po-hud-side" id="hudMe"></span>
+          <span class="po-hud-goals" id="hudGoals">0 – 0</span>
+          <span class="po-hud-side right" id="hudThem"></span>
+        </div>
+        <div class="po-hud-mid" id="hudMid"></div>
+      </div>
+      <button type="button" class="pk-iconbtn" id="btnMute" aria-label="Mute sound" title="Sound">🔊</button>
+    </header>
+
+    <div class="pk-scene" id="scene" data-pick="">
+      <svg class="pk-bg" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="pkSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070d24"/><stop offset="1" stop-color="#1d3470"/></linearGradient>
+          <radialGradient id="pkLight"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+          <pattern id="pkCrowd" width="5" height="4" patternUnits="userSpaceOnUse">
+            <rect width="5" height="4" fill="#0d1838"/>
+            <circle cx="1.2" cy="1.2" r="1" fill="#f472b6"/><circle cx="3.7" cy="1.4" r="1" fill="#facc15"/>
+            <circle cx="2.4" cy="3.2" r="1" fill="#38bdf8"/><circle cx="4.6" cy="3.4" r=".8" fill="#fb923c"/>
+          </pattern>
+          <pattern id="pkNet" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <path d="M0 0H3M0 0V3" stroke="#fff" stroke-opacity=".38" stroke-width=".18" fill="none"/>
+          </pattern>
+        </defs>
+        <rect width="160" height="38" fill="url(#pkSky)"/>
+        <rect y="24" width="160" height="14" fill="url(#pkCrowd)" opacity=".85"/>
+        <circle cx="12" cy="6" r="14" fill="url(#pkLight)"/><circle cx="148" cy="6" r="14" fill="url(#pkLight)"/>
+        <rect y="38" width="160" height="62" fill="#1f8a4c"/>
+        <rect y="38" width="160" height="10" fill="#238f50"/><rect y="58" width="160" height="12" fill="#238f50"/><rect y="82" width="160" height="18" fill="#238f50"/>
+        <g fill="none" stroke="#fff" stroke-opacity=".85" stroke-width=".7" stroke-linejoin="round">
+          <line x1="0" y1="50" x2="160" y2="50"/>
+          <polyline points="22,50 12,86 148,86 138,50"/>
+          <polyline points="50,50 45,64 115,64 110,50"/>
+        </g>
+        <circle cx="80" cy="76" r=".9" fill="#fff"/>
+        <polygon points="36,20 124,20 124,48 36,48" fill="#0a1a2a" fill-opacity=".55"/>
+        <polygon points="36,20 124,20 124,48 36,48" fill="url(#pkNet)"/>
+        <polygon points="30,16 36,20 36,48 30,50" fill="url(#pkNet)" opacity=".8"/>
+        <polygon points="130,16 124,20 124,48 130,50" fill="url(#pkNet)" opacity=".8"/>
+        <polygon points="30,16 130,16 124,20 36,20" fill="url(#pkNet)" opacity=".8"/>
+        <g fill="#fff" stroke="#cbd5e1" stroke-width=".25">
+          <rect x="28.8" y="15" width="2.4" height="35.4" rx=".6"/><rect x="128.8" y="15" width="2.4" height="35.4" rx=".6"/>
+          <rect x="28.8" y="14.8" width="102.4" height="2.4" rx=".6"/>
+        </g>
+      </svg>
+
+      <div class="pk-zones" id="zones">
+        <button type="button" class="pk-zone" data-zone="left" aria-label="Left corner"><span>Left</span></button>
+        <button type="button" class="pk-zone" data-zone="center" aria-label="Middle"><span>Middle</span></button>
+        <button type="button" class="pk-zone" data-zone="right" aria-label="Right corner"><span>Right</span></button>
+      </div>
+
+      <div class="pk-keeper" id="keeper" aria-hidden="true">
+        <div class="pk-k-arm l"><i></i></div><div class="pk-k-arm r"><i></i></div>
+        <div class="pk-k-body"></div><div class="pk-k-head"></div>
+        <div class="pk-k-leg l"></div><div class="pk-k-leg r"></div>
+      </div>
+      <div class="pk-ball" id="ball" aria-hidden="true"><span>⚽</span></div>
+      <div class="pk-banner" id="banner" hidden></div>
+    </div>
+
+    <div class="pk-panel" id="panel" aria-live="polite"></div>
+    <p class="po-status" id="gameStatus" aria-live="polite"></p>
+  </section>
+
+  <!-- END -->
+  <div class="pk-modal" id="endModal" hidden>
+    <div class="pk-modal-card">
+      <div class="pk-win-emoji" id="endEmoji" aria-hidden="true">🏆</div>
+      <h2 class="po-end-title" id="endTitle">Winner!</h2>
+      <p id="endSub"></p>
+      <div class="pk-modal-actions">
+        <button type="button" class="mp-btn mp-btn-primary mp-btn-full" id="btnPlayAgain">Back to lobby</button>
+        <button type="button" class="mp-btn mp-btn-secondary mp-btn-full" id="btnEndLeave">Leave room</button>
+        <p class="po-status" id="endStatus"></p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · Multiplayer</p>
+    <div class="footer-links">
+      <a class="footer-link" href="/contact/">Contact</a>
+      <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
+    </div>
+  </div>
+</footer>
+
+<script src="/theme.js"></script>
+<script src="/script.js"></script>
+<script src="/learningarcade/vendor/load-supabase.js"></script>
+<script src="/learningarcade/auth-system/auth.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>window.io || document.write('<script src="/socket.io/socket.io.js"><\/script>');</script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- config ---------- */
+  var SERVER_URL = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname.endsWith(".run.app"))
+    ? location.origin
+    : "https://mrsheyhaki-multiplayer.onrender.com";
+  var COLORS = ["#f472b6", "#22d3ee"];
+  var ZONE_LABEL = { left: "Left", center: "Middle", right: "Right" };
+  var TARGET = { left: { x: 29.2, y: 34 }, center: { x: 50, y: 34 }, right: { x: 70.8, y: 34 } };
+  var DIVE_X = { left: -17.5, right: 17.5, center: 0 };
+
+  /* ---------- state ---------- */
+  var $ = function (id) { return document.getElementById(id); };
+  var socket = null, accessToken = null, myId = null, myName = "Player";
+  var room = null, priv = null, privAt = 0;
+  var lastSeqShown = null, lastKickShown = -1, shownKey = null, pickedZone = null, answering = false;
+  var tickTimer = null, endShown = false;
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function setStatus(el, txt, isErr) { if (!el) return; el.textContent = txt || ""; el.classList.toggle("err", !!isErr); }
+  function nameOf(id) {
+    if (!room) return "";
+    var p = room.players.filter(function (x) { return x.id === id; })[0];
+    return p ? (p.displayName || p.username) : "";
+  }
+  function opponentId() {
+    if (!room) return null;
+    var o = room.players.filter(function (x) { return x.id !== myId; })[0];
+    return o ? o.id : null;
+  }
+  function initials(n) { return String(n || "P").split(/\s+/).map(function (w) { return w[0]; }).join("").slice(0, 2).toUpperCase(); }
+
+  /* ---------- sound (same effects as the offline game) ---------- */
+  /* ---------- sound ---------- */
+  var ctx = null, muted = false;
+  try { muted = localStorage.getItem("pk-muted") === "1"; } catch (e) {}
+  function ac() {
+    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
+    if (ctx.state === "suspended") { try { ctx.resume(); } catch (e) {} }
+    return ctx;
+  }
+  function tone(f, dur, type, gain, delay, slideTo) {
+    var c = ac(); if (!c || muted) return;
+    var t = c.currentTime + (delay || 0), o = c.createOscillator(), g = c.createGain();
+    o.type = type || "sine"; o.frequency.setValueAtTime(f, t);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain || 0.1, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.03);
+  }
+  function noise(dur, gain, delay, freq) {
+    var c = ac(); if (!c || muted) return;
+    var len = Math.floor(c.sampleRate * dur), buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+    for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+    var src = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(), t = c.currentTime + (delay || 0);
+    src.buffer = buf; f.type = "lowpass"; f.frequency.value = freq || 1800;
+    g.gain.setValueAtTime(gain || 0.1, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(c.destination); src.start(t);
+  }
+  var SFX = {
+    tap: function () { tone(620, 0.05, "triangle", 0.07); },
+    pick: function () { tone(820, 0.07, "triangle", 0.08); },
+    right: function () { tone(660, 0.12, "triangle", 0.1); tone(990, 0.2, "triangle", 0.1, 0.09); },
+    wrong: function () { tone(220, 0.16, "square", 0.06, 0, 150); tone(160, 0.22, "square", 0.05, 0.12, 110); },
+    whistle: function () { tone(2300, 0.28, "sine", 0.06); tone(2500, 0.2, "sine", 0.05, 0.3); },
+    kick: function () { noise(0.12, 0.2, 0, 900); tone(140, 0.1, "sine", 0.12, 0, 70); },
+    goal: function () { noise(1.3, 0.13, 0, 2400); [523.25, 659.25, 783.99, 1046.5].forEach(function (f, i) { tone(f, 0.28, "triangle", 0.1, 0.05 + i * 0.09); }); },
+    save: function () { tone(110, 0.18, "sine", 0.2, 0, 60); noise(0.2, 0.1, 0, 700); tone(740, 0.15, "triangle", 0.07, 0.08); },
+    miss: function () { tone(420, 0.45, "triangle", 0.08, 0, 160); noise(0.5, 0.05, 0.05, 1200); },
+    win: function () { [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach(function (f, i) { tone(f, 0.3, "triangle", 0.1, i * 0.1); }); noise(1.6, 0.12, 0.1, 2600); }
+  };
+  function sfx(n) { if (SFX[n]) SFX[n](); }
+  function paintMute() { $("btnMute").textContent = muted ? "🔇" : "🔊"; $("btnMute").setAttribute("aria-label", muted ? "Unmute sound" : "Mute sound"); }
+  $("btnMute").addEventListener("click", function () {
+    muted = !muted; try { localStorage.setItem("pk-muted", muted ? "1" : "0"); } catch (e) {}
+    paintMute(); if (!muted) sfx("tap");
+  });
+
+  /* ---------- auth ---------- */
+  async function getAccessToken() {
+    if (!window.LAAuth || !window.LAAuth.getClient) return null;
+    var client = window.LAAuth.getClient();
+    if (!client) return null;
+    for (var i = 0; i < 6; i++) {
+      try {
+        var res = await client.auth.getSession();
+        if (res.data && res.data.session && res.data.session.access_token) return res.data.session.access_token;
+        return null;
+      } catch (e) { await new Promise(function (r) { setTimeout(r, 350 + i * 250); }); }
+    }
+    return null;
+  }
+  async function ensureLoggedIn() {
+    await new Promise(function (resolve) {
+      if (window.LAAuth && window.supabase) return resolve();
+      document.addEventListener("supabase-ready", function () { setTimeout(resolve, 50); }, { once: true });
+      setTimeout(resolve, 3000);
+    });
+    var here = location.pathname + location.search;
+    $("loginLink").href = "/learningarcade/auth-system/login.html?redirect=" + encodeURIComponent(here);
+    if (!window.LAAuth) { $("loginGate").classList.remove("po-hide"); return false; }
+    var session = window.LAAuth.getSession();
+    if (!session) { try { session = await window.LAAuth.verify(); } catch (e) {} }
+    accessToken = await getAccessToken();
+    if (!accessToken) { $("loginGate").classList.remove("po-hide"); return false; }
+    myName = (session && (session.displayName || session.username)) || "Player";
+    return true;
+  }
+
+  /* ---------- socket ---------- */
+  function connectSocket() {
+    if (socket) { socket.disconnect(); socket = null; }
+    socket = io(SERVER_URL, { auth: { token: accessToken }, transports: ["websocket", "polling"] });
+    socket.on("server:hello", function (d) {
+      if (d && d.player) myId = d.player.id;
+      var ok = d && d.features && d.features.indexOf("penalty-shootout") > -1;
+      if (!ok) setStatus($("homeStatus"), "The game server is out of date.", true);
+    });
+    socket.on("connect_error", function (err) { setStatus($("homeStatus"), "Connection failed: " + (err && err.message ? err.message : "error"), true); });
+    socket.on("room:error", function (d) {
+      var msg = d && d.error ? d.error : "Something went wrong";
+      setStatus($("homeStatus"), msg, true); setStatus($("lobbyStatus"), msg, true);
+      setStatus($("gameStatus"), msg, true); setStatus($("endStatus"), msg, true);
+    });
+    socket.on("room:update", function (r) { applyRoom(r); });
+    socket.on("ps:private", function (p) { priv = p; privAt = Date.now(); renderPanel(); });
+  }
+
+  function sendAction(event, payload, statusEl) {
+    if (!socket) return;
+    socket.emit(event, payload, function (res) {
+      if (res && res.ok === false && /already in/i.test(res.error || "")) {
+        setStatus(statusEl, "Leaving previous room…");
+        socket.emit("room:leave", {}, function () {
+          room = null; priv = null;
+          socket.emit(event, payload, function (res2) { setStatus(statusEl, res2 && res2.ok === false ? res2.error : "", !!(res2 && res2.ok === false)); });
+        });
+        return;
+      }
+      if (res && res.ok === false) setStatus(statusEl, res.error, true); else setStatus(statusEl, "");
+    });
+  }
+
+  /* ---------- screens ---------- */
+  function show(id) {
+    ["loginGate", "screenHome", "screenLobby", "screenPlay"].forEach(function (s) { $(s).classList.toggle("po-hide", s !== id); });
+    document.body.classList.toggle("mp-playing", id === "screenPlay");
+    if (id !== "screenPlay") $("endModal").hidden = true;
+    window.scrollTo(0, 0);
+  }
+
+  function applyRoom(r) {
+    var prev = room;
+    room = r;
+    if (!r) { show("screenHome"); return; }
+    if (r.status === "lobby" || !r.game || r.game.type !== "penalty-shootout") {
+      priv = null;
+      lastSeqShown = null; lastKickShown = -1; shownKey = null; endShown = false; anim.busy = false; clearAnim();
+      renderLobby();
+      show("screenLobby");
+      return;
+    }
+    if (!prev || !prev.game) { lastSeqShown = r.game.lastKick ? r.game.lastKick.seq : 0; }
+    show("screenPlay");
+    renderGame();
+    var lk = r.game.lastKick;
+    if (lk && lastSeqShown !== null && lk.seq > lastSeqShown) {
+      lastSeqShown = lk.seq;
+      playReveal(lk, r.game);
+    }
+    if (r.game.over && !lk) showEnd();
+  }
+
+  /* ---------- lobby ---------- */
+  function renderLobby() {
+    if (!room) return;
+    var me = room.players.filter(function (p) { return p.id === myId; })[0];
+    var isHost = room.hostId === myId;
+    $("lobbyCode").textContent = room.code;
+    var link = location.origin + "/multiplayer/penalty-shootout/online/?room=" + room.code;
+    $("inviteLink").value = link;
+    $("playerCount").textContent = room.players.length + " / 2";
+
+    var seats = "";
+    for (var i = 0; i < 2; i++) {
+      var p = room.players[i];
+      if (!p) { seats += '<div class="po-seat po-empty">Waiting for a friend…</div>'; continue; }
+      var color = COLORS[i];
+      seats += '<div class="po-seat' + (p.ready ? " is-ready" : "") + '">' +
+        '<span class="pk-dot" style="background:' + color + '"></span>' +
+        '<span>' + esc(p.displayName || p.username) + (p.id === myId ? " (you)" : "") + '</span>' +
+        (p.isHost ? '<span class="po-tag">Host</span>' : '') +
+        '<span class="po-ready">' + (p.ready ? "Ready ✓" : "Not ready") + '</span></div>';
+    }
+    $("roster").innerHTML = seats;
+
+    var subs = room.penaltySubjects || [];
+    var cur = room.penaltySettings || {};
+    $("subjectList").innerHTML = subs.map(function (s) {
+      var on = s.id === cur.subjectId;
+      return '<button type="button" class="pk-subject' + (on ? " is-on" : "") + '" role="radio" aria-checked="' + on + '" data-id="' + esc(s.id) + '"' + (isHost ? "" : " disabled") + '>' +
+        '<span class="pk-subject-ico" aria-hidden="true">' + esc(s.emoji) + '</span>' +
+        '<span><strong>' + esc(s.title) + '</strong><small>' + esc(s.tag) + ' · ' + s.count + ' questions</small></span></button>';
+    }).join("");
+    $("subjectHint").textContent = isHost ? "Choose what to practise" : "The host chooses the subject";
+    Array.prototype.forEach.call($("segRounds").children, function (b) {
+      b.classList.toggle("is-on", +b.getAttribute("data-n") === cur.rounds);
+      b.disabled = !isHost;
+    });
+
+    var meReady = me && me.ready;
+    $("btnReady").textContent = meReady ? "Not ready" : "I'm ready";
+    var bothReady = room.players.length === 2 && room.players.every(function (p) { return p.ready; });
+    $("btnStart").disabled = !(isHost && bothReady);
+    $("btnStart").hidden = !isHost;
+    var msg = room.players.length < 2 ? "Share the code. Waiting for your friend to join."
+      : !bothReady ? "Both players tap “I'm ready”."
+      : isHost ? "Everyone is ready. Start when you like." : "Ready! Waiting for the host to start.";
+    setStatus($("lobbyStatus"), msg);
+  }
+
+  /* ---------- game screen ---------- */
+  function renderHud() {
+    var g = room.game;
+    var mine = g.players.indexOf(myId), theirs = mine === 0 ? 1 : 0;
+    if (mine < 0) { mine = 0; theirs = 1; }
+    var myGoals = g.goals[mine] || 0, theirGoals = g.goals[theirs] || 0;
+    $("hudMe").textContent = nameOf(myId) || myName;
+    $("hudThem").textContent = nameOf(g.players[theirs]) || "Opponent";
+    $("hudGoals").textContent = myGoals + " – " + theirGoals;
+    var mid = g.over ? "Full time" : (g.sudden ? "Sudden death" : "Kick " + Math.min(g.kick + 1, g.total) + "/" + g.total + " · Round " + g.round);
+    if (!g.over && g.shooterId) mid += " · " + (g.shooterId === myId ? "you shoot" : "you keep");
+    $("hudMid").textContent = mid;
+  }
+
+  function renderGame() {
+    renderHud();
+    renderPanel();
+  }
+
+  // The panel shows the player's own state. Questions and corner choices come only from `priv`.
+  function renderPanel() {
+    if (!room || !room.game || room.status === "lobby") return;
+    if (anim.busy) return; // let the result animation finish first
+    var g = room.game;
+    var panel = $("panel");
+    var r = priv && priv.role;
+    var scene = $("scene");
+
+    if (g.over) { panel.innerHTML = ""; scene.setAttribute("data-pick", ""); return; }
+    if (r && r.kick !== lastKickShown && r.stage === "question") { resetScene(); lastKickShown = r.kick; }
+
+    if (!r) {
+      scene.setAttribute("data-pick", "");
+      shownKey = null;
+      var lk = g.lastKick;
+      if (lk && lk.seq === lastSeqShown) {
+        panel.innerHTML = '<div class="pk-center"><p class="pk-kicker">Next kick</p><h2 class="pk-title">Next kick is on its way…</h2></div>';
+      } else {
+        panel.innerHTML = '<div class="pk-center"><p class="pk-kicker">Get ready</p><h2 class="pk-title">Penalty coming up</h2></div>';
+      }
+      setWait();
+      return;
+    }
+
+    var kindLabel = r.kind === "shoot" ? "answer to take the kick" : "answer to dive";
+    var head = '<p class="pk-kicker" style="color:' + (r.kind === "shoot" ? COLORS[0] : COLORS[1]) + '">' + esc(kindLabel) + ' <span class="po-timer" id="qTimer"></span></p>';
+
+    if (r.stage === "question" && r.question) {
+      var key = r.kick + ":" + r.kind + ":q";
+      // already showing this question: keep it (typed text must survive other updates); only refresh the clock
+      if (shownKey === key && ($("chips") || $("writeInput"))) { updateTimer(); setWait(); scene.setAttribute("data-pick", ""); return; }
+      shownKey = key; pickedZone = null; answering = false;
+      var q = r.question;
+      var body = '<p class="pk-sub" style="margin:0">' + esc(q.prompt || "Choose the correct answer.") + '</p>' +
+        '<p class="pk-q">' + esc(q.q) + '</p>' + (q.hint ? '<p class="pk-hint">' + esc(q.hint) + '</p>' : '');
+      if (q.type === "write") {
+        body += '<div class="pk-write"><input id="writeInput" class="pk-write-input" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Type your answer here" aria-label="Your answer"' + (answering ? " disabled" : "") + ' />' +
+          '<button type="button" class="mp-btn mp-btn-primary" id="writeSubmit" disabled>Submit ✏️</button></div>';
+      } else {
+        body += '<div class="pk-chips" id="chips">' + (q.chips || []).map(function (c, i) {
+          return '<button type="button" class="pk-chip" data-i="' + i + '"' + (answering ? " disabled" : "") + '>' + esc(c) + '</button>';
+        }).join("") + '</div>';
+      }
+      panel.innerHTML = '<div class="po-top">' + head + body + '<div id="verdict"></div></div>';
+      updateTimer(); setWait();
+      if (q.type === "write") {
+        var input = $("writeInput"), submit = $("writeSubmit");
+        if (!answering) {
+          input.addEventListener("input", function () { submit.disabled = !input.value.trim(); });
+          var go = function () {
+            if (answering || !input.value.trim()) return;
+            answering = true; ac(); input.disabled = true; submit.disabled = true;
+            sendAnswer(input.value);
+          };
+          submit.addEventListener("click", go);
+          input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); go(); } });
+          setTimeout(function () { if (input && !answering) input.focus(); }, 60);
+        } else { input.disabled = true; }
+      } else {
+        Array.prototype.forEach.call(document.querySelectorAll("#chips .pk-chip"), function (b) {
+          b.addEventListener("click", function () {
+            if (answering) return;
+            answering = true; ac();
+            Array.prototype.forEach.call(document.querySelectorAll("#chips .pk-chip"), function (x) { x.disabled = true; });
+            b.classList.add("is-dim");
+            sendAnswer(b.textContent);
+          });
+        });
+      }
+      scene.setAttribute("data-pick", "");
+      return;
+    }
+
+    if (r.stage === "pick") {
+      var locked = pickedZone;
+      panel.innerHTML = '<div class="po-top">' + head +
+        '<p class="pk-verdict ok" style="margin:.4rem 0">Correct! ' + (r.kind === "shoot" ? "Choose where to shoot." : "Choose where to dive.") + '</p>' +
+        '<p class="pk-sub" style="margin:0">Tap a corner of the goal.' + (r.kind === "dive" ? " Guess where the ball is going!" : " Your keeper can’t see your choice.") + '</p>' +
+        '<div class="po-lock-row"><button type="button" class="mp-btn mp-btn-primary mp-btn-full" id="btnLock"' + (locked ? "" : " disabled") + '>' +
+        (locked ? (r.kind === "shoot" ? "Lock shot 🔒 · " : "Dive! 🧤 · ") + ZONE_LABEL[locked] : "Pick a corner") + '</button></div></div>';
+      scene.setAttribute("data-pick", r.kind === "shoot" ? "shot" : "dive");
+      $("btnLock").addEventListener("click", function () {
+        if (!pickedZone) return;
+        ac(); sfx("tap");
+        socket.emit("ps:pick", { zone: pickedZone }, function () {});
+        pickedZone = null;
+        $("btnLock").disabled = true;
+      });
+      setWait();
+      return;
+    }
+
+    // locked or done: this player's part is finished
+    scene.setAttribute("data-pick", "");
+    var msg;
+    if (r.stage === "locked") {
+      msg = '<p class="pk-verdict ok">Corner locked in 🔒. Waiting for ' + waitingNames() + '…</p>';
+    } else if (r.correct) {
+      msg = '<p class="pk-verdict ok">Correct!</p>';
+    } else {
+      var why = r.kind === "shoot" ? "Your shot will fly over the bar! 😬" : "You slip on the grass! 😬";
+      msg = '<p class="pk-verdict no">Not quite. ' + why + '<small>Right answer: ' + esc(r.answerText || "") + '</small></p>';
+    }
+    panel.innerHTML = '<div class="po-top">' + head + msg + '</div>';
+    updateTimer(); setWait();
+  }
+
+  function updateTimer() {
+    var el = $("qTimer");
+    var r = priv && priv.role;
+    if (!el || !r || r.left == null) return;
+    var left = Math.max(0, r.left - Math.floor((Date.now() - privAt) / 1000));
+    el.textContent = (r.stage === "question" || r.stage === "pick") ? "⏱ " + left + "s" : "";
+  }
+
+  function waitingNames() {
+    var g = room.game;
+    var others = (g.waitingOn || []).filter(function (id) { return id !== myId; }).map(nameOf);
+    return others.length ? others.join(", ") : "the other player";
+  }
+  function setWait() {
+    var g = room.game;
+    var busyOthers = (g.waitingOn || []).filter(function (id) { return id !== myId; });
+    var mine = priv && priv.role && (priv.role.stage === "question" || priv.role.stage === "pick");
+    var txt = "";
+    if (!mine && busyOthers.length) txt = "Waiting for " + waitingNames() + "…";
+    setStatus($("gameStatus"), txt);
+  }
+
+  function sendAnswer(answer) {
+    socket.emit("ps:answer", { answer: answer }, function (res) {
+      if (res && res.ok === false) { answering = false; shownKey = null; setStatus($("gameStatus"), res.error, true); renderPanel(); }
+    });
+  }
+
+  /* ---------- the kick: animation (once per result) ---------- */
+  var anim = { busy: false, timers: [] };
+  function clearAnim() { anim.timers.forEach(clearTimeout); anim.timers = []; }
+  function later(fn, ms) { anim.timers.push(setTimeout(fn, ms)); }
+
+  function resetScene() {
+    clearAnim(); anim.busy = false;
+    var ball = $("ball"), keeper = $("keeper");
+    ball.style.transition = "none"; keeper.style.transition = "none";
+    ball.style.left = "50%"; ball.style.top = "77%"; ball.style.transform = "scale(1)"; ball.style.opacity = "1";
+    keeper.style.transform = "none";
+    ball.classList.remove("spin");
+    void ball.offsetWidth;
+    $("banner").hidden = true;
+    Array.prototype.forEach.call(document.querySelectorAll(".pk-zone"), function (z) { z.classList.remove("is-picked", "is-result"); });
+  }
+
+  function playReveal(lk, g) {
+    resetScene();
+    anim.busy = true;
+    var shooterMe = lk.shooterId === myId;
+    var shotZone = lk.shotZone || PICK_FALLBACK();
+    var tgt = TARGET[shotZone];
+    var result = lk.result;
+    var scene = $("scene");
+    scene.setAttribute("data-pick", "");
+    setStatus($("gameStatus"), "");
+    $("panel").innerHTML = '<div class="pk-center"><div class="pk-big-ico" aria-hidden="true">⚽</div><h2 class="pk-title">' + esc(nameOf(lk.shooterId)) + ' steps up…</h2></div>';
+    sfx("whistle");
+
+    later(function () {
+      sfx("kick");
+      var ball = $("ball"), keeper = $("keeper");
+      ball.classList.add("spin");
+      ball.style.transition = "left .55s cubic-bezier(.3,.6,.3,1), top .55s cubic-bezier(.25,.7,.3,1), transform .55s ease";
+      if (result === "miss") {
+        var side = shotZone === "center" ? (Math.random() < .5 ? -1 : 1) : (shotZone === "left" ? -1 : 1);
+        ball.style.left = (50 + side * (shotZone === "center" ? 26 : 30)) + "%"; ball.style.top = "5%"; ball.style.transform = "scale(.5) rotate(200deg)";
+      } else {
+        ball.style.left = tgt.x + "%"; ball.style.top = tgt.y + "%"; ball.style.transform = "scale(.55)";
+      }
+      later(function () {
+        keeper.style.transition = "transform .5s cubic-bezier(.2,.8,.25,1)";
+        if (lk.diveZone) {
+          if (lk.diveZone === "center") keeper.style.transform = "translateY(-1.5cqw) scale(1.12)";
+          else keeper.style.transform = "translate(" + DIVE_X[lk.diveZone] + "cqw, 1cqw) rotate(" + (lk.diveZone === "left" ? -78 : 78) + "deg)";
+        } else if (lk.shooterCorrect && !lk.keeperCorrect) {
+          var d = Math.random() < .5 ? -1 : 1;
+          keeper.style.transform = "translate(" + (d * 4) + "cqw, 2.5cqw) rotate(" + (d * 88) + "deg)";
+        } else {
+          keeper.style.transform = "translateY(-.6cqw)";
+        }
+      }, 110);
+    }, 700);
+
+    later(function () {
+      if (result === "save") {
+        var away = shotZone === "left" ? -1 : shotZone === "right" ? 1 : (Math.random() < .5 ? -1 : 1);
+        var ball = $("ball");
+        ball.style.transition = "left .4s ease-out, top .4s ease-out, transform .4s";
+        ball.style.left = (tgt.x + away * 16) + "%"; ball.style.top = "58%"; ball.style.transform = "scale(.8) rotate(160deg)";
+      }
+      if (lk.shotZone) { var z = document.querySelector('.pk-zone[data-zone="' + lk.shotZone + '"]'); if (z) z.classList.add("is-result"); }
+      var b = $("banner");
+      b.className = "pk-banner " + result;
+      b.textContent = result === "goal" ? "GOAL! ⚽" : result === "save" ? "SAVED! 🧤" : "MISSED! 😬";
+      b.hidden = false;
+      sfx(result);
+      renderHud();
+    }, 1400);
+
+    later(function () {
+      var title = result === "goal" ? nameOf(lk.shooterId) + " scores!" : result === "save" ? nameOf(lk.keeperId) + " saves it!" : nameOf(lk.shooterId) + " misses the goal.";
+      var sub = result === "miss" ? "A wrong answer sends the ball over the bar." : result === "save" ? "Same corner. Great guess!" : (lk.keeperCorrect ? "The keeper dived the wrong way." : "The keeper slipped.");
+      var score = "";
+      if (g) score = '<p class="pk-score"><span style="color:' + COLORS[0] + '">' + esc(nameOf(g.players[0])) + '</span> <b>' + g.goals[0] + ' – ' + g.goals[1] + '</b> <span style="color:' + COLORS[1] + '">' + esc(nameOf(g.players[1])) + '</span></p>';
+      var picks = '<p class="po-subject-meta">Shot: ' + (lk.shotZone ? ZONE_LABEL[lk.shotZone] : "—") + ' · Dive: ' + (lk.diveZone ? ZONE_LABEL[lk.diveZone] : "—") + '</p>';
+      $("panel").innerHTML = '<div class="pk-center">' +
+        '<div class="pk-big-ico" aria-hidden="true">' + (result === "goal" ? "🎉" : result === "save" ? "🧤" : "😬") + '</div>' +
+        '<h2 class="po-reveal ' + (result === "goal" ? "po-ok" : "po-bad") + '">' + esc(title) + '</h2>' +
+        '<p class="pk-sub">' + esc(sub) + '</p>' + picks + score + '</div>';
+      anim.busy = false;
+      if (g && g.over) later(showEnd, 2400);
+    }, 2300);
+  }
+  function PICK_FALLBACK() { return "center"; }
+
+  /* ---------- end ---------- */
+  function showEnd() {
+    if (!room || !room.game || !room.game.over) return;
+    if (endShown) return;
+    endShown = true;
+    var g = room.game;
+    var won = g.winnerId === myId;
+    sfx(won ? "win" : "miss");
+    $("endEmoji").textContent = won ? "🏆" : "🥈";
+    $("endTitle").textContent = won ? "You win!" : nameOf(g.winnerId) + " wins!";
+    $("endSub").textContent = nameOf(g.players[0]) + " " + g.goals[0] + " – " + g.goals[1] + " " + nameOf(g.players[1]) + " · " + (g.subjectTitle || "");
+    var host = room.hostId === myId;
+    $("btnPlayAgain").hidden = !host;
+    $("endModal").hidden = false;
+    setStatus($("endStatus"), host ? "" : "Waiting for the host to go back to the lobby.");
+  }
+
+  /* ---------- wiring ---------- */
+  $("btnCreate").addEventListener("click", function () {
+    ac(); sfx("tap");
+    sendAction("room:create", { gameType: "penalty-shootout" }, $("homeStatus"));
+  });
+  $("btnJoin").addEventListener("click", function () { joinFromInput(); });
+  $("joinCode").addEventListener("keydown", function (e) { if (e.key === "Enter") joinFromInput(); });
+  function joinFromInput() {
+    var code = ($("joinCode").value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (code.length < 4) { setStatus($("homeStatus"), "Enter the room code.", true); return; }
+    sendAction("room:join", { code: code }, $("homeStatus"));
+  }
+
+  $("subjectList").addEventListener("click", function (ev) {
+    var b = ev.target.closest(".pk-subject"); if (!b || b.disabled) return;
+    sfx("pick");
+    sendAction("ps:settings", { subjectId: b.getAttribute("data-id") }, $("lobbyStatus"));
+  });
+  $("segRounds").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button"); if (!b || b.disabled) return;
+    sfx("pick");
+    sendAction("ps:settings", { rounds: +b.getAttribute("data-n") }, $("lobbyStatus"));
+  });
+  $("btnReady").addEventListener("click", function () {
+    var me = room && room.players.filter(function (p) { return p.id === myId; })[0];
+    sfx("tap");
+    sendAction("room:setReady", { ready: !(me && me.ready) }, $("lobbyStatus"));
+  });
+  $("btnStart").addEventListener("click", function () { ac(); sfx("whistle"); sendAction("ps:start", {}, $("lobbyStatus")); });
+  $("btnLeaveLobby").addEventListener("click", leaveRoom);
+  $("btnExit").addEventListener("click", function () {
+    if (room && room.game && !room.game.over && !window.confirm("Leave the match?")) return;
+    leaveRoom();
+  });
+  $("btnEndLeave").addEventListener("click", leaveRoom);
+  $("btnPlayAgain").addEventListener("click", function () {
+    ac(); sfx("tap");
+    endShown = false;
+    sendAction("game:backToLobby", {}, $("endStatus"));
+  });
+  $("zones").addEventListener("click", function (ev) {
+    var z = ev.target.closest(".pk-zone");
+    var scene = $("scene");
+    if (!z || !scene.getAttribute("data-pick")) return;
+    pickedZone = z.getAttribute("data-zone");
+    Array.prototype.forEach.call(document.querySelectorAll(".pk-zone"), function (x) { x.classList.toggle("is-picked", x === z); });
+    sfx("pick");
+    var lock = $("btnLock");
+    if (lock) { lock.disabled = false; lock.textContent = (priv && priv.role && priv.role.kind === "shoot" ? "Lock shot 🔒 · " : "Dive! 🧤 · ") + ZONE_LABEL[pickedZone]; }
+  });
+
+  function leaveRoom() {
+    if (!socket) return;
+    socket.emit("room:leave", {}, function () {
+      room = null; priv = null; lastSeqShown = null;
+      $("endModal").hidden = true;
+      show("screenHome");
+      setStatus($("homeStatus"), "");
+    });
+  }
+
+  $("btnCopyCode").addEventListener("click", function () { copyText($("lobbyCode").textContent, $("btnCopyCode")); });
+  $("btnCopy").addEventListener("click", function () { copyText($("inviteLink").value, $("btnCopy")); });
+  function copyText(text, btn) {
+    try { navigator.clipboard.writeText(text); } catch (e) {}
+    var old = btn.textContent; btn.textContent = "Copied ✓";
+    setTimeout(function () { btn.textContent = old; }, 1400);
+  }
+
+
+  // a live countdown for the question timer
+  tickTimer = setInterval(function () { updateTimer(); }, 1000);
+
+  /* ---------- go ---------- */
+  var yr = $("year"); if (yr) yr.textContent = new Date().getFullYear();
+
+  (async function init() {
+    show("loginGate");
+    var ok = await ensureLoggedIn();
+    if (!ok) return;
+    show("screenHome");
+    paintMute();
+    connectSocket();
+    var params = new URLSearchParams(location.search);
+    var code = (params.get("room") || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (code) {
+      socket.once("server:hello", function () {
+        sendAction("room:join", { code: code }, $("homeStatus"));
+      });
+    }
+  })();
+})();
+</script>
+</body>
+</html>

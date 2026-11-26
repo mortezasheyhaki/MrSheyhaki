@@ -64,3 +64,26 @@ Connect with:
 ```js
 io(SERVER_URL, { auth: { token: accessToken } })
 ```
+
+## Penalty Shootout (online)
+
+Two players, one room. Rules mirror `multiplayer/penalty-shootout/engine.js`; the server is the only
+place that knows the answers and the secret corners.
+
+| Client → server | Notes |
+|-----------------|-------|
+| `room:create` `{ gameType: "penalty-shootout" }` | 2-player room |
+| `room:setReady` `{ ready }` | both players must be ready to start |
+| `ps:settings` `{ subjectId?, rounds? }` | host only, lobby only; rounds 3, 5 or 7 |
+| `ps:start` | host only; needs 2 ready players |
+| `ps:answer` `{ answer }` | the chip text, or the typed answer |
+| `ps:pick` `{ zone: "left" \| "center" \| "right" }` | after a correct answer |
+| `ps:sync` | asks for your current question again (also sent on reconnect) |
+
+| Server → client | Notes |
+|-----------------|-------|
+| `room:update` | public room view; `game.lastKick` holds each resolved kick (`seq` bumps once per kick) |
+| `ps:private` | only to the player it belongs to: `{ role: { kind, stage, question, left, ... } }` |
+
+Timers: 25 s to answer a question (wrong if it runs out), 20 s to pick a corner (a random one is taken).
+A finished kick is revealed, then the next kick starts after about 3.8 s.

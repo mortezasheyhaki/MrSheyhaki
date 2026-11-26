@@ -1,5 +1,6 @@
 import { verifyAccessToken } from "./auth/verifyPlayer.js";
 import { roomManager } from "./rooms/roomManager.js";
+import { privatePenaltyState } from "./games/penaltyShootout.js";
 
 /**
  * Phase 3 socket API
@@ -71,12 +72,13 @@ export function attachSocket(io) {
       socket.join(roomChannel(recon.room.code));
       socket.emit("room:update", recon.room);
       emitRoom(io, recon.room);
+      syncPenaltyForPlayer(socket, recon.room.code, player.id);
     }
 
     socket.emit("server:hello", {
       ok: true,
       phase: 4,
-      features: ["family-words", "tictactoe-should"],
+      features: ["family-words", "tictactoe-should", "penalty-shootout"],
       message: "Authenticated multiplayer server — A or An + Snakes & Ladders + Family Words + Tic-Tac-Toe ready",
       player: {
         id: player.id,
@@ -133,6 +135,7 @@ export function attachSocket(io) {
       if (result.leftCode) {
         socket.leave(roomChannel(result.leftCode));
         clearTttTimer(result.leftCode);
+        clearPenaltyTimer(result.leftCode);
         if (result.room) emitRoom(io, result.room);
       }
       if (typeof ack === "function") ack(result);
@@ -266,6 +269,7 @@ socket.on("game:start", (payload, ack) => {
         if (typeof ack === "function") ack(result);
         return;
       }
+      clearPenaltyTimer(result.room.code);
       emitRoom(io, result.room);
       if (typeof ack === "function") ack(result);
       console.log(`[game] ${brief} returned room ${result.room.code} to lobby`);
@@ -471,6 +475,60 @@ socket.on("game:start", (payload, ack) => {
       if (typeof ack === "function") ack(result);
     });
 
+    // ── Penalty Shootout (online) ──────────────────────────────────
+    socket.on("ps:settings", (payload, ack) => {
+      const result = roomManager.penaltySettings(player.id, payload || {});
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitRoom(io, result.room);
+      if (typeof ack === "function") ack(result);
+    });
+
+    socket.on("ps:start", (_payload, ack) => {
+      const result = roomManager.penaltyStart(player.id, Date.now());
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      const code = result.room.code;
+      emitRoom(io, result.room);
+      emitPenalty(io, code);
+      console.log(`[game] ${brief} started Penalty Shootout in ${code}`);
+      if (typeof ack === "function") ack(result);
+    });
+
+    socket.on("ps:answer", (payload, ack) => {
+      const result = roomManager.penaltyAnswer(player.id, payload?.answer, Date.now());
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitPenalty(io, result.code);
+      if (typeof ack === "function") ack({ ok: true, correct: result.correct });
+    });
+
+    socket.on("ps:pick", (payload, ack) => {
+      const result = roomManager.penaltyPick(player.id, payload?.zone, Date.now());
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitPenalty(io, result.code);
+      if (typeof ack === "function") ack({ ok: true });
+    });
+
+    socket.on("ps:sync", (_payload, ack) => {
+      const code = roomManager.penaltyPlayerRoomCode(player.id);
+      if (code) syncPenaltyForPlayer(socket, code, player.id);
+      if (typeof ack === "function") ack({ ok: true });
+    });
+
     socket.on("disconnect", (reason) => {
       console.log(`[socket] ${brief} disconnected (${reason})`);
       const info = roomManager.markDisconnected(socket.id);
@@ -596,4 +654,45 @@ function scheduleTttTurnStart(io, roomCode, ms = 1600) {
     }
   }, ms);
   tttTimers.set(roomCode, t);
+}
+
+// ── Penalty Shootout timers and private views (in-memory) ──────────
+const penaltyTimers = new Map();
+
+function clearPenaltyTimer(roomCode) {
+  const t = penaltyTimers.get(roomCode);
+  if (t) {
+    clearTimeout(t);
+    penaltyTimers.delete(roomCode);
+  }
+}
+
+// Send the room view to everyone, and each player their own question.
+function emitPenalty(io, roomCode) {
+  const room = roomManager.getRoomByCode(roomCode);
+  if (room) io.to(roomChannel(roomCode)).emit("room:update", room);
+  const now = Date.now();
+  for (const t of roomManager.penaltyPrivateTargets(roomCode)) {
+    io.to(t.socketId).emit("ps:private", privatePenaltyState(t.game, t.playerId, now));
+  }
+  schedulePenaltyTimer(io, roomCode);
+}
+
+// Wake up at the next deadline (question or corner timeout, or the next kick).
+function schedulePenaltyTimer(io, roomCode) {
+  clearPenaltyTimer(roomCode);
+  const at = roomManager.penaltyNextDeadline(roomCode);
+  if (!at) return;
+  const t = setTimeout(() => {
+    penaltyTimers.delete(roomCode);
+    roomManager.penaltyAdvance(roomCode, Date.now());
+    emitPenalty(io, roomCode);
+  }, Math.max(0, at - Date.now()) + 15);
+  penaltyTimers.set(roomCode, t);
+}
+
+function syncPenaltyForPlayer(socket, roomCode, playerId) {
+  const target = roomManager.penaltyPrivateTargets(roomCode).find((t) => t.playerId === playerId);
+  if (!target) return;
+  socket.emit("ps:private", privatePenaltyState(target.game, playerId, Date.now()));
 }
