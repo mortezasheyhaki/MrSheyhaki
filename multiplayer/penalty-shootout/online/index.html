@@ -92,7 +92,7 @@
     <div class="mp-subhead"><div class="mp-subhead-left">
       <a class="mp-back-link" href="/multiplayer/penalty-shootout/">← Penalty Shootout</a>
       <h1 class="mp-title">⚽ Penalty Shootout · Online</h1>
-      <p class="mp-subtitle">2 players · Create a room, or join with a friend's code</p>
+      <p class="mp-subtitle" id="homeSubtitle">2 players · Create a room, or join with a friend's code</p>
     </div></div>
     <div class="pk-setup-grid">
       <div class="mp-panel">
@@ -146,7 +146,8 @@
           <h2 class="mp-panel-title">Subject</h2>
           <p class="mp-panel-desc" id="subjectHint">Host chooses what to practise</p>
         </div></div>
-        <div class="pk-subjects" id="subjectList" role="radiogroup" aria-label="Subject"></div>
+        <div id="subjectPicker"><div class="pk-subjects" id="subjectList" role="radiogroup" aria-label="Subject"></div></div>
+        <p class="mp-subtitle" id="subjectText" style="margin:.2rem 0 0" hidden></p>
         <div class="mp-panel-head" style="margin-top:1rem"><div>
           <h2 class="mp-panel-title">Kicks each</h2>
           <p class="mp-panel-desc">Both players shoot the same number</p>
@@ -288,6 +289,14 @@
   var room = null, priv = null, privAt = 0;
   var lastSeqShown = null, lastKickShown = -1, shownKey = null, pickedZone = null, answering = false;
   var tickTimer = null, endShown = false;
+  var SUBJECT_TITLES = {
+    "t2t1-u07-home": "🏠 Home vocabulary",
+    "t2t1-u12-should": "👍 Should or shouldn't?",
+    "present-continuous": "🏃 Present Continuous"
+  };
+  // set when the page is opened from a subject card on the hub (…/online/?subject=ID)
+  var SUBJECT_ID = (new URLSearchParams(location.search).get("subject") || "").trim();
+  if (!SUBJECT_TITLES[SUBJECT_ID]) SUBJECT_ID = "";
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function setStatus(el, txt, isErr) { if (!el) return; el.textContent = txt || ""; el.classList.toggle("err", !!isErr); }
@@ -468,13 +477,18 @@
 
     var subs = room.penaltySubjects || [];
     var cur = room.penaltySettings || {};
+    var curTitle = (subs.filter(function (s) { return s.id === cur.subjectId; })[0] || {}).title || "";
+    var pickable = isHost && !SUBJECT_ID;
+    $("subjectPicker").hidden = !pickable;
+    $("subjectText").hidden = pickable;
+    $("subjectText").textContent = "Subject: " + curTitle;
     $("subjectList").innerHTML = subs.map(function (s) {
       var on = s.id === cur.subjectId;
       return '<button type="button" class="pk-subject' + (on ? " is-on" : "") + '" role="radio" aria-checked="' + on + '" data-id="' + esc(s.id) + '"' + (isHost ? "" : " disabled") + '>' +
         '<span class="pk-subject-ico" aria-hidden="true">' + esc(s.emoji) + '</span>' +
         '<span><strong>' + esc(s.title) + '</strong><small>' + esc(s.tag) + ' · ' + s.count + ' questions</small></span></button>';
     }).join("");
-    $("subjectHint").textContent = isHost ? "Choose what to practise" : "The host chooses the subject";
+    $("subjectHint").textContent = pickable ? "Choose what to practise" : (SUBJECT_ID ? "Chosen from the subject card" : "The host chose the subject");
     Array.prototype.forEach.call($("segRounds").children, function (b) {
       b.classList.toggle("is-on", +b.getAttribute("data-n") === cur.rounds);
       b.disabled = !isHost;
@@ -753,8 +767,20 @@
   /* ---------- wiring ---------- */
   $("btnCreate").addEventListener("click", function () {
     ac(); sfx("tap");
-    sendAction("room:create", { gameType: "penalty-shootout" }, $("homeStatus"));
+    createRoom();
   });
+  function createRoom() {
+    socket.emit("room:create", { gameType: "penalty-shootout" }, function (res) {
+      if (res && res.ok === false && /already in/i.test(res.error || "")) {
+        setStatus($("homeStatus"), "Leaving previous room…");
+        socket.emit("room:leave", {}, function () { room = null; priv = null; createRoom(); });
+        return;
+      }
+      if (res && res.ok === false) { setStatus($("homeStatus"), res.error, true); return; }
+      setStatus($("homeStatus"), "");
+      if (SUBJECT_ID) socket.emit("ps:settings", { subjectId: SUBJECT_ID }, function () {});
+    });
+  }
   $("btnJoin").addEventListener("click", function () { joinFromInput(); });
   $("joinCode").addEventListener("keydown", function (e) { if (e.key === "Enter") joinFromInput(); });
   function joinFromInput() {
@@ -827,6 +853,7 @@
   var yr = $("year"); if (yr) yr.textContent = new Date().getFullYear();
 
   (async function init() {
+    if (SUBJECT_ID) $("homeSubtitle").textContent = "Subject: " + SUBJECT_TITLES[SUBJECT_ID] + " · Create a room, then invite your friend";
     show("loginGate");
     var ok = await ensureLoggedIn();
     if (!ok) return;

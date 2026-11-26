@@ -1,19 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
-<meta name="theme-color" content="#0b1020" />
-<meta name="color-scheme" content="dark light" />
-<title>Penalty Shootout · Multiplayer | Mr. Sheyhaki</title>
-<meta name="description" content="Penalty Shootout — answer English questions to score goals and save penalties. Two players, many subjects." />
-<link rel="stylesheet" href="/style.css" />
-<link rel="stylesheet" href="/theme.css" />
-<link rel="stylesheet" href="/multiplayer/lobby.css" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Penalty Shootout · Multiplayer | Mr. Sheyhaki</title>
+  <meta name="description" content="Penalty Shootout grammar game for two players. Pick a subject, then create a lobby and play a friend online, or play on one device." />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/theme.css" />
+  <link rel="stylesheet" href="/multiplayer/lobby.css" />
+  <link rel="stylesheet" href="/multiplayer/penalty-shootout/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    .pk-hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .pk-hub-card {
+      display: flex; flex-direction: column; gap: .9rem;
+      padding: 1.3rem; text-decoration: none; color: inherit;
+      border-radius: 22px; border: 1px solid var(--pk-border); background: var(--pk-surface);
+      position: relative; overflow: hidden;
+      transition: transform .15s, border-color .15s;
+    }
+    .pk-hub-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 5px; background: linear-gradient(90deg, #34d399, #22d3ee); }
+    .pk-hub-card.online::before { background: linear-gradient(90deg, #e879f9, #a78bfa); }
+    .pk-hub-card:hover { transform: translateY(-3px); border-color: var(--mp-accent); }
+    .pk-hub-top { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
+    .pk-hub-mark { font-size: 2.2rem; line-height: 1; }
+    .pk-hub-meta { font-size: .78rem; font-weight: 700; color: var(--pk-muted); text-align: right; }
+    .pk-hub-foot { margin-top: auto; font-weight: 800; font-size: .92rem; color: var(--mp-accent); }
+    .pk-hub-section { margin: 1.6rem 0 .7rem; font-size: .8rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--pk-muted); }
+  </style>
 </head>
 <body class="pk-page mp-lobby-body mp-theme-green has-site-topbar">
 
@@ -43,171 +63,82 @@
     </nav>
   </header>
 
-<div class="pk-app" id="app">
-
-  <!-- MODE SELECT -->
-  <section class="mp-shell pk-screen" id="screenMode">
+  <main class="mp-shell">
     <div class="mp-subhead">
       <div class="mp-subhead-left">
         <a class="mp-back-link" href="/multiplayer/">← Multiplayer</a>
         <h1 class="mp-title">⚽ Penalty Shootout</h1>
-        <p class="mp-subtitle">Answer to score. Answer to save. Two players, many subjects.</p>
+        <p class="mp-subtitle">2 players · Answer to score, answer to save. Pick a subject to open its lobby.</p>
       </div>
     </div>
-    <div class="pk-mode-grid">
-      <button type="button" class="pk-mode-card offline" id="btnOffline">
-        <span class="pk-mode-ico" aria-hidden="true">📱</span>
-        <strong>Offline</strong>
-        <span>2 players on the same screen</span>
-      </button>
-      <a class="pk-mode-card online" id="btnOnline" href="/multiplayer/penalty-shootout/online/">
-        <span class="pk-mode-ico" aria-hidden="true">🌐</span>
-        <strong>Online</strong>
-        <span>Create a room and play a friend</span>
+
+    <p class="pk-hub-section">Online · 2 players</p>
+    <div class="pk-hub-grid">
+      <a class="pk-hub-card online" href="/multiplayer/penalty-shootout/online/?subject=t2t1-u07-home">
+        <div class="pk-hub-top">
+          <div class="pk-hub-mark" aria-hidden="true">🏠</div>
+          <span class="pk-hub-meta">Teen2Teen 1 · Unit 7<br>13 questions</span>
+        </div>
+        <div>
+          <h2 class="mp-panel-title">Home vocabulary</h2>
+          <p class="mp-panel-desc">Rooms, furniture and everyday words for home.</p>
+        </div>
+        <div class="pk-hub-foot">Open lobby →</div>
+      </a>
+
+      <a class="pk-hub-card online" href="/multiplayer/penalty-shootout/online/?subject=t2t1-u12-should">
+        <div class="pk-hub-top">
+          <div class="pk-hub-mark" aria-hidden="true">👍</div>
+          <span class="pk-hub-meta">Teen2Teen 1 · Unit 12<br>10 questions</span>
+        </div>
+        <div>
+          <h2 class="mp-panel-title">Should or shouldn't?</h2>
+          <p class="mp-panel-desc">Advice and rules: should, shouldn't and the right form.</p>
+        </div>
+        <div class="pk-hub-foot">Open lobby →</div>
+      </a>
+
+      <a class="pk-hub-card online" href="/multiplayer/penalty-shootout/online/?subject=present-continuous">
+        <div class="pk-hub-top">
+          <div class="pk-hub-mark" aria-hidden="true">🏃</div>
+          <span class="pk-hub-meta">Grammar · Present continuous<br>55 questions</span>
+        </div>
+        <div>
+          <h2 class="mp-panel-title">Present Continuous</h2>
+          <p class="mp-panel-desc">am / is / are, -ing forms, reordering and fill-in-the-blank sentences.</p>
+        </div>
+        <div class="pk-hub-foot">Open lobby →</div>
       </a>
     </div>
-  </section>
 
-  <!-- OFFLINE SETUP -->
-  <section class="mp-shell pk-screen" id="screenSetup" hidden>
-    <div class="mp-subhead">
-      <div class="mp-subhead-left">
-        <button type="button" class="mp-back-link" id="backFromSetup">← Modes</button>
-        <h1 class="mp-title">Offline · Same screen</h1>
-        <p class="mp-subtitle">Pass the device when the game asks you to.</p>
-      </div>
-    </div>
-
-    <div class="pk-setup-grid">
-      <div class="mp-panel">
-        <div class="mp-panel-head"><div><h2 class="mp-panel-title">Players</h2><p class="mp-panel-desc">Type your names</p></div></div>
-        <div class="pk-names">
-          <label class="pk-name p1"><span class="pk-dot" aria-hidden="true"></span><input type="text" id="name1" maxlength="12" value="Player 1" placeholder="Player 1" aria-label="Player 1 name" /></label>
-          <label class="pk-name p2"><span class="pk-dot" aria-hidden="true"></span><input type="text" id="name2" maxlength="12" value="Player 2" placeholder="Player 2" aria-label="Player 2 name" /></label>
+    <p class="pk-hub-section">Same device</p>
+    <div class="pk-hub-grid">
+      <a class="pk-hub-card" href="/multiplayer/penalty-shootout/offline/">
+        <div class="pk-hub-top">
+          <div class="pk-hub-mark" aria-hidden="true">📱</div>
+          <span class="pk-hub-meta">No account needed</span>
         </div>
-      </div>
-      <div class="mp-panel">
-        <div class="mp-panel-head"><div><h2 class="mp-panel-title">Kicks each</h2><p class="mp-panel-desc">Both players shoot the same number</p></div></div>
-        <div class="pk-seg" id="segRounds" role="group" aria-label="Kicks each">
-          <button type="button" data-n="3">3</button>
-          <button type="button" data-n="5" class="is-on">5</button>
-          <button type="button" data-n="7">7</button>
+        <div>
+          <h2 class="mp-panel-title">Offline</h2>
+          <p class="mp-panel-desc">Two players on one screen. Pass the device when the game asks.</p>
         </div>
+        <div class="pk-hub-foot">Play offline →</div>
+      </a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · Multiplayer</p>
+      <div class="footer-links">
+        <a class="footer-link" href="/contact/">Contact</a>
+        <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
       </div>
     </div>
+  </footer>
 
-    <div class="mp-panel">
-      <div class="mp-panel-head"><div><h2 class="mp-panel-title">Subject</h2><p class="mp-panel-desc">Pick what you want to practise</p></div></div>
-      <div class="pk-subjects" id="subjectList" role="radiogroup" aria-label="Subject"></div>
-    </div>
-
-    <div class="mp-panel pk-how">
-      <h2 class="mp-panel-title">How it works</h2>
-      <ol>
-        <li><strong>Shooter</strong> answers a question. Right = the kick is on target. Wrong = it flies over the bar.</li>
-        <li>The shooter secretly picks a corner: left, middle or right.</li>
-        <li>Pass the device. The <strong>keeper</strong> answers a question. Right = the keeper can dive. Wrong = the keeper slips.</li>
-        <li>The keeper picks a corner. Same corner as the shot = <strong>saved!</strong> Players swap roles every kick.</li>
-      </ol>
-    </div>
-
-    <button type="button" class="mp-btn mp-btn-primary mp-btn-full pk-start" id="btnStart">Start match ⚽</button>
-  </section>
-
-  <!-- PLAY -->
-  <section class="pk-play" id="screenPlay" hidden>
-    <header class="pk-hud">
-      <button type="button" class="pk-iconbtn" id="btnExit" aria-label="Exit match" title="Exit">←</button>
-      <div class="pk-board" id="board" aria-live="polite"></div>
-      <button type="button" class="pk-iconbtn" id="btnMute" aria-label="Mute sound" title="Sound">🔊</button>
-    </header>
-
-    <div class="pk-scene" id="scene" data-pick="">
-      <svg class="pk-bg" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="pkSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070d24"/><stop offset="1" stop-color="#1d3470"/></linearGradient>
-          <radialGradient id="pkLight"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-          <pattern id="pkCrowd" width="5" height="4" patternUnits="userSpaceOnUse">
-            <rect width="5" height="4" fill="#0d1838"/>
-            <circle cx="1.2" cy="1.2" r="1" fill="#f472b6"/><circle cx="3.7" cy="1.4" r="1" fill="#facc15"/>
-            <circle cx="2.4" cy="3.2" r="1" fill="#38bdf8"/><circle cx="4.6" cy="3.4" r=".8" fill="#fb923c"/>
-          </pattern>
-          <pattern id="pkNet" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <path d="M0 0H3M0 0V3" stroke="#fff" stroke-opacity=".38" stroke-width=".18" fill="none"/>
-          </pattern>
-        </defs>
-        <rect width="160" height="38" fill="url(#pkSky)"/>
-        <rect y="24" width="160" height="14" fill="url(#pkCrowd)" opacity=".85"/>
-        <circle cx="12" cy="6" r="14" fill="url(#pkLight)"/><circle cx="148" cy="6" r="14" fill="url(#pkLight)"/>
-        <rect y="38" width="160" height="62" fill="#1f8a4c"/>
-        <rect y="38" width="160" height="10" fill="#238f50"/><rect y="58" width="160" height="12" fill="#238f50"/><rect y="82" width="160" height="18" fill="#238f50"/>
-        <g fill="none" stroke="#fff" stroke-opacity=".85" stroke-width=".7" stroke-linejoin="round">
-          <line x1="0" y1="50" x2="160" y2="50"/>
-          <polyline points="22,50 12,86 148,86 138,50"/>
-          <polyline points="50,50 45,64 115,64 110,50"/>
-        </g>
-        <circle cx="80" cy="76" r=".9" fill="#fff"/>
-        <!-- goal: back net, side nets, frame -->
-        <polygon points="36,20 124,20 124,48 36,48" fill="#0a1a2a" fill-opacity=".55"/>
-        <polygon points="36,20 124,20 124,48 36,48" fill="url(#pkNet)"/>
-        <polygon points="30,16 36,20 36,48 30,50" fill="url(#pkNet)" opacity=".8"/>
-        <polygon points="130,16 124,20 124,48 130,50" fill="url(#pkNet)" opacity=".8"/>
-        <polygon points="30,16 130,16 124,20 36,20" fill="url(#pkNet)" opacity=".8"/>
-        <g fill="#fff" stroke="#cbd5e1" stroke-width=".25">
-          <rect x="28.8" y="15" width="2.4" height="35.4" rx=".6"/><rect x="128.8" y="15" width="2.4" height="35.4" rx=".6"/>
-          <rect x="28.8" y="14.8" width="102.4" height="2.4" rx=".6"/>
-        </g>
-      </svg>
-
-      <div class="pk-zones" id="zones">
-        <button type="button" class="pk-zone" data-zone="left" aria-label="Left corner"><span>Left</span></button>
-        <button type="button" class="pk-zone" data-zone="center" aria-label="Middle"><span>Middle</span></button>
-        <button type="button" class="pk-zone" data-zone="right" aria-label="Right corner"><span>Right</span></button>
-      </div>
-
-      <div class="pk-keeper" id="keeper" aria-hidden="true">
-        <div class="pk-k-arm l"><i></i></div><div class="pk-k-arm r"><i></i></div>
-        <div class="pk-k-body"></div><div class="pk-k-head"></div>
-        <div class="pk-k-leg l"></div><div class="pk-k-leg r"></div>
-      </div>
-      <div class="pk-ball" id="ball" aria-hidden="true"><span>⚽</span></div>
-      <div class="pk-banner" id="banner" hidden></div>
-    </div>
-
-    <div class="pk-panel" id="panel"></div>
-  </section>
-
-  <!-- RESULT -->
-  <div class="pk-modal" id="winModal" hidden>
-    <div class="pk-modal-card">
-      <div class="pk-win-emoji" aria-hidden="true">🏆</div>
-      <h2 id="winTitle">Winner!</h2>
-      <p id="winSub"></p>
-      <div class="pk-modal-actions">
-        <button type="button" class="mp-btn mp-btn-primary mp-btn-full" id="btnAgain">Play again</button>
-        <button type="button" class="mp-btn mp-btn-secondary mp-btn-full" id="btnChange">Change subject</button>
-        <a class="pk-link" href="/multiplayer/">← Multiplayer</a>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<footer class="site-footer">
-  <div class="footer-inner">
-    <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · Multiplayer</p>
-    <div class="footer-links">
-      <a class="footer-link" href="/contact/">Contact</a>
-      <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
-      <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
-    </div>
-  </div>
-</footer>
-
-<script src="/theme.js"></script>
-<script src="/script.js"></script>
-<script src="subjects.js"></script>
-<script src="engine.js"></script>
-<script src="penalty.js"></script>
+  <script src="/theme.js"></script>
+  <script>var y = document.getElementById("year"); if (y) y.textContent = new Date().getFullYear();</script>
 </body>
 </html>

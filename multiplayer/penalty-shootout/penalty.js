@@ -67,13 +67,11 @@
 
   /* ---------- screens ---------- */
   function showScreen(id) {
-    ["screenMode", "screenSetup", "screenPlay"].forEach(function (s) { $(s).hidden = s !== id; });
+    ["screenSetup", "screenPlay"].forEach(function (s) { $(s).hidden = s !== id; });
     document.body.classList.toggle("mp-playing", id === "screenPlay");
     window.scrollTo(0, 0);
   }
 
-  $("btnOffline").addEventListener("click", function () { sfx("tap"); showScreen("screenSetup"); });
-  $("backFromSetup").addEventListener("click", function () { showScreen("screenMode"); });
 
   /* ---------- setup ---------- */
   function renderSubjects() {
@@ -382,6 +380,6 @@
   /* ---------- go ---------- */
   var yr = $("year"); if (yr) yr.textContent = new Date().getFullYear();
   renderSubjects();
-  showScreen("screenMode");
+  showScreen("screenSetup");
   window.__pk = { S: S, E: E };   // for testing
 })();
