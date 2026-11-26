@@ -642,8 +642,67 @@ html {
  * The site stylesheet (tfl-design.css) loads before this file and styles
  * the same class names; these rules reset those leftovers. */
 .lc-app { background: none; box-shadow: none; }
-.lc-app .lc-top { background: none; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; border: 0; }
-.lc-app .lc-top-center { background: none; border: 0; box-shadow: none; padding: 0; border-radius: 0; min-width: 0; }
+
+.lc-app .lc-top {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 0 8px;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  border: 0;
+}
+
+.lc-app .lc-top-center {
+  min-width: 0;
+  text-align: center;
+  background: var(--lc-card);
+  border: 1px solid var(--lc-line);
+  border-radius: 999px;
+  box-shadow: var(--lc-shadow);
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+
+.lc-app .lc-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--lc-accent);
+  line-height: 1.2;
+}
+
+.lc-app .lc-top-center strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  line-height: 1.25;
+  color: var(--lc-ink);
+}
+
+.lc-app .lc-counter {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--lc-muted);
+  min-width: 44px;
+  text-align: right;
+  padding: 0 2px;
+}
+
 .lc-app .lc-back {
   width: auto;
   min-width: 0;
@@ -659,10 +718,28 @@ html {
   background: var(--lc-card);
   border: 1px solid var(--lc-line);
   color: var(--lc-ink);
-  box-shadow: none;
+  box-shadow: var(--lc-shadow);
   white-space: nowrap;
 }
 .lc-app .lc-back span { display: inline; }
+
+.lc-app .lc-seg {
+  display: flex;
+  gap: 5px;
+  margin: 0 0 8px;
+}
+.lc-app .lc-seg i {
+  flex: 1;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--lc-line);
+  transition: background .3s ease;
+}
+.lc-app .lc-seg i.is-done    { background: var(--lc-ok); }
+.lc-app .lc-seg i.is-current { background: var(--lc-accent); }
+.lc-app .lc-seg i.is-right   { background: var(--lc-ok); }
+.lc-app .lc-seg i.is-wrong   { background: var(--lc-bad); }
+
 .lc-app .lc-play {
   border: none;
   padding: 0;
@@ -670,6 +747,14 @@ html {
   display: grid;
   place-items: center;
   line-height: 1;
+}
+
+@media (max-width: 400px) {
+  .lc-app .lc-top { gap: 8px; }
+  .lc-app .lc-top-center { padding: 7px 10px; }
+  .lc-app .lc-top-center strong { font-size: 13px; }
+  .lc-app .lc-back { padding: 0 10px 0 8px; height: 36px; font-size: 13px; }
+  .lc-app .lc-counter { font-size: 12px; min-width: 40px; }
 }
 
 

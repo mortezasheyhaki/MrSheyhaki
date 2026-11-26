@@ -113,6 +113,12 @@
   function pick(word) {
     if (checked) return;
     choice = word;
+    // Auto-check on tap for faster mobile play
+    checked = true;
+    var item = BANK[order[current]];
+    var ok = choice === item.answer;
+    results[current] = ok;
+    sfx(ok ? "correct" : "wrong");
     renderPlay();
   }
 
@@ -225,19 +231,15 @@
 
     var foot;
     if (!checked) {
-      if (choice === null) {
-        foot = '<div class="cdef-foot"><span class="cdef-foot-text">Choose the word that matches the clue.</span></div>';
-      } else {
-        foot =
-          '<div class="cdef-foot">' +
-          '<span class="cdef-foot-text">You can change your answer, then Check.</span>' +
-          '<button type="button" class="cdef-next" id="cdef-check">Check ✓</button></div>';
-      }
+      foot =
+        '<div class="cdef-foot">' +
+        '<span class="cdef-foot-text">Tap a word chip to answer.</span>' +
+        '</div>';
     } else {
       var ok = choice === item.answer;
       var msg = ok ? "Correct!" : "Not quite. The answer is “" + item.answer + "”.";
       foot =
-        '<div class="cdef-foot">' +
+        '<div class="cdef-foot cdef-foot-action">' +
         '<span class="cdef-foot-text ' + (ok ? "is-ok" : "is-bad") + '">' + esc(msg) + "</span>" +
         '<button type="button" class="cdef-next" id="cdef-next">' +
         (last ? "See results →" : "Next →") + "</button></div>";
@@ -248,6 +250,7 @@
       segments() +
       '<div class="cdef-main">' +
         '<div class="cdef-center">' +
+          '<span class="cdef-badge">Clue ' + (current + 1) + ' of ' + TOTAL + '</span>' +
           '<p class="cdef-clue" aria-live="polite">' + esc(item.clue) + "</p>" +
           '<div class="cdef-chips" role="group" aria-label="Choices">' + chips + "</div>" +
         "</div>" +
@@ -260,8 +263,6 @@
         pick(btn.getAttribute("data-w"));
       };
     });
-    var checkBtn = document.getElementById("cdef-check");
-    if (checkBtn) checkBtn.onclick = checkAnswer;
     var nextBtn = document.getElementById("cdef-next");
     if (nextBtn) nextBtn.onclick = next;
   }
@@ -297,9 +298,9 @@
         pick(options[i]);
       }
     }
-    if (k === "Enter" && choice !== null && !checked) {
+    if ((k === "Enter" || k === " ") && checked) {
       e.preventDefault();
-      checkAnswer();
+      next();
     }
   });
 
