@@ -42,8 +42,14 @@
   function sendToLogin() {
     var here = window.location.pathname + window.location.search + window.location.hash;
     var back = HUB_PAGE;
-    if (here.indexOf("/tests/") !== -1) {
-      back = "/resources/american-english-file/tests/";
+    if (here.indexOf("/american-english-file/") !== -1) {
+      back = "/resources/american-english-file/";
+    } else if (here.indexOf("/teen-2-teen/") !== -1) {
+      back = "/resources/teen-2-teen/";
+    } else if (here.indexOf("/tactics-for-listening/") !== -1) {
+      back = "/resources/tactics-for-listening/";
+    } else if (here.indexOf("/pre-starter/") !== -1) {
+      back = "/resources/pre-starter/";
     }
     window.location.replace(
       LOGIN_PAGE +

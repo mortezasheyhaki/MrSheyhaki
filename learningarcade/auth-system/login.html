@@ -3,317 +3,530 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#5b21b6" />
-  <title>Sign in · Mr. Sheyhaki</title>
+  <meta name="theme-color" content="#6d28d9" />
+  <title>Sign in | Mr. Sheyhaki</title>
+  <meta name="description" content="Sign in or create an account to save your Learning Arcade progress, access tests, and join live multiplayer games." />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/theme.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../style.css" />
-  <link rel="stylesheet" href="../theme.css" />
   <style>
-    :root {
-      --auth-accent: #6d28d9;
-      --auth-accent-2: #4f46e5;
-      --auth-accent-soft: rgba(109, 40, 217, 0.12);
-      --auth-bg: #f4f2ff;
-      --auth-card: #ffffff;
-      --auth-text: #0f172a;
-      --auth-muted: #64748b;
-      --auth-border: #e2e8f0;
-      --auth-input-bg: #f8fafc;
-      --auth-error: #dc2626;
-      --auth-success: #059669;
-    }
-    html[data-theme="dark"] {
-      --auth-bg: #0b0f1a;
-      --auth-card: #151a2a;
-      --auth-text: #f1f5f9;
-      --auth-muted: #94a3b8;
-      --auth-border: #2a3347;
-      --auth-input-bg: #0f1422;
-      --auth-accent-soft: rgba(139, 92, 246, 0.18);
-    }
-    * { box-sizing: border-box; }
     body.auth-page {
       margin: 0;
       min-height: 100dvh;
-      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
-      background: var(--auth-bg);
-      color: var(--auth-text);
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--site-text);
+      background: var(--site-bg);
       display: flex;
       flex-direction: column;
+      -webkit-font-smoothing: antialiased;
     }
+
     body.auth-page::before {
       content: "";
       position: fixed;
       inset: 0;
       pointer-events: none;
-      background:
-        radial-gradient(ellipse 80% 50% at 10% -10%, rgba(109, 40, 217, 0.18), transparent 55%),
-        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(79, 70, 229, 0.12), transparent 50%),
-        radial-gradient(ellipse 50% 40% at 50% 110%, rgba(14, 165, 233, 0.08), transparent 50%);
       z-index: 0;
+      background:
+        radial-gradient(ellipse 68% 44% at 50% -12%, var(--site-glow-a), transparent 60%),
+        radial-gradient(ellipse 42% 30% at 92% 14%, var(--site-glow-b), transparent 54%);
     }
-    .auth-page-inner {
+
+    .auth-main {
       position: relative;
       z-index: 1;
-      flex: 1;
+      flex: 1 0 auto;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 28px 16px 40px;
-      width: 100%;
+      padding: 2rem 1.25rem 3.25rem;
     }
-    .auth-brand {
+
+    .auth-shell {
+      width: min(432px, 100%);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 28px;
-      text-align: center;
+      gap: 0.9rem;
     }
-    .auth-logo {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      background: linear-gradient(145deg, #7c3aed, #4f46e5);
-      color: #fff;
+
+    .auth-back {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      min-height: 36px;
+      padding: 0.35rem 0.8rem;
+      border-radius: 10px;
+      border: 1px solid var(--site-border);
+      background: var(--site-surface);
+      color: var(--site-muted);
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 600;
+      transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    }
+    .auth-back:hover {
+      color: var(--hm-accent);
+      border-color: var(--hm-border-strong);
+      transform: translateY(-1px);
+    }
+
+    .auth-card {
+      position: relative;
+      overflow: hidden;
+      background: var(--site-surface);
+      border: 1px solid var(--site-border);
+      border-radius: 20px;
+      padding: 2rem 1.85rem 1.75rem;
+      box-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.04),
+        0 18px 42px var(--site-shadow);
+    }
+
+    .auth-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #6d28d9 0%, #4f46e5 55%, #0ea5e9 100%);
+    }
+
+    .auth-head {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      margin-bottom: 1.35rem;
+    }
+
+    .auth-brand-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .auth-monogram {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
       display: grid;
       place-items: center;
-      font-family: "Fredoka", sans-serif;
+      background: linear-gradient(135deg, #6d28d9 0%, #4f46e5 100%);
+      color: #ffffff;
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: 0.92rem;
       font-weight: 700;
-      font-size: 1.35rem;
-      box-shadow: 0 10px 28px rgba(109, 40, 217, 0.35);
       letter-spacing: -0.02em;
+      box-shadow: 0 4px 12px rgba(109, 40, 217, 0.25);
     }
-    .auth-brand-name {
-      font-family: "Fredoka", sans-serif;
+
+    .auth-portal-label {
+      font-size: 0.78rem;
       font-weight: 700;
-      font-size: 1.15rem;
-      letter-spacing: -0.01em;
-      color: var(--auth-text);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--site-muted);
     }
-    .auth-brand-tag {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--auth-muted);
-    }
-    .auth-wrap { width: 100%; max-width: 400px; }
-    .auth-card {
-      background: var(--auth-card);
-      border: 1px solid var(--auth-border);
-      border-radius: 20px;
-      padding: 28px 26px 24px;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 40px rgba(15, 23, 42, 0.08);
-    }
-    html[data-theme="dark"] .auth-card {
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 16px 48px rgba(0, 0, 0, 0.35);
-    }
+
     .auth-title {
-      margin: 0 0 4px;
-      font-family: "Fredoka", sans-serif;
-      font-size: 1.55rem;
+      margin: 0 0 0.3rem;
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: 1.7rem;
       font-weight: 700;
       letter-spacing: -0.02em;
-      color: var(--auth-text);
-      text-align: center;
+      line-height: 1.15;
+      color: var(--site-text);
     }
+
     .auth-sub {
-      margin: 0 0 22px;
-      text-align: center;
-      color: var(--auth-muted);
-      font-size: 0.9rem;
+      margin: 0;
+      color: var(--site-muted);
+      font-size: 0.92rem;
+      line-height: 1.48;
       font-weight: 500;
-      line-height: 1.45;
     }
+
+    .auth-context {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-bottom: 1.15rem;
+      padding: 0.6rem 0.85rem;
+      border-radius: 11px;
+      border: 1px solid var(--hm-border-strong);
+      background: var(--hm-accent-soft);
+      color: var(--site-text);
+      font-size: 0.83rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+    .auth-context svg {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      color: var(--hm-accent);
+    }
+
+    /* Segmented mode switch */
     .auth-tabs {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 4px;
       padding: 4px;
-      margin-bottom: 22px;
-      background: var(--auth-input-bg);
-      border: 1px solid var(--auth-border);
       border-radius: 12px;
+      background: var(--site-surface-2);
+      border: 1px solid var(--site-border);
+      margin-bottom: 1.25rem;
     }
+    html[data-theme="dark"] .auth-tabs {
+      background: var(--site-bg);
+    }
+
     .auth-tab {
-      border: 0;
-      background: transparent;
-      color: var(--auth-muted);
-      font: inherit;
-      font-weight: 700;
-      font-size: 0.88rem;
-      padding: 10px 12px;
+      min-height: 38px;
+      border: 1px solid transparent;
       border-radius: 9px;
+      background: transparent;
+      color: var(--site-muted);
+      font: inherit;
+      font-size: 0.88rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .auth-tab:hover:not(.is-on) {
+      color: var(--site-text);
     }
     .auth-tab.is-on {
-      background: var(--auth-card);
-      color: var(--auth-accent);
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(109, 40, 217, 0.08);
+      background: var(--site-surface);
+      color: var(--site-text);
+      border-color: var(--site-border);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
     }
     html[data-theme="dark"] .auth-tab.is-on {
-      background: #1e2438;
-      color: #a78bfa;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      background: var(--site-surface-2);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
     }
-    .auth-field { margin-bottom: 14px; }
-    .auth-field.hidden { display: none; }
+
+    /* Form fields */
+    .auth-field {
+      margin-bottom: 1rem;
+    }
+
     .auth-field label {
-      display: block;
-      font-size: 0.75rem;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.82rem;
       font-weight: 700;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      color: var(--auth-muted);
-      margin-bottom: 6px;
+      color: var(--site-text);
+      margin-bottom: 0.42rem;
     }
-    .auth-field input {
+
+    .auth-label-opt {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--site-muted);
+    }
+
+    .auth-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    html .auth-field input {
       width: 100%;
-      border: 1.5px solid var(--auth-border);
-      background: var(--auth-input-bg);
-      border-radius: 12px;
-      padding: 12px 14px;
+      min-height: 46px;
+      box-sizing: border-box;
+      border: 1.5px solid var(--site-border);
+      background: var(--site-surface-2);
+      border-radius: 11px;
+      padding: 0.65rem 0.9rem;
       font: inherit;
       font-size: 0.95rem;
       font-weight: 600;
-      color: var(--auth-text);
+      color: var(--site-text);
       outline: none;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
     }
-    .auth-field input::placeholder { color: #94a3b8; font-weight: 500; }
-    .auth-field input:focus {
-      border-color: var(--auth-accent);
-      box-shadow: 0 0 0 3px var(--auth-accent-soft);
+    html .auth-field input::placeholder {
+      color: var(--site-muted);
+      font-weight: 500;
+      opacity: 0.68;
     }
+    html .auth-field input:focus {
+      border-color: var(--hm-accent);
+      background: var(--site-surface);
+      box-shadow: 0 0 0 3px var(--hm-accent-soft);
+    }
+    html[data-theme="dark"] .auth-field input:focus {
+      background: var(--site-surface-2);
+    }
+
+    .auth-input-wrap input {
+      padding-right: 2.9rem;
+    }
+
+    .auth-pass-toggle {
+      position: absolute;
+      right: 5px;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--site-muted);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: color 0.14s ease, background-color 0.14s ease;
+    }
+    .auth-pass-toggle:hover {
+      color: var(--site-text);
+      background: var(--site-border);
+    }
+    .auth-pass-toggle svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .auth-hint {
+      margin: 0.38rem 0 0;
+      font-size: 0.78rem;
+      color: var(--site-muted);
+      font-weight: 500;
+    }
+
     .auth-error {
-      min-height: 1.25rem;
-      margin: 0 0 12px;
-      font-size: 0.85rem;
+      margin: 0 0 1rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 10px;
       font-weight: 600;
-      color: var(--auth-error);
-      text-align: center;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: #dc2626;
+      background: rgba(220, 38, 38, 0.09);
+      text-align: left;
     }
-    .auth-error.auth-success { color: var(--auth-success); }
+    html[data-theme="dark"] .auth-error {
+      color: #f87171;
+      background: rgba(248, 113, 113, 0.14);
+    }
+    .auth-error:empty {
+      display: none;
+    }
+    .auth-error.auth-success {
+      color: #059669;
+      background: rgba(5, 150, 105, 0.11);
+    }
+    html[data-theme="dark"] .auth-error.auth-success {
+      color: #34d399;
+      background: rgba(52, 211, 153, 0.14);
+    }
+
     .auth-btn {
       width: 100%;
+      min-height: 46px;
       border: 0;
-      border-radius: 12px;
-      padding: 13px 16px;
+      background: var(--hm-accent);
+      color: #ffffff;
       font: inherit;
-      font-weight: 800;
-      font-size: 0.95rem;
-      color: #fff;
+      font-weight: 700;
+      font-size: 0.96rem;
+      padding: 0.75rem 1.15rem;
+      border-radius: 11px;
       cursor: pointer;
-      background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
-      box-shadow: 0 8px 20px rgba(109, 40, 217, 0.3);
-      transition: transform 0.12s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      box-shadow: 0 6px 18px rgba(109, 40, 217, 0.22);
+      transition: background-color 0.15s ease, transform 0.12s ease, opacity 0.15s ease;
     }
-    .auth-btn:hover { filter: brightness(1.05); box-shadow: 0 10px 26px rgba(109, 40, 217, 0.38); }
-    .auth-btn:active { transform: translateY(1px); }
-    .auth-btn:disabled { opacity: 0.65; cursor: wait; filter: none; }
-    .auth-footer {
-      margin-top: 18px;
+    .auth-btn:hover:not(:disabled) {
+      background: var(--hm-accent-hover);
+    }
+    .auth-btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    .auth-btn:disabled {
+      opacity: 0.58;
+      cursor: not-allowed;
+    }
+
+    .auth-already {
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--hm-border-strong);
+      background: var(--site-surface-2);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 10px;
+      gap: 0.65rem;
+      font-size: 0.86rem;
+      color: var(--site-text);
     }
-    .auth-guest {
-      font-size: 0.88rem;
+    .auth-already-title {
       font-weight: 700;
-      color: var(--auth-muted);
-      text-decoration: none;
-      transition: color 0.15s ease;
+      margin: 0;
     }
-    .auth-guest:hover { color: var(--auth-accent); }
-    .auth-back {
+    .auth-already-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .auth-already-btn {
+      flex: 1 1 auto;
+      min-height: 38px;
+      padding: 0.45rem 0.85rem;
+      border-radius: 9px;
+      font: inherit;
+      font-size: 0.84rem;
+      font-weight: 700;
+      text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      margin-bottom: 18px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--auth-muted);
-      text-decoration: none;
-      transition: color 0.15s ease;
-    }
-    .auth-back:hover { color: var(--auth-accent); }
-    .auth-logout-note {
-      display: none;
-      margin-top: 12px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: var(--auth-accent-soft);
-      border: 1px solid rgba(109, 40, 217, 0.2);
-      text-align: center;
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--auth-text);
-    }
-    .auth-logout-note.is-visible { display: block; }
-    .auth-logout-note button {
-      margin-top: 8px;
-      border: 0;
-      background: var(--auth-accent);
-      color: #fff;
-      font: inherit;
-      font-weight: 700;
-      font-size: 0.85rem;
-      padding: 8px 14px;
-      border-radius: 999px;
+      justify-content: center;
       cursor: pointer;
     }
-    #sdkStatus {
-      display: none;
-      text-align: center;
-      padding: 10px 14px;
-      margin: 12px 16px 0;
-      border-radius: 12px;
-      background: #fef2f2;
-      color: #b91c1c;
-      font-weight: 700;
-      font-size: 0.85rem;
-      max-width: 400px;
-      width: 100%;
+    .auth-already-btn--primary {
+      border: 0;
+      background: var(--hm-accent);
+      color: #ffffff;
     }
-    html[data-theme="dark"] #sdkStatus {
-      background: rgba(127, 29, 29, 0.35);
-      color: #fca5a5;
+    .auth-already-btn--primary:hover {
+      background: var(--hm-accent-hover);
+    }
+    .auth-already-btn--ghost {
+      border: 1px solid var(--site-border);
+      background: var(--site-surface);
+      color: var(--site-text);
+    }
+    .auth-already-btn--ghost:hover {
+      border-color: var(--hm-border-strong);
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1.05rem 0;
+      color: var(--site-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .auth-divider::before,
+    .auth-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--site-border);
+    }
+
+    .auth-guest {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--site-border);
+      background: transparent;
+      color: var(--site-muted);
+      font: inherit;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 0.65rem 1rem;
+      border-radius: 11px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .auth-guest:hover {
+      color: var(--site-text);
+      background: var(--site-surface-2);
+    }
+
+    .auth-sdk-status {
+      text-align: center;
+      padding: 0.65rem 0.9rem;
+      border-radius: 11px;
+      background: rgba(220, 38, 38, 0.1);
+      color: #dc2626;
+      font-weight: 600;
+      font-size: 0.84rem;
+    }
+    html[data-theme="dark"] .auth-sdk-status {
+      background: rgba(248, 113, 113, 0.14);
+      color: #f87171;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 480px) {
+      .auth-main {
+        align-items: flex-start;
+        padding: 1.15rem 0.95rem 2.25rem;
+      }
+      .auth-card {
+        padding: 1.55rem 1.25rem 1.45rem;
+      }
     }
   </style>
-  <script>
-    (function () {
-      try {
-        var t = localStorage.getItem("mrsheyhaki-theme");
-        if (t !== "dark" && t !== "light") {
-          t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        }
-        document.documentElement.setAttribute("data-theme", t);
-      } catch (e) {
-        document.documentElement.setAttribute("data-theme", "light");
-      }
-    })();
-  </script>
+<!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
-<body class="auth-page">
-  <div class="auth-page-inner">
-    <div class="auth-brand">
-      <div class="auth-logo" aria-hidden="true">MS</div>
-      <div class="auth-brand-name">Mr. Sheyhaki</div>
-      <div class="auth-brand-tag">Learning Arcade</div>
+<body class="auth-page has-site-topbar">
+
+  <header class="site-topbar">
+    <div class="topbar-inner">
+      <a href="/" class="brand-mark">Mr. Sheyhaki</a>
+      <nav class="topbar-nav" aria-label="Main navigation">
+        <a href="/" class="topbar-link">Home</a>
+        <a href="/learningarcade/" class="topbar-link">Arcade</a>
+        <a href="/multiplayer/" class="topbar-link">Multiplayer</a>
+        <a href="/resources/" class="topbar-link">Resources</a>
+        <a href="/about/" class="topbar-link">About</a>
+      </nav>
+      <div class="topbar-actions">
+        <button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <a href="/learningarcade/profile/" class="topbar-cta" id="headerAccountCta">Sign in</a>
+      </div>
     </div>
+    <nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+      <a href="/">Home</a>
+      <a href="/learningarcade/">Arcade</a>
+      <a href="/multiplayer/">Multiplayer</a>
+      <a href="/resources/">Resources</a>
+      <a href="/about/">About</a>
+    </nav>
+  </header>
 
-    <main class="auth-wrap">
-      <a class="auth-back" id="authBack" href="/">← Back to Home</a>
+  <main class="auth-main">
+    <div class="auth-shell">
+      <a class="auth-back" id="authBack" href="/">← Back</a>
 
-      <div class="auth-card">
-        <h1 class="auth-title" id="authTitle">Welcome back</h1>
-        <p class="auth-sub" id="authSub">Sign in to save progress and play multiplayer</p>
+      <section class="auth-card" aria-labelledby="authTitle">
+        <div class="auth-head">
+          <div class="auth-brand-row">
+            <span class="auth-monogram" aria-hidden="true">MS</span>
+            <span class="auth-portal-label">Mr. Sheyhaki · Account</span>
+          </div>
+          <h1 class="auth-title" id="authTitle">Welcome back</h1>
+          <p class="auth-sub" id="authSub">Sign in to save your progress, open tests, and play live matches.</p>
+        </div>
 
-        <div class="auth-tabs" role="tablist">
+        <div class="auth-context hidden" id="authContext" role="note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span id="authContextText">Sign in to continue.</span>
+        </div>
+
+        <div class="auth-tabs" role="tablist" aria-label="Authentication mode">
           <button type="button" class="auth-tab is-on" id="tabLogin" role="tab" aria-selected="true">Sign in</button>
           <button type="button" class="auth-tab" id="tabRegister" role="tab" aria-selected="false">Create account</button>
         </div>
@@ -321,39 +534,60 @@
         <form id="authForm" autocomplete="on">
           <div class="auth-field">
             <label for="username">Username</label>
-            <input id="username" name="username" type="text" maxlength="24" placeholder="e.g. ali_7a" required autocomplete="username" />
+            <input id="username" name="username" type="text" maxlength="24" placeholder="e.g. ali_7a" required autocomplete="username" autocapitalize="none" spellcheck="false" />
           </div>
 
           <div class="auth-field hidden" id="displayNameField">
-            <label for="displayName">Display name <span style="opacity:.7;font-weight:600;text-transform:none;letter-spacing:0">(optional)</span></label>
-            <input id="displayName" name="displayName" type="text" maxlength="32" placeholder="e.g. Ali" autocomplete="nickname" />
+            <label for="displayName">Display name <span class="auth-label-opt">Optional</span></label>
+            <input id="displayName" name="displayName" type="text" maxlength="32" placeholder="Name shown to classmates" autocomplete="nickname" />
           </div>
 
           <div class="auth-field">
             <label for="password">Password</label>
-            <input id="password" name="password" type="password" maxlength="64" placeholder="••••••••" required autocomplete="current-password" />
+            <div class="auth-input-wrap">
+              <input id="password" name="password" type="password" maxlength="64" placeholder="Enter your password" required autocomplete="current-password" />
+              <button type="button" class="auth-pass-toggle" id="togglePassword" aria-label="Show password" aria-pressed="false">
+                <svg id="eyeOpenIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg id="eyeClosedIcon" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+              </button>
+            </div>
+            <p class="auth-hint hidden" id="passwordHint">Use at least 8 characters.</p>
           </div>
 
-          <p class="auth-error" id="authMsg" role="alert"></p>
+          <p class="auth-error" id="authMsg" aria-live="polite"></p>
 
           <button type="submit" class="auth-btn" id="authSubmit">Sign in</button>
         </form>
 
-        <div class="auth-logout-note" id="alreadyIn">
-          You’re already signed in.
-          <br />
-          <button type="button" id="forceLogout">Sign out</button>
+        <div class="auth-already hidden" id="alreadyIn">
+          <p class="auth-already-title" id="alreadyInLabel">You’re already signed in.</p>
+          <div class="auth-already-actions">
+            <a href="/learningarcade/profile/" class="auth-already-btn auth-already-btn--primary" id="continueSignedIn">Continue</a>
+            <button type="button" class="auth-already-btn auth-already-btn--ghost" id="forceLogout">Sign out</button>
+          </div>
         </div>
 
-        <div class="auth-footer">
-          <a class="auth-guest" id="authGuest" href="/">Continue as guest</a>
-        </div>
+        <div class="auth-divider"><span>or</span></div>
+
+        <a class="auth-guest" id="authGuest" href="/">Continue as Guest</a>
+      </section>
+
+      <div id="sdkStatus" class="auth-sdk-status" style="display:none;" role="status"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · English Teacher</p>
+      <div class="footer-links">
+        <a class="footer-link" href="/contact/">Contact</a>
+        <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
       </div>
-    </main>
+    </div>
+  </footer>
 
-    <div id="sdkStatus"></div>
-  </div>
-
+  <script src="/theme.js"></script>
   <script src="/learningarcade/vendor/load-supabase.js"></script>
   <script>
   (function () {
@@ -394,86 +628,163 @@
   </script>
   <script>
     (function () {
-      function getReturnUrl() {
-        try {
-          var params = new URLSearchParams(window.location.search);
-          var next = params.get("next") || params.get("redirect");
-          if (next && next.charAt(0) === "/" && next.indexOf("//") === -1) {
-            return next;
-          }
-        } catch (e) {}
-        return "/learningarcade/profile/";
+      function safeLocalPath(p) {
+        return p && p.charAt(0) === "/" && p.indexOf("//") === -1 ? p : "";
       }
 
-      var returnUrl = getReturnUrl();
+      var params;
+      try {
+        params = new URLSearchParams(window.location.search);
+      } catch (e) {
+        params = null;
+      }
+
+      var rawNext = params ? safeLocalPath(params.get("next") || params.get("redirect")) : "";
+      var returnUrl = rawNext || "/learningarcade/profile/";
+
+      var rawBack = params ? safeLocalPath(params.get("back")) : "";
+      // Prevent back link from bouncing into a gated /tests/ URL or matching rawNext
+      function resolveSafeBack(candidate, nextPath) {
+        var target = candidate || nextPath || "/";
+        if (target.indexOf("/american-english-file/tests") !== -1) {
+          return "/resources/american-english-file/";
+        }
+        if (nextPath && target === nextPath) {
+          if (nextPath.indexOf("/american-english-file/") !== -1) return "/resources/american-english-file/";
+          if (nextPath.indexOf("/teen-2-teen/") !== -1) return "/resources/teen-2-teen/";
+          if (nextPath.indexOf("/tactics-for-listening/") !== -1) return "/resources/tactics-for-listening/";
+          if (nextPath.indexOf("/pre-starter/") !== -1) return "/resources/pre-starter/";
+          if (nextPath.indexOf("/resources/") !== -1) return "/resources/";
+          return "/";
+        }
+        return target;
+      }
+
+      var backUrl = resolveSafeBack(rawBack, rawNext);
+
+      var backLink = document.getElementById("authBack");
+      var guestLink = document.getElementById("authGuest");
+      if (backLink) {
+        backLink.href = backUrl;
+        if (backUrl.indexOf("/american-english-file/") !== -1) {
+          backLink.textContent = "← Back to American English File";
+        } else if (backUrl === "/resources/") {
+          backLink.textContent = "← Back to Resources";
+        }
+      }
+      if (guestLink) {
+        guestLink.href = backUrl;
+        if (rawNext) guestLink.textContent = "Back without signing in";
+      }
+
+      var contextBox = document.getElementById("authContext");
+      var contextText = document.getElementById("authContextText");
+      if (rawNext && contextBox && contextText) {
+        if (rawNext.indexOf("/tests/") !== -1) {
+          contextText.textContent = "Sign in required to open Tests & Exams.";
+        } else if (rawNext.indexOf("/resources/") !== -1) {
+          contextText.textContent = "Sign in required to open this activity.";
+        } else if (rawNext.indexOf("/multiplayer/") !== -1) {
+          contextText.textContent = "Sign in to join or host this multiplayer match.";
+        } else {
+          contextText.textContent = "Sign in to continue.";
+        }
+        contextBox.classList.remove("hidden");
+      }
+
       var mode = "login";
+      var upgrading = false;
       var form = document.getElementById("authForm");
-      var msg = document.getElementById("authMsg");
-      var submitBtn = document.getElementById("authSubmit");
       var tabLogin = document.getElementById("tabLogin");
       var tabRegister = document.getElementById("tabRegister");
-      var displayNameField = document.getElementById("displayNameField");
+      var title = document.getElementById("authTitle");
+      var sub = document.getElementById("authSub");
+      var submitBtn = document.getElementById("authSubmit");
+      var msg = document.getElementById("authMsg");
+      var displayField = document.getElementById("displayNameField");
       var passwordInput = document.getElementById("password");
-      var authTitle = document.getElementById("authTitle");
-      var authSub = document.getElementById("authSub");
+      var passwordHint = document.getElementById("passwordHint");
+      var togglePassword = document.getElementById("togglePassword");
+      var eyeOpenIcon = document.getElementById("eyeOpenIcon");
+      var eyeClosedIcon = document.getElementById("eyeClosedIcon");
       var alreadyIn = document.getElementById("alreadyIn");
+      var alreadyInLabel = document.getElementById("alreadyInLabel");
+      var continueSignedIn = document.getElementById("continueSignedIn");
       var forceLogout = document.getElementById("forceLogout");
-      var upgrading = false;
 
-      function setMode(next) {
-        mode = next;
-        var isLogin = mode === "login";
-        tabLogin.classList.toggle("is-on", isLogin);
-        tabRegister.classList.toggle("is-on", !isLogin);
-        tabLogin.setAttribute("aria-selected", isLogin ? "true" : "false");
-        tabRegister.setAttribute("aria-selected", isLogin ? "false" : "true");
-        displayNameField.classList.toggle("hidden", isLogin);
-        authTitle.textContent = isLogin ? "Welcome back" : "Create your account";
-        authSub.textContent = isLogin
-          ? "Sign in to save progress and play multiplayer"
-          : "Pick a username and password to get started";
-        submitBtn.textContent = isLogin ? "Sign in" : "Create account";
-        passwordInput.autocomplete = isLogin ? "current-password" : "new-password";
-        msg.textContent = "";
-        msg.className = "auth-error";
+      if (togglePassword && passwordInput) {
+        togglePassword.addEventListener("click", function () {
+          var show = passwordInput.type === "password";
+          passwordInput.type = show ? "text" : "password";
+          togglePassword.setAttribute("aria-pressed", show ? "true" : "false");
+          togglePassword.setAttribute("aria-label", show ? "Hide password" : "Show password");
+          if (eyeOpenIcon && eyeClosedIcon) {
+            eyeOpenIcon.classList.toggle("hidden", show);
+            eyeClosedIcon.classList.toggle("hidden", !show);
+          }
+        });
+      }
+
+      function setMode(m) {
+        mode = m;
+        upgrading = false;
         var np = document.getElementById("newPasswordField");
         if (np) np.remove();
-        upgrading = false;
+        msg.textContent = "";
+        msg.className = "auth-error";
+
+        var minLen = (window.LAAuth && window.LAAuth.MIN_PASSWORD) ? window.LAAuth.MIN_PASSWORD : 8;
+        if (m === "login") {
+          tabLogin.classList.add("is-on");
+          tabLogin.setAttribute("aria-selected", "true");
+          tabRegister.classList.remove("is-on");
+          tabRegister.setAttribute("aria-selected", "false");
+          title.textContent = "Welcome back";
+          sub.textContent = "Sign in to save your progress, open tests, and play live matches.";
+          submitBtn.textContent = "Sign in";
+          displayField.classList.add("hidden");
+          passwordHint.classList.add("hidden");
+          passwordInput.placeholder = "Enter your password";
+          passwordInput.autocomplete = "current-password";
+        } else {
+          tabLogin.classList.remove("is-on");
+          tabLogin.setAttribute("aria-selected", "false");
+          tabRegister.classList.add("is-on");
+          tabRegister.setAttribute("aria-selected", "true");
+          title.textContent = "Create account";
+          sub.textContent = "Register to track your stars, unlock tests, and play online.";
+          submitBtn.textContent = "Create account";
+          displayField.classList.remove("hidden");
+          passwordHint.textContent = "Use at least " + minLen + " characters.";
+          passwordHint.classList.remove("hidden");
+          passwordInput.placeholder = "Choose a password";
+          passwordInput.autocomplete = "new-password";
+        }
       }
 
       tabLogin.onclick = function () { setMode("login"); };
       tabRegister.onclick = function () { setMode("register"); };
 
-      function showAlreadyIn() {
-        if (alreadyIn) alreadyIn.classList.add("is-visible");
-      }
-
-      function checkSession() {
-        if (!window.LAAuth) return;
-        if (LAAuth.isLoggedIn()) showAlreadyIn();
-      }
-
-      if (forceLogout) {
-        forceLogout.onclick = function () {
-          forceLogout.disabled = true;
-          forceLogout.textContent = "Signing out…";
-          var done = function () {
-            alreadyIn.classList.remove("is-visible");
-            forceLogout.disabled = false;
-            forceLogout.textContent = "Sign out";
-            msg.className = "auth-error auth-success";
-            msg.textContent = "Signed out. You can sign in again.";
-          };
-          if (window.LAAuth && typeof LAAuth.logoutAsync === "function") {
-            LAAuth.logoutAsync().then(done).catch(done);
-          } else if (window.LAAuth) {
-            var r = LAAuth.logout();
-            if (r && r.done && r.done.then) r.done.then(done).catch(done);
-            else done();
-          } else {
-            done();
+      var sessionChecked = false;
+      function checkExistingSession() {
+        if (sessionChecked || !window.LAAuth || typeof LAAuth.verify !== "function") return;
+        sessionChecked = true;
+        LAAuth.verify().then(function (u) {
+          if (!u) return;
+          if (rawNext) {
+            window.location.replace(returnUrl);
+            return;
           }
-        };
+          if (alreadyIn) {
+            if (alreadyInLabel) {
+              var name = u.displayName || u.username || "your account";
+              alreadyInLabel.textContent = "Signed in as " + name + ".";
+            }
+            if (continueSignedIn) continueSignedIn.href = returnUrl;
+            alreadyIn.classList.add("hidden");
+            alreadyIn.classList.remove("hidden");
+          }
+        }).catch(function () {});
       }
 
       var tries = 0;
@@ -481,36 +792,57 @@
         tries++;
         if (window.LAAuth) {
           clearInterval(waitAuth);
-          checkSession();
+          checkExistingSession();
         } else if (tries > 40) {
           clearInterval(waitAuth);
         }
       }, 150);
 
+      if (forceLogout) {
+        forceLogout.onclick = function () {
+          forceLogout.disabled = true;
+          forceLogout.textContent = "Signing out…";
+          var done = function () {
+            if (alreadyIn) alreadyIn.classList.add("hidden");
+            forceLogout.disabled = false;
+            forceLogout.textContent = "Sign out";
+            msg.className = "auth-error auth-success";
+            msg.textContent = "Signed out. You can sign in with another account.";
+          };
+          if (window.LAAuth && typeof LAAuth.logoutAsync === "function") {
+            LAAuth.logoutAsync().then(done).catch(done);
+          } else if (window.LAAuth) {
+            var r = LAAuth.logout();
+            if (r && r.done && typeof r.done.then === "function") r.done.then(done).catch(done);
+            else done();
+          } else {
+            done();
+          }
+        };
+      }
+
       function askNewPassword() {
         upgrading = true;
+        var minLen = (window.LAAuth && window.LAAuth.MIN_PASSWORD) ? window.LAAuth.MIN_PASSWORD : 8;
         if (!document.getElementById("newPasswordField")) {
           var f = document.createElement("div");
           f.className = "auth-field";
           f.id = "newPasswordField";
-          f.innerHTML =
-            '<label for="newPassword">New password (' +
-            (window.LAAuth ? LAAuth.MIN_PASSWORD : 8) +
-            "+ characters)</label>" +
+          f.innerHTML = '<label for="newPassword">New password (' + minLen + '+ characters)</label>' +
             '<input id="newPassword" type="password" maxlength="64" autocomplete="new-password" required />';
-          passwordInput.parentNode.insertAdjacentElement("afterend", f);
+          passwordInput.closest(".auth-field").insertAdjacentElement("afterend", f);
         }
         submitBtn.textContent = "Save new password";
       }
 
       form.onsubmit = async function (e) {
         e.preventDefault();
-        if (!window.LAAuth) {
-          msg.textContent = "Auth is still loading. Please wait a moment.";
-          return;
-        }
         msg.textContent = "";
         msg.className = "auth-error";
+        if (!window.LAAuth) {
+          msg.textContent = "Authentication is still loading — please wait a moment and try again.";
+          return;
+        }
         submitBtn.disabled = true;
         submitBtn.textContent = mode === "login" ? "Signing in…" : "Creating account…";
 
@@ -533,18 +865,14 @@
         }
 
         submitBtn.disabled = false;
-        submitBtn.textContent = upgrading
-          ? "Save new password"
-          : mode === "login"
-            ? "Sign in"
-            : "Create account";
+        submitBtn.textContent = upgrading ? "Save new password" : (mode === "login" ? "Sign in" : "Create account");
 
         if (result.ok) {
           msg.className = "auth-error auth-success";
-          msg.textContent = mode === "login" ? "Welcome back!" : "Account created!";
+          msg.textContent = mode === "login" ? "Signed in! Redirecting…" : "Account created! Redirecting…";
           setTimeout(function () {
-            window.location.href = returnUrl;
-          }, 700);
+            window.location.replace(returnUrl);
+          }, 550);
         } else {
           if (result.needsPasswordUpgrade) askNewPassword();
           msg.textContent = result.error || "Something went wrong";

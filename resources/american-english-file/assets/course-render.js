@@ -608,39 +608,97 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
         ]),
       ])
     );
-    const grid = el("section", { class: "level-grid level-grid--hub", "aria-label": "Levels" });
+    const grid = el("section", { class: "book-level-grid", "aria-label": "Levels" });
     // Explicit order: Starter first, then 1, then any other unlocked levels
     const levelOrder = ["starter", "1"].concat(
       Object.keys(course.levels).filter((k) => k !== "starter" && k !== "1")
     );
     const levelMeta = {
-      starter: { badge: "STARTER", title: "Beginner", desc: "12 units with 6 Practical English lessons." },
-      "1": { badge: "LEVEL 1", title: "Elementary", desc: "12 units with 6 Practical English lessons." },
-      "2": { badge: "LEVEL 2", title: "Pre-intermediate", desc: "12 units with 6 Practical English lessons." },
-      "3": { badge: "LEVEL 3", title: "Intermediate", desc: "12 units with 6 Practical English lessons." },
-      "4": { badge: "LEVEL 4", title: "Intermediate Plus", desc: "12 units with 6 Practical English lessons." },
-      "5": { badge: "LEVEL 5", title: "Upper-intermediate", desc: "12 units with 6 Practical English lessons." },
+      starter: { num: "Starter", cefr: "CEFR A1 · 12 Units", title: "Beginner", desc: "12 units · 6 Practical English" },
+      "1": { num: "1", cefr: "CEFR A1–A2 · 12 Units", title: "Elementary", desc: "12 units · 6 Practical English" },
+      "2": { num: "2", cefr: "CEFR A2–B1 · 12 Units", title: "Pre-intermediate", desc: "Coming soon" },
+      "3": { num: "3", cefr: "CEFR B1 · 12 Units", title: "Intermediate", desc: "Coming soon" },
+      "4": { num: "4", cefr: "CEFR B1+ · 12 Units", title: "Intermediate Plus", desc: "Coming soon" },
+      "5": { num: "5", cefr: "CEFR B2 · 12 Units", title: "Upper-intermediate", desc: "Coming soon" },
     };
+
+    const mosaicSvg =
+      '<svg class="aef-cover-mosaic" viewBox="0 0 320 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">' +
+        '<g opacity="0.88">' +
+          '<rect x="18" y="120" width="9" height="9" rx="2" fill="#6b216f" transform="rotate(-12 22 124)"/>' +
+          '<circle cx="42" cy="108" r="5" fill="#d62828"/>' +
+          '<rect x="56" y="126" width="10" height="8" rx="2" fill="#0284c7" transform="rotate(15 61 130)"/>' +
+          '<circle cx="76" cy="96" r="4.5" fill="#ea580c"/>' +
+          '<rect x="88" y="112" width="11" height="9" rx="2" fill="#2e7d32" transform="rotate(-8 93 116)"/>' +
+          '<circle cx="108" cy="132" r="5.5" fill="#0d1d4d"/>' +
+          '<rect x="104" y="84" width="9" height="9" rx="2" fill="#0f766e" transform="rotate(20 108 88)"/>' +
+          '<circle cx="126" cy="102" r="5" fill="#d62828"/>' +
+          '<rect x="136" y="70" width="10" height="8" rx="2" fill="#6b216f" transform="rotate(-18 141 74)"/>' +
+          '<circle cx="144" cy="122" r="4.5" fill="#ea580c"/>' +
+          '<rect x="158" y="90" width="9" height="9" rx="2" fill="#0284c7" transform="rotate(10 162 94)"/>' +
+          '<circle cx="174" cy="60" r="5" fill="#2e7d32"/>' +
+          '<rect x="182" y="106" width="10" height="8" rx="2" fill="#d62828" transform="rotate(-14 187 110)"/>' +
+          '<circle cx="198" cy="78" r="4.5" fill="#0f766e"/>' +
+          '<rect x="212" y="48" width="9" height="9" rx="2" fill="#ea580c" transform="rotate(18 216 52)"/>' +
+          '<circle cx="228" cy="92" r="5" fill="#6b216f"/>' +
+          '<rect x="242" y="64" width="10" height="8" rx="2" fill="#0d1d4d" transform="rotate(-10 247 68)"/>' +
+          '<circle cx="264" cy="44" r="4.5" fill="#0284c7"/>' +
+          '<rect x="278" y="76" width="9" height="9" rx="2" fill="#2e7d32" transform="rotate(14 282 80)"/>' +
+          '<circle cx="296" cy="54" r="5" fill="#d62828"/>' +
+          '<rect x="294" y="102" width="10" height="8" rx="2" fill="#ea580c" transform="rotate(-16 299 106)"/>' +
+        '</g>' +
+      '</svg>';
+
+    function buildBookCard(tagName, attrs, meta, locked, key) {
+      const bubbleClass =
+        "aef-cover-bubble" + (key === "starter" ? " aef-cover-bubble--starter" : "");
+      return el(tagName, attrs, [
+        el("div", { class: "aef-cover-oxford", text: "Oxford" }),
+        el("div", { class: "aef-cover-head" }, [
+          el("div", { class: "aef-cover-title" }, [
+            el("span", { class: "aef-cover-american", text: "American" }),
+            el("span", { class: "aef-cover-file", text: "English File" }),
+            el("span", { class: "aef-cover-edition", text: "Third Edition" }),
+          ]),
+          el("span", { class: bubbleClass, "aria-hidden": "true", text: meta.num }),
+        ]),
+        el("div", { class: "aef-cover-ribbon" }, [
+          el("span", { text: meta.cefr }),
+        ]),
+        el("div", { class: "aef-cover-lower" }, [
+          el("div", { html: mosaicSvg }),
+          el("div", { class: "aef-cover-card-foot" }, [
+            el("div", { class: "aef-cover-card-info" }, [
+              el("h3", { text: meta.title }),
+              el("p", { text: locked ? "Not available yet" : meta.desc }),
+            ]),
+            el("span", {
+              class: "aef-cover-btn",
+              text: locked ? "Soon" : "Open →",
+            }),
+          ]),
+        ]),
+      ]);
+    }
+
     levelOrder.forEach((key) => {
       if (!course.levels[key]) return;
       const meta = levelMeta[key] || {
-        badge: "LEVEL " + key.toUpperCase(),
+        num: String(key).toUpperCase().slice(0, 2),
+        cefr: "Units & Lessons",
         title: course.levels[key].label,
-        desc: "Units and Practical English lessons.",
+        desc: "Units and Practical English",
       };
       grid.appendChild(
-        el(
+        buildBookCard(
           "a",
           {
-            class: "level-card level-card--hub level-card--" + key,
+            class: "book-level book-level--aef book-level--aef-" + key,
             href: key + "/",
           },
-          [
-            el("span", { class: "level-badge", text: meta.badge }),
-            el("h3", { text: meta.title }),
-            el("p", { text: meta.desc }),
-            el("span", { class: "level-arrow", "aria-hidden": "true", text: "→" }),
-          ]
+          meta,
+          false,
+          key
         )
       );
     });
@@ -648,17 +706,22 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     (course.lockedLevels || []).forEach((label) => {
       const key = String(label).toLowerCase().replace(/\s+/g, "-");
       const meta = levelMeta[key] || {
-        badge: "LEVEL " + String(label).toUpperCase(),
+        num: String(label).toUpperCase().slice(0, 2),
+        cefr: "Coming soon",
         title: "Level " + label,
-        desc: "Coming soon.",
+        desc: "Not available yet",
       };
       grid.appendChild(
-        el("div", { class: "level-card level-card--hub level-card--" + key + " level-locked" }, [
-          el("span", { class: "level-badge", text: meta.badge }),
-          el("h3", { text: meta.title }),
-          el("p", { text: "This level is not available yet." }),
-          el("span", { class: "level-arrow level-arrow--locked", "aria-hidden": "true", text: "🔒" }),
-        ])
+        buildBookCard(
+          "div",
+          {
+            class: "book-level book-level--aef book-level--aef-" + key + " is-locked",
+            "aria-disabled": "true",
+          },
+          meta,
+          true,
+          key
+        )
       );
     });
     main.appendChild(grid);
@@ -681,7 +744,7 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
           el("span", { class: "level-badge", text: "QUIZ" }),
           el("h3", { text: "Multiple Choice" }),
           el("p", { text: "40 questions per unit · Grammar & Vocabulary." }),
-          el("span", { class: "level-arrow", "aria-hidden": "true", text: "→" }),
+          el("span", { class: "level-arrow", "aria-hidden": "true", text: "Open quiz →" }),
         ]
       )
     );
@@ -693,47 +756,42 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
           el("span", { class: "level-badge", text: "TESTS" }),
           el("h3", { text: "Tests & Exams" }),
           el("p", { text: "Progress tests, listening exams, and exam-style games by level." }),
-          el("span", { class: "level-arrow", "aria-hidden": "true", text: "→" }),
+          el("span", { class: "level-arrow", "aria-hidden": "true", text: "Open tests →" }),
         ]
       )
     );
     main.appendChild(quizGrid);
   }
 
-  function itemCard(href, index, title, name, isPE) {
-    // AEF book color groups: units 1/5/9 purple, 2/6/10 teal, 3/7/11 orange, 4/8/12 blue
-    let colorClass = "";
-    if (!isPE) {
-      const n = parseInt(index, 10);
-      if ([1, 5, 9].indexOf(n) !== -1) colorClass = " unit-color--purple";
-      else if ([2, 6, 10].indexOf(n) !== -1) colorClass = " unit-color--teal";
-      else if ([3, 7, 11].indexOf(n) !== -1) colorClass = " unit-color--orange";
-      else if ([4, 8, 12].indexOf(n) !== -1) colorClass = " unit-color--blue";
-    }
+  function itemCard(href, index, title, name, isPE, levelKey) {
+    // Match each level's actual AEF 3rd Edition cover color; PE uses Oxford Navy
+    const colorClass = isPE
+      ? " item-card--pe"
+      : (" unit-color--aef-" + (levelKey || "1"));
     return el(
       "a",
       {
-        class:
-          "item-card unit-style-card" +
-          (isPE ? " item-card--pe" : "") +
-          colorClass,
+        class: "item-card item-card--aef unit-style-card" + colorClass,
         href,
       },
       [
-        el("span", { class: "unit-number", text: isPE ? "PE" : "UNIT " + index }),
+        el("div", { class: "unit-card-top" }, [
+          el("span", { class: "unit-number", text: isPE ? "Practical English" : "Unit " + index }),
+          el("span", { class: "unit-arrow", "aria-hidden": "true", text: "→" }),
+        ]),
         el("h3", { text: title }),
         el("p", {
           class: "item-name-placeholder",
           text: name || (isPE ? "[Add name]" : "[Add unit name]"),
         }),
-        el("span", { class: "unit-arrow", "aria-hidden": "true", text: "→" }),
       ]
     );
   }
 
   function renderLevel(body, main) {
     const course = courseFor(body);
-    const level = course.levels[body.dataset.level];
+    const levelKey = body.dataset.level;
+    const level = course.levels[levelKey];
     main.appendChild(
       el("section", { class: "arcade-intro" }, [
         backLink("../", "Back to " + course.label),
@@ -774,7 +832,8 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
           String(u).padStart(2, "0"),
           "Unit " + u,
           unit.name,
-          false
+          false,
+          levelKey
         )
       );
       if (u % peInterval === 1 && level.practicalEnglish[peIndex]) {
@@ -784,7 +843,8 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
             "PE",
             "Practical English " + peIndex,
             level.practicalEnglish[peIndex].name,
-            true
+            true,
+            levelKey
           )
         );
         peIndex++;
