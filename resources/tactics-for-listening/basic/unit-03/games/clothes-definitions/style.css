@@ -1,0 +1,178 @@
+/* Clothes definitions · one clue + 3 chips · Unit 3 Basic */
+
+.cdef-app {
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 100dvh;
+  padding-top: max(10px, env(safe-area-inset-top));
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-bottom: max(14px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.cdef-app .lc-top { margin: 0; }
+.cdef-app .lc-seg { margin: 0 0 4px; }
+.cdef-app .lc-intro {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  align-content: center;
+}
+
+.cdef-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cdef-center {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 8px 0;
+}
+
+/* Clue sentence — centered */
+.cdef-clue {
+  margin: 0;
+  max-width: 28ch;
+  text-align: center;
+  font-size: clamp(22px, 5.5vw, 30px);
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  color: var(--lc-ink);
+  padding: 8px 12px;
+}
+
+/* Chip buttons under the sentence */
+.cdef-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+  padding: 0 4px;
+}
+
+.cdef-chip {
+  appearance: none;
+  border: 1.5px solid var(--lc-line);
+  background: var(--lc-card);
+  border-radius: 999px;
+  padding: 12px 20px;
+  font: inherit;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--lc-ink);
+  cursor: pointer;
+  box-shadow: var(--lc-shadow);
+  transition: border-color .15s ease, background .15s ease, transform .12s ease, color .15s ease;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 48px;
+  line-height: 1.2;
+}
+.cdef-chip:hover:not(:disabled) {
+  border-color: var(--lc-accent-line);
+  background: var(--lc-accent-soft);
+}
+.cdef-chip:active:not(:disabled) { transform: scale(.97); }
+.cdef-chip:focus-visible { outline: none; box-shadow: var(--lc-ring); }
+.cdef-chip:disabled { cursor: default; }
+
+.cdef-chip.is-picked {
+  border-color: var(--lc-accent);
+  background: var(--lc-accent-soft);
+  color: var(--lc-accent);
+}
+.cdef-chip.is-correct {
+  border-color: var(--lc-ok);
+  background: var(--lc-ok-soft);
+  color: var(--lc-ok-ink);
+}
+.cdef-chip.is-wrong {
+  border-color: var(--lc-bad);
+  background: var(--lc-bad-soft);
+  color: var(--lc-bad-ink);
+}
+.cdef-chip.is-idle { opacity: .4; }
+
+/* Footer */
+.cdef-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  flex-wrap: wrap;
+  flex: 0 0 auto;
+}
+.cdef-foot-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--lc-muted);
+  flex: 1 1 auto;
+  line-height: 1.35;
+}
+.cdef-foot-text.is-ok { color: var(--lc-ok-ink); }
+.cdef-foot-text.is-bad { color: var(--lc-bad-ink); }
+
+.cdef-next {
+  appearance: none;
+  border: none;
+  background: var(--lc-accent);
+  color: #fff;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 800;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(59, 91, 219, .28);
+  transition: transform .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.cdef-next:active { transform: scale(.97); }
+.cdef-next:focus-visible { outline: none; box-shadow: var(--lc-ring); }
+
+/* Desktop — a bit more air */
+@media (min-width: 700px) {
+  .cdef-clue {
+    font-size: 32px;
+    max-width: 22ch;
+  }
+  .cdef-chips {
+    gap: 12px;
+    max-width: 480px;
+  }
+  .cdef-chip {
+    font-size: 16px;
+    padding: 14px 24px;
+    min-height: 52px;
+  }
+  .cdef-center { gap: 36px; }
+}
+
+/* Narrow phones */
+@media (max-width: 400px) {
+  .cdef-clue { font-size: 20px; max-width: 100%; }
+  .cdef-chip {
+    font-size: 14.5px;
+    padding: 11px 16px;
+    min-height: 46px;
+  }
+  .cdef-chips { gap: 8px; }
+}

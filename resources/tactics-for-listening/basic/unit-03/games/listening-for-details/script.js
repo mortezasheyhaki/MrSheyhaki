@@ -1,20 +1,19 @@
 /* Listening for Details · Tactics For Listening · Basic Unit 3
  * Book task: "Listen again. What does each person need? Circle the correct answer."
- *  - six short clips, one at a time, played automatically (on phones, tap ▶ if the browser blocks autoplay)
+ *  - six short clips, one at a time
  *  - each clip has a sentence with a blank and three choices (a, b, c)
  *  - a correct choice fills the blank and the next clip plays
  *  - a wrong choice is marked for this clip only, the answer is NOT revealed, and the player chooses again
  *  - a clip scores only if it was right on the first try
  *  - keyboard (desktop): A/B/C or 1/2/3 choose, Space or R plays the clip again
- * The screen is built once per game and only its parts are updated, so nothing redraws
- * or jumps when a choice is tapped.
- * Uses LAStars, LAFinish and LASfx when present.
+ * Visual style matches Unit 5 "What they did" (shared listen.css + circular play button).
  */
 (function () {
   "use strict";
 
   var GAME_ID = "tfl-basic-u3-listening-for-details";
   var GAME_NAME = "Listening for Details";
+  var UNIT = "Unit 3 · Basic";
   var BACK = "../../";      // back to Unit 3
   var CDN = "https://cdn.imgurl.ir/uploads/";
 
@@ -29,6 +28,7 @@
     { before: "She needs a", after: "size.", opts: ["smaller", "bigger", "more comfortable"], ans: 0, src: CDN + "z326097_.mp3" }
   ];
   var LETTERS = ["a", "b", "c"];
+  var TOTAL = ITEMS.length;
 
   var ENC_OK = ["Correct! Great listening.", "Yes, that's it!", "Nice work!", "You heard it!", "Excellent!"];
   var ENC_BAD = ["Not quite — listen again and choose another.", "Close! Listen for the key word.", "No worries, keep listening and choose again."];
@@ -47,11 +47,16 @@
   var nextTimer = null;
   var playedFor = -1;    // clip index whose audio has been started
   var blocked = false;   // browser blocked autoplay: prompt the player to tap play
+  var playing = false;
+  var audioError = false;
   var audio = new Audio();
   audio.preload = "auto";
   var playRecorded = false;
   var startedAt = 0;
-  var els = null;        // references to the parts of the play screen
+
+  var PLAY_ICON = '<span class="lfd-play-tri" aria-hidden="true"></span>';
+  var BARS_ICON = '<span class="lfd-play-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>';
+  var ALERT_ICON = '<span class="lfd-play-alert" aria-hidden="true">!</span>';
 
   function sfx(name) {
     try { if (window.LASfx && typeof LASfx[name] === "function") LASfx[name](); } catch (e) {}
@@ -67,189 +72,217 @@
     for (var i = 0; i < firstTry.length; i++) if (firstTry[i]) n++;
     return n;
   }
-  function pct() { return Math.round((q / ITEMS.length) * 100); }
-  function setClass(el, name, on) {
-    if (on) el.classList.add(name); else el.classList.remove(name);
-  }
 
-  /* ---------- audio status ---------- */
-  function setStatus(text, playing) {
-    if (!els) return;
-    els.status.className = "lfd-status" + (playing ? " is-playing" : "");
-    els.status.innerHTML = playing
-      ? '<span class="lfd-wave" aria-hidden="true"><i></i><i></i><i></i></span>' + esc(text)
-      : esc(text);
+  /* ---------- audio ---------- */
+  function stopAudio() {
+    playing = false;
+    try { audio.pause(); audio.currentTime = 0; } catch (e) {}
   }
 
   function playClip() {
-    if (phase !== "play") return;
-    audio.pause();
+    if (phase !== "play" || busy) return;
+    stopAudio();
+    audioError = false;
+    blocked = false;
     audio.src = ITEMS[q].src;
     audio.currentTime = 0;
     playedFor = q;
-    blocked = false;
-    setStatus("Listening…", true);
-    refreshPlay();
+    playing = true;
+    renderPlay();
     var p = audio.play();
     if (p && p.catch) {
       p.catch(function () {
-        // autoplay blocked (common on phones after a clip change): ask for one tap
         if (phase !== "play") return;
+        playing = false;
         blocked = true;
-        setStatus("Tap ▶ Play clip to hear it", false);
-        refreshPlay();
+        audioError = true;
+        renderPlay();
       });
     }
   }
 
-  audio.addEventListener("playing", function () { if (phase === "play") { blocked = false; refreshPlay(); } });
+  audio.addEventListener("playing", function () {
+    if (phase === "play") {
+      playing = true;
+      blocked = false;
+      audioError = false;
+      renderPlay();
+    }
+  });
   audio.addEventListener("ended", function () {
     if (phase !== "play" || busy) return;
-    setStatus("Choose an answer", false);
+    playing = false;
+    renderPlay();
   });
   audio.addEventListener("error", function () {
     if (phase !== "play" || busy) return;
+    playing = false;
     blocked = true;
-    setStatus("This clip could not load. Tap ▶ to try again.", false);
-    refreshPlay();
+    audioError = true;
+    renderPlay();
   });
 
-  /* ---------- screens ---------- */
-  function topBar() {
+  /* ---------- views ---------- */
+  function topBar(counter) {
     return (
-      '<header class="lfd-top">' +
-      '<a class="lfd-back" href="' + BACK + '" aria-label="Back to Unit 3">←</a>' +
-      '<div class="lfd-title"><span>Unit 3 · Basic</span><strong>' + GAME_NAME + '</strong></div>' +
-      '<span class="lfd-pill" id="lfd-pill"></span>' +
-      '</header>'
+      '<header class="lc-top">' +
+      '<a class="lc-back" href="' + BACK + '" aria-label="Back to unit">←<span>Unit</span></a>' +
+      '<div class="lc-top-center"><span class="lc-eyebrow">' + esc(UNIT) + "</span>" +
+      "<strong>" + esc(GAME_NAME) + "</strong></div>" +
+      '<span class="lc-counter">' + esc(counter || "") + "</span>" +
+      "</header>"
     );
   }
 
-  function renderStart() {
-    app.innerHTML =
-      topBar() +
-      '<section class="lfd-card">' +
-      '<div class="lfd-emoji" aria-hidden="true">🎧</div>' +
-      '<h1>Listening for Details</h1>' +
-      '<p>Each clip describes what a person needs. Listen, then choose the word that completes the sentence.</p>' +
-      '<p>If you choose the wrong answer, listen again and try another. The right word fills the blank.</p>' +
-      '<button type="button" class="lfd-btn" id="lfd-start">Start ▶</button>' +
-      '</section>';
-    document.getElementById("lfd-start").onclick = startGame;
-    els = null;
+  function segments() {
+    return (
+      '<div class="lc-seg" role="img" aria-label="Question ' + (q + 1) + " of " + TOTAL + '">' +
+      ITEMS.map(function (_, i) {
+        var cls = "";
+        if (i < q) {
+          cls = firstTry[i] ? "is-right" : "is-wrong";
+        } else if (i === q) {
+          cls = "is-current";
+          if (solved) cls = firstTry[i] !== false ? "is-right" : "is-wrong";
+        }
+        return '<i class="' + cls + '"></i>';
+      }).join("") + "</div>"
+    );
   }
 
-  // built once per game; afterwards only the changing parts are updated
-  function buildPlay() {
-    var opts = LETTERS.map(function (L, i) {
-      return '<button type="button" class="lfd-opt" data-i="' + i + '" aria-label="Choice ' + L + '">' +
-        '<span class="lfd-letter">' + L + '</span><span class="lfd-word"></span></button>';
-    }).join("");
-
-    app.innerHTML =
-      topBar() +
-      '<div class="lfd-progress" id="lfd-progress" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
-      '<div class="lfd-bar"><span id="lfd-bar"></span></div>' +
-      '<span class="lfd-progress-label" id="lfd-label"></span>' +
-      '</div>' +
-      '<div class="lfd-stage">' +
-      '<section class="lfd-sentence-card" aria-live="polite">' +
-      '<div class="lfd-num" id="lfd-num"></div>' +
-      '<p class="lfd-sentence" id="lfd-sentence"></p>' +
-      '</section>' +
-      '<div class="lfd-side">' +
-      '<div class="lfd-audio">' +
-      '<button type="button" class="lfd-play" id="lfd-replay"></button>' +
-      '<span class="lfd-status" id="lfd-status" role="status" aria-live="polite"></span>' +
-      '</div>' +
-      '<div class="lfd-opts" id="lfd-opts" role="group" aria-label="Choices">' + opts + '</div>' +
-      '<p class="lfd-hint" aria-hidden="true">Keyboard: A, B, C or 1, 2, 3 to choose · Space to play again</p>' +
-      '<div class="lfd-feedback" id="lfd-feedback" role="status" aria-live="polite"></div>' +
-      '</div>' +
-      '</div>';
-
-    els = {
-      pill: document.getElementById("lfd-pill"),
-      progress: document.getElementById("lfd-progress"),
-      bar: document.getElementById("lfd-bar"),
-      label: document.getElementById("lfd-label"),
-      num: document.getElementById("lfd-num"),
-      sentence: document.getElementById("lfd-sentence"),
-      replay: document.getElementById("lfd-replay"),
-      status: document.getElementById("lfd-status"),
-      feedback: document.getElementById("lfd-feedback"),
-      sentenceKey: null,
-      opts: []
-    };
-    app.querySelectorAll(".lfd-opt").forEach(function (el) { els.opts.push(el); });
+  function playIcon() {
+    if (audioError) return ALERT_ICON;
+    if (playing) return BARS_ICON;
+    return PLAY_ICON;
   }
 
-  // the number and the three choices for the current clip; text only, no nodes are rebuilt
-  function fillQuestion() {
-    var item = ITEMS[q];
-    els.num.textContent = String(q + 1);
-    els.sentenceKey = null;
-    els.opts.forEach(function (el, i) {
-      el.querySelector(".lfd-word").textContent = item.opts[i];
-      setClass(el, "is-ok", false);
-      setClass(el, "is-bad", false);
-      setClass(el, "is-fresh", false);
-      setClass(el, "is-idle", false);
-    });
+  function playLabel() {
+    if (audioError || blocked) return "Tap to play";
+    if (playing) return "Playing…";
+    if (playedFor === q) return "Play again";
+    return "Play the recording";
+  }
+
+  function playSub() {
+    return "Person " + (q + 1) + " of " + TOTAL;
   }
 
   function sentenceHtml() {
     var item = ITEMS[q];
     var blank = solved
-      ? '<span class="lfd-blank is-filled">' + esc(item.opts[item.ans]) + '</span>'
+      ? '<span class="lfd-blank is-filled">' + esc(item.opts[item.ans]) + "</span>"
       : '<span class="lfd-blank" aria-label="blank"></span>';
-    return esc(item.before) + ' ' + blank + ' ' + esc(item.after);
+    return esc(item.before) + " " + blank + " " + esc(item.after);
   }
 
-  // updates only what changed: progress, pill, sentence, choices, play button and feedback line
-  function refreshPlay() {
-    if (!els || phase !== "play") return;
+  function optHtml(i) {
+    var item = ITEMS[q];
+    var cls = "lfd-opt";
+    var isRight = solved && i === item.ans;
+    var isWrong = !!wrongNow[i] && !solved;
+    if (isRight) cls += " is-ok" + (lastCorrect === i ? " is-fresh" : "");
+    if (isWrong) cls += " is-bad";
+    if (solved && !isRight) cls += " is-idle";
+    var disabled = solved || !!wrongNow[i] || busy;
+    return (
+      '<button type="button" class="' + cls + '" data-i="' + i + '"' + (disabled ? " disabled" : "") +
+      ' aria-label="Choice ' + LETTERS[i] + '">' +
+      '<span class="lfd-letter" aria-hidden="true">' + LETTERS[i] + "</span>" +
+      '<span class="lfd-word">' + esc(item.opts[i]) + "</span></button>"
+    );
+  }
 
-    els.pill.textContent = "Question " + (q + 1) + " of " + ITEMS.length;
-    els.bar.style.width = pct() + "%";
-    els.progress.setAttribute("aria-valuenow", String(pct()));
-    els.label.textContent = q + "/" + ITEMS.length;
+  function footHtml() {
+    if (fb.text) {
+      return (
+        '<div class="lfd-foot">' +
+        '<span class="lfd-foot-text ' + (fb.type === "ok" ? "is-ok" : fb.type === "bad" ? "is-bad" : "") + '">' +
+        esc(fb.text) + "</span></div>"
+      );
+    }
+    var hint = (playedFor === q && !blocked && !audioError)
+      ? "Choose a, b or c."
+      : "Tap play to listen first.";
+    return '<div class="lfd-foot"><span class="lfd-foot-text">' + esc(hint) + "</span></div>";
+  }
 
-    // rebuild the sentence only when the clip or its answered state changes (keeps the blank's animation to once)
-    var key = q + ":" + solved;
-    if (els.sentenceKey !== key) { els.sentence.innerHTML = sentenceHtml(); els.sentenceKey = key; }
+  function renderStart() {
+    app.innerHTML =
+      topBar("") +
+      '<section class="lc-intro">' +
+      '<div class="lc-intro-main">' +
+      '<div class="lc-hero-icon" aria-hidden="true">🎧</div>' +
+      "<h1>" + esc(GAME_NAME) + "</h1>" +
+      '<p class="lc-intro-lede">Each clip describes what a person needs. Listen, then choose the word that completes the sentence.</p>' +
+      '<div class="lc-start-row"><button type="button" class="lc-btn primary" id="lfd-start">Start listening →</button></div>' +
+      "</div>" +
+      '<ol class="lc-steps">' +
+      '<li><span class="tip-num">1</span><span>Tap <strong>Play</strong> to hear the person</span></li>' +
+      '<li><span class="tip-num">2</span><span>Choose <strong>a</strong>, <strong>b</strong> or <strong>c</strong></span></li>' +
+      '<li><span class="tip-num">3</span><span><strong>6</strong> questions in total</span></li>' +
+      "</ol></section>";
+    document.getElementById("lfd-start").onclick = startGame;
+  }
 
-    els.opts.forEach(function (el, i) {
-      var isRight = solved && i === ITEMS[q].ans;
-      var isWrong = !!wrongNow[i] && !solved;
-      setClass(el, "is-ok", isRight);
-      setClass(el, "is-fresh", isRight && lastCorrect === i);
-      setClass(el, "is-bad", isWrong);
-      setClass(el, "is-idle", solved && !isRight);
-      el.disabled = solved || !!wrongNow[i] || busy;
+  function renderPlay() {
+    if (phase !== "play") return;
+    var counter = (q + 1) + " / " + TOTAL;
+    var playCls = "lfd-play";
+    if (playing) playCls += " is-playing";
+    if (audioError) playCls += " is-error";
+
+    app.innerHTML =
+      topBar(counter) +
+      segments() +
+      '<div class="lc-main lfd-main">' +
+      '<div class="lfd-left">' +
+      '<div class="lfd-listen">' +
+      '<button type="button" class="' + playCls + '" id="lfd-replay" aria-label="' + esc(playLabel()) + '">' +
+      playIcon() + "</button>" +
+      '<div class="lfd-listen-text">' +
+      '<p class="lfd-listen-title">' + esc(playLabel()) + "</p>" +
+      '<p class="lfd-listen-sub">' + esc(playSub()) + "</p>" +
+      "</div></div>" +
+      '<p class="lfd-question" id="lfd-sentence" aria-live="polite">' + sentenceHtml() + "</p>" +
+      "</div>" +
+      '<div class="lfd-right">' +
+      '<div class="lfd-opts" role="group" aria-label="Choices">' +
+      LETTERS.map(function (_, i) { return optHtml(i); }).join("") +
+      "</div>" +
+      footHtml() +
+      "</div></div>";
+
+    // bind
+    var replay = document.getElementById("lfd-replay");
+    if (replay) {
+      replay.onclick = function () {
+        if (!busy) {
+          sfx("click");
+          playClip();
+        }
+      };
+    }
+    app.querySelectorAll(".lfd-opt").forEach(function (el) {
+      el.onclick = function () {
+        if (el.disabled) return;
+        onPick(parseInt(el.getAttribute("data-i"), 10));
+      };
     });
-
-    // "▶ Play clip" when the browser needs a tap (or nothing has played yet), otherwise "Play again"
-    els.replay.textContent = (blocked || playedFor !== q) ? "▶ Play clip" : "🔁 Play again";
-    els.replay.disabled = busy;
-    setClass(els.replay, "is-attention", (blocked || playedFor !== q) && !busy);
-
-    els.feedback.textContent = fb.text;
-    els.feedback.className = "lfd-feedback" + (fb.type === "ok" ? " is-ok" : fb.type === "bad" ? " is-bad" : "");
   }
 
   function renderDone(score, total) {
     app.innerHTML =
-      topBar() +
-      '<section class="lfd-card"><div class="lfd-emoji" aria-hidden="true">🏆</div>' +
-      '<h1>' + score + ' of ' + total + ' correct</h1>' +
-      '<p>Listen for the key word in each clip. It is the one that completes the sentence.</p>' +
-      '<div class="lfd-actions">' +
-      '<button type="button" class="lfd-btn" id="lfd-again">Play again</button>' +
-      '<a class="lfd-btn lfd-btn-quiet" href="' + BACK + '">Back to Unit 3</a>' +
-      '</div></section>';
+      topBar("") +
+      '<section class="lc-intro">' +
+      '<div class="lc-intro-main">' +
+      '<div class="lc-hero-icon" aria-hidden="true">🏆</div>' +
+      "<h1>" + score + " of " + total + " correct</h1>" +
+      '<p class="lc-intro-lede">Listen for the key word in each clip. It is the one that completes the sentence.</p>' +
+      '<div class="lc-start-row" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">' +
+      '<button type="button" class="lc-btn primary" id="lfd-again">Play again</button>' +
+      '<a class="lc-btn secondary" href="' + BACK + '">Back to Unit 3</a>' +
+      "</div></div></section>";
     document.getElementById("lfd-again").onclick = startGame;
-    els = null;
   }
 
   /* ---------- logic ---------- */
@@ -267,10 +300,12 @@
     busy = false;
     playedFor = -1;
     blocked = false;
-    buildPlay();
-    fillQuestion();
-    refreshPlay();
-    playClip();   // the Start tap is the user gesture that lets audio play
+    playing = false;
+    audioError = false;
+    stopAudio();
+    renderPlay();
+    // Start tap is the user gesture that lets audio play
+    setTimeout(playClip, 80);
   }
 
   function onPick(i) {
@@ -285,9 +320,8 @@
       busy = true;
       sfx("correct");
       fb = { type: "ok", text: pick(ENC_OK) };
-      audio.pause();
-      setStatus("Next question…", false);
-      refreshPlay();
+      stopAudio();
+      renderPlay();
       nextTimer = setTimeout(nextQuestion, 900);
       return;
     }
@@ -297,8 +331,7 @@
     wrongNow[i] = true;
     sfx("wrong");
     fb = { type: "bad", text: pick(ENC_BAD) };
-    setStatus("Try another answer", false);
-    refreshPlay();
+    renderPlay();
   }
 
   function nextQuestion() {
@@ -309,10 +342,9 @@
     lastCorrect = -1;
     wrongNow = {};
     fb = { type: "", text: "" };
-    if (q >= ITEMS.length) return finishGame();
-    fillQuestion();
-    refreshPlay();
-    playClip();   // the next clip plays automatically (or the player taps play)
+    if (q >= TOTAL) return finishGame();
+    renderPlay();
+    playClip();
   }
 
   function starsFor(p) {
@@ -324,10 +356,9 @@
 
   function finishGame() {
     phase = "done";
-    audio.pause();
-    var total = ITEMS.length;
+    stopAudio();
     var score = correctCount();
-    var p = Math.round((score / total) * 100);
+    var p = Math.round((score / TOTAL) * 100);
     var stars = starsFor(p);
     var timeMs = Date.now() - startedAt;
     if (window.LAStars) LAStars.save(GAME_ID, stars);
@@ -339,7 +370,7 @@
         gameId: GAME_ID,
         gameName: GAME_NAME,
         score: score,
-        total: total,
+        total: TOTAL,
         stars: stars,
         accuracy: p,
         timeMs: timeMs,
@@ -351,30 +382,25 @@
       });
       return;
     }
-    renderDone(score, total);
+    renderDone(score, TOTAL);
   }
 
-  /* ---------- input ---------- */
-  // one delegated listener on the persistent container, so rebuilding the play screen never loses it
-  app.addEventListener("click", function (e) {
-    if (phase !== "play") return;
-    var opt = e.target.closest && e.target.closest(".lfd-opt");
-    if (opt && !opt.disabled) return onPick(parseInt(opt.getAttribute("data-i"), 10));
-    var rep = e.target.closest && e.target.closest("#lfd-replay");
-    if (rep && !busy) playClip();
-  });
-
+  /* ---------- keyboard ---------- */
   document.addEventListener("keydown", function (e) {
-    if (phase !== "play" || e.ctrlKey || e.metaKey || e.altKey) return;
-    var k = (e.key || "").toLowerCase();
+    if (phase !== "play" || busy) return;
+    var k = e.key.toLowerCase();
+    if (k === " " || k === "r") {
+      e.preventDefault();
+      playClip();
+      return;
+    }
     var map = { a: 0, b: 1, c: 2, "1": 0, "2": 1, "3": 2 };
-    if (Object.prototype.hasOwnProperty.call(map, k)) { e.preventDefault(); onPick(map[k]); return; }
-    if (e.key === " " || k === "r") { if (!busy) { e.preventDefault(); playClip(); } }
+    if (map[k] !== undefined) {
+      e.preventDefault();
+      onPick(map[k]);
+    }
   });
 
-  function render() {
-    if (phase === "start") return renderStart();
-  }
-
-  render();
+  // start
+  renderStart();
 })();
