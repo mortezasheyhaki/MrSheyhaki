@@ -5,12 +5,12 @@
  */
 (function () {
   "use strict";
-
+ 
   var GAME_ID = "tfl-basic-u3-match-making";
   var GAME_NAME = "Match Making";
   var BACK = "../../";           // back to Unit 3
   var CDN = "https://cdn.imgurl.ir/uploads/";
-
+ 
   // 18 clothing items: word + picture (in the order given by the teacher)
   var ITEMS = [
     { word: "hat",          img: CDN + "r169150_1_hat.png" },
@@ -32,7 +32,7 @@
     { word: "windbreaker",  img: CDN + "b180437_17_windbreaker.png" },
     { word: "skirt",        img: CDN + "x0670_18_st.png" }
   ];
-
+ 
   var SETS = [ITEMS.slice(0, 6), ITEMS.slice(6, 12), ITEMS.slice(12, 18)];
   var SET_TITLES = ["Everyday clothes", "Clothes for going out", "Wardrobe favourites"];
   var SET_INTRO = [
@@ -54,10 +54,10 @@
     1: "Good effort! Practise these words and try again.",
     0: "Keep going! Every try helps you learn."
   };
-
+ 
   var app = document.getElementById("game-app");
   if (!app) return;
-
+ 
   var phase = "start";     // start | play | setdone | done
   var setIdx = 0;
   var picOrder = [];       // item indexes (within the set) shown as pictures
@@ -75,7 +75,8 @@
   var playRecorded = false;
   var pendingTimer = null;  // timer that shows the set-complete screen
   var busyTimer = null;     // timer that clears a wrong-attempt shake
-
+  var freshIdx = null;     // set-local index of the pair matched on the last tap (only this one animates)
+ 
   function sfx(name) {
     try { if (window.LASfx && typeof LASfx[name] === "function") LASfx[name](); } catch (e) {}
   }
@@ -96,7 +97,7 @@
   function setItems() { return SETS[setIdx]; }
   function matchedCount() { return Object.keys(matched).length; }
   function overallPct() { return Math.round((matchedTotal / ITEMS.length) * 100); }
-
+ 
   function topBar(rightLabel) {
     return (
       '<header class="mm-top">' +
@@ -115,7 +116,7 @@
       '</div>'
     );
   }
-
+ 
   /* ---------- screens ---------- */
   function renderStart() {
     var chips = SETS.map(function (s, i) {
@@ -132,11 +133,11 @@
       '</section>';
     document.getElementById("mm-start").onclick = startGame;
   }
-
+ 
   function renderPlay() {
     var items = setItems();
     var bannerText = SET_INTRO[setIdx];
-
+ 
     var pics = picOrder.map(function (i) {
       var it = items[i];
       var st = pickClass("pic", i);
@@ -144,7 +145,7 @@
         '<span class="mm-pic"><img src="' + esc(it.img) + '" alt="' + esc(it.word) + '" loading="lazy" onerror="this.parentNode.classList.add(\'is-noimg\')"></span>' +
         '</button>';
     }).join("");
-
+ 
     var words = wordOrder.map(function (i) {
       var it = items[i];
       var st = pickClass("word", i);
@@ -152,7 +153,7 @@
         '<span class="mm-word' + (it.word.length >= 9 && it.word.indexOf(" ") < 0 ? " is-long" : "") + '">' + esc(it.word) + '</span>' +
         '</button>';
     }).join("");
-
+ 
     app.innerHTML =
       topBar("Set " + (setIdx + 1) + " of 3") +
       progressBar() +
@@ -166,19 +167,19 @@
       '</section>' +
       '<div class="mm-feedback ' + (fb.type === "ok" ? "is-ok" : fb.type === "bad" ? "is-bad" : "is-info") + '" role="status" aria-live="polite">' +
       esc(fb.type === "info" ? "" : fb.text) + '</div>';
-
+ 
     bindTiles();
   }
-
+ 
   function pickClass(side, i) {
     var cls = "";
     var dis = "";
-    if (matched[i]) { cls = "is-ok"; dis = "disabled"; }
+    if (matched[i]) { cls = "is-ok" + (i === freshIdx ? " is-fresh" : ""); dis = "disabled"; }
     else if (badPair && ((side === "pic" && badPair.pic === i) || (side === "word" && badPair.word === i))) cls = "is-bad";
     else if (sel && sel.side === side && sel.i === i) cls = "is-selected";
     return { cls: cls, dis: dis };
   }
-
+ 
   function renderSetDone() {
     var last = setIdx === SETS.length - 1;
     var msg = SET_DONE[setIdx];
@@ -200,7 +201,7 @@
       else startSet(setIdx + 1);
     };
   }
-
+ 
   /* ---------- logic ---------- */
   function startGame() {
     if (window.LAFinish && LAFinish.startTimer) LAFinish.startTimer();
@@ -209,7 +210,7 @@
     matchedTotal = 0;
     startSet(0);
   }
-
+ 
   function startSet(i) {
     clearTimeout(pendingTimer); pendingTimer = null;
     clearTimeout(busyTimer); busyTimer = null;
@@ -218,6 +219,7 @@
     wordOrder = shuffle(SETS[i].map(function (_, k) { return k; }));
     matched = {};
     mistakes = {};
+    freshIdx = null;
     sel = null;
     busy = false;
     badPair = null;
@@ -227,7 +229,7 @@
     phase = "play";
     render();
   }
-
+ 
   function bindTiles() {
     app.querySelectorAll(".mm-tile").forEach(function (el) {
       el.addEventListener("click", function () {
@@ -236,9 +238,10 @@
       });
     });
   }
-
+ 
   function onTile(side, i) {
     if (matched[i]) return;
+    freshIdx = null;   // a new tap ends the pop of the last match
     if (!sel) {
       sel = { side: side, i: i };
       sfx("click");
@@ -259,6 +262,7 @@
     var wordI = a.side === "word" ? a.i : b.i;
     if (picI === wordI) {
       matched[picI] = true;
+      freshIdx = picI;
       matchedTotal += 1;
       if (!mistakes[picI]) { firstTryTotal += 1; setFirstTry += 1; }
       sel = null;
@@ -303,21 +307,21 @@
       }, 650);
     }
   }
-
+ 
   function render() {
     if (phase === "start") return renderStart();
     if (phase === "play") return renderPlay();
     if (phase === "setdone") return renderSetDone();
     if (phase === "done") return; // finish screen is handled by LAFinish
   }
-
+ 
   function starsFor(pct) {
     if (pct >= 90) return 3;
     if (pct >= 70) return 2;
     if (pct >= 40) return 1;
     return 0;
   }
-
+ 
   function finishGame() {
     if (phase === "done") return;   // never save or show the result twice
     phase = "done";
@@ -327,7 +331,7 @@
     var timeMs = 0;
     if (window.LAStars) LAStars.save(GAME_ID, stars);
     sfx("win");
-
+ 
     if (window.LAFinish) {
       timeMs = LAFinish.stopTimer ? LAFinish.stopTimer() : 0;
       LAFinish.show({
@@ -346,7 +350,7 @@
       });
       return;
     }
-
+ 
     // fallback result card when la-finish is not loaded
     app.innerHTML =
       topBar("Done") +
@@ -360,6 +364,7 @@
       '</div></section>';
     document.getElementById("mm-again").onclick = function () { phase = "start"; render(); };
   }
-
+ 
   render();
 })();
+ 
