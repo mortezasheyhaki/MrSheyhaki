@@ -90,16 +90,16 @@
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35) !important;
 }
 .resource-card--skill-grammar .resource-card-footer .resource-button {
-  background: #6d28d9 !important;
-  box-shadow: 0 4px 12px rgba(109, 40, 217, 0.4) !important;
+  background: #1e4b8f !important;
+  box-shadow: 0 4px 12px rgba(30, 75, 143, 0.36) !important;
 }
 .resource-card--skill-vocabulary .resource-card-footer .resource-button {
-  background: #1d4ed8 !important;
-  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.4) !important;
+  background: #006d38 !important;
+  box-shadow: 0 4px 12px rgba(0, 109, 56, 0.36) !important;
 }
 .resource-card--skill-pronunciation .resource-card-footer .resource-button {
-  background: #be185d !important;
-  box-shadow: 0 4px 12px rgba(190, 24, 93, 0.4) !important;
+  background: #d62d7a !important;
+  box-shadow: 0 4px 12px rgba(214, 45, 122, 0.36) !important;
 }
 .resource-card--skill-listening .resource-card-footer .resource-button {
   background: #0f766e !important;
@@ -190,13 +190,13 @@ html[data-theme="dark"] .resource-card--game .game-plays-badge {
   z-index: 2;
 }
 .resource-card--skill-grammar .resource-card-curve {
-  background: rgba(124, 58, 237, 0.14);
+  background: rgba(30, 75, 143, 0.14);
 }
 .resource-card--skill-vocabulary .resource-card-curve {
-  background: rgba(37, 99, 235, 0.14);
+  background: rgba(0, 109, 56, 0.14);
 }
 .resource-card--skill-pronunciation .resource-card-curve {
-  background: rgba(219, 39, 119, 0.14);
+  background: rgba(214, 45, 122, 0.14);
 }
 .resource-card--skill-listening .resource-card-curve {
   background: rgba(13, 148, 136, 0.14);
@@ -217,10 +217,10 @@ html[data-theme="dark"] .resource-card--game .resource-card-curve {
   background: rgba(167, 139, 250, 0.18);
 }
 html[data-theme="dark"] .resource-card--skill-grammar .resource-card-curve {
-  background: rgba(167, 139, 250, 0.2);
+  background: rgba(96, 165, 250, 0.2);
 }
 html[data-theme="dark"] .resource-card--skill-vocabulary .resource-card-curve {
-  background: rgba(96, 165, 250, 0.2);
+  background: rgba(52, 211, 153, 0.2);
 }
 html[data-theme="dark"] .resource-card--skill-pronunciation .resource-card-curve {
   background: rgba(244, 114, 182, 0.2);
@@ -241,19 +241,19 @@ html[data-theme="dark"] .resource-card--skill-writing .resource-card-curve {
   background: rgba(52, 211, 153, 0.2);
 }
 .skill-badge--grammar {
-  background: rgba(124, 58, 237, 0.12);
-  color: #6d28d9;
-  border: 1px solid rgba(124, 58, 237, 0.2);
+  background: rgba(30, 75, 143, 0.12);
+  color: #1e4b8f;
+  border: 1px solid rgba(30, 75, 143, 0.24);
 }
 .skill-badge--vocabulary {
-  background: rgba(37, 99, 235, 0.12);
-  color: #1d4ed8;
-  border: 1px solid rgba(37, 99, 235, 0.2);
+  background: rgba(0, 109, 56, 0.12);
+  color: #006d38;
+  border: 1px solid rgba(0, 109, 56, 0.24);
 }
 .skill-badge--pronunciation {
-  background: rgba(219, 39, 119, 0.12);
-  color: #be185d;
-  border: 1px solid rgba(219, 39, 119, 0.2);
+  background: rgba(214, 45, 122, 0.12);
+  color: #d62d7a;
+  border: 1px solid rgba(214, 45, 122, 0.24);
 }
 .skill-badge--listening {
   background: rgba(13, 148, 136, 0.12);
@@ -281,14 +281,14 @@ html[data-theme="dark"] .resource-card--skill-writing .resource-card-curve {
   border: 1px solid rgba(5, 150, 105, 0.22);
 }
 html[data-theme="dark"] .skill-badge--grammar {
-  background: rgba(167, 139, 250, 0.18);
-  color: #c4b5fd;
-  border-color: rgba(167, 139, 250, 0.3);
-}
-html[data-theme="dark"] .skill-badge--vocabulary {
   background: rgba(96, 165, 250, 0.18);
   color: #93c5fd;
   border-color: rgba(96, 165, 250, 0.3);
+}
+html[data-theme="dark"] .skill-badge--vocabulary {
+  background: rgba(52, 211, 153, 0.18);
+  color: #6ee7b7;
+  border-color: rgba(52, 211, 153, 0.3);
 }
 html[data-theme="dark"] .skill-badge--pronunciation {
   background: rgba(244, 114, 182, 0.18);
@@ -348,30 +348,30 @@ a.resource-card.resource-card--game.resource-card--skill-spelling,
 /* Light mode: colored outline + matching top bar by skill (white card fill) */
 a.resource-card.resource-card--game.resource-card--skill-grammar,
 .resource-card.resource-card--game.resource-card--skill-grammar {
-  border-color: rgba(124, 58, 237, 0.5) !important;
-  box-shadow: 0 8px 22px rgba(124, 58, 237, 0.06) !important;
+  border-color: rgba(30, 75, 143, 0.45) !important;
+  box-shadow: 0 8px 22px rgba(30, 75, 143, 0.06) !important;
 }
 a.resource-card.resource-card--game.resource-card--skill-grammar::before,
 .resource-card.resource-card--game.resource-card--skill-grammar::before {
-  background: linear-gradient(90deg, #a78bfa, #7c3aed) !important;
+  background: linear-gradient(90deg, #3b82f6, #1e4b8f) !important;
 }
 a.resource-card.resource-card--game.resource-card--skill-vocabulary,
 .resource-card.resource-card--game.resource-card--skill-vocabulary {
-  border-color: rgba(37, 99, 235, 0.5) !important;
-  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.06) !important;
+  border-color: rgba(0, 109, 56, 0.45) !important;
+  box-shadow: 0 8px 22px rgba(0, 109, 56, 0.06) !important;
 }
 a.resource-card.resource-card--game.resource-card--skill-vocabulary::before,
 .resource-card.resource-card--game.resource-card--skill-vocabulary::before {
-  background: linear-gradient(90deg, #93c5fd, #2563eb) !important;
+  background: linear-gradient(90deg, #10b981, #006d38) !important;
 }
 a.resource-card.resource-card--game.resource-card--skill-pronunciation,
 .resource-card.resource-card--game.resource-card--skill-pronunciation {
-  border-color: rgba(219, 39, 119, 0.5) !important;
-  box-shadow: 0 8px 22px rgba(219, 39, 119, 0.06) !important;
+  border-color: rgba(214, 45, 122, 0.45) !important;
+  box-shadow: 0 8px 22px rgba(214, 45, 122, 0.06) !important;
 }
 a.resource-card.resource-card--game.resource-card--skill-pronunciation::before,
 .resource-card.resource-card--game.resource-card--skill-pronunciation::before {
-  background: linear-gradient(90deg, #f9a8d4, #db2777) !important;
+  background: linear-gradient(90deg, #f472b6, #d62d7a) !important;
 }
 a.resource-card.resource-card--game.resource-card--skill-listening,
 .resource-card.resource-card--game.resource-card--skill-listening {
@@ -422,17 +422,17 @@ a.resource-card.resource-card--game.resource-card--skill-writing::before,
 /* Soft skill cards — dark mode (muted, not deep) */
 html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-grammar,
 html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-grammar {
-  background: linear-gradient(160deg, rgba(91, 33, 182, 0.28) 0%, rgba(30, 20, 50, 0.95) 100%) !important;
-  border-color: rgba(167, 139, 250, 0.3) !important;
+  background: linear-gradient(160deg, rgba(30, 75, 143, 0.28) 0%, rgba(18, 28, 52, 0.95) 100%) !important;
+  border-color: rgba(96, 165, 250, 0.3) !important;
 }
 html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-vocabulary,
 html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-vocabulary {
-  background: linear-gradient(160deg, rgba(37, 99, 235, 0.28) 0%, rgba(20, 30, 55, 0.95) 100%) !important;
-  border-color: rgba(96, 165, 250, 0.3) !important;
+  background: linear-gradient(160deg, rgba(0, 109, 56, 0.28) 0%, rgba(15, 40, 28, 0.95) 100%) !important;
+  border-color: rgba(52, 211, 153, 0.3) !important;
 }
 html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-pronunciation,
 html[data-theme="dark"] .resource-card.resource-card--game.resource-card--skill-pronunciation {
-  background: linear-gradient(160deg, rgba(190, 24, 93, 0.28) 0%, rgba(50, 20, 40, 0.95) 100%) !important;
+  background: linear-gradient(160deg, rgba(214, 45, 122, 0.28) 0%, rgba(50, 20, 40, 0.95) 100%) !important;
   border-color: rgba(244, 114, 182, 0.3) !important;
 }
 html[data-theme="dark"] a.resource-card.resource-card--game.resource-card--skill-listening,
@@ -763,15 +763,23 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     main.appendChild(quizGrid);
   }
 
-  function itemCard(href, index, title, name, isPE, levelKey) {
-    // Match each level's actual AEF 3rd Edition cover color; PE uses Oxford Navy
-    const colorClass = isPE
-      ? " item-card--pe"
-      : (" unit-color--aef-" + (levelKey || "1"));
+  function itemCard(href, index, title, name, isPE) {
+    // AEF syllabus colors: 1/5/9 plum purple, 2/6/10 lime green, 3/7/11 orange, 4/8/12 cyan blue
+    let colorClass = "";
+    if (!isPE) {
+      const n = parseInt(index, 10);
+      if ([1, 5, 9].indexOf(n) !== -1) colorClass = " unit-color--aef-u1";
+      else if ([2, 6, 10].indexOf(n) !== -1) colorClass = " unit-color--aef-u2";
+      else if ([3, 7, 11].indexOf(n) !== -1) colorClass = " unit-color--aef-u3";
+      else if ([4, 8, 12].indexOf(n) !== -1) colorClass = " unit-color--aef-u4";
+    }
     return el(
       "a",
       {
-        class: "item-card item-card--aef unit-style-card" + colorClass,
+        class:
+          "item-card item-card--aef unit-style-card" +
+          (isPE ? " item-card--pe" : "") +
+          colorClass,
         href,
       },
       [
