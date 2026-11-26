@@ -578,11 +578,63 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     return node;
   }
 
+  function aefRootBase() {
+    var p = (window.location.pathname || "/");
+    var m = p.match(/^(.*?\/american-english-file)(?:\/|$)/i);
+    return m ? m[1] + "/" : "/resources/american-english-file/";
+  }
+
+  function currentPageDir(body) {
+    var base = aefRootBase();
+    var d = body && body.dataset ? body.dataset : {};
+    var type = d.type;
+    if (type === "level-list") return base;
+    if (type === "level" && d.level) return base + d.level + "/";
+    if (type === "unit" && d.level && d.unit) return base + d.level + "/unit-" + d.unit + "/";
+    if (type === "lesson" && d.level) {
+      if (d.pe) return base + d.level + "/practical-english-" + d.pe + "/";
+      if (d.unit && d.lesson) return base + d.level + "/unit-" + d.unit + "/" + d.lesson + "/";
+    }
+    if ((type === "games" || type === "worksheets" || type === "audio") && d.level) {
+      if (d.pe) return base + d.level + "/practical-english-" + d.pe + "/" + type + "/";
+      if (d.unit && d.lesson) return base + d.level + "/unit-" + d.unit + "/" + d.lesson + "/" + type + "/";
+    }
+    var p = (window.location.pathname || "/").replace(/\/index\.html$/i, "/");
+    return p.endsWith("/") ? p : p + "/";
+  }
+
+  function canonicalParentHref(body) {
+    var base = aefRootBase();
+    var d = body && body.dataset ? body.dataset : {};
+    var type = d.type;
+    if (type === "level-list") {
+      return base.replace(/american-english-file\/$/i, "");
+    }
+    if (type === "level") return base;
+    if (type === "unit" && d.level) return base + d.level + "/";
+    if (type === "lesson" && d.level) {
+      if (d.pe) return base + d.level + "/";
+      if (d.unit) return base + d.level + "/unit-" + d.unit + "/";
+    }
+    if ((type === "games" || type === "worksheets" || type === "audio") && d.level) {
+      if (d.pe) return base + d.level + "/practical-english-" + d.pe + "/";
+      if (d.unit && d.lesson) return base + d.level + "/unit-" + d.unit + "/" + d.lesson + "/";
+    }
+    return "../";
+  }
+
+  function resolveRel(body, href) {
+    if (!href || /^(?:[a-z]+:|\/|#)/i.test(href)) return href;
+    if (href === "../") return canonicalParentHref(body);
+    return currentPageDir(body) + href.replace(/^\.\//, "");
+  }
+
   function backLink(href, label) {
     // Pill back button (same look as Tactics For Listening): "← Resources"
+    const resolvedHref = href === "../" ? canonicalParentHref(document.body) : resolveRel(document.body, href);
     const short = String(label).replace(/^Back to /, "");
     return el("div", { class: "aef-back-row" }, [
-      el("a", { class: "back-link", href, "aria-label": label, title: label, text: "\u2190 " + short }),
+      el("a", { class: "back-link", href: resolvedHref, "aria-label": label, title: label, text: "\u2190 " + short }),
     ]);
   }
 
@@ -594,7 +646,7 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     const course = courseFor(body);
     main.appendChild(
       el("section", { class: "arcade-intro" }, [
-        backLink("../", "Back to Resources"),
+        backLink(canonicalParentHref(body), "Back to Resources"),
         el("span", { class: "eyebrow", text: "COURSEBOOK" }),
         el("h1", { text: course.label }),
         el("p", { text: "Choose a level to see its units." }),
@@ -694,7 +746,7 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
           "a",
           {
             class: "book-level book-level--aef book-level--aef-" + key,
-            href: key + "/",
+            href: resolveRel(body, key + "/"),
           },
           meta,
           false,
@@ -739,7 +791,7 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     quizGrid.appendChild(
       el(
         "a",
-        { class: "level-card level-card--hub level-card--quiz", href: "quiz/" },
+        { class: "level-card level-card--hub level-card--quiz", href: resolveRel(body, "quiz/") },
         [
           el("span", { class: "level-badge", text: "QUIZ" }),
           el("h3", { text: "Multiple Choice" }),
@@ -751,7 +803,7 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     quizGrid.appendChild(
       el(
         "a",
-        { class: "level-card level-card--hub level-card--quiz", href: "tests/" },
+        { class: "level-card level-card--hub level-card--quiz", href: resolveRel(body, "tests/") },
         [
           el("span", { class: "level-badge", text: "TESTS" }),
           el("h3", { text: "Tests & Exams" }),
@@ -836,7 +888,7 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
       const unit = level.units[u];
       grid.appendChild(
         itemCard(
-          "unit-" + u + "/",
+          resolveRel(body, "unit-" + u + "/"),
           String(u).padStart(2, "0"),
           "Unit " + u,
           unit.name,
@@ -847,7 +899,7 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
       if (u % peInterval === 1 && level.practicalEnglish[peIndex]) {
         grid.appendChild(
           itemCard(
-            "practical-english-" + peIndex + "/",
+            resolveRel(body, "practical-english-" + peIndex + "/"),
             "PE",
             "Practical English " + peIndex,
             level.practicalEnglish[peIndex].name,
@@ -897,7 +949,7 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
       grid.appendChild(
         el("a", {
           class: "ab-card ab-card--arcade ab-card--" + meta.color,
-          href: letter + "/",
+          href: resolveRel(body, letter + "/"),
         }, [
           el("div", { class: "ab-card-top" }, [
             el("span", { class: "ab-letter-badge", text: letter.toUpperCase() }),
@@ -913,7 +965,7 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
   }
 
   function resourceCard(href, icon, title, description, tone) {
-    return el("a", { class: "lesson-type-card lesson-type-card--" + (tone || "purple"), href }, [
+    return el("a", { class: "lesson-type-card lesson-type-card--" + (tone || "purple"), href: resolveRel(document.body, href) }, [
       el("div", { class: "lesson-type-icon", "aria-hidden": "true", text: icon }),
       el("h3", { text: title }),
       el("p", { text: description }),
@@ -925,14 +977,14 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     const course = courseFor(body);
     const level = course.levels[body.dataset.level];
     if (body.dataset.pe) {
-      return { label: "Practical English " + body.dataset.pe, lesson: level.practicalEnglish[body.dataset.pe], back: "../", backLabel: "Back to " + level.label };
+      return { label: "Practical English " + body.dataset.pe, lesson: level.practicalEnglish[body.dataset.pe], back: canonicalParentHref(body), backLabel: "Back to " + level.label };
     }
     const unit = level.units[body.dataset.unit];
     const letter = body.dataset.lesson;
     return {
       label: "Unit " + body.dataset.unit + letter.toUpperCase(),
       lesson: unit.lessons[letter],
-      back: "../",
+      back: canonicalParentHref(body),
       backLabel: "Back to Unit " + body.dataset.unit,
     };
   }
@@ -966,12 +1018,12 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
   };
 
   function renderSimpleResourceSection(body, main, section) {
-    const { label, lesson, back, backLabel } = lessonFromBody(body);
+    const { label, lesson } = lessonFromBody(body);
     const meta = SECTION_META[section];
     const items = lesson[section] || [];
     main.appendChild(
       el("section", { class: "arcade-intro" }, [
-        backLink(back === "../" ? "../" : back, "Back to " + label),
+        backLink(canonicalParentHref(body), "Back to " + label),
         el("h1", { text: label + " " + section.charAt(0).toUpperCase() + section.slice(1) }),
         el("p", { text: meta.noun.charAt(0).toUpperCase() + meta.noun.slice(1) + "s for " + label + "." }),
       ])
@@ -1055,7 +1107,7 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
             class:
               "content-card resource-card resource-card--game" +
               (skillSlug ? " resource-card--skill-" + skillSlug : ""),
-            href: item.url,
+            href: resolveRel(body, item.url),
           }, [
             el("span", { class: "resource-card-curve", "aria-hidden": "true" }),
             el("div", { class: "resource-card-main" }, [
@@ -1068,7 +1120,7 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
         grid.appendChild(
           el("a", {
             class: "content-card resource-card",
-            href: item.url,
+            href: resolveRel(body, item.url),
           }, [
             el("div", { class: "resource-card-main" }, [
               el("div", { class: "resource-icon", "aria-hidden": "true", text: meta.icon }),
@@ -1088,10 +1140,10 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
   }
 
   function renderAudio(body, main) {
-    const { label, lesson, back } = lessonFromBody(body);
+    const { label, lesson } = lessonFromBody(body);
     main.appendChild(
       el("section", { class: "arcade-intro" }, [
-        backLink("../", "Back to " + label),
+        backLink(canonicalParentHref(body), "Back to " + label),
         el("h1", { text: label + " Audio" }),
         el("p", { text: "Student's Book and Workbook listening tracks for " + label + "." }),
       ])

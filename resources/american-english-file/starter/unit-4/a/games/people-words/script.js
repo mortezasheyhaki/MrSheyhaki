@@ -319,15 +319,5 @@ const GAME_ID = "starter-4a-people-words";
     else if (!checkBtn.disabled && !checkBtn.hidden) check();
   });
 
-  const backBtn = $("backBtn");
-  if (backBtn) {
-    backBtn.addEventListener("click", function (e) {
-      if (history.length > 1) {
-        e.preventDefault();
-        history.back();
-      }
-    });
-  }
-
   render();
 })();

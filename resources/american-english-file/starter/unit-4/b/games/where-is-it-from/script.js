@@ -368,15 +368,5 @@ const GAME_ID = "starter-4b-where-is-it-from";
   });
   $("againBtn").addEventListener("click", reset);
 
-  const backBtn = $("backBtn");
-  if (backBtn) {
-    backBtn.addEventListener("click", function (e) {
-      if (history.length > 1) {
-        e.preventDefault();
-        history.back();
-      }
-    });
-  }
-
   render();
 })();

@@ -104,6 +104,10 @@ export function attachSocket(io) {
         const gt = roomManager.setGameType(player.id, payload.gameType);
         if (gt.ok) result.room = gt.room;
       }
+      if (payload?.topic) {
+        const tp = roomManager.setSlTopic(player.id, payload.topic);
+        if (tp.ok) result.room = tp.room;
+      }
       socket.join(roomChannel(result.room.code));
       socket.emit("room:update", result.room);
       if (typeof ack === "function") ack(result);
@@ -157,7 +161,11 @@ export function attachSocket(io) {
     
     // Dedicated Snakes & Ladders start (avoids A/An path entirely)
     socket.on("sl:start", (payload, ack) => {
-      const result = roomManager.startGame(player.id, { gameType: "snakes-ladders", level: payload?.level });
+      const result = roomManager.startGame(player.id, {
+        gameType: "snakes-ladders",
+        level: payload?.level,
+        topic: payload?.topic,
+      });
       if (!result.ok) {
         socket.emit("room:error", { error: result.error });
         if (typeof ack === "function") ack(result);
@@ -267,6 +275,17 @@ socket.on("game:start", (payload, ack) => {
     // ── Snakes & Ladders ───────────────────────────────────────────
     socket.on("room:setGameType", (payload, ack) => {
       const result = roomManager.setGameType(player.id, payload?.gameType);
+      if (!result.ok) {
+        socket.emit("room:error", { error: result.error });
+        if (typeof ack === "function") ack(result);
+        return;
+      }
+      emitRoom(io, result.room);
+      if (typeof ack === "function") ack(result);
+    });
+
+    socket.on("sl:setTopic", (payload, ack) => {
+      const result = roomManager.setSlTopic(player.id, payload?.topic);
       if (!result.ok) {
         socket.emit("room:error", { error: result.error });
         if (typeof ack === "function") ack(result);

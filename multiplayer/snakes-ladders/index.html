@@ -45,8 +45,8 @@
 
 <div class="sl-app" id="app">
 
-  <!-- MODE SELECT -->
-  <section class="sl-screen sl-screen--mode" id="screenMode">
+  <!-- TOPIC SELECT (FIRST SCREEN) -->
+  <section class="sl-screen sl-screen--mode sl-screen--topics" id="screenTopics">
     <div class="sl-mode-bg" aria-hidden="true">
       <span class="sl-orb sl-orb-a"></span>
       <span class="sl-orb sl-orb-b"></span>
@@ -54,11 +54,43 @@
       <span class="sl-grid-fade"></span>
     </div>
     <a class="sl-back" href="/multiplayer/">← Multiplayer</a>
+    <div class="sl-mode-center sl-topics-center">
+      <div class="sl-hero">
+        <div class="sl-logo" aria-hidden="true">🐍🪜</div>
+        <h1>Snakes &amp; Ladders</h1>
+        <p class="sl-tagline">Choose a grammar topic to start playing</p>
+      </div>
+      <div class="sl-topic-grid" id="topicGrid">
+        <button type="button" class="sl-topic-card" data-topic="simple-present-vs-continuous">
+          <span class="sl-topic-kicker">Topic 1 · 45 questions</span>
+          <strong>Simple Present vs Present Continuous</strong>
+          <span class="sl-topic-desc">Tense contrast, error correction, choices &amp; sentence writing.</span>
+          <span class="sl-topic-cta">Choose topic →</span>
+        </button>
+        <button type="button" class="sl-topic-card is-teal" data-topic="present-continuous">
+          <span class="sl-topic-kicker">Topic 2 · 55 questions</span>
+          <strong>Present Continuous</strong>
+          <span class="sl-topic-desc">Be verbs (am/is/are), -ing spelling, word box, word order &amp; blanks.</span>
+          <span class="sl-topic-cta">Choose topic →</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODE SELECT -->
+  <section class="sl-screen sl-screen--mode" id="screenMode" hidden>
+    <div class="sl-mode-bg" aria-hidden="true">
+      <span class="sl-orb sl-orb-a"></span>
+      <span class="sl-orb sl-orb-b"></span>
+      <span class="sl-orb sl-orb-c"></span>
+      <span class="sl-grid-fade"></span>
+    </div>
+    <button type="button" class="sl-back" id="backFromMode">← Topics</button>
     <div class="sl-mode-center">
       <div class="sl-hero">
         <div class="sl-logo" aria-hidden="true">🐍🪜</div>
         <h1>Snakes &amp; Ladders</h1>
-        <p class="sl-tagline">Present Simple vs Continuous</p>
+        <p class="sl-tagline" id="modeTopicLabel">Simple Present vs Present Continuous</p>
       </div>
       <div class="sl-mode-grid">
         <button type="button" class="sl-mode-card offline" id="btnOffline">
@@ -80,16 +112,13 @@
     <button type="button" class="sl-back" id="backFromOffline">← Modes</button>
     <div class="sl-hero">
       <h1>Offline · Same device</h1>
-      <p class="sl-tagline">Pass the phone each turn · questions are for the player who landed on ?</p>
+      <p class="sl-tagline" id="offlineTopicLabel">Topic: Simple Present vs Present Continuous</p>
+      <p class="sl-subhint">When a player lands on <strong>?</strong>, other players pick 1 of 3 shuffled questions.</p>
     </div>
     <div class="sl-seg" id="segCount" aria-label="Number of players">
       <button type="button" data-n="2">2 players</button>
       <button type="button" data-n="3">3 players</button>
       <button type="button" data-n="4">4 players</button>
-    </div>
-    <div class="sl-seg" id="segLevel" aria-label="Level">
-      <button type="button" data-lvl="beginner">Beginner</button>
-      <button type="button" data-lvl="elementary" disabled>Elementary · coming soon</button>
     </div>
     <div class="sl-players-setup">
       <div class="sl-psetup p1"><span class="sl-dot"></span><input type="text" id="name1" maxlength="12" placeholder="Player 1" value="Player 1" /><div class="sl-icons" data-p="0"></div></div>
@@ -106,7 +135,7 @@
       <div class="mp-subhead-left">
         <button type="button" class="mp-back-link" id="backFromOnline">← Modes</button>
         <h1 class="mp-title">Snakes &amp; Ladders · Online</h1>
-        <p class="mp-subtitle">Grammar Board · 2–4 players · Present Simple vs Continuous</p>
+        <p class="mp-subtitle" id="onlineTopicLabel">Grammar Board · 2–4 players · Simple Present vs Present Continuous</p>
       </div>
       <div class="mp-identity" id="userIdentity" hidden>
         <div class="mp-identity-avatar" id="userAvatar">P</div>
@@ -168,7 +197,7 @@
       <div class="mp-subhead-left">
         <button type="button" class="mp-back-link" id="btnLeaveRoom">← Leave room</button>
         <h1 class="mp-title">Snakes &amp; Ladders · Lobby</h1>
-        <p class="mp-subtitle">Present Simple vs Continuous · 2–4 players</p>
+        <p class="mp-subtitle" id="lobbyTopicLabel">Simple Present vs Present Continuous · 2–4 players</p>
       </div>
     </div>
 
@@ -199,8 +228,8 @@
           </div>
         </div>
 
-        <div class="mp-rules-summary">
-          <strong>Level:</strong> Beginner (Present Simple vs Continuous)<br />
+        <div class="mp-rules-summary" id="lobbyRules">
+          <strong>Topic:</strong> <span id="lobbyTopicName">Simple Present vs Present Continuous</span><br />
           Land on <strong>?</strong> squares and answer your opponent's picked question to hold your spot.
         </div>
 
@@ -243,7 +272,7 @@
     <div class="sl-modal-card">
       <div class="sl-modal-head">
         <span class="sl-modal-who" id="qWho">Choose a question</span>
-        <p class="sl-modal-sub">Pick one for <strong id="qTarget">opponent</strong></p>
+        <p class="sl-modal-sub">Pick 1 of 3 questions for <strong id="qTarget">opponent</strong></p>
       </div>
       <div class="sl-qlist" id="qList"></div>
     </div>
@@ -254,7 +283,10 @@
       <div class="sl-modal-head">
         <span class="sl-modal-who" id="aWho">Your question</span>
       </div>
+      <p class="sl-qlabel" id="aLabel" hidden></p>
+      <div class="sl-wordbox" id="aWordBox" hidden></div>
       <div class="sl-qtext" id="aText"></div>
+      <p class="sl-qhint" id="aHint" hidden></p>
       <div class="sl-choices" id="aChoices"></div>
       <div class="sl-result" id="aResult" hidden></div>
       <button type="button" class="sl-btn primary" id="aContinue" hidden>Continue</button>

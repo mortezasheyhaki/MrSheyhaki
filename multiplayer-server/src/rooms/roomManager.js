@@ -34,6 +34,7 @@ import {
   pickQuestion as slPickQuestion,
   answerQuestion as slAnswerQuestion,
 } from "../games/snakesLadders.js";
+import { TOPICS, normalizeTopicId } from "../games/slQuestions.js";
 import {
   createTttShouldState,
   publicTttState,
@@ -67,6 +68,8 @@ function publicRoom(room) {
     status: room.status, // lobby | playing | ended
     createdAt: room.createdAt,
     gameType: room.gameType || null,
+    slTopic: room.slTopic || normalizeTopicId(null),
+    slTopicTitle: TOPICS[normalizeTopicId(room.slTopic)].title,
     familySettings: room.familySettings || { timeLimit: FW_DEFAULT_SECONDS, gameType: "family-words" },
     familyGames: FAMILY_GAME_CHOICES,
   };
@@ -301,6 +304,15 @@ export const roomManager = {
     return { ok: true, room: publicRoom(room) };
   },
 
+  setSlTopic(playerId, topic) {
+    const room = findRoomByPlayerId(playerId);
+    if (!room) return { ok: false, error: "Not in a room" };
+    if (room.hostId !== playerId) return { ok: false, error: "Only host can choose the topic" };
+    if (room.status !== "lobby") return { ok: false, error: "Game already started" };
+    room.slTopic = normalizeTopicId(topic);
+    return { ok: true, room: publicRoom(room) };
+  },
+
   /** Host sets the Family Words time limit (seconds) in the lobby. */
   setFamilySettings(playerId, settings = {}) {
     const room = findRoomByPlayerId(playerId);
@@ -387,7 +399,9 @@ export const roomManager = {
         return { ok: false, error: "Snakes & Ladders needs 2 to 4 players" };
       }
       const ids = room.players.slice(0, 4).map((p) => p.id);
-      const game = createSnakesLaddersState(ids, settings.level);
+      const topic = normalizeTopicId(settings.topic || room.slTopic);
+      room.slTopic = topic;
+      const game = createSnakesLaddersState(ids, settings.level, topic);
       room.game = game;
       room.gameType = "snakes-ladders";
       room.maxPlayers = 4;

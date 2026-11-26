@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <span style="font-size:.75rem;opacity:.8;">MULTIPLE CHOICE</span>
         <h3 style="margin:.5rem 0;">Unit Quizzes</h3>
         <p style="margin:0 0 1rem;opacity:.9;font-size:.9rem;">40 questions per unit · Grammar & Vocabulary</p>
-        <a href="../quiz/" style="display:inline-block;background:#fff;color:#4c1d95;padding:.5rem 1rem;border-radius:2rem;text-decoration:none;font-weight:600;">Open Quizzes →</a>
+        <a href="/resources/american-english-file/quiz/" style="display:inline-block;background:#fff;color:#4c1d95;padding:.5rem 1rem;border-radius:2rem;text-decoration:none;font-weight:600;">Open Quizzes →</a>
       </div>
       <div class="card" style="background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff;border-radius:1rem;padding:1.5rem;">
         <span style="font-size:.75rem;opacity:.8;">MIXED</span>

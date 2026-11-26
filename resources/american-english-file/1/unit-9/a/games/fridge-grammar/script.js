@@ -367,14 +367,7 @@
     if (e.target === zoomOverlay) zoomOverlay.hidden = true;
   });
 
-  if (backBtn) {
-    backBtn.addEventListener("click", (e) => {
-      if (history.length > 1) {
-        e.preventDefault();
-        history.back();
-      }
-    });
-  }
+
 
 
   // Enter = Check (or Continue when locked)

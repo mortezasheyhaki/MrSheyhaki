@@ -1315,20 +1315,208 @@ html[data-theme="dark"] #screenPlay .sl-dice {
   box-shadow: 0 0 0 9px #8b5a2b, 0 0 0 11px #4a2a0f, 0 18px 40px rgba(0,0,0,.4);
 }
 
-/* Fill-in-the-blank questions: boxes sit inside the sentence */
+/* Fill-in-the-blank questions: crisp writing boxes sit inside the sentence */
 .sl-fill {
-  font-size: 1rem; font-weight: 800; line-height: 2.5;
+  font-size: 1rem; font-weight: 800; line-height: 2.55;
   color: var(--text); text-align: left;
+  margin-bottom: .15rem;
 }
 .sl-blank {
-  display: inline-block; width: 7em; margin: 0 .2em; padding: .05em .2em;
+  display: inline-block; width: 7.4em; max-width: 100%;
+  margin: .15em .22em; padding: .24em .48em;
   font: inherit; font-weight: 800; text-align: center; outline: none;
-  border: none; border-bottom: 2.5px solid var(--accent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  color: var(--text); border-radius: 6px 6px 0 0;
+  border: 1.5px solid color-mix(in srgb, var(--accent) 55%, var(--card-border));
+  border-bottom: 2.5px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg2));
+  color: var(--text); border-radius: 9px;
+  transition: border-color .15s, background .15s, box-shadow .15s;
 }
-.sl-blank:focus { background: color-mix(in srgb, var(--accent) 20%, transparent); }
-.sl-blank:disabled { opacity: .85; }
+.sl-blank:focus {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 18%, var(--bg2));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.sl-blank:disabled { opacity: .88; }
 
 /* Tokens are positioned by their centre, not their top-left corner */
 .sl-token { transform: translate(-50%, -50%); }
+
+/* ════════ Topic Cards Entry Screen ════════ */
+.sl-topics-center {
+  width: 100%;
+  max-width: 48rem;
+}
+.sl-topic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem;
+  width: 100%;
+  max-width: 46rem;
+}
+.sl-topic-card {
+  position: relative;
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: .45rem;
+  padding: 1.5rem 1.35rem 1.35rem;
+  border-radius: 20px;
+  cursor: pointer;
+  color: var(--text);
+  background: var(--mode-card-bg);
+  border: 1.5px solid color-mix(in srgb, var(--neon-offline) 52%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--neon-offline) 20%, transparent),
+    0 14px 32px rgba(0,0,0,.18);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s ease, border-color .22s ease;
+  overflow: hidden;
+}
+.sl-topic-card.is-teal {
+  border-color: color-mix(in srgb, var(--neon-online) 52%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--neon-online) 20%, transparent),
+    0 14px 32px rgba(0,0,0,.18);
+}
+.sl-topic-card:hover,
+.sl-topic-card:focus-visible {
+  transform: translateY(-3px) scale(1.015);
+  outline: none;
+  border-color: var(--neon-offline);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--neon-offline) 38%, transparent),
+    0 0 26px color-mix(in srgb, var(--neon-offline) 28%, transparent),
+    0 18px 36px rgba(0,0,0,.22);
+}
+.sl-topic-card.is-teal:hover,
+.sl-topic-card.is-teal:focus-visible {
+  border-color: var(--neon-online);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--neon-online) 38%, transparent),
+    0 0 26px color-mix(in srgb, var(--neon-online) 28%, transparent),
+    0 18px 36px rgba(0,0,0,.22);
+}
+.sl-topic-card:active { transform: translateY(0) scale(.985); }
+.sl-topic-kicker {
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--neon-offline);
+}
+.sl-topic-card.is-teal .sl-topic-kicker { color: var(--neon-online); }
+.sl-topic-card strong {
+  font-family: Fredoka, Nunito, sans-serif;
+  font-size: clamp(1.12rem, 2.5vw, 1.32rem);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text);
+}
+.sl-topic-desc {
+  font-size: .86rem;
+  line-height: 1.45;
+  color: var(--muted);
+  font-weight: 600;
+  flex: 1 0 auto;
+}
+.sl-topic-cta {
+  margin-top: .45rem;
+  font-size: .85rem;
+  font-weight: 800;
+  color: var(--neon-offline);
+}
+.sl-topic-card.is-teal .sl-topic-cta { color: var(--neon-online); }
+
+@media (max-width: 640px) {
+  .sl-topic-grid { grid-template-columns: 1fr; max-width: 24rem; }
+  .sl-topic-card { padding: 1.2rem 1.15rem; }
+}
+
+.sl-subhint {
+  margin: .35rem auto 0;
+  font-size: .84rem;
+  color: var(--muted);
+  font-weight: 600;
+  max-width: 26rem;
+}
+
+/* ════════ Single Activity Modal: Prompt Label, Word Box, Chips, Hint ════════ */
+.sl-qlabel {
+  margin: 0 0 .55rem;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+  color: var(--muted);
+}
+.sl-wordbox {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin: 0 0 .85rem;
+  padding: .6rem .75rem;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.sl-wordbox[hidden] { display: none !important; }
+.sl-wordbox-title {
+  font-size: .75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--accent);
+  margin-right: .2rem;
+}
+.sl-word-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: .22rem .58rem;
+  border-radius: 8px;
+  font-size: .86rem;
+  font-weight: 800;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--card-border);
+}
+.sl-qhint {
+  margin: -.45rem 0 .85rem;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.sl-qhint[hidden],
+.sl-qlabel[hidden] { display: none !important; }
+
+/* Chip Buttons for Single-Answer Choice Questions */
+.sl-choices.is-chips {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: .55rem;
+  justify-content: center;
+}
+.sl-choice.is-chip {
+  flex: 0 1 auto;
+  min-width: 5.4rem;
+  min-height: 2.75rem;
+  padding: .62rem 1.15rem;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.sl-qpick-tag {
+  display: block;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: .2rem;
+}
+

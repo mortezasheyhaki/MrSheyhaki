@@ -1,7 +1,13 @@
 /**
  * Snakes & Ladders — multiplayer logic (server-authoritative), 2–4 players.
  */
-import { LEVELS, QUESTION_SQUARES } from "./slQuestions.js";
+import {
+  DEFAULT_TOPIC,
+  QUESTION_SQUARES,
+  TOPICS,
+  getTopicQuestions,
+  normalizeTopicId,
+} from "./slQuestions.js";
 
 export { QUESTION_SQUARES };
 export const MAX_PLAYERS_SL = 4;
@@ -19,18 +25,24 @@ function shuffle(arr) {
   return a;
 }
 
-/** Same normalisation the client uses before checking typed answers. */
-function normalize(s) {
-  return String(s ?? "").replace(/\u2019/g, "'").replace(/\s+/g, " ").trim().toLowerCase();
+function rawTrim(s) {
+  return String(s ?? "").replace(/\u2019/g, "'").replace(/\s+/g, " ").trim();
 }
 
-export function createSnakesLaddersState(playerIds, level = "beginner") {
+/** Same normalisation the client uses before checking standard typed answers. */
+function normalize(s) {
+  return rawTrim(s).toLowerCase();
+}
+
+export function createSnakesLaddersState(playerIds, level = "beginner", topic = DEFAULT_TOPIC) {
   if (!playerIds || playerIds.length < 2) {
     throw new Error("Snakes & Ladders needs 2 to 4 players");
   }
   const ids = playerIds.slice(0, MAX_PLAYERS_SL);
   const positions = {};
   ids.forEach((id) => { positions[id] = 1; });
+  const topicId = normalizeTopicId(topic);
+  const bank = getTopicQuestions(topicId);
   return {
     type: "snakes-ladders",
     status: "playing", // playing | finished
@@ -44,8 +56,11 @@ export function createSnakesLaddersState(playerIds, level = "beginner") {
     answerFor: null,
     pickFor: null,
     usedQuestionIds: [],
+    shuffledQueue: shuffle(bank.map((q) => q.id)),
     winnerId: null,
-    level: LEVELS[level]?.length ? level : "beginner",
+    level: level || "beginner",
+    topic: topicId,
+    topicTitle: TOPICS[topicId].title,
     message: "Game started",
     updatedAt: Date.now(),
   };
@@ -62,6 +77,7 @@ export function publicSlState(game, players) {
     names[p.id] = p.displayName || p.username || "Player";
   });
   const full = game.pendingQuestionFull;
+  const topicId = normalizeTopicId(game.topic);
   return {
     type: game.type,
     status: game.status,
@@ -71,12 +87,24 @@ export function publicSlState(game, players) {
     turnId: game.playerIds[game.turnIndex],
     phase: game.phase,
     level: game.level,
+    topic: topicId,
+    topicTitle: game.topicTitle || TOPICS[topicId].title,
     lastDice: game.lastDice,
     pendingQuestions: game.pendingQuestions,
     // answers and checkers never leave the server
     currentQuestion:
       game.phase === "answer" && full
-        ? { id: full.id, q: full.q, type: full.type || "choice", blanks: full.blanks ? full.blanks.length : 0, choices: full.choices }
+        ? {
+            id: full.id,
+            q: full.q,
+            type: full.type || "choice",
+            ui: full.ui || null,
+            promptLabel: full.promptLabel || null,
+            hint: full.hint || null,
+            wordBox: full.wordBox || null,
+            blanks: full.blanks ? full.blanks.length : 0,
+            choices: full.choices,
+          }
         : null,
     answerFor: game.answerFor,
     pickFor: game.pickFor,
@@ -94,13 +122,21 @@ function applySnakesLadders(pos) {
 }
 
 function pickThree(game) {
-  const bank = LEVELS[game.level];
+  const bank = getTopicQuestions(game.topic);
+  const byId = new Map(bank.map((q) => [q.id, q]));
   let pool = bank.filter((q) => !game.usedQuestionIds.includes(q.id));
   if (pool.length < 3) {
     game.usedQuestionIds = [];
     pool = bank.slice();
   }
-  return shuffle(pool).slice(0, 3);
+  const poolIds = new Set(pool.map((q) => q.id));
+  let queue = (game.shuffledQueue || []).filter((id) => poolIds.has(id));
+  if (queue.length < 3) {
+    queue = shuffle(pool.map((q) => q.id));
+  }
+  const pickedIds = queue.slice(0, 3);
+  game.shuffledQueue = queue.slice(3);
+  return pickedIds.map((id) => byId.get(id)).filter(Boolean);
 }
 
 /** Current player rolls. */
@@ -142,8 +178,10 @@ export function rollDice(game, playerId) {
     game._pendingFull = three;
     game.pendingQuestions = three.map((q) => ({
       id: q.id,
-      q: q.q.replace(/\[\[\d\]\]/g, "______"),
+      q: q.q.replace(/\[\[\d+\]\]/g, "______"),
       type: q.type || "choice",
+      ui: q.ui || null,
+      promptLabel: q.promptLabel || null,
       choices: q.choices,
     }));
     game.phase = "pickQuestion";
@@ -175,7 +213,7 @@ export function pickQuestion(game, playerId, questionId) {
 }
 
 /**
- * answer = { choiceIndex } for choice questions, { text } for typed ones.
+ * answer = { choiceIndex } for choice questions, { text } or { texts } for typed ones.
  * A plain number is accepted as a choice index.
  */
 export function answerQuestion(game, playerId, answer) {
@@ -189,7 +227,16 @@ export function answerQuestion(game, playerId, answer) {
   if (q.type === "type") {
     if (q.blanks) {
       const texts = typeof answer === "object" && Array.isArray(answer?.texts) ? answer.texts : [];
-      correct = q.blanks.every((check, i) => !!check(normalize(texts[i])));
+      const nonEmpty = q.blanks.every((_, i) => rawTrim(texts[i]).length > 0);
+      if (!nonEmpty) {
+        correct = false;
+      } else if (q.checkJoined) {
+        correct = !!q.checkJoined(normalize(texts.slice(0, q.blanks.length).join(" ")));
+      } else {
+        correct = q.blanks.every((check, i) => !!check(normalize(texts[i])));
+      }
+    } else if (q.rawCheck) {
+      correct = !!q.rawCheck(rawTrim(typeof answer === "object" ? answer?.text : ""));
     } else {
       correct = !!q.check(normalize(typeof answer === "object" ? answer?.text : ""));
     }

@@ -370,13 +370,4 @@ const GAME_ID = "starter-4a-family-tree";
     else if (!checkBtn.disabled && !checkBtn.hidden) check();
   });
 
-  const backBtn = $("backBtn");
-  if (backBtn) {
-    backBtn.addEventListener("click", (e) => {
-      if (history.length > 1) {
-        e.preventDefault();
-        history.back();
-      }
-    });
-  }
 })();

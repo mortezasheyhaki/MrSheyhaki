@@ -1335,8 +1335,17 @@ html[data-theme="dark"] .ab-card--purple .ab-letter-badge { background: rgba(167
   gap: 18px;
 }
 
+.lesson-type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
 .lesson-type-card,
 .content-card {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -1347,13 +1356,70 @@ html[data-theme="dark"] .ab-card--purple .ab-letter-badge { background: rgba(167
   box-shadow: 0 8px 22px var(--site-shadow);
   text-decoration: none;
   color: inherit;
-  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
-.lesson-type-card:hover,
+.lesson-type-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--card-accent, var(--t2t-accent, var(--hm-accent, #6d28d9)));
+}
+
+a.lesson-type-card:hover,
 a.content-card:hover {
   transform: translateY(-3px);
-  border-color: var(--hm-border-strong, rgba(109, 40, 217, 0.35));
+  border-color: color-mix(in srgb, var(--card-accent, var(--hm-accent, #6d28d9)) 42%, var(--site-border));
+  box-shadow: 0 14px 30px var(--site-shadow);
+}
+
+.lesson-type-card--blue   { --card-accent: #0084c9; --card-soft: rgba(0, 132, 201, 0.12); }
+.lesson-type-card--green  { --card-accent: #22a035; --card-soft: rgba(34, 160, 53, 0.12); }
+.lesson-type-card--purple { --card-accent: #7c3aed; --card-soft: rgba(124, 58, 237, 0.12); }
+.lesson-type-card--orange { --card-accent: #e86f18; --card-soft: rgba(232, 111, 24, 0.12); }
+.lesson-type-card--red    { --card-accent: #d91c24; --card-soft: rgba(217, 28, 36, 0.12); }
+
+html[data-theme="dark"] .lesson-type-card--blue   { --card-accent: #38bdf8; --card-soft: rgba(56, 189, 248, 0.16); }
+html[data-theme="dark"] .lesson-type-card--green  { --card-accent: #4ade80; --card-soft: rgba(74, 222, 128, 0.16); }
+html[data-theme="dark"] .lesson-type-card--purple { --card-accent: #a78bfa; --card-soft: rgba(167, 139, 250, 0.16); }
+html[data-theme="dark"] .lesson-type-card--orange { --card-accent: #fb923c; --card-soft: rgba(251, 146, 60, 0.16); }
+html[data-theme="dark"] .lesson-type-card--red    { --card-accent: #f87171; --card-soft: rgba(248, 113, 113, 0.16); }
+
+.lesson-type-card--t2t::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  width: 64px;
+  height: 44px;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image: radial-gradient(var(--card-accent, #0084c9) 2.5px, transparent 3px);
+  background-size: 11px 11px;
+  mask-image: radial-gradient(circle at 85% 85%, #000 0%, rgba(0,0,0,0.45) 55%, transparent 82%);
+  -webkit-mask-image: radial-gradient(circle at 85% 85%, #000 0%, rgba(0,0,0,0.45) 55%, transparent 82%);
+}
+
+.lesson-type-card.is-coming {
+  cursor: default;
+  border-style: dashed;
+  box-shadow: none;
+}
+
+.lesson-type-card.is-coming::before {
+  opacity: 0.45;
+}
+
+.lesson-type-card.is-coming::after {
+  opacity: 0.08;
+}
+
+.lesson-type-card.is-coming h3,
+.lesson-type-card.is-coming p {
+  opacity: 0.72;
 }
 
 .lesson-type-icon,
@@ -1364,7 +1430,8 @@ a.content-card:hover {
   display: grid;
   place-items: center;
   font-size: 1.5rem;
-  background: var(--site-surface-2);
+  background: var(--card-soft, var(--site-surface-2));
+  color: var(--card-accent, var(--hm-accent, #6d28d9));
   flex-shrink: 0;
 }
 
@@ -1372,7 +1439,7 @@ a.content-card:hover {
 .content-card h3 {
   margin: 0;
   font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.24rem;
   color: var(--site-text);
 }
 
@@ -1386,12 +1453,57 @@ a.content-card:hover {
 .lesson-type-btn,
 .resource-button {
   margin-top: auto;
+  padding-top: 6px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--card-accent, var(--hm-accent, #6d28d9));
+}
+
+.lesson-type-card.is-coming .lesson-type-btn {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--site-surface-2);
+  border: 1px solid var(--site-border);
+  font-size: 0.76rem;
   font-weight: 700;
-  color: var(--hm-accent, #6d28d9);
+  color: var(--site-muted);
+}
+
+/* Teen2Teen unit & games page accent tones */
+body.t2t-tone--blue   { --t2t-accent: #0084c9; }
+body.t2t-tone--orange { --t2t-accent: #e86f18; }
+body.t2t-tone--red    { --t2t-accent: #d91c24; }
+body.t2t-tone--green  { --t2t-accent: #22a035; }
+
+html[data-theme="dark"] body.t2t-tone--blue   { --t2t-accent: #38bdf8; }
+html[data-theme="dark"] body.t2t-tone--orange { --t2t-accent: #fb923c; }
+html[data-theme="dark"] body.t2t-tone--red    { --t2t-accent: #f87171; }
+html[data-theme="dark"] body.t2t-tone--green  { --t2t-accent: #4ade80; }
+
+body[class*="t2t-tone--"] .res-hub-main .eyebrow {
+  color: var(--t2t-accent);
+}
+body[class*="t2t-tone--"] .res-hub-main .back-link:hover {
+  border-color: var(--t2t-accent);
+  color: var(--t2t-accent);
+}
+
+@media (max-width: 900px) {
+  .lesson-type-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .lesson-type-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .resource-card-main {
