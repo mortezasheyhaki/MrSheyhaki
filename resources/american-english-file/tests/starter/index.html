@@ -2,404 +2,305 @@
 <html lang="en">
 <head>
 <script src="/resources/auth-gate.js"></script>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AEF Starter · Tests & Exams | Mr. Sheyhaki</title>
-<meta name="description" content="Unit quizzes and tests for American English File Starter.">
-<link rel="stylesheet" href="../../../../style.css">
-<link rel="stylesheet" href="../../../../theme.css">
-<link rel="stylesheet" href="../../../style.css">
-<style>
-  .tests-page {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 1.5rem 1.25rem 4rem;
-  }
-  .tests-page .top-row {
-    display: flex; flex-wrap: wrap; align-items: center; gap: .55rem;
-    margin-bottom: 1.15rem;
-  }
-  .tests-page .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: #475569 !important;
-    text-decoration: none !important;
-    font-size: 0.9rem;
-    font-weight: 650;
-    padding: .5rem 1.05rem;
-    border-radius: 999px;
-    background: #fff;
-    border: 1.5px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(15,23,42,.05);
-    margin-bottom: 0;
-    transition: border-color .15s, color .15s, box-shadow .15s, transform .15s;
-  }
-  .tests-page .back-link:hover {
-    color: #0f766e !important;
-    border-color: #99f6e4;
-    box-shadow: 0 4px 14px rgba(13,148,136,.12);
-    transform: translateY(-1px);
-  }
-  .tests-page .page-badge {
-    display: inline-flex; align-items: center;
-    background: linear-gradient(135deg, #ccfbf1, #a5f3fc);
-    color: #0f766e;
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    padding: 0.35rem 0.9rem;
-    border-radius: 999px;
-    border: 1px solid rgba(13,148,136,.15);
-    margin-bottom: 0;
-  }
-  .tests-page h1 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.3rem;
-    color: #0f172a;
-  }
-  .tests-page .subtitle {
-    color: #64748b;
-    font-size: 1.05rem;
-    margin-bottom: 2rem;
-  }
-  
-  
-  .section-title {
-    font-size: 1.15rem; font-weight: 800; color: #0f172a;
-    margin: 0 0 .95rem;
-  }
-  .units-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-  }
-  @media (max-width: 900px) { .units-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 520px) { .units-grid { grid-template-columns: 1fr; gap: .75rem; } }
-
-  /* Shared card shell — same structure light & dark */
-  .unit-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 1.25rem;
-    min-height: 156px;
-    padding: 1.2rem 1.15rem 1.1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    text-decoration: none;
-    color: #0f172a;
-    background: linear-gradient(160deg, #ffffff 0%, #f1f5f9 100%);
-    border: 1.5px solid #e2e8f0;
-    box-shadow: 0 8px 22px rgba(15,23,42,.06);
-    transition: transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s, border-color .2s;
-  }
-  .unit-card::before {
-    content: attr(data-num);
-    position: absolute;
-    top: -0.15rem; left: .35rem;
-    font-size: clamp(3.8rem, 8vw, 5.2rem);
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -.04em;
-    color: #0f172a;
-    opacity: .06;
-    pointer-events: none;
-    z-index: 0;
-    font-variant-numeric: tabular-nums;
-  }
-  .unit-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 32px rgba(15,23,42,.1);
-    border-color: #cbd5e1;
-  }
-
-  .unit-card .unit-label {
-    position: relative; z-index: 1;
-    font-size: .68rem; font-weight: 800; letter-spacing: .1em;
-    color: #64748b; margin-bottom: .15rem;
-  }
-  .unit-card h3 {
-    position: relative; z-index: 1;
-    font-size: 1.15rem; font-weight: 800; margin: 0 0 .2rem;
-    color: #0f172a; letter-spacing: -.01em;
-  }
-  .unit-card p {
-    position: relative; z-index: 1;
-    font-size: .84rem; margin: 0; color: #64748b; line-height: 1.35;
-  }
-  .unit-card .unit-chips {
-    position: relative; z-index: 1;
-    display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .65rem;
-  }
-  .unit-card .unit-chips span {
-    font-size: .66rem; font-weight: 700;
-    background: #e2e8f0; color: #475569;
-    padding: .18rem .5rem; border-radius: 999px;
-  }
-  .unit-card .arrow {
-    position: absolute; top: .9rem; right: .9rem; z-index: 2;
-    width: 30px; height: 30px; border-radius: 50%;
-    background: #f1f5f9; border: 1px solid #e2e8f0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: .9rem; font-weight: 700; color: #475569;
-    transition: background .15s, transform .15s;
-  }
-  .unit-card:hover .arrow { background: #e2e8f0; transform: translateX(2px); }
-
-  .ts-star.ts-corner {
-    position: absolute; top: .9rem; right: 2.95rem; z-index: 2;
-    width: 30px; height: 30px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: #f1f5f9; border: 1px solid #e2e8f0;
-    font-size: .95rem; line-height: 1; color: #94a3b8;
-  }
-  .ts-star.ts-corner.on {
-    background: linear-gradient(145deg, #fde68a, #f59e0b);
-    border-color: transparent;
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(245,158,11,.4);
-  }
-
-  /* Ready unit — accent border + stronger content */
-  .unit-card.is-ready {
-    background: linear-gradient(155deg, #ffffff 0%, #ecfeff 55%, #f0fdfa 100%);
-    border-color: #99f6e4;
-    box-shadow: 0 10px 28px rgba(13,148,136,.12);
-  }
-  .unit-card.is-ready::before {
-    color: #0d9488;
-    opacity: .1;
-  }
-  .unit-card.is-ready .unit-label { color: #0f766e; }
-  .unit-card.is-ready h3 { color: #0f172a; }
-  .unit-card.is-ready p { color: #334155; }
-  .unit-card.is-ready .unit-chips span {
-    background: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4;
-  }
-  .unit-card.is-ready .arrow {
-    background: #ccfbf1; border-color: #99f6e4; color: #0f766e;
-  }
-  .unit-card.is-ready:hover {
-    border-color: #2dd4bf;
-    box-shadow: 0 16px 34px rgba(13,148,136,.16);
-  }
-
-  /* Empty */
-  .unit-card.is-empty {
-    cursor: default;
-    opacity: 1;
-  }
-  .unit-card.is-empty:hover {
-    transform: none;
-    box-shadow: 0 8px 22px rgba(15,23,42,.06);
-    border-color: #e2e8f0;
-  }
-  .unit-card.is-empty h3 {
-    color: #94a3b8; font-weight: 700; font-size: 1.05rem;
-  }
-  .unit-card.is-empty .dot {
-    position: absolute; top: 1.05rem; right: 1.05rem; z-index: 2;
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #cbd5e1;
-  }
-  .unit-card.is-empty .arrow { display: none; }
-
-  /* ===== Dark: same layout, inverted palette ===== */
-  [data-theme="dark"] .section-title, body.dark .section-title { color: #f1f5f9; }
-  [data-theme="dark"] .unit-card, body.dark .unit-card {
-    background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
-    border-color: #334155;
-    color: #f1f5f9;
-    box-shadow: 0 10px 26px rgba(0,0,0,.35);
-  }
-  [data-theme="dark"] .unit-card::before, body.dark .unit-card::before {
-    color: #f8fafc;
-    opacity: .07;
-  }
-  [data-theme="dark"] .unit-card .unit-label, body.dark .unit-card .unit-label { color: #94a3b8; }
-  [data-theme="dark"] .unit-card h3, body.dark .unit-card h3 { color: #f1f5f9; }
-  [data-theme="dark"] .unit-card p, body.dark .unit-card p { color: #94a3b8; }
-  [data-theme="dark"] .unit-card .unit-chips span, body.dark .unit-card .unit-chips span {
-    background: #334155; color: #cbd5e1; border: none;
-  }
-  [data-theme="dark"] .unit-card .arrow, body.dark .unit-card .arrow {
-    background: #334155; border-color: #475569; color: #e2e8f0;
-  }
-  [data-theme="dark"] .ts-star.ts-corner, body.dark .ts-star.ts-corner {
-    background: #334155; border-color: #475569; color: #64748b;
-  }
-  [data-theme="dark"] .unit-card.is-ready, body.dark .unit-card.is-ready {
-    background: linear-gradient(155deg, #134e4a 0%, #0f172a 70%);
-    border-color: #0d9488;
-    box-shadow: 0 12px 30px rgba(13,148,136,.2);
-  }
-  [data-theme="dark"] .unit-card.is-ready::before, body.dark .unit-card.is-ready::before {
-    color: #2dd4bf; opacity: .12;
-  }
-  [data-theme="dark"] .unit-card.is-ready .unit-label, body.dark .unit-card.is-ready .unit-label { color: #5eead4; }
-  [data-theme="dark"] .unit-card.is-ready h3, body.dark .unit-card.is-ready h3 { color: #f8fafc; }
-  [data-theme="dark"] .unit-card.is-ready p, body.dark .unit-card.is-ready p { color: #cbd5e1; }
-  [data-theme="dark"] .unit-card.is-ready .unit-chips span, body.dark .unit-card.is-ready .unit-chips span {
-    background: rgba(13,148,136,.35); color: #99f6e4;
-  }
-  [data-theme="dark"] .unit-card.is-ready .arrow, body.dark .unit-card.is-ready .arrow {
-    background: rgba(13,148,136,.35); border-color: #0d9488; color: #5eead4;
-  }
-  [data-theme="dark"] .unit-card.is-empty .dot, body.dark .unit-card.is-empty .dot { background: #475569; }
-  [data-theme="dark"] .unit-card.is-empty h3, body.dark .unit-card.is-empty h3 { color: #64748b; }
-
-.coming-note {
-    margin-top: 1.5rem;
-    padding: 1rem 1.15rem;
-    border-radius: 0.9rem;
-    background: #f0fdfa;
-    border: 1px solid #99f6e4;
-    color: #0f766e;
-    font-size: 0.95rem;
-  }
-  [data-theme="dark"] .tests-page h1,
-  body.dark .tests-page h1 { color: #f1f5f9; }
-  [data-theme="dark"] .tests-page .subtitle,
-  body.dark .tests-page .subtitle { color: #94a3b8; }
-  [data-theme="dark"] .tests-page .back-link,
-  body.dark .tests-page .back-link { color: #94a3b8; }
-  [data-theme="dark"] .coming-note,
-  body.dark .coming-note {
-    background: rgba(15, 118, 110, 0.15);
-    border-color: rgba(20, 184, 166, 0.35);
-    color: #5eead4;
-  }
-
-  [data-theme="dark"] .unit-card.is-empty, body.dark .unit-card.is-empty {
-    background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%) !important;
-    border-color: #334155;
-    box-shadow: 0 8px 20px rgba(0,0,0,.3);
-  }
-  [data-theme="dark"] .unit-card.is-empty .unit-label, body.dark .unit-card.is-empty .unit-label { color: #64748b; }
-  [data-theme="dark"] .unit-card.is-empty h3, body.dark .unit-card.is-empty h3 { color: #475569; }
-  [data-theme="dark"] .unit-card.is-empty .dot, body.dark .unit-card.is-empty .dot { background: #334155; }
-  [data-theme="dark"] .tests-page .page-badge, body.dark .tests-page .page-badge {
-    background: linear-gradient(135deg, rgba(13,148,136,.35), rgba(34,211,238,.25));
-    color: #5eead4; border-color: rgba(45,212,191,.3);
-  }
-  [data-theme="dark"] .tests-page .back-link, body.dark .tests-page .back-link {
-    background: #1e293b !important; border-color: #334155 !important; color: #e2e8f0 !important;
-  }
-
-</style>
-<link rel="stylesheet" href="../assets/tests-ui.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>AEF Starter · Tests &amp; Exams | Mr. Sheyhaki</title>
+<meta name="description" content="Unit quizzes, progress checks, and end-of-course practice tests for American English File Starter." />
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("mrsheyhaki-theme");
+      if (t !== "dark" && t !== "light") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../../../../style.css" />
+<link rel="stylesheet" href="../../../../theme.css" />
+<link rel="stylesheet" href="../../../style.css" />
+<link rel="stylesheet" href="../assets/tests-hub.css" />
 <!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
-<body>
+<body class="has-site-topbar">
 
-<header class="arcade-header-bar">
-<nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
-      <a href="../../../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
-      <a href="../../../../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
-      <a href="../../../" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-      <a href="../../../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
-      <a href="../../../../learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+<header class="site-topbar">
+  <div class="topbar-inner">
+    <a href="../../../../" class="brand-mark">Mr. Sheyhaki</a>
+    <nav class="topbar-nav" aria-label="Main navigation">
+      <a href="../../../../" class="topbar-link">Home</a>
+      <a href="../../../../learningarcade/" class="topbar-link">Arcade</a>
+      <a href="../../../../multiplayer/" class="topbar-link">Multiplayer</a>
+      <a href="../../../" class="topbar-link active" aria-current="page">Resources</a>
+      <a href="../../../../about/" class="topbar-link">About</a>
     </nav>
+    <div class="topbar-actions">
+      <button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <a href="../../../../learningarcade/profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>
+    </div>
+  </div>
+  <nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+    <a href="../../../../">Home</a>
+    <a href="../../../../learningarcade/">Arcade</a>
+    <a href="../../../../multiplayer/">Multiplayer</a>
+    <a href="../../../" class="active" aria-current="page">Resources</a>
+    <a href="../../../../about/">About</a>
+  </nav>
 </header>
 
-<main class="tests-page">
-  <div class="top-row">
-    <a href="../" class="back-link">← Back to Tests &amp; Exams</a>
-    <span class="page-badge">AEF STARTER · TESTS</span>
+<main class="tests-hub-page">
+  <section class="tests-hero">
+    <div class="aef-back-row">
+      <a href="../" class="back-link">← Tests &amp; Exams</a>
+    </div>
+    <span class="eyebrow">AEF Starter · Tests &amp; Exams</span>
+    <h1>American English File Starter</h1>
+    <p>Choose a unit to open grammar, vocabulary, pronunciation, reading, and listening practice tests.</p>
+
+    <div class="tests-summary-strip" aria-label="Starter test overview">
+      <span><strong>12</strong> units + End of Course</span>
+      <span aria-hidden="true">·</span>
+      <span><strong>125</strong> activities</span>
+      <span aria-hidden="true">·</span>
+      <span><strong id="starterCompletedCount">0 / 13</strong> units starred</span>
+    </div>
+  </section>
+
+  <div class="tests-toolbar">
+    <div class="tests-filter-tabs" role="tablist" aria-label="Filter Starter test units">
+      <button type="button" class="tests-filter-tab is-active" data-filter="all" role="tab" aria-selected="true">All (13)</button>
+      <button type="button" class="tests-filter-tab" data-filter="1-6" role="tab" aria-selected="false">Units 1–6</button>
+      <button type="button" class="tests-filter-tab" data-filter="7-12" role="tab" aria-selected="false">Units 7–12</button>
+      <button type="button" class="tests-filter-tab" data-filter="eoc" role="tab" aria-selected="false">End of Course</button>
+    </div>
+    <span class="tests-toolbar-count" id="visibleUnitsCount">13 sets</span>
   </div>
-  <h1>American English File Starter</h1>
-  <p class="subtitle">Choose a unit to open its practice activities.</p>
 
-  <h2 class="section-title">Units</h2>
-  <div class="units-grid" id="unitsGrid"></div>
-
+  <div class="tests-units-grid" id="unitsGrid"></div>
 </main>
 
-<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Resources</p></footer>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · Resources</p>
+    <div class="footer-links">
+      <a class="footer-link" href="../../../../contact/">Contact</a>
+      <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
+    </div>
+  </div>
+</footer>
 
 <script src="../../../script.js"></script>
 <script src="../../../../theme.js"></script>
 <script src="../../../../swipe-nav.js"></script>
-<script>
-  document.getElementById("year").textContent = new Date().getFullYear();
-
-  function colorFor(n) {
-    if ([1, 5, 9].includes(n)) return "u-purple";
-    if ([2, 6, 10].includes(n)) return "u-teal";
-    if ([3, 7, 11].includes(n)) return "u-orange";
-    return "u-blue";
-  }
-
-  const grid = document.getElementById("unitsGrid");
-  const READY = {
-    1: { href: "unit-1/", label: "7 practice activities ready", chips: ["Grammar", "Vocabulary", "Pronunciation", "Dialogues", "Reading"], stars: ["starter-u1-underline-1", "starter-u1-complete-contractions", "starter-u1-days-order", "starter-u1-number-words", "starter-u1-same-sound-wheel", "starter-u1-dialogue-phrases", "starter-u1-reading-emails"] },
-    2: { href: "unit-2/", label: "9 practice activities ready", chips: ["Grammar", "Writing", "Reading", "Pronunciation", "Listening"], stars: ["starter-u2-complete-questions", "starter-u2-underline-correct-word", "starter-u2-write-numbers", "starter-u2-check-correct-answer", "starter-u2-match-same-sound", "starter-u2-reading-hotel-booking", "starter-u2-writing-about-you", "starter-u2-listen-phone-booking", "starter-u2-listen-conversations-abc"] },
-    3: { href: "unit-3/", label: "7 practice activities ready", chips: ["Grammar", "Vocabulary", "Listening", "Writing"], stars: ["starter-u3-choose-correct-word", "starter-u3-words-in-the-box", "starter-u3-cafe-dialogue", "starter-u3-odd-one-out", "starter-u3-answer-the-questions", "starter-u3-airport-true-false", "starter-u3-listen-conversations"] },
-    4: { href: "unit-4/", label: "6 practice activities ready", chips: ["Grammar", "Listening", "Writing"], stars: ["starter-u4-tick-sentence", "starter-u4-possessive-adjectives", "starter-u4-man-woman-child", "starter-u4-tick-correct-answer", "starter-u4-family-questions", "starter-u4-who-are-the-people-tf"] },
-    5: { href: "unit-5/", label: "9 practice activities ready", chips: ["Grammar", "Vocabulary", "Pronunciation", "Reading", "Listening"], stars: ["starter-u5-do-dont", "starter-u5-present-simple", "starter-u5-verb-phrases", "starter-u5-food-words", "starter-u5-same-sound", "starter-u5-time-dialogues", "starter-u5-reading-maite", "starter-u5-listen-rob-keiko", "starter-u5-listen-true-false"] },
-    6: { href: "unit-6/", label: "12 practice activities ready", chips: ["Grammar", "Vocabulary", "Pronunciation", "Listening"], stars: ["starter-u6-frequency-shen", "starter-u6-frequency-sophie", "starter-u6-underline-1", "starter-u6-underline-2", "starter-u6-jennys-day", "starter-u6-saras-day", "starter-u6-different-sound-6", "starter-u6-jobs-wheel-4", "starter-u6-listen-ana-tf", "starter-u6-listen-ana-tf-2", "starter-u6-listen-conversations", "starter-u6-listen-conversations-2"] },
-    7: { href: "unit-7/", label: "11 practice activities ready", chips: ["Grammar", "Vocabulary", "Pronunciation", "Listening"], stars: ["starter-u7-object-pronouns", "starter-u7-word-order", "starter-u7-movie-kinds", "starter-u7-match-verbs", "starter-u7-same-sound", "starter-u7-write-dates", "starter-u7-listen-weekends-tf", "starter-u7-listen-weekends-tf-2", "starter-u7-listen-weekends-questions", "starter-u7-listen-weekends-questions-2", "starter-u7-same-sound-match-2"] },
-    8: { href: "unit-8/", label: "14 practice activities ready", chips: ["Grammar", "Listening"], stars: ["starter-u8-can-cant", "starter-u8-can-cant-2", "starter-u8-verb-ing", "starter-u8-verb-ing-2", "starter-u8-phrases-box", "starter-u8-phrases-box-2", "starter-u8-underline-verbs", "starter-u8-underline-verbs-2", "starter-u8-same-sound", "starter-u8-same-sound-2", "starter-u8-listen-rosa-questions", "starter-u8-listen-rosa-questions-2", "starter-u8-listen-likes-tf", "starter-u8-listen-likes-tf-2"] },
-    9: { href: "unit-9/", label: "14 practice activities ready", chips: ["Grammar", "Listening"], stars: ["starter-u9-present-continuous", "starter-u9-present-continuous-2", "starter-u9-simple-or-continuous", "starter-u9-simple-or-continuous-2", "starter-u9-email-verbs", "starter-u9-email-verbs-2", "starter-u9-clothes", "starter-u9-clothes-2", "starter-u9-dialogues", "starter-u9-dialogues-2", "starter-u9-listen-eva-tf", "starter-u9-listen-eva-tf-2", "starter-u9-listen-airport-questions", "starter-u9-listen-airport-questions-2"] },
-    10: { href: "unit-10/", label: "12 practice activities ready", chips: ["Grammar", "Listening"], stars: ["starter-u10-there-is-are", "starter-u10-there-is-are-2", "starter-u10-was-were", "starter-u10-was-were-2", "starter-u10-in-on-under", "starter-u10-in-on-under-2", "starter-u10-in-at-on", "starter-u10-in-at-on-2", "starter-u10-listen-hotel-tf", "starter-u10-listen-hotel-tf-2", "starter-u10-listen-hotel-questions", "starter-u10-listen-hotel-questions-2"] },
-    11: { href: "unit-11/", label: "9 practice activities ready", chips: ["Grammar", "Vocabulary", "Pronunciation", "Listening"], stars: ["starter-u11-simple-past-forms","starter-u11-past-verbs-complete","starter-u11-verbs-from-box","starter-u11-words-and-phrases","starter-u11-ed-sounds","starter-u11-listen-ellen-trip","starter-u11-true-false-conversations","starter-u11-listen-ellen-trip-2","starter-u11-true-false-conversations-2"] },
-    12: { href: "unit-12/", label: "8 practice activities ready", chips: ["Grammar", "Vocabulary", "Pronunciation", "Listening"], stars: ["starter-u12-past-simple-complete","starter-u12-dialogue-verbs","starter-u12-word-choice","starter-u12-different-sound","starter-u12-listen-vacations-tf","starter-u12-listen-vacations-tf-2","starter-u12-listen-questions-1","starter-u12-listen-questions-2"] }
-  };
-  for (let i = 1; i <= 12; i++) {
-    const info = READY[i];
-    const num = String(i).padStart(2, "0");
-    if (info) {
-      const a = document.createElement("a");
-      a.href = info.href;
-      a.className = "unit-card is-ready";
-      a.dataset.num = num;
-      const chips = info.chips.map(t => `<span>${t}</span>`).join("");
-      const starIds = (info.stars || []).join(",") || ("starter-u" + i + "-main");
-      a.innerHTML = `
-        <span class="ts-star ts-corner" data-star-all="${starIds}" role="img">☆</span>
-        <span class="arrow" aria-hidden="true">→</span>
-        <div class="unit-label">UNIT ${num}</div>
-        <h3>Unit ${i}</h3>
-        <p>${info.label}</p>
-        <div class="unit-chips">${chips}</div>
-      `;
-      grid.appendChild(a);
-    } else {
-      const a = document.createElement("div");
-      a.className = "unit-card is-empty";
-      a.dataset.num = num;
-      a.setAttribute("aria-disabled", "true");
-      a.innerHTML = `
-        <span class="dot" aria-hidden="true"></span>
-        <div class="unit-label">UNIT ${num}</div>
-        <h3>Coming soon</h3>
-      `;
-      grid.appendChild(a);
-    }
-  }
-  /* End of Course: its own card after the units */
-  {
-    const a = document.createElement("a");
-    a.href = "end-of-course/";
-    a.className = "unit-card is-ready";
-    a.dataset.num = "EOC";
-    a.innerHTML = `
-        <span class="ts-star ts-corner" data-star-all="starter-eoc-complete-sentences,starter-eoc-verb-text,starter-eoc-word-order,starter-eoc-fill-letters,starter-eoc-choose-abc,starter-eoc-missing-word,starter-eoc-match-sets" role="img">☆</span>
-        <span class="arrow" aria-hidden="true">→</span>
-        <div class="unit-label">END OF COURSE</div>
-        <h3>End of Course</h3>
-        <p>7 practice activities ready</p>
-        <div class="unit-chips"><span>Grammar</span></div>
-      `;
-    grid.appendChild(a);
-  }
-</script>
 <script src="../assets/tests-stars.js"></script>
-<script src="../assets/tests-ui.js"></script>
+<script>
+  (function () {
+    var yr = document.getElementById("year");
+    if (yr) yr.textContent = new Date().getFullYear();
+
+    var UNITS = [
+      {
+        unit: 1,
+        group: "1-6",
+        href: "unit-1/",
+        title: "Introductions & music",
+        activities: 7,
+        skills: ["Grammar", "Vocabulary", "Pronunciation", "Dialogues", "Reading"],
+        stars: ["starter-u1-underline-1", "starter-u1-complete-contractions", "starter-u1-days-order", "starter-u1-number-words", "starter-u1-same-sound-wheel", "starter-u1-dialogue-phrases", "starter-u1-reading-emails"]
+      },
+      {
+        unit: 2,
+        group: "1-6",
+        href: "unit-2/",
+        title: "Vacations & transport",
+        activities: 9,
+        skills: ["Grammar", "Writing", "Reading", "Pronunciation", "Listening"],
+        stars: ["starter-u2-complete-questions", "starter-u2-underline-correct-word", "starter-u2-write-numbers", "starter-u2-check-correct-answer", "starter-u2-match-same-sound", "starter-u2-reading-hotel-booking", "starter-u2-writing-about-you", "starter-u2-listen-phone-booking", "starter-u2-listen-conversations-abc"]
+      },
+      {
+        unit: 3,
+        group: "1-6",
+        href: "unit-3/",
+        title: "Possessions & souvenirs",
+        activities: 7,
+        skills: ["Grammar", "Vocabulary", "Listening", "Writing"],
+        stars: ["starter-u3-choose-correct-word", "starter-u3-words-in-the-box", "starter-u3-cafe-dialogue", "starter-u3-odd-one-out", "starter-u3-answer-the-questions", "starter-u3-airport-true-false", "starter-u3-listen-conversations"]
+      },
+      {
+        unit: 4,
+        group: "1-6",
+        href: "unit-4/",
+        title: "Family & cars",
+        activities: 6,
+        skills: ["Grammar", "Listening", "Writing"],
+        stars: ["starter-u4-tick-sentence", "starter-u4-possessive-adjectives", "starter-u4-man-woman-child", "starter-u4-tick-correct-answer", "starter-u4-family-questions", "starter-u4-who-are-the-people-tf"]
+      },
+      {
+        unit: 5,
+        group: "1-6",
+        href: "unit-5/",
+        title: "Food & travel",
+        activities: 9,
+        skills: ["Grammar", "Vocabulary", "Pronunciation", "Reading", "Listening"],
+        stars: ["starter-u5-do-dont", "starter-u5-present-simple", "starter-u5-verb-phrases", "starter-u5-food-words", "starter-u5-same-sound", "starter-u5-time-dialogues", "starter-u5-reading-maite", "starter-u5-listen-rob-keiko", "starter-u5-listen-true-false"]
+      },
+      {
+        unit: 6,
+        group: "1-6",
+        href: "unit-6/",
+        title: "Reunions & daily routines",
+        activities: 12,
+        skills: ["Grammar", "Vocabulary", "Pronunciation", "Listening"],
+        stars: ["starter-u6-frequency-shen", "starter-u6-frequency-sophie", "starter-u6-underline-1", "starter-u6-underline-2", "starter-u6-jennys-day", "starter-u6-saras-day", "starter-u6-different-sound-6", "starter-u6-jobs-wheel-4", "starter-u6-listen-ana-tf", "starter-u6-listen-ana-tf-2", "starter-u6-listen-conversations", "starter-u6-listen-conversations-2"]
+      },
+      {
+        unit: 7,
+        group: "7-12",
+        href: "unit-7/",
+        title: "Weekends & film",
+        activities: 11,
+        skills: ["Grammar", "Vocabulary", "Pronunciation", "Listening"],
+        stars: ["starter-u7-object-pronouns", "starter-u7-word-order", "starter-u7-movie-kinds", "starter-u7-match-verbs", "starter-u7-same-sound", "starter-u7-write-dates", "starter-u7-listen-weekends-tf", "starter-u7-listen-weekends-tf-2", "starter-u7-listen-weekends-questions", "starter-u7-listen-weekends-questions-2", "starter-u7-same-sound-match-2"]
+      },
+      {
+        unit: 8,
+        group: "7-12",
+        href: "unit-8/",
+        title: "Parking & cooking",
+        activities: 14,
+        skills: ["Grammar", "Listening"],
+        stars: ["starter-u8-can-cant", "starter-u8-can-cant-2", "starter-u8-verb-ing", "starter-u8-verb-ing-2", "starter-u8-phrases-box", "starter-u8-phrases-box-2", "starter-u8-underline-verbs", "starter-u8-underline-verbs-2", "starter-u8-same-sound", "starter-u8-same-sound-2", "starter-u8-listen-rosa-questions", "starter-u8-listen-rosa-questions-2", "starter-u8-listen-likes-tf", "starter-u8-listen-likes-tf-2"]
+      },
+      {
+        unit: 9,
+        group: "7-12",
+        href: "unit-9/",
+        title: "Problems & work",
+        activities: 14,
+        skills: ["Grammar", "Listening"],
+        stars: ["starter-u9-present-continuous", "starter-u9-present-continuous-2", "starter-u9-simple-or-continuous", "starter-u9-simple-or-continuous-2", "starter-u9-email-verbs", "starter-u9-email-verbs-2", "starter-u9-clothes", "starter-u9-clothes-2", "starter-u9-dialogues", "starter-u9-dialogues-2", "starter-u9-listen-eva-tf", "starter-u9-listen-eva-tf-2", "starter-u9-listen-airport-questions", "starter-u9-listen-airport-questions-2"]
+      },
+      {
+        unit: 10,
+        group: "7-12",
+        href: "unit-10/",
+        title: "Hotels & the past",
+        activities: 12,
+        skills: ["Grammar", "Listening"],
+        stars: ["starter-u10-there-is-are", "starter-u10-there-is-are-2", "starter-u10-was-were", "starter-u10-was-were-2", "starter-u10-in-on-under", "starter-u10-in-on-under-2", "starter-u10-in-at-on", "starter-u10-in-at-on-2", "starter-u10-listen-hotel-tf", "starter-u10-listen-hotel-tf-2", "starter-u10-listen-hotel-questions", "starter-u10-listen-hotel-questions-2"]
+      },
+      {
+        unit: 11,
+        group: "7-12",
+        href: "unit-11/",
+        title: "Life in the US & daily life",
+        activities: 9,
+        skills: ["Grammar", "Vocabulary", "Pronunciation", "Listening"],
+        stars: ["starter-u11-simple-past-forms", "starter-u11-past-verbs-complete", "starter-u11-verbs-from-box", "starter-u11-words-and-phrases", "starter-u11-ed-sounds", "starter-u11-listen-ellen-trip", "starter-u11-true-false-conversations", "starter-u11-listen-ellen-trip-2", "starter-u11-true-false-conversations-2"]
+      },
+      {
+        unit: 12,
+        group: "7-12",
+        href: "unit-12/",
+        title: "Travel & the past",
+        activities: 8,
+        skills: ["Grammar", "Vocabulary", "Pronunciation", "Listening"],
+        stars: ["starter-u12-past-simple-complete", "starter-u12-dialogue-verbs", "starter-u12-word-choice", "starter-u12-different-sound", "starter-u12-listen-vacations-tf", "starter-u12-listen-vacations-tf-2", "starter-u12-listen-questions-1", "starter-u12-listen-questions-2"]
+      },
+      {
+        unit: 13,
+        isEoc: true,
+        group: "eoc",
+        href: "end-of-course/",
+        title: "Full Starter Review",
+        activities: 7,
+        skills: ["Grammar", "Vocabulary", "Sentence Building", "Matching"],
+        stars: ["starter-eoc-complete-sentences", "starter-eoc-verb-text", "starter-eoc-word-order", "starter-eoc-fill-letters", "starter-eoc-choose-abc", "starter-eoc-missing-word", "starter-eoc-match-sets"]
+      }
+    ];
+
+    function accentClass(unitNum) {
+      return "aef-u" + (((unitNum - 1) % 4) + 1);
+    }
+
+    var grid = document.getElementById("unitsGrid");
+    var visibleCountEl = document.getElementById("visibleUnitsCount");
+    var completedCountEl = document.getElementById("starterCompletedCount");
+    var currentFilter = "all";
+
+    function render(filter) {
+      currentFilter = filter;
+      grid.innerHTML = "";
+      var visible = UNITS.filter(function (item) {
+        return filter === "all" || item.group === filter;
+      });
+
+      visible.forEach(function (item) {
+        var card = document.createElement("a");
+        card.href = item.href;
+        card.className = "tests-unit-card is-ready " + accentClass(item.unit);
+
+        var badgeText = item.isEoc ? "End of Course" : "Unit " + String(item.unit).padStart(2, "0");
+        var starIds = item.stars.join(",");
+
+        card.innerHTML =
+          '<div class="tests-unit-top">' +
+            '<span class="tests-unit-bubble">' + badgeText + '</span>' +
+            '<span class="tests-unit-star ts-star" data-star-all="' + starIds + '" role="img">☆</span>' +
+          '</div>' +
+          '<div class="tests-unit-body">' +
+            '<h2>' + item.title + '</h2>' +
+            '<p class="tests-unit-skills">' + item.skills.join(" · ") + '</p>' +
+          '</div>' +
+          '<div class="tests-unit-foot">' +
+            '<span class="tests-unit-count">' + item.activities + ' activities</span>' +
+            '<span class="tests-unit-cta">Open unit →</span>' +
+          '</div>';
+
+        grid.appendChild(card);
+      });
+
+      if (visibleCountEl) {
+        visibleCountEl.textContent = visible.length + (visible.length === 1 ? " set" : " sets");
+      }
+      if (window.TestStars) {
+        window.TestStars.paint(grid);
+      }
+      updateCompletedSummary();
+    }
+
+    function updateCompletedSummary() {
+      if (!completedCountEl || !window.TestStars) return;
+      var completed = UNITS.filter(function (item) {
+        return item.stars.every(function (id) { return window.TestStars.has(id); });
+      }).length;
+      completedCountEl.textContent = completed + " / " + UNITS.length;
+    }
+
+    document.querySelectorAll(".tests-filter-tab").forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        var filter = tab.getAttribute("data-filter") || "all";
+        document.querySelectorAll(".tests-filter-tab").forEach(function (btn) {
+          var active = btn === tab;
+          btn.classList.toggle("is-active", active);
+          btn.setAttribute("aria-selected", active ? "true" : "false");
+        });
+        render(filter);
+      });
+    });
+
+    render("all");
+  })();
+</script>
 <script src="/visit-counter.js" defer></script>
 </body>
 </html>

@@ -2,524 +2,294 @@
 <html lang="en">
 <head>
 <script src="/resources/auth-gate.js"></script>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AEF 1 · Tests & Exams | Mr. Sheyhaki</title>
-<meta name="description" content="Unit quizzes and tests for American English File 1.">
-<link rel="stylesheet" href="../../../../style.css">
-<link rel="stylesheet" href="../../../../theme.css">
-<link rel="stylesheet" href="../../../style.css">
-<style>
-  .tests-page {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 1.5rem 1.25rem 4rem;
-  }
-  .tests-page .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: #64748b;
-    text-decoration: none;
-    font-size: 0.9rem;
-    margin-bottom: 1.25rem;
-    transition: color 0.2s;
-  }
-  .tests-page .back-link:hover { color: #7c3aed; }
-  .tests-page .page-badge {
-    display: inline-block;
-    background: #ede9fe;
-    color: #5b21b6;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    padding: 0.3rem 0.85rem;
-    border-radius: 999px;
-    margin-bottom: 0.9rem;
-  }
-  .tests-page h1 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.3rem;
-    color: #0f172a;
-  }
-  .tests-page .subtitle {
-    color: #64748b;
-    font-size: 1.05rem;
-    margin-bottom: 2rem;
-  }
-  .units-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.1rem;
-  }
-  @media (max-width: 900px) {
-    .units-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 520px) {
-    .units-grid { grid-template-columns: 1fr; }
-  }
-  .unit-card {
-    border-radius: 1.15rem;
-    padding: 1.35rem 1.25rem;
-    color: #fff;
-    position: relative;
-    overflow: hidden;
-    min-height: 140px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    text-decoration: none;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    transition: transform 0.22s ease, box-shadow 0.22s ease;
-  }
-  .unit-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.18);
-  }
-  .unit-card .arrow {
-    position: absolute;
-    top: 0.95rem;
-    right: 0.95rem;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    backdrop-filter: blur(4px);
-  }
-  .unit-card .unit-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.07em;
-    opacity: 0.92;
-    margin-bottom: 0.2rem;
-  }
-  .unit-card h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 0.3rem;
-    color: #fff;
-  }
-  .unit-card p {
-    font-size: 0.82rem;
-    opacity: 0.88;
-    margin: 0;
-    line-height: 1.4;
-    color: #fff;
-  }
-  .unit-card::after {
-    content: "";
-    position: absolute;
-    bottom: -30px;
-    right: -30px;
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.06);
-    pointer-events: none;
-  }
-  .unit-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    margin-top: 0.65rem;
-  }
-  .unit-chips span {
-    font-size: 0.68rem;
-    font-weight: 600;
-    background: rgba(255,255,255,0.18);
-    padding: 0.2rem 0.5rem;
-    border-radius: 999px;
-  }
-  .u-purple { background: linear-gradient(145deg, #3b0764 0%, #5b21b6 50%, #6d28d9 100%); }
-  .u-teal   { background: linear-gradient(145deg, #115e59 0%, #0d9488 50%, #14b8a6 100%); }
-  .u-orange { background: linear-gradient(145deg, #7c2d12 0%, #c2410c 50%, #ea580c 100%); }
-  .u-blue   { background: linear-gradient(145deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%); }
-  [data-theme="dark"] .tests-page h1,
-  body.dark .tests-page h1 { color: #f1f5f9; }
-  [data-theme="dark"] .tests-page .subtitle,
-  body.dark .tests-page .subtitle { color: #94a3b8; }
-  [data-theme="dark"] .tests-page .back-link,
-  body.dark .tests-page .back-link { color: #94a3b8; }
-
-/* Coming soon: same look as the AEF Starter tests */
-.unit-card.is-empty { cursor: default; background: #fff !important; border: 1px solid #e2e8f0; box-shadow: 0 8px 22px rgba(15,23,42,.06); }
-.unit-card.is-empty:hover { transform: none; box-shadow: 0 8px 22px rgba(15,23,42,.06); border-color: #e2e8f0; }
-.unit-card.is-empty .unit-label { color: #94a3b8; }
-.unit-card.is-empty h3 { color: #94a3b8; font-weight: 700; font-size: 1.05rem; }
-.unit-card.is-empty .arrow { display: none; }
-.unit-card.is-empty .dot { position: absolute; top: 1.05rem; right: 1.05rem; z-index: 2; width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; }
-[data-theme="dark"] .unit-card.is-empty, body.dark .unit-card.is-empty { background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%) !important; border-color: #334155; box-shadow: 0 8px 20px rgba(0,0,0,.3); }
-[data-theme="dark"] .unit-card.is-empty .unit-label, body.dark .unit-card.is-empty .unit-label { color: #64748b; }
-[data-theme="dark"] .unit-card.is-empty h3, body.dark .unit-card.is-empty h3 { color: #475569; }
-[data-theme="dark"] .unit-card.is-empty .dot, body.dark .unit-card.is-empty .dot { background: #334155; }
-
-/* Card style copied from AEF Starter tests */
-
-  .tests-page {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 1.5rem 1.25rem 4rem;
-  }
-  .tests-page .top-row {
-    display: flex; flex-wrap: wrap; align-items: center; gap: .55rem;
-    margin-bottom: 1.15rem;
-  }
-  .tests-page .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: #475569 !important;
-    text-decoration: none !important;
-    font-size: 0.9rem;
-    font-weight: 650;
-    padding: .5rem 1.05rem;
-    border-radius: 999px;
-    background: #fff;
-    border: 1.5px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(15,23,42,.05);
-    margin-bottom: 0;
-    transition: border-color .15s, color .15s, box-shadow .15s, transform .15s;
-  }
-  .tests-page .back-link:hover {
-    color: #0f766e !important;
-    border-color: #99f6e4;
-    box-shadow: 0 4px 14px rgba(13,148,136,.12);
-    transform: translateY(-1px);
-  }
-  .tests-page .page-badge {
-    display: inline-flex; align-items: center;
-    background: linear-gradient(135deg, #ccfbf1, #a5f3fc);
-    color: #0f766e;
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    padding: 0.35rem 0.9rem;
-    border-radius: 999px;
-    border: 1px solid rgba(13,148,136,.15);
-    margin-bottom: 0;
-  }
-  .tests-page h1 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.3rem;
-    color: #0f172a;
-  }
-  .tests-page .subtitle {
-    color: #64748b;
-    font-size: 1.05rem;
-    margin-bottom: 2rem;
-  }
-  
-  
-  .section-title {
-    font-size: 1.15rem; font-weight: 800; color: #0f172a;
-    margin: 0 0 .95rem;
-  }
-  .units-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-  }
-  @media (max-width: 900px) { .units-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 520px) { .units-grid { grid-template-columns: 1fr; gap: .75rem; } }
-
-  /* Shared card shell — same structure light & dark */
-  .unit-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 1.25rem;
-    min-height: 156px;
-    padding: 1.2rem 1.15rem 1.1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    text-decoration: none;
-    color: #0f172a;
-    background: linear-gradient(160deg, #ffffff 0%, #f1f5f9 100%);
-    border: 1.5px solid #e2e8f0;
-    box-shadow: 0 8px 22px rgba(15,23,42,.06);
-    transition: transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s, border-color .2s;
-  }
-  .unit-card::before {
-    content: attr(data-num);
-    position: absolute;
-    top: -0.15rem; left: .35rem;
-    font-size: clamp(3.8rem, 8vw, 5.2rem);
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -.04em;
-    color: #0f172a;
-    opacity: .06;
-    pointer-events: none;
-    z-index: 0;
-    font-variant-numeric: tabular-nums;
-  }
-  .unit-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 32px rgba(15,23,42,.1);
-    border-color: #cbd5e1;
-  }
-
-  .unit-card .unit-label {
-    position: relative; z-index: 1;
-    font-size: .68rem; font-weight: 800; letter-spacing: .1em;
-    color: #64748b; margin-bottom: .15rem;
-  }
-  .unit-card h3 {
-    position: relative; z-index: 1;
-    font-size: 1.15rem; font-weight: 800; margin: 0 0 .2rem;
-    color: #0f172a; letter-spacing: -.01em;
-  }
-  .unit-card p {
-    position: relative; z-index: 1;
-    font-size: .84rem; margin: 0; color: #64748b; line-height: 1.35;
-  }
-  .unit-card .unit-chips {
-    position: relative; z-index: 1;
-    display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .65rem;
-  }
-  .unit-card .unit-chips span {
-    font-size: .66rem; font-weight: 700;
-    background: #e2e8f0; color: #475569;
-    padding: .18rem .5rem; border-radius: 999px;
-  }
-  .unit-card .arrow {
-    position: absolute; top: .9rem; right: .9rem; z-index: 2;
-    width: 30px; height: 30px; border-radius: 50%;
-    background: #f1f5f9; border: 1px solid #e2e8f0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: .9rem; font-weight: 700; color: #475569;
-    transition: background .15s, transform .15s;
-  }
-  .unit-card:hover .arrow { background: #e2e8f0; transform: translateX(2px); }
-
-  .ts-star.ts-corner {
-    position: absolute; top: .9rem; right: 2.95rem; z-index: 2;
-    width: 30px; height: 30px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: #f1f5f9; border: 1px solid #e2e8f0;
-    font-size: .95rem; line-height: 1; color: #94a3b8;
-  }
-  .ts-star.ts-corner.on {
-    background: linear-gradient(145deg, #fde68a, #f59e0b);
-    border-color: transparent;
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(245,158,11,.4);
-  }
-
-  /* Ready unit — accent border + stronger content */
-  .unit-card.is-ready {
-    background: linear-gradient(155deg, #ffffff 0%, #ecfeff 55%, #f0fdfa 100%);
-    border-color: #99f6e4;
-    box-shadow: 0 10px 28px rgba(13,148,136,.12);
-  }
-  .unit-card.is-ready::before {
-    color: #0d9488;
-    opacity: .1;
-  }
-  .unit-card.is-ready .unit-label { color: #0f766e; }
-  .unit-card.is-ready h3 { color: #0f172a; }
-  .unit-card.is-ready p { color: #334155; }
-  .unit-card.is-ready .unit-chips span {
-    background: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4;
-  }
-  .unit-card.is-ready .arrow {
-    background: #ccfbf1; border-color: #99f6e4; color: #0f766e;
-  }
-  .unit-card.is-ready:hover {
-    border-color: #2dd4bf;
-    box-shadow: 0 16px 34px rgba(13,148,136,.16);
-  }
-
-  /* Empty */
-  .unit-card.is-empty {
-    cursor: default;
-    opacity: 1;
-  }
-  .unit-card.is-empty:hover {
-    transform: none;
-    box-shadow: 0 8px 22px rgba(15,23,42,.06);
-    border-color: #e2e8f0;
-  }
-  .unit-card.is-empty h3 {
-    color: #94a3b8; font-weight: 700; font-size: 1.05rem;
-  }
-  .unit-card.is-empty .dot {
-    position: absolute; top: 1.05rem; right: 1.05rem; z-index: 2;
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #cbd5e1;
-  }
-  .unit-card.is-empty .arrow { display: none; }
-
-  /* ===== Dark: same layout, inverted palette ===== */
-  [data-theme="dark"] .section-title, body.dark .section-title { color: #f1f5f9; }
-  [data-theme="dark"] .unit-card, body.dark .unit-card {
-    background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
-    border-color: #334155;
-    color: #f1f5f9;
-    box-shadow: 0 10px 26px rgba(0,0,0,.35);
-  }
-  [data-theme="dark"] .unit-card::before, body.dark .unit-card::before {
-    color: #f8fafc;
-    opacity: .07;
-  }
-  [data-theme="dark"] .unit-card .unit-label, body.dark .unit-card .unit-label { color: #94a3b8; }
-  [data-theme="dark"] .unit-card h3, body.dark .unit-card h3 { color: #f1f5f9; }
-  [data-theme="dark"] .unit-card p, body.dark .unit-card p { color: #94a3b8; }
-  [data-theme="dark"] .unit-card .unit-chips span, body.dark .unit-card .unit-chips span {
-    background: #334155; color: #cbd5e1; border: none;
-  }
-  [data-theme="dark"] .unit-card .arrow, body.dark .unit-card .arrow {
-    background: #334155; border-color: #475569; color: #e2e8f0;
-  }
-  [data-theme="dark"] .ts-star.ts-corner, body.dark .ts-star.ts-corner {
-    background: #334155; border-color: #475569; color: #64748b;
-  }
-  [data-theme="dark"] .unit-card.is-ready, body.dark .unit-card.is-ready {
-    background: linear-gradient(155deg, #134e4a 0%, #0f172a 70%);
-    border-color: #0d9488;
-    box-shadow: 0 12px 30px rgba(13,148,136,.2);
-  }
-  [data-theme="dark"] .unit-card.is-ready::before, body.dark .unit-card.is-ready::before {
-    color: #2dd4bf; opacity: .12;
-  }
-  [data-theme="dark"] .unit-card.is-ready .unit-label, body.dark .unit-card.is-ready .unit-label { color: #5eead4; }
-  [data-theme="dark"] .unit-card.is-ready h3, body.dark .unit-card.is-ready h3 { color: #f8fafc; }
-  [data-theme="dark"] .unit-card.is-ready p, body.dark .unit-card.is-ready p { color: #cbd5e1; }
-  [data-theme="dark"] .unit-card.is-ready .unit-chips span, body.dark .unit-card.is-ready .unit-chips span {
-    background: rgba(13,148,136,.35); color: #99f6e4;
-  }
-  [data-theme="dark"] .unit-card.is-ready .arrow, body.dark .unit-card.is-ready .arrow {
-    background: rgba(13,148,136,.35); border-color: #0d9488; color: #5eead4;
-  }
-  [data-theme="dark"] .unit-card.is-empty .dot, body.dark .unit-card.is-empty .dot { background: #475569; }
-  [data-theme="dark"] .unit-card.is-empty h3, body.dark .unit-card.is-empty h3 { color: #64748b; }
-
-.coming-note {
-    margin-top: 1.5rem;
-    padding: 1rem 1.15rem;
-    border-radius: 0.9rem;
-    background: #f0fdfa;
-    border: 1px solid #99f6e4;
-    color: #0f766e;
-    font-size: 0.95rem;
-  }
-  [data-theme="dark"] .tests-page h1,
-  body.dark .tests-page h1 { color: #f1f5f9; }
-  [data-theme="dark"] .tests-page .subtitle,
-  body.dark .tests-page .subtitle { color: #94a3b8; }
-  [data-theme="dark"] .tests-page .back-link,
-  body.dark .tests-page .back-link { color: #94a3b8; }
-  [data-theme="dark"] .coming-note,
-  body.dark .coming-note {
-    background: rgba(15, 118, 110, 0.15);
-    border-color: rgba(20, 184, 166, 0.35);
-    color: #5eead4;
-  }
-
-  [data-theme="dark"] .unit-card.is-empty, body.dark .unit-card.is-empty {
-    background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%) !important;
-    border-color: #334155;
-    box-shadow: 0 8px 20px rgba(0,0,0,.3);
-  }
-  [data-theme="dark"] .unit-card.is-empty .unit-label, body.dark .unit-card.is-empty .unit-label { color: #64748b; }
-  [data-theme="dark"] .unit-card.is-empty h3, body.dark .unit-card.is-empty h3 { color: #475569; }
-  [data-theme="dark"] .unit-card.is-empty .dot, body.dark .unit-card.is-empty .dot { background: #334155; }
-  [data-theme="dark"] .tests-page .page-badge, body.dark .tests-page .page-badge {
-    background: linear-gradient(135deg, rgba(13,148,136,.35), rgba(34,211,238,.25));
-    color: #5eead4; border-color: rgba(45,212,191,.3);
-  }
-  [data-theme="dark"] .tests-page .back-link, body.dark .tests-page .back-link {
-    background: #1e293b !important; border-color: #334155 !important; color: #e2e8f0 !important;
-  }
-
-
-</style>
-<link rel="stylesheet" href="../assets/tests-ui.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>AEF 1 · Tests &amp; Exams | Mr. Sheyhaki</title>
+<meta name="description" content="Unit quizzes and self-paced grammar, vocabulary, reading, and listening tests for American English File 1." />
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("mrsheyhaki-theme");
+      if (t !== "dark" && t !== "light") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../../../../style.css" />
+<link rel="stylesheet" href="../../../../theme.css" />
+<link rel="stylesheet" href="../../../style.css" />
+<link rel="stylesheet" href="../assets/tests-hub.css" />
 <!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
-<body>
+<body class="has-site-topbar">
 
-<header class="arcade-header-bar">
-<nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
-      <a href="/" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
-      <a href="/learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
-      <a href="/resources/" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-      <a href="/about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
-      <a href="/learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+<header class="site-topbar">
+  <div class="topbar-inner">
+    <a href="../../../../" class="brand-mark">Mr. Sheyhaki</a>
+    <nav class="topbar-nav" aria-label="Main navigation">
+      <a href="../../../../" class="topbar-link">Home</a>
+      <a href="../../../../learningarcade/" class="topbar-link">Arcade</a>
+      <a href="../../../../multiplayer/" class="topbar-link">Multiplayer</a>
+      <a href="../../../" class="topbar-link active" aria-current="page">Resources</a>
+      <a href="../../../../about/" class="topbar-link">About</a>
     </nav>
+    <div class="topbar-actions">
+      <button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <a href="../../../../learningarcade/profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>
+    </div>
+  </div>
+  <nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+    <a href="../../../../">Home</a>
+    <a href="../../../../learningarcade/">Arcade</a>
+    <a href="../../../../multiplayer/">Multiplayer</a>
+    <a href="../../../" class="active" aria-current="page">Resources</a>
+    <a href="../../../../about/">About</a>
+  </nav>
 </header>
 
-<main class="tests-page">
-  <a href="/resources/american-english-file/tests/" class="back-link">← Back to Tests &amp; Exams</a>
+<main class="tests-hub-page">
+  <section class="tests-hero">
+    <div class="aef-back-row">
+      <a href="../" class="back-link">← Tests &amp; Exams</a>
+    </div>
+    <span class="eyebrow">AEF Level 1 · Tests &amp; Exams</span>
+    <h1>American English File 1</h1>
+    <p>Choose a unit and practise grammar, vocabulary, reading, and listening at your own pace — no timers, no rankings.</p>
 
-  <div class="page-badge">AEF 1 · TESTS</div>
-  <h1>American English File 1</h1>
-  <p class="subtitle">Choose a unit and practise grammar &amp; vocabulary at your own pace — no timers, no rankings.</p>
+    <div class="tests-summary-strip" aria-label="Level 1 test overview">
+      <span><strong>9</strong> units ready</span>
+      <span aria-hidden="true">·</span>
+      <span><strong>71</strong> activities</span>
+      <span aria-hidden="true">·</span>
+      <span><strong>3</strong> units coming soon</span>
+    </div>
+  </section>
 
-  <div class="units-grid" id="unitsGrid"></div>
+  <div class="tests-toolbar">
+    <div class="tests-filter-tabs" role="tablist" aria-label="Filter Level 1 test units">
+      <button type="button" class="tests-filter-tab is-active" data-filter="all" role="tab" aria-selected="true">All (12)</button>
+      <button type="button" class="tests-filter-tab" data-filter="ready" role="tab" aria-selected="false">Available (9)</button>
+      <button type="button" class="tests-filter-tab" data-filter="soon" role="tab" aria-selected="false">Coming soon (3)</button>
+    </div>
+    <span class="tests-toolbar-count" id="visibleUnitsCount">12 units</span>
+  </div>
+
+  <div class="tests-units-grid" id="unitsGrid"></div>
 </main>
 
-<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Resources</p></footer>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · Resources</p>
+    <div class="footer-links">
+      <a class="footer-link" href="../../../../contact/">Contact</a>
+      <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
+    </div>
+  </div>
+</footer>
 
 <script src="../../../script.js"></script>
 <script src="../../../../theme.js"></script>
 <script src="../../../../swipe-nav.js"></script>
+<script src="../assets/tests-stars.js"></script>
 <script>
-  const grid = document.getElementById("unitsGrid");
-  const READY = {
-    1: { href: "/resources/american-english-file/tests/unit-1/", chips: ["12 activities", "Grammar 4", "Vocabulary 2", "Sounds 1", "Reading 1", "Writing 1", "Listening 2", "Speaking 1"], star: "aef1-u1" },
-    2: { href: "/resources/american-english-file/tests/unit-2/", chips: ["10 activities", "Grammar 3", "Vocabulary 3", "Pronunciation 1", "Reading 1", "Listening 2"], star: "aef1-u2" },
-    3: { href: "/resources/american-english-file/tests/unit-3/", chips: ["10 activities", "Grammar 4", "Vocabulary 2", "Reading 1", "Listening 2", "Speaking 1"], star: "aef1-u3" },
-    4: { href: "/resources/american-english-file/tests/unit-4/", chips: ["10 activities", "Grammar 3", "Vocabulary 3", "Pronunciation 1", "Reading 1", "Listening 2"], star: "aef1-u4" },
-    5: { href: "/resources/american-english-file/tests/unit-5/", chips: ["12 activities", "Grammar 6", "Listening 4", "Vocabulary 1", "Reading 1"], star: "aef1-u5" },
-    6: { href: "/resources/american-english-file/tests/unit-6/", chips: ["3 activities", "Grammar 3"], star: "aef1-u6" },
-    10: { href: "/resources/american-english-file/tests/unit-10/", chips: ["6 activities", "Grammar 3", "Vocabulary 3"], star: "aef1-u10" },
-    11: { href: "/resources/american-english-file/tests/unit-11/", chips: ["7 activities", "Grammar 4", "Vocabulary 2", "Sounds 1"], star: "aef1-u11" },
-    12: { href: "/resources/american-english-file/tests/unit-12/", chips: ["1 activity", "Grammar 1"], star: "aef1-u12" }
-  };
-  for (let i = 1; i <= 12; i++) {
-    const num = String(i).padStart(2, "0");
-    if (READY[i]) {
-      const r = READY[i];
-      const a = document.createElement("a");
-      a.href = r.href;
-      a.className = "unit-card is-ready";
-      a.dataset.num = num;
-      a.style.setProperty("--i", i - 1);
-      a.innerHTML = `
-        <span class="ts-star ts-corner" data-star="${r.star}" role="img">☆</span>
-        <span class="arrow" aria-hidden="true">→</span>
-        <div class="unit-label">UNIT ${num}</div>
-        <h3>Unit ${i}</h3>
-        <p>Practice activities</p>
-        <div class="unit-chips">${r.chips.map(t => `<span>${t}</span>`).join("")}</div>
-      `;
-      grid.appendChild(a);
-    } else {
-      const e = document.createElement("div");
-      e.className = "unit-card is-empty";
-      e.dataset.num = num;
-      e.setAttribute("aria-disabled", "true");
-      e.style.setProperty("--i", i - 1);
-      e.innerHTML = `
-        <span class="dot" aria-hidden="true"></span>
-        <div class="unit-label">UNIT ${num}</div>
-        <h3>Coming soon</h3>
-      `;
-      grid.appendChild(e);
+  (function () {
+    var yr = document.getElementById("year");
+    if (yr) yr.textContent = new Date().getFullYear();
+
+    var UNITS = [
+      {
+        unit: 1,
+        ready: true,
+        href: "/resources/american-english-file/tests/unit-1/",
+        title: "Welcome & introductions",
+        activities: 12,
+        skills: ["Grammar 4", "Vocabulary 2", "Sounds 1", "Reading 1", "Writing 1", "Listening 2", "Speaking 1"],
+        star: "aef1-u1"
+      },
+      {
+        unit: 2,
+        ready: true,
+        href: "/resources/american-english-file/tests/unit-2/",
+        title: "Personality & routines",
+        activities: 10,
+        skills: ["Grammar 3", "Vocabulary 3", "Pronunciation 1", "Reading 1", "Listening 2"],
+        star: "aef1-u2"
+      },
+      {
+        unit: 3,
+        ready: true,
+        href: "/resources/american-english-file/tests/unit-3/",
+        title: "America & work routines",
+        activities: 10,
+        skills: ["Grammar 4", "Vocabulary 2", "Reading 1", "Listening 2", "Speaking 1"],
+        star: "aef1-u3"
+      },
+      {
+        unit: 4,
+        ready: true,
+        href: "/resources/american-english-file/tests/unit-4/",
+        title: "Family & daily life",
+        activities: 10,
+        skills: ["Grammar 3", "Vocabulary 3", "Pronunciation 1", "Reading 1", "Listening 2"],
+        star: "aef1-u4"
+      },
+      {
+        unit: 5,
+        ready: true,
+        href: "/resources/american-english-file/tests/unit-5/",
+        title: "Opinions & lifestyle",
+        activities: 12,
+        skills: ["Grammar 6", "Listening 4", "Vocabulary 1", "Reading 1"],
+        star: "aef1-u5"
+      },
+      {
+        unit: 6,
+        ready: true,
+        href: "/resources/american-english-file/tests/unit-6/",
+        title: "Stories & celebrations",
+        activities: 3,
+        skills: ["Grammar 3"],
+        star: "aef1-u6"
+      },
+      {
+        unit: 7,
+        ready: false,
+        title: "Selfies & travel"
+      },
+      {
+        unit: 8,
+        ready: false,
+        title: "Mysteries & places"
+      },
+      {
+        unit: 9,
+        ready: false,
+        title: "Food & facts"
+      },
+      {
+        unit: 10,
+        ready: true,
+        href: "/resources/american-english-file/tests/unit-10/",
+        title: "Travel & fortune",
+        activities: 6,
+        skills: ["Grammar 3", "Vocabulary 3"],
+        star: "aef1-u10"
+      },
+      {
+        unit: 11,
+        ready: true,
+        href: "/resources/american-english-file/tests/unit-11/",
+        title: "Culture & experiences",
+        activities: 7,
+        skills: ["Grammar 4", "Vocabulary 2", "Sounds 1"],
+        star: "aef1-u11"
+      },
+      {
+        unit: 12,
+        ready: true,
+        href: "/resources/american-english-file/tests/unit-12/",
+        title: "Entertainment & interview",
+        activities: 1,
+        skills: ["Grammar 1"],
+        star: "aef1-u12"
+      }
+    ];
+
+    function accentClass(unitNum) {
+      return "aef-u" + (((unitNum - 1) % 4) + 1);
     }
-  }
+
+    var grid = document.getElementById("unitsGrid");
+    var visibleCountEl = document.getElementById("visibleUnitsCount");
+
+    function render(filter) {
+      grid.innerHTML = "";
+      var visible = UNITS.filter(function (item) {
+        if (filter === "ready") return item.ready;
+        if (filter === "soon") return !item.ready;
+        return true;
+      });
+
+      visible.forEach(function (item) {
+        var badgeText = "Unit " + String(item.unit).padStart(2, "0");
+
+        if (item.ready) {
+          var card = document.createElement("a");
+          card.href = item.href;
+          card.className = "tests-unit-card is-ready " + accentClass(item.unit);
+
+          var activityLabel = item.activities === 1 ? "1 activity" : item.activities + " activities";
+
+          card.innerHTML =
+            '<div class="tests-unit-top">' +
+              '<span class="tests-unit-bubble">' + badgeText + '</span>' +
+              '<span class="tests-unit-star ts-star" data-star="' + item.star + '" role="img">☆</span>' +
+            '</div>' +
+            '<div class="tests-unit-body">' +
+              '<h2>' + item.title + '</h2>' +
+              '<p class="tests-unit-skills">' + item.skills.join(" · ") + '</p>' +
+            '</div>' +
+            '<div class="tests-unit-foot">' +
+              '<span class="tests-unit-count">' + activityLabel + '</span>' +
+              '<span class="tests-unit-cta">Open unit →</span>' +
+            '</div>';
+
+          grid.appendChild(card);
+        } else {
+          var empty = document.createElement("div");
+          empty.className = "tests-unit-card is-empty";
+          empty.setAttribute("aria-disabled", "true");
+
+          empty.innerHTML =
+            '<div class="tests-unit-top">' +
+              '<span class="tests-unit-bubble">' + badgeText + '</span>' +
+              '<span class="tests-unit-state">Soon</span>' +
+            '</div>' +
+            '<div class="tests-unit-body">' +
+              '<h2>' + item.title + '</h2>' +
+              '<p class="tests-unit-skills">Practice tests for this unit are being prepared.</p>' +
+            '</div>' +
+            '<div class="tests-unit-foot">' +
+              '<span class="tests-unit-count">Coming soon</span>' +
+            '</div>';
+
+          grid.appendChild(empty);
+        }
+      });
+
+      if (visibleCountEl) {
+        visibleCountEl.textContent = visible.length + (visible.length === 1 ? " unit" : " units");
+      }
+      if (window.TestStars) {
+        window.TestStars.paint(grid);
+      }
+    }
+
+    document.querySelectorAll(".tests-filter-tab").forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        var filter = tab.getAttribute("data-filter") || "all";
+        document.querySelectorAll(".tests-filter-tab").forEach(function (btn) {
+          var active = btn === tab;
+          btn.classList.toggle("is-active", active);
+          btn.setAttribute("aria-selected", active ? "true" : "false");
+        });
+        render(filter);
+      });
+    });
+
+    render("all");
+  })();
 </script>
-<script src="../assets/tests-ui.js"></script>
 <script src="/visit-counter.js" defer></script>
 </body>
 </html>

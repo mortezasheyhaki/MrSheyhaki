@@ -36,18 +36,6 @@ import {
 } from "../games/snakesLadders.js";
 import { TOPICS, normalizeTopicId } from "../games/slQuestions.js";
 import {
-  createPenaltyState,
-  publicPenaltyState,
-  startKick as psStartKick,
-  submitAnswer as psSubmitAnswer,
-  submitPick as psSubmitPick,
-  advancePenalty as psAdvance,
-  nextPenaltyDeadline as psNextDeadline,
-  listPenaltySubjects,
-  getPenaltySubject,
-  normalizeRounds as psNormalizeRounds,
-} from "../games/penaltyShootout.js";
-import {
   createTttShouldState,
   publicTttState,
   submitRps as tttSubmitRps,
@@ -71,14 +59,6 @@ function publicPlayer(p) {
   };
 }
 
-function psSettingsFor(room) {
-  const subject = getPenaltySubject(room.psSettings && room.psSettings.subjectId);
-  return {
-    subjectId: subject ? subject.id : listPenaltySubjects()[0].id,
-    rounds: psNormalizeRounds(room.psSettings && room.psSettings.rounds),
-  };
-}
-
 function publicRoom(room) {
   const base = {
     code: room.code,
@@ -92,14 +72,7 @@ function publicRoom(room) {
     slTopicTitle: TOPICS[normalizeTopicId(room.slTopic)].title,
     familySettings: room.familySettings || { timeLimit: FW_DEFAULT_SECONDS, gameType: "family-words" },
     familyGames: FAMILY_GAME_CHOICES,
-    penaltySubjects: listPenaltySubjects(),
-    penaltySettings: psSettingsFor(room),
   };
-
-  if (room.game && room.game.type === "penalty-shootout") {
-    base.game = publicPenaltyState(room.game);
-    return base;
-  }
 
   if (isFamilyGame(room.game)) {
     base.game = publicFamilyState(room.game, room.players);
@@ -185,12 +158,6 @@ function removePlayerFromRoom(room, playerId) {
   if (idx === -1) return;
   room.players.splice(idx, 1);
 
-  if (room.game && room.game.type === "penalty-shootout" && room.players.length < 2) {
-    room.game = null;
-    room.status = "lobby";
-    room.players.forEach((p) => { p.ready = false; });
-  }
-
   if (room.players.length === 0) {
     rooms.delete(room.code);
     return null;
@@ -212,86 +179,6 @@ function connectedIds(room) {
 }
 
 export const roomManager = {
-  /* ── Penalty Shootout (online) ── */
-  penaltySettings(playerId, payload = {}) {
-    const room = findRoomByPlayerId(playerId);
-    if (!room) return { ok: false, error: "Not in a room" };
-    if (room.hostId !== playerId) return { ok: false, error: "Only the host can change the settings" };
-    if (room.status !== "lobby") return { ok: false, error: "Game already started" };
-    const next = { ...psSettingsFor(room), ...payload };
-    if (!getPenaltySubject(next.subjectId)) return { ok: false, error: "Unknown subject" };
-    next.rounds = psNormalizeRounds(next.rounds);
-    room.psSettings = next;
-    return { ok: true, room: publicRoom(room) };
-  },
-
-  penaltyStart(playerId, now) {
-    const room = findRoomByPlayerId(playerId);
-    if (!room) return { ok: false, error: "Not in a room" };
-    if (room.hostId !== playerId) return { ok: false, error: "Only the host can start the game" };
-    if (room.status !== "lobby") return { ok: false, error: "Game already in progress or finished" };
-    if (room.players.length !== 2) return { ok: false, error: "Penalty Shootout needs exactly 2 players" };
-    if (!room.players.every((p) => p.ready)) return { ok: false, error: "Both players must be ready" };
-
-    const settings = psSettingsFor(room);
-    room.gameType = "penalty-shootout";
-    room.maxPlayers = 2;
-    room.game = createPenaltyState(room.players.map((p) => p.id), settings);
-    room.status = "playing";
-    room.players.forEach((p) => { p.ready = false; });
-    psStartKick(room.game, now);
-    return { ok: true, room: publicRoom(room) };
-  },
-
-  penaltyAnswer(playerId, answer, now) {
-    const room = findRoomByPlayerId(playerId);
-    if (!room || !room.game || room.game.type !== "penalty-shootout") return { ok: false, error: "No Penalty Shootout match running" };
-    const r = psSubmitAnswer(room.game, playerId, answer, now);
-    if (!r.ok) return r;
-    psAdvance(room.game, now);
-    if (room.game.over) room.status = "ended";
-    return { ok: true, correct: r.correct, code: room.code, room: publicRoom(room) };
-  },
-
-  penaltyPick(playerId, zone, now) {
-    const room = findRoomByPlayerId(playerId);
-    if (!room || !room.game || room.game.type !== "penalty-shootout") return { ok: false, error: "No Penalty Shootout match running" };
-    const r = psSubmitPick(room.game, playerId, zone);
-    if (!r.ok) return r;
-    psAdvance(room.game, now);
-    if (room.game.over) room.status = "ended";
-    return { ok: true, code: room.code, room: publicRoom(room) };
-  },
-
-  /* Timer hook: move a match forward to `now`. */
-  penaltyAdvance(code, now) {
-    const room = rooms.get(code);
-    if (!room || !room.game || room.game.type !== "penalty-shootout") return { ok: false };
-    const changed = psAdvance(room.game, now);
-    if (room.game.over) room.status = "ended";
-    return { ok: true, changed, room: publicRoom(room) };
-  },
-
-  penaltyNextDeadline(code) {
-    const room = rooms.get(code);
-    if (!room || !room.game || room.game.type !== "penalty-shootout") return null;
-    return psNextDeadline(room.game);
-  },
-
-  /* Who should receive a private view (their own question), with the state needed to build it. */
-  penaltyPrivateTargets(code) {
-    const room = rooms.get(code);
-    if (!room || !room.game || room.game.type !== "penalty-shootout") return [];
-    return room.players
-      .filter((p) => p.socketId && p.connected !== false)
-      .map((p) => ({ playerId: p.id, socketId: p.socketId, game: room.game }));
-  },
-
-  penaltyPlayerRoomCode(playerId) {
-    const room = findRoomByPlayerId(playerId);
-    return room ? room.code : null;
-  },
-
   createRoom(player, socketId) {
     const existing = findRoomByPlayerId(player.id);
     if (existing) {
@@ -413,7 +300,6 @@ export const roomManager = {
     room.gameType = gameType || "a-an-swipe";
     if (gameType === "snakes-ladders") room.maxPlayers = 4;
     else if (gameType === "tictactoe-should") room.maxPlayers = 2;
-    else if (gameType === "penalty-shootout") room.maxPlayers = 2;
     else room.maxPlayers = config.maxPlayersPerRoom;
     return { ok: true, room: publicRoom(room) };
   },

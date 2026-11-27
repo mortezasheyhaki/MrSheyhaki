@@ -2,188 +2,314 @@
 <html lang="en">
 <head>
 <script src="/resources/auth-gate.js"></script>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tests & Exams | American English File | Mr. Sheyhaki</title>
-<meta name="description" content="Unit quizzes and tests for American English File — Starter and Level 1.">
-<link rel="stylesheet" href="../../../style.css">
-<link rel="stylesheet" href="../../../theme.css">
-<link rel="stylesheet" href="../../style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Tests &amp; Exams · American English File | Mr. Sheyhaki</title>
+<meta name="description" content="Unit quizzes, progress checks, and listening tests for American English File Starter and Level 1." />
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("mrsheyhaki-theme");
+      if (t !== "dark" && t !== "light") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../../../style.css" />
+<link rel="stylesheet" href="../../../theme.css" />
+<link rel="stylesheet" href="../../style.css" />
 <style>
-  .tests-page {
-    max-width: 1080px;
+  .tests-hub-shell {
+    width: min(1120px, 100%);
     margin: 0 auto;
-    padding: 1.5rem 1.25rem 4rem;
+    padding: 36px 20px 64px;
+    flex: 1 0 auto;
   }
-  .tests-page .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: #64748b;
-    text-decoration: none;
-    font-size: 0.9rem;
-    margin-bottom: 1.25rem;
-    transition: color 0.2s;
-  }
-  .tests-page .back-link:hover { color: #7c3aed; }
-  .tests-page .page-badge {
-    display: inline-block;
-    background: #ccfbf1;
-    color: #0f766e;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    padding: 0.3rem 0.85rem;
-    border-radius: 999px;
-    margin-bottom: 0.9rem;
-  }
-  .tests-page h1 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.3rem;
-    color: #0f172a;
-  }
-  .tests-page .subtitle {
-    color: #64748b;
-    font-size: 1.05rem;
-    margin-bottom: 2rem;
-  }
-  .levels-grid {
+
+  .tests-levels-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
-    max-width: 720px;
+    grid-template-columns: repeat(2, minmax(0, 380px));
+    gap: 24px;
+    margin-bottom: 28px;
   }
-  @media (max-width: 560px) {
-    .levels-grid { grid-template-columns: 1fr; }
+
+  .tests-book-card {
+    min-height: 332px;
   }
-  .level-card {
-    border-radius: 1.25rem;
-    padding: 1.75rem 1.5rem;
-    color: #fff;
-    position: relative;
-    overflow: hidden;
-    min-height: 160px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    text-decoration: none;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    transition: transform 0.22s ease, box-shadow 0.22s ease;
+
+  .tests-book-card .aef-cover-oxford {
+    justify-content: space-between;
   }
-  .level-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.18);
-  }
-  .level-card .arrow {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.95rem;
-    backdrop-filter: blur(4px);
-  }
-  .level-card .level-badge {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    opacity: 0.9;
-    margin-bottom: 0.35rem;
-  }
-  .level-card h3 {
-    font-size: 1.45rem;
+
+  .tests-book-tag {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 0.64rem;
     font-weight: 800;
-    margin: 0 0 0.35rem;
-    color: #fff;
-  }
-  .level-card p {
-    font-size: 0.88rem;
+    letter-spacing: 0.09em;
     opacity: 0.9;
-    margin: 0;
-    line-height: 1.4;
-    color: #fff;
   }
-  .level-card::after {
-    content: "";
-    position: absolute;
-    bottom: -35px;
-    right: -35px;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.07);
-    pointer-events: none;
+
+  .tests-cover-skills {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: #334155;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 10px;
+    padding: 8px 12px;
+    backdrop-filter: blur(4px);
+    font-variant-numeric: tabular-nums;
   }
-  .level-starter {
-    background: linear-gradient(145deg, #0f766e 0%, #0d9488 45%, #14b8a6 100%);
+
+  .tests-book-foot {
+    width: 100%;
   }
-  .level-1 {
-    background: linear-gradient(145deg, #3b0764 0%, #5b21b6 50%, #7c3aed 100%);
+
+  .tests-cover-progress {
+    margin-top: 3px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--aef-color);
+    font-variant-numeric: tabular-nums;
   }
-  [data-theme="dark"] .tests-page h1,
-  body.dark .tests-page h1 { color: #f1f5f9; }
-  [data-theme="dark"] .tests-page .subtitle,
-  body.dark .tests-page .subtitle { color: #94a3b8; }
-  [data-theme="dark"] .tests-page .back-link,
-  body.dark .tests-page .back-link { color: #94a3b8; }
+
+  .tests-note-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--site-border);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--site-muted);
+    max-width: 784px;
+  }
+
+  .tests-note-bar strong {
+    color: var(--site-text);
+    font-weight: 700;
+  }
+
+  @media (max-width: 720px) {
+    .tests-hub-shell {
+      padding: 24px 16px 48px;
+    }
+    .tests-levels-grid {
+      grid-template-columns: 1fr;
+    }
+    .tests-book-card {
+      min-height: 300px;
+    }
+  }
 </style>
-<link rel="stylesheet" href="assets/tests-ui.css">
 <!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
-<body>
+<body class="has-site-topbar">
 
-<header class="arcade-header-bar">
-<nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
-      <a href="../../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
-      <a href="../../../learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
-      <a href="../../" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-      <a href="../../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
-      <a href="../../../learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+<header class="site-topbar">
+  <div class="topbar-inner">
+    <a href="../../../" class="brand-mark">Mr. Sheyhaki</a>
+    <nav class="topbar-nav" aria-label="Main navigation">
+      <a href="../../../" class="topbar-link">Home</a>
+      <a href="../../../learningarcade/" class="topbar-link">Arcade</a>
+      <a href="../../../multiplayer/" class="topbar-link">Multiplayer</a>
+      <a href="../../" class="topbar-link active" aria-current="page">Resources</a>
+      <a href="../../../about/" class="topbar-link">About</a>
     </nav>
+    <div class="topbar-actions">
+      <button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <a href="../../../learningarcade/profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>
+    </div>
+  </div>
+  <nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+    <a href="../../../">Home</a>
+    <a href="../../../learningarcade/">Arcade</a>
+    <a href="../../../multiplayer/">Multiplayer</a>
+    <a href="../../" class="active" aria-current="page">Resources</a>
+    <a href="../../../about/">About</a>
+  </nav>
 </header>
 
-<main class="tests-page">
-  <a href="../" class="back-link">← Back to American English File</a>
+<main class="tests-hub-shell">
+  <section class="arcade-intro">
+    <div class="aef-back-row">
+      <a href="../" class="back-link">← American English File</a>
+    </div>
+    <span class="eyebrow">American English File · Assessments</span>
+    <h1>Tests &amp; Exams</h1>
+    <p>Pick a level to open unit-by-unit progress checks, listening tests, and self-paced exam practice.</p>
+  </section>
 
-  <div class="page-badge">COURSEBOOK · TESTS</div>
-  <h1>Tests &amp; Exams</h1>
-  <p class="subtitle">Choose a level — then pick a unit to practise grammar &amp; vocabulary at your own pace.</p>
+  <section class="section-heading">
+    <div>
+      <h2>Choose a Level</h2>
+      <p>Third Edition · Practice activities and unit review tests</p>
+    </div>
+  </section>
 
-  <div class="levels-grid" aria-label="American English File levels">
-    <!-- AEF Starter on the left -->
-    <a class="level-card level-starter" href="starter/">
-      <span class="arrow" aria-hidden="true">→</span>
-      <div class="level-badge">AMERICAN ENGLISH FILE</div>
-      <h3>AEF Starter</h3>
-      <p>Units 1–12 · Tests &amp; practice activities</p>
+  <section class="tests-levels-grid" aria-label="American English File test levels">
+    <!-- AEF Starter -->
+    <a class="book-level book-level--aef book-level--aef-starter tests-book-card" href="starter/">
+      <div class="aef-cover-oxford">
+        <span class="tests-book-tag">Tests &amp; Exams</span>
+        <span>Oxford</span>
+      </div>
+      <div class="aef-cover-head">
+        <div class="aef-cover-title">
+          <span class="aef-cover-american">American</span>
+          <span class="aef-cover-file">English File</span>
+          <span class="aef-cover-edition">Third Edition · Practice Tests</span>
+        </div>
+        <span class="aef-cover-bubble aef-cover-bubble--starter" aria-hidden="true">Starter</span>
+      </div>
+      <div class="aef-cover-ribbon">
+        <span>CEFR A1 · 12 Units + End of Course</span>
+      </div>
+      <div class="aef-cover-lower">
+        <svg class="aef-cover-mosaic" viewBox="0 0 320 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+          <g opacity="0.82">
+            <rect x="18" y="120" width="9" height="9" rx="2" fill="#6b216f" transform="rotate(-12 22 124)"/>
+            <circle cx="42" cy="108" r="5" fill="#d62828"/>
+            <rect x="56" y="126" width="10" height="8" rx="2" fill="#0284c7" transform="rotate(15 61 130)"/>
+            <circle cx="76" cy="96" r="4.5" fill="#ea580c"/>
+            <rect x="88" y="112" width="11" height="9" rx="2" fill="#2e7d32" transform="rotate(-8 93 116)"/>
+            <circle cx="108" cy="132" r="5.5" fill="#0d1d4d"/>
+            <rect x="104" y="84" width="9" height="9" rx="2" fill="#0f766e" transform="rotate(20 108 88)"/>
+            <circle cx="126" cy="102" r="5" fill="#d62828"/>
+            <rect x="136" y="70" width="10" height="8" rx="2" fill="#6b216f" transform="rotate(-18 141 74)"/>
+            <circle cx="144" cy="122" r="4.5" fill="#ea580c"/>
+            <rect x="158" y="90" width="9" height="9" rx="2" fill="#0284c7" transform="rotate(10 162 94)"/>
+            <circle cx="174" cy="60" r="5" fill="#2e7d32"/>
+            <rect x="182" y="106" width="10" height="8" rx="2" fill="#d62828" transform="rotate(-14 187 110)"/>
+            <circle cx="198" cy="78" r="4.5" fill="#0f766e"/>
+            <rect x="212" y="48" width="9" height="9" rx="2" fill="#ea580c" transform="rotate(18 216 52)"/>
+            <circle cx="228" cy="92" r="5" fill="#6b216f"/>
+            <rect x="242" y="64" width="10" height="8" rx="2" fill="#0d1d4d" transform="rotate(-10 247 68)"/>
+            <circle cx="264" cy="44" r="4.5" fill="#0284c7"/>
+            <rect x="278" y="76" width="9" height="9" rx="2" fill="#2e7d32" transform="rotate(14 282 80)"/>
+            <circle cx="296" cy="54" r="5" fill="#d62828"/>
+          </g>
+        </svg>
+        <p class="tests-cover-skills">124 activities · Grammar, Vocabulary, Pronunciation, Reading &amp; Listening</p>
+        <div class="aef-cover-card-foot tests-book-foot">
+          <div class="aef-cover-card-info">
+            <h3>AEF Starter</h3>
+            <p id="starterStarNote">Units 1–12 &amp; End of Course</p>
+          </div>
+          <span class="aef-cover-btn">Open →</span>
+        </div>
+      </div>
     </a>
-    <!-- AEF 1 next to it -->
-    <a class="level-card level-1" href="1/">
-      <span class="arrow" aria-hidden="true">→</span>
-      <div class="level-badge">AMERICAN ENGLISH FILE</div>
-      <h3>AEF 1</h3>
-      <p>Units 1–12 · Including Units 5, 10, 11 &amp; 12 activities</p>
+
+    <!-- AEF 1 -->
+    <a class="book-level book-level--aef book-level--aef-1 tests-book-card" href="1/">
+      <div class="aef-cover-oxford">
+        <span class="tests-book-tag">Tests &amp; Exams</span>
+        <span>Oxford</span>
+      </div>
+      <div class="aef-cover-head">
+        <div class="aef-cover-title">
+          <span class="aef-cover-american">American</span>
+          <span class="aef-cover-file">English File</span>
+          <span class="aef-cover-edition">Third Edition · Practice Tests</span>
+        </div>
+        <span class="aef-cover-bubble" aria-hidden="true">1</span>
+      </div>
+      <div class="aef-cover-ribbon">
+        <span>CEFR A1–A2 · Units 1–6 &amp; 10–12</span>
+      </div>
+      <div class="aef-cover-lower">
+        <svg class="aef-cover-mosaic" viewBox="0 0 320 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+          <g opacity="0.82">
+            <rect x="18" y="120" width="9" height="9" rx="2" fill="#d62828" transform="rotate(-12 22 124)"/>
+            <circle cx="42" cy="108" r="5" fill="#0284c7"/>
+            <rect x="56" y="126" width="10" height="8" rx="2" fill="#6b216f" transform="rotate(15 61 130)"/>
+            <circle cx="76" cy="96" r="4.5" fill="#2e7d32"/>
+            <rect x="88" y="112" width="11" height="9" rx="2" fill="#ea580c" transform="rotate(-8 93 116)"/>
+            <circle cx="108" cy="132" r="5.5" fill="#0d1d4d"/>
+            <rect x="104" y="84" width="9" height="9" rx="2" fill="#d62828" transform="rotate(20 108 88)"/>
+            <circle cx="126" cy="102" r="5" fill="#0f766e"/>
+            <rect x="136" y="70" width="10" height="8" rx="2" fill="#0284c7" transform="rotate(-18 141 74)"/>
+            <circle cx="144" cy="122" r="4.5" fill="#6b216f"/>
+            <rect x="158" y="90" width="9" height="9" rx="2" fill="#2e7d32" transform="rotate(10 162 94)"/>
+            <circle cx="174" cy="60" r="5" fill="#ea580c"/>
+            <rect x="182" y="106" width="10" height="8" rx="2" fill="#0d1d4d" transform="rotate(-14 187 110)"/>
+            <circle cx="198" cy="78" r="4.5" fill="#d62828"/>
+            <rect x="212" y="48" width="9" height="9" rx="2" fill="#0284c7" transform="rotate(18 216 52)"/>
+            <circle cx="228" cy="92" r="5" fill="#2e7d32"/>
+            <rect x="242" y="64" width="10" height="8" rx="2" fill="#ea580c" transform="rotate(-10 247 68)"/>
+            <circle cx="264" cy="44" r="4.5" fill="#6b216f"/>
+            <rect x="278" y="76" width="9" height="9" rx="2" fill="#d62828" transform="rotate(14 282 80)"/>
+            <circle cx="296" cy="54" r="5" fill="#0f766e"/>
+          </g>
+        </svg>
+        <p class="tests-cover-skills">71 activities · Grammar, Vocabulary, Sounds, Reading &amp; Listening</p>
+        <div class="aef-cover-card-foot tests-book-foot">
+          <div class="aef-cover-card-info">
+            <h3>AEF 1</h3>
+            <p>Elementary · 9 units available</p>
+          </div>
+          <span class="aef-cover-btn">Open →</span>
+        </div>
+      </div>
     </a>
+  </section>
+
+  <div class="tests-note-bar">
+    <span><strong>Self-paced practice</strong> · No countdown timers</span>
+    <span aria-hidden="true">·</span>
+    <span>Instant answer checks</span>
+    <span aria-hidden="true">·</span>
+    <span>Completion stars saved on this device</span>
   </div>
 </main>
 
-<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Resources</p></footer>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · Resources</p>
+    <div class="footer-links">
+      <a class="footer-link" href="../../../contact/">Contact</a>
+      <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
+    </div>
+  </div>
+</footer>
 
 <script src="../../script.js"></script>
 <script src="../../../theme.js"></script>
 <script src="../../../swipe-nav.js"></script>
 <script>
-  document.getElementById("year").textContent = new Date().getFullYear();
+  (function () {
+    var yr = document.getElementById("year");
+    if (yr) yr.textContent = new Date().getFullYear();
+
+    try {
+      var raw = localStorage.getItem("aef-starter-test-stars");
+      if (raw) {
+        var stars = JSON.parse(raw);
+        var count = Object.keys(stars).filter(function (k) { return stars[k]; }).length;
+        var note = document.getElementById("starterStarNote");
+        if (note && count > 0) {
+          note.textContent = count + " test" + (count === 1 ? "" : "s") + " completed on this device";
+        }
+      }
+    } catch (e) {}
+  })();
 </script>
-<script src="assets/tests-ui.js"></script>
 <script src="/visit-counter.js" defer></script>
 </body>
 </html>
