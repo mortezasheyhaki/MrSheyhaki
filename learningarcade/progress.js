@@ -32,29 +32,23 @@
       .replace(/\b[a-z]/g, function (c) { return c.toUpperCase(); });
   }
   function inferCategory(gameId, explicitCategory) {
-    if (explicitCategory && String(explicitCategory).trim()) {
-      return String(explicitCategory).trim();
+    if (global.LASkillCatalog && typeof global.LASkillCatalog.inferCategory === "function") {
+      return global.LASkillCatalog.inferCategory(gameId, explicitCategory);
+    }
+    var raw = String(explicitCategory || "").trim();
+    var low = raw.toLowerCase();
+    if (raw && low !== "general" && low !== "starter" && low !== "starter course" && low !== "tactics-for-listening") {
+      if (low === "vocab") return "Vocabulary";
+      return raw.charAt(0).toUpperCase() + raw.slice(1);
     }
     var id = String(gameId || "").toLowerCase();
-    if (id.indexOf("vocab-") === 0 || id.indexOf("match-rush") !== -1 || id.indexOf("opposite-snap") !== -1 || id.indexOf("sound-match") !== -1) {
-      return "Vocabulary";
-    }
-    if (
-      id.indexOf("grammar-") === 0 ||
-      id === "be-verbs" ||
-      id === "nouns" ||
-      id === "there-is-there-are" ||
-      id === "simple-present" ||
-      id === "simple-past" ||
-      id === "present-perfect"
-    ) {
-      return "Grammar";
-    }
-    if (id.indexOf("writing-") === 0) return "Writing";
-    if (id.indexOf("speaking-") === 0) return "Speaking";
-    if (id.indexOf("reading-") === 0) return "Reading";
-    if (id.indexOf("listening-") === 0 || id.indexOf("tfl-") === 0) return "Listening";
-    if (id.indexOf("starter-") === 0 || id.indexOf("aef") === 0) return "Starter Course";
+    if (id.indexOf("pronunciation") !== -1 || id.indexOf("plural-s-") !== -1 || id.indexOf("three-sounds") !== -1) return "Pronunciation";
+    if (id.indexOf("tfl-") === 0 || id.indexOf("listening-") === 0 || id.indexOf("listen-") !== -1 || id.indexOf("sound-match") !== -1 || id.indexOf("dictation") !== -1) return "Listening";
+    if (id.indexOf("speaking-") === 0 || id.indexOf("-roleplay") !== -1 || id.indexOf("-speaking") !== -1) return "Speaking";
+    if (id.indexOf("reading-") === 0 || id.indexOf("-reading") !== -1) return "Reading";
+    if (id.indexOf("writing-") === 0 || id.indexOf("-write") !== -1 || id.indexOf("-writing") !== -1) return "Writing";
+    if (id.indexOf("vocab-") === 0 || id.indexOf("flashcards") !== -1 || id.indexOf("match-rush") !== -1 || id.indexOf("opposite-snap") !== -1 || id.indexOf("-match") !== -1 || id.indexOf("unscramble") !== -1) return "Vocabulary";
+    if (id.indexOf("grammar-") === 0 || id === "be-verbs" || id === "nouns" || id === "there-is-there-are" || id === "simple-present" || id === "simple-past" || id === "present-perfect" || id.indexOf("-sentences") !== -1 || id.indexOf("-question") !== -1) return "Grammar";
     if (id.indexOf("topics-") === 0) return "Topics";
     return "General";
   }

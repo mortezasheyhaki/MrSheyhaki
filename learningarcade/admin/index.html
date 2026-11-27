@@ -833,6 +833,78 @@
       return out;
     }
 
+    function formatTime(ms) {
+      var n = Math.round(Number(ms) || 0);
+      if (!(n > 0)) return "—";
+      var totalSec = Math.max(1, Math.round(n / 1000));
+      var mins = Math.floor(totalSec / 60);
+      var secs = totalSec % 60;
+      return mins > 0 ? mins + ":" + (secs < 10 ? "0" : "") + secs : secs + "s";
+    }
+
+    function sleep(ms) {
+      return new Promise(function (resolve) { setTimeout(resolve, ms); });
+    }
+
+    async function adminFetch(path, options) {
+      var opts = Object.assign({}, options || {});
+      opts.credentials = "same-origin";
+      opts.cache = "no-store";
+      var lastErr = null;
+      for (var attempt = 0; attempt < 2; attempt++) {
+        try {
+          var res = await fetch(path, opts);
+          var text = await res.text();
+          var data = null;
+          if (text) {
+            try {
+              data = JSON.parse(text);
+            } catch (parseErr) {
+              data = null;
+            }
+          }
+          if (data && typeof data === "object") {
+            return { ok: true, res: res, data: data };
+          }
+          var isTransient =
+            res.status === 502 ||
+            res.status === 503 ||
+            res.status === 504 ||
+            (text && text.indexOf("__cookie_check") !== -1);
+          if (isTransient && attempt === 0) {
+            await sleep(500);
+            continue;
+          }
+          return {
+            ok: false,
+            res: res,
+            status: res.status,
+            isHtml: Boolean(text && text.trim().charAt(0) === "<"),
+            isCookieCheck: Boolean(text && text.indexOf("__cookie_check") !== -1),
+            error:
+              res.status === 404
+                ? "Teacher Admin API (/api/admin) is not available on this host."
+                : (text && text.indexOf("__cookie_check") !== -1)
+                  ? "Preview session refreshed. Please reload the page and try again."
+                  : "Server returned an unexpected response (HTTP " + res.status + ")."
+          };
+        } catch (err) {
+          lastErr = err;
+          if (attempt === 0) {
+            await sleep(500);
+            continue;
+          }
+        }
+      }
+      return {
+        ok: false,
+        status: 0,
+        networkError: true,
+        error: "Could not reach the server. Check your connection or refresh the page.",
+        cause: lastErr
+      };
+    }
+
     function showGate(needsSetup) {
       gateSection.hidden = false;
       adminDash.classList.remove("is-on");
@@ -860,19 +932,21 @@
     }
 
     async function checkAdminStatus() {
-      try {
-        var headers = adminToken ? { Authorization: "Bearer " + adminToken } : {};
-        var res = await fetch("/api/admin/status", { headers: headers });
-        var data = await res.json();
-        if (data && data.authenticated && adminToken) {
-          showDashboard();
-        } else {
-          adminToken = "";
-          showGate(Boolean(data && data.needsSetup));
-        }
-      } catch (e) {
+      var headers = adminToken ? { Authorization: "Bearer " + adminToken } : {};
+      var result = await adminFetch("/api/admin/status", { headers: headers });
+      if (!result.ok) {
         gateTitle.textContent = "Teacher Admin";
-        gateSub.textContent = "Could not connect to server. Please refresh.";
+        gateSub.textContent = result.error || "Could not connect to server. Please refresh.";
+        setupForm.hidden = true;
+        loginForm.hidden = true;
+        return;
+      }
+      var data = result.data;
+      if (data && data.authenticated && adminToken) {
+        showDashboard();
+      } else {
+        adminToken = "";
+        showGate(Boolean(data && data.needsSetup));
       }
     }
 
@@ -896,12 +970,17 @@
       btn.disabled = true;
       btn.textContent = "Saving…";
       try {
-        var res = await fetch("/api/admin/setup", {
+        var result = await adminFetch("/api/admin/setup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ password: pw })
         });
-        var data = await res.json();
+        if (!result.ok) {
+          errEl.textContent = result.error || "Could not reach server. Please try again.";
+          return;
+        }
+        var res = result.res;
+        var data = result.data;
         if (!res.ok || !data.ok || !data.token) {
           errEl.textContent = (data && data.error) || "Could not set admin password.";
           if (res.status === 409) checkAdminStatus();
@@ -911,8 +990,6 @@
         document.getElementById("setupPw").value = "";
         document.getElementById("setupPwConfirm").value = "";
         showDashboard();
-      } catch (err) {
-        errEl.textContent = "Network error. Please try again.";
       } finally {
         btn.disabled = false;
         btn.textContent = "Set Password & Open Admin";
@@ -934,12 +1011,17 @@
       btn.disabled = true;
       btn.textContent = "Verifying…";
       try {
-        var res = await fetch("/api/admin/login", {
+        var result = await adminFetch("/api/admin/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ password: pw })
         });
-        var data = await res.json();
+        if (!result.ok) {
+          errEl.textContent = result.error || "Could not reach server. Please try again.";
+          return;
+        }
+        var res = result.res;
+        var data = result.data;
         if (!res.ok || !data.ok || !data.token) {
           if (data && data.needsSetup) {
             showGate(true);
@@ -951,8 +1033,6 @@
         adminToken = data.token;
         document.getElementById("loginPw").value = "";
         showDashboard();
-      } catch (err) {
-        errEl.textContent = "Network error. Please try again.";
       } finally {
         btn.disabled = false;
         btn.textContent = "Open Admin Console";
@@ -967,6 +1047,7 @@
       if (tok) {
         fetch("/api/admin/logout", {
           method: "POST",
+          credentials: "same-origin",
           headers: { Authorization: "Bearer " + tok }
         }).catch(function () {});
       }
@@ -986,24 +1067,27 @@
       refreshBtn.disabled = true;
 
       try {
-        var res = await fetch("/api/admin/activity", {
+        var result = await adminFetch("/api/admin/activity", {
           headers: { Authorization: "Bearer " + adminToken }
         });
+        if (!result.ok) {
+          statusLine.textContent = result.error || "Could not load student activity. Check connection and refresh.";
+          return;
+        }
+        var res = result.res;
+        var data = result.data;
         if (res.status === 401) {
           adminToken = "";
           showGate(false);
           document.getElementById("loginErr").textContent = "Session expired. Please sign in again.";
           return;
         }
-        var data = await res.json();
         if (!res.ok || !data.ok) {
           statusLine.textContent = (data && data.error) || "Failed to load student activity.";
           return;
         }
         dashboardData = data;
         renderDashboard();
-      } catch (err) {
-        statusLine.textContent = "Could not load student activity. Check connection and refresh.";
       } finally {
         refreshBtn.disabled = false;
       }
@@ -1076,7 +1160,7 @@
                 (s.avgAccuracy ? s.avgAccuracy + "% avg accuracy" : "Accuracy tracking pending") +
               "</div>" +
               '<div class="adm-table-wrap"><table class="adm-table"><thead><tr>' +
-                '<th>Game</th><th>Category</th><th class="num">Stars</th><th class="num">Best Score</th><th class="num">Accuracy</th><th class="num">Plays</th><th class="num">Last Played</th>' +
+                '<th>Game</th><th>Skill</th><th class="num">Stars</th><th class="num">Best Score</th><th class="num">Best Time</th><th class="num">Accuracy</th><th class="num">Plays</th><th class="num">Last Played</th>' +
               "</tr></thead><tbody>" +
               s.games.map(function (g) {
                 var sc = g.maxScore > 0 ? g.bestScore + " / " + g.maxScore : (g.bestScore ? String(g.bestScore) : "—");
@@ -1086,6 +1170,7 @@
                     "<td>" + escapeHtml(g.category || "General") + "</td>" +
                     '<td class="num">' + starsHtml(g.stars) + "</td>" +
                     '<td class="num">' + escapeHtml(sc) + "</td>" +
+                    '<td class="num">' + escapeHtml(formatTime(g.bestTimeMs)) + "</td>" +
                     '<td class="num">' + (g.accuracy ? g.accuracy + "%" : "—") + "</td>" +
                     '<td class="num">' + (g.plays || 0) + "</td>" +
                     '<td class="num">' + escapeHtml(formatExact(g.lastAt)) + "</td>" +
@@ -1099,7 +1184,8 @@
                 '<div class="detail-summary" style="margin-top:4px;">Latest score submissions: ' +
                 s.recentScores.slice(0, 5).map(function (rs) {
                   var sc = rs.maxScore ? rs.score + "/" + rs.maxScore : rs.score;
-                  return escapeHtml(rs.gameName + " (" + sc + ", " + formatRelative(rs.at) + ")");
+                  var tm = rs.timeMs ? ", " + formatTime(rs.timeMs) : "";
+                  return escapeHtml(rs.gameName + " (" + sc + tm + ", " + formatRelative(rs.at) + ")");
                 }).join(" · ") +
                 "</div>";
             }

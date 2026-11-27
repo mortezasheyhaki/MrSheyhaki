@@ -203,6 +203,7 @@
             name: r.name || "Player",
             score: Number(r.score) || 0,
             maxScore: r.max_score != null ? Number(r.max_score) : null,
+            timeMs: r.time_ms != null && Number(r.time_ms) > 0 ? Number(r.time_ms) : null,
             gameName: r.game_name || r.game_id,
             at: r.at || 0,
             iso: r.created_at || "",
@@ -247,7 +248,7 @@
             name: r.name || "Player",
             score: Number(r.score) || 0,
             maxScore: r.max_score != null ? Number(r.max_score) : null,
-            timeMs: r.time_ms != null ? Number(r.time_ms) : null,
+            timeMs: r.time_ms != null && Number(r.time_ms) > 0 ? Number(r.time_ms) : null,
             gameName: r.game_name || r.game_id,
             at: r.at || 0,
           });
@@ -262,23 +263,29 @@
 
   function myScores() {
     if (!init()) return Promise.resolve([]);
-    if (!getPlayerName()) return Promise.resolve([]);
+    var sessionUser = null;
+    if (global.LAAuth && typeof LAAuth.currentUser === "function") {
+      sessionUser = LAAuth.currentUser();
+    }
+    if (!getPlayerName() && !(sessionUser && sessionUser.id)) return Promise.resolve([]);
     return sb
       .from("scores")
-      .select("id,name,score,max_score,game_id,game_name,time_ms,at,created_at")
+      .select("id,name,score,max_score,game_id,game_name,time_ms,at,created_at,user_id")
       .order("at", { ascending: false })
-      .limit(100)
+      .limit(120)
       .then(function (res) {
         if (res.error) return [];
         var rows = [];
         (res.data || []).forEach(function (r) {
-          if (!nameMatchesPlayer(r.name)) return;
+          var owned = sessionUser && sessionUser.id && r.user_id === sessionUser.id;
+          if (!owned && !nameMatchesPlayer(r.name)) return;
           rows.push({
             key: r.id,
             gameId: r.game_id,
             name: r.name || "Player",
             score: Number(r.score) || 0,
             maxScore: r.max_score != null ? Number(r.max_score) : null,
+            timeMs: r.time_ms != null && Number(r.time_ms) > 0 ? Number(r.time_ms) : null,
             gameName: r.game_name || r.game_id,
             at: r.at || 0,
             iso: r.created_at || "",

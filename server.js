@@ -2,6 +2,7 @@ import crypto from "crypto";
 import fs from "fs";
 import http from "http";
 import path from "path";
+import vm from "vm";
 import { fileURLToPath } from "url";
 import express from "express";
 import cors from "cors";
@@ -167,12 +168,46 @@ function getSupabaseAdminClient() {
   });
 }
 
+function loadSkillCatalog() {
+  try {
+    const sandbox = {};
+    sandbox.window = sandbox;
+    const courseDataPath = path.join(__dirname, "resources", "american-english-file", "assets", "course-data.js");
+    if (fs.existsSync(courseDataPath)) {
+      const cdCode = fs.readFileSync(courseDataPath, "utf8");
+      vm.runInNewContext(cdCode + "; this.COURSE_DATA = COURSE_DATA;", sandbox);
+    }
+    const catalogPath = path.join(__dirname, "learningarcade", "skill-catalog.js");
+    if (fs.existsSync(catalogPath)) {
+      const catCode = fs.readFileSync(catalogPath, "utf8");
+      vm.runInNewContext(catCode, sandbox);
+    }
+    return sandbox.LASkillCatalog || null;
+  } catch (err) {
+    console.warn("[server] skill-catalog load fallback:", err && err.message ? err.message : err);
+    return null;
+  }
+}
+
+const skillCatalog = loadSkillCatalog();
+
 function inferCategory(gameId, explicitCategory) {
-  if (explicitCategory && String(explicitCategory).trim()) {
-    return String(explicitCategory).trim();
+  if (skillCatalog && typeof skillCatalog.inferCategory === "function") {
+    return skillCatalog.inferCategory(gameId, explicitCategory);
+  }
+  const raw = String(explicitCategory || "").trim();
+  const low = raw.toLowerCase();
+  if (raw && low !== "general" && low !== "starter" && low !== "starter course" && low !== "tactics-for-listening") {
+    if (low === "vocab") return "Vocabulary";
+    return raw.charAt(0).toUpperCase() + raw.slice(1);
   }
   const id = String(gameId || "").toLowerCase();
-  if (id.startsWith("vocab-") || id.includes("match-rush") || id.includes("opposite-snap") || id.includes("sound-match")) {
+  if (id.includes("pronunciation") || id.includes("plural-s-") || id.includes("three-sounds")) return "Pronunciation";
+  if (id.startsWith("tfl-") || id.startsWith("listening-") || id.includes("listen-") || id.includes("sound-match") || id.includes("dictation")) return "Listening";
+  if (id.startsWith("speaking-") || id.includes("-roleplay") || id.includes("-speaking")) return "Speaking";
+  if (id.startsWith("reading-") || id.includes("-reading")) return "Reading";
+  if (id.startsWith("writing-") || id.includes("-write") || id.includes("-writing")) return "Writing";
+  if (id.startsWith("vocab-") || id.includes("flashcards") || id.includes("match-rush") || id.includes("opposite-snap") || id.includes("-match") || id.includes("unscramble")) {
     return "Vocabulary";
   }
   if (
@@ -182,17 +217,22 @@ function inferCategory(gameId, explicitCategory) {
     id === "there-is-there-are" ||
     id === "simple-present" ||
     id === "simple-past" ||
-    id === "present-perfect"
+    id === "present-perfect" ||
+    id.includes("-sentences") ||
+    id.includes("-question")
   ) {
     return "Grammar";
   }
-  if (id.startsWith("writing-")) return "Writing";
-  if (id.startsWith("speaking-")) return "Speaking";
-  if (id.startsWith("reading-")) return "Reading";
-  if (id.startsWith("listening-") || id.startsWith("tfl-")) return "Listening";
-  if (id.startsWith("starter-") || id.startsWith("aef")) return "Starter Course";
   if (id.startsWith("topics-")) return "Topics";
   return "General";
+}
+
+function inferGameTitle(gameId, rawName) {
+  const cleanRaw = rawName && String(rawName).trim() && rawName !== gameId ? String(rawName).trim() : "";
+  if (skillCatalog && typeof skillCatalog.getTitle === "function") {
+    return skillCatalog.getTitle(gameId, cleanRaw);
+  }
+  return cleanRaw || String(gameId || "Game");
 }
 
 function toTimestamp(val) {
@@ -203,6 +243,7 @@ function toTimestamp(val) {
 }
 
 const app = express();
+app.set("trust proxy", 1);
 
 app.use(express.json({ limit: "64kb" }));
 
@@ -220,9 +261,24 @@ app.use(
       }
       return cb(null, true);
     },
-    methods: ["GET", "POST"],
+    credentials: true,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+app.use("/api", (err, _req, res, next) => {
+  if (!err) return next();
+  return res.status(err.status || 400).json({
+    ok: false,
+    error: err.message || "Invalid API request.",
+  });
+});
+
+app.use("/api/admin", (_req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+  next();
+});
 
 app.get("/health", (_req, res) => {
   res.json({
@@ -419,7 +475,7 @@ app.get("/api/admin/activity", requireAdmin, async (_req, res) => {
 
       st.gamesById[gid] = {
         id: gid,
-        name: String(r.game_name || gid),
+        name: inferGameTitle(gid, r.game_name),
         category: inferCategory(gid, r.category),
         unit: String(r.unit || ""),
         stars: prev ? Math.max(prev.stars, stars) : stars,
@@ -427,6 +483,7 @@ app.get("/api/admin/activity", requireAdmin, async (_req, res) => {
         bestScore: prev ? Math.max(prev.bestScore, bestScore) : bestScore,
         maxScore: prev ? Math.max(prev.maxScore, maxScore) : maxScore,
         accuracy: prev ? Math.max(prev.accuracy, accuracy) : accuracy,
+        bestTimeMs: prev && prev.bestTimeMs ? prev.bestTimeMs : 0,
         completed: Boolean(r.completed || (prev && prev.completed)),
         lastAt: prev ? Math.max(prev.lastAt, lastAt) : lastAt,
         fromProgress: true,
@@ -440,7 +497,7 @@ app.get("/api/admin/activity", requireAdmin, async (_req, res) => {
       if (!gameStatsMap.has(gid)) {
         gameStatsMap.set(gid, {
           id: gid,
-          name: gname || gid,
+          name: inferGameTitle(gid, gname),
           category: inferCategory(gid, category),
           totalPlays: 0,
           accuracySum: 0,
@@ -465,8 +522,9 @@ app.get("/api/admin/activity", requireAdmin, async (_req, res) => {
       const maxScore = r.max_score != null ? Math.max(0, Number(r.max_score) || 0) : 0;
       const ts = Number(r.at) || toTimestamp(r.created_at);
       const gid = String(r.game_id || r.game_name || "game");
-      const gname = String(r.game_name || gid);
+      const gname = inferGameTitle(gid, r.game_name);
       const pct = maxScore > 0 ? Math.min(100, Math.round((score / maxScore) * 100)) : null;
+      const timeMs = r.time_ms != null && Number(r.time_ms) > 0 ? Math.round(Number(r.time_ms)) : 0;
 
       st.totalScore += score;
       if (ts > st.lastActiveAt) st.lastActiveAt = ts;
@@ -479,7 +537,7 @@ app.get("/api/admin/activity", requireAdmin, async (_req, res) => {
           score,
           maxScore: maxScore || null,
           accuracy: pct,
-          timeMs: r.time_ms != null ? Number(r.time_ms) : null,
+          timeMs: timeMs || null,
           at: ts,
         });
       }
@@ -495,12 +553,16 @@ app.get("/api/admin/activity", requireAdmin, async (_req, res) => {
           bestScore: 0,
           maxScore: 0,
           accuracy: 0,
+          bestTimeMs: 0,
           completed: true,
           lastAt: 0,
           fromProgress: false,
         };
       }
       const g = st.gamesById[gid];
+      if (timeMs > 0) {
+        g.bestTimeMs = g.bestTimeMs > 0 ? Math.min(g.bestTimeMs, timeMs) : timeMs;
+      }
       if (!g.fromProgress) {
         g.plays += 1;
         if (score > g.bestScore) {
@@ -528,7 +590,7 @@ app.get("/api/admin/activity", requireAdmin, async (_req, res) => {
           score,
           maxScore: maxScore || null,
           accuracy: pct,
-          timeMs: r.time_ms != null ? Number(r.time_ms) : null,
+          timeMs: timeMs || null,
           at: ts,
         });
       }

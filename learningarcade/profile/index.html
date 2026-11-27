@@ -950,6 +950,8 @@
   <script src="../auth-system/auth.js"></script>
   <script src="../progress.js"></script>
   <script src="../la-stars.js"></script>
+  <script src="../../resources/american-english-file/assets/course-data.js"></script>
+  <script src="../skill-catalog.js"></script>
   <script src="../theme.js"></script>
   <script>
   (function () {
@@ -1010,8 +1012,13 @@
       { id: "listening-hub", title: "Listening Practice", category: "Listening", url: "../listening/" }
     ];
 
-    function prettyTitle(id) {
+    function prettyTitle(id, rawName) {
       if (TITLES[id]) return TITLES[id];
+      if (window.LASkillCatalog && LASkillCatalog.getTitle) {
+        var catTitle = LASkillCatalog.getTitle(id, rawName && rawName !== id ? rawName : "");
+        if (catTitle) return catTitle;
+      }
+      if (rawName && String(rawName).trim() && rawName !== id) return String(rawName).trim();
       return String(id || "Game")
         .replace(/^starter-\d+[a-z]-/i, "")
         .replace(/^starter-pe\d+-/i, "")
@@ -1022,18 +1029,38 @@
         .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
     }
 
+    function gameUrl(id) {
+      if (GAME_URLS[id]) return GAME_URLS[id];
+      if (window.LASkillCatalog && LASkillCatalog.getUrl) return LASkillCatalog.getUrl(id);
+      return null;
+    }
+
     function inferCategory(gameId, explicitCategory) {
+      if (window.LASkillCatalog && LASkillCatalog.inferCategory) {
+        return LASkillCatalog.inferCategory(gameId, explicitCategory);
+      }
       if (explicitCategory && String(explicitCategory).trim()) return String(explicitCategory).trim();
       var id = String(gameId || "").toLowerCase();
-      if (id.indexOf("vocab-") === 0 || id.indexOf("match-rush") !== -1 || id.indexOf("opposite-snap") !== -1 || id.indexOf("sound-match") !== -1) return "Vocabulary";
+      if (id.indexOf("vocab-") === 0 || id.indexOf("match-rush") !== -1 || id.indexOf("opposite-snap") !== -1) return "Vocabulary";
       if (id.indexOf("grammar-") === 0 || id === "be-verbs" || id === "nouns" || id === "there-is-there-are" || id === "simple-present" || id === "simple-past" || id === "present-perfect") return "Grammar";
       if (id.indexOf("writing-") === 0) return "Writing";
       if (id.indexOf("speaking-") === 0) return "Speaking";
       if (id.indexOf("reading-") === 0) return "Reading";
-      if (id.indexOf("listening-") === 0 || id.indexOf("tfl-") === 0) return "Listening";
-      if (id.indexOf("starter-") === 0 || id.indexOf("aef") === 0) return "Starter Course";
+      if (id.indexOf("listening-") === 0 || id.indexOf("tfl-") === 0 || id.indexOf("sound-match") !== -1) return "Listening";
       if (id.indexOf("topics-") === 0) return "Topics";
       return "General";
+    }
+
+    function formatTime(ms) {
+      var n = Math.round(Number(ms) || 0);
+      if (!(n > 0)) return "—";
+      if (window.LAStars && typeof LAStars.formatTime === "function") {
+        return LAStars.formatTime(n) || "—";
+      }
+      var totalSec = Math.max(1, Math.round(n / 1000));
+      var mins = Math.floor(totalSec / 60);
+      var secs = totalSec % 60;
+      return mins > 0 ? mins + ":" + (secs < 10 ? "0" : "") + secs : secs + "s";
     }
 
     function escapeHtml(s) {
@@ -1144,109 +1171,123 @@
     function readLocalStarsAndPlays() {
       var starsMap = {};
       var playsMap = {};
+      var timesMap = {};
       try {
         if (window.LAStars) {
           starsMap = LAStars.load() || {};
           playsMap = LAStars.loadPlays() || {};
+          if (typeof LAStars.loadBestTimes === "function") {
+            timesMap = LAStars.loadBestTimes() || {};
+          }
         }
       } catch (e) {}
-      return { starsMap: starsMap, playsMap: playsMap };
+      return { starsMap: starsMap, playsMap: playsMap, timesMap: timesMap };
+    }
+
+    function minPositiveTime(a, b) {
+      var na = Math.round(Number(a) || 0);
+      var nb = Math.round(Number(b) || 0);
+      if (na > 0 && nb > 0) return Math.min(na, nb);
+      return na > 0 ? na : (nb > 0 ? nb : 0);
+    }
+
+    function localBestTimeFor(gid, timesMap) {
+      if (!timesMap) return 0;
+      try {
+        if (window.LAStars && typeof LAStars.bestTimeFor === "function") {
+          return Number(LAStars.bestTimeFor(gid, timesMap)) || 0;
+        }
+      } catch (e) {}
+      return Math.round(Number(timesMap[gid]) || 0);
     }
 
     function buildMergedGames() {
       var local = readLocalStarsAndPlays();
       var byId = {};
 
+      function ensureEntry(gid, rawName, explicitCat) {
+        if (!byId[gid]) {
+          byId[gid] = {
+            id: gid,
+            title: prettyTitle(gid, rawName),
+            category: inferCategory(gid, explicitCat),
+            stars: 0,
+            plays: 0,
+            bestScore: 0,
+            maxScore: 0,
+            accuracy: 0,
+            bestTimeMs: localBestTimeFor(gid, local.timesMap),
+            completed: false,
+            lastAt: 0,
+            url: gameUrl(gid)
+          };
+        }
+        return byId[gid];
+      }
+
       (state.cloudProgress || []).forEach(function (r) {
         var gid = r.gameId || r.game_id;
         if (!gid) return;
-        byId[gid] = {
-          id: gid,
-          title: r.gameName || prettyTitle(gid),
-          category: inferCategory(gid, r.category),
-          stars: Math.max(0, Math.min(3, Number(r.stars) || 0)),
-          plays: Number(r.plays || r.attempts) || 0,
-          bestScore: Number(r.bestScore || r.best_score) || 0,
-          maxScore: Number(r.bestMaxScore || r.max_score) || 0,
-          accuracy: Number(r.bestAccuracy || r.best_accuracy) || 0,
-          completed: !!r.completed,
-          lastAt: Number(r.lastPlayedAt) || 0,
-          url: GAME_URLS[gid] || null
-        };
+        var g = ensureEntry(gid, r.gameName, r.category);
+        g.stars = Math.max(g.stars, Math.max(0, Math.min(3, Number(r.stars) || 0)));
+        g.plays = Math.max(g.plays, Number(r.plays || r.attempts) || 0);
+        var bs = Number(r.bestScore || r.best_score) || 0;
+        var ms = Number(r.bestMaxScore || r.max_score) || 0;
+        if (bs > g.bestScore) {
+          g.bestScore = bs;
+          if (ms) g.maxScore = ms;
+        } else if (ms > g.maxScore) {
+          g.maxScore = ms;
+        }
+        g.accuracy = Math.max(g.accuracy, Number(r.bestAccuracy || r.best_accuracy) || 0);
+        g.completed = Boolean(g.completed || r.completed);
+        g.lastAt = Math.max(g.lastAt, Number(r.lastPlayedAt) || 0);
       });
 
       Object.keys(local.starsMap).forEach(function (gid) {
         var st = Math.max(0, Math.min(3, Number(local.starsMap[gid]) || 0));
         var pl = Number(local.playsMap[gid] || 0);
-        if (!st && !pl) return;
-        if (!byId[gid]) {
-          byId[gid] = {
-            id: gid,
-            title: prettyTitle(gid),
-            category: inferCategory(gid),
-            stars: st,
-            plays: pl,
-            bestScore: 0,
-            maxScore: 0,
-            accuracy: 0,
-            completed: st > 0,
-            lastAt: 0,
-            url: GAME_URLS[gid] || null
-          };
-        } else {
-          byId[gid].stars = Math.max(byId[gid].stars, st);
-          byId[gid].plays = Math.max(byId[gid].plays, pl);
-        }
+        var bt = localBestTimeFor(gid, local.timesMap);
+        if (!st && !pl && !bt) return;
+        var g = ensureEntry(gid);
+        g.stars = Math.max(g.stars, st);
+        g.plays = Math.max(g.plays, pl);
+        g.bestTimeMs = minPositiveTime(g.bestTimeMs, bt);
+        if (st > 0) g.completed = true;
       });
 
       Object.keys(local.playsMap).forEach(function (gid) {
         var pl = Number(local.playsMap[gid] || 0);
         if (!pl) return;
-        if (!byId[gid]) {
-          byId[gid] = {
-            id: gid,
-            title: prettyTitle(gid),
-            category: inferCategory(gid),
-            stars: 0,
-            plays: pl,
-            bestScore: 0,
-            maxScore: 0,
-            accuracy: 0,
-            completed: false,
-            lastAt: 0,
-            url: GAME_URLS[gid] || null
-          };
-        } else {
-          byId[gid].plays = Math.max(byId[gid].plays, pl);
-        }
+        var g = ensureEntry(gid);
+        g.plays = Math.max(g.plays, pl);
+      });
+
+      Object.keys(local.timesMap).forEach(function (gid) {
+        var bt = Math.round(Number(local.timesMap[gid]) || 0);
+        if (!(bt > 0)) return;
+        var g = ensureEntry(gid);
+        g.bestTimeMs = minPositiveTime(g.bestTimeMs, bt);
       });
 
       (state.cloudScores || []).forEach(function (s) {
         var gid = s.gameId;
         if (!gid) return;
         var pct = s.maxScore > 0 ? Math.min(100, Math.round((s.score / s.maxScore) * 100)) : 0;
-        if (!byId[gid]) {
-          byId[gid] = {
-            id: gid,
-            title: s.gameName || prettyTitle(gid),
-            category: inferCategory(gid),
-            stars: pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0,
-            plays: 1,
-            bestScore: Number(s.score) || 0,
-            maxScore: Number(s.maxScore) || 0,
-            accuracy: pct,
-            completed: true,
-            lastAt: Number(s.at) || 0,
-            url: GAME_URLS[gid] || null
-          };
-        } else {
-          if (Number(s.score) > byId[gid].bestScore) {
-            byId[gid].bestScore = Number(s.score) || 0;
-            if (s.maxScore) byId[gid].maxScore = Number(s.maxScore) || 0;
-          }
-          if (pct > byId[gid].accuracy) byId[gid].accuracy = pct;
-          if ((Number(s.at) || 0) > byId[gid].lastAt) byId[gid].lastAt = Number(s.at) || 0;
+        var g = ensureEntry(gid, s.gameName);
+        if (g.plays === 0) g.plays = 1;
+        g.completed = true;
+        var inferredStars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
+        if (inferredStars > g.stars) g.stars = inferredStars;
+        if (Number(s.score) > g.bestScore) {
+          g.bestScore = Number(s.score) || 0;
+          if (s.maxScore) g.maxScore = Number(s.maxScore) || 0;
         }
+        if (pct > g.accuracy) g.accuracy = pct;
+        if (s.timeMs && Number(s.timeMs) > 0) {
+          g.bestTimeMs = minPositiveTime(g.bestTimeMs, Number(s.timeMs));
+        }
+        if ((Number(s.at) || 0) > g.lastAt) g.lastAt = Number(s.at) || 0;
       });
 
       state.mergedGames = Object.keys(byId)
@@ -1340,7 +1381,7 @@
       var skillMeta = document.getElementById("skillSummaryMeta");
       if (!games.length) {
         skillMeta.textContent = "No progress yet";
-        skillEl.innerHTML = '<div class="pf-empty">Play any Learning Arcade game to see your progress across Vocabulary, Grammar, Writing, and Listening.</div>';
+        skillEl.innerHTML = '<div class="pf-empty">Play any game to see your progress across Vocabulary, Grammar, Pronunciation, Listening, Reading, and Writing.</div>';
       } else {
         var cats = {};
         games.forEach(function (g) {
@@ -1355,7 +1396,7 @@
           }
         });
         var catNames = Object.keys(cats).sort(function (a, b) {
-          return cats[b].plays - cats[a].plays || cats[b].stars - cats[a].stars;
+          return cats[b].plays - cats[a].plays || cats[b].stars - cats[a].stars || a.localeCompare(b);
         });
         skillMeta.textContent = catNames.length + " skill area" + (catNames.length === 1 ? "" : "s");
         skillEl.innerHTML = catNames.map(function (c) {
@@ -1380,7 +1421,7 @@
       var launchItems = recentPlayable.length ? recentPlayable.map(function (g) {
         return {
           title: g.title,
-          sub: g.category + " · " + g.stars + " ★ · " + g.plays + " plays",
+          sub: g.category + " · " + g.stars + " ★ · " + g.plays + " plays" + (g.bestTimeMs > 0 ? " · ⏱ " + formatTime(g.bestTimeMs) : ""),
           url: g.url
         };
       }) : RECOMMENDED_GAMES.map(function (g) {
@@ -1398,21 +1439,27 @@
       // Recent activity
       var recentWrap = document.getElementById("recentActivityWrap");
       var recentItems = (state.cloudScores || []).slice(0, 6);
+      var bestTimeById = {};
+      games.forEach(function (g) {
+        if (g.bestTimeMs > 0) bestTimeById[g.id] = g.bestTimeMs;
+      });
       if (recentItems.length) {
         recentWrap.innerHTML =
           '<div class="pf-table-wrap"><table class="pf-table"><thead><tr>' +
-          '<th>Game</th><th class="num">Score</th><th class="num">Accuracy</th><th class="num">When</th>' +
+          '<th>Game</th><th class="num">Score</th><th class="num">Accuracy</th><th class="num">Best Time</th><th class="num">When</th>' +
           "</tr></thead><tbody>" +
           recentItems.map(function (r) {
-            var title = r.gameName || prettyTitle(r.gameId);
-            var url = GAME_URLS[r.gameId] || null;
+            var title = prettyTitle(r.gameId, r.gameName);
+            var url = gameUrl(r.gameId);
             var pct = r.maxScore > 0 ? Math.round((r.score / r.maxScore) * 100) + "%" : "—";
             var sc = r.maxScore > 0 ? (r.score + " / " + r.maxScore) : String(r.score);
+            var tMs = r.timeMs || bestTimeById[r.gameId] || 0;
             return (
               "<tr>" +
                 "<td>" + (url ? '<a class="game-link" href="' + escapeHtml(url) + '">' + escapeHtml(title) + "</a>" : "<strong>" + escapeHtml(title) + "</strong>") + "</td>" +
                 '<td class="num">' + escapeHtml(sc) + "</td>" +
                 '<td class="num">' + escapeHtml(pct) + "</td>" +
+                '<td class="num">' + escapeHtml(formatTime(tMs)) + "</td>" +
                 '<td class="num">' + escapeHtml(formatRelative(r.at)) + "</td>" +
               "</tr>"
             );
@@ -1421,7 +1468,7 @@
       } else if (games.length) {
         recentWrap.innerHTML =
           '<div class="pf-table-wrap"><table class="pf-table"><thead><tr>' +
-          '<th>Game</th><th class="num">Stars</th><th class="num">Plays</th><th class="num">Best Accuracy</th>' +
+          '<th>Game</th><th class="num">Stars</th><th class="num">Plays</th><th class="num">Best Time</th><th class="num">Best Accuracy</th>' +
           "</tr></thead><tbody>" +
           games.slice(0, 6).map(function (g) {
             return (
@@ -1429,6 +1476,7 @@
                 "<td>" + (g.url ? '<a class="game-link" href="' + escapeHtml(g.url) + '">' + escapeHtml(g.title) + "</a>" : "<strong>" + escapeHtml(g.title) + "</strong>") + "</td>" +
                 '<td class="num">' + g.stars + " ★</td>" +
                 '<td class="num">' + g.plays + "</td>" +
+                '<td class="num">' + escapeHtml(formatTime(g.bestTimeMs)) + "</td>" +
                 '<td class="num">' + (g.accuracy ? g.accuracy + "%" : "—") + "</td>" +
               "</tr>"
             );
@@ -1459,6 +1507,7 @@
       grid.innerHTML = list.map(function (g) {
         var metaParts = [g.category];
         if (g.plays > 0) metaParts.push(g.plays + " play" + (g.plays === 1 ? "" : "s"));
+        if (g.bestTimeMs > 0) metaParts.push("⏱ " + formatTime(g.bestTimeMs));
         if (g.accuracy > 0) metaParts.push(g.accuracy + "% best");
         var inner =
           '<span class="ach-tile-title">' + escapeHtml(g.title) + "</span>" +
@@ -1486,7 +1535,7 @@
       statusEl.textContent = games.length + " game" + (games.length === 1 ? "" : "s") + " · " + state.cloudScores.length + " score submission" + (state.cloudScores.length === 1 ? "" : "s");
       listEl.innerHTML =
         '<div class="pf-table-wrap"><table class="pf-table"><thead><tr>' +
-        '<th>Game</th><th>Category</th><th class="num">Stars</th><th class="num">Best Score</th><th class="num">Accuracy</th><th class="num">Plays</th><th class="num">Last Played</th>' +
+        '<th>Game</th><th>Skill</th><th class="num">Stars</th><th class="num">Best Score</th><th class="num">Best Time</th><th class="num">Accuracy</th><th class="num">Plays</th><th class="num">Last Played</th>' +
         "</tr></thead><tbody>" +
         games.map(function (g) {
           var scoreStr = g.maxScore > 0 ? g.bestScore + " / " + g.maxScore : (g.bestScore ? String(g.bestScore) : "—");
@@ -1496,6 +1545,7 @@
               "<td>" + escapeHtml(g.category) + "</td>" +
               '<td class="num">' + g.stars + " ★</td>" +
               '<td class="num">' + escapeHtml(scoreStr) + "</td>" +
+              '<td class="num">' + escapeHtml(formatTime(g.bestTimeMs)) + "</td>" +
               '<td class="num">' + (g.accuracy ? g.accuracy + "%" : "—") + "</td>" +
               '<td class="num">' + g.plays + "</td>" +
               '<td class="num">' + escapeHtml(formatDate(g.lastAt)) + "</td>" +
