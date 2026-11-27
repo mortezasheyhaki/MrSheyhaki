@@ -205,10 +205,16 @@ html[data-theme="dark"] .al-play.is-playing { background: #042C53; }
 /* Showtimes: five time options, pick three */
 .st-opts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
 @media (max-width: 599px) {
-  .st-opts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .st-opts { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .st-opts .al-opt:nth-child(n+4) { grid-column: span 1; }
 }
-.st-opts .al-opt { font-size: 20px; padding: 0 6px; }
+.st-opts .al-opt { font-size: 20px; padding: 8px 6px; min-height: 64px; height: auto; touch-action: manipulation; }
 .st-opts .al-opt.is-missed { border-style: dashed; border-color: var(--lc-ok); color: var(--lc-ok-ink); background: var(--lc-card); }
 .st-hint { margin: 0; text-align: center; font-size: 14px; font-weight: 700; color: var(--lc-muted); }
 .al-foot-text.is-missed { color: var(--lc-muted); }
+.al-play, .al-opt, .al-next { touch-action: manipulation; }
+@media (max-width: 420px) {
+  .al-listen { height: auto; min-height: 108px; padding: 14px 16px; gap: 14px; }
+  .al-play { width: 64px; height: 64px; }
+  .st-opts .al-opt { font-size: 17px; min-height: 56px; padding: 8px 4px; }
+}

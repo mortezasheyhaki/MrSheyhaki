@@ -829,3 +829,27 @@ html[data-theme="dark"] .lc-steps li {
 .lc-app .lc-hero-icon {
   border-radius: 24px !important;
 }
+
+/* Mobile & short-viewport safety: prevent clipping controls */
+.lc-back, .lc-btn, .lc-opt, .lc-play {
+  touch-action: manipulation;
+}
+@media (max-width: 899px), (max-height: 760px) {
+  html,
+  body.game-page,
+  .lc-app {
+    height: auto;
+    min-height: 100dvh;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .lc-intro {
+    overflow: visible;
+    padding-bottom: 24px;
+  }
+}
+@media (max-width: 420px) {
+  .lc-app { padding: 0 12px; }
+}
+

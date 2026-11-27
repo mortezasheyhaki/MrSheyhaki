@@ -90,7 +90,8 @@
 
     function playAudio() {
       var item = items[current];
-      if (!item || audioError) return;
+      if (!item) return;
+      audioError = false;
       sfx("click");
       if (playing) {
         stopAudio();

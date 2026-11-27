@@ -209,62 +209,67 @@ html[data-theme="dark"] .al-play.is-playing { background: #042C53; }
   .al-opts.is-tri > .al-opt:nth-child(3) { width: calc(50% - 5px); }
 }
 
-/* ---- Unit 1 polish: styled background, cards, answer buttons and footer ---- */
-html[data-theme="light"] body.game-page,
+/* ---- Unit 1 polish: theme-aware background, cards, answer buttons and footer ---- */
 body.game-page {
-  background: linear-gradient(160deg, #eef2ff 0%, #f5f0ff 60%, #fdf2f8 100%) !important;
+  background: var(--gp-bg, var(--lc-page));
   min-height: 100dvh;
 }
 .al-app { padding-bottom: 32px; }
 .al-app .lc-top { margin-bottom: 6px; }
 .al-app .lc-main { gap: 16px; padding-top: 6px; }
+.al-play, .al-opt, .al-next { touch-action: manipulation; }
 
 .al-listen {
-  background: #ffffff; border: 1px solid #e4e8f7; border-radius: 22px;
-  box-shadow: 0 10px 30px rgba(42, 27, 107, 0.08); padding: 18px 22px; gap: 18px;
+  background: var(--gp-card, #ffffff); border: 1px solid var(--gp-card-line, #e4e8f7); border-radius: 22px;
+  box-shadow: var(--gp-card-shadow, 0 10px 30px rgba(42, 27, 107, 0.08)); padding: 18px 22px; gap: 18px;
 }
 .al-play { box-shadow: 0 8px 20px rgba(24, 95, 165, 0.3); }
-.al-listen-title { font-weight: 900; color: #2a1b6b; }
-.al-listen-sub { color: #6b6890; }
+.al-listen-title { font-weight: 900; color: var(--gp-ink, #2a1b6b); }
+.al-listen-sub { color: var(--gp-sub, #6b6890); }
 
 .al-set {
-  background: #ffffff; border: 1px solid #e4e8f7; border-radius: 22px;
-  box-shadow: 0 10px 30px rgba(42, 27, 107, 0.08); padding: 22px 20px 24px;
+  background: var(--gp-card, #ffffff); border: 1px solid var(--gp-card-line, #e4e8f7); border-radius: 22px;
+  box-shadow: var(--gp-card-shadow, 0 10px 30px rgba(42, 27, 107, 0.08)); padding: 22px 20px 24px;
 }
-.al-set .tf-statement { text-align: center; font-size: 22px; font-weight: 900; color: #2a1b6b; margin: 0 0 6px; }
-.al-set .st-hint { text-align: center; font-size: 15px; color: #5a5480; margin: 0 0 16px; }
+.al-set .tf-statement { text-align: center; font-size: 22px; font-weight: 900; color: var(--gp-ink, #2a1b6b); margin: 0 0 6px; }
+.al-set .st-hint { text-align: center; font-size: 15px; color: var(--gp-muted, #5a5480); margin: 0 0 16px; }
 .al-opts { gap: 12px; }
 .al-opt {
-  min-height: 74px; border-radius: 18px; border: 2px solid #dfe4f5;
-  background: linear-gradient(180deg, #ffffff, #f6f7ff); color: #2a1b6b;
-  font-size: 19px; font-weight: 800; box-shadow: 0 4px 0 #dfe4f5;
+  height: auto; min-height: 74px; padding: 12px 14px; border-radius: 18px; border: 2px solid var(--gp-opt-line, #dfe4f5);
+  background: var(--gp-opt-bg, linear-gradient(180deg, #ffffff, #f6f7ff)); color: var(--gp-ink, #2a1b6b);
+  font-size: 18px; font-weight: 800; line-height: 1.3; box-shadow: 0 4px 0 var(--gp-opt-ledge, #dfe4f5);
   transition: transform .12s ease, box-shadow .12s ease, border-color .15s, background .15s;
 }
-.al-opt:hover:not(:disabled) { transform: translateY(-2px); border-color: #9aa8e6; box-shadow: 0 6px 0 #c9d1f0; }
-.al-opt:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 #c9d1f0; }
-.al-opt.is-picked { border-color: #4c6ef5; background: linear-gradient(180deg, #eef2ff, #e0e7ff); box-shadow: 0 4px 0 #4c6ef5; color: #1e3a8a; }
-.al-opt.is-correct { border-color: #2f9e62; background: linear-gradient(180deg, #e8f8ef, #d4f1e2); color: #14532d; box-shadow: 0 4px 0 #2f9e62; }
-.al-opt.is-wrong { border-color: #d64545; background: linear-gradient(180deg, #fdecec, #fbd9d9); color: #7f1d1d; box-shadow: 0 4px 0 #d64545; }
+@media (hover: hover) {
+  .al-opt:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--gp-opt-hover-line, #9aa8e6); box-shadow: 0 6px 0 var(--gp-opt-hover-ledge, #c9d1f0); }
+}
+.al-opt:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--gp-opt-hover-ledge, #c9d1f0); }
+.al-opt.is-picked { border-color: var(--gp-pick-line, #4c6ef5); background: var(--gp-pick-bg, linear-gradient(180deg, #eef2ff, #e0e7ff)); box-shadow: 0 4px 0 var(--gp-pick-line, #4c6ef5); color: var(--gp-pick-ink, #1e3a8a); }
+.al-opt.is-correct { border-color: var(--gp-ok-line, #2f9e62); background: var(--gp-ok-bg, linear-gradient(180deg, #e8f8ef, #d4f1e2)); color: var(--gp-ok-ink, #14532d); box-shadow: 0 4px 0 var(--gp-ok-line, #2f9e62); }
+.al-opt.is-wrong { border-color: var(--gp-bad-line, #d64545); background: var(--gp-bad-bg, linear-gradient(180deg, #fdecec, #fbd9d9)); color: var(--gp-bad-ink, #7f1d1d); box-shadow: 0 4px 0 var(--gp-bad-line, #d64545); }
 .al-opt:disabled { cursor: default; }
 .al-tick { margin-left: 8px; }
 
 .al-foot {
-  background: #ffffff; border: 1px solid #e4e8f7; border-radius: 18px;
-  box-shadow: 0 8px 22px rgba(42, 27, 107, 0.07);
+  background: var(--gp-card, #ffffff); border: 1px solid var(--gp-card-line, #e4e8f7); border-radius: 18px;
+  box-shadow: var(--gp-card-shadow, 0 8px 22px rgba(42, 27, 107, 0.07));
   padding: 14px 18px; margin-top: 0; justify-content: space-between; gap: 14px;
 }
-.al-foot-text { font-size: 15px; font-weight: 700; color: #5a5480; }
-.al-foot-text.is-ok { color: #14532d; }
-.al-foot-text.is-bad { color: #7f1d1d; }
+.al-foot-text { font-size: 15px; font-weight: 700; color: var(--gp-muted, #5a5480); }
+.al-foot-text.is-ok { color: var(--gp-ok-ink, #14532d); }
+.al-foot-text.is-bad { color: var(--gp-bad-ink, #7f1d1d); }
 .al-next {
   border-radius: 14px; padding: 12px 22px; font-weight: 900; font-size: 16px;
   background: linear-gradient(180deg, #ffe36a, #ffb020); color: #3a1d00; border: none;
   box-shadow: 0 4px 0 #b06e00; cursor: pointer; white-space: nowrap;
 }
-.al-next:active { transform: translateY(3px); box-shadow: 0 1px 0 #b06e00; }
+.al-next:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 #b06e00; }
 @media (max-width: 480px) {
   .al-set { padding: 18px 14px 20px; }
-  .al-opt { font-size: 17px; min-height: 66px; }
-  .al-set .tf-statement { font-size: 19px; }
+  .al-opt { font-size: 16px; min-height: 60px; padding: 10px 12px; }
+  .al-set .tf-statement { font-size: 18px; }
   .al-foot { flex-direction: column; text-align: center; }
+  .al-next { width: 100%; }
+  .al-opts.is-tri { grid-template-columns: 1fr; }
+  .al-opts.is-tri > .al-opt:nth-child(3) { grid-column: auto; width: 100%; }
 }

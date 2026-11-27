@@ -186,17 +186,18 @@ html[data-theme="dark"] .lc-top, html[data-theme="dark"] .hk-top, html[data-them
   cursor: pointer;
   transition: transform .2s var(--tfl-ease), box-shadow .2s, background .2s, color .2s, border-color .2s;
 }
-.lc-play@:hover, .hk-play@:hover, .ln-play@:hover, .lp-play@:hover, .sp-play@:hover, .cm-play@:hover {
+.lc-play:hover, .hk-play:hover, .ln-play:hover, .lp-play:hover, .sp-play:hover, .cm-play:hover {
   transform: translateY(-2px);
   box-shadow: 0 16px 34px -12px rgba(59, 91, 219, .55);
 }
-.lc-play@:active, .hk-play@:active, .ln-play@:active, .lp-play@:active, .sp-play@:active, .cm-play@:active { transform: scale(.98); }
+.lc-play:active, .hk-play:active, .ln-play:active, .lp-play:active, .sp-play:active, .cm-play:active { transform: scale(.98); }
+.lc-play, .hk-play, .ln-play, .lp-play, .sp-play, .cm-play { touch-action: manipulation; }
 .lc-play.is-playing, .hk-play.is-playing, .ln-play.is-playing, .lp-play.is-playing, .sp-play.is-playing, .cm-play.is-playing {
   background: linear-gradient(135deg, var(--tfl-blue), var(--tfl-violet));
   color: #fff;
   border-color: transparent;
 }
-.lc-play.is-playing@::after, .hk-play.is-playing@::after, .ln-play.is-playing@::after, .lp-play.is-playing@::after, .sp-play.is-playing@::after, .cm-play.is-playing@::after {
+.lc-play.is-playing::after, .hk-play.is-playing::after, .ln-play.is-playing::after, .lp-play.is-playing::after, .sp-play.is-playing::after, .cm-play.is-playing::after {
   content: "";
   position: absolute;
   inset: -6px;
@@ -963,10 +964,14 @@ a.tfl-game:hover .tfl-game-cta { transform: translateX(3px); }
 }
 
 /* ---- responsive ---- */
+.tfl-unit, .tfl-game, .tfl-back, .lc-opt, .hk-opt, .ln-opt, .lp-opt, .sp-opt, .cm-opt {
+  touch-action: manipulation;
+}
 @media (max-width: 520px) {
-  .tfl-levels, .tfl-games, .tfl-units { grid-template-columns: 1fr; }
-  .tfl-game-body { padding: 18px 18px 14px; }
-  .tfl-game-foot { padding: 11px 18px; }
+  .tfl-levels, .tfl-games, .tfl-units { grid-template-columns: 1fr; width: min(calc(100% - 28px), 1100px); }
+  .tfl-game-body { padding: 18px 16px 14px; gap: 12px; }
+  .tfl-game-icon { width: 52px; height: 52px; font-size: 24px; border-radius: 15px; }
+  .tfl-game-foot { padding: 11px 16px; gap: 10px; }
   .tfl-game-text { padding-right: 16px; }
 }
 

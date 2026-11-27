@@ -7,7 +7,7 @@
 (function () {
   "use strict";
 
-  var GAME_ID = "tfl-developing-u5-dictation-dates";
+  var GAME_ID = "tfl-basic-u5-dictation-dates";
   var UNIT = "Unit 5 · Basic";
   var BACK = "../../";
   var AUDIO = "https://cdn.imgurl.ir/uploads/f118424_29_Unit_5_www_mp3cut_net.mp3";

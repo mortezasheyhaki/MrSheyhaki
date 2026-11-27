@@ -723,3 +723,38 @@ html[data-theme="dark"] .lc-steps li {
   box-shadow: 0 12px 32px rgba(99, 102, 241, 0.18);
   background: linear-gradient(145deg, rgba(99, 102, 241, 0.18), rgba(56, 189, 248, 0.12)) !important;
 }
+
+/* Mobile & short-viewport safety: prevent clipping cards/controls */
+button, [role="button"], .lc-back, .lc-btn, .lc-opt, .lc-play, .mt-item {
+  touch-action: manipulation;
+}
+@media (max-width: 899px), (max-height: 760px) {
+  html,
+  body.game-page,
+  .lc-app {
+    height: auto;
+    min-height: 100dvh;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .lc-intro {
+    overflow: visible;
+    padding-bottom: 24px;
+  }
+}
+@media (max-width: 480px) {
+  .al-listen { height: auto; min-height: 108px; padding: 14px 16px; gap: 14px; }
+  .al-play { width: 64px; height: 64px; }
+  .al-listen-title { font-size: 17px; }
+  .al-listen-sub { font-size: 13.5px; }
+}
+@media (max-width: 420px) {
+  .lc-app { padding: 0 12px; }
+  .lc-app .lc-top { gap: 8px; padding-top: calc(10px + env(safe-area-inset-top, 0px)); }
+  .lc-app .lc-back { height: 36px; padding: 0 10px 0 8px; font-size: 13px; }
+  .lc-app .lc-top-center strong { font-size: 14px; }
+  .lc-app .lc-counter { font-size: 12px; min-width: 36px; }
+  .al-app .al-foot { margin-left: -12px; margin-right: -12px; padding-left: 12px; padding-right: 12px; }
+}
+

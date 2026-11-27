@@ -6,7 +6,7 @@
 (function () {
   "use strict";
 
-  var GAME_ID = "tfl-developing-u5-what-they-did";
+  var GAME_ID = "tfl-basic-u5-what-they-did";
   var UNIT = "Unit 5 · Basic";
   var BACK = "../../";
   var LETTERS = ["a", "b", "c"];

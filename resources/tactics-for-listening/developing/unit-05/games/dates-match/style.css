@@ -263,7 +263,9 @@
 
 .lc-seg { height: 5px; }
 
-/* very short phones */
+.mt-item { touch-action: manipulation; }
+
+/* very short or narrow phones: allow gentle scrolling instead of clipping */
 @media (max-height: 640px) {
   .mt-help { display: none; }
   .mt-col { gap: 4px; }
@@ -274,4 +276,16 @@
   .mt-left .mt-text { font-size: 13.5px; }
   .mt-status { height: 36px; margin-top: 6px; font-size: 12px; }
   .mt-app .lc-top { padding-top: calc(4px + env(safe-area-inset-top, 0px)); }
+}
+@media (max-height: 560px), (max-width: 380px) {
+  html, body.game-page, .mt-app {
+    height: auto;
+    min-height: 100dvh;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .mt-app .lc-main, .mt-board { overflow: visible; }
+  .mt-col { height: auto; grid-template-rows: auto; }
+  .mt-item { min-height: 52px; }
 }

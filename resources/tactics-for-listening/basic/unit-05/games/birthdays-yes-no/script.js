@@ -6,7 +6,7 @@
 (function () {
   "use strict";
 
-  var GAME_ID = "tfl-developing-u5-birthdays-yes-no";
+  var GAME_ID = "tfl-basic-u5-birthdays-yes-no";
   var UNIT = "Unit 5 · Basic";
   var BACK = "../../";
 
