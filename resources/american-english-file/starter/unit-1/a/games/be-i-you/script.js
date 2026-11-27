@@ -585,7 +585,7 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     const item = items[index];
     const partLabel =
       part === "positive"
-        ? "Positive · I am / You are"
+        ? "Positive · I'm / You're"
         : "Negative · I'm not / You're not";
     blankIndex = Math.min(blankIndex, item.blanks.length - 1);
 

@@ -1,4 +1,4 @@
-/* ===== Type am / are – American English File Starter Unit 1A ===== */
+/* ===== Type am / are – Improved design with Positive / Negative / Question badges ===== */
 
 /* Hide site chrome so the game fills the screen */
 .arcade-header-bar,
@@ -14,14 +14,13 @@ html, body {
   height: 100%;
   height: 100dvh;
   margin: 0;
-  padding: 0 !important;
+  overflow: hidden;
 }
-body.game-page { background: #f4f2fb; }
 
 .typebe-game {
   --ink: #1e1b4b;
-  --muted: #6b6890;
-  --line: #e4e0f3;
+  --muted: #6b7280;
+  --line: #e5e7eb;
   --card: #ffffff;
   --brand: #6d5ff0;
   --brand-2: #8b7bf7;
@@ -29,13 +28,19 @@ body.game-page { background: #f4f2fb; }
   --ok-bg: #dcfce7;
   --bad: #dc2626;
   --bad-bg: #fee2e2;
+  --pos: #059669;
+  --pos-bg: #d1fae5;
+  --neg: #dc2626;
+  --neg-bg: #fee2e2;
+  --q: #2563eb;
+  --q-bg: #dbeafe;
 
   box-sizing: border-box;
   min-height: 100%;
-  height: 100%;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding: env(safe-area-inset-top, 0px) 16px env(safe-area-inset-bottom, 0px);
+  padding: 0 16px 20px;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   color: var(--ink);
   background: linear-gradient(180deg, #efeafd 0%, #f4f2fb 45%, #f7f6fb 100%);
@@ -52,6 +57,12 @@ html[data-theme="dark"] .typebe-game {
   --brand-2: #a78bfa;
   --ok-bg: rgba(22, 163, 74, .18);
   --bad-bg: rgba(220, 38, 38, .18);
+  --pos: #34d399;
+  --pos-bg: rgba(5, 150, 105, .2);
+  --neg: #f87171;
+  --neg-bg: rgba(220, 38, 38, .2);
+  --q: #60a5fa;
+  --q-bg: rgba(37, 99, 235, .2);
   background: linear-gradient(180deg, #151826 0%, #0f1117 100%);
 }
 
@@ -78,6 +89,11 @@ html[data-theme="dark"] .typebe-game {
   text-decoration: none;
   font-size: 1.1rem;
   flex: 0 0 auto;
+  transition: border-color .15s, box-shadow .15s;
+}
+.typebe-back:hover {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(109, 95, 240, .15);
 }
 .typebe-title {
   flex: 1;
@@ -141,7 +157,7 @@ html[data-theme="dark"] .typebe-game {
   border: 1px solid var(--line);
   border-radius: 24px;
   box-shadow: 0 18px 40px rgba(60, 50, 140, .10);
-  padding: 28px 22px 24px;
+  padding: 26px 22px 22px;
   text-align: center;
   animation: typebe-in .4s cubic-bezier(.22, 1, .36, 1) both;
 }
@@ -150,192 +166,109 @@ html[data-theme="dark"] .typebe-game {
   to   { opacity: 1; transform: none; }
 }
 
-.typebe-pron {
-  display: inline-block;
-  font-size: .72rem;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--brand);
-  background: rgba(109, 95, 240, .10);
-  border-radius: 999px;
-  padding: 5px 12px;
-  margin-bottom: 16px;
-}
-
-.typebe-sentence {
-  font-size: clamp(1.45rem, 4.6vw, 2rem);
-  font-weight: 700;
-  line-height: 1.35;
-  margin: 0 0 8px;
-  min-height: 2.7em;
-  display: flex;
+/* ----- Type badge (Positive / Negative / Question) ----- */
+.typebe-badge {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: .25em;
+  gap: 8px;
+  margin: 0 auto 18px;
+  padding: 7px 14px 7px 10px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+  border: 1.5px solid transparent;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
 }
-.typebe-blank {
+.typebe-badge-symbol {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 3.2em;
-  height: 1.7em;
-  padding: 0 .4em;
-  border-radius: 10px;
-  border: 2px dashed #b9b2e8;
-  color: var(--brand);
-  font-weight: 800;
-  transition: all .25s ease;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.95rem;
+  font-weight: 900;
+  background: rgba(255,255,255,.55);
 }
-.typebe-blank.is-filled {
-  border-style: solid;
-  border-color: var(--ok);
-  background: var(--ok-bg);
-  color: var(--ok);
-  animation: typebe-pop .4s cubic-bezier(.22, 1, .36, 1);
-}
-.typebe-blank.is-empty-flash {
-  animation: typebe-shake .4s ease;
-}
-@keyframes typebe-pop {
-  0% { transform: scale(.7); }
-  60% { transform: scale(1.08); }
-  100% { transform: scale(1); }
-}
-@keyframes typebe-shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(6px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
+.typebe-badge-label {
+  font-size: 0.78rem;
 }
 
-/* Feedback line */
-.typebe-feedback {
-  min-height: 1.5em;
-  margin: 10px 0 0;
-  font-size: .95rem;
-  font-weight: 700;
-  color: var(--muted);
+/* Positive – green */
+.typebe-badge--positive {
+  background: var(--pos-bg);
+  color: var(--pos);
+  border-color: color-mix(in srgb, var(--pos) 35%, transparent);
 }
-.typebe-feedback.is-ok { color: var(--ok); }
-.typebe-feedback.is-bad { color: var(--bad); }
-
-/* ----- Chips ----- */
-.typebe-chips {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-top: 22px;
-}
-.typebe-chip {
-  appearance: none;
-  -webkit-appearance: none;
-  min-height: 64px;
-  border-radius: 18px;
-  border: 2px solid var(--line);
-  background: var(--card);
-  color: var(--ink);
-  font: inherit;
-  font-size: 1.35rem;
-  font-weight: 800;
-  letter-spacing: .01em;
-  cursor: pointer;
-  box-shadow: 0 6px 16px rgba(60, 50, 140, .08);
-  transition: transform .15s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
-.typebe-chip:hover:not(:disabled) {
-  border-color: var(--brand);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(109, 95, 240, .18);
-}
-.typebe-chip:active:not(:disabled) { transform: scale(.97); }
-.typebe-chip:focus-visible {
-  outline: 3px solid rgba(109, 95, 240, .45);
-  outline-offset: 3px;
-}
-.typebe-chip:disabled { cursor: default; }
-.typebe-chip.is-right {
-  border-color: var(--ok);
-  background: var(--ok-bg);
-  color: var(--ok);
-}
-.typebe-chip.is-wrong {
-  border-color: var(--bad);
-  background: var(--bad-bg);
-  color: var(--bad);
-  animation: typebe-shake .4s ease;
-}
-.typebe-chip.is-dim { opacity: .45; }
-
-/* ----- Done screen (fallback when la-finish is missing) ----- */
-.typebe-done {
-  text-align: center;
-  padding: 32px 20px;
-}
-.typebe-done h2 { margin: 0 0 8px; font-size: 1.6rem; }
-.typebe-done p { margin: 0 0 20px; color: var(--muted); }
-.typebe-done button {
-  appearance: none;
-  border: none;
-  border-radius: 14px;
-  padding: 14px 22px;
-  font: inherit;
-  font-weight: 800;
+.typebe-badge--positive .typebe-badge-symbol {
+  background: var(--pos);
   color: #fff;
-  background: var(--brand);
-  cursor: pointer;
 }
 
-/* ----- Wider screens ----- */
-@media (min-width: 720px) {
-  .typebe-card { padding: 40px 36px 34px; }
-  .typebe-chip { min-height: 74px; font-size: 1.5rem; }
-  .typebe-chips { margin-top: 28px; }
+/* Negative – red */
+.typebe-badge--negative {
+  background: var(--neg-bg);
+  color: var(--neg);
+  border-color: color-mix(in srgb, var(--neg) 35%, transparent);
+}
+.typebe-badge--negative .typebe-badge-symbol {
+  background: var(--neg);
+  color: #fff;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .typebe-card, .typebe-blank, .typebe-chip, .typebe-progress-fill { animation: none !important; transition: none !important; }
+/* Question – blue */
+.typebe-badge--question {
+  background: var(--q-bg);
+  color: var(--q);
+  border-color: color-mix(in srgb, var(--q) 35%, transparent);
+}
+.typebe-badge--question .typebe-badge-symbol {
+  background: var(--q);
+  color: #fff;
 }
 
-/* ----- Typing input ----- */
+/* ----- Sentence + input ----- */
 .typebe-sentence {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 6px 4px;
   font-size: 1.35rem;
   font-weight: 700;
   line-height: 1.45;
-  text-align: center;
+  color: var(--ink);
+  margin-bottom: 4px;
 }
+
 .typebe-input {
+  appearance: none;
+  -webkit-appearance: none;
   display: inline-block;
-  width: 4.6em;
-  min-width: 3.2em;
-  max-width: 6em;
-  padding: 6px 10px;
+  width: 5.2em;
+  min-width: 4.2em;
+  max-width: 7em;
+  padding: 8px 12px;
   margin: 0 2px;
   font: inherit;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 800;
   text-align: center;
   color: var(--ink);
-  background: #f8f6ff;
+  background: #f8f7ff;
   border: 2px solid var(--brand);
-  border-radius: 12px;
+  border-radius: 14px;
   outline: none;
-  transition: border-color .15s, background .15s, box-shadow .15s;
+  transition: border-color .15s, box-shadow .15s, background .15s;
   box-shadow: 0 0 0 3px rgba(109, 95, 240, 0.12);
 }
 .typebe-input.is-long {
-  width: 7.5em;
-  max-width: 9em;
-  min-width: 5.5em;
+  width: 8.5em;
+  max-width: 9.5em;
+  min-width: 6em;
 }
 .typebe-input:focus {
   border-color: var(--brand-2);
@@ -361,22 +294,35 @@ html[data-theme="dark"] .typebe-game {
 }
 
 .typebe-hint {
-  margin: 10px 0 0;
-  font-size: 0.82rem;
+  margin: 14px 0 0;
+  font-size: 0.84rem;
   color: var(--muted);
   font-weight: 600;
   text-align: center;
+  line-height: 1.35;
 }
 
+.typebe-feedback {
+  min-height: 1.4em;
+  margin: 10px 0 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-align: center;
+}
+.typebe-feedback.is-ok { color: var(--ok); }
+.typebe-feedback.is-bad { color: var(--bad); }
+
+/* ----- Actions ----- */
 .typebe-actions {
   display: flex;
   justify-content: center;
-  margin-top: 18px;
+  margin-top: 20px;
 }
 .typebe-check {
-  min-width: 140px;
-  padding: 12px 22px;
-  font-size: 1rem;
+  min-width: 150px;
+  padding: 13px 24px;
+  font-size: 1.02rem;
   font-weight: 700;
   color: #fff;
   background: linear-gradient(135deg, var(--brand), var(--brand-2));
@@ -452,4 +398,19 @@ html[data-theme="dark"] .typebe-input.is-wrong {
   color: var(--ink);
   background: var(--card);
   border: 1px solid var(--line);
+}
+
+/* ----- Wider screens ----- */
+@media (min-width: 720px) {
+  .typebe-card { padding: 34px 32px 28px; }
+  .typebe-sentence { font-size: 1.5rem; }
+  .typebe-input { font-size: 1.3rem; padding: 10px 14px; }
+  .typebe-badge { margin-bottom: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typebe-card, .typebe-input, .typebe-progress-fill {
+    animation: none !important;
+    transition: none !important;
+  }
 }

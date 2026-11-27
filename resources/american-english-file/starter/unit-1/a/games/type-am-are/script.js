@@ -1,25 +1,107 @@
-/* Type am / are – American English File Starter Unit 1A */
+/* Type am / are – American English File Starter Unit 1A
+   Improved: clear Positive / Negative / Question badges
+   so learners know which form to type. */
 (function () {
   "use strict";
 
   var GAME_ID = "starter-1a-type-am-are";
   var NEXT_DELAY = 1100;
 
-  // before + [answer] + after. Answer includes correct capitalisation.
-  // For negatives players must type the full form (am not / are not / aren't).
-  // When the verb starts the sentence, answer begins with a capital letter.
+  /**
+   * before + [answer] + after
+   * type: "positive" | "negative" | "question"
+   * answers[] = accepted spellings (exact case required)
+   */
   var ITEMS = [
-    { before: "I",   after: "from Mexico.",      answer: "am",      answers: ["am"] },
-    { before: "I",   after: "a doctor.",         answer: "am not",  answers: ["am not", "I'm not"] },
-    { before: "",    after: "you a student?",    answer: "Are",     answers: ["Are"] },
-    { before: "You", after: "from Spain.",       answer: "are",     answers: ["are"] },
-    { before: "I",   after: "in Class 1.",       answer: "am",      answers: ["am"] },
-    { before: "You", after: "my teacher.",       answer: "are not", answers: ["are not", "aren't"] },
-    { before: "I",   after: "20 years old.",     answer: "am",      answers: ["am"] },
-    { before: "",    after: "you in Room 3?",    answer: "Are",     answers: ["Are"] },
-    { before: "I",   after: "from Brazil.",      answer: "am not",  answers: ["am not", "I'm not"] },
-    { before: "",    after: "you 18 years old?", answer: "Are",     answers: ["Are"] }
+    {
+      type: "positive",
+      before: "I",
+      after: "from Mexico.",
+      answer: "am",
+      answers: ["am"]
+    },
+    {
+      type: "negative",
+      before: "I",
+      after: "a doctor.",
+      answer: "am not",
+      answers: ["am not", "I'm not"]
+    },
+    {
+      type: "question",
+      before: "",
+      after: "you a student?",
+      answer: "Are",
+      answers: ["Are"]
+    },
+    {
+      type: "positive",
+      before: "You",
+      after: "from Spain.",
+      answer: "are",
+      answers: ["are"]
+    },
+    {
+      type: "positive",
+      before: "I",
+      after: "in Class 1.",
+      answer: "am",
+      answers: ["am"]
+    },
+    {
+      type: "negative",
+      before: "You",
+      after: "my teacher.",
+      answer: "are not",
+      answers: ["are not", "aren't"]
+    },
+    {
+      type: "positive",
+      before: "I",
+      after: "20 years old.",
+      answer: "am",
+      answers: ["am"]
+    },
+    {
+      type: "question",
+      before: "",
+      after: "you in Room 3?",
+      answer: "Are",
+      answers: ["Are"]
+    },
+    {
+      type: "negative",
+      before: "I",
+      after: "from Brazil.",
+      answer: "am not",
+      answers: ["am not", "I'm not"]
+    },
+    {
+      type: "question",
+      before: "",
+      after: "you 18 years old?",
+      answer: "Are",
+      answers: ["Are"]
+    }
   ];
+
+  var TYPE_META = {
+    positive: {
+      label: "Positive",
+      symbol: "+",
+      hint: "Affirmative sentence · use am / are"
+    },
+    negative: {
+      label: "Negative",
+      symbol: "−",
+      hint: "Negative sentence · use am not / are not / aren't"
+    },
+    question: {
+      label: "Question",
+      symbol: "?",
+      hint: "Question · start with a capital letter (Are…)"
+    }
+  };
 
   var app = document.getElementById("game-app");
   if (!app) return;
@@ -73,7 +155,9 @@
     var a = arr.slice();
     for (var i = a.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
-      var t = a[i]; a[i] = a[j]; a[j] = t;
+      var t = a[i];
+      a[i] = a[j];
+      a[j] = t;
     }
     return a;
   }
@@ -95,7 +179,11 @@
 
   /* ---------- flow ---------- */
   function start() {
-    order = shuffle(ITEMS.map(function (_, i) { return i; }));
+    order = shuffle(
+      ITEMS.map(function (_, i) {
+        return i;
+      })
+    );
     pos = 0;
     score = 0;
     wrongOnCurrent = false;
@@ -111,27 +199,38 @@
 
   function render() {
     var item = current();
+    var meta = TYPE_META[item.type] || TYPE_META.positive;
     app.innerHTML = "";
 
     var wrap = el("div", "typebe-game-inner");
-    wrap.style.cssText = "display:flex;flex-direction:column;flex:1;width:100%";
+    wrap.style.cssText =
+      "display:flex;flex-direction:column;flex:1;width:100%";
 
-    // Top bar
+    // ----- Top bar -----
     var top = el("div", "typebe-top");
     var back = el("a", "typebe-back", "←");
     back.href = "../";
     back.setAttribute("aria-label", "Back to games");
+
     var titleBox = el("div", "typebe-title");
     titleBox.appendChild(el("h1", null, "Type am / are"));
-    titleBox.appendChild(el("p", null, "Type the missing verb · am not / aren't too"));
-    var count = el("div", "typebe-count", (pos + 1) + " / " + ITEMS.length);
+    titleBox.appendChild(
+      el("p", null, "Positive · Negative · Questions")
+    );
+
+    var count = el(
+      "div",
+      "typebe-count",
+      pos + 1 + " / " + ITEMS.length
+    );
     count.setAttribute("aria-live", "polite");
+
     top.appendChild(back);
     top.appendChild(titleBox);
     top.appendChild(count);
     wrap.appendChild(top);
 
-    // Progress
+    // ----- Progress -----
     var bar = el("div", "typebe-progress");
     bar.setAttribute("role", "progressbar");
     bar.setAttribute("aria-valuemin", "0");
@@ -141,56 +240,76 @@
     bar.appendChild(fill);
     wrap.appendChild(bar);
     requestAnimationFrame(function () {
-      fill.style.width = Math.round((pos / ITEMS.length) * 100) + "%";
+      fill.style.width =
+        Math.round((pos / ITEMS.length) * 100) + "%";
     });
 
-    // Stage
+    // ----- Stage -----
     var stage = el("div", "typebe-stage");
     var card = el("div", "typebe-card");
 
+    // Type badge (Positive / Negative / Question)
+    var badge = el("div", "typebe-badge typebe-badge--" + item.type);
+    var badgeSymbol = el("span", "typebe-badge-symbol", meta.symbol);
+    var badgeLabel = el("span", "typebe-badge-label", meta.label);
+    badge.appendChild(badgeSymbol);
+    badge.appendChild(badgeLabel);
+    badge.setAttribute("aria-label", "Sentence type: " + meta.label);
+    card.appendChild(badge);
+
+    // Sentence with input
     var sentence = el("div", "typebe-sentence");
-    var labelParts = [];
     if (item.before) {
       sentence.appendChild(document.createTextNode(item.before + " "));
-      labelParts.push(item.before);
     }
+
     var input = document.createElement("input");
     input.type = "text";
     input.className = "typebe-input";
     input.id = "typebe-input";
     input.setAttribute("autocomplete", "off");
-    input.setAttribute("autocapitalize", "off"); // we force exact case ourselves
+    input.setAttribute("autocapitalize", "off");
     input.setAttribute("spellcheck", "false");
-    // Wider box for multi-word negatives (am not / are not / aren't)
-    var isLong = item.answer.indexOf(" ") !== -1 || item.answer.length > 4;
+    input.setAttribute("aria-label", "Type the missing verb");
+
+    var isLong =
+      item.answer.indexOf(" ") !== -1 || item.answer.length > 4;
     input.setAttribute("maxlength", isLong ? "12" : "8");
     if (isLong) input.classList.add("is-long");
-    input.setAttribute("aria-label", "Type the missing verb");
-    var needsCap = item.answer[0] === item.answer[0].toUpperCase();
-    input.placeholder = needsCap ? "A…" : (isLong ? "am not…" : "a…");
+
+    var needsCap =
+      item.answer[0] === item.answer[0].toUpperCase();
+    input.placeholder = needsCap
+      ? "A…"
+      : isLong
+      ? "am not…"
+      : "a…";
+
     sentence.appendChild(input);
+
     if (item.after) {
       sentence.appendChild(document.createTextNode(" " + item.after));
-      labelParts.push(item.after);
     }
-    sentence.setAttribute("aria-label", (item.before ? item.before + " " : "") + "blank " + item.after);
+    sentence.setAttribute(
+      "aria-label",
+      (item.before ? item.before + " " : "") + "blank " + item.after
+    );
     card.appendChild(sentence);
 
-    var hint = el("p", "typebe-hint");
-    if (needsCap) {
-      hint.textContent = "Start with a capital letter";
-    } else if (isLong) {
-      hint.textContent = "Type the full negative (am not / are not / aren't)";
-    } else {
-      hint.textContent = "Type the verb (lowercase)";
-    }
+    // Contextual hint based on type
+    var hint = el("p", "typebe-hint", meta.hint);
     hint.id = "typebe-hint";
     card.appendChild(hint);
 
-    var feedback = el("p", "typebe-feedback", "Type the missing word and press Enter");
+    // Feedback line
+    var feedback = el(
+      "p",
+      "typebe-feedback",
+      "Type the missing word and press Enter"
+    );
     feedback.id = "typebe-feedback";
-    feedback.setAttribute("aria-live", "polite");
     card.appendChild(feedback);
+
     stage.appendChild(card);
 
     // Check button
@@ -198,14 +317,14 @@
     var checkBtn = el("button", "typebe-check", "Check ✓");
     checkBtn.type = "button";
     checkBtn.id = "typebe-check";
-    checkBtn.addEventListener("click", function () { checkAnswer(); });
+    checkBtn.addEventListener("click", checkAnswer);
     actions.appendChild(checkBtn);
     stage.appendChild(actions);
 
     wrap.appendChild(stage);
     app.appendChild(wrap);
 
-    // Focus and key handlers
+    // Focus + keyboard
     input.focus();
     input.addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
@@ -213,7 +332,6 @@
         checkAnswer();
       }
     });
-    // Soft force: if answer needs capital and user types first letter lowercase, keep it but show feedback later
     input.addEventListener("input", function () {
       if (locked) return;
       feedback.textContent = "Type the missing word and press Enter";
@@ -250,17 +368,23 @@
       }
     }
 
-    var needsCapital = item.answer[0] === item.answer[0].toUpperCase();
+    var needsCapital =
+      item.answer[0] === item.answer[0].toUpperCase();
 
     if (ok) {
       locked = true;
       if (!wrongOnCurrent) score++;
       sfxCorrect();
       input.classList.add("is-right");
-      input.value = matched; // show the accepted form
+      input.value = matched;
       input.disabled = true;
       if (checkBtn) checkBtn.disabled = true;
-      feedback.textContent = "✓ Correct! " + (item.before ? item.before + " " : "") + matched + " " + item.after;
+      feedback.textContent =
+        "✓ Correct! " +
+        (item.before ? item.before + " " : "") +
+        matched +
+        " " +
+        item.after;
       feedback.className = "typebe-feedback is-ok";
       if (hint) hint.textContent = "";
       setTimeout(nextItem, NEXT_DELAY);
@@ -283,11 +407,18 @@
       }
 
       if (almostCapital) {
-        feedback.textContent = "Almost! Start with a capital letter → " + matched;
+        feedback.textContent =
+          "Almost! Start with a capital letter → " + matched;
       } else if (almostForm) {
         feedback.textContent = "Check the capital letter / spelling.";
-      } else if (item.answer.indexOf(" ") !== -1 || item.answer === "aren't") {
+      } else if (
+        item.type === "negative" ||
+        item.answer.indexOf(" ") !== -1 ||
+        item.answer === "aren't"
+      ) {
         feedback.textContent = "Try: am not · are not · aren't";
+      } else if (item.type === "question") {
+        feedback.textContent = "Questions start with Are (capital A)";
       } else {
         feedback.textContent = "Not quite. Try again.";
       }
@@ -313,7 +444,9 @@
     var perfect = score === ITEMS.length;
 
     if (perfect && timeMs && window.LAStars && LAStars.saveBestTime) {
-      try { LAStars.saveBestTime(GAME_ID, timeMs); } catch (e) {}
+      try {
+        LAStars.saveBestTime(GAME_ID, timeMs);
+      } catch (e) {}
     }
 
     if (hasFinish()) {
@@ -329,12 +462,20 @@
     }
 
     if (window.LAStars && LAStars.recordPlay) {
-      try { LAStars.recordPlay(GAME_ID); LAStars.saveFromAccuracy(GAME_ID, Math.round(score / ITEMS.length * 100)); } catch (e) {}
+      try {
+        LAStars.recordPlay(GAME_ID);
+        LAStars.saveFromAccuracy(
+          GAME_ID,
+          Math.round((score / ITEMS.length) * 100)
+        );
+      } catch (e) {}
     }
     app.innerHTML = "";
     var done = el("div", "typebe-done");
     done.appendChild(el("h2", null, "Well done!"));
-    done.appendChild(el("p", null, "You scored " + score + " / " + ITEMS.length + "."));
+    done.appendChild(
+      el("p", null, "You scored " + score + " / " + ITEMS.length + ".")
+    );
     var again = el("button", null, "Play again");
     again.type = "button";
     again.addEventListener("click", start);
