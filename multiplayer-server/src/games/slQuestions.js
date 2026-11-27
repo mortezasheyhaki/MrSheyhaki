@@ -66,16 +66,16 @@ const PC_WORD_BOX = ["eat", "swim", "study", "wait", "build"];
 
 export const PRESENT_CONTINUOUS_QUESTIONS = [
   // PART 1: Choose the correct "be" verb (am / is / are) — chips
-  { id: 101, promptLabel: 'Choose the correct "be" verb', q: "She _____ reading a book.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
-  { id: 102, promptLabel: 'Choose the correct "be" verb', q: "They _____ playing football.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
-  { id: 103, promptLabel: 'Choose the correct "be" verb', q: "I _____ doing my homework.", choices: ["am", "is", "are"], answer: 0, ui: "chips" },
-  { id: 104, promptLabel: 'Choose the correct "be" verb', q: "He _____ watching TV.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
-  { id: 105, promptLabel: 'Choose the correct "be" verb', q: "We _____ cooking dinner.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
-  { id: 106, promptLabel: 'Choose the correct "be" verb', q: "You _____ listening to music.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
-  { id: 107, promptLabel: 'Choose the correct "be" verb', q: "The cat _____ sleeping on the sofa.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
-  { id: 108, promptLabel: 'Choose the correct "be" verb', q: "My friends _____ coming to my house.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
-  { id: 109, promptLabel: 'Choose the correct "be" verb', q: "It _____ raining outside.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
-  { id: 110, promptLabel: 'Choose the correct "be" verb', q: "The children _____ drawing pictures.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
+  { id: 101, promptLabel: 'Choose the correct "be" verb', q: "She ( ___ ) reading a book.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
+  { id: 102, promptLabel: 'Choose the correct "be" verb', q: "They ( ___ ) playing football.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
+  { id: 103, promptLabel: 'Choose the correct "be" verb', q: "I ( ___ ) doing my homework.", choices: ["am", "is", "are"], answer: 0, ui: "chips" },
+  { id: 104, promptLabel: 'Choose the correct "be" verb', q: "He ( ___ ) watching TV.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
+  { id: 105, promptLabel: 'Choose the correct "be" verb', q: "We ( ___ ) cooking dinner.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
+  { id: 106, promptLabel: 'Choose the correct "be" verb', q: "You ( ___ ) listening to music.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
+  { id: 107, promptLabel: 'Choose the correct "be" verb', q: "The cat ( ___ ) sleeping on the sofa.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
+  { id: 108, promptLabel: 'Choose the correct "be" verb', q: "My friends ( ___ ) coming to my house.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
+  { id: 109, promptLabel: 'Choose the correct "be" verb', q: "It ( ___ ) raining outside.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
+  { id: 110, promptLabel: 'Choose the correct "be" verb', q: "The children ( ___ ) drawing pictures.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
 
   // PART 2: Choose the correct -ing form — chips
   { id: 111, promptLabel: "Choose the correct -ing form", q: "make → ______", choices: ["makeing", "making"], answer: 1, ui: "chips" },
