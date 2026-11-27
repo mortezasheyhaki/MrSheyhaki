@@ -333,10 +333,133 @@
     return sb;
   }
 
+  async function updateDisplayName(newDisplayName) {
+    if (!init()) {
+      return { ok: false, error: initError || "Supabase is still loading — wait a second and try again" };
+    }
+    var clean = String(newDisplayName || "").trim().slice(0, 32);
+    if (clean.length < 2) {
+      return { ok: false, error: "Showing name must be at least 2 characters" };
+    }
+    try {
+      var prev = getSession();
+      var userRes = await sb.auth.getUser();
+      var user = userRes && userRes.data && userRes.data.user;
+      if (!user) {
+        clearSession();
+        return { ok: false, error: "Your session expired. Please sign in again." };
+      }
+
+      var meta = user.user_metadata || {};
+      var username = meta.username || usernameFromEmail(user.email) || (prev && prev.username) || "";
+
+      var upd = await sb.auth.updateUser({
+        data: {
+          username: username,
+          display_name: clean,
+        },
+      });
+      if (upd.error) return { ok: false, error: mapAuthError(upd.error) };
+
+      var updatedUser = (upd.data && upd.data.user) || user;
+      saveSessionFromUser(updatedUser);
+
+      // Update public profiles table (visible on Leaderboard & Teacher Admin)
+      try {
+        var profRes = await sb
+          .from("profiles")
+          .upsert({ id: user.id, username: username, display_name: clean }, { onConflict: "id" });
+        if (profRes && profRes.error) {
+          console.warn("[LAAuth] profile display_name sync:", profRes.error.message);
+        }
+      } catch (eProf) {}
+
+      // Keep scoreboard player name in sync if it was unset or matched previous name
+      try {
+        var curPlayer = (localStorage.getItem("laPlayerName") || "").trim();
+        var prevName = prev ? (prev.displayName || prev.username || "").trim() : "";
+        if (!curPlayer || curPlayer === prevName || curPlayer === username) {
+          localStorage.setItem("laPlayerName", clean);
+        }
+      } catch (eLs) {}
+
+      return { ok: true, player: getSession() };
+    } catch (e) {
+      return { ok: false, error: mapAuthError(e) };
+    }
+  }
+
+  async function changePassword(currentPassword, newPassword) {
+    if (!init()) {
+      return { ok: false, error: initError || "Supabase is still loading — wait a second and try again" };
+    }
+    var cur = String(currentPassword || "");
+    var next = String(newPassword || "");
+    if (!cur) return { ok: false, error: "Please enter your current password" };
+    if (next.length < MIN_PASSWORD) {
+      return { ok: false, error: "New password must be at least " + MIN_PASSWORD + " characters" };
+    }
+    if (cur === next) {
+      return { ok: false, error: "New password must be different from your current password" };
+    }
+    try {
+      var userRes = await sb.auth.getUser();
+      var user = userRes && userRes.data && userRes.data.user;
+      if (!user) {
+        clearSession();
+        return { ok: false, error: "Your session expired. Please sign in again." };
+      }
+
+      var meta = user.user_metadata || {};
+      var username = meta.username || usernameFromEmail(user.email) || "";
+      var loginEmail = user.email || emailFor(username);
+
+      var checkRes = await sb.auth.signInWithPassword({
+        email: loginEmail,
+        password: cur,
+      });
+      if (checkRes.error) {
+        return { ok: false, error: "Current password is incorrect" };
+      }
+
+      var upd = await sb.auth.updateUser({ password: next });
+      if (upd.error) return { ok: false, error: mapAuthError(upd.error) };
+
+      if (upd.data && upd.data.user) {
+        saveSessionFromUser(upd.data.user);
+      }
+      return { ok: true, player: getSession() };
+    } catch (e) {
+      return { ok: false, error: mapAuthError(e) };
+    }
+  }
+
+  async function getAccountDetails() {
+    if (!init()) return getSession();
+    try {
+      var res = await sb.auth.getUser();
+      var u = res && res.data && res.data.user;
+      if (!u) return null;
+      saveSessionFromUser(u);
+      var s = getSession() || {};
+      return {
+        id: u.id,
+        username: s.username || usernameFromEmail(u.email),
+        displayName: s.displayName || s.username || "Player",
+        createdAt: u.created_at || null,
+      };
+    } catch (e) {
+      return getSession();
+    }
+  }
+
   global.LAAuth = {
     register: register,
     login: login,
     upgradeLegacy: upgradeLegacy,
+    updateDisplayName: updateDisplayName,
+    changePassword: changePassword,
+    getAccountDetails: getAccountDetails,
     logout: logout,
     logoutAsync: logoutAsync,
     verify: verify,

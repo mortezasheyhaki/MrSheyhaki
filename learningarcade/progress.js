@@ -5,6 +5,8 @@
  *   LAProgress.save({ gameId, gameName, category, unit, score, maxScore,
  *                     accuracy, completed, timeSeconds, stars, playsDelta })
  *   LAProgress.getMine()
+ *   LAProgress.getSummary()
+ *   LAProgress.reset()
  *
  * Never throws. Guests are skipped. Identity from LAAuth / supabase session.
  */
@@ -29,6 +31,33 @@
       .replace(/[-_]+/g, " ")
       .replace(/\b[a-z]/g, function (c) { return c.toUpperCase(); });
   }
+  function inferCategory(gameId, explicitCategory) {
+    if (explicitCategory && String(explicitCategory).trim()) {
+      return String(explicitCategory).trim();
+    }
+    var id = String(gameId || "").toLowerCase();
+    if (id.indexOf("vocab-") === 0 || id.indexOf("match-rush") !== -1 || id.indexOf("opposite-snap") !== -1 || id.indexOf("sound-match") !== -1) {
+      return "Vocabulary";
+    }
+    if (
+      id.indexOf("grammar-") === 0 ||
+      id === "be-verbs" ||
+      id === "nouns" ||
+      id === "there-is-there-are" ||
+      id === "simple-present" ||
+      id === "simple-past" ||
+      id === "present-perfect"
+    ) {
+      return "Grammar";
+    }
+    if (id.indexOf("writing-") === 0) return "Writing";
+    if (id.indexOf("speaking-") === 0) return "Speaking";
+    if (id.indexOf("reading-") === 0) return "Reading";
+    if (id.indexOf("listening-") === 0 || id.indexOf("tfl-") === 0) return "Listening";
+    if (id.indexOf("starter-") === 0 || id.indexOf("aef") === 0) return "Starter Course";
+    if (id.indexOf("topics-") === 0) return "Topics";
+    return "General";
+  }
 
   function getClient() {
     try {
@@ -37,11 +66,6 @@
         if (c) return c;
       }
     } catch (e) {}
-    try {
-      if (global.supabase && typeof global.supabase.createClient === "function") {
-        // fall through — prefer LAAuth which already has the project keys
-      }
-    } catch (e2) {}
     return null;
   }
 
@@ -80,7 +104,7 @@
     return {
       gameId: gameId,
       gameName: str(o.gameName || pretty(gameId), 128),
-      category: str(o.category, 64),
+      category: inferCategory(gameId, o.category),
       unit: str(o.unit, 64),
       score: score != null ? Math.max(0, Math.round(score)) : 0,
       maxScore: maxScore != null ? Math.max(0, Math.round(maxScore)) : 0,
@@ -102,6 +126,35 @@
     return false;
   }
 
+  function normalizeRow(r) {
+    var gid = r.game_id || r.gameId || "game";
+    var lastMs = r.last_at ? new Date(r.last_at).getTime() : (Number(r.lastPlayedAt) || 0);
+    if (!isFinite(lastMs)) lastMs = 0;
+    return {
+      user_id: r.user_id,
+      game_id: gid,
+      game_name: r.game_name || pretty(gid),
+      gameId: gid,
+      gameName: r.game_name || pretty(gid),
+      category: inferCategory(gid, r.category),
+      unit: r.unit || "",
+      stars: Math.max(0, Math.min(3, Number(r.stars) || 0)),
+      plays: Number(r.plays) || 0,
+      attempts: Number(r.plays) || 0,
+      best_score: Number(r.best_score) || 0,
+      bestScore: Number(r.best_score) || 0,
+      max_score: Number(r.max_score) || 0,
+      bestMaxScore: Number(r.max_score) || 0,
+      latestScore: Number(r.best_score) || 0,
+      latestMaxScore: Number(r.max_score) || 0,
+      best_accuracy: Number(r.best_accuracy) || 0,
+      bestAccuracy: Number(r.best_accuracy) || 0,
+      completed: !!r.completed,
+      last_at: r.last_at || null,
+      lastPlayedAt: lastMs
+    };
+  }
+
   async function save(opts) {
     try {
       if (!maybeLoggedIn()) return { ok: false, skipped: "not-logged-in" };
@@ -113,7 +166,6 @@
       var uid = getUserId();
       if (!client || !uid) return { ok: false, skipped: "no-session" };
 
-      // read existing row
       var existing = null;
       try {
         var q = await client
@@ -180,10 +232,76 @@
         console.warn("[LAProgress] getMine:", res.error.message);
         return [];
       }
-      return res.data || [];
+      return (res.data || []).map(normalizeRow);
     } catch (e) {
       return [];
     }
+  }
+
+  async function getSummary() {
+    var rows = await getMine();
+    var gamesPlayed = rows.length;
+    var gamesCompleted = 0;
+    var totalAttempts = 0;
+    var totalStars = 0;
+    var accSum = 0;
+    var accCount = 0;
+    var lastPlayedAt = 0;
+    var byCategory = {};
+
+    rows.forEach(function (r) {
+      if (r.completed || r.stars > 0) gamesCompleted += 1;
+      totalAttempts += r.attempts;
+      totalStars += r.stars;
+      if (r.bestAccuracy > 0) {
+        accSum += r.bestAccuracy;
+        accCount += 1;
+      }
+      if (r.lastPlayedAt > lastPlayedAt) lastPlayedAt = r.lastPlayedAt;
+
+      var cat = r.category || "General";
+      if (!byCategory[cat]) {
+        byCategory[cat] = {
+          games: 0,
+          completed: 0,
+          attempts: 0,
+          stars: 0,
+          accSum: 0,
+          accCount: 0,
+          averageBestAccuracy: 0
+        };
+      }
+      var bucket = byCategory[cat];
+      bucket.games += 1;
+      if (r.completed || r.stars > 0) bucket.completed += 1;
+      bucket.attempts += r.attempts;
+      bucket.stars += r.stars;
+      if (r.bestAccuracy > 0) {
+        bucket.accSum += r.bestAccuracy;
+        bucket.accCount += 1;
+      }
+    });
+
+    Object.keys(byCategory).forEach(function (k) {
+      var b = byCategory[k];
+      b.averageBestAccuracy = b.accCount ? Math.round(b.accSum / b.accCount) : 0;
+    });
+
+    return {
+      gamesPlayed: gamesPlayed,
+      gamesCompleted: gamesCompleted,
+      totalAttempts: totalAttempts,
+      totalStars: totalStars,
+      averageBestAccuracy: accCount ? Math.round(accSum / accCount) : 0,
+      totalTimeSeconds: 0,
+      lastPlayedAt: lastPlayedAt,
+      byCategory: byCategory,
+      rows: rows
+    };
+  }
+
+  function reset() {
+    recent = {};
   }
 
   global.LAProgress = {
@@ -196,10 +314,25 @@
       return Promise.resolve(getMine()).catch(function () {
         return [];
       });
-    }
+    },
+    getSummary: function () {
+      return Promise.resolve(getSummary()).catch(function () {
+        return {
+          gamesPlayed: 0,
+          gamesCompleted: 0,
+          totalAttempts: 0,
+          totalStars: 0,
+          averageBestAccuracy: 0,
+          totalTimeSeconds: 0,
+          lastPlayedAt: 0,
+          byCategory: {},
+          rows: []
+        };
+      });
+    },
+    reset: reset
   };
 
-  // Alias used by LAFinish / la-stars
   global.LAProgressSave = function (payload) {
     return global.LAProgress.save(payload);
   };

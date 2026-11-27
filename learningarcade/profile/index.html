@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
-  <meta name="theme-color" content="#5b21b6" />
-  <title>My Profile · Mr. Sheyhaki</title>
-  <meta name="description" content="Your Learning Arcade profile, stars, and scores." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#6d28d9" />
+  <title>Student Dashboard · Mr. Sheyhaki</title>
+  <meta name="description" content="Student dashboard for Learning Arcade: track stars, scores, skill progress, showing name, and password settings." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
@@ -13,24 +13,39 @@
   <link rel="stylesheet" href="../theme.css" />
   <style>
     :root {
-      --pf-bg: #f3f1ff;
+      --pf-bg: #f8fafc;
       --pf-surface: #ffffff;
+      --pf-surface-alt: #f1f5f9;
       --pf-text: #0f172a;
       --pf-muted: #64748b;
       --pf-accent: #6d28d9;
-      --pf-accent-2: #4f46e5;
-      --pf-border: rgba(15, 23, 42, 0.08);
-      --pf-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 32px rgba(15, 23, 42, 0.06);
-      --pf-radius: 18px;
-      --pf-star: #f5b942;
+      --pf-accent-soft: rgba(109, 40, 217, 0.08);
+      --pf-accent-border: rgba(109, 40, 217, 0.22);
+      --pf-border: #e2e8f0;
+      --pf-ok: #15803d;
+      --pf-ok-bg: rgba(22, 163, 74, 0.1);
+      --pf-warn: #b45309;
+      --pf-err: #b91c1c;
+      --pf-err-bg: rgba(220, 38, 38, 0.09);
+      --pf-star: #eab308;
+      --pf-radius: 16px;
     }
+
     html[data-theme="dark"] {
-      --pf-bg: #0b0f1a;
-      --pf-surface: #151a2a;
-      --pf-text: #f1f5f9;
+      --pf-bg: #0f172a;
+      --pf-surface: #1e293b;
+      --pf-surface-alt: #162032;
+      --pf-text: #f8fafc;
       --pf-muted: #94a3b8;
-      --pf-border: rgba(148, 163, 184, 0.12);
-      --pf-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 16px 40px rgba(0,0,0,0.35);
+      --pf-accent: #a78bfa;
+      --pf-accent-soft: rgba(167, 139, 250, 0.12);
+      --pf-accent-border: rgba(167, 139, 250, 0.3);
+      --pf-border: #334155;
+      --pf-ok: #4ade80;
+      --pf-ok-bg: rgba(34, 197, 94, 0.14);
+      --pf-warn: #fbbf24;
+      --pf-err: #f87171;
+      --pf-err-bg: rgba(248, 113, 113, 0.14);
     }
 
     * { box-sizing: border-box; }
@@ -41,378 +56,482 @@
       font-family: "Plus Jakarta Sans", system-ui, sans-serif;
       background: var(--pf-bg);
       color: var(--pf-text);
+      line-height: 1.5;
     }
-    body.profile-app::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(ellipse 70% 45% at 0% 0%, rgba(109, 40, 217, 0.14), transparent 55%),
-        radial-gradient(ellipse 50% 40% at 100% 0%, rgba(79, 70, 229, 0.1), transparent 50%);
-      z-index: 0;
-    }
+
     body.profile-app .arcade-header-bar,
     body.profile-app .site-topbar,
     body.profile-app .site-footer,
-    body.profile-app .profile-fab { display: none !important; }
-
-    .pf-shell {
-      position: relative;
-      z-index: 1;
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 20px 16px 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      min-height: 100dvh;
+    body.profile-app .profile-fab {
+      display: none !important;
     }
 
-    /* Header */
-    .pf-top {
+    .tabular { font-variant-numeric: tabular-nums; }
+
+    /* Top workspace bar */
+    .pf-topbar {
+      background: var(--pf-surface);
+      border-bottom: 1px solid var(--pf-border);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+    .pf-topbar-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .pf-brand-group {
       display: flex;
       align-items: center;
       gap: 12px;
-      flex-wrap: wrap;
+      min-width: 0;
     }
     .pf-back {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
       display: grid;
       place-items: center;
       text-decoration: none;
       font-weight: 800;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: var(--pf-accent);
-      background: var(--pf-surface);
+      background: var(--pf-surface-alt);
       border: 1px solid var(--pf-border);
-      box-shadow: var(--pf-shadow);
-      transition: transform 0.12s ease;
-    }
-    .pf-back:hover { transform: translateY(-1px); }
-
-    .pf-title-wrap { flex: 1; min-width: 140px; }
-    .pf-title-wrap h1 {
-      margin: 0;
-      font-family: "Fredoka", sans-serif;
-      font-size: 1.45rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--pf-text);
-    }
-    .pf-title-wrap p {
-      margin: 2px 0 0;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--pf-muted);
-    }
-
-    .pf-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .pf-name-chip {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--pf-surface);
-      border: 1px solid var(--pf-border);
-      border-radius: 999px;
-      padding: 4px 4px 4px 14px;
-      box-shadow: var(--pf-shadow);
-    }
-    .pf-name-chip input {
-      border: 0;
-      background: transparent;
-      color: var(--pf-text);
-      font-weight: 700;
-      font-size: 0.88rem;
-      width: 100px;
-      min-width: 0;
-      outline: none;
-    }
-    .pf-name-chip input::placeholder { color: var(--pf-muted); font-weight: 600; }
-    .pf-name-chip input:read-only { cursor: default; }
-    .pf-name-chip button {
-      border: 0;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #7c3aed, var(--pf-accent));
-      color: #fff;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(109, 40, 217, 0.3);
-    }
-
-    .pf-logout-btn {
-      border: 1.5px solid rgba(239, 68, 68, 0.3);
-      background: rgba(254, 242, 242, 0.95);
-      color: #b91c1c;
-      font: inherit;
-      font-weight: 800;
-      font-size: 0.82rem;
-      padding: 9px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: background 0.15s ease, border-color 0.15s ease;
-      white-space: nowrap;
-    }
-    .pf-logout-btn:hover {
-      background: #fef2f2;
-      border-color: rgba(239, 68, 68, 0.5);
-    }
-    .pf-logout-btn:disabled { opacity: 0.6; cursor: wait; }
-    html[data-theme="dark"] .pf-logout-btn {
-      background: rgba(127, 29, 29, 0.35);
-      border-color: rgba(248, 113, 113, 0.35);
-      color: #fca5a5;
-    }
-
-    /* Identity card */
-    .pf-identity {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 18px 18px;
-      background: var(--pf-surface);
-      border: 1px solid var(--pf-border);
-      border-radius: var(--pf-radius);
-      box-shadow: var(--pf-shadow);
-    }
-    .pf-avatar {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      background: linear-gradient(145deg, #7c3aed, #4f46e5);
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-family: "Fredoka", sans-serif;
-      font-weight: 700;
-      font-size: 1.35rem;
       flex-shrink: 0;
-      box-shadow: 0 8px 20px rgba(109, 40, 217, 0.3);
+      transition: border-color 0.15s ease;
     }
-    .pf-identity-meta { min-width: 0; flex: 1; }
-    .pf-identity-meta h2 {
-      margin: 0;
-      font-size: 1.15rem;
-      font-weight: 800;
-      letter-spacing: -0.01em;
+    .pf-back:hover { border-color: var(--pf-accent); }
+    .pf-breadcrumb {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--pf-muted);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .pf-identity-meta p {
-      margin: 4px 0 0;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--pf-muted);
+    .pf-breadcrumb strong {
+      font-family: "Fredoka", sans-serif;
+      font-size: 1.15rem;
+      color: var(--pf-text);
+      font-weight: 700;
     }
-    .pf-stat-pills {
+
+    .pf-top-actions {
       display: flex;
+      align-items: center;
       gap: 8px;
       flex-wrap: wrap;
     }
-    .pf-pill {
+    .pf-nav-link {
+      text-decoration: none;
+      color: var(--pf-muted);
+      font-weight: 700;
+      font-size: 0.85rem;
       padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      transition: color 0.15s ease, background 0.15s ease;
+    }
+    .pf-nav-link:hover {
+      color: var(--pf-text);
+      background: var(--pf-surface-alt);
+    }
+    .pf-btn {
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--pf-border);
+      background: var(--pf-surface);
+      color: var(--pf-text);
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 38px;
+      transition: border-color 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+    }
+    .pf-btn:hover { border-color: var(--pf-accent); }
+    .pf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .pf-btn--primary {
+      background: #6d28d9;
+      border-color: #6d28d9;
+      color: #ffffff;
+    }
+    .pf-btn--primary:hover { background: #5b21b6; border-color: #5b21b6; }
+    .pf-btn--danger {
+      color: var(--pf-err);
+      border-color: rgba(220, 38, 38, 0.3);
+      background: var(--pf-err-bg);
+    }
+    .pf-btn--danger:hover { border-color: var(--pf-err); }
+
+    /* Main layout */
+    .pf-shell {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px 20px 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Guest notice banner */
+    .pf-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 14px 18px;
+      background: var(--pf-accent-soft);
+      border: 1px solid var(--pf-accent-border);
+      border-radius: var(--pf-radius);
+    }
+    .pf-banner[hidden] { display: none; }
+    .pf-banner p {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--pf-text);
+    }
+
+    /* Hero + KPIs */
+    .pf-hero {
+      background: var(--pf-surface);
+      border: 1px solid var(--pf-border);
+      border-radius: var(--pf-radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .pf-hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .pf-identity {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+    .pf-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #6d28d9, #4f46e5);
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+      font-family: "Fredoka", sans-serif;
+      font-weight: 700;
+      font-size: 1.45rem;
+      flex-shrink: 0;
+    }
+    .pf-identity-meta { min-width: 0; }
+    .pf-identity-meta h1 {
+      margin: 0;
+      font-family: "Fredoka", sans-serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      line-height: 1.2;
+      text-wrap: balance;
+    }
+    .pf-identity-sub {
+      margin: 4px 0 0;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--pf-muted);
+    }
+    .pf-hero-quick {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pf-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      border-top: 1px solid var(--pf-border);
+      padding-top: 16px;
+    }
+    @media (max-width: 720px) {
+      .pf-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    .pf-kpi {
+      padding: 12px 14px;
       border-radius: 12px;
-      background: rgba(109, 40, 217, 0.08);
-      border: 1px solid rgba(109, 40, 217, 0.12);
-      text-align: center;
-      min-width: 72px;
+      background: var(--pf-surface-alt);
+      border: 1px solid var(--pf-border);
     }
-    html[data-theme="dark"] .pf-pill {
-      background: rgba(139, 92, 246, 0.12);
-      border-color: rgba(139, 92, 246, 0.2);
-    }
-    .pf-pill strong {
+    .pf-kpi-label {
       display: block;
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--pf-accent);
-    }
-    html[data-theme="dark"] .pf-pill strong { color: #a78bfa; }
-    .pf-pill span {
-      font-size: 0.68rem;
+      font-size: 0.74rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: var(--pf-muted);
     }
+    .pf-kpi-val {
+      display: block;
+      margin-top: 4px;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--pf-text);
+    }
+    .pf-kpi-sub {
+      display: block;
+      margin-top: 2px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--pf-muted);
+    }
 
-    /* Tabs */
+    /* Segmented Tabs */
     .pf-tabs {
       display: flex;
-      gap: 4px;
+      gap: 6px;
+      overflow-x: auto;
       padding: 4px;
       background: var(--pf-surface);
       border: 1px solid var(--pf-border);
       border-radius: 14px;
-      box-shadow: var(--pf-shadow);
     }
     .pf-tab {
-      flex: 1;
       border: 0;
-      border-radius: 10px;
-      padding: 11px 8px;
-      font: inherit;
-      font-weight: 800;
-      font-size: 0.86rem;
-      cursor: pointer;
       background: transparent;
       color: var(--pf-muted);
-      transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.86rem;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s ease, color 0.15s ease;
     }
-    .pf-tab:hover { color: var(--pf-accent); }
+    .pf-tab:hover { color: var(--pf-text); }
     .pf-tab.is-on {
-      background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(79, 70, 229, 0.1));
+      background: var(--pf-accent-soft);
       color: var(--pf-accent);
-      box-shadow: inset 0 0 0 1px rgba(109, 40, 217, 0.15);
-    }
-    html[data-theme="dark"] .pf-tab.is-on {
-      background: rgba(139, 92, 246, 0.15);
-      color: #c4b5fd;
+      box-shadow: inset 0 0 0 1px var(--pf-accent-border);
     }
 
     /* Panels */
-    .pf-panel {
-      display: none;
-      flex-direction: column;
-      gap: 12px;
+    .pf-panel { display: none; flex-direction: column; gap: 16px; }
+    .pf-panel.is-on { display: flex; }
+
+    .pf-section {
       background: var(--pf-surface);
       border: 1px solid var(--pf-border);
       border-radius: var(--pf-radius);
-      box-shadow: var(--pf-shadow);
-      padding: 16px;
-      flex: 1;
-      min-height: 320px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
-    .pf-panel.is-on { display: flex; }
-
-    .pf-panel-head {
+    .pf-section-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    .pf-panel-head h2 {
+    .pf-section-head h2 {
       margin: 0;
       font-family: "Fredoka", sans-serif;
       font-size: 1.15rem;
       font-weight: 700;
     }
-    .pf-count {
-      font-size: 0.78rem;
-      font-weight: 700;
+    .pf-section-meta {
+      font-size: 0.82rem;
+      font-weight: 600;
       color: var(--pf-muted);
-      background: rgba(100, 116, 139, 0.1);
-      padding: 4px 10px;
+    }
+
+    .pf-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 820px) {
+      .pf-grid-2 { grid-template-columns: 1fr; }
+    }
+
+    /* Skill breakdown rows */
+    .skill-list { display: flex; flex-direction: column; gap: 12px; }
+    .skill-row { display: flex; flex-direction: column; gap: 6px; }
+    .skill-row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      font-size: 0.86rem;
+    }
+    .skill-row-top strong { font-weight: 700; }
+    .skill-row-top span { color: var(--pf-muted); font-weight: 600; font-size: 0.8rem; }
+    .skill-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--pf-surface-alt);
+      overflow: hidden;
+      border: 1px solid var(--pf-border);
+    }
+    .skill-bar > i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #6d28d9, #4f46e5);
       border-radius: 999px;
     }
 
-    /* Achievements */
-    .ach-viewport {
-      overflow: hidden;
-      border-radius: 14px;
-      flex: 1;
-      min-height: 200px;
-    }
-    .ach-track {
-      display: flex;
-      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-      height: 100%;
-    }
-    .ach-page {
-      min-width: 100%;
-      padding: 4px;
+    /* Quick launch list */
+    .quick-list {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
-      align-content: start;
     }
-    @media (min-width: 520px) {
-      .ach-page { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 560px) {
+      .quick-list { grid-template-columns: 1fr; }
+    }
+    .quick-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--pf-surface-alt);
+      border: 1px solid var(--pf-border);
+      text-decoration: none;
+      color: var(--pf-text);
+      transition: border-color 0.15s ease;
+    }
+    .quick-item:hover { border-color: var(--pf-accent); }
+    .quick-item strong {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+    .quick-item small {
+      display: block;
+      font-size: 0.76rem;
+      color: var(--pf-muted);
+      font-weight: 600;
+    }
+    .quick-go {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--pf-accent);
+      white-space: nowrap;
+    }
+
+    /* Search & Stars Grid */
+    .pf-search {
+      width: 100%;
+      max-width: 280px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--pf-border);
+      background: var(--pf-surface-alt);
+      color: var(--pf-text);
+      font: inherit;
+      font-size: 0.86rem;
+      outline: none;
+    }
+    .pf-search:focus { border-color: var(--pf-accent); }
+
+    .stars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+      gap: 10px;
     }
     .ach-tile {
-      background: rgba(109, 40, 217, 0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--pf-surface-alt);
       border: 1px solid var(--pf-border);
-      border-radius: 14px;
-      padding: 14px 12px;
-      text-align: center;
+      text-decoration: none;
+      color: var(--pf-text);
+      transition: border-color 0.15s ease;
     }
-    html[data-theme="dark"] .ach-tile {
-      background: rgba(139, 92, 246, 0.08);
-    }
+    a.ach-tile:hover { border-color: var(--pf-accent); }
     .ach-tile-title {
-      font-size: 0.82rem;
-      font-weight: 800;
-      margin-bottom: 8px;
-      line-height: 1.25;
+      font-size: 0.88rem;
+      font-weight: 700;
+      line-height: 1.3;
     }
-    .ach-plays {
-      font-size: 0.72rem;
+    .ach-tile-meta {
+      font-size: 0.76rem;
       font-weight: 600;
       color: var(--pf-muted);
-      margin-top: 6px;
-    }
-    .ach-empty {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 40px 16px;
-      color: var(--pf-muted);
-      font-weight: 600;
     }
     .game-stars {
       display: flex;
-      justify-content: center;
       gap: 4px;
-    }
-    .game-stars .star {
       font-size: 1.05rem;
-      opacity: 0.25;
-      filter: grayscale(1);
+      line-height: 1;
     }
-    .game-stars .star.is-filled,
-    .game-stars .star.on {
+    .game-stars .star { opacity: 0.25; }
+    .game-stars .star.is-filled {
       opacity: 1;
-      filter: none;
       color: var(--pf-star);
     }
 
-    .ach-nav {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
+    /* Tables / Scores */
+    .pf-table-wrap { overflow-x: auto; }
+    .pf-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
     }
-    .ach-arrow {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      border: 1px solid var(--pf-border);
-      background: var(--pf-bg);
+    .pf-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--pf-muted);
+      border-bottom: 1px solid var(--pf-border);
+      white-space: nowrap;
+    }
+    .pf-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--pf-border);
+      vertical-align: middle;
+    }
+    .pf-table tr:last-child td { border-bottom: 0; }
+    .pf-table tr:hover td { background: var(--pf-surface-alt); }
+    .pf-table th.num, .pf-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .pf-table a.game-link {
       color: var(--pf-text);
-      font-size: 1.2rem;
-      font-weight: 800;
-      cursor: pointer;
+      font-weight: 700;
+      text-decoration: none;
     }
-    .ach-dots { display: flex; gap: 6px; }
-    .ach-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: rgba(100, 116, 139, 0.3);
-      border: 0;
-      padding: 0;
-      cursor: pointer;
-    }
-    .ach-dot.is-on { background: var(--pf-accent); }
+    .pf-table a.game-link:hover { color: var(--pf-accent); text-decoration: underline; }
 
     /* Leaderboard */
     .lb-filters {
@@ -422,103 +541,159 @@
     }
     .lb-chip {
       border: 1px solid var(--pf-border);
-      background: var(--pf-bg);
+      background: var(--pf-surface-alt);
       color: var(--pf-muted);
       font: inherit;
       font-weight: 700;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       padding: 7px 12px;
       border-radius: 999px;
       cursor: pointer;
     }
     .lb-chip.is-on {
-      background: rgba(109, 40, 217, 0.12);
+      background: var(--pf-accent-soft);
       color: var(--pf-accent);
-      border-color: rgba(109, 40, 217, 0.25);
+      border-color: var(--pf-accent-border);
     }
-    .lb-body { display: flex; flex-direction: column; gap: 14px; }
     .lb-podium {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
       align-items: end;
     }
+    @media (max-width: 520px) {
+      .lb-podium { grid-template-columns: 1fr; }
+    }
     .lb-pod {
-      background: rgba(109, 40, 217, 0.06);
+      background: var(--pf-surface-alt);
       border: 1px solid var(--pf-border);
-      border-radius: 14px;
-      padding: 12px 8px;
+      border-radius: 12px;
+      padding: 14px 10px;
       text-align: center;
     }
-    .lb-pod-rank { font-size: 0.7rem; font-weight: 800; color: var(--pf-muted); }
-    .lb-pod-medal { font-size: 1.4rem; margin: 4px 0; }
+    .lb-pod.is-me { border-color: var(--pf-accent); background: var(--pf-accent-soft); }
+    .lb-pod-medal { font-size: 1.35rem; }
     .lb-pod-name {
-      font-size: 0.82rem;
+      margin-top: 4px;
       font-weight: 800;
+      font-size: 0.9rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .lb-pod-score { font-size: 0.9rem; font-weight: 800; color: var(--pf-accent); margin-top: 4px; }
+    .lb-pod-score {
+      margin-top: 4px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--pf-accent);
+    }
+    .lb-pod-rank { font-size: 0.75rem; color: var(--pf-muted); font-weight: 600; margin-top: 2px; }
     .lb-list { display: flex; flex-direction: column; gap: 6px; }
     .lb-row {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: rgba(100, 116, 139, 0.06);
-      border: 1px solid transparent;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--pf-surface-alt);
+      border: 1px solid var(--pf-border);
     }
     .lb-row.is-me {
-      background: rgba(109, 40, 217, 0.1);
-      border-color: rgba(109, 40, 217, 0.2);
+      background: var(--pf-accent-soft);
+      border-color: var(--pf-accent-border);
     }
-    .lb-row-rank { font-weight: 800; color: var(--pf-muted); width: 28px; }
+    .lb-row-rank { width: 28px; font-weight: 800; color: var(--pf-muted); }
     .lb-row-name { flex: 1; font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .lb-row-score { font-weight: 800; color: var(--pf-accent); }
-    .lb-empty {
-      text-align: center;
-      color: var(--pf-muted);
-      font-weight: 600;
-      padding: 32px 12px;
-      line-height: 1.5;
-    }
 
-    /* Scores */
-    #scoreList { display: flex; flex-direction: column; gap: 6px; }
-    .score-row {
+    /* Account & Settings forms */
+    .pf-form { display: flex; flex-direction: column; gap: 14px; }
+    .pf-field { display: flex; flex-direction: column; gap: 6px; }
+    .pf-field label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--pf-text);
+    }
+    .pf-field small {
+      font-size: 0.76rem;
+      color: var(--pf-muted);
+      font-weight: 500;
+    }
+    .pf-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .pf-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--pf-border);
+      background: var(--pf-surface-alt);
+      color: var(--pf-text);
+      font: inherit;
+      font-size: 0.92rem;
+      outline: none;
+      min-height: 42px;
+    }
+    .pf-input:focus { border-color: var(--pf-accent); }
+    .pf-input--pw { padding-right: 68px; }
+    .pf-pw-toggle {
+      position: absolute;
+      right: 8px;
+      border: 0;
+      background: transparent;
+      color: var(--pf-muted);
+      font: inherit;
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 6px 8px;
+      cursor: pointer;
+    }
+    .pf-pw-toggle:hover { color: var(--pf-accent); }
+
+    .pf-form-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .pf-feedback {
+      font-size: 0.84rem;
+      font-weight: 700;
+      min-height: 1.2em;
+    }
+    .pf-feedback.is-ok { color: var(--pf-ok); }
+    .pf-feedback.is-err { color: var(--pf-err); }
+
+    .pf-kv-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pf-kv {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: rgba(100, 116, 139, 0.06);
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--pf-surface-alt);
       border: 1px solid var(--pf-border);
+      font-size: 0.86rem;
     }
-    .score-row .name { font-weight: 700; font-size: 0.9rem; }
-    .score-val { font-weight: 800; color: var(--pf-accent); }
-    .scores-empty, #scoresStatus {
-      text-align: center;
-      color: var(--pf-muted);
-      font-weight: 600;
-      padding: 24px 12px;
-    }
+    .pf-kv span { color: var(--pf-muted); font-weight: 600; }
+    .pf-kv strong { font-weight: 700; }
 
-    #swipeHint {
+    .pf-empty {
       text-align: center;
-      font-size: 0.75rem;
-      font-weight: 600;
+      padding: 28px 16px;
       color: var(--pf-muted);
-      margin: 0;
-    }
-
-    @media (max-width: 480px) {
-      .pf-identity { flex-wrap: wrap; }
-      .pf-stat-pills { width: 100%; }
-      .pf-pill { flex: 1; }
-      .pf-name-chip input { width: 72px; }
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 1px dashed var(--pf-border);
+      border-radius: 12px;
     }
   </style>
   <script>
@@ -536,85 +711,238 @@
   </script>
 </head>
 <body class="profile-app">
-  <div class="pf-shell">
-    <header class="pf-top">
-      <a class="pf-back" href="../" id="pfBack" aria-label="Back">←</a>
-      <div class="pf-title-wrap">
-        <h1>My Profile</h1>
-        <p>Stars &amp; scores across Learning Arcade</p>
-      </div>
-      <div class="pf-actions">
-        <div class="pf-name-chip">
-          <input id="playerName" type="text" maxlength="32" placeholder="Your name" autocomplete="nickname" readonly />
-          <button type="button" id="saveNameBtn" class="is-edit" aria-label="Edit name">✎</button>
+  <header class="pf-topbar">
+    <div class="pf-topbar-inner">
+      <div class="pf-brand-group">
+        <a class="pf-back" href="../" id="pfBack" aria-label="Back to Arcade">←</a>
+        <div class="pf-breadcrumb">
+          <a href="../" style="color:inherit;text-decoration:none;">Learning Arcade</a> /
+          <strong>Student Dashboard</strong>
         </div>
-        <button type="button" class="pf-logout-btn" id="pfLogout" title="Log out">Log out</button>
       </div>
-    </header>
+      <div class="pf-top-actions">
+        <a href="../" class="pf-nav-link">Games</a>
+        <a href="../leaderboard/" class="pf-nav-link">Leaderboard</a>
+        <button type="button" class="pf-btn" id="themeToggleBtn" aria-label="Toggle light or dark theme">Theme</button>
+        <a href="../auth-system/login.html?redirect=/learningarcade/profile/" class="pf-btn pf-btn--primary" id="topSignInLink" hidden>Sign in</a>
+        <button type="button" class="pf-btn pf-btn--danger" id="pfLogout">Sign out</button>
+      </div>
+    </div>
+  </header>
 
-    <section class="pf-identity" aria-label="Account summary">
-      <div class="pf-avatar" id="pfAvatar">?</div>
-      <div class="pf-identity-meta">
-        <h2 id="pfDisplayName">Player</h2>
-        <p id="pfSubtitle">Signed in to Learning Arcade</p>
-      </div>
-      <div class="pf-stat-pills">
-        <div class="pf-pill">
-          <strong id="pfStarTotal">0</strong>
-          <span>Stars</span>
-        </div>
-        <div class="pf-pill">
-          <strong id="pfGameCount">0</strong>
-          <span>Games</span>
-        </div>
-      </div>
-    </section>
-
-    <div class="pf-tabs" role="tablist">
-      <button type="button" class="pf-tab is-on" data-tab="achievements" role="tab" aria-selected="true">★ Stars</button>
-      <button type="button" class="pf-tab" data-tab="leaderboard" role="tab" aria-selected="false">🏆 Board</button>
-      <button type="button" class="pf-tab" data-tab="scores" role="tab" aria-selected="false">Scores</button>
+  <main class="pf-shell">
+    <div class="pf-banner" id="guestBanner" hidden>
+      <p>You are browsing in Guest mode. Sign in or create an account to save stars across devices and change your password.</p>
+      <a href="../auth-system/login.html?redirect=/learningarcade/profile/" class="pf-btn pf-btn--primary">Sign in / Register</a>
     </div>
 
-    <section class="pf-panel is-on" id="panel-achievements" role="tabpanel">
-      <div class="pf-panel-head">
-        <h2>Achievements</h2>
-        <span class="pf-count" id="achCount">0 games</span>
+    <section class="pf-hero" aria-label="Student summary">
+      <div class="pf-hero-top">
+        <div class="pf-identity">
+          <div class="pf-avatar" id="pfAvatar">?</div>
+          <div class="pf-identity-meta">
+            <h1 id="pfDisplayName">Student</h1>
+            <p class="pf-identity-sub" id="pfSubtitle">Loading account…</p>
+          </div>
+        </div>
+        <div class="pf-hero-quick">
+          <button type="button" class="pf-btn" id="jumpSettingsBtn">Edit Profile &amp; Password</button>
+          <a href="../" class="pf-btn pf-btn--primary">Play Games</a>
+        </div>
       </div>
-      <div class="ach-viewport" id="achViewport">
-        <div class="ach-track" id="achTrack"></div>
+
+      <div class="pf-kpis">
+        <div class="pf-kpi">
+          <span class="pf-kpi-label">Stars Earned</span>
+          <strong class="pf-kpi-val tabular" id="kpiStars">0</strong>
+          <span class="pf-kpi-sub" id="kpiStarsSub">Across practiced games</span>
+        </div>
+        <div class="pf-kpi">
+          <span class="pf-kpi-label">Games Practiced</span>
+          <strong class="pf-kpi-val tabular" id="kpiGames">0</strong>
+          <span class="pf-kpi-sub" id="kpiCompletedSub">0 completed</span>
+        </div>
+        <div class="pf-kpi">
+          <span class="pf-kpi-label">Total Plays</span>
+          <strong class="pf-kpi-val tabular" id="kpiPlays">0</strong>
+          <span class="pf-kpi-sub" id="kpiLastActive">No activity yet</span>
+        </div>
+        <div class="pf-kpi">
+          <span class="pf-kpi-label">Avg Accuracy</span>
+          <strong class="pf-kpi-val tabular" id="kpiAccuracy">—</strong>
+          <span class="pf-kpi-sub" id="kpiBestScore">Best score tracking</span>
+        </div>
       </div>
-      <div class="ach-nav">
-        <button type="button" class="ach-arrow" id="achPrev" aria-label="Previous">‹</button>
-        <div class="ach-dots" id="achDots"></div>
-        <button type="button" class="ach-arrow" id="achNext" aria-label="Next">›</button>
-      </div>
-      <p id="swipeHint">Swipe or use arrows to browse</p>
     </section>
 
-    <section class="pf-panel" id="panel-leaderboard" role="tabpanel">
-      <div class="pf-panel-head">
-        <h2>Leaderboard</h2>
-        <span class="pf-count" id="lbMeta">Overall</span>
+    <nav class="pf-tabs" role="tablist" aria-label="Dashboard sections">
+      <button type="button" class="pf-tab is-on" data-tab="overview" role="tab" aria-selected="true">Overview</button>
+      <button type="button" class="pf-tab" data-tab="stars" role="tab" aria-selected="false">Stars &amp; Games</button>
+      <button type="button" class="pf-tab" data-tab="scores" role="tab" aria-selected="false">Scores &amp; History</button>
+      <button type="button" class="pf-tab" data-tab="leaderboard" role="tab" aria-selected="false">Leaderboard</button>
+      <button type="button" class="pf-tab" data-tab="settings" role="tab" aria-selected="false">Account &amp; Settings</button>
+    </nav>
+
+    <!-- OVERVIEW -->
+    <section class="pf-panel is-on" id="panel-overview" role="tabpanel">
+      <div class="pf-grid-2">
+        <div class="pf-section">
+          <div class="pf-section-head">
+            <h2>Skill Progress</h2>
+            <span class="pf-section-meta" id="skillSummaryMeta">—</span>
+          </div>
+          <div class="skill-list" id="skillBreakdown"></div>
+        </div>
+
+        <div class="pf-section">
+          <div class="pf-section-head">
+            <h2>Quick Launch</h2>
+            <span class="pf-section-meta">Jump back into practice</span>
+          </div>
+          <div class="quick-list" id="quickLaunchList"></div>
+        </div>
       </div>
-      <div class="lb-filters" id="lbFilters" role="tablist" aria-label="Filter by game">
-        <button type="button" class="lb-chip is-on" data-game="overall">Overall</button>
+
+      <div class="pf-section">
+        <div class="pf-section-head">
+          <h2>Recent Activity</h2>
+          <span class="pf-section-meta" id="recentActivityMeta">Latest games and scores</span>
+        </div>
+        <div id="recentActivityWrap"></div>
       </div>
-      <div class="lb-body" id="lbBody">
-        <div class="lb-podium" id="lbPodium"></div>
-        <div class="lb-list" id="lbList"></div>
-      </div>
-      <p class="lb-empty" id="lbEmpty" hidden>No scores on the board yet.<br>Finish games with your name set to appear here.</p>
     </section>
 
+    <!-- STARS & GAMES -->
+    <section class="pf-panel" id="panel-stars" role="tabpanel">
+      <div class="pf-section">
+        <div class="pf-section-head">
+          <div>
+            <h2>Earned Stars &amp; Plays</h2>
+            <span class="pf-section-meta" id="achCount">0 games</span>
+          </div>
+          <input type="search" class="pf-search" id="starsSearch" placeholder="Filter games…" aria-label="Filter games" />
+        </div>
+        <div class="stars-grid" id="starsGrid"></div>
+      </div>
+    </section>
+
+    <!-- SCORES & HISTORY -->
     <section class="pf-panel" id="panel-scores" role="tabpanel">
-      <div class="pf-panel-head">
-        <h2>Your scores</h2>
-        <span class="pf-count" id="scoresStatus">—</span>
+      <div class="pf-section">
+        <div class="pf-section-head">
+          <h2>Your Scores &amp; Best Attempts</h2>
+          <span class="pf-section-meta" id="scoresStatus">Loading…</span>
+        </div>
+        <div id="scoreList"></div>
       </div>
-      <div id="scoreList"></div>
     </section>
-  </div>
+
+    <!-- LEADERBOARD -->
+    <section class="pf-panel" id="panel-leaderboard" role="tabpanel">
+      <div class="pf-section">
+        <div class="pf-section-head">
+          <h2>Class Leaderboard</h2>
+          <span class="pf-section-meta" id="lbMeta">Overall</span>
+        </div>
+        <div class="lb-filters" id="lbFilters" role="tablist" aria-label="Filter leaderboard by game">
+          <button type="button" class="lb-chip is-on" data-game="overall">Overall</button>
+        </div>
+        <div id="lbBody" style="display:flex;flex-direction:column;gap:14px;">
+          <div class="lb-podium" id="lbPodium"></div>
+          <div class="lb-list" id="lbList"></div>
+        </div>
+        <div class="pf-empty" id="lbEmpty" hidden>
+          No scores on the board yet. Finish a game with your showing name set to appear here.
+        </div>
+      </div>
+    </section>
+
+    <!-- ACCOUNT & SETTINGS -->
+    <section class="pf-panel" id="panel-settings" role="tabpanel">
+      <div class="pf-grid-2">
+        <div class="pf-section">
+          <div class="pf-section-head">
+            <h2>Showing Name &amp; Class</h2>
+            <span class="pf-section-meta">Shown on leaderboards and teacher reports</span>
+          </div>
+          <form class="pf-form" id="profileForm">
+            <div class="pf-field">
+              <label for="displayNameInput">Showing Name</label>
+              <input class="pf-input" id="displayNameInput" type="text" maxlength="32" required placeholder="e.g. Sara Ahmadi" />
+              <small>This is the name your teacher and classmates see.</small>
+            </div>
+            <div class="pf-field">
+              <label for="classCodeInput">Class Code (optional)</label>
+              <input class="pf-input" id="classCodeInput" type="text" maxlength="16" placeholder="e.g. 7A or STARTER" />
+              <small>Helps separate shared names on class leaderboards.</small>
+            </div>
+            <div class="pf-form-foot">
+              <span class="pf-feedback" id="profileFeedback" role="status" aria-live="polite"></span>
+              <button type="submit" class="pf-btn pf-btn--primary" id="saveProfileBtn">Save Changes</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="pf-section">
+          <div class="pf-section-head">
+            <h2>Change Password</h2>
+            <span class="pf-section-meta">Minimum 8 characters</span>
+          </div>
+          <div id="pwGuestNotice" class="pf-empty" hidden>
+            Sign in with your student account to set a new password.<br /><br />
+            <a href="../auth-system/login.html?redirect=/learningarcade/profile/" class="pf-btn pf-btn--primary">Sign in to Account</a>
+          </div>
+          <form class="pf-form" id="passwordForm">
+            <div class="pf-field">
+              <label for="curPwInput">Current Password</label>
+              <div class="pf-input-wrap">
+                <input class="pf-input pf-input--pw" id="curPwInput" type="password" autocomplete="current-password" required />
+                <button type="button" class="pf-pw-toggle" data-target="curPwInput">Show</button>
+              </div>
+            </div>
+            <div class="pf-field">
+              <label for="newPwInput">New Password</label>
+              <div class="pf-input-wrap">
+                <input class="pf-input pf-input--pw" id="newPwInput" type="password" minlength="8" autocomplete="new-password" required />
+                <button type="button" class="pf-pw-toggle" data-target="newPwInput">Show</button>
+              </div>
+              <small id="pwStrengthHint">Use at least 8 characters.</small>
+            </div>
+            <div class="pf-field">
+              <label for="confirmPwInput">Confirm New Password</label>
+              <div class="pf-input-wrap">
+                <input class="pf-input pf-input--pw" id="confirmPwInput" type="password" minlength="8" autocomplete="new-password" required />
+                <button type="button" class="pf-pw-toggle" data-target="confirmPwInput">Show</button>
+              </div>
+            </div>
+            <div class="pf-form-foot">
+              <span class="pf-feedback" id="pwFeedback" role="status" aria-live="polite"></span>
+              <button type="submit" class="pf-btn pf-btn--primary" id="savePwBtn">Update Password</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="pf-section">
+        <div class="pf-section-head">
+          <h2>Account Details &amp; Preferences</h2>
+          <span class="pf-section-meta">Session &amp; appearance</span>
+        </div>
+        <div class="pf-kv-list" id="accountDetailsList">
+          <div class="pf-kv"><span>Username</span><strong id="detailUsername">—</strong></div>
+          <div class="pf-kv"><span>Sync Status</span><strong id="detailSyncStatus">—</strong></div>
+          <div class="pf-kv"><span>Joined</span><strong id="detailJoined">—</strong></div>
+          <div class="pf-kv">
+            <span>Appearance</span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="pf-btn" id="prefLightBtn">Light</button>
+              <button type="button" class="pf-btn" id="prefDarkBtn">Dark</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <script src="/learningarcade/vendor/supabase.min.js"></script>
   <script src="../firebase-scores.js"></script>
@@ -623,861 +951,902 @@
   <script src="../la-stars.js"></script>
   <script src="../theme.js"></script>
   <script>
-
-(function () {
-  "use strict";
-
-  var TITLES = {
-    "opposite-snap": "Opposite Snap",
-    "sound-match-picture": "Sound Match",
-    "vocab-clothes-voice-hunt": "Voice Hunt",
-    "writing-sara-daily": "Sara's Routine",
-    "vocab-clothes-match": "Clothes Match",
-    "vocab-clothes-dictation": "Clothes Dictation",
-    "there-is-there-are": "There is / are",
-    "starter-3a-a-an-swipe": "A / An Swipe",
-    "starter-7a-question-builder": "Question Builder",
-    "starter-6a-listen-and-write": "Listen & Write",
-    "starter-7a-build-the-question": "Build Question",
-    "starter-3a-plural-s-sound-match": "Plural -s Sound",
-    "starter-3a-pictures-words-match": "Pictures & Words",
-    "starter-3b-listen-match": "Listen & Match",
-    "starter-3b-dialogue-completer": "Dialogue",
-    "starter-3b-this-that-sentences": "This / That",
-    "starter-3a-whats-in-your-bag": "What's in Bag?",
-    "nouns": "Nouns",
-    "match-rush": "Match Rush",
-    "starter-4b-car-adjectives": "Car Adjectives",
-    "starter-4b-opposite-snap": "Opposite Snap",
-    "be-verbs": "Be Verbs"
-  };
-
-  var GAME_URLS = {
-    "opposite-snap": "../vocabulary/Adjectives/Opposite_Snap/",
-    "sound-match-picture": "../vocabulary/Adjectives/Sound_Match_Picture/",
-    "vocab-clothes-voice-hunt": "../vocabulary/clothes/voice-treasure-hunt/",
-    "vocab-clothes-match": "../vocabulary/clothes/match/",
-    "vocab-clothes-dictation": "../vocabulary/clothes/dictation/",
-    "writing-sara-daily": "../writing/Daily%20Routine/Sara/",
-    "there-is-there-are": "../grammar/there-is-there-are/",
-    "nouns": "../grammar/nouns/",
-    "match-rush": "../vocabulary/match-rush/",
-    "starter-3a-a-an-swipe": "../../resources/american-english-file/starter/unit-3/a/games/a-an-swipe/",
-    "starter-3a-plural-s-sound-match": "../../resources/american-english-file/starter/unit-3/a/games/plural-s-sound-match/",
-    "starter-3a-pictures-words-match": "../../resources/american-english-file/starter/unit-3/a/games/pictures-words-match/",
-    "starter-3a-whats-in-your-bag": "../../resources/american-english-file/starter/unit-3/a/games/whats-in-your-bag/",
-    "starter-3b-listen-match": "../../resources/american-english-file/starter/unit-3/b/games/listen-match/",
-    "starter-3b-dialogue-completer": "../../resources/american-english-file/starter/unit-3/b/games/dialogue-completer/",
-    "starter-3b-this-that-sentences": "../../resources/american-english-file/starter/unit-3/b/games/this-that-sentences/"
-  };
-
-  function prettyTitle(id) {
-    if (TITLES[id]) return TITLES[id];
-    return String(id)
-      .replace(/^starter-\d+[a-z]-/i, "")
-      .replace(/^starter-pe\d+-/i, "")
-      .replace(/^vocab-/i, "")
-      .replace(/^writing-/i, "")
-      .replace(/^aef\d?\s*/i, "")
-      .replace(/[-_]+/g, " ")
-      .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
-  }
-
-  function gameUrl(id) {
-    return GAME_URLS[id] || null;
-  }
-
-  function escapeHtml(s) {
-    return String(s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  }
-
-  /* —— Name chip —— */
-  var input = document.getElementById("playerName");
-  var saveNameBtn = document.getElementById("saveNameBtn");
-  var editingName = false;
-
-  function loadName() {
-    var n = "";
-    try {
-      if (window.LAScores && LAScores.getPlayerName) n = LAScores.getPlayerName() || "";
-      if (!n) n = localStorage.getItem("laPlayerName") || "";
-    } catch (e) {}
-    input.value = n;
-  }
-
-  function setNameMode(editing) {
-    editingName = editing;
-    input.readOnly = !editing;
-    if (editing) {
-      saveNameBtn.textContent = "✓";
-      saveNameBtn.setAttribute("aria-label", "Save name");
-      input.focus();
-    } else {
-      saveNameBtn.textContent = "✎";
-      saveNameBtn.setAttribute("aria-label", "Edit name");
-    }
-  }
-
-  saveNameBtn.addEventListener("click", function () {
-    if (!editingName) {
-      setNameMode(true);
-      return;
-    }
-    var n = (input.value || "").trim().slice(0, 32);
-    try {
-      if (n) localStorage.setItem("laPlayerName", n);
-      else localStorage.removeItem("laPlayerName");
-    } catch (e) {}
-    if (window.LAScores && LAScores.setPlayerName) LAScores.setPlayerName(n);
-    input.value = n;
-    setNameMode(false);
-    loadAchievements();
-    loadScores();
-  });
-
-  input.addEventListener("keydown", function (e) {
-    if (e.key === "Enter" && editingName) {
-      e.preventDefault();
-      saveNameBtn.click();
-    }
-  });
-
-  loadName();
-  setNameMode(false);
-
-  /* —— Tabs —— */
-  var tabs = document.querySelectorAll(".pf-tab");
-  var panels = {
-    achievements: document.getElementById("panel-achievements"),
-    leaderboard: document.getElementById("panel-leaderboard"),
-    scores: document.getElementById("panel-scores")
-  };
-  var swipeHint = document.getElementById("swipeHint");
-
-  tabs.forEach(function (tab) {
-    tab.addEventListener("click", function () {
-      var id = tab.getAttribute("data-tab");
-      tabs.forEach(function (t) {
-        t.classList.toggle("is-on", t === tab);
-        t.setAttribute("aria-selected", t === tab ? "true" : "false");
-      });
-      Object.keys(panels).forEach(function (k) {
-        panels[k].classList.toggle("is-on", k === id);
-      });
-      if (swipeHint) {
-        if (id === "achievements") {
-          swipeHint.style.visibility = "visible";
-        } else if (id === "leaderboard") {
-          swipeHint.style.visibility = "visible";
-          swipeHint.textContent = "Filter by game · top scores across the class";
-        } else {
-          swipeHint.style.visibility = "hidden";
-        }
-      }
-      if (id === "leaderboard") loadLeaderboard();
-    });
-  });
-
-  /* —— Achievements grid (swipe pages) —— */
-  var PER_PAGE = 20; // 5×4 desktop; mobile CSS may show fewer cells but same data chunking
-  var pageIndex = 0;
-  var pageCount = 1;
-  var track = document.getElementById("achTrack");
-  var dotsEl = document.getElementById("achDots");
-  var prevBtn = document.getElementById("achPrev");
-  var nextBtn = document.getElementById("achNext");
-  var achCount = document.getElementById("achCount");
-  var viewport = document.getElementById("achViewport");
-
-  function perPageForViewport() {
-    var w = window.innerWidth;
-    if (w <= 380) return 9;  // 3×3
-    if (w <= 640) return 12; // 4×3
-    if (window.innerHeight <= 500) return 15; // 5×3
-    return 20; // 5×4
-  }
-
-  function fireLevelFromPlays(plays) {
-    plays = Number(plays) || 0;
-    if (plays >= 10) return 3;
-    if (plays > 6) return 2;
-    if (plays > 3) return 1;
-    return 0;
-  }
-
-  function ensureParticles(star) {
-    if (star.querySelector(".la-particles")) return;
-    var wrap = document.createElement("span");
-    wrap.className = "la-particles";
-    wrap.setAttribute("aria-hidden", "true");
-    var wind = (Math.random() * 2 - 1) * 12;
-    for (var i = 0; i < 5; i++) {
-      var p = document.createElement("span");
-      p.className = "la-particle la-particle--fire";
-      p.style.setProperty("--d", (i * 0.18) + "s");
-      p.style.setProperty("--x", (Math.random() * 10 - 5).toFixed(1) + "px");
-      p.style.setProperty("--w", (wind * (0.35 + Math.random() * 0.3)).toFixed(1) + "px");
-      wrap.appendChild(p);
-    }
-    for (var j = 0; j < 4; j++) {
-      var s = document.createElement("span");
-      s.className = "la-particle la-particle--smoke";
-      s.style.setProperty("--d", (j * 0.35 + 0.2) + "s");
-      s.style.setProperty("--x", (Math.random() * 12 - 6).toFixed(1) + "px");
-      s.style.setProperty("--s", (0.7 + Math.random() * 0.8).toFixed(2));
-      s.style.setProperty("--w", (wind * (0.9 + Math.random() * 0.5)).toFixed(1) + "px");
-      wrap.appendChild(s);
-    }
-    star.appendChild(wrap);
-  }
-
-  function starsEl(n, fire) {
-    n = Math.min(3, Math.max(0, Number(n) || 0));
-    fire = Math.min(3, Math.max(0, Number(fire) || 0));
-    var wrap = document.createElement("div");
-    wrap.className = "game-stars";
-    wrap.setAttribute("data-fire", String(fire));
-    for (var i = 1; i <= 3; i++) {
-      var star = document.createElement("span");
-      star.className = "star";
-      star.setAttribute("data-n", String(i));
-      if (i <= n) {
-        star.classList.add("is-filled");
-        star.textContent = "★";
-      } else {
-        star.textContent = "☆";
-      }
-      if (i <= fire) {
-        star.classList.add("on-fire");
-        ensureParticles(star);
-      }
-      wrap.appendChild(star);
-    }
-    return wrap;
-  }
-
-  function loadPlaysMap() {
-    try {
-      var key = "laGamePlays";
-      var nm = (localStorage.getItem("laPlayerName") || "").trim().toLowerCase();
-      var cd = (localStorage.getItem("laClassCode") || "").trim().toUpperCase();
-      if (nm && cd) key = "laGamePlays::" + nm + "::" + cd;
-      else if (nm) key = "laGamePlays::" + nm;
-      var raw = localStorage.getItem(key);
-      var data = raw ? JSON.parse(raw) : {};
-      if (!Object.keys(data || {}).length && key !== "laGamePlays") {
-        try { data = JSON.parse(localStorage.getItem("laGamePlays") || "{}") || {}; } catch (e2) { data = {}; }
-      }
-      return data || {};
-    } catch (e) {
-      return {};
-    }
-  }
-
-  function goPage(i) {
-    pageIndex = Math.max(0, Math.min(pageCount - 1, i));
-    track.style.transform = "translateX(" + -pageIndex * 100 + "%)";
-    dotsEl.querySelectorAll(".ach-dot").forEach(function (d, idx) {
-      d.classList.toggle("is-on", idx === pageIndex);
-    });
-    prevBtn.disabled = pageIndex <= 0;
-    nextBtn.disabled = pageIndex >= pageCount - 1;
-  }
-
-  function loadAchievements() {
-    var data = {};
-    try {
-      var starsKey = "laGameStars";
-      var nm = (localStorage.getItem("laPlayerName") || "").trim().toLowerCase();
-      var cd = (localStorage.getItem("laClassCode") || "").trim().toUpperCase();
-      if (nm && cd) starsKey = "laGameStars::" + nm + "::" + cd;
-      else if (nm) starsKey = "laGameStars::" + nm;
-      var raw = localStorage.getItem(starsKey);
-      data = raw ? JSON.parse(raw) : {};
-      if (!Object.keys(data || {}).length && starsKey !== "laGameStars") {
-        try {
-          data = JSON.parse(localStorage.getItem("laGameStars") || "{}") || {};
-        } catch (e2) {
-          data = {};
-        }
-      }
-    } catch (e) {
-      data = {};
-    }
-
-    var keys = Object.keys(data || {}).filter(function (id) {
-      return Number(data[id]) > 0;
-    });
-    keys.sort(function (a, b) {
-      return Number(data[b]) - Number(data[a]) || prettyTitle(a).localeCompare(prettyTitle(b));
-    });
-
-    achCount.textContent = keys.length + " game" + (keys.length === 1 ? "" : "s");
-
-    var per = perPageForViewport();
-    pageCount = Math.max(1, Math.ceil(keys.length / per) || 1);
-    pageIndex = Math.min(pageIndex, pageCount - 1);
-
-    track.innerHTML = "";
-    dotsEl.innerHTML = "";
-
-    if (!keys.length) {
-      var emptyPage = document.createElement("div");
-      emptyPage.className = "ach-page";
-      emptyPage.innerHTML =
-        '<div class="ach-empty">No achievements yet.<br>Finish a game to earn stars ★</div>';
-      track.appendChild(emptyPage);
-      pageCount = 1;
-      goPage(0);
-      if (swipeHint) swipeHint.textContent = "Play games to unlock achievements";
-      return;
-    }
-
-    for (var p = 0; p < pageCount; p++) {
-      var page = document.createElement("div");
-      page.className = "ach-page";
-      var slice = keys.slice(p * per, (p + 1) * per);
-      var playsMap = loadPlaysMap();
-      slice.forEach(function (id) {
-        var n = Math.min(3, Number(data[id]) || 0);
-        var plays = Number(playsMap[id] || 0);
-        var fire = fireLevelFromPlays(plays);
-        var title = prettyTitle(id);
-        var url = gameUrl(id);
-        var el = url ? document.createElement("a") : document.createElement("article");
-        el.className = "ach-tile" + (fire > 0 ? " is-hot" : "");
-        if (url) el.href = url;
-        var label = title + " — " + n + " of 3 stars";
-        if (fire > 0) label += ", " + fire + " on fire · played " + plays + "×";
-        el.title = label;
-
-        var titleEl = document.createElement("span");
-        titleEl.className = "ach-tile-title";
-        titleEl.textContent = title;
-        el.appendChild(titleEl);
-        el.appendChild(starsEl(n, fire));
-
-        if (plays > 0) {
-          var playsEl = document.createElement("span");
-          playsEl.className = "ach-plays" + (fire > 0 ? " is-hot" : "");
-          playsEl.textContent = plays >= 10 ? "🔥 " + plays + "×" : plays + "× played";
-          el.appendChild(playsEl);
-        }
-        page.appendChild(el);
-      });
-      track.appendChild(page);
-
-      var dot = document.createElement("button");
-      dot.type = "button";
-      dot.className = "ach-dot" + (p === pageIndex ? " is-on" : "");
-      dot.setAttribute("aria-label", "Page " + (p + 1));
-      (function (idx) {
-        dot.addEventListener("click", function () {
-          goPage(idx);
-        });
-      })(p);
-      dotsEl.appendChild(dot);
-    }
-
-    goPage(pageIndex);
-    if (swipeHint) {
-      swipeHint.textContent =
-        pageCount > 1 ? "Swipe or use arrows to see more games" : "Tap a game to play again";
-    }
-  }
-
-  prevBtn.addEventListener("click", function () {
-    goPage(pageIndex - 1);
-  });
-  nextBtn.addEventListener("click", function () {
-    goPage(pageIndex + 1);
-  });
-
-  /* Touch / pointer swipe */
-  (function bindSwipe() {
-    var startX = 0;
-    var startY = 0;
-    var dragging = false;
-    viewport.addEventListener(
-      "pointerdown",
-      function (e) {
-        dragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        try {
-          viewport.setPointerCapture(e.pointerId);
-        } catch (err) {}
-      },
-      { passive: true }
-    );
-    viewport.addEventListener(
-      "pointerup",
-      function (e) {
-        if (!dragging) return;
-        dragging = false;
-        var dx = e.clientX - startX;
-        var dy = e.clientY - startY;
-        if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
-        if (dx < 0) goPage(pageIndex + 1);
-        else goPage(pageIndex - 1);
-      },
-      { passive: true }
-    );
-  })();
-
-  window.addEventListener("resize", function () {
-    loadAchievements();
-  });
-
-  /* —— Scores —— */
-  function formatDate(ms) {
-    if (!ms) return "";
-    try {
-      return new Date(ms).toLocaleString(undefined, {
-        dateStyle: "medium",
-        timeStyle: "short"
-      });
-    } catch (e) {
-      return "";
-    }
-  }
-
-  /* Logged-in students: show THEIR saved progress (private, per account). */
-  function loadMyProgress(scoresStatus, scoreList) {
-    window.LAProgress.getSummary().then(function (s) {
-      if (!s.gamesPlayed) {
-        scoresStatus.textContent = "";
-        scoreList.innerHTML =
-          '<div class="scores-empty">No saved progress yet.<br>Finish a game while logged in and it appears here.</div>';
-        return;
-      }
-      var mins = Math.round(s.totalTimeSeconds / 60);
-      scoresStatus.textContent =
-        s.gamesPlayed + " games played · " + s.gamesCompleted + " completed · " +
-        s.totalAttempts + " attempts · " + s.averageBestAccuracy + "% avg best" +
-        (mins ? " · " + mins + " min" : "");
-      var html = Object.keys(s.byCategory).map(function (k) {
-        var c = s.byCategory[k];
-        return '<div class="score-row"><div><strong>' + escapeHtml(k) + "</strong><small>" +
-          c.games + " game" + (c.games === 1 ? "" : "s") + " · " + c.completed + " completed · " +
-          c.attempts + " attempts</small></div><div class=\"score-val\">" + c.averageBestAccuracy + "%</div></div>";
-      }).join("");
-      scoreList.innerHTML = html;
-      window.LAProgress.getMine().then(function (rows) {
-        rows.sort(function (a, b) { return (b.lastPlayedAt || 0) - (a.lastPlayedAt || 0); });
-        scoreList.innerHTML = html + rows.map(function (r) {
-          var title = r.gameName || TITLES[r.gameId] || prettyTitle(r.gameId);
-          var best = r.bestMaxScore > 0 ? r.bestScore + "/" + r.bestMaxScore : r.bestScore;
-          var latest = r.latestMaxScore > 0 ? r.latestScore + "/" + r.latestMaxScore : r.latestScore;
-          var url = gameUrl(r.gameId);
-          var body = "<div><strong>" + escapeHtml(title) + "</strong><small>" +
-            "Best " + best + " · Latest " + latest + " · " + r.attempts + " play" + (r.attempts === 1 ? "" : "s") +
-            (r.unit ? " · " + escapeHtml(r.unit) : "") + " · " + formatDate(r.lastPlayedAt) +
-            '</small></div><div class="score-val">' + (r.bestAccuracy || 0) + "%</div>";
-          return url ? '<a class="score-row" href="' + url + '">' + body + "</a>" : '<div class="score-row">' + body + "</div>";
-        }).join("");
-      });
-    }).catch(function () {
-      scoresStatus.textContent = "";
-      scoreList.innerHTML = '<div class="scores-empty">Could not load your progress.<br>Local stars still work.</div>';
-    });
-  }
-
-  function loadScores() {
-    var scoresStatus = document.getElementById("scoresStatus");
-    var scoreList = document.getElementById("scoreList");
-    scoresStatus.textContent = "Loading…";
-    scoreList.innerHTML = "";
-
-    if (window.LAAuth && LAAuth.isLoggedIn() && window.LAProgress) {
-      loadMyProgress(scoresStatus, scoreList);
-      return;
-    }
-
-    if (!window.LAScores || !LAScores.myScores) {
-      scoresStatus.textContent = "";
-      scoreList.innerHTML =
-        '<div class="scores-empty">Cloud scores need a connection.<br>Your stars still save on this device.</div>';
-      return;
-    }
-
-    var p = LAScores.ensureAuth ? LAScores.ensureAuth() : Promise.resolve();
-    p.then(function () {
-      return LAScores.myScores();
-    })
-      .then(function (rows) {
-        rows = rows || [];
-        if (!rows.length) {
-          scoresStatus.textContent = "";
-          scoreList.innerHTML =
-            '<div class="scores-empty">No cloud scores yet.<br>Enter your name above — scores save when you finish games.</div>';
-          return;
-        }
-        scoresStatus.textContent =
-          rows.length + " score" + (rows.length === 1 ? "" : "s");
-        scoreList.innerHTML = rows
-          .map(function (r) {
-            var title = r.gameName || TITLES[r.gameId] || prettyTitle(r.gameId);
-            var url = gameUrl(r.gameId);
-            var body =
-              "<div><strong>" +
-              escapeHtml(title) +
-              "</strong><small>" +
-              formatDate(r.at) +
-              "</small></div><div class=\"pts\">" +
-              r.score +
-              "</div>";
-            if (url) return '<a class="score-row" href="' + url + '">' + body + "</a>";
-            return '<div class="score-row">' + body + "</div>";
-          })
-          .join("");
-      })
-      .catch(function () {
-        scoresStatus.textContent = "";
-        scoreList.innerHTML =
-          '<div class="scores-empty">Could not load cloud scores.<br>Local stars still work.</div>';
-      });
-  }
-
-
-  /* —— Leaderboard —— */
-  var lbCache = { overall: [], games: {}, loaded: false, filter: "overall" };
-  var lbFilters = document.getElementById("lbFilters");
-  var lbPodium = document.getElementById("lbPodium");
-  var lbList = document.getElementById("lbList");
-  var lbEmpty = document.getElementById("lbEmpty");
-  var lbMeta = document.getElementById("lbMeta");
-  var lbBody = document.getElementById("lbBody");
-
-  function myNameKey() {
-    var n = "";
-    try {
-      if (window.LAScores && LAScores.getPlayerName) n = LAScores.getPlayerName() || "";
-      if (!n) n = localStorage.getItem("laPlayerName") || "";
-    } catch (e) {}
-    return String(n).trim().toLowerCase();
-  }
-
-  function medal(rank) {
-    if (rank === 1) return "🥇";
-    if (rank === 2) return "🥈";
-    if (rank === 3) return "🥉";
-    return String(rank);
-  }
-
-  function buildLbFilters(gameIds) {
-    lbFilters.innerHTML = '<button type="button" class="lb-chip is-on" data-game="overall">Overall</button>';
-    (gameIds || []).forEach(function (id) {
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "lb-chip";
-      btn.setAttribute("data-game", id);
-      btn.textContent = prettyTitle(id);
-      lbFilters.appendChild(btn);
-    });
-  }
-
-  lbFilters.addEventListener("click", function (e) {
-    var btn = e.target.closest(".lb-chip");
-    if (!btn) return;
-    lbFilters.querySelectorAll(".lb-chip").forEach(function (b) {
-      b.classList.toggle("is-on", b === btn);
-    });
-    lbCache.filter = btn.getAttribute("data-game") || "overall";
-    renderLeaderboard();
-  });
-
-  function renderLeaderboard() {
-    var filter = lbCache.filter || "overall";
-    var rows =
-      filter === "overall"
-        ? lbCache.overall || []
-        : (lbCache.games && lbCache.games[filter]) || [];
-
-    lbMeta.textContent = filter === "overall" ? "Overall" : prettyTitle(filter);
-
-    if (!rows.length) {
-      lbBody.hidden = true;
-      lbEmpty.hidden = false;
-      return;
-    }
-    lbBody.hidden = false;
-    lbEmpty.hidden = true;
-
-    var me = myNameKey();
-    var top3 = rows.slice(0, 3);
-    // Visual order: 2nd, 1st, 3rd
-    var visual = [];
-    if (top3[1]) visual.push({ row: top3[1], rank: 2 });
-    if (top3[0]) visual.push({ row: top3[0], rank: 1 });
-    if (top3[2]) visual.push({ row: top3[2], rank: 3 });
-
-    lbPodium.innerHTML = visual
-      .map(function (item) {
-        var isMe = me && item.row.key === me;
-        return (
-          '<div class="lb-pod' +
-          (item.rank === 1 ? " is-first" : "") +
-          (isMe ? " is-me" : "") +
-          '">' +
-          '<div class="lb-pod-medal">' +
-          medal(item.rank) +
-          "</div>" +
-          '<div class="lb-pod-name">' +
-          escapeHtml(item.row.name) +
-          "</div>" +
-          '<div class="lb-pod-score">' +
-          item.row.score +
-          "</div>" +
-          '<div class="lb-pod-rank">#' +
-          item.rank +
-          (filter === "overall" && item.row.games
-            ? " · " + item.row.games + "g"
-            : "") +
-          "</div>" +
-          "</div>"
-        );
-      })
-      .join("");
-
-    var rest = rows.slice(3, 30);
-    lbList.innerHTML = rest
-      .map(function (p, i) {
-        var rank = i + 4;
-        var isMe = me && p.key === me;
-        return (
-          '<div class="lb-row' +
-          (isMe ? " is-me" : "") +
-          '">' +
-          '<span class="lb-row-rank">' +
-          rank +
-          "</span>" +
-          '<span class="lb-row-name">' +
-          escapeHtml(p.name) +
-          "</span>" +
-          '<span class="lb-row-score">' +
-          p.score +
-          "</span>" +
-          "</div>"
-        );
-      })
-      .join("");
-
-    // If I'm not in top list, still highlight if in rest — already done via is-me
-  }
-
-  function loadLeaderboard() {
-    if (!window.LAScores || !LAScores.top) {
-      lbBody.hidden = true;
-      lbEmpty.hidden = false;
-      lbEmpty.innerHTML =
-        "Leaderboard needs a connection.<br>Your local stars still work on the Stars tab.";
-      return;
-    }
-    if (lbCache.loaded) {
-      renderLeaderboard();
-      return;
-    }
-    lbEmpty.hidden = false;
-    lbEmpty.textContent = "Loading leaderboard…";
-    lbBody.hidden = true;
-
-    var auth = LAScores.ensureAuth ? LAScores.ensureAuth() : Promise.resolve();
-    auth
-      .catch(function () {
-        return null;
-      })
-      .then(function () {
-        return LAScores.listGames().then(function (ids) {
-          if (!ids || !ids.length) {
-            ids = Object.keys((LAScores.GAMES || {}));
-          }
-          return Promise.all(
-            (ids || []).map(function (gid) {
-              return LAScores.top(gid, 50).then(function (rows) {
-                return { gameId: gid, rows: rows || [] };
-              });
-            })
-          );
-        });
-      })
-      .then(function (gameBuckets) {
-        var perGame = {};
-        var overall = {};
-
-        (gameBuckets || []).forEach(function (bucket) {
-          var gameId = bucket.gameId;
-          perGame[gameId] = {};
-          (bucket.rows || []).forEach(function (v) {
-            var name = String(v.name || "Player").trim() || "Player";
-            var key = name.toLowerCase();
-            var score = Number(v.score) || 0;
-            var at = Number(v.at) || 0;
-            var prev = perGame[gameId][key];
-            if (!prev || score > prev.score || (score === prev.score && at > prev.at)) {
-              perGame[gameId][key] = { name: name, score: score, at: at };
-            }
-          });
-        });
-
-        Object.keys(perGame).forEach(function (gameId) {
-          Object.keys(perGame[gameId]).forEach(function (key) {
-            var p = perGame[gameId][key];
-            if (!overall[key]) {
-              overall[key] = { name: p.name, total: 0, games: 0, best: 0 };
-            }
-            overall[key].total += p.score;
-            overall[key].games += 1;
-            if (p.score > overall[key].best) overall[key].best = p.score;
-          });
-        });
-
-        function toRanked(map, scoreKey) {
-          return Object.keys(map)
-            .map(function (k) {
-              var o = map[k];
-              return {
-                name: o.name,
-                score: o[scoreKey] != null ? o[scoreKey] : o.score,
-                games: o.games || 1,
-                best: o.best != null ? o.best : o.score,
-                key: k
-              };
-            })
-            .sort(function (a, b) {
-              if (b.score !== a.score) return b.score - a.score;
-              if ((b.games || 0) !== (a.games || 0)) return (b.games || 0) - (a.games || 0);
-              return a.name.localeCompare(b.name);
-            });
-        }
-
-        lbCache.overall = toRanked(overall, "total");
-        lbCache.games = {};
-        Object.keys(perGame).forEach(function (gameId) {
-          lbCache.games[gameId] = toRanked(perGame[gameId], "score");
-        });
-        lbCache.loaded = true;
-        buildLbFilters(Object.keys(perGame).sort());
-        renderLeaderboard();
-      })
-      .catch(function (err) {
-        console.warn("[Profile LB]", err);
-        lbBody.hidden = true;
-        lbEmpty.hidden = false;
-        lbEmpty.innerHTML = "Could not load leaderboard.<br>Check your connection and try again.";
-      });
-  }
-
-
-  // Smart back: return to previous page when possible, else arcade hub
   (function () {
-    var back = document.getElementById("pfBack");
-    if (!back) return;
-    back.addEventListener("click", function (e) {
+    "use strict";
+
+    var TITLES = {
+      "opposite-snap": "Opposite Snap",
+      "sound-match-picture": "Sound Match",
+      "vocab-clothes-voice-hunt": "Voice Hunt",
+      "writing-sara-daily": "Sara's Routine",
+      "vocab-clothes-match": "Clothes Match",
+      "vocab-clothes-dictation": "Clothes Dictation",
+      "there-is-there-are": "There is / are",
+      "starter-3a-a-an-swipe": "A / An Swipe",
+      "starter-7a-question-builder": "Question Builder",
+      "starter-6a-listen-and-write": "Listen & Write",
+      "starter-7a-build-the-question": "Build Question",
+      "starter-3a-plural-s-sound-match": "Plural -s Sound",
+      "starter-3a-pictures-words-match": "Pictures & Words",
+      "starter-3b-listen-match": "Listen & Match",
+      "starter-3b-dialogue-completer": "Dialogue",
+      "starter-3b-this-that-sentences": "This / That",
+      "starter-3a-whats-in-your-bag": "What's in Bag?",
+      "nouns": "Nouns",
+      "match-rush": "Match Rush",
+      "starter-4b-car-adjectives": "Car Adjectives",
+      "starter-4b-opposite-snap": "Opposite Snap",
+      "be-verbs": "Be Verbs"
+    };
+
+    var GAME_URLS = {
+      "opposite-snap": "../vocabulary/Adjectives/Opposite_Snap/",
+      "sound-match-picture": "../vocabulary/Adjectives/Sound_Match_Picture/",
+      "vocab-clothes-voice-hunt": "../vocabulary/clothes/voice-treasure-hunt/",
+      "vocab-clothes-match": "../vocabulary/clothes/match/",
+      "vocab-clothes-dictation": "../vocabulary/clothes/dictation/",
+      "writing-sara-daily": "../writing/Daily%20Routine/Sara/",
+      "there-is-there-are": "../grammar/there-is-there-are/",
+      "nouns": "../grammar/nouns/",
+      "be-verbs": "../grammar/be-verbs/",
+      "simple-present": "../grammar/simple-present/",
+      "simple-past": "../grammar/simple-past/",
+      "present-perfect": "../grammar/present-perfect/",
+      "match-rush": "../vocabulary/match-rush/",
+      "starter-3a-a-an-swipe": "../../resources/american-english-file/starter/unit-3/a/games/a-an-swipe/",
+      "starter-3a-plural-s-sound-match": "../../resources/american-english-file/starter/unit-3/a/games/plural-s-sound-match/",
+      "starter-3a-pictures-words-match": "../../resources/american-english-file/starter/unit-3/a/games/pictures-words-match/",
+      "starter-3a-whats-in-your-bag": "../../resources/american-english-file/starter/unit-3/a/games/whats-in-your-bag/",
+      "starter-3b-listen-match": "../../resources/american-english-file/starter/unit-3/b/games/listen-match/",
+      "starter-3b-dialogue-completer": "../../resources/american-english-file/starter/unit-3/b/games/dialogue-completer/",
+      "starter-3b-this-that-sentences": "../../resources/american-english-file/starter/unit-3/b/games/this-that-sentences/"
+    };
+
+    var RECOMMENDED_GAMES = [
+      { id: "be-verbs", title: "Be Verbs", category: "Grammar", url: "../grammar/be-verbs/" },
+      { id: "vocab-clothes-match", title: "Clothes Match", category: "Vocabulary", url: "../vocabulary/" },
+      { id: "writing-sara-daily", title: "Sara's Daily Routine", category: "Writing", url: "../writing/Daily%20Routine/Sara/" },
+      { id: "listening-hub", title: "Listening Practice", category: "Listening", url: "../listening/" }
+    ];
+
+    function prettyTitle(id) {
+      if (TITLES[id]) return TITLES[id];
+      return String(id || "Game")
+        .replace(/^starter-\d+[a-z]-/i, "")
+        .replace(/^starter-pe\d+-/i, "")
+        .replace(/^vocab-/i, "")
+        .replace(/^writing-/i, "")
+        .replace(/^grammar-/i, "")
+        .replace(/[-_]+/g, " ")
+        .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    }
+
+    function inferCategory(gameId, explicitCategory) {
+      if (explicitCategory && String(explicitCategory).trim()) return String(explicitCategory).trim();
+      var id = String(gameId || "").toLowerCase();
+      if (id.indexOf("vocab-") === 0 || id.indexOf("match-rush") !== -1 || id.indexOf("opposite-snap") !== -1 || id.indexOf("sound-match") !== -1) return "Vocabulary";
+      if (id.indexOf("grammar-") === 0 || id === "be-verbs" || id === "nouns" || id === "there-is-there-are" || id === "simple-present" || id === "simple-past" || id === "present-perfect") return "Grammar";
+      if (id.indexOf("writing-") === 0) return "Writing";
+      if (id.indexOf("speaking-") === 0) return "Speaking";
+      if (id.indexOf("reading-") === 0) return "Reading";
+      if (id.indexOf("listening-") === 0 || id.indexOf("tfl-") === 0) return "Listening";
+      if (id.indexOf("starter-") === 0 || id.indexOf("aef") === 0) return "Starter Course";
+      if (id.indexOf("topics-") === 0) return "Topics";
+      return "General";
+    }
+
+    function escapeHtml(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function formatDate(ms) {
+      if (!ms) return "—";
+      try {
+        return new Date(ms).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+      } catch (e) {
+        return "—";
+      }
+    }
+
+    function formatRelative(ms) {
+      if (!ms) return "No activity yet";
+      var diff = Date.now() - ms;
+      if (diff < 60000) return "Just now";
+      if (diff < 3600000) return Math.floor(diff / 60000) + "m ago";
+      if (diff < 86400000) return Math.floor(diff / 3600000) + "h ago";
+      if (diff < 7 * 86400000) return Math.floor(diff / 86400000) + "d ago";
+      return new Date(ms).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    }
+
+    function starsMarkup(n) {
+      n = Math.max(0, Math.min(3, Number(n) || 0));
+      var out = '<div class="game-stars" aria-label="' + n + ' of 3 stars">';
+      for (var i = 1; i <= 3; i++) {
+        out += '<span class="star' + (i <= n ? " is-filled" : "") + '">' + (i <= n ? "★" : "☆") + "</span>";
+      }
+      return out + "</div>";
+    }
+
+    /* Theme sync */
+    function applyTheme(t) {
+      document.documentElement.setAttribute("data-theme", t);
+      try { localStorage.setItem("mrsheyhaki-theme", t); } catch (e) {}
+      var btn = document.getElementById("themeToggleBtn");
+      if (btn) btn.textContent = t === "dark" ? "Light Mode" : "Dark Mode";
+    }
+    applyTheme(document.documentElement.getAttribute("data-theme") || "light");
+    document.getElementById("themeToggleBtn").addEventListener("click", function () {
+      var cur = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyTheme(cur);
+    });
+    document.getElementById("prefLightBtn").addEventListener("click", function () { applyTheme("light"); });
+    document.getElementById("prefDarkBtn").addEventListener("click", function () { applyTheme("dark"); });
+
+    /* Smart Back */
+    document.getElementById("pfBack").addEventListener("click", function (e) {
       try {
         var ref = document.referrer || "";
-        var sameOrigin = ref.indexOf(location.origin) === 0;
-        var notSelf = sameOrigin && ref.indexOf("/profile") === -1;
-        if (notSelf && window.history.length > 1) {
+        if (ref.indexOf(location.origin) === 0 && ref.indexOf("/profile") === -1 && history.length > 1) {
           e.preventDefault();
           history.back();
-          return;
         }
       } catch (err) {}
-      // fallback href="../" (arcade) already on the link
     });
-  })();
 
-  try {
-    loadAchievements();
-  } catch (e) {
-    console.warn(e);
-  }
-  try {
-    loadScores();
-  } catch (e) {
-    console.warn(e);
-  }
+    /* Tabs */
+    var tabs = document.querySelectorAll(".pf-tab");
+    var panels = {
+      overview: document.getElementById("panel-overview"),
+      stars: document.getElementById("panel-stars"),
+      scores: document.getElementById("panel-scores"),
+      leaderboard: document.getElementById("panel-leaderboard"),
+      settings: document.getElementById("panel-settings")
+    };
 
+    function activateTab(id) {
+      tabs.forEach(function (t) {
+        var on = t.getAttribute("data-tab") === id;
+        t.classList.toggle("is-on", on);
+        t.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      Object.keys(panels).forEach(function (k) {
+        if (panels[k]) panels[k].classList.toggle("is-on", k === id);
+      });
+      if (id === "leaderboard") loadLeaderboard();
+    }
 
-  // Log out — clear Supabase + local session, then go home
-  (function () {
-    var btn = document.getElementById("pfLogout");
-    if (!btn) return;
-    btn.addEventListener("click", function () {
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        activateTab(tab.getAttribute("data-tab"));
+      });
+    });
+
+    document.getElementById("jumpSettingsBtn").addEventListener("click", function () {
+      activateTab("settings");
+      var el = document.getElementById("displayNameInput");
+      if (el) el.focus();
+    });
+
+    /* State */
+    var state = {
+      session: null,
+      account: null,
+      cloudProgress: [],
+      cloudScores: [],
+      mergedGames: []
+    };
+
+    function readLocalStarsAndPlays() {
+      var starsMap = {};
+      var playsMap = {};
+      try {
+        if (window.LAStars) {
+          starsMap = LAStars.load() || {};
+          playsMap = LAStars.loadPlays() || {};
+        }
+      } catch (e) {}
+      return { starsMap: starsMap, playsMap: playsMap };
+    }
+
+    function buildMergedGames() {
+      var local = readLocalStarsAndPlays();
+      var byId = {};
+
+      (state.cloudProgress || []).forEach(function (r) {
+        var gid = r.gameId || r.game_id;
+        if (!gid) return;
+        byId[gid] = {
+          id: gid,
+          title: r.gameName || prettyTitle(gid),
+          category: inferCategory(gid, r.category),
+          stars: Math.max(0, Math.min(3, Number(r.stars) || 0)),
+          plays: Number(r.plays || r.attempts) || 0,
+          bestScore: Number(r.bestScore || r.best_score) || 0,
+          maxScore: Number(r.bestMaxScore || r.max_score) || 0,
+          accuracy: Number(r.bestAccuracy || r.best_accuracy) || 0,
+          completed: !!r.completed,
+          lastAt: Number(r.lastPlayedAt) || 0,
+          url: GAME_URLS[gid] || null
+        };
+      });
+
+      Object.keys(local.starsMap).forEach(function (gid) {
+        var st = Math.max(0, Math.min(3, Number(local.starsMap[gid]) || 0));
+        var pl = Number(local.playsMap[gid] || 0);
+        if (!st && !pl) return;
+        if (!byId[gid]) {
+          byId[gid] = {
+            id: gid,
+            title: prettyTitle(gid),
+            category: inferCategory(gid),
+            stars: st,
+            plays: pl,
+            bestScore: 0,
+            maxScore: 0,
+            accuracy: 0,
+            completed: st > 0,
+            lastAt: 0,
+            url: GAME_URLS[gid] || null
+          };
+        } else {
+          byId[gid].stars = Math.max(byId[gid].stars, st);
+          byId[gid].plays = Math.max(byId[gid].plays, pl);
+        }
+      });
+
+      Object.keys(local.playsMap).forEach(function (gid) {
+        var pl = Number(local.playsMap[gid] || 0);
+        if (!pl) return;
+        if (!byId[gid]) {
+          byId[gid] = {
+            id: gid,
+            title: prettyTitle(gid),
+            category: inferCategory(gid),
+            stars: 0,
+            plays: pl,
+            bestScore: 0,
+            maxScore: 0,
+            accuracy: 0,
+            completed: false,
+            lastAt: 0,
+            url: GAME_URLS[gid] || null
+          };
+        } else {
+          byId[gid].plays = Math.max(byId[gid].plays, pl);
+        }
+      });
+
+      (state.cloudScores || []).forEach(function (s) {
+        var gid = s.gameId;
+        if (!gid) return;
+        var pct = s.maxScore > 0 ? Math.min(100, Math.round((s.score / s.maxScore) * 100)) : 0;
+        if (!byId[gid]) {
+          byId[gid] = {
+            id: gid,
+            title: s.gameName || prettyTitle(gid),
+            category: inferCategory(gid),
+            stars: pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0,
+            plays: 1,
+            bestScore: Number(s.score) || 0,
+            maxScore: Number(s.maxScore) || 0,
+            accuracy: pct,
+            completed: true,
+            lastAt: Number(s.at) || 0,
+            url: GAME_URLS[gid] || null
+          };
+        } else {
+          if (Number(s.score) > byId[gid].bestScore) {
+            byId[gid].bestScore = Number(s.score) || 0;
+            if (s.maxScore) byId[gid].maxScore = Number(s.maxScore) || 0;
+          }
+          if (pct > byId[gid].accuracy) byId[gid].accuracy = pct;
+          if ((Number(s.at) || 0) > byId[gid].lastAt) byId[gid].lastAt = Number(s.at) || 0;
+        }
+      });
+
+      state.mergedGames = Object.keys(byId)
+        .map(function (k) { return byId[k]; })
+        .sort(function (a, b) {
+          return b.lastAt - a.lastAt || b.stars - a.stars || b.plays - a.plays || a.title.localeCompare(b.title);
+        });
+    }
+
+    function renderIdentity() {
+      var s = state.session;
+      var loggedIn = !!(s && (s.id || s.username));
+      var localName = window.LAScores ? (LAScores.getPlayerName() || "") : "";
+      var classCode = window.LAScores ? (LAScores.getClassCode() || "") : "";
+      var showingName = (s && (s.displayName || s.username)) || localName || "Student";
+
+      document.getElementById("pfDisplayName").textContent = showingName;
+      document.getElementById("pfAvatar").textContent = showingName.charAt(0).toUpperCase();
+
+      var subParts = [];
+      if (loggedIn && s.username) subParts.push("@" + s.username);
+      else subParts.push("Guest mode");
+      if (classCode) subParts.push("Class " + classCode);
+      subParts.push(loggedIn ? "Cloud progress active" : "Saved on this browser");
+      document.getElementById("pfSubtitle").textContent = subParts.join(" · ");
+
+      document.getElementById("guestBanner").hidden = loggedIn;
+      document.getElementById("topSignInLink").hidden = loggedIn;
+      document.getElementById("pfLogout").hidden = !loggedIn;
+      document.getElementById("pwGuestNotice").hidden = loggedIn;
+      document.getElementById("passwordForm").hidden = !loggedIn;
+
+      // Sync settings fields
+      var dnInput = document.getElementById("displayNameInput");
+      if (dnInput && document.activeElement !== dnInput) {
+        dnInput.value = showingName === "Student" && !localName && !loggedIn ? "" : showingName;
+      }
+      var ccInput = document.getElementById("classCodeInput");
+      if (ccInput && document.activeElement !== ccInput) {
+        ccInput.value = classCode;
+      }
+
+      document.getElementById("detailUsername").textContent = loggedIn && s.username ? "@" + s.username : "Guest (no username)";
+      document.getElementById("detailSyncStatus").textContent = loggedIn ? "Cloud synced" : "Local browser only";
+      document.getElementById("detailJoined").textContent =
+        state.account && state.account.createdAt
+          ? new Date(state.account.createdAt).toLocaleDateString(undefined, { dateStyle: "medium" })
+          : "—";
+    }
+
+    function renderKPIs() {
+      var games = state.mergedGames;
+      var totalStars = 0;
+      var totalPlays = 0;
+      var completed = 0;
+      var accSum = 0;
+      var accCount = 0;
+      var lastAt = 0;
+      var maxScoreBest = 0;
+
+      games.forEach(function (g) {
+        totalStars += g.stars;
+        totalPlays += g.plays;
+        if (g.completed || g.stars > 0) completed += 1;
+        if (g.accuracy > 0) {
+          accSum += g.accuracy;
+          accCount += 1;
+        }
+        if (g.lastAt > lastAt) lastAt = g.lastAt;
+        if (g.bestScore > maxScoreBest) maxScoreBest = g.bestScore;
+      });
+
+      var maxPossibleStars = games.length * 3;
+      document.getElementById("kpiStars").textContent = String(totalStars);
+      document.getElementById("kpiStarsSub").textContent = games.length
+        ? totalStars + " / " + maxPossibleStars + " possible"
+        : "Finish games to earn stars";
+      document.getElementById("kpiGames").textContent = String(games.length);
+      document.getElementById("kpiCompletedSub").textContent = completed + " completed";
+      document.getElementById("kpiPlays").textContent = String(totalPlays);
+      document.getElementById("kpiLastActive").textContent = lastAt ? "Last active " + formatRelative(lastAt) : "No plays recorded";
+      document.getElementById("kpiAccuracy").textContent = accCount ? Math.round(accSum / accCount) + "%" : "—";
+      document.getElementById("kpiBestScore").textContent = maxScoreBest ? "Highest score: " + maxScoreBest : "Best score tracking";
+    }
+
+    function renderOverview() {
+      var games = state.mergedGames;
+
+      // Skill breakdown
+      var skillEl = document.getElementById("skillBreakdown");
+      var skillMeta = document.getElementById("skillSummaryMeta");
+      if (!games.length) {
+        skillMeta.textContent = "No progress yet";
+        skillEl.innerHTML = '<div class="pf-empty">Play any Learning Arcade game to see your progress across Vocabulary, Grammar, Writing, and Listening.</div>';
+      } else {
+        var cats = {};
+        games.forEach(function (g) {
+          var c = g.category || "General";
+          if (!cats[c]) cats[c] = { games: 0, stars: 0, plays: 0, accSum: 0, accCount: 0 };
+          cats[c].games += 1;
+          cats[c].stars += g.stars;
+          cats[c].plays += g.plays;
+          if (g.accuracy > 0) {
+            cats[c].accSum += g.accuracy;
+            cats[c].accCount += 1;
+          }
+        });
+        var catNames = Object.keys(cats).sort(function (a, b) {
+          return cats[b].plays - cats[a].plays || cats[b].stars - cats[a].stars;
+        });
+        skillMeta.textContent = catNames.length + " skill area" + (catNames.length === 1 ? "" : "s");
+        skillEl.innerHTML = catNames.map(function (c) {
+          var b = cats[c];
+          var avgAcc = b.accCount ? Math.round(b.accSum / b.accCount) : Math.round((b.stars / (b.games * 3)) * 100);
+          var pct = Math.max(6, Math.min(100, avgAcc));
+          return (
+            '<div class="skill-row">' +
+              '<div class="skill-row-top">' +
+                "<strong>" + escapeHtml(c) + "</strong>" +
+                '<span class="tabular">' + b.games + " game" + (b.games === 1 ? "" : "s") + " · " + b.stars + " ★ · " + b.plays + " plays</span>" +
+              "</div>" +
+              '<div class="skill-bar"><i style="width:' + pct + '%"></i></div>' +
+            "</div>"
+          );
+        }).join("");
+      }
+
+      // Quick launch
+      var quickEl = document.getElementById("quickLaunchList");
+      var recentPlayable = games.filter(function (g) { return !!g.url; }).slice(0, 4);
+      var launchItems = recentPlayable.length ? recentPlayable.map(function (g) {
+        return {
+          title: g.title,
+          sub: g.category + " · " + g.stars + " ★ · " + g.plays + " plays",
+          url: g.url
+        };
+      }) : RECOMMENDED_GAMES.map(function (g) {
+        return { title: g.title, sub: g.category + " · Recommended", url: g.url };
+      });
+      quickEl.innerHTML = launchItems.map(function (item) {
+        return (
+          '<a class="quick-item" href="' + escapeHtml(item.url) + '">' +
+            '<div><strong>' + escapeHtml(item.title) + "</strong><small>" + escapeHtml(item.sub) + "</small></div>" +
+            '<span class="quick-go">Play →</span>' +
+          "</a>"
+        );
+      }).join("");
+
+      // Recent activity
+      var recentWrap = document.getElementById("recentActivityWrap");
+      var recentItems = (state.cloudScores || []).slice(0, 6);
+      if (recentItems.length) {
+        recentWrap.innerHTML =
+          '<div class="pf-table-wrap"><table class="pf-table"><thead><tr>' +
+          '<th>Game</th><th class="num">Score</th><th class="num">Accuracy</th><th class="num">When</th>' +
+          "</tr></thead><tbody>" +
+          recentItems.map(function (r) {
+            var title = r.gameName || prettyTitle(r.gameId);
+            var url = GAME_URLS[r.gameId] || null;
+            var pct = r.maxScore > 0 ? Math.round((r.score / r.maxScore) * 100) + "%" : "—";
+            var sc = r.maxScore > 0 ? (r.score + " / " + r.maxScore) : String(r.score);
+            return (
+              "<tr>" +
+                "<td>" + (url ? '<a class="game-link" href="' + escapeHtml(url) + '">' + escapeHtml(title) + "</a>" : "<strong>" + escapeHtml(title) + "</strong>") + "</td>" +
+                '<td class="num">' + escapeHtml(sc) + "</td>" +
+                '<td class="num">' + escapeHtml(pct) + "</td>" +
+                '<td class="num">' + escapeHtml(formatRelative(r.at)) + "</td>" +
+              "</tr>"
+            );
+          }).join("") +
+          "</tbody></table></div>";
+      } else if (games.length) {
+        recentWrap.innerHTML =
+          '<div class="pf-table-wrap"><table class="pf-table"><thead><tr>' +
+          '<th>Game</th><th class="num">Stars</th><th class="num">Plays</th><th class="num">Best Accuracy</th>' +
+          "</tr></thead><tbody>" +
+          games.slice(0, 6).map(function (g) {
+            return (
+              "<tr>" +
+                "<td>" + (g.url ? '<a class="game-link" href="' + escapeHtml(g.url) + '">' + escapeHtml(g.title) + "</a>" : "<strong>" + escapeHtml(g.title) + "</strong>") + "</td>" +
+                '<td class="num">' + g.stars + " ★</td>" +
+                '<td class="num">' + g.plays + "</td>" +
+                '<td class="num">' + (g.accuracy ? g.accuracy + "%" : "—") + "</td>" +
+              "</tr>"
+            );
+          }).join("") +
+          "</tbody></table></div>";
+      } else {
+        recentWrap.innerHTML = '<div class="pf-empty">No recent activity yet. Finish a game to log your progress here.</div>';
+      }
+    }
+
+    function renderStarsGrid() {
+      var grid = document.getElementById("starsGrid");
+      var countEl = document.getElementById("achCount");
+      var q = String(document.getElementById("starsSearch").value || "").trim().toLowerCase();
+      var list = state.mergedGames.filter(function (g) {
+        if (!q) return true;
+        return g.title.toLowerCase().indexOf(q) !== -1 || g.category.toLowerCase().indexOf(q) !== -1;
+      });
+      countEl.textContent = list.length + " game" + (list.length === 1 ? "" : "s");
+
+      if (!list.length) {
+        grid.innerHTML = '<div class="pf-empty" style="grid-column:1/-1;">' +
+          (q ? "No games match your search." : "No stars earned yet. Play games in the arcade to unlock stars.") +
+          "</div>";
+        return;
+      }
+
+      grid.innerHTML = list.map(function (g) {
+        var metaParts = [g.category];
+        if (g.plays > 0) metaParts.push(g.plays + " play" + (g.plays === 1 ? "" : "s"));
+        if (g.accuracy > 0) metaParts.push(g.accuracy + "% best");
+        var inner =
+          '<span class="ach-tile-title">' + escapeHtml(g.title) + "</span>" +
+          starsMarkup(g.stars) +
+          '<span class="ach-tile-meta tabular">' + escapeHtml(metaParts.join(" · ")) + "</span>";
+        return g.url
+          ? '<a class="ach-tile" href="' + escapeHtml(g.url) + '">' + inner + "</a>"
+          : '<article class="ach-tile">' + inner + "</article>";
+      }).join("");
+    }
+
+    document.getElementById("starsSearch").addEventListener("input", renderStarsGrid);
+
+    function renderScoresPanel() {
+      var statusEl = document.getElementById("scoresStatus");
+      var listEl = document.getElementById("scoreList");
+      var games = state.mergedGames;
+
+      if (!games.length && !state.cloudScores.length) {
+        statusEl.textContent = "0 entries";
+        listEl.innerHTML = '<div class="pf-empty">No saved scores yet. Finish a game while signed in or with your showing name set.</div>';
+        return;
+      }
+
+      statusEl.textContent = games.length + " game" + (games.length === 1 ? "" : "s") + " · " + state.cloudScores.length + " score submission" + (state.cloudScores.length === 1 ? "" : "s");
+      listEl.innerHTML =
+        '<div class="pf-table-wrap"><table class="pf-table"><thead><tr>' +
+        '<th>Game</th><th>Category</th><th class="num">Stars</th><th class="num">Best Score</th><th class="num">Accuracy</th><th class="num">Plays</th><th class="num">Last Played</th>' +
+        "</tr></thead><tbody>" +
+        games.map(function (g) {
+          var scoreStr = g.maxScore > 0 ? g.bestScore + " / " + g.maxScore : (g.bestScore ? String(g.bestScore) : "—");
+          return (
+            "<tr>" +
+              "<td>" + (g.url ? '<a class="game-link" href="' + escapeHtml(g.url) + '">' + escapeHtml(g.title) + "</a>" : "<strong>" + escapeHtml(g.title) + "</strong>") + "</td>" +
+              "<td>" + escapeHtml(g.category) + "</td>" +
+              '<td class="num">' + g.stars + " ★</td>" +
+              '<td class="num">' + escapeHtml(scoreStr) + "</td>" +
+              '<td class="num">' + (g.accuracy ? g.accuracy + "%" : "—") + "</td>" +
+              '<td class="num">' + g.plays + "</td>" +
+              '<td class="num">' + escapeHtml(formatDate(g.lastAt)) + "</td>" +
+            "</tr>"
+          );
+        }).join("") +
+        "</tbody></table></div>";
+    }
+
+    /* Leaderboard */
+    var lbCache = { overall: [], games: {}, loaded: false, filter: "overall" };
+    var lbFilters = document.getElementById("lbFilters");
+    var lbPodium = document.getElementById("lbPodium");
+    var lbList = document.getElementById("lbList");
+    var lbEmpty = document.getElementById("lbEmpty");
+    var lbMeta = document.getElementById("lbMeta");
+    var lbBody = document.getElementById("lbBody");
+
+    function myNameKey() {
+      var s = state.session;
+      var n = (s && (s.displayName || s.username)) || (window.LAScores ? LAScores.getPlayerName() : "") || "";
+      return String(n).trim().toLowerCase();
+    }
+
+    function medal(rank) {
+      if (rank === 1) return "🥇";
+      if (rank === 2) return "🥈";
+      if (rank === 3) return "🥉";
+      return String(rank);
+    }
+
+    function buildLbFilters(gameIds) {
+      lbFilters.innerHTML = '<button type="button" class="lb-chip is-on" data-game="overall">Overall</button>';
+      (gameIds || []).forEach(function (id) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "lb-chip";
+        btn.setAttribute("data-game", id);
+        btn.textContent = prettyTitle(id);
+        lbFilters.appendChild(btn);
+      });
+    }
+
+    lbFilters.addEventListener("click", function (e) {
+      var btn = e.target.closest(".lb-chip");
+      if (!btn) return;
+      lbFilters.querySelectorAll(".lb-chip").forEach(function (b) {
+        b.classList.toggle("is-on", b === btn);
+      });
+      lbCache.filter = btn.getAttribute("data-game") || "overall";
+      renderLeaderboard();
+    });
+
+    function renderLeaderboard() {
+      var filter = lbCache.filter || "overall";
+      var rows = filter === "overall" ? (lbCache.overall || []) : ((lbCache.games && lbCache.games[filter]) || []);
+      lbMeta.textContent = filter === "overall" ? "Overall" : prettyTitle(filter);
+
+      if (!rows.length) {
+        lbBody.style.display = "none";
+        lbEmpty.hidden = false;
+        return;
+      }
+      lbBody.style.display = "flex";
+      lbEmpty.hidden = true;
+
+      var me = myNameKey();
+      var top3 = rows.slice(0, 3);
+      var visual = [];
+      if (top3[1]) visual.push({ row: top3[1], rank: 2 });
+      if (top3[0]) visual.push({ row: top3[0], rank: 1 });
+      if (top3[2]) visual.push({ row: top3[2], rank: 3 });
+
+      lbPodium.innerHTML = visual.map(function (item) {
+        var isMe = me && (item.row.key === me || item.row.key.indexOf(me + " · ") === 0);
+        return (
+          '<div class="lb-pod' + (isMe ? " is-me" : "") + '">' +
+            '<div class="lb-pod-medal">' + medal(item.rank) + "</div>" +
+            '<div class="lb-pod-name">' + escapeHtml(item.row.name) + "</div>" +
+            '<div class="lb-pod-score tabular">' + item.row.score + " pts</div>" +
+            '<div class="lb-pod-rank tabular">#' + item.rank + (filter === "overall" && item.row.games ? " · " + item.row.games + " games" : "") + "</div>" +
+          "</div>"
+        );
+      }).join("");
+
+      lbList.innerHTML = rows.slice(3, 30).map(function (p, i) {
+        var rank = i + 4;
+        var isMe = me && (p.key === me || p.key.indexOf(me + " · ") === 0);
+        return (
+          '<div class="lb-row' + (isMe ? " is-me" : "") + '">' +
+            '<span class="lb-row-rank tabular">' + rank + "</span>" +
+            '<span class="lb-row-name">' + escapeHtml(p.name) + "</span>" +
+            '<span class="lb-row-score tabular">' + p.score + " pts</span>" +
+          "</div>"
+        );
+      }).join("");
+    }
+
+    function loadLeaderboard() {
+      if (!window.LAScores || !LAScores.top) {
+        lbBody.style.display = "none";
+        lbEmpty.hidden = false;
+        return;
+      }
+      if (lbCache.loaded) {
+        renderLeaderboard();
+        return;
+      }
+      lbEmpty.hidden = false;
+      lbEmpty.textContent = "Loading leaderboard…";
+      lbBody.style.display = "none";
+
+      Promise.resolve(LAScores.ensureAuth ? LAScores.ensureAuth() : null)
+        .then(function () { return LAScores.listGames(); })
+        .then(function (ids) {
+          if (!ids || !ids.length) ids = Object.keys(LAScores.GAMES || {});
+          return Promise.all((ids || []).map(function (gid) {
+            return LAScores.top(gid, 50).then(function (rows) {
+              return { gameId: gid, rows: rows || [] };
+            });
+          }));
+        })
+        .then(function (buckets) {
+          var perGame = {};
+          var overall = {};
+          (buckets || []).forEach(function (bucket) {
+            var gid = bucket.gameId;
+            perGame[gid] = {};
+            (bucket.rows || []).forEach(function (v) {
+              var name = String(v.name || "Player").trim() || "Player";
+              var key = name.toLowerCase();
+              var score = Number(v.score) || 0;
+              var at = Number(v.at) || 0;
+              var prev = perGame[gid][key];
+              if (!prev || score > prev.score || (score === prev.score && at > prev.at)) {
+                perGame[gid][key] = { name: name, score: score, at: at };
+              }
+            });
+          });
+
+          Object.keys(perGame).forEach(function (gid) {
+            Object.keys(perGame[gid]).forEach(function (key) {
+              var p = perGame[gid][key];
+              if (!overall[key]) overall[key] = { name: p.name, total: 0, games: 0, best: 0 };
+              overall[key].total += p.score;
+              overall[key].games += 1;
+              if (p.score > overall[key].best) overall[key].best = p.score;
+            });
+          });
+
+          function toRanked(map, scoreKey) {
+            return Object.keys(map).map(function (k) {
+              var o = map[k];
+              return { name: o.name, score: o[scoreKey] != null ? o[scoreKey] : o.score, games: o.games || 1, key: k };
+            }).sort(function (a, b) {
+              return b.score - a.score || b.games - a.games || a.name.localeCompare(b.name);
+            });
+          }
+
+          lbCache.overall = toRanked(overall, "total");
+          lbCache.games = {};
+          Object.keys(perGame).forEach(function (gid) {
+            lbCache.games[gid] = toRanked(perGame[gid], "score");
+          });
+          lbCache.loaded = true;
+          buildLbFilters(Object.keys(perGame).sort());
+          renderLeaderboard();
+        })
+        .catch(function () {
+          lbBody.style.display = "none";
+          lbEmpty.hidden = false;
+          lbEmpty.textContent = "Could not load leaderboard right now.";
+        });
+    }
+
+    /* Account Settings Forms */
+    document.querySelectorAll(".pf-pw-toggle").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var target = document.getElementById(btn.getAttribute("data-target"));
+        if (!target) return;
+        var show = target.type === "password";
+        target.type = show ? "text" : "password";
+        btn.textContent = show ? "Hide" : "Show";
+      });
+    });
+
+    document.getElementById("newPwInput").addEventListener("input", function (e) {
+      var val = e.target.value || "";
+      var hint = document.getElementById("pwStrengthHint");
+      if (!val.length) hint.textContent = "Use at least 8 characters.";
+      else if (val.length < 8) hint.textContent = (8 - val.length) + " more character" + (8 - val.length === 1 ? "" : "s") + " needed.";
+      else if (val.length >= 12) hint.textContent = "Strong password length.";
+      else hint.textContent = "Good length (" + val.length + " characters).";
+    });
+
+    document.getElementById("profileForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var feedback = document.getElementById("profileFeedback");
+      var btn = document.getElementById("saveProfileBtn");
+      var dn = String(document.getElementById("displayNameInput").value || "").trim().slice(0, 32);
+      var cc = String(document.getElementById("classCodeInput").value || "").trim().slice(0, 16);
+
+      feedback.className = "pf-feedback";
+      if (dn.length < 2) {
+        feedback.className = "pf-feedback is-err";
+        feedback.textContent = "Please enter at least 2 characters for your showing name.";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Saving…";
+      feedback.textContent = "";
+
+      try {
+        if (window.LAScores) {
+          LAScores.setClassCode(cc);
+          LAScores.setPlayerName(dn);
+        } else {
+          try {
+            localStorage.setItem("laPlayerName", dn);
+            if (cc) localStorage.setItem("laClassCode", cc);
+            else localStorage.removeItem("laClassCode");
+          } catch (eLs) {}
+        }
+
+        if (window.LAAuth && LAAuth.isLoggedIn()) {
+          var res = await LAAuth.updateDisplayName(dn);
+          if (!res || !res.ok) {
+            feedback.className = "pf-feedback is-err";
+            feedback.textContent = (res && res.error) || "Could not update showing name.";
+            return;
+          }
+          state.session = res.player || LAAuth.getSession();
+        }
+
+        feedback.className = "pf-feedback is-ok";
+        feedback.textContent = "Profile updated.";
+        await refreshDashboard();
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Save Changes";
+      }
+    });
+
+    document.getElementById("passwordForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var feedback = document.getElementById("pwFeedback");
+      var btn = document.getElementById("savePwBtn");
+      var cur = document.getElementById("curPwInput").value;
+      var next = document.getElementById("newPwInput").value;
+      var confirm = document.getElementById("confirmPwInput").value;
+
+      feedback.className = "pf-feedback";
+      if (!cur) {
+        feedback.className = "pf-feedback is-err";
+        feedback.textContent = "Enter your current password.";
+        return;
+      }
+      if (next.length < 8) {
+        feedback.className = "pf-feedback is-err";
+        feedback.textContent = "New password must be at least 8 characters.";
+        return;
+      }
+      if (next !== confirm) {
+        feedback.className = "pf-feedback is-err";
+        feedback.textContent = "New passwords do not match.";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Updating…";
+      feedback.textContent = "";
+
+      try {
+        if (!window.LAAuth || typeof LAAuth.changePassword !== "function") {
+          feedback.className = "pf-feedback is-err";
+          feedback.textContent = "Authentication module is still loading.";
+          return;
+        }
+        var res = await LAAuth.changePassword(cur, next);
+        if (!res || !res.ok) {
+          feedback.className = "pf-feedback is-err";
+          feedback.textContent = (res && res.error) || "Could not change password.";
+          return;
+        }
+        document.getElementById("curPwInput").value = "";
+        document.getElementById("newPwInput").value = "";
+        document.getElementById("confirmPwInput").value = "";
+        document.getElementById("pwStrengthHint").textContent = "Use at least 8 characters.";
+        feedback.className = "pf-feedback is-ok";
+        feedback.textContent = "Password changed successfully.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Update Password";
+      }
+    });
+
+    /* Logout */
+    document.getElementById("pfLogout").addEventListener("click", function () {
+      var btn = this;
       btn.disabled = true;
       btn.textContent = "Signing out…";
-      var go = function () { window.location.href = "/"; };
-      if (window.LAAuth && typeof LAAuth.logoutAsync === "function") {
-        LAAuth.logoutAsync().then(go).catch(go);
-      } else if (window.LAAuth && typeof LAAuth.logout === "function") {
+      var go = function () { window.location.href = "../"; };
+      if (window.LAAuth && LAAuth.logoutAsync) LAAuth.logoutAsync().then(go).catch(go);
+      else if (window.LAAuth && LAAuth.logout) {
         var r = LAAuth.logout();
-        if (r && r.done && typeof r.done.then === "function") r.done.then(go).catch(go);
+        if (r && r.done && r.done.then) r.done.then(go).catch(go);
         else go();
       } else {
         try { localStorage.removeItem("laAuthSession"); } catch (e) {}
         go();
       }
     });
-  })();
 
-})();
-  </script>
-  <script>
-  // Fill identity card from session / name field
-  (function () {
-    function refreshIdentity() {
-      var nameInput = document.getElementById("playerName");
-      var display = document.getElementById("pfDisplayName");
-      var avatar = document.getElementById("pfAvatar");
-      var subtitle = document.getElementById("pfSubtitle");
-      var n = (nameInput && nameInput.value) || "";
-      try {
-        if (window.LAAuth && LAAuth.getSession) {
-          var s = LAAuth.getSession();
-          if (s) {
-            n = s.displayName || s.username || n;
-            if (subtitle) subtitle.textContent = "@" + (s.username || "player");
-          }
+    async function refreshDashboard() {
+      if (window.LAAuth) {
+        state.session = await LAAuth.verify().catch(function () { return LAAuth.getSession(); });
+        if (state.session && LAAuth.getAccountDetails) {
+          state.account = await LAAuth.getAccountDetails().catch(function () { return null; });
         }
-      } catch (e) {}
-      n = String(n || "Player").trim() || "Player";
-      if (display) display.textContent = n;
-      if (avatar) avatar.textContent = n.charAt(0).toUpperCase();
-    }
-    refreshIdentity();
-    var nameInput = document.getElementById("playerName");
-    if (nameInput) {
-      nameInput.addEventListener("change", refreshIdentity);
-      var obs = new MutationObserver(refreshIdentity);
-      obs.observe(nameInput, { attributes: true, attributeFilter: ["value"] });
-    }
-    // Update star / game counts from achievements when available
-    function syncStats() {
-      try {
-        var tiles = document.querySelectorAll(".ach-tile");
-        var games = tiles.length;
-        var stars = 0;
-        tiles.forEach(function (t) {
-          stars += t.querySelectorAll(".star.is-filled, .star.on").length;
-        });
-        var g = document.getElementById("pfGameCount");
-        var s = document.getElementById("pfStarTotal");
-        if (g) g.textContent = String(games);
-        if (s) s.textContent = String(stars);
-      } catch (e) {}
-    }
-    setTimeout(syncStats, 800);
-    setTimeout(syncStats, 2000);
-    document.addEventListener("click", function (e) {
-      if (e.target && e.target.closest && e.target.closest(".pf-tab")) {
-        setTimeout(syncStats, 300);
       }
-    });
+
+      var loggedIn = !!(state.session && (state.session.id || state.session.username));
+      var tasks = [];
+      if (loggedIn && window.LAProgress && LAProgress.getMine) {
+        tasks.push(LAProgress.getMine().catch(function () { return []; }));
+      } else {
+        tasks.push(Promise.resolve([]));
+      }
+
+      if (window.LAScores && LAScores.myScores) {
+        if (state.session && state.session.displayName && !LAScores.getPlayerName()) {
+          LAScores.setPlayerName(state.session.displayName);
+        }
+        tasks.push(LAScores.myScores().catch(function () { return []; }));
+      } else {
+        tasks.push(Promise.resolve([]));
+      }
+
+      var res = await Promise.all(tasks);
+      state.cloudProgress = res[0] || [];
+      state.cloudScores = res[1] || [];
+
+      buildMergedGames();
+      renderIdentity();
+      renderKPIs();
+      renderOverview();
+      renderStarsGrid();
+      renderScoresPanel();
+    }
+
+    refreshDashboard();
   })();
   </script>
   <script src="/visit-counter.js" defer></script>

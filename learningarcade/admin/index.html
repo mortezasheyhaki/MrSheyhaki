@@ -3,933 +3,1267 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#6937d8" />
-  <title>Admin · Students | Learning Arcade</title>
+  <meta name="theme-color" content="#6d28d9" />
+  <title>Teacher Admin · Mr. Sheyhaki</title>
+  <meta name="description" content="Teacher Admin console for tracking student activity, stars, accuracy, and recent scores in Learning Arcade." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../style.css" />
   <link rel="stylesheet" href="../theme.css" />
   <style>
-    /* Hide global profile / login floating controls on this page */
-    .nav-profile,
-    a[href*="profile"],
-    .auth-bar,
-    .la-auth-btn,
-    .login-fab,
-    .profile-fab,
-    button.profile,
-    .arcade-header-bar .nav-profile,
-    header a[aria-label="Profile"],
-    a.nav-link[data-icon="👤"] {
+    :root {
+      --adm-bg: #f8fafc;
+      --adm-surface: #ffffff;
+      --adm-surface-alt: #f1f5f9;
+      --adm-text: #0f172a;
+      --adm-muted: #64748b;
+      --adm-border: #e2e8f0;
+      --adm-accent: #6d28d9;
+      --adm-accent-soft: rgba(109, 40, 217, 0.08);
+      --adm-accent-border: rgba(109, 40, 217, 0.25);
+      --adm-ok: #15803d;
+      --adm-warn: #b45309;
+      --adm-err: #b91c1c;
+      --adm-err-bg: rgba(220, 38, 38, 0.09);
+      --adm-star: #eab308;
+      --adm-radius: 16px;
+    }
+
+    html[data-theme="dark"] {
+      --adm-bg: #0f172a;
+      --adm-surface: #1e293b;
+      --adm-surface-alt: #162032;
+      --adm-text: #f8fafc;
+      --adm-muted: #94a3b8;
+      --adm-border: #334155;
+      --adm-accent: #a78bfa;
+      --adm-accent-soft: rgba(167, 139, 250, 0.12);
+      --adm-accent-border: rgba(167, 139, 250, 0.3);
+      --adm-ok: #4ade80;
+      --adm-warn: #fbbf24;
+      --adm-err: #f87171;
+      --adm-err-bg: rgba(248, 113, 113, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+
+    body.admin-app {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      background: var(--adm-bg);
+      color: var(--adm-text);
+      line-height: 1.5;
+    }
+
+    body.admin-app .arcade-header-bar,
+    body.admin-app .site-topbar,
+    body.admin-app .site-footer,
+    body.admin-app .profile-fab {
       display: none !important;
     }
 
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(900px 500px at 10% -10%, rgba(105,55,216,.12), transparent 55%),
-        radial-gradient(700px 420px at 100% 0%, rgba(59,130,246,.10), transparent 50%),
-        linear-gradient(180deg, #f5f3ff 0%, #eef2ff 50%, #f8fafc 100%);
+    .tabular { font-variant-numeric: tabular-nums; }
+
+    /* Top bar */
+    .adm-topbar {
+      background: var(--adm-surface);
+      border-bottom: 1px solid var(--adm-border);
+      position: sticky;
+      top: 0;
+      z-index: 30;
     }
-    html[data-theme=dark] body {
-      background:
-        radial-gradient(900px 500px at 10% -10%, rgba(105,55,216,.22), transparent 55%),
-        linear-gradient(180deg, #0f1220 0%, #151a2b 100%);
+    .adm-topbar-inner {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .adm-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .adm-back {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      text-decoration: none;
+      font-weight: 800;
+      color: var(--adm-accent);
+      background: var(--adm-surface-alt);
+      border: 1px solid var(--adm-border);
+      flex-shrink: 0;
+    }
+    .adm-back:hover { border-color: var(--adm-accent); }
+    .adm-crumb {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--adm-muted);
+    }
+    .adm-crumb strong {
+      font-family: "Fredoka", sans-serif;
+      font-size: 1.15rem;
+      color: var(--adm-text);
     }
 
-    .admin-top {
-      max-width: 760px;
+    .adm-top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .adm-link {
+      text-decoration: none;
+      color: var(--adm-muted);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 8px 12px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+    .adm-link:hover {
+      color: var(--adm-text);
+      background: var(--adm-surface-alt);
+    }
+    .adm-btn {
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.84rem;
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--adm-border);
+      background: var(--adm-surface);
+      color: var(--adm-text);
+      cursor: pointer;
+      white-space: nowrap;
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: border-color 0.15s ease, opacity 0.15s ease;
+    }
+    .adm-btn:hover { border-color: var(--adm-accent); }
+    .adm-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .adm-btn--primary {
+      background: #6d28d9;
+      border-color: #6d28d9;
+      color: #ffffff;
+    }
+    .adm-btn--primary:hover { background: #5b21b6; border-color: #5b21b6; }
+
+    /* Container */
+    .adm-wrap {
+      max-width: 1260px;
       margin: 0 auto;
-      padding: 18px 16px 0;
+      padding: 24px 20px 56px;
+    }
+
+    /* Auth Gate */
+    .adm-gate {
+      max-width: 440px;
+      margin: 48px auto;
+      background: var(--adm-surface);
+      border: 1px solid var(--adm-border);
+      border-radius: var(--adm-radius);
+      padding: 28px 24px;
+    }
+    .adm-gate h1 {
+      margin: 0;
+      font-family: "Fredoka", sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .adm-gate p {
+      margin: 6px 0 18px;
+      font-size: 0.9rem;
+      color: var(--adm-muted);
+      font-weight: 500;
+    }
+    .adm-form { display: flex; flex-direction: column; gap: 14px; }
+    .adm-field { display: flex; flex-direction: column; gap: 6px; }
+    .adm-field label { font-size: 0.82rem; font-weight: 700; }
+    .adm-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--adm-border);
+      background: var(--adm-surface-alt);
+      color: var(--adm-text);
+      font: inherit;
+      font-size: 0.92rem;
+      outline: none;
+      min-height: 42px;
+    }
+    .adm-input:focus { border-color: var(--adm-accent); }
+    .adm-error {
+      margin: 0;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--adm-err);
+      min-height: 1.2em;
+    }
+
+    /* Dashboard */
+    .adm-dash { display: none; flex-direction: column; gap: 20px; }
+    .adm-dash.is-on { display: flex; }
+
+    .adm-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .adm-head h1 {
+      margin: 0;
+      font-family: "Fredoka", sans-serif;
+      font-size: 1.65rem;
+      font-weight: 700;
+      text-wrap: balance;
+    }
+    .adm-head p {
+      margin: 4px 0 0;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--adm-muted);
+    }
+    .adm-head-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* KPI Strip */
+    .adm-kpis {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 980px) {
+      .adm-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 560px) {
+      .adm-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    .adm-kpi {
+      background: var(--adm-surface);
+      border: 1px solid var(--adm-border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .adm-kpi-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--adm-muted);
+    }
+    .adm-kpi-val {
+      display: block;
+      margin-top: 4px;
+      font-size: 1.45rem;
+      font-weight: 800;
+    }
+    .adm-kpi-sub {
+      display: block;
+      margin-top: 2px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--adm-muted);
+    }
+
+    /* Warning notice */
+    .adm-warn-bar {
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: var(--adm-err-bg);
+      border: 1px solid rgba(220, 38, 38, 0.25);
+      color: var(--adm-err);
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    /* Workspace split */
+    .adm-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+    @media (max-width: 1040px) {
+      .adm-grid { grid-template-columns: 1fr; }
+    }
+
+    .adm-panel {
+      background: var(--adm-surface);
+      border: 1px solid var(--adm-border);
+      border-radius: var(--adm-radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .adm-panel-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      flex-wrap: wrap;
     }
-    .admin-brand {
+    .adm-panel-head h2 {
+      margin: 0;
+      font-family: "Fredoka", sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+    .adm-panel-meta {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--adm-muted);
+    }
+
+    /* Controls */
+    .adm-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .adm-controls-row {
       display: flex;
       align-items: center;
       gap: 10px;
-      text-decoration: none;
-      color: inherit;
-      font-weight: 800;
-      font-size: 0.95rem;
+      flex-wrap: wrap;
     }
-    .admin-brand-ico {
-      width: 36px; height: 36px; border-radius: 12px;
-      display: grid; place-items: center;
-      background: linear-gradient(145deg, #7c3aed, #4f46e5);
-      color: #fff; font-size: 1rem;
-      box-shadow: 0 4px 0 rgba(79,70,229,.35);
+    .adm-search {
+      flex: 1;
+      min-width: 200px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--adm-border);
+      background: var(--adm-surface-alt);
+      color: var(--adm-text);
+      font: inherit;
+      font-size: 0.88rem;
+      outline: none;
     }
-    .admin-tabs {
-      display: inline-flex;
-      background: rgba(255,255,255,.85);
-      border: 1.5px solid rgba(105,55,216,.12);
-      border-radius: 999px;
-      padding: 4px;
-      gap: 2px;
-      box-shadow: 0 4px 16px rgba(32,38,54,.06);
-    }
-    html[data-theme=dark] .admin-tabs {
-      background: #1e2130;
-      border-color: #2e3348;
-    }
-    .admin-tabs a {
-      text-decoration: none;
-      font-weight: 800;
+    .adm-search:focus { border-color: var(--adm-accent); }
+    .adm-select {
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--adm-border);
+      background: var(--adm-surface-alt);
+      color: var(--adm-text);
+      font: inherit;
       font-size: 0.84rem;
-      padding: 8px 14px;
-      border-radius: 999px;
-      color: #687184;
-    }
-    .admin-tabs a.active {
-      background: linear-gradient(145deg, #7c3aed, #5b21b6);
-      color: #fff;
-      box-shadow: 0 2px 0 #4c1d95;
-    }
-
-    .admin-wrap {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 18px 16px 64px;
-    }
-    .admin-card {
-      background: rgba(255,255,255,.97);
-      border-radius: 22px;
-      padding: 22px 20px;
-      border: 1px solid rgba(105,55,216,.08);
-      box-shadow: 0 10px 0 rgba(84,37,184,.08), 0 18px 36px rgba(32,38,54,.07);
-      margin-bottom: 18px;
-    }
-    html[data-theme=dark] .admin-card {
-      background: #1a1f2e;
-      border-color: #2a3145;
-      box-shadow: 0 10px 0 rgba(0,0,0,.25), 0 18px 36px rgba(0,0,0,.3);
-    }
-    .admin-title {
-      margin: 0 0 4px;
-      font-size: 1.45rem;
-      font-weight: 900;
-      color: #1e1b4b;
-      letter-spacing: -0.02em;
-    }
-    html[data-theme=dark] .admin-title { color: #f0f2f8; }
-    .admin-sub {
-      margin: 0 0 16px;
-      color: #687184;
-      font-size: 0.9rem;
       font-weight: 600;
+      outline: none;
     }
-    .admin-note {
-      background: linear-gradient(135deg, #f5f3ff, #eef2ff);
-      border: 1.5px solid rgba(105,55,216,.15);
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-size: 0.86rem;
-      font-weight: 600;
-      color: #4338ca;
-      margin-bottom: 16px;
-      line-height: 1.5;
-    }
-    html[data-theme=dark] .admin-note {
-      background: #252042;
-      border-color: #3b3560;
-      color: #c4b5fd;
-    }
-    .admin-status {
-      min-height: 1.3em;
-      margin: 0 0 12px;
-      font-weight: 700;
-      color: #687184;
-      font-size: 0.88rem;
-    }
-    .admin-actions {
+    .adm-filters {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .admin-btn {
-      border: 2px solid #e8e0ff;
-      background: #fff;
-      color: #2c2450;
-      font: inherit;
-      font-weight: 800;
-      font-size: 0.88rem;
-      padding: 10px 16px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: transform .1s, box-shadow .1s;
-    }
-    .admin-btn:active { transform: translateY(2px); }
-    .admin-btn.primary {
-      background: linear-gradient(145deg, #7c3aed, #5b21b6);
-      border-color: transparent;
-      color: #fff;
-      box-shadow: 0 4px 0 #4c1d95;
-    }
-    .admin-btn.primary:active { box-shadow: 0 1px 0 #4c1d95; }
-    html[data-theme=dark] .admin-btn {
-      background: #2a2e42;
-      border-color: #3a3f55;
-      color: #d0d4e4;
-    }
-
-    .student-list { display: grid; gap: 10px; }
-    .student-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: #f8f7ff;
-      border: 1px solid rgba(105,55,216,.08);
-    }
-    html[data-theme=dark] .student-row {
-      background: #22263a;
-      border-color: #2e3348;
-    }
-    .student-avatar {
-      width: 40px; height: 40px; border-radius: 12px;
-      display: grid; place-items: center;
-      font-weight: 900; font-size: 0.95rem;
-      background: linear-gradient(145deg, #c4b5fd, #8b5cf6);
-      color: #4c1d95;
-      flex: none;
-    }
-    .student-name {
-      font-weight: 800;
-      color: #1e1b4b;
-      font-size: 0.95rem;
-    }
-    html[data-theme=dark] .student-name { color: #eef0f8; }
-    .student-meta {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #7c8298;
-      margin-top: 2px;
-    }
-    .student-row {
-      cursor: pointer;
-    }
-    .student-row:hover {
-      filter: brightness(0.98);
-    }
-    .student-detail {
-      display: none;
-      padding: 0 14px 14px 58px;
-      margin-top: -4px;
-    }
-    .student-detail.open { display: block; }
-    .game-chip-row {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;
-    }
-    .game-chip {
-      background: #f5f3ff;
-      border: 1px solid rgba(105,55,216,.15);
-      border-radius: 12px;
-      padding: 8px 12px;
-      font-size: 0.82rem;
-      line-height: 1.35;
-      min-width: 140px;
-    }
-    html[data-theme=dark] .game-chip {
-      background: #1e2130;
-      border-color: #2e3348;
-    }
-    .game-chip strong { display: block; font-size: 0.88rem; }
-    .game-chip .meta { color: #6b7280; font-size: 0.78rem; }
-    .stars-note {
-      margin-top: 10px;
-      font-size: 0.8rem;
-      color: #6b7280;
-      line-height: 1.4;
-    }
-    .student-score {
-
-      margin-left: auto;
-      font-weight: 900;
-      color: #6d28d9;
-      font-size: 0.95rem;
-      text-align: right;
-      flex: none;
-    }
-    .empty {
-      text-align: center;
-      padding: 32px 12px;
-      color: #8b86b0;
-      font-weight: 700;
-    }
-
-    .gate {
-      max-width: 380px;
-      margin: 48px auto;
-      text-align: center;
-    }
-    .gate-lock {
-      width: 56px; height: 56px; border-radius: 18px;
-      margin: 0 auto 14px;
-      display: grid; place-items: center;
-      background: linear-gradient(145deg, #7c3aed, #4f46e5);
-      color: #fff; font-size: 1.4rem;
-      box-shadow: 0 6px 0 rgba(79,70,229,.35);
-    }
-    .gate input {
-      width: 100%;
-      box-sizing: border-box;
-      border: 2px solid #e8e0ff;
-      background: #faf9ff;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font: inherit;
-      font-size: 1rem;
-      font-weight: 600;
-      margin: 12px 0 14px;
-      text-align: center;
-    }
-    html[data-theme=dark] .gate input {
-      background: #151925;
-      border-color: #2e3348;
-      color: #eef0f8;
-    }
-  
-    /* Student block + expandable detail */
-    .student-block {
-      border-radius: 16px;
-      border: 1px solid rgba(105,55,216,.1);
-      background: #fff;
-      overflow: hidden;
-      box-shadow: 0 4px 14px rgba(32,38,54,.04);
-    }
-    html[data-theme=dark] .student-block {
-      background: #1a1f2e;
-      border-color: #2e3348;
-    }
-    .student-block .student-row {
-      border: 0;
-      border-radius: 0;
-      background: transparent;
-      cursor: pointer;
-      transition: background .12s;
-    }
-    .student-block .student-row:hover {
-      background: #f5f3ff;
-    }
-    html[data-theme=dark] .student-block .student-row:hover {
-      background: #22263a;
-    }
-    .student-row .chev {
-      margin-left: 8px;
-      color: #a78bfa;
-      font-weight: 900;
-      transition: transform .15s;
-    }
-    .student-block.is-open .chev { transform: rotate(180deg); }
-
-    .student-detail {
-      display: none;
-      padding: 0 14px 16px;
-      border-top: 1px solid rgba(105,55,216,.08);
-      background: linear-gradient(180deg, #faf9ff, #fff);
-    }
-    html[data-theme=dark] .student-detail {
-      background: #151925;
-      border-top-color: #2e3348;
-    }
-    .student-detail.open { display: block; }
-
-    .detail-summary {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 14px 0 12px;
-    }
-    .stat-pill {
-      display: inline-flex;
-      align-items: center;
       gap: 6px;
-      padding: 6px 12px;
-      border-radius: 999px;
+      flex-wrap: wrap;
+    }
+    .adm-filter-btn {
+      border: 1px solid var(--adm-border);
+      background: var(--adm-surface-alt);
+      color: var(--adm-muted);
+      font: inherit;
+      font-weight: 700;
       font-size: 0.78rem;
-      font-weight: 800;
-      background: #f3e8ff;
-      color: #6d28d9;
-      border: 1px solid rgba(109,40,217,.12);
+      padding: 6px 11px;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
     }
-    html[data-theme=dark] .stat-pill {
-      background: #2a2540;
-      color: #c4b5fd;
-      border-color: #3b3560;
+    .adm-filter-btn.is-on {
+      background: var(--adm-accent-soft);
+      color: var(--adm-accent);
+      border-color: var(--adm-accent-border);
     }
-    .stat-pill strong { font-weight: 900; }
 
-    .game-table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0 8px;
-    }
-    .game-table th {
-      text-align: left;
-      font-size: 0.7rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #8b86b0;
-      padding: 0 10px 4px;
-    }
-    .game-table th.num, .game-table td.num {
-      text-align: center;
-    }
-    .game-table th.right, .game-table td.right {
-      text-align: right;
-    }
-    .game-table tr.game-tr td {
-      background: #f8f7ff;
-      border-top: 1px solid rgba(105,55,216,.06);
-      border-bottom: 1px solid rgba(105,55,216,.06);
-      padding: 12px 10px;
-      vertical-align: middle;
-      font-size: 0.88rem;
-    }
-    html[data-theme=dark] .game-table tr.game-tr td {
-      background: #22263a;
-      border-color: #2e3348;
-    }
-    .game-table tr.game-tr td:first-child {
-      border-left: 1px solid rgba(105,55,216,.06);
-      border-radius: 12px 0 0 12px;
-      font-weight: 800;
-      color: #1e1b4b;
-      max-width: 220px;
-    }
-    html[data-theme=dark] .game-table tr.game-tr td:first-child { color: #eef0f8; }
-    .game-table tr.game-tr td:last-child {
-      border-right: 1px solid rgba(105,55,216,.06);
-      border-radius: 0 12px 12px 0;
-    }
-    .game-name-cell {
+    /* Student Roster Table / Accordion */
+    .roster-list {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      border: 1px solid var(--adm-border);
+      border-radius: 12px;
+      overflow: hidden;
     }
-    .game-name-cell .gid {
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: #9ca3af;
-      word-break: break-all;
+    .roster-item + .roster-item {
+      border-top: 1px solid var(--adm-border);
     }
-    .stars-cell {
-      font-size: 1rem;
-      letter-spacing: 1px;
-      color: #f59e0b;
-      white-space: nowrap;
+    .roster-row {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1.5fr) auto auto auto 22px;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: background 0.12s ease;
     }
-    .stars-cell .empty-star { color: #d1d5db; }
-    html[data-theme=dark] .stars-cell .empty-star { color: #4b5563; }
-    .score-cell {
+    .roster-row:hover { background: var(--adm-surface-alt); }
+    .roster-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #6d28d9, #4f46e5);
+      color: #ffffff;
       font-weight: 800;
-      color: #6d28d9;
-      white-space: nowrap;
+      font-size: 0.92rem;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
     }
-    html[data-theme=dark] .score-cell { color: #c4b5fd; }
-    .plays-cell {
-      font-weight: 800;
-      color: #475569;
+    .roster-avatar.is-guest {
+      background: var(--adm-surface-alt);
+      color: var(--adm-muted);
+      border: 1px solid var(--adm-border);
     }
-    .when-cell {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #94a3b8;
-      white-space: nowrap;
-    }
-    .stars-note {
-      padding: 16px 4px;
-      text-align: center;
-      color: #8b86b0;
+    .roster-main { min-width: 0; }
+    .roster-name {
       font-weight: 700;
+      font-size: 0.92rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .roster-meta {
+      font-size: 0.77rem;
+      color: var(--adm-muted);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .roster-metric {
+      text-align: right;
+      min-width: 64px;
+    }
+    .roster-metric strong {
+      display: block;
       font-size: 0.88rem;
+      font-weight: 800;
+    }
+    .roster-metric span {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--adm-muted);
+      font-weight: 600;
+    }
+    .roster-status {
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+      text-align: right;
+    }
+    .roster-status.is-today { color: var(--adm-ok); }
+    .roster-status.is-week { color: var(--adm-accent); }
+    .roster-status.is-idle { color: var(--adm-warn); }
+    .roster-status.is-none { color: var(--adm-muted); }
+
+    .roster-chev {
+      color: var(--adm-muted);
+      font-size: 0.85rem;
+      text-align: center;
+      transition: transform 0.15s ease;
+    }
+    .roster-item.is-open .roster-chev { transform: rotate(180deg); }
+
+    @media (max-width: 720px) {
+      .roster-row {
+        grid-template-columns: 36px minmax(0, 1fr) auto 20px;
+      }
+      .roster-metric--hide-sm { display: none; }
     }
 
-    /* Mobile: stack as cards */
-    @media (max-width: 640px) {
-      .game-table, .game-table thead, .game-table tbody, .game-table th, .game-table td, .game-table tr {
-        display: block;
-      }
-      .game-table thead { display: none; }
-      .game-table tr.game-tr {
-        margin-bottom: 10px;
-      }
-      .game-table tr.game-tr td {
-        border: 1px solid rgba(105,55,216,.08) !important;
-        border-radius: 0 !important;
-        padding: 8px 12px;
-        text-align: left !important;
-      }
-      .game-table tr.game-tr td:first-child {
-        border-radius: 12px 12px 0 0 !important;
-        border-bottom: 0 !important;
-        padding-top: 12px;
-      }
-      .game-table tr.game-tr td:last-child {
-        border-radius: 0 0 12px 12px !important;
-        border-top: 0 !important;
-        padding-bottom: 12px;
-      }
-      .game-table tr.game-tr td:not(:first-child):not(:last-child) {
-        border-top: 0 !important;
-        border-bottom: 0 !important;
-      }
-      .game-table tr.game-tr td::before {
-        content: attr(data-label);
-        display: block;
-        font-size: 0.65rem;
-        font-weight: 800;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        color: #8b86b0;
-        margin-bottom: 2px;
-      }
-      .game-table tr.game-tr td:first-child::before { display: none; }
+    .roster-detail {
+      display: none;
+      padding: 14px 16px 16px;
+      background: var(--adm-surface-alt);
+      border-top: 1px solid var(--adm-border);
+      flex-direction: column;
+      gap: 12px;
+    }
+    .roster-item.is-open .roster-detail { display: flex; }
+
+    .detail-summary {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--adm-muted);
     }
 
+    .adm-table-wrap { overflow-x: auto; }
+    .adm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .adm-table th {
+      text-align: left;
+      padding: 7px 10px;
+      font-size: 0.71rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--adm-muted);
+      border-bottom: 1px solid var(--adm-border);
+      white-space: nowrap;
+    }
+    .adm-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--adm-border);
+    }
+    .adm-table tr:last-child td { border-bottom: 0; }
+    .adm-table th.num, .adm-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .star-on { color: var(--adm-star); }
+    .star-off { opacity: 0.25; }
+
+    /* Sidebar lists */
+    .insight-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .insight-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--adm-surface-alt);
+      border: 1px solid var(--adm-border);
+      font-size: 0.84rem;
+    }
+    .insight-main { min-width: 0; }
+    .insight-main strong {
+      display: block;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .insight-main small {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--adm-muted);
+      font-weight: 600;
+    }
+    .insight-val {
+      text-align: right;
+      font-weight: 800;
+      color: var(--adm-accent);
+      white-space: nowrap;
+    }
+    .insight-val small {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--adm-muted);
+      font-weight: 600;
+    }
+
+    .adm-empty {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--adm-muted);
+      font-size: 0.86rem;
+      font-weight: 600;
+      border: 1px dashed var(--adm-border);
+      border-radius: 12px;
+    }
   </style>
-</head>
-<body>
-  <div class="admin-top">
-    <a class="admin-brand" href="../">
-      <span class="admin-brand-ico" aria-hidden="true">🕹️</span>
-      <span>Learning Arcade</span>
-    </a>
-    <nav class="admin-tabs" aria-label="Section">
-      <a href="../">Arcade</a>
-      <a href="./" class="active">Admin</a>
-    </nav>
-  </div>
-
-  <main class="admin-wrap">
-    <div id="gate" class="admin-card gate">
-      <div class="gate-lock" aria-hidden="true">🔐</div>
-      <h1 class="admin-title">Teacher Admin</h1>
-      <p class="admin-sub">Enter the admin password to continue</p>
-      <input type="password" id="gatePassword" placeholder="Password" autocomplete="current-password" />
-      <button type="button" class="admin-btn primary" id="gateBtn" style="width:100%">Open Admin</button>
-      <p id="gateError" class="admin-status" style="color:#c0392b;margin-top:10px;"></p>
-    </div>
-
-    <div id="adminPanel" style="display:none;">
-      <div class="admin-card">
-        <h1 class="admin-title">Students</h1>
-        <p class="admin-sub">Registered accounts and players who submitted scores</p>
-
-        <div class="admin-note">
-          <strong>Registered accounts</strong> come from the <code>profiles</code> table (created when students sign up).<br>
-          Tap a student to see <strong>stars, plays, and scores</strong> synced while they are logged in. You can also check Supabase → <strong>Authentication → Users</strong>
-          (email = <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a4d1d7c1d6cac5c9c1e4d4c8c5ddc1d6d78ac9d6d7ccc1ddccc5cfcd8acdd6">[email&#160;protected]</a></code>).
-        </div>
-
-        <div class="admin-actions">
-          <button type="button" class="admin-btn primary" id="refreshBtn">Refresh list</button>
-          <button type="button" class="admin-btn" id="logoutAdminBtn">Close admin</button>
-        </div>
-
-        <p class="admin-status" id="status">Loading…</p>
-        <div class="student-list" id="studentList"></div>
-      </div>
-
-      <div class="admin-card">
-        <h2 class="admin-title" style="font-size:1.15rem;">Recent scores</h2>
-        <p class="admin-sub">Last 30 submitted scores</p>
-        <div class="student-list" id="recentList"></div>
-      </div>
-    </div>
-  </main>
-
-  <!-- Supabase with CDN fallbacks (jsDelivr is often blocked) -->
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  (function () {
-    var urls = [
-      "../vendor/supabase.min.js",
-      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js",
-      "https://unpkg.com/@supabase/supabase-js@2.49.1/dist/umd/supabase.js",
-      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    ];
-    function done() {
-      document.dispatchEvent(new Event("supabase-ready"));
-    }
-    function loadNext(i) {
-      if (i >= urls.length) {
-        window.__supabaseLoadError = "All Supabase CDN URLs failed to load.";
-        console.error(window.__supabaseLoadError);
-        done();
-        return;
-      }
-      var s = document.createElement("script");
-      s.src = urls[i];
-      s.onload = function () {
-        if (window.supabase && window.supabase.createClient) done();
-        else loadNext(i + 1);
-      };
-      s.onerror = function () { loadNext(i + 1); };
-      document.head.appendChild(s);
-    }
-    loadNext(0);
-  })();
-  </script>
-  <script src="../auth-system/auth.js"></script>
-  <script src="../firebase-scores.js"></script>
-  <script src="../theme.js"></script>
   <script>
     (function () {
-      var ADMIN_PASSWORD = "sheyhaki2026";
-      var SB_URL = "https://ezlcrygimvceusmnojgk.supabase.co";
-      var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6bGNyeWdpbXZjZXVzbW5vamdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNjU4NjQsImV4cCI6MjEwOTk0MTg2NH0.R3a0dMRDCHaAbDKRGhLssvYfg8HzcEb5ODF5xfUt_Ys";
-
-      var gate = document.getElementById("gate");
-      var panel = document.getElementById("adminPanel");
-      var statusEl = document.getElementById("status");
-      var studentList = document.getElementById("studentList");
-      var recentList = document.getElementById("recentList");
-
-      function openAdmin() {
-        try { sessionStorage.setItem("laAdminOk", "1"); } catch (e) {}
-        gate.style.display = "none";
-        panel.style.display = "block";
-        loadData();
-      }
-
-      function closeAdmin() {
-        try { sessionStorage.removeItem("laAdminOk"); } catch (e) {}
-        panel.style.display = "none";
-        gate.style.display = "block";
-        document.getElementById("gatePassword").value = "";
-      }
-
-      document.getElementById("gateBtn").onclick = function () {
-        var pw = document.getElementById("gatePassword").value;
-        if (pw === ADMIN_PASSWORD) {
-          document.getElementById("gateError").textContent = "";
-          openAdmin();
-        } else {
-          document.getElementById("gateError").textContent = "Wrong password";
-        }
-      };
-
-      document.getElementById("gatePassword").addEventListener("keydown", function (e) {
-        if (e.key === "Enter") document.getElementById("gateBtn").click();
-      });
-
-      document.getElementById("logoutAdminBtn").onclick = closeAdmin;
-      document.getElementById("refreshBtn").onclick = loadData;
-
       try {
-        if (sessionStorage.getItem("laAdminOk") === "1") openAdmin();
-      } catch (e) {}
-
-      function getClient() {
-        if (!(window.supabase && window.supabase.createClient)) return null;
-        return window.supabase.createClient(SB_URL, SB_KEY);
-      }
-
-      function loadData() {
-        statusEl.textContent = "Loading…";
-        studentList.innerHTML = "";
-        recentList.innerHTML = "";
-
-        function run() {
-          if (!(window.supabase && window.supabase.createClient)) {
-            statusEl.textContent = "Could not load Supabase library. Check CDN / network, then refresh.";
-            studentList.innerHTML =
-              '<div class="empty">The Supabase script failed to load.<br>' +
-              'This often happens when <code>cdn.jsdelivr.net</code> is blocked.<br>' +
-              'The page now also tries <strong>unpkg</strong> and <strong>cdnjs</strong>. Hard-refresh and try again.</div>';
-            return;
-          }
-          var client = getClient();
-          if (!client) {
-            statusEl.textContent = "Could not create Supabase client.";
-            return;
-          }
-
-          Promise.all([
-            client.from("profiles").select("id,username,display_name,created_at").order("created_at", { ascending: false }).limit(200),
-            client.from("scores").select("name, score, max_score, game_id, game_name, at, created_at, user_id").order("created_at", { ascending: false }).limit(200),
-            client.from("game_progress").select("user_id,game_id,game_name,stars,plays,best_score,max_score,best_accuracy,last_at,completed").order("last_at", { ascending: false }).limit(1000)
-          ])
-            .then(function (results) {
-              var profRes = results[0];
-              var scoreRes = results[1];
-              var progRes = results[2];
-              var profiles = profRes.data || [];
-              var rows = scoreRes.data || [];
-              var progressRows = (progRes && progRes.data) || [];
-
-              if (profRes.error) console.warn("profiles error", profRes.error);
-              if (scoreRes.error) console.warn("scores error", scoreRes.error);
-              if (progRes && progRes.error) console.warn("game_progress error", progRes.error);
-
-              var byName = {};
-              rows.forEach(function (r) {
-                var name = (r.name || "Player").trim();
-                var key = name.toLowerCase();
-                if (!byName[key]) {
-                  byName[key] = { name: name, totalScore: 0, games: 0, lastAt: 0 };
-                }
-                byName[key].totalScore += Number(r.score) || 0;
-                byName[key].games += 1;
-                var ts = Number(r.at) || 0;
-                if (ts > byName[key].lastAt) byName[key].lastAt = ts;
-              });
-
-              var studentsMap = {};
-              profiles.forEach(function (p) {
-                var un = (p.username || "").trim();
-                var dn = (p.display_name || un || "Student").trim();
-                var key = un.toLowerCase() || dn.toLowerCase();
-                if (!key) return;
-                var scoreInfo = byName[key] || byName[dn.toLowerCase()] || null;
-                studentsMap[key] = {
-                  name: dn + (un && un.toLowerCase() !== dn.toLowerCase() ? " (@" + un + ")" : ""),
-                  username: un,
-                  userId: p.id || null,
-                  totalScore: scoreInfo ? scoreInfo.totalScore : 0,
-                  games: scoreInfo ? scoreInfo.games : 0,
-                  lastAt: scoreInfo ? scoreInfo.lastAt : 0,
-                  signedUp: p.created_at ? new Date(p.created_at).getTime() : 0,
-                  registered: true
-                };
-              });
-              Object.keys(byName).forEach(function (k) {
-                if (!studentsMap[k]) {
-                  studentsMap[k] = {
-                    name: byName[k].name,
-                    username: "",
-                    totalScore: byName[k].totalScore,
-                    games: byName[k].games,
-                    lastAt: byName[k].lastAt,
-                    signedUp: 0,
-                    registered: false
-                  };
-                }
-              });
-
-              var students = Object.keys(studentsMap)
-                .map(function (k) { return studentsMap[k]; })
-                .sort(function (a, b) {
-                  if (a.registered !== b.registered) return a.registered ? -1 : 1;
-                  if (b.signedUp !== a.signedUp) return b.signedUp - a.signedUp;
-                  return a.name.localeCompare(b.name);
-                });
-
-              statusEl.textContent =
-                profiles.length + " registered · " + rows.length + " score(s) · " +
-                progressRows.length + " progress row(s)" +
-                (profRes.error ? " (profiles: " + profRes.error.message + ")" : "") +
-                (scoreRes.error ? " (scores: " + scoreRes.error.message + ")" : "") +
-                (progRes && progRes.error ? " (progress: " + progRes.error.message + ")" : "");
-
-              // attach cloud progress + scores per student
-              students.forEach(function (s) {
-                var keys = [];
-                if (s.username) keys.push(s.username.toLowerCase());
-                if (s.name) {
-                  keys.push(s.name.toLowerCase());
-                  var bare = s.name.replace(/\s*\(@[^)]+\)\s*$/, "").trim().toLowerCase();
-                  if (bare) keys.push(bare);
-                }
-                s.gamesList = rows.filter(function (r) {
-                  if (s.userId && r.user_id && r.user_id === s.userId) return true;
-                  var n = (r.name || "").trim().toLowerCase();
-                  return keys.indexOf(n) !== -1;
-                });
-                s.progressList = progressRows.filter(function (r) {
-                  return s.userId && r.user_id === s.userId;
-                });
-              });
-
-              if (!students.length) {
-                studentList.innerHTML = '<div class="empty">No students yet. When someone registers, they appear here.</div>';
-              } else {
-                studentList.innerHTML = students.map(function (s, si) {
-                  var initial = (s.name.charAt(0) || "?").toUpperCase();
-                  var meta = [];
-                  if (s.registered) meta.push("Registered");
-                  else meta.push("Guest scores");
-                  if (s.gamesList && s.gamesList.length) meta.push(s.gamesList.length + " score(s)");
-                  else if (s.games) meta.push(s.games + " game(s)");
-                  else if (s.signedUp) meta.push("joined: " + new Date(s.signedUp).toLocaleString());
-                  if (s.signedUp) meta.push("joined: " + new Date(s.signedUp).toLocaleDateString());
-
-                  // Prefer game_progress (real stars); fall back to scores
-                  var byGame = {};
-                  (s.progressList || []).forEach(function (r) {
-                    var gid = r.game_id || "game";
-                    byGame[gid] = {
-                      id: gid,
-                      name: r.game_name || r.game_id || "game",
-                      best: Number(r.best_score) || 0,
-                      max: Number(r.max_score) || 0,
-                      plays: Number(r.plays) || 0,
-                      stars: Number(r.stars) || 0,
-                      accuracy: Number(r.best_accuracy) || 0,
-                      lastAt: r.last_at ? new Date(r.last_at).getTime() : 0,
-                      fromProgress: true
-                    };
-                  });
-                  (s.gamesList || []).forEach(function (r) {
-                    var gid = r.game_id || r.game_name || "game";
-                    if (!byGame[gid]) {
-                      byGame[gid] = {
-                        id: gid,
-                        name: r.game_name || r.game_id || "game",
-                        best: 0,
-                        max: 0,
-                        plays: 0,
-                        stars: 0,
-                        accuracy: 0,
-                        lastAt: 0,
-                        fromProgress: false
-                      };
-                    }
-                    if (!byGame[gid].fromProgress) {
-                      byGame[gid].plays += 1;
-                      var sc = Number(r.score) || 0;
-                      var mx = Number(r.max_score) || 0;
-                      if (sc > byGame[gid].best) {
-                        byGame[gid].best = sc;
-                        byGame[gid].max = mx;
-                      }
-                      var ts = Number(r.at) || (r.created_at ? new Date(r.created_at).getTime() : 0);
-                      if (ts > byGame[gid].lastAt) byGame[gid].lastAt = ts;
-                    }
-                  });
-                  var games = Object.keys(byGame).map(function (k) { return byGame[k]; })
-                    .sort(function (a, b) { return b.lastAt - a.lastAt; });
-
-                  var totalStars = games.reduce(function (sum, g) {
-                    return sum + (Number(g.stars) || 0);
-                  }, 0);
-
-                  var detail;
-                  if (!games.length) {
-                    detail = '<div class="stars-note">No cloud progress yet. After this student plays while logged in, stars and plays appear here.</div>';
-                  } else {
-                    var sumPlays = games.reduce(function (n, g) { return n + (Number(g.plays) || 0); }, 0);
-                    detail =
-                      '<div class="detail-summary">' +
-                      '<span class="stat-pill">★ <strong>' + totalStars + '</strong> stars</span>' +
-                      '<span class="stat-pill"><strong>' + games.length + '</strong> games</span>' +
-                      '<span class="stat-pill"><strong>' + sumPlays + '</strong> plays</span>' +
-                      '</div>' +
-                      '<table class="game-table"><thead><tr>' +
-                      '<th>Game</th><th class="num">Stars</th><th class="num">Score</th><th class="num">Plays</th><th class="right">Last played</th>' +
-                      '</tr></thead><tbody>' +
-                      games.map(function (g) {
-                        var stars = Math.max(0, Math.min(3, Number(g.stars) || 0));
-                        if (!g.fromProgress && g.max > 0) {
-                          var acc = Math.round(g.best / g.max * 100);
-                          stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 50 ? 1 : 0;
-                        }
-                        var starHtml = "";
-                        for (var si2 = 1; si2 <= 3; si2++) {
-                          starHtml += si2 <= stars
-                            ? "<span>★</span>"
-                            : '<span class="empty-star">★</span>';
-                        }
-                        var scoreLabel = g.max
-                          ? (g.best + " / " + g.max)
-                          : (g.best ? String(g.best) : "—");
-                        var when = g.lastAt
-                          ? new Date(g.lastAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
-                          : "—";
-                        var niceName = g.name || g.id || "Game";
-                        return (
-                          '<tr class="game-tr">' +
-                          '<td data-label="Game"><div class="game-name-cell"><span>' + escapeHtml(niceName) + "</span></div></td>" +
-                          '<td class="num stars-cell" data-label="Stars">' + starHtml + "</td>" +
-                          '<td class="num score-cell" data-label="Score">' + escapeHtml(scoreLabel) + "</td>" +
-                          '<td class="num plays-cell" data-label="Plays">' + (g.plays || 0) + "</td>" +
-                          '<td class="right when-cell" data-label="Last played">' + escapeHtml(when) + "</td>" +
-                          "</tr>"
-                        );
-                      }).join("") +
-                      "</tbody></table>";
-                  }
-
-                  return (
-                    '<div class="student-block" id="block-' + si + '">' +
-                    '<div class="student-row" data-si="' + si + '">' +
-                    '<div class="student-avatar">' + initial + "</div>" +
-                    '<div style="flex:1;min-width:0"><div class="student-name">' + escapeHtml(s.name) + "</div>" +
-                    '<div class="student-meta">' + escapeHtml(meta.join(" · ")) + "</div></div>" +
-                    '<div class="student-score">' + (games.length ? games.length + " games" : "—") + "</div>" +
-                    '<span class="chev" aria-hidden="true">▾</span>' +
-                    "</div>" +
-                    '<div class="student-detail" id="detail-' + si + '">' + detail + "</div>" +
-                    "</div>"
-                  );
-                }).join("");
-
-                studentList.querySelectorAll(".student-row").forEach(function (row) {
-                  row.addEventListener("click", function () {
-                    var si = row.getAttribute("data-si");
-                    var d = document.getElementById("detail-" + si);
-                    var b = document.getElementById("block-" + si);
-                    if (d) d.classList.toggle("open");
-                    if (b) b.classList.toggle("is-open");
-                  });
-                });
-              }
-
-              
-              var recent = rows.slice(0, 30);
-              if (!recent.length) {
-                recentList.innerHTML = '<div class="empty">No recent scores</div>';
-              } else {
-                recentList.innerHTML = recent.map(function (r) {
-                  var when = r.at
-                    ? new Date(Number(r.at)).toLocaleString()
-                    : (r.created_at || "—");
-                  return (
-                    '<div class="student-row">' +
-                    '<div class="student-avatar">' + ((r.name || "?").charAt(0) || "?").toUpperCase() + "</div>" +
-                    '<div><div class="student-name">' + escapeHtml(r.name || "Player") + "</div>" +
-                    '<div class="student-meta">' + escapeHtml(r.game_name || r.game_id || "game") + " · " + when + "</div></div>" +
-                    '<div class="student-score">' + (Number(r.score) || 0) + "</div>" +
-                    "</div>"
-                  );
-                }).join("");
-              }
-            })
-            .catch(function (err) {
-              statusEl.textContent = "Error loading data: " + (err && err.message ? err.message : String(err));
-            });
+        var t = localStorage.getItem("mrsheyhaki-theme");
+        if (t !== "dark" && t !== "light") {
+          t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         }
-
-        if (window.supabase && window.supabase.createClient) {
-          run();
-        } else if (window.__supabaseLoadError) {
-          run();
-        } else {
-          statusEl.textContent = "Loading Supabase library…";
-          var finished = false;
-          function once() {
-            if (finished) return;
-            finished = true;
-            document.removeEventListener("supabase-ready", once);
-            run();
-          }
-          document.addEventListener("supabase-ready", once);
-          setTimeout(once, 8000);
-        }
-      }
-
-      function escapeHtml(s) {
-        return String(s || "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "light");
       }
     })();
+  </script>
+</head>
+<body class="admin-app">
+  <header class="adm-topbar">
+    <div class="adm-topbar-inner">
+      <div class="adm-brand">
+        <a class="adm-back" href="../" aria-label="Back to Learning Arcade">←</a>
+        <div class="adm-crumb">
+          <a href="../" style="color:inherit;text-decoration:none;">Learning Arcade</a> /
+          <strong>Teacher Admin</strong>
+        </div>
+      </div>
+      <div class="adm-top-actions">
+        <a href="../" class="adm-link">Arcade</a>
+        <a href="../profile/" class="adm-link">Student Dashboard</a>
+        <button type="button" class="adm-btn" id="themeToggleBtn">Theme</button>
+        <button type="button" class="adm-btn" id="lockAdminBtn" hidden>Lock Admin</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="adm-wrap">
+    <!-- Server-verified Admin Gate -->
+    <section id="gateSection" class="adm-gate" aria-label="Admin authentication">
+      <h1 id="gateTitle">Teacher Admin</h1>
+      <p id="gateSub">Checking admin configuration…</p>
+
+      <form id="setupForm" class="adm-form" hidden>
+        <div class="adm-field">
+          <label for="setupPw">Create Admin Password</label>
+          <input class="adm-input" id="setupPw" type="password" minlength="8" autocomplete="new-password" required placeholder="Minimum 8 characters" />
+        </div>
+        <div class="adm-field">
+          <label for="setupPwConfirm">Confirm Password</label>
+          <input class="adm-input" id="setupPwConfirm" type="password" minlength="8" autocomplete="new-password" required placeholder="Repeat password" />
+        </div>
+        <p class="adm-error" id="setupErr" role="alert"></p>
+        <button type="submit" class="adm-btn adm-btn--primary" id="setupSubmitBtn">Set Password &amp; Open Admin</button>
+      </form>
+
+      <form id="loginForm" class="adm-form" hidden>
+        <div class="adm-field">
+          <label for="loginPw">Admin Password</label>
+          <input class="adm-input" id="loginPw" type="password" autocomplete="current-password" required placeholder="Enter teacher password" />
+        </div>
+        <p class="adm-error" id="loginErr" role="alert"></p>
+        <button type="submit" class="adm-btn adm-btn--primary" id="loginSubmitBtn">Open Admin Console</button>
+      </form>
+    </section>
+
+    <!-- Admin Dashboard -->
+    <section id="adminDash" class="adm-dash" aria-label="Student activity tracking">
+      <div class="adm-head">
+        <div>
+          <h1>Student Activity Console</h1>
+          <p id="statusLine">Loading student activity…</p>
+        </div>
+        <div class="adm-head-actions">
+          <button type="button" class="adm-btn" id="exportCsvBtn">Export CSV</button>
+          <button type="button" class="adm-btn adm-btn--primary" id="refreshBtn">Refresh</button>
+        </div>
+      </div>
+
+      <div id="warnBar" class="adm-warn-bar" hidden></div>
+
+      <div class="adm-kpis">
+        <div class="adm-kpi">
+          <span class="adm-kpi-label">Registered Students</span>
+          <strong class="adm-kpi-val tabular" id="kpiRegistered">0</strong>
+          <span class="adm-kpi-sub" id="kpiGuests">0 guest players</span>
+        </div>
+        <div class="adm-kpi">
+          <span class="adm-kpi-label">Active (7 Days)</span>
+          <strong class="adm-kpi-val tabular" id="kpiActive7d">0</strong>
+          <span class="adm-kpi-sub" id="kpiActive24h">0 active today</span>
+        </div>
+        <div class="adm-kpi">
+          <span class="adm-kpi-label">Total Plays</span>
+          <strong class="adm-kpi-val tabular" id="kpiPlays">0</strong>
+          <span class="adm-kpi-sub" id="kpiProgressRows">0 tracked game records</span>
+        </div>
+        <div class="adm-kpi">
+          <span class="adm-kpi-label">Stars Earned</span>
+          <strong class="adm-kpi-val tabular" id="kpiStars">0</strong>
+          <span class="adm-kpi-sub" id="kpiInactive">0 inactive accounts</span>
+        </div>
+        <div class="adm-kpi">
+          <span class="adm-kpi-label">Class Avg Accuracy</span>
+          <strong class="adm-kpi-val tabular" id="kpiAccuracy">—</strong>
+          <span class="adm-kpi-sub" id="kpiSubmissions">0 score submissions</span>
+        </div>
+      </div>
+
+      <div class="adm-grid">
+        <!-- Main Roster & Per-Student Activity -->
+        <div class="adm-panel">
+          <div class="adm-panel-head">
+            <div>
+              <h2>Students &amp; Activity</h2>
+              <span class="adm-panel-meta" id="rosterCountMeta">Click any student to inspect per-game stars, scores, and attempts</span>
+            </div>
+          </div>
+
+          <div class="adm-controls">
+            <div class="adm-controls-row">
+              <input type="search" class="adm-search" id="studentSearch" placeholder="Search by name, @username, or game…" aria-label="Search students" />
+              <select class="adm-select" id="studentSort" aria-label="Sort students">
+                <option value="lastActive">Sort: Last Active</option>
+                <option value="stars">Sort: Most Stars</option>
+                <option value="plays">Sort: Most Plays</option>
+                <option value="accuracy">Sort: Highest Accuracy</option>
+                <option value="joined">Sort: Newest Accounts</option>
+                <option value="name">Sort: Name (A–Z)</option>
+              </select>
+            </div>
+            <div class="adm-filters" id="filterBar" role="tablist" aria-label="Filter students by activity">
+              <button type="button" class="adm-filter-btn is-on" data-filter="all">All</button>
+              <button type="button" class="adm-filter-btn" data-filter="active7d">Active 7d</button>
+              <button type="button" class="adm-filter-btn" data-filter="active24h">Active Today</button>
+              <button type="button" class="adm-filter-btn" data-filter="inactive">Inactive</button>
+              <button type="button" class="adm-filter-btn" data-filter="registered">Registered</button>
+              <button type="button" class="adm-filter-btn" data-filter="guest">Guest Scores</button>
+            </div>
+          </div>
+
+          <div id="rosterContainer"></div>
+        </div>
+
+        <!-- Side Insights & Live Feed -->
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div class="adm-panel">
+            <div class="adm-panel-head">
+              <h2>Top Practiced Games</h2>
+              <span class="adm-panel-meta">Plays &amp; avg accuracy</span>
+            </div>
+            <div class="insight-list" id="topGamesList"></div>
+          </div>
+
+          <div class="adm-panel">
+            <div class="adm-panel-head">
+              <h2>Recent Submissions</h2>
+              <span class="adm-panel-meta" id="recentFeedMeta">Latest scores</span>
+            </div>
+            <div class="insight-list" id="recentFeedList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../theme.js"></script>
+  <script>
+  (function () {
+    "use strict";
+
+    // Admin token held strictly in memory — never in localStorage or sessionStorage
+    var adminToken = "";
+    var dashboardData = null;
+    var activeFilter = "all";
+    var searchTerm = "";
+    var sortMode = "lastActive";
+    var openKeys = {};
+
+    var gateSection = document.getElementById("gateSection");
+    var gateTitle = document.getElementById("gateTitle");
+    var gateSub = document.getElementById("gateSub");
+    var setupForm = document.getElementById("setupForm");
+    var loginForm = document.getElementById("loginForm");
+    var adminDash = document.getElementById("adminDash");
+    var lockBtn = document.getElementById("lockAdminBtn");
+
+    function applyTheme(t) {
+      document.documentElement.setAttribute("data-theme", t);
+      try { localStorage.setItem("mrsheyhaki-theme", t); } catch (e) {}
+      var btn = document.getElementById("themeToggleBtn");
+      if (btn) btn.textContent = t === "dark" ? "Light Mode" : "Dark Mode";
+    }
+    applyTheme(document.documentElement.getAttribute("data-theme") || "light");
+    document.getElementById("themeToggleBtn").addEventListener("click", function () {
+      applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+    });
+
+    function escapeHtml(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function formatRelative(ms) {
+      if (!ms) return "Never";
+      var diff = Date.now() - ms;
+      if (diff < 60000) return "Just now";
+      if (diff < 3600000) return Math.floor(diff / 60000) + "m ago";
+      if (diff < 86400000) return Math.floor(diff / 3600000) + "h ago";
+      if (diff < 14 * 86400000) return Math.floor(diff / 86400000) + "d ago";
+      return new Date(ms).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    }
+
+    function formatExact(ms) {
+      if (!ms) return "—";
+      try {
+        return new Date(ms).toLocaleString(undefined, {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      } catch (e) {
+        return "—";
+      }
+    }
+
+    function statusInfo(s) {
+      if (s.active24h) return { label: "● Active today", cls: "is-today" };
+      if (s.active7d) return { label: "● Active 7d", cls: "is-week" };
+      if (s.lastActiveAt > 0) return { label: "○ Idle", cls: "is-idle" };
+      return { label: "○ No plays", cls: "is-none" };
+    }
+
+    function starsHtml(n) {
+      n = Math.max(0, Math.min(3, Number(n) || 0));
+      var out = "";
+      for (var i = 1; i <= 3; i++) {
+        out += i <= n ? '<span class="star-on">★</span>' : '<span class="star-off">★</span>';
+      }
+      return out;
+    }
+
+    function showGate(needsSetup) {
+      gateSection.hidden = false;
+      adminDash.classList.remove("is-on");
+      lockBtn.hidden = true;
+      if (needsSetup) {
+        gateTitle.textContent = "Set Teacher Admin Password";
+        gateSub.textContent = "First-time setup: choose an admin password (at least 8 characters) to protect student activity reports.";
+        setupForm.hidden = false;
+        loginForm.hidden = true;
+        document.getElementById("setupPw").focus();
+      } else {
+        gateTitle.textContent = "Teacher Admin Sign In";
+        gateSub.textContent = "Enter your teacher password to view student activity, stars, and recent scores.";
+        setupForm.hidden = true;
+        loginForm.hidden = false;
+        document.getElementById("loginPw").focus();
+      }
+    }
+
+    function showDashboard() {
+      gateSection.hidden = true;
+      adminDash.classList.add("is-on");
+      lockBtn.hidden = false;
+      loadActivity();
+    }
+
+    async function checkAdminStatus() {
+      try {
+        var headers = adminToken ? { Authorization: "Bearer " + adminToken } : {};
+        var res = await fetch("/api/admin/status", { headers: headers });
+        var data = await res.json();
+        if (data && data.authenticated && adminToken) {
+          showDashboard();
+        } else {
+          adminToken = "";
+          showGate(Boolean(data && data.needsSetup));
+        }
+      } catch (e) {
+        gateTitle.textContent = "Teacher Admin";
+        gateSub.textContent = "Could not connect to server. Please refresh.";
+      }
+    }
+
+    setupForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var errEl = document.getElementById("setupErr");
+      var btn = document.getElementById("setupSubmitBtn");
+      var pw = document.getElementById("setupPw").value;
+      var confirmPw = document.getElementById("setupPwConfirm").value;
+
+      errEl.textContent = "";
+      if (pw.length < 8) {
+        errEl.textContent = "Password must be at least 8 characters.";
+        return;
+      }
+      if (pw !== confirmPw) {
+        errEl.textContent = "Passwords do not match.";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Saving…";
+      try {
+        var res = await fetch("/api/admin/setup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: pw })
+        });
+        var data = await res.json();
+        if (!res.ok || !data.ok || !data.token) {
+          errEl.textContent = (data && data.error) || "Could not set admin password.";
+          if (res.status === 409) checkAdminStatus();
+          return;
+        }
+        adminToken = data.token;
+        document.getElementById("setupPw").value = "";
+        document.getElementById("setupPwConfirm").value = "";
+        showDashboard();
+      } catch (err) {
+        errEl.textContent = "Network error. Please try again.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Set Password & Open Admin";
+      }
+    });
+
+    loginForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var errEl = document.getElementById("loginErr");
+      var btn = document.getElementById("loginSubmitBtn");
+      var pw = document.getElementById("loginPw").value;
+
+      errEl.textContent = "";
+      if (!pw) {
+        errEl.textContent = "Enter the admin password.";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Verifying…";
+      try {
+        var res = await fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: pw })
+        });
+        var data = await res.json();
+        if (!res.ok || !data.ok || !data.token) {
+          if (data && data.needsSetup) {
+            showGate(true);
+            return;
+          }
+          errEl.textContent = (data && data.error) || "Incorrect password.";
+          return;
+        }
+        adminToken = data.token;
+        document.getElementById("loginPw").value = "";
+        showDashboard();
+      } catch (err) {
+        errEl.textContent = "Network error. Please try again.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Open Admin Console";
+      }
+    });
+
+    lockBtn.addEventListener("click", async function () {
+      var tok = adminToken;
+      adminToken = "";
+      dashboardData = null;
+      openKeys = {};
+      if (tok) {
+        fetch("/api/admin/logout", {
+          method: "POST",
+          headers: { Authorization: "Bearer " + tok }
+        }).catch(function () {});
+      }
+      showGate(false);
+    });
+
+    document.getElementById("refreshBtn").addEventListener("click", loadActivity);
+
+    async function loadActivity() {
+      if (!adminToken) {
+        checkAdminStatus();
+        return;
+      }
+      var statusLine = document.getElementById("statusLine");
+      var refreshBtn = document.getElementById("refreshBtn");
+      statusLine.textContent = "Syncing latest student activity…";
+      refreshBtn.disabled = true;
+
+      try {
+        var res = await fetch("/api/admin/activity", {
+          headers: { Authorization: "Bearer " + adminToken }
+        });
+        if (res.status === 401) {
+          adminToken = "";
+          showGate(false);
+          document.getElementById("loginErr").textContent = "Session expired. Please sign in again.";
+          return;
+        }
+        var data = await res.json();
+        if (!res.ok || !data.ok) {
+          statusLine.textContent = (data && data.error) || "Failed to load student activity.";
+          return;
+        }
+        dashboardData = data;
+        renderDashboard();
+      } catch (err) {
+        statusLine.textContent = "Could not load student activity. Check connection and refresh.";
+      } finally {
+        refreshBtn.disabled = false;
+      }
+    }
+
+    function filteredStudents() {
+      var list = (dashboardData && dashboardData.students) ? dashboardData.students.slice() : [];
+      var q = searchTerm.trim().toLowerCase();
+
+      list = list.filter(function (s) {
+        if (activeFilter === "active7d" && !s.active7d) return false;
+        if (activeFilter === "active24h" && !s.active24h) return false;
+        if (activeFilter === "inactive" && s.active7d) return false;
+        if (activeFilter === "registered" && !s.registered) return false;
+        if (activeFilter === "guest" && s.registered) return false;
+
+        if (!q) return true;
+        if ((s.displayName || "").toLowerCase().indexOf(q) !== -1) return true;
+        if ((s.username || "").toLowerCase().indexOf(q) !== -1) return true;
+        return (s.games || []).some(function (g) {
+          return (g.name || "").toLowerCase().indexOf(q) !== -1 || (g.id || "").toLowerCase().indexOf(q) !== -1;
+        });
+      });
+
+      list.sort(function (a, b) {
+        if (sortMode === "stars") return b.totalStars - a.totalStars || b.totalPlays - a.totalPlays || b.lastActiveAt - a.lastActiveAt;
+        if (sortMode === "plays") return b.totalPlays - a.totalPlays || b.totalStars - a.totalStars;
+        if (sortMode === "accuracy") return b.avgAccuracy - a.avgAccuracy || b.totalStars - a.totalStars;
+        if (sortMode === "joined") return b.joinedAt - a.joinedAt || b.lastActiveAt - a.lastActiveAt;
+        if (sortMode === "name") return (a.displayName || "").localeCompare(b.displayName || "");
+        return b.lastActiveAt - a.lastActiveAt || b.totalStars - a.totalStars || b.joinedAt - a.joinedAt;
+      });
+
+      return list;
+    }
+
+    function renderRoster() {
+      var container = document.getElementById("rosterContainer");
+      var meta = document.getElementById("rosterCountMeta");
+      var list = filteredStudents();
+
+      meta.textContent = list.length + " student" + (list.length === 1 ? "" : "s") + " shown · click a row to inspect games & scores";
+
+      if (!list.length) {
+        container.innerHTML = '<div class="adm-empty">No students match the current filter or search.</div>';
+        return;
+      }
+
+      container.innerHTML =
+        '<div class="roster-list">' +
+        list.map(function (s) {
+          var isOpen = !!openKeys[s.key];
+          var st = statusInfo(s);
+          var subParts = [];
+          if (s.registered && s.username) subParts.push("@" + s.username);
+          else subParts.push("Guest score");
+          if (s.joinedAt) subParts.push("Joined " + new Date(s.joinedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" }));
+          subParts.push("Last active: " + formatRelative(s.lastActiveAt));
+
+          var detailHtml;
+          if (!s.games || !s.games.length) {
+            detailHtml = '<div class="detail-summary">No game activity recorded yet for this account.</div>';
+          } else {
+            detailHtml =
+              '<div class="detail-summary tabular">' +
+                s.gamesPlayed + " games practiced · " +
+                s.completedGames + " completed · " +
+                s.totalStars + " stars · " +
+                s.totalPlays + " plays · " +
+                (s.avgAccuracy ? s.avgAccuracy + "% avg accuracy" : "Accuracy tracking pending") +
+              "</div>" +
+              '<div class="adm-table-wrap"><table class="adm-table"><thead><tr>' +
+                '<th>Game</th><th>Category</th><th class="num">Stars</th><th class="num">Best Score</th><th class="num">Accuracy</th><th class="num">Plays</th><th class="num">Last Played</th>' +
+              "</tr></thead><tbody>" +
+              s.games.map(function (g) {
+                var sc = g.maxScore > 0 ? g.bestScore + " / " + g.maxScore : (g.bestScore ? String(g.bestScore) : "—");
+                return (
+                  "<tr>" +
+                    "<td><strong>" + escapeHtml(g.name) + "</strong></td>" +
+                    "<td>" + escapeHtml(g.category || "General") + "</td>" +
+                    '<td class="num">' + starsHtml(g.stars) + "</td>" +
+                    '<td class="num">' + escapeHtml(sc) + "</td>" +
+                    '<td class="num">' + (g.accuracy ? g.accuracy + "%" : "—") + "</td>" +
+                    '<td class="num">' + (g.plays || 0) + "</td>" +
+                    '<td class="num">' + escapeHtml(formatExact(g.lastAt)) + "</td>" +
+                  "</tr>"
+                );
+              }).join("") +
+              "</tbody></table></div>";
+
+            if (s.recentScores && s.recentScores.length) {
+              detailHtml +=
+                '<div class="detail-summary" style="margin-top:4px;">Latest score submissions: ' +
+                s.recentScores.slice(0, 5).map(function (rs) {
+                  var sc = rs.maxScore ? rs.score + "/" + rs.maxScore : rs.score;
+                  return escapeHtml(rs.gameName + " (" + sc + ", " + formatRelative(rs.at) + ")");
+                }).join(" · ") +
+                "</div>";
+            }
+          }
+
+          return (
+            '<div class="roster-item' + (isOpen ? " is-open" : "") + '" data-key="' + escapeHtml(s.key) + '">' +
+              '<button type="button" class="roster-row" aria-expanded="' + (isOpen ? "true" : "false") + '">' +
+                '<div class="roster-avatar' + (s.registered ? "" : " is-guest") + '">' + escapeHtml((s.displayName || "?").charAt(0).toUpperCase()) + "</div>" +
+                '<div class="roster-main">' +
+                  '<div class="roster-name">' + escapeHtml(s.displayName) + "</div>" +
+                  '<div class="roster-meta">' + escapeHtml(subParts.join(" · ")) + "</div>" +
+                "</div>" +
+                '<div class="roster-metric"><strong>' + s.totalStars + ' ★</strong><span>' + s.gamesPlayed + " games</span></div>" +
+                '<div class="roster-metric roster-metric--hide-sm"><strong>' + s.totalPlays + '</strong><span>plays · ' + (s.avgAccuracy ? s.avgAccuracy + "%" : "—") + "</span></div>" +
+                '<div class="roster-status ' + st.cls + '">' + escapeHtml(st.label) + "</div>" +
+                '<span class="roster-chev" aria-hidden="true">▾</span>' +
+              "</button>" +
+              '<div class="roster-detail">' + detailHtml + "</div>" +
+            "</div>"
+          );
+        }).join("") +
+        "</div>";
+
+      container.querySelectorAll(".roster-row").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var item = btn.closest(".roster-item");
+          if (!item) return;
+          var k = item.getAttribute("data-key");
+          var next = !item.classList.contains("is-open");
+          item.classList.toggle("is-open", next);
+          btn.setAttribute("aria-expanded", next ? "true" : "false");
+          if (next) openKeys[k] = true;
+          else delete openKeys[k];
+        });
+      });
+    }
+
+    function renderInsights() {
+      var topEl = document.getElementById("topGamesList");
+      var top = (dashboardData && dashboardData.topGames) || [];
+      if (!top.length) {
+        topEl.innerHTML = '<div class="adm-empty">No game plays recorded yet.</div>';
+      } else {
+        topEl.innerHTML = top.map(function (g) {
+          return (
+            '<div class="insight-row">' +
+              '<div class="insight-main"><strong>' + escapeHtml(g.name) + "</strong><small>" + escapeHtml(g.category) + "</small></div>" +
+              '<div class="insight-val tabular">' + g.totalPlays + " plays<small>" + (g.avgAccuracy ? g.avgAccuracy + "% avg" : "—") + "</small></div>" +
+            "</div>"
+          );
+        }).join("");
+      }
+
+      var feedEl = document.getElementById("recentFeedList");
+      var feedMeta = document.getElementById("recentFeedMeta");
+      var feed = (dashboardData && dashboardData.recentActivity) || [];
+      feedMeta.textContent = feed.length + " recent";
+      if (!feed.length) {
+        feedEl.innerHTML = '<div class="adm-empty">No recent score submissions yet.</div>';
+      } else {
+        feedEl.innerHTML = feed.slice(0, 20).map(function (r) {
+          var sc = r.maxScore ? r.score + " / " + r.maxScore : String(r.score);
+          var meta = r.gameName + " · " + formatRelative(r.at);
+          return (
+            '<div class="insight-row">' +
+              '<div class="insight-main"><strong>' + escapeHtml(r.studentName) + "</strong><small>" + escapeHtml(meta) + "</small></div>" +
+              '<div class="insight-val tabular">' + escapeHtml(sc) + "<small>" + (r.accuracy != null ? r.accuracy + "%" : "score") + "</small></div>" +
+            "</div>"
+          );
+        }).join("");
+      }
+    }
+
+    function renderDashboard() {
+      if (!dashboardData) return;
+      var s = dashboardData.summary || {};
+
+      document.getElementById("statusLine").textContent =
+        "Updated " + formatExact(dashboardData.generatedAt) + " · " +
+        (s.totalStudents || 0) + " tracked profiles & guests";
+
+      var warnBar = document.getElementById("warnBar");
+      if (dashboardData.warnings && dashboardData.warnings.length) {
+        warnBar.hidden = false;
+        warnBar.textContent = "Database note: " + dashboardData.warnings.join(" | ");
+      } else {
+        warnBar.hidden = true;
+      }
+
+      document.getElementById("kpiRegistered").textContent = String(s.registeredCount || 0);
+      document.getElementById("kpiGuests").textContent = (s.guestCount || 0) + " guest score profiles";
+      document.getElementById("kpiActive7d").textContent = String(s.active7dCount || 0);
+      document.getElementById("kpiActive24h").textContent = (s.active24hCount || 0) + " active today";
+      document.getElementById("kpiPlays").textContent = String(s.totalPlays || 0);
+      document.getElementById("kpiProgressRows").textContent = (s.progressRows || 0) + " progress records";
+      document.getElementById("kpiStars").textContent = String(s.totalStars || 0);
+      document.getElementById("kpiInactive").textContent = (s.inactiveCount || 0) + " inactive registered";
+      document.getElementById("kpiAccuracy").textContent = s.avgAccuracy ? s.avgAccuracy + "%" : "—";
+      document.getElementById("kpiSubmissions").textContent = (s.scoreSubmissions || 0) + " score submissions";
+
+      renderRoster();
+      renderInsights();
+    }
+
+    /* Filter, search, sort */
+    document.getElementById("studentSearch").addEventListener("input", function (e) {
+      searchTerm = e.target.value || "";
+      renderRoster();
+    });
+    document.getElementById("studentSort").addEventListener("change", function (e) {
+      sortMode = e.target.value || "lastActive";
+      renderRoster();
+    });
+    document.getElementById("filterBar").addEventListener("click", function (e) {
+      var btn = e.target.closest(".adm-filter-btn");
+      if (!btn) return;
+      document.querySelectorAll(".adm-filter-btn").forEach(function (b) {
+        b.classList.toggle("is-on", b === btn);
+      });
+      activeFilter = btn.getAttribute("data-filter") || "all";
+      renderRoster();
+    });
+
+    /* Safe CSV export */
+    function csvCell(val) {
+      var str = String(val == null ? "" : val);
+      if (/^[=+\-@\t\r]/.test(str)) str = "'" + str;
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+
+    document.getElementById("exportCsvBtn").addEventListener("click", function () {
+      if (!dashboardData) return;
+      var rows = filteredStudents();
+      var header = ["Showing Name", "Username", "Account Type", "Status", "Stars", "Games Practiced", "Completed Games", "Total Plays", "Avg Accuracy %", "Total Score", "Last Active", "Joined"];
+      var lines = [header.map(csvCell).join(",")];
+      rows.forEach(function (s) {
+        lines.push([
+          s.displayName,
+          s.username || "",
+          s.registered ? "Registered" : "Guest",
+          statusInfo(s).label.replace(/^[●○]\s*/, ""),
+          s.totalStars,
+          s.gamesPlayed,
+          s.completedGames,
+          s.totalPlays,
+          s.avgAccuracy,
+          s.totalScore,
+          s.lastActiveAt ? new Date(s.lastActiveAt).toISOString() : "",
+          s.joinedAt ? new Date(s.joinedAt).toISOString() : ""
+        ].map(csvCell).join(","));
+      });
+      var blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "student-activity-" + new Date().toISOString().slice(0, 10) + ".csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    });
+
+    checkAdminStatus();
+  })();
   </script>
 </body>
 </html>
