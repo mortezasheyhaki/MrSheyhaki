@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Match Making · Multiplayer | Mr. Sheyhaki</title>
+  <meta name="description" content="Timed picture and word matching games for 1–10 players. Pick Family Words (Vocabulary) or Singular & Plural (Grammar) and race friends live." />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/theme.css" />
+  <link rel="stylesheet" href="/multiplayer/lobby.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    .mm-topic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .mm-topic-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+    }
+    .mm-topic-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, #8b5cf6, #ec4899);
+    }
+    .mm-topic-card[data-category="grammar"]::before {
+      background: linear-gradient(90deg, #06b6d4, #6366f1);
+    }
+    .mm-topic-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--mp-accent-border);
+    }
+    .mm-topic-card.is-offline-blocked {
+      opacity: 0.65;
+    }
+    .mm-topic-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .mm-topic-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: var(--mp-accent-soft);
+      color: var(--mp-accent);
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .mm-topic-meta {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--site-muted);
+      text-align: right;
+      line-height: 1.4;
+    }
+    .mm-topic-foot {
+      margin-top: auto;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--site-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--mp-accent);
+    }
+  </style>
+</head>
+<body class="mp-lobby-body has-site-topbar">
+
+  <header class="site-topbar">
+    <div class="topbar-inner">
+      <a href="/" class="brand-mark">Mr. Sheyhaki</a>
+      <nav class="topbar-nav" aria-label="Main navigation">
+        <a href="/" class="topbar-link">Home</a>
+        <a href="/learningarcade/" class="topbar-link">Arcade</a>
+        <a href="/multiplayer/" class="topbar-link active" aria-current="page">Multiplayer</a>
+        <a href="/resources/" class="topbar-link">Resources</a>
+        <a href="/about/" class="topbar-link">About</a>
+      </nav>
+      <div class="topbar-actions">
+        <button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <a href="/learningarcade/profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>
+      </div>
+    </div>
+    <nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+      <a href="/">Home</a>
+      <a href="/learningarcade/">Arcade</a>
+      <a href="/multiplayer/" class="active" aria-current="page">Multiplayer</a>
+      <a href="/resources/">Resources</a>
+      <a href="/about/">About</a>
+    </nav>
+  </header>
+
+  <main class="mp-shell">
+    <div class="mp-subhead">
+      <div class="mp-subhead-left">
+        <a class="mp-back-link" href="/multiplayer/">← Multiplayer</a>
+        <h1 class="mp-title">Match Making</h1>
+        <p class="mp-subtitle">1–10 players · Choose Vocabulary or Grammar to open a timed matching lobby</p>
+      </div>
+    </div>
+
+    <div class="mp-toolbar">
+      <div class="mp-filter-tabs" role="tablist" aria-label="Filter by skill">
+        <button type="button" class="mp-filter-tab is-active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button type="button" class="mp-filter-tab" data-filter="grammar" role="tab" aria-selected="false">Grammar</button>
+        <button type="button" class="mp-filter-tab" data-filter="vocabulary" role="tab" aria-selected="false">Vocabulary</button>
+      </div>
+
+      <div class="mp-mode-switch-wrap">
+        <div class="mp-mode-switch-text">
+          <span class="mp-mode-switch-title">Online play</span>
+          <span class="mp-mode-switch-sub" id="modeSubLabel">1–10 players · Live room</span>
+        </div>
+        <button type="button" class="mp-mode-switch" id="modeSwitch" role="switch" aria-checked="true" aria-label="Toggle online or offline play">
+          <span class="mp-mode-track" aria-hidden="true"><span class="mp-mode-thumb"></span></span>
+          <span class="mp-mode-state" id="modeStateText">Online</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mp-notice-bar" id="offlineNotice" hidden>
+      <span><strong>Match Making is Online only.</strong> Turn Online on to create or join a timed live room.</span>
+      <button type="button" class="mp-btn mp-btn-primary mp-btn-sm" id="btnTurnOnline">Turn Online on</button>
+    </div>
+
+    <div class="mm-topic-grid" id="topicGrid">
+      <a class="mp-panel mm-topic-card" data-category="vocabulary" href="/multiplayer/family-words/?game=family-words">
+        <div class="mm-topic-top">
+          <div class="mm-topic-mark" aria-hidden="true">🖼️</div>
+          <span class="mm-topic-meta">Vocabulary · 16 pictures<br />Online · Host sets timer</span>
+        </div>
+        <div>
+          <h2 class="mp-panel-title">Family Words</h2>
+          <p class="mp-panel-desc">Match each family picture with the right word from three choices. Speed and accuracy earn bonus points.</p>
+        </div>
+        <div class="mm-topic-foot">
+          <span class="mm-topic-meta" data-mode-tag>Online only</span>
+          <span data-cta>Open lobby →</span>
+        </div>
+      </a>
+
+      <a class="mp-panel mm-topic-card" data-category="grammar" href="/multiplayer/family-words/?game=plural-forms">
+        <div class="mm-topic-top">
+          <div class="mm-topic-mark" aria-hidden="true">🔤</div>
+          <span class="mm-topic-meta">Grammar · 6 nouns<br />Online · Host sets timer</span>
+        </div>
+        <div>
+          <h2 class="mp-panel-title">Singular &amp; Plural</h2>
+          <p class="mp-panel-desc">Match each singular noun with its correct plural form before the round timer runs out.</p>
+        </div>
+        <div class="mm-topic-foot">
+          <span class="mm-topic-meta" data-mode-tag>Online only</span>
+          <span data-cta>Open lobby →</span>
+        </div>
+      </a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · Multiplayer</p>
+      <div class="footer-links">
+        <a class="footer-link" href="/contact/">Contact</a>
+        <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/theme.js"></script>
+  <script src="/script.js"></script>
+  <script>
+    (function () {
+      var MODE_KEY = "mrsheyhaki-mp-mode";
+      var modeSwitch = document.getElementById("modeSwitch");
+      var modeStateText = document.getElementById("modeStateText");
+      var modeSubLabel = document.getElementById("modeSubLabel");
+      var offlineNotice = document.getElementById("offlineNotice");
+      var btnTurnOnline = document.getElementById("btnTurnOnline");
+      var tabs = Array.prototype.slice.call(document.querySelectorAll(".mp-filter-tab"));
+      var cards = Array.prototype.slice.call(document.querySelectorAll(".mm-topic-card"));
+
+      function readInitialMode() {
+        var q = new URLSearchParams(location.search).get("mode");
+        if (q === "offline" || q === "online") return q;
+        try {
+          var saved = localStorage.getItem(MODE_KEY);
+          if (saved === "offline" || saved === "online") return saved;
+        } catch (e) {}
+        return "online";
+      }
+
+      var currentMode = readInitialMode();
+
+      function applyMode(mode) {
+        currentMode = mode === "offline" ? "offline" : "online";
+        var isOnline = currentMode === "online";
+        try { localStorage.setItem(MODE_KEY, currentMode); } catch (e) {}
+
+        modeSwitch.setAttribute("aria-checked", isOnline ? "true" : "false");
+        modeStateText.textContent = isOnline ? "Online" : "Offline";
+        modeSubLabel.textContent = isOnline ? "1–10 players · Live room" : "Online required for this game";
+        offlineNotice.hidden = isOnline;
+
+        cards.forEach(function (card) {
+          card.classList.toggle("is-offline-blocked", !isOnline);
+          var cta = card.querySelector("[data-cta]");
+          if (cta) cta.textContent = isOnline ? "Open lobby →" : "Turn Online on →";
+        });
+      }
+
+      function applyFilter(filter) {
+        tabs.forEach(function (tab) {
+          var active = tab.getAttribute("data-filter") === filter;
+          tab.classList.toggle("is-active", active);
+          tab.setAttribute("aria-selected", active ? "true" : "false");
+        });
+        cards.forEach(function (card) {
+          var match = filter === "all" || card.getAttribute("data-category") === filter;
+          card.hidden = !match;
+        });
+      }
+
+      cards.forEach(function (card) {
+        card.addEventListener("click", function (ev) {
+          if (currentMode === "offline") {
+            ev.preventDefault();
+            applyMode("online");
+            offlineNotice.hidden = true;
+          }
+        });
+      });
+
+      modeSwitch.addEventListener("click", function () {
+        applyMode(currentMode === "online" ? "offline" : "online");
+      });
+      if (btnTurnOnline) {
+        btnTurnOnline.addEventListener("click", function () { applyMode("online"); });
+      }
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          applyFilter(tab.getAttribute("data-filter"));
+        });
+      });
+
+      var yr = document.getElementById("year");
+      if (yr) yr.textContent = new Date().getFullYear();
+
+      applyMode(currentMode);
+      applyFilter("all");
+    })();
+  </script>
+</body>
+</html>

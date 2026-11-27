@@ -214,9 +214,9 @@
   <main class="mp-shell">
     <div class="mp-subhead">
       <div class="mp-subhead-left">
-        <a class="mp-back-link" href="/multiplayer/" id="backLink">← Multiplayer</a>
-        <h1 class="mp-title">Family Words</h1>
-        <p class="mp-subtitle">Vocabulary · Picture Match &amp; Singular/Plural · Online only (1–10 players)</p>
+        <a class="mp-back-link" href="/multiplayer/match-making/" id="backLink">← Match Making</a>
+        <h1 class="mp-title" id="fwPageTitle">Family Words</h1>
+        <p class="mp-subtitle" id="fwPageSub">Match Making · Vocabulary · Online only (1–10 players)</p>
       </div>
       <div class="mp-identity hidden" id="userIdentity">
         <div class="mp-identity-avatar" id="userAvatar">P</div>
@@ -739,13 +739,36 @@
         });
       }
 
+      var initialGame = (new URLSearchParams(location.search).get("game") || "").trim();
+      if (initialGame !== "plural-forms") initialGame = "family-words";
+
       $("btnCreate").addEventListener("click", function () {
         if (!socket || !socket.connected) {
           setStatus($("homeStatus"), "Still connecting to server…", "error");
           return;
         }
         setStatus($("homeStatus"), "Creating lobby…");
-        sendRoomAction("room:create", { gameType: "family-words" }, $("homeStatus"));
+        socket.emit("room:create", { gameType: "family-words" }, function (res) {
+          if (res && res.ok === false && /already in/i.test(res.error || "")) {
+            setStatus($("homeStatus"), "Leaving previous room…");
+            socket.emit("room:leave", {}, function () {
+              room = null; question = null; answered = false; stopTimer();
+              socket.emit("room:create", { gameType: "family-words" }, function (res2) {
+                if (res2 && res2.ok === false) setStatus($("homeStatus"), res2.error, "error");
+                else {
+                  setStatus($("homeStatus"), "");
+                  if (initialGame === "plural-forms") socket.emit("fw:settings", { gameType: "plural-forms" });
+                }
+              });
+            });
+            return;
+          }
+          if (res && res.ok === false) setStatus($("homeStatus"), res.error, "error");
+          else {
+            setStatus($("homeStatus"), "");
+            if (initialGame === "plural-forms") socket.emit("fw:settings", { gameType: "plural-forms" });
+          }
+        });
       });
 
       $("btnJoin").addEventListener("click", function () {
@@ -831,8 +854,12 @@
     }
 
     (async function init() {
-      var modeParam = new URLSearchParams(location.search).get("mode");
-      if (modeParam === "offline" && $("fwOfflineNotice")) {
+      var params = new URLSearchParams(location.search);
+      if (params.get("game") === "plural-forms") {
+        if ($("fwPageTitle")) $("fwPageTitle").textContent = "Singular & Plural";
+        if ($("fwPageSub")) $("fwPageSub").textContent = "Match Making · Grammar · Online only (1–10 players)";
+      }
+      if (params.get("mode") === "offline" && $("fwOfflineNotice")) {
         $("fwOfflineNotice").hidden = false;
       }
       bind();
