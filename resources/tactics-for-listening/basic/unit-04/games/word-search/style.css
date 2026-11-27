@@ -1,0 +1,229 @@
+/* Word search · Tactics For Listening Basic Unit 4 · one screen, no scroll */
+
+.ws-app {
+  --ws-cell: var(--lc-card, #ffffff);
+  --ws-sel: #c7d2fe;
+  --ws-found: #bbf7d0;
+  --ws-found-ink: #14532d;
+  --ws-bad: #fde2e2;
+  position: relative;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+  height: 100dvh;
+  max-height: 100dvh;
+  padding: max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+html[data-theme="dark"] .ws-app {
+  --ws-cell: #1d2230;
+  --ws-sel: #3d4a7a;
+  --ws-found: #134e34;
+  --ws-found-ink: #bbf7d0;
+  --ws-bad: #4c1d1d;
+}
+
+/* ----- header: title on the left, round word-list button on the top-right ----- */
+.ws-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex: 0 0 auto;
+  padding-top: 4px;
+}
+.ws-title { min-width: 0; }
+.ws-eyebrow {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--lc-muted);
+}
+.ws-title strong {
+  display: block;
+  font-size: 19px;
+  color: var(--lc-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ws-words-btn {
+  flex: 0 0 auto;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid var(--lc-accent);
+  background: var(--lc-accent);
+  color: #ffffff;
+  font-size: 22px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 16px rgba(59, 91, 219, .3);
+  touch-action: manipulation;
+}
+.ws-words-btn:active { transform: scale(.94); }
+.ws-words-wrap .ws-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  background: var(--lc-ok);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 22px;
+  text-align: center;
+}
+.ws-words-wrap { position: relative; flex: 0 0 auto; }
+
+/* ----- board: fills the space left under the header, never scrolls ----- */
+.ws-board-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+.ws-board {
+  width: min(100%, calc(100dvh - 190px));
+  aspect-ratio: 1 / 1;
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  grid-template-rows: repeat(15, 1fr);
+  gap: 3px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+.ws-cell {
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  background: var(--ws-cell);
+  color: var(--lc-ink);
+  font-size: clamp(12px, calc(min(100vw, 100dvh) / 30), 22px);
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  border: 1px solid var(--lc-line);
+}
+.ws-cell.is-sel { background: var(--ws-sel); }
+.ws-cell.is-found { background: var(--ws-found); color: var(--ws-found-ink); border-color: transparent; }
+.ws-cell.is-bad { animation: ws-shake .3s; background: var(--ws-bad); }
+@keyframes ws-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+/* ----- footer status ----- */
+.ws-foot {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--lc-muted);
+}
+.ws-foot .ws-found-count { color: var(--lc-ink); }
+.ws-foot-btn {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--lc-line);
+  background: transparent;
+  color: var(--lc-muted);
+  cursor: pointer;
+}
+.ws-done {
+  flex: 0 0 auto;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--lc-ok-ink);
+}
+
+/* ----- words panel (opened by the round button) ----- */
+.ws-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(10, 12, 20, .55);
+}
+.ws-modal[hidden] { display: none; }
+.ws-sheet {
+  width: min(100%, 420px);
+  max-height: 88dvh;
+  overflow-y: auto;
+  background: var(--lc-card);
+  color: var(--lc-ink);
+  border: 1px solid var(--lc-line);
+  border-radius: 20px;
+  box-shadow: var(--lc-shadow);
+  padding: 18px 18px 16px;
+}
+.ws-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.ws-sheet-head h2 { margin: 0; font-size: 20px; }
+.ws-close {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  padding: 9px 16px;
+  border-radius: 12px;
+  border: none;
+  background: var(--lc-accent);
+  color: #ffffff;
+  cursor: pointer;
+}
+.ws-sheet-hint { margin: 0 0 12px; font-size: 15px; color: var(--lc-muted); }
+.ws-words {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.ws-words li {
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1.5px solid var(--lc-line);
+  background: var(--ws-cell);
+  color: var(--lc-ink);
+  font-size: 17px;
+  font-weight: 700;
+}
+.ws-words li.is-found {
+  background: var(--ws-found);
+  color: var(--ws-found-ink);
+  border-color: transparent;
+  text-decoration: line-through;
+}
+
+@media (max-width: 520px) {
+  .ws-words { grid-template-columns: 1fr; }
+  .ws-title strong { font-size: 17px; }
+}
