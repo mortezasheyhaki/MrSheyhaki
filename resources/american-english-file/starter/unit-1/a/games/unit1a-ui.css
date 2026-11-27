@@ -1,0 +1,750 @@
+/* ==========================================================================
+   Unit 1A Games — Cohesive Polish & Responsive Upgrade
+   Applies across all 19 games under starter/unit-1/a/games/
+   ========================================================================== */
+
+:root {
+  --u1a-font: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --u1a-display: "Fredoka", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --u1a-bg: #f5f4fb;
+  --u1a-bg-wash: radial-gradient(ellipse 85% 45% at 50% -8%, rgba(99, 84, 232, 0.12), transparent 70%);
+  --u1a-surface: #ffffff;
+  --u1a-surface-soft: #f8f7fe;
+  --u1a-ink: #1b1936;
+  --u1a-muted: #5d5b7a;
+  --u1a-line: rgba(27, 25, 54, 0.1);
+  --u1a-line-strong: rgba(99, 84, 232, 0.28);
+  --u1a-accent: #5e4fe6;
+  --u1a-accent-2: #7c6ef2;
+  --u1a-accent-soft: rgba(94, 79, 230, 0.1);
+  --u1a-ok: #15803d;
+  --u1a-ok-bg: #dcfce7;
+  --u1a-bad: #dc2626;
+  --u1a-bad-bg: #fee2e2;
+  --u1a-shadow-sm: 0 2px 8px rgba(27, 25, 54, 0.05);
+  --u1a-shadow-md: 0 12px 32px rgba(27, 25, 54, 0.08);
+  --u1a-radius-card: 22px;
+  --u1a-radius-ctl: 14px;
+  --u1a-radius-tag: 10px;
+}
+
+html[data-theme="dark"] {
+  --u1a-bg: #0e1018;
+  --u1a-bg-wash: radial-gradient(ellipse 85% 45% at 50% -8%, rgba(139, 123, 247, 0.16), transparent 70%);
+  --u1a-surface: #161a26;
+  --u1a-surface-soft: #1d2233;
+  --u1a-ink: #f1f5f9;
+  --u1a-muted: #9aa5bc;
+  --u1a-line: rgba(148, 163, 184, 0.16);
+  --u1a-line-strong: rgba(143, 130, 255, 0.36);
+  --u1a-accent: #8f82ff;
+  --u1a-accent-2: #a99eff;
+  --u1a-accent-soft: rgba(143, 130, 255, 0.15);
+  --u1a-ok: #4ade80;
+  --u1a-ok-bg: rgba(22, 163, 74, 0.2);
+  --u1a-bad: #f87171;
+  --u1a-bad-bg: rgba(220, 38, 38, 0.2);
+  --u1a-shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.25);
+  --u1a-shadow-md: 0 16px 38px rgba(0, 0, 0, 0.38);
+}
+
+/* Release mobile-keyboard overflow traps while keeping drag lock functional */
+html,
+body {
+  height: auto !important;
+  min-height: 100dvh !important;
+  max-height: none !important;
+  overflow-x: clip !important;
+  overflow-y: auto !important;
+  font-family: var(--u1a-font) !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.game-page,
+body[data-type="game"] {
+  background-color: var(--u1a-bg) !important;
+  background-image: var(--u1a-bg-wash) !important;
+  background-repeat: no-repeat !important;
+  color: var(--u1a-ink) !important;
+  padding: 0 !important;
+}
+
+body.od-touch-dragging {
+  overflow: hidden !important;
+}
+
+/* Unified shell layout across all 19 game containers */
+#game-app {
+  width: 100%;
+  min-height: 100dvh !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 0 auto !important;
+  padding: max(14px, env(safe-area-inset-top, 14px)) 16px max(24px, env(safe-area-inset-bottom, 24px)) !important;
+  box-sizing: border-box !important;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--u1a-font) !important;
+  color: var(--u1a-ink);
+  background: transparent !important;
+  overflow: visible !important;
+}
+
+@media (min-width: 720px) {
+  #game-app {
+    max-width: 680px !important;
+    padding: 24px 28px 40px !important;
+  }
+
+  .amor-top,
+  .amor-progress,
+  .amor-stage,
+  .typebe-top,
+  .typebe-progress,
+  .typebe-stage,
+  .be-topbar,
+  .be-forms-intro,
+  .be-forms-board,
+  .be-card,
+  #be-feedback,
+  .sb-top,
+  .sb-start,
+  .sb-play {
+    max-width: 100% !important;
+  }
+}
+
+/* Wider desktop layouts for spatial/multi-panel games */
+@media (min-width: 820px) {
+  #game-app.cc-app {
+    max-width: 900px !important;
+  }
+
+  #game-app.cc-app .cc-scroll {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr) !important;
+    gap: 16px !important;
+    align-items: start !important;
+    overflow: visible !important;
+  }
+
+  #game-app.cc-app .cc-card-dialogue {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  #game-app.cc-app .cc-card-photo,
+  #game-app.cc-app .cc-card-chips {
+    grid-column: 2;
+  }
+
+  #game-app.cc-app .cc-photo {
+    max-height: 240px !important;
+  }
+}
+
+@media (min-width: 720px) {
+  main#game-app.amor-game:has(.wo-slots) {
+    max-width: 860px !important;
+  }
+}
+
+@media (min-width: 900px) {
+  #game-app.ws-game {
+    max-width: 1040px !important;
+  }
+
+  #game-app.ws-game .ws-grid {
+    width: min(100%, 490px) !important;
+    max-width: 490px !important;
+  }
+}
+
+/* Display typography */
+#game-app h1,
+#game-app h2,
+#game-app .amor-title h1,
+#game-app .typebe-title h1,
+#game-app .cc-title,
+#game-app .ws-title,
+#game-app .dg-topbar-title,
+#game-app .mq-topbar-title,
+#game-app .ln-topbar-title,
+#game-app .ld-title,
+#game-app .lr-title,
+#game-app .od-title,
+#game-app .be-topbar-title,
+#game-app .lw-title,
+#game-app .ay-title {
+  font-family: var(--u1a-display) !important;
+  letter-spacing: -0.01em;
+}
+
+/* Unified Topbars */
+#game-app .amor-top,
+#game-app .typebe-top,
+#game-app .be-topbar,
+#game-app .sb-top,
+#game-app .lw-topbar,
+#game-app .lr-topbar,
+#game-app .ld-topbar,
+#game-app .ln-topbar,
+#game-app .od-topbar,
+#game-app .dg-topbar,
+#game-app .mq-topbar,
+#game-app .cc-topbar,
+#game-app .ws-topbar,
+#game-app .ay-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0 0 14px !important;
+  padding: 0 !important;
+  min-height: 44px;
+}
+
+/* Back buttons */
+#game-app .amor-back,
+#game-app .typebe-back,
+#game-app .be-back-btn,
+#game-app .sb-back,
+#game-app .lw-back,
+#game-app .lr-back,
+#game-app .ld-back,
+#game-app .ln-back,
+#game-app .od-back,
+#game-app .dg-back-btn,
+#game-app .mq-back-btn,
+#game-app .cc-back,
+#game-app .ws-back,
+#game-app .ay-back {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px;
+  min-height: 42px;
+  border-radius: 12px !important;
+  border: 1px solid var(--u1a-line) !important;
+  background: var(--u1a-surface) !important;
+  color: var(--u1a-ink) !important;
+  box-shadow: var(--u1a-shadow-sm) !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+#game-app .amor-back:hover,
+#game-app .typebe-back:hover,
+#game-app .be-back-btn:hover,
+#game-app .sb-back:hover,
+#game-app .lw-back:hover,
+#game-app .lr-back:hover,
+#game-app .ld-back:hover,
+#game-app .ln-back:hover,
+#game-app .od-back:hover,
+#game-app .dg-back-btn:hover,
+#game-app .mq-back-btn:hover,
+#game-app .cc-back:hover,
+#game-app .ws-back:hover,
+#game-app .ay-back:hover {
+  border-color: var(--u1a-accent) !important;
+  background: var(--u1a-surface-soft) !important;
+}
+
+/* Zero-pill discipline on static status/counter tags + tabular numerals */
+#game-app .amor-count,
+#game-app .typebe-count,
+#game-app .be-progress,
+#game-app .sb-mode-tag,
+#game-app .lw-badge,
+#game-app .lr-badge,
+#game-app .ld-badge,
+#game-app .ln-progress,
+#game-app .ln-track,
+#game-app .od-badge,
+#game-app .dg-progress,
+#game-app .mq-progress,
+#game-app .cc-badge,
+#game-app .ws-badge,
+#game-app .ay-badge,
+#game-app .amor-pron,
+#game-app .typebe-badge,
+#game-app .be-chip,
+#game-app .od-chip,
+#game-app .ay-orbit-name {
+  border-radius: var(--u1a-radius-tag) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+#game-app .amor-count,
+#game-app .typebe-count,
+#game-app .be-progress,
+#game-app .sb-mode-tag,
+#game-app .lw-badge,
+#game-app .lr-badge,
+#game-app .ld-badge,
+#game-app .ln-progress,
+#game-app .od-badge,
+#game-app .dg-progress,
+#game-app .mq-progress,
+#game-app .cc-badge,
+#game-app .ws-badge,
+#game-app .ay-badge {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 11px !important;
+  font-size: 0.82rem !important;
+  font-weight: 800;
+  color: var(--u1a-accent) !important;
+  background: var(--u1a-surface) !important;
+  border: 1px solid var(--u1a-line) !important;
+  box-shadow: var(--u1a-shadow-sm) !important;
+}
+
+/* Surface cards consistency */
+#game-app .amor-card,
+#game-app .typebe-card,
+#game-app .be-card,
+#game-app .sb-prompt,
+#game-app .lw-prompt-card,
+#game-app .lw-player,
+#game-app .dg-card,
+#game-app .mq-card,
+#game-app .cc-card,
+#game-app .ws-board,
+#game-app .ws-lists,
+#game-app .ay-part-card,
+#game-app .ay-bubble {
+  background: var(--u1a-surface) !important;
+  border: 1px solid var(--u1a-line) !important;
+  border-radius: var(--u1a-radius-card) !important;
+  box-shadow: var(--u1a-shadow-md) !important;
+}
+
+/* Modern button elevation (replaces chunky 3D lips & pill buttons) */
+#game-app .dg-btn,
+#game-app .dg-check,
+#game-app .mq-btn,
+#game-app .mq-check,
+#game-app .cc-btn,
+#game-app .cc-btn-check,
+#game-app .lr-btn,
+#game-app .ld-btn,
+#game-app .lw-btn,
+#game-app .ln-btn,
+#game-app .od-btn,
+#game-app .be-btn,
+#game-app .sb-btn-primary,
+#game-app .ws-btn,
+#game-app .ay-btn,
+#game-app .typebe-check {
+  border-radius: var(--u1a-radius-ctl) !important;
+  min-height: 48px !important;
+  font-family: var(--u1a-font) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 6px 18px rgba(94, 79, 230, 0.24) !important;
+  transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.16s ease, filter 0.16s ease, background-color 0.16s ease !important;
+}
+
+#game-app .dg-btn:not(.secondary),
+#game-app .dg-check,
+#game-app .mq-btn:not(.secondary),
+#game-app .mq-check,
+#game-app .cc-btn,
+#game-app .lr-btn:not(.secondary),
+#game-app .ld-btn:not(.secondary),
+#game-app .lw-btn:not(.secondary),
+#game-app .ln-btn:not(.secondary),
+#game-app .od-btn:not(.secondary),
+#game-app .be-btn:not(.secondary),
+#game-app .sb-btn-primary,
+#game-app .ws-btn:not(.secondary),
+#game-app .ay-btn:not(.secondary),
+#game-app .typebe-check {
+  background: linear-gradient(135deg, var(--u1a-accent), var(--u1a-accent-2)) !important;
+  color: #ffffff !important;
+}
+
+#game-app .cc-btn-check {
+  background: var(--u1a-accent-soft) !important;
+  color: var(--u1a-accent) !important;
+  border: 1px solid var(--u1a-line-strong) !important;
+  box-shadow: var(--u1a-shadow-sm) !important;
+}
+
+#game-app .cc-btn-check:hover:not(:disabled) {
+  background: var(--u1a-accent) !important;
+  color: #ffffff !important;
+}
+
+#game-app .dg-btn.secondary,
+#game-app .mq-btn.secondary,
+#game-app .lr-btn.secondary,
+#game-app .ld-btn.secondary,
+#game-app .lw-btn.secondary,
+#game-app .ln-btn.secondary,
+#game-app .od-btn.secondary,
+#game-app .be-btn.secondary,
+#game-app .sb-btn-ghost,
+#game-app .ws-btn.secondary,
+#game-app .ay-btn.secondary {
+  background: var(--u1a-surface) !important;
+  color: var(--u1a-ink) !important;
+  border: 1px solid var(--u1a-line) !important;
+  box-shadow: var(--u1a-shadow-sm) !important;
+}
+
+/* Sleek shared ArcadeFX progress bar + calm combo tag */
+#game-app .afx-bar {
+  height: 7px !important;
+  border-radius: 999px !important;
+  background: var(--u1a-accent-soft) !important;
+  margin: 0 0 14px !important;
+  flex-shrink: 0;
+}
+
+#game-app .afx-bar i {
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, var(--u1a-accent), var(--u1a-accent-2)) !important;
+  background-size: 100% 100% !important;
+  animation: none !important;
+  box-shadow: none !important;
+}
+
+.afx-combo {
+  border-radius: 10px !important;
+  font-family: var(--u1a-font) !important;
+  font-size: 13px !important;
+  padding: 5px 11px !important;
+}
+
+/* Inputs: never trigger iOS Safari auto-zoom (< 16px) & crisp focus rings */
+#game-app input[type="text"],
+#game-app input:not([type]) {
+  font-size: max(16px, 1rem) !important;
+  font-family: var(--u1a-font) !important;
+}
+
+#game-app input:focus-visible,
+#game-app button:focus-visible,
+#game-app a:focus-visible {
+  outline: 3px solid rgba(94, 79, 230, 0.45) !important;
+  outline-offset: 2px !important;
+}
+
+/* --- Game-specific polish --- */
+
+/* Listen & Repeat / Select Day / Write Numbers player cards */
+#game-app .lr-player,
+#game-app .ld-player,
+#game-app .ln-player {
+  background: var(--u1a-surface) !important;
+  border: 1px solid var(--u1a-line) !important;
+  border-radius: 18px !important;
+  padding: 14px 16px !important;
+  box-shadow: var(--u1a-shadow-sm) !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#game-app .ln-play-btn {
+  border-radius: 12px !important;
+  padding: 8px 16px 8px 8px !important;
+  background: linear-gradient(135deg, var(--u1a-accent), var(--u1a-accent-2)) !important;
+  animation: none !important;
+  box-shadow: 0 4px 14px rgba(94, 79, 230, 0.28) !important;
+}
+
+#game-app .ln-play-btn.is-playing {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+  animation: none !important;
+}
+
+#game-app .ln-boxes {
+  max-height: none !important;
+  gap: 10px !important;
+  margin: 8px 0 14px !important;
+}
+
+@media (min-width: 640px) {
+  #game-app .ln-boxes {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  }
+}
+
+#game-app .ln-box {
+  background: var(--u1a-surface) !important;
+  border: 2px solid var(--u1a-line-strong) !important;
+  box-shadow: var(--u1a-shadow-sm);
+}
+
+#game-app .ln-box.ln-box-example {
+  background: var(--u1a-accent-soft) !important;
+  border-color: var(--u1a-accent) !important;
+}
+
+#game-app .ln-box-num {
+  color: var(--u1a-accent) !important;
+}
+
+#game-app .ln-box-tag {
+  color: var(--u1a-muted) !important;
+}
+
+#game-app .ln-input {
+  color: var(--u1a-ink) !important;
+  font-size: clamp(1.15rem, 3vw, 1.5rem) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+#game-app .ln-input.ok {
+  background: var(--u1a-ok-bg) !important;
+  color: var(--u1a-ok) !important;
+}
+
+#game-app .ln-input.bad {
+  background: var(--u1a-bad-bg) !important;
+  color: var(--u1a-bad) !important;
+}
+
+#game-app .ln-start h1 {
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: var(--u1a-ink) !important;
+}
+
+/* Listen & Select Day dark mode + desktop grid */
+html[data-theme="dark"] #game-app.ld-game .ld-day {
+  background: var(--u1a-surface) !important;
+  border-color: var(--u1a-line) !important;
+  color: var(--u1a-ink) !important;
+}
+
+html[data-theme="dark"] #game-app.ld-game .ld-day:hover:not(.disabled) {
+  border-color: var(--u1a-accent) !important;
+  background: var(--u1a-surface-soft) !important;
+}
+
+html[data-theme="dark"] #game-app.ld-game .ld-day.muted {
+  opacity: 0.42;
+}
+
+html[data-theme="dark"] #game-app.ld-game .ld-start h1,
+html[data-theme="dark"] #game-app.ld-game .ld-done h1,
+html[data-theme="dark"] #game-app.ld-game .ld-title {
+  color: var(--u1a-ink) !important;
+}
+
+html[data-theme="dark"] #game-app.ld-game .ld-sub,
+html[data-theme="dark"] #game-app.ld-game .ld-hint,
+html[data-theme="dark"] #game-app.ld-game .ld-instruction {
+  color: var(--u1a-muted) !important;
+}
+
+@media (min-width: 640px) {
+  #game-app.ld-game .ld-days {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  #game-app.ld-game .ld-day:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Order the Days: touch-friendly horizontal arrow controls & spacious desktop */
+#game-app.od-game .od-list {
+  overflow: visible !important;
+  gap: 8px !important;
+}
+
+#game-app.od-game .od-item {
+  padding: 6px 10px !important;
+  background: var(--u1a-surface) !important;
+  border-color: var(--u1a-line) !important;
+}
+
+#game-app.od-game .od-moves {
+  flex-direction: row !important;
+  gap: 6px !important;
+}
+
+#game-app.od-game .od-move {
+  width: 40px !important;
+  height: 38px !important;
+  border-radius: 10px !important;
+  font-size: 14px !important;
+}
+
+@media (max-width: 480px) {
+  #game-app.od-game .od-move {
+    width: 44px !important;
+    height: 44px !important;
+  }
+}
+
+/* Are You…? Full dark mode & desktop responsiveness */
+html[data-theme="dark"] #game-app.ay-game .ay-start h1,
+html[data-theme="dark"] #game-app.ay-game .ay-win h1,
+html[data-theme="dark"] #game-app.ay-game .ay-title,
+html[data-theme="dark"] #game-app.ay-game .ay-part-card strong {
+  color: var(--u1a-ink) !important;
+}
+
+html[data-theme="dark"] #game-app.ay-game .ay-desc,
+html[data-theme="dark"] #game-app.ay-game .ay-part-card p,
+html[data-theme="dark"] #game-app.ay-game .ay-soft,
+html[data-theme="dark"] #game-app.ay-game .ay-hint {
+  color: var(--u1a-muted) !important;
+}
+
+html[data-theme="dark"] #game-app.ay-game .ay-bubble {
+  color: var(--u1a-ink) !important;
+  border-color: var(--u1a-line-strong) !important;
+}
+
+html[data-theme="dark"] #game-app.ay-game .ay-bubble::before {
+  border-bottom-color: var(--u1a-line-strong) !important;
+}
+
+html[data-theme="dark"] #game-app.ay-game .ay-bubble::after {
+  border-bottom-color: var(--u1a-surface) !important;
+}
+
+html[data-theme="dark"] #game-app.ay-game .ay-bubble em {
+  color: var(--u1a-accent) !important;
+}
+
+html[data-theme="dark"] #game-app.ay-game .ay-orbit-name,
+html[data-theme="dark"] #game-app.ay-game .ay-pick,
+html[data-theme="dark"] #game-app.ay-game .ay-chip,
+html[data-theme="dark"] #game-app.ay-game .ay-input {
+  background: var(--u1a-surface) !important;
+  border-color: var(--u1a-line) !important;
+  color: var(--u1a-ink) !important;
+}
+
+html[data-theme="dark"] #game-app.ay-game .ay-ans {
+  background: var(--u1a-accent-soft) !important;
+  border-color: var(--u1a-line-strong) !important;
+  color: var(--u1a-accent-2) !important;
+}
+
+html[data-theme="dark"] #game-app.ay-game .ay-pick:hover {
+  border-color: var(--u1a-accent) !important;
+  background: var(--u1a-surface-soft) !important;
+}
+
+@media (min-width: 640px) {
+  #game-app.ay-game .ay-parts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  #game-app.ay-game .ay-pick-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  #game-app.ay-game .ay-orbit {
+    width: min(100%, 440px);
+    max-height: 440px;
+  }
+}
+
+#game-app.ay-game .ay-chip {
+  border-radius: 12px !important;
+}
+
+html[data-theme="dark"] #game-app.ay-game .ay-input:disabled {
+  background: var(--u1a-surface-soft) !important;
+  color: var(--u1a-muted) !important;
+}
+
+/* Word Order (word-order-be) token & slot surface consistency */
+#game-app .wo-tile {
+  background: var(--u1a-surface) !important;
+  border-color: var(--u1a-line) !important;
+  color: var(--u1a-ink) !important;
+  border-radius: var(--u1a-radius-ctl) !important;
+  box-shadow: var(--u1a-shadow-sm) !important;
+}
+
+#game-app .wo-tile:hover:not(.is-used) {
+  border-color: var(--u1a-accent) !important;
+  background: var(--u1a-surface-soft) !important;
+}
+
+#game-app .wo-slot {
+  border-color: var(--u1a-line-strong) !important;
+  color: var(--u1a-ink) !important;
+}
+
+#game-app .wo-slot.is-filled {
+  border-color: var(--u1a-accent) !important;
+  background: var(--u1a-accent-soft) !important;
+  color: var(--u1a-accent) !important;
+}
+
+/* Word Search mobile & desktop polish (prevents 44px button rule from stretching 12x12 grid) */
+#game-app.ws-game .ws-lists {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+#game-app.ws-game .ws-grid {
+  width: min(100%, 420px);
+  margin: 0 auto;
+}
+
+#game-app.ws-game .ws-cell {
+  min-height: 0 !important;
+  min-width: 0 !important;
+  aspect-ratio: 1;
+  border: 1px solid var(--u1a-line);
+}
+
+/* Subtle keyboard hint on desktop choice games */
+.u1a-kbd-hint {
+  margin: 12px 0 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--u1a-muted);
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .u1a-kbd-hint {
+    display: none;
+  }
+}
+
+/* SVG fallback card when remote CDN character image fails */
+.u1a-img-fallback {
+  width: 100%;
+  height: 100%;
+  min-height: 140px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: var(--u1a-accent-soft);
+  border: 1px dashed var(--u1a-line-strong);
+  color: var(--u1a-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #game-app *,
+  #game-app *::before,
+  #game-app *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
