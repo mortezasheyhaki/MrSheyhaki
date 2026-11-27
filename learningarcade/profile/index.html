@@ -49,6 +49,7 @@
     }
 
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
 
     body.profile-app {
       margin: 0;
@@ -725,7 +726,7 @@
         <a href="../leaderboard/" class="pf-nav-link">Leaderboard</a>
         <button type="button" class="pf-btn" id="themeToggleBtn" aria-label="Toggle light or dark theme">Theme</button>
         <a href="../auth-system/login.html?redirect=/learningarcade/profile/" class="pf-btn pf-btn--primary" id="topSignInLink" hidden>Sign in</a>
-        <button type="button" class="pf-btn pf-btn--danger" id="pfLogout">Sign out</button>
+        <button type="button" class="pf-btn pf-btn--danger" id="pfLogout" hidden>Sign out</button>
       </div>
     </div>
   </header>
@@ -1811,6 +1812,10 @@
 
     async function refreshDashboard() {
       if (window.LAAuth) {
+        if (!state.session && LAAuth.getSession) {
+          state.session = LAAuth.getSession();
+          renderIdentity();
+        }
         state.session = await LAAuth.verify().catch(function () { return LAAuth.getSession(); });
         if (state.session && LAAuth.getAccountDetails) {
           state.account = await LAAuth.getAccountDetails().catch(function () { return null; });
