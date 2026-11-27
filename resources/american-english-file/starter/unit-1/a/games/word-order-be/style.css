@@ -1,0 +1,397 @@
+/* ===== Am or Are? – American English File Starter Unit 1A ===== */
+
+/* Hide site chrome so the game fills the screen */
+.arcade-header-bar,
+.arcade-nav,
+.nav-profile,
+[data-theme-toggle],
+.theme-toggle,
+body > header,
+.site-footer {
+  display: none !important;
+}
+html, body {
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0 !important;
+}
+body.game-page { background: #f4f2fb; }
+
+.amor-game {
+  --ink: #1e1b4b;
+  --muted: #6b6890;
+  --line: #e4e0f3;
+  --card: #ffffff;
+  --brand: #6d5ff0;
+  --brand-2: #8b7bf7;
+  --ok: #16a34a;
+  --ok-bg: #dcfce7;
+  --bad: #dc2626;
+  --bad-bg: #fee2e2;
+
+  box-sizing: border-box;
+  min-height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top, 0px) 16px env(safe-area-inset-bottom, 0px);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(180deg, #efeafd 0%, #f4f2fb 45%, #f7f6fb 100%);
+  -webkit-font-smoothing: antialiased;
+}
+
+html[data-theme="dark"] body.game-page { background: #0f1117; }
+html[data-theme="dark"] .amor-game {
+  --ink: #f4f6fb;
+  --muted: #aeb6c8;
+  --line: #2b3040;
+  --card: #181b24;
+  --brand: #8b7bf7;
+  --brand-2: #a78bfa;
+  --ok-bg: rgba(22, 163, 74, .18);
+  --bad-bg: rgba(220, 38, 38, .18);
+  background: linear-gradient(180deg, #151826 0%, #0f1117 100%);
+}
+
+/* ----- Top bar ----- */
+.amor-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 14px 0 10px;
+}
+.amor-back {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 1.1rem;
+  flex: 0 0 auto;
+}
+.amor-title {
+  flex: 1;
+  min-width: 0;
+}
+.amor-title h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.amor-title p {
+  margin: 2px 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.amor-count {
+  font-size: .85rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--brand);
+  flex: 0 0 auto;
+}
+
+/* ----- Progress ----- */
+.amor-progress {
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto 18px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+.amor-progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  transition: width .45s cubic-bezier(.22, 1, .36, 1);
+}
+
+/* ----- Stage ----- */
+.amor-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding-bottom: 24px;
+}
+
+.amor-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: 0 18px 40px rgba(60, 50, 140, .10);
+  padding: 28px 22px 24px;
+  text-align: center;
+  animation: amor-in .4s cubic-bezier(.22, 1, .36, 1) both;
+}
+@keyframes amor-in {
+  from { opacity: 0; transform: translateY(14px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+.amor-pron {
+  display: inline-block;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--brand);
+  background: rgba(109, 95, 240, .10);
+  border-radius: 999px;
+  padding: 5px 12px;
+  margin-bottom: 16px;
+}
+
+.amor-sentence {
+  font-size: clamp(1.45rem, 4.6vw, 2rem);
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0 0 8px;
+  min-height: 2.7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: .25em;
+}
+.amor-blank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.2em;
+  height: 1.7em;
+  padding: 0 .4em;
+  border-radius: 10px;
+  border: 2px dashed #b9b2e8;
+  color: var(--brand);
+  font-weight: 800;
+  transition: all .25s ease;
+}
+.amor-blank.is-filled {
+  border-style: solid;
+  border-color: var(--ok);
+  background: var(--ok-bg);
+  color: var(--ok);
+  animation: amor-pop .4s cubic-bezier(.22, 1, .36, 1);
+}
+.amor-blank.is-empty-flash {
+  animation: amor-shake .4s ease;
+}
+@keyframes amor-pop {
+  0% { transform: scale(.7); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes amor-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* Feedback line */
+.amor-feedback {
+  min-height: 1.5em;
+  margin: 10px 0 0;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.amor-feedback.is-ok { color: var(--ok); }
+.amor-feedback.is-bad { color: var(--bad); }
+
+/* ----- Chips ----- */
+.amor-chips {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 22px;
+}
+.amor-chip {
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 64px;
+  border-radius: 18px;
+  border: 2px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: .01em;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(60, 50, 140, .08);
+  transition: transform .15s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.amor-chip:hover:not(:disabled) {
+  border-color: var(--brand);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(109, 95, 240, .18);
+}
+.amor-chip:active:not(:disabled) { transform: scale(.97); }
+.amor-chip:focus-visible {
+  outline: 3px solid rgba(109, 95, 240, .45);
+  outline-offset: 3px;
+}
+.amor-chip:disabled { cursor: default; }
+.amor-chip.is-right {
+  border-color: var(--ok);
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+.amor-chip.is-wrong {
+  border-color: var(--bad);
+  background: var(--bad-bg);
+  color: var(--bad);
+  animation: amor-shake .4s ease;
+}
+.amor-chip.is-dim { opacity: .45; }
+
+/* ----- Done screen (fallback when la-finish is missing) ----- */
+.amor-done {
+  text-align: center;
+  padding: 32px 20px;
+}
+.amor-done h2 { margin: 0 0 8px; font-size: 1.6rem; }
+.amor-done p { margin: 0 0 20px; color: var(--muted); }
+.amor-done button {
+  appearance: none;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 22px;
+  font: inherit;
+  font-weight: 800;
+  color: #fff;
+  background: var(--brand);
+  cursor: pointer;
+}
+
+/* ----- Wider screens ----- */
+@media (min-width: 720px) {
+  .amor-card { padding: 40px 36px 34px; }
+  .amor-chip { min-height: 74px; font-size: 1.5rem; }
+  .amor-chips { margin-top: 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .amor-card, .amor-blank, .amor-chip, .amor-progress-fill { animation: none !important; transition: none !important; }
+}
+
+/* ----- Word order: sentence slots and word tiles ----- */
+.wo-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 64px;
+  margin-bottom: 4px;
+}
+.wo-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  height: 52px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 2px dashed #b9b2e8;
+  color: var(--ink);
+  font-size: clamp(1.1rem, 3.8vw, 1.5rem);
+  font-weight: 700;
+  transition: all .25s ease;
+}
+.wo-slot.is-filled {
+  border: 2px solid var(--brand);
+  background: rgba(109, 95, 240, .10);
+  color: var(--brand);
+  animation: amor-pop .35s cubic-bezier(.22, 1, .36, 1);
+}
+.wo-slot.is-punct {
+  min-width: 36px;
+  padding: 0 6px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: clamp(1.5rem, 4.5vw, 2rem);
+}
+.wo-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 22px;
+}
+.wo-tile {
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 56px;
+  padding: 0 18px;
+  border-radius: 16px;
+  border: 2px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(60, 50, 140, .08);
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.wo-tile:hover { border-color: var(--brand); transform: translateY(-2px); box-shadow: 0 10px 22px rgba(109, 95, 240, .18); }
+.wo-tile:active { transform: scale(.96); }
+.wo-tile:focus-visible { outline: 3px solid rgba(109, 95, 240, .45); outline-offset: 3px; }
+.wo-tile.is-wrong { border-color: var(--bad); background: var(--bad-bg); color: var(--bad); animation: amor-shake .4s ease; }
+@media (min-width: 720px) {
+  .wo-tile { min-height: 64px; font-size: 1.35rem; }
+}
+
+/* ----- No animation in this game; used tiles are muted ----- */
+.amor-card, .wo-slot.is-filled, .wo-tile.is-wrong, .amor-blank, .amor-chip { animation: none !important; }
+.wo-tile.is-used {
+  opacity: .35;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+  border-color: var(--line);
+}
+.wo-tile.is-used:hover { transform: none; border-color: var(--line); box-shadow: none; }
+
+/* ----- Wider card on desktop so sentence slots stay on one row ----- */
+.amor-top,
+.amor-progress,
+.amor-stage {
+  max-width: 800px;
+}
+.wo-slots {
+  flex-wrap: nowrap;
+}
+@media (max-width: 720px) {
+  .wo-slots { flex-wrap: wrap; }
+}
