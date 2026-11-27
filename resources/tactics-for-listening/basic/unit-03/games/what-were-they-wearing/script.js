@@ -337,6 +337,7 @@
       topBar(counter) +
       segments() +
       '<div class="lc-main www-main">' +
+      '<div class="www-left">' +
       '<div class="www-listen">' +
       '<button type="button" class="' + playCls + '" id="www-replay" aria-label="' + esc(playLabel()) + '">' +
       playIcon() + "</button>" +
@@ -345,10 +346,13 @@
       '<p class="www-listen-sub">' + esc(playSub()) + "</p>" +
       "</div></div>" +
       '<p class="www-sentence" aria-live="polite">' + sentenceHtml() + "</p>" +
+      "</div>" +
+      '<div class="www-right">' +
       '<div class="www-opts" role="group" aria-label="Choices">' +
       LETTERS.map(function (_, i) { return optHtml(i); }).join("") +
       "</div>" +
       footHtml() +
+      "</div>" +
       "</div>";
 
     var replay = document.getElementById("www-replay");
