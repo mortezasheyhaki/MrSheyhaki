@@ -16,8 +16,10 @@
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
 
   var timers = [];
+  var initSubjectId = (new URLSearchParams(location.search).get("subject") || "").trim();
+  var matchedSubject = SUBJECTS.filter(function (s) { return s.id === initSubjectId; })[0];
   var S = {
-    subject: SUBJECTS[0] || null, rounds: 5, names: ["Player 1", "Player 2"],
+    subject: matchedSubject || SUBJECTS[0] || null, rounds: 5, names: ["Player 1", "Player 2"],
     match: null, nextQ: null, shot: null, dive: null, shooterCorrect: false, keeperCorrect: false, picking: null, pickedZone: null
   };
 

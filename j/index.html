@@ -42,11 +42,11 @@
   <script>
     (function () {
       var GAME_ROUTES = {
-        "a-an-swipe": "/multiplayer/a-an-swipe/",
         "family-words": "/multiplayer/family-words/",
         "plural-forms": "/multiplayer/family-words/",
         "tictactoe-should": "/multiplayer/tic-tac-toe/should/",
-        "snakes-ladders": "/multiplayer/snakes-ladders/"
+        "snakes-ladders": "/multiplayer/snakes-ladders/",
+        "penalty-shootout": "/multiplayer/penalty-shootout/online/"
       };
 
       function codeFromLocation() {
@@ -78,7 +78,11 @@
         .then(function (r) { return r.ok ? r.json() : null; })
         .catch(function () { return null; })
         .then(function (data) {
-          var route = (data && data.ok && GAME_ROUTES[data.gameType]) || GAME_ROUTES["a-an-swipe"];
+          var route = data && data.ok && GAME_ROUTES[data.gameType];
+          if (!route) {
+            el.innerHTML = "<h1>Room not found</h1><p>Double-check your code or pick a game on the <a href=\"/multiplayer/\">multiplayer</a> page.</p><code>" + code + "</code>";
+            return;
+          }
           var target = route + "?room=" + encodeURIComponent(code);
           location.replace(target);
         });

@@ -4,35 +4,90 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Penalty Shootout · Multiplayer | Mr. Sheyhaki</title>
-  <meta name="description" content="Penalty Shootout grammar game for two players. Pick a subject, then create a lobby and play a friend online, or play on one device." />
+  <meta name="description" content="Penalty Shootout for two players. Pick Grammar or Vocabulary, toggle Online or Offline, and start kicking." />
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/theme.css" />
   <link rel="stylesheet" href="/multiplayer/lobby.css" />
   <link rel="stylesheet" href="/multiplayer/penalty-shootout/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
     .pk-hub-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1rem;
     }
     .pk-hub-card {
-      display: flex; flex-direction: column; gap: .9rem;
-      padding: 1.3rem; text-decoration: none; color: inherit;
-      border-radius: 22px; border: 1px solid var(--pk-border); background: var(--pk-surface);
-      position: relative; overflow: hidden;
-      transition: transform .15s, border-color .15s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      padding: 1.35rem;
+      text-decoration: none;
+      color: inherit;
+      border-radius: 18px;
+      border: 1px solid var(--site-border);
+      background: var(--site-surface);
+      box-shadow: var(--mp-card-shadow);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.16s ease, box-shadow 0.16s ease;
     }
-    .pk-hub-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 5px; background: linear-gradient(90deg, #34d399, #22d3ee); }
-    .pk-hub-card.online::before { background: linear-gradient(90deg, #e879f9, #a78bfa); }
-    .pk-hub-card:hover { transform: translateY(-3px); border-color: var(--mp-accent); }
-    .pk-hub-top { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
-    .pk-hub-mark { font-size: 2.2rem; line-height: 1; }
-    .pk-hub-meta { font-size: .78rem; font-weight: 700; color: var(--pk-muted); text-align: right; }
-    .pk-hub-foot { margin-top: auto; font-weight: 800; font-size: .92rem; color: var(--mp-accent); }
-    .pk-hub-section { margin: 1.6rem 0 .7rem; font-size: .8rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--pk-muted); }
+    .pk-hub-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, #10b981, #06b6d4);
+    }
+    .pk-hub-card[data-category="grammar"]::before {
+      background: linear-gradient(90deg, #8b5cf6, #ec4899);
+    }
+    .pk-hub-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--mp-accent-border);
+      box-shadow: 0 16px 34px var(--site-shadow);
+    }
+    .pk-hub-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .pk-hub-ico {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: var(--mp-accent-soft);
+      color: var(--mp-accent);
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .pk-hub-meta {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--site-muted);
+      text-align: right;
+      line-height: 1.4;
+    }
+    .pk-hub-foot {
+      margin-top: auto;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--site-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--mp-accent);
+    }
+    .pk-hub-mode-tag {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--site-muted);
+    }
   </style>
 </head>
 <body class="pk-page mp-lobby-body mp-theme-green has-site-topbar">
@@ -67,62 +122,74 @@
     <div class="mp-subhead">
       <div class="mp-subhead-left">
         <a class="mp-back-link" href="/multiplayer/">← Multiplayer</a>
-        <h1 class="mp-title">⚽ Penalty Shootout</h1>
-        <p class="mp-subtitle">2 players · Answer to score, answer to save. Pick a subject to open its lobby.</p>
+        <h1 class="mp-title">Penalty Shootout</h1>
+        <p class="mp-subtitle">2 players · Choose Grammar or Vocabulary, then play online or on one device</p>
       </div>
     </div>
 
-    <p class="pk-hub-section">Online · 2 players</p>
-    <div class="pk-hub-grid">
-      <a class="pk-hub-card online" href="/multiplayer/penalty-shootout/online/?subject=t2t1-u07-home">
-        <div class="pk-hub-top">
-          <div class="pk-hub-mark" aria-hidden="true">🏠</div>
-          <span class="pk-hub-meta">Teen2Teen 1 · Unit 7<br>13 questions</span>
-        </div>
-        <div>
-          <h2 class="mp-panel-title">Home vocabulary</h2>
-          <p class="mp-panel-desc">Rooms, furniture and everyday words for home.</p>
-        </div>
-        <div class="pk-hub-foot">Open lobby →</div>
-      </a>
+    <div class="mp-toolbar">
+      <div class="mp-filter-tabs" role="tablist" aria-label="Filter by skill">
+        <button type="button" class="mp-filter-tab is-active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button type="button" class="mp-filter-tab" data-filter="grammar" role="tab" aria-selected="false">Grammar</button>
+        <button type="button" class="mp-filter-tab" data-filter="vocabulary" role="tab" aria-selected="false">Vocabulary</button>
+      </div>
 
-      <a class="pk-hub-card online" href="/multiplayer/penalty-shootout/online/?subject=t2t1-u12-should">
+      <div class="mp-mode-switch-wrap">
+        <div class="mp-mode-switch-text">
+          <span class="mp-mode-switch-title">Online play</span>
+          <span class="mp-mode-switch-sub" id="modeSubLabel">Create or join a live room</span>
+        </div>
+        <button type="button" class="mp-mode-switch" id="modeSwitch" role="switch" aria-checked="true" aria-label="Toggle online or offline play">
+          <span class="mp-mode-track" aria-hidden="true"><span class="mp-mode-thumb"></span></span>
+          <span class="mp-mode-state" id="modeStateText">Online</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="pk-hub-grid" id="subjectGrid">
+      <a class="pk-hub-card" data-category="grammar" data-subject="t2t1-u12-should" href="/multiplayer/penalty-shootout/online/?subject=t2t1-u12-should">
         <div class="pk-hub-top">
-          <div class="pk-hub-mark" aria-hidden="true">👍</div>
-          <span class="pk-hub-meta">Teen2Teen 1 · Unit 12<br>10 questions</span>
+          <div class="pk-hub-ico" aria-hidden="true">👍</div>
+          <span class="pk-hub-meta">Grammar · Teen2Teen 1 · Unit 12<br />10 questions</span>
         </div>
         <div>
           <h2 class="mp-panel-title">Should or shouldn't?</h2>
-          <p class="mp-panel-desc">Advice and rules: should, shouldn't and the right form.</p>
+          <p class="mp-panel-desc">Advice and rules: choose between should, shouldn't, and the right form.</p>
         </div>
-        <div class="pk-hub-foot">Open lobby →</div>
+        <div class="pk-hub-foot">
+          <span class="pk-hub-mode-tag" data-mode-tag>Online · 2 players</span>
+          <span data-cta>Open lobby →</span>
+        </div>
       </a>
 
-      <a class="pk-hub-card online" href="/multiplayer/penalty-shootout/online/?subject=present-continuous">
+      <a class="pk-hub-card" data-category="grammar" data-subject="present-continuous" href="/multiplayer/penalty-shootout/online/?subject=present-continuous">
         <div class="pk-hub-top">
-          <div class="pk-hub-mark" aria-hidden="true">🏃</div>
-          <span class="pk-hub-meta">Grammar · Present continuous<br>55 questions</span>
+          <div class="pk-hub-ico" aria-hidden="true">🏃</div>
+          <span class="pk-hub-meta">Grammar · Present continuous<br />55 questions</span>
         </div>
         <div>
           <h2 class="mp-panel-title">Present Continuous</h2>
-          <p class="mp-panel-desc">am / is / are, -ing forms, reordering and fill-in-the-blank sentences.</p>
+          <p class="mp-panel-desc">am / is / are, -ing forms, reordering words, and fill-in-the-blank sentences.</p>
         </div>
-        <div class="pk-hub-foot">Open lobby →</div>
+        <div class="pk-hub-foot">
+          <span class="pk-hub-mode-tag" data-mode-tag>Online · 2 players</span>
+          <span data-cta>Open lobby →</span>
+        </div>
       </a>
-    </div>
 
-    <p class="pk-hub-section">Same device</p>
-    <div class="pk-hub-grid">
-      <a class="pk-hub-card" href="/multiplayer/penalty-shootout/offline/">
+      <a class="pk-hub-card" data-category="vocabulary" data-subject="t2t1-u07-home" href="/multiplayer/penalty-shootout/online/?subject=t2t1-u07-home">
         <div class="pk-hub-top">
-          <div class="pk-hub-mark" aria-hidden="true">📱</div>
-          <span class="pk-hub-meta">No account needed</span>
+          <div class="pk-hub-ico" aria-hidden="true">🏠</div>
+          <span class="pk-hub-meta">Vocabulary · Teen2Teen 1 · Unit 7<br />13 questions</span>
         </div>
         <div>
-          <h2 class="mp-panel-title">Offline</h2>
-          <p class="mp-panel-desc">Two players on one screen. Pass the device when the game asks.</p>
+          <h2 class="mp-panel-title">Home vocabulary</h2>
+          <p class="mp-panel-desc">Rooms, furniture, and everyday household words.</p>
         </div>
-        <div class="pk-hub-foot">Play offline →</div>
+        <div class="pk-hub-foot">
+          <span class="pk-hub-mode-tag" data-mode-tag>Online · 2 players</span>
+          <span data-cta>Open lobby →</span>
+        </div>
       </a>
     </div>
   </main>
@@ -139,6 +206,77 @@
   </footer>
 
   <script src="/theme.js"></script>
-  <script>var y = document.getElementById("year"); if (y) y.textContent = new Date().getFullYear();</script>
+  <script src="/script.js"></script>
+  <script>
+    (function () {
+      var MODE_KEY = "mrsheyhaki-mp-mode";
+      var modeSwitch = document.getElementById("modeSwitch");
+      var modeStateText = document.getElementById("modeStateText");
+      var modeSubLabel = document.getElementById("modeSubLabel");
+      var tabs = Array.prototype.slice.call(document.querySelectorAll(".mp-filter-tab"));
+      var cards = Array.prototype.slice.call(document.querySelectorAll(".pk-hub-card"));
+
+      function readInitialMode() {
+        var q = new URLSearchParams(location.search).get("mode");
+        if (q === "offline" || q === "online") return q;
+        try {
+          var saved = localStorage.getItem(MODE_KEY);
+          if (saved === "offline" || saved === "online") return saved;
+        } catch (e) {}
+        return "online";
+      }
+
+      var currentMode = readInitialMode();
+      var currentFilter = "all";
+
+      function applyMode(mode) {
+        currentMode = mode === "offline" ? "offline" : "online";
+        var isOnline = currentMode === "online";
+        try { localStorage.setItem(MODE_KEY, currentMode); } catch (e) {}
+
+        modeSwitch.setAttribute("aria-checked", isOnline ? "true" : "false");
+        modeStateText.textContent = isOnline ? "Online" : "Offline";
+        modeSubLabel.textContent = isOnline ? "Create or join a live room" : "Same device · No account needed";
+
+        cards.forEach(function (card) {
+          var id = card.getAttribute("data-subject");
+          card.href = (isOnline ? "/multiplayer/penalty-shootout/online/?subject=" : "/multiplayer/penalty-shootout/offline/?subject=") + encodeURIComponent(id);
+          var tag = card.querySelector("[data-mode-tag]");
+          var cta = card.querySelector("[data-cta]");
+          if (tag) tag.textContent = isOnline ? "Online · 2 players" : "Offline · Same device";
+          if (cta) cta.textContent = isOnline ? "Open lobby →" : "Play offline →";
+        });
+      }
+
+      function applyFilter(filter) {
+        currentFilter = filter;
+        tabs.forEach(function (tab) {
+          var active = tab.getAttribute("data-filter") === filter;
+          tab.classList.toggle("is-active", active);
+          tab.setAttribute("aria-selected", active ? "true" : "false");
+        });
+        cards.forEach(function (card) {
+          var match = filter === "all" || card.getAttribute("data-category") === filter;
+          card.hidden = !match;
+        });
+      }
+
+      modeSwitch.addEventListener("click", function () {
+        applyMode(currentMode === "online" ? "offline" : "online");
+      });
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          applyFilter(tab.getAttribute("data-filter"));
+        });
+      });
+
+      var yr = document.getElementById("year");
+      if (yr) yr.textContent = new Date().getFullYear();
+
+      applyMode(currentMode);
+      applyFilter("all");
+    })();
+  </script>
 </body>
 </html>

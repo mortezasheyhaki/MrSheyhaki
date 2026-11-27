@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Tic-Tac-Toe · Multiplayer | Mr. Sheyhaki</title>
-  <meta name="description" content="Tic-Tac-Toe grammar games for two players. Pick a topic, create a lobby, and play a friend online." />
+  <meta name="description" content="Tic-Tac-Toe games for two players. Pick Grammar or Vocabulary, open a lobby, and play a friend online." />
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/theme.css" />
   <link rel="stylesheet" href="/multiplayer/lobby.css" />
@@ -18,16 +18,28 @@
       gap: 1rem;
     }
     .ttt-topic-card {
+      position: relative;
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
       text-decoration: none;
       color: inherit;
-      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+      overflow: hidden;
+      transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+    }
+    .ttt-topic-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ec4899, #f97316);
     }
     .ttt-topic-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       border-color: var(--mp-accent-border);
+    }
+    .ttt-topic-card.is-offline-blocked {
+      opacity: 0.65;
     }
     .ttt-topic-top {
       display: flex;
@@ -54,7 +66,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       font-weight: 700;
       color: var(--mp-accent);
     }
@@ -98,24 +110,55 @@
       <div class="mp-subhead-left">
         <a class="mp-back-link" href="/multiplayer/">← Multiplayer</a>
         <h1 class="mp-title">Tic-Tac-Toe</h1>
-        <p class="mp-subtitle">2 players · Online · Pick a grammar topic to open a lobby</p>
+        <p class="mp-subtitle">2 players · Choose Grammar or Vocabulary to open a lobby</p>
       </div>
     </div>
 
-    <div class="ttt-topic-grid">
-      <a class="mp-panel ttt-topic-card" href="/multiplayer/tic-tac-toe/should/">
+    <div class="mp-toolbar">
+      <div class="mp-filter-tabs" role="tablist" aria-label="Filter by skill">
+        <button type="button" class="mp-filter-tab is-active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button type="button" class="mp-filter-tab" data-filter="grammar" role="tab" aria-selected="false">Grammar</button>
+        <button type="button" class="mp-filter-tab" data-filter="vocabulary" role="tab" aria-selected="false">Vocabulary</button>
+      </div>
+
+      <div class="mp-mode-switch-wrap">
+        <div class="mp-mode-switch-text">
+          <span class="mp-mode-switch-title">Online play</span>
+          <span class="mp-mode-switch-sub" id="modeSubLabel">2 players · Live room</span>
+        </div>
+        <button type="button" class="mp-mode-switch" id="modeSwitch" role="switch" aria-checked="true" aria-label="Toggle online or offline play">
+          <span class="mp-mode-track" aria-hidden="true"><span class="mp-mode-thumb"></span></span>
+          <span class="mp-mode-state" id="modeStateText">Online</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mp-notice-bar" id="offlineNotice" hidden>
+      <span><strong>Tic-Tac-Toe is Online only.</strong> Turn Online on to create or join a 2-player room.</span>
+      <button type="button" class="mp-btn mp-btn-primary mp-btn-sm" id="btnTurnOnline">Turn Online on</button>
+    </div>
+
+    <div class="ttt-topic-grid" id="topicGrid">
+      <a class="mp-panel ttt-topic-card" data-category="grammar" href="/multiplayer/tic-tac-toe/should/">
         <div class="ttt-topic-top">
           <div class="ttt-topic-mark" aria-hidden="true">X/O</div>
-          <span class="ttt-topic-meta">2 players · Online</span>
+          <span class="ttt-topic-meta">Grammar · 2 players · Online</span>
         </div>
         <div>
           <h2 class="mp-panel-title">Should</h2>
-          <p class="mp-panel-desc">Rock-Paper-Scissors decides who starts. Answer Should questions correctly to claim your square.</p>
+          <p class="mp-panel-desc">Rock, paper, scissors decides who starts. Answer Should questions correctly to claim your square.</p>
         </div>
         <div class="ttt-topic-foot">
-          <span>Open lobby →</span>
+          <span class="ttt-topic-meta" data-mode-tag>Online only</span>
+          <span data-cta>Open lobby →</span>
         </div>
       </a>
+
+      <div class="mp-empty-state" id="vocabEmpty" hidden>
+        <h3>Vocabulary topics coming soon</h3>
+        <p>Tic-Tac-Toe currently has Grammar topics available. Switch back to Grammar to play now.</p>
+        <button type="button" class="mp-btn mp-btn-secondary mp-btn-sm" id="btnShowGrammar">Show Grammar topics</button>
+      </div>
     </div>
   </main>
 
@@ -131,5 +174,97 @@
   </footer>
 
   <script src="/theme.js"></script>
+  <script src="/script.js"></script>
+  <script>
+    (function () {
+      var MODE_KEY = "mrsheyhaki-mp-mode";
+      var modeSwitch = document.getElementById("modeSwitch");
+      var modeStateText = document.getElementById("modeStateText");
+      var modeSubLabel = document.getElementById("modeSubLabel");
+      var offlineNotice = document.getElementById("offlineNotice");
+      var btnTurnOnline = document.getElementById("btnTurnOnline");
+      var vocabEmpty = document.getElementById("vocabEmpty");
+      var btnShowGrammar = document.getElementById("btnShowGrammar");
+      var tabs = Array.prototype.slice.call(document.querySelectorAll(".mp-filter-tab"));
+      var cards = Array.prototype.slice.call(document.querySelectorAll(".ttt-topic-card"));
+
+      function readInitialMode() {
+        var q = new URLSearchParams(location.search).get("mode");
+        if (q === "offline" || q === "online") return q;
+        try {
+          var saved = localStorage.getItem(MODE_KEY);
+          if (saved === "offline" || saved === "online") return saved;
+        } catch (e) {}
+        return "online";
+      }
+
+      var currentMode = readInitialMode();
+      var currentFilter = "all";
+
+      function applyMode(mode) {
+        currentMode = mode === "offline" ? "offline" : "online";
+        var isOnline = currentMode === "online";
+        try { localStorage.setItem(MODE_KEY, currentMode); } catch (e) {}
+
+        modeSwitch.setAttribute("aria-checked", isOnline ? "true" : "false");
+        modeStateText.textContent = isOnline ? "Online" : "Offline";
+        modeSubLabel.textContent = isOnline ? "2 players · Live room" : "Online required for this game";
+        offlineNotice.hidden = isOnline;
+
+        cards.forEach(function (card) {
+          card.classList.toggle("is-offline-blocked", !isOnline);
+          var cta = card.querySelector("[data-cta]");
+          if (cta) cta.textContent = isOnline ? "Open lobby →" : "Turn Online on →";
+        });
+      }
+
+      function applyFilter(filter) {
+        currentFilter = filter;
+        tabs.forEach(function (tab) {
+          var active = tab.getAttribute("data-filter") === filter;
+          tab.classList.toggle("is-active", active);
+          tab.setAttribute("aria-selected", active ? "true" : "false");
+        });
+        var visibleCount = 0;
+        cards.forEach(function (card) {
+          var match = filter === "all" || card.getAttribute("data-category") === filter;
+          card.hidden = !match;
+          if (match) visibleCount++;
+        });
+        if (vocabEmpty) vocabEmpty.hidden = visibleCount > 0;
+      }
+
+      cards.forEach(function (card) {
+        card.addEventListener("click", function (ev) {
+          if (currentMode === "offline") {
+            ev.preventDefault();
+            applyMode("online");
+            offlineNotice.hidden = true;
+          }
+        });
+      });
+
+      modeSwitch.addEventListener("click", function () {
+        applyMode(currentMode === "online" ? "offline" : "online");
+      });
+      if (btnTurnOnline) {
+        btnTurnOnline.addEventListener("click", function () { applyMode("online"); });
+      }
+      if (btnShowGrammar) {
+        btnShowGrammar.addEventListener("click", function () { applyFilter("grammar"); });
+      }
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          applyFilter(tab.getAttribute("data-filter"));
+        });
+      });
+
+      var yr = document.getElementById("year");
+      if (yr) yr.textContent = new Date().getFullYear();
+
+      applyMode(currentMode);
+      applyFilter("all");
+    })();
+  </script>
 </body>
 </html>

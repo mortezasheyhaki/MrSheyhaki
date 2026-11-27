@@ -216,7 +216,7 @@
       <div class="mp-subhead-left">
         <a class="mp-back-link" href="/multiplayer/" id="backLink">← Multiplayer</a>
         <h1 class="mp-title">Family Words</h1>
-        <p class="mp-subtitle">Vocabulary · Picture Match &amp; Singular/Plural · Host sets match timer</p>
+        <p class="mp-subtitle">Vocabulary · Picture Match &amp; Singular/Plural · Online only (1–10 players)</p>
       </div>
       <div class="mp-identity hidden" id="userIdentity">
         <div class="mp-identity-avatar" id="userAvatar">P</div>
@@ -225,6 +225,11 @@
           <span class="mp-conn-state" id="connBadge"><span class="mp-conn-dot"></span><span id="connText">Connecting…</span></span>
         </div>
       </div>
+    </div>
+
+    <div class="mp-notice-bar" id="fwOfflineNotice" hidden>
+      <span><strong>Family Words is Online only.</strong> Sign in to create or join a live vocabulary room.</span>
+      <a class="mp-btn mp-btn-secondary mp-btn-sm" href="/multiplayer/?mode=offline">Back to offline games</a>
     </div>
 
     <!-- Not logged in -->
@@ -826,6 +831,10 @@
     }
 
     (async function init() {
+      var modeParam = new URLSearchParams(location.search).get("mode");
+      if (modeParam === "offline" && $("fwOfflineNotice")) {
+        $("fwOfflineNotice").hidden = false;
+      }
       bind();
       var ok = await ensureLoggedIn();
       if (!ok) return;
