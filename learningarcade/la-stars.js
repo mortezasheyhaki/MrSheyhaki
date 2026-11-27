@@ -54,6 +54,7 @@
   var PLAYS_KEY = "laGamePlays";
   var BEST_TIMES_KEY = "laGameBestTimes";
   var LAST_ACTIVITY_KEY = "laLastActivity";
+  var PRACTICE_DAYS_KEY = "laPracticeDays";
 
   var attemptStartedAt = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
   var lastFinishTimerSyncAt = 0;
@@ -291,6 +292,113 @@
     return LAST_ACTIVITY_KEY + identitySuffix();
   }
 
+  function practiceDaysKey() {
+    return PRACTICE_DAYS_KEY + identitySuffix();
+  }
+
+  function localDateStr(input) {
+    try {
+      var d = input ? (input instanceof Date ? input : new Date(input)) : new Date();
+      if (isNaN(d.getTime())) return "";
+      var y = d.getFullYear();
+      var m = String(d.getMonth() + 1);
+      var day = String(d.getDate());
+      return y + "-" + (m.length < 2 ? "0" + m : m) + "-" + (day.length < 2 ? "0" + day : day);
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function prevLocalDateStr(dateStr) {
+    var parts = String(dateStr || "").split("-");
+    if (parts.length !== 3) return "";
+    var d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    d.setDate(d.getDate() - 1);
+    return localDateStr(d);
+  }
+
+  function loadPracticeDays() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(practiceDaysKey()) || "[]");
+      if (!Array.isArray(raw)) return [];
+      var seen = {};
+      var out = [];
+      raw.forEach(function (s) {
+        if (typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s) && !seen[s]) {
+          seen[s] = true;
+          out.push(s);
+        }
+      });
+      out.sort();
+      return out;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function recordPracticeDay(tsOrDate) {
+    try {
+      var day = localDateStr(tsOrDate || Date.now());
+      if (!day) return [];
+      var days = loadPracticeDays();
+      if (days.indexOf(day) === -1) {
+        days.push(day);
+        days.sort();
+        if (days.length > 400) days = days.slice(days.length - 400);
+        localStorage.setItem(practiceDaysKey(), JSON.stringify(days));
+      }
+      return days;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function getStreak(extraDatesOrMs) {
+    var seen = {};
+    loadPracticeDays().forEach(function (d) { seen[d] = true; });
+    if (Array.isArray(extraDatesOrMs)) {
+      extraDatesOrMs.forEach(function (item) {
+        if (!item) return;
+        var ds = typeof item === "string" && /^\d{4}-\d{2}-\d{2}$/.test(item)
+          ? item
+          : localDateStr(item);
+        if (ds) seen[ds] = true;
+      });
+    }
+    var days = Object.keys(seen).sort();
+    var today = localDateStr(new Date());
+    var yesterday = prevLocalDateStr(today);
+    var practicedToday = !!seen[today];
+
+    var current = 0;
+    var cursor = practicedToday ? today : (seen[yesterday] ? yesterday : "");
+    while (cursor && seen[cursor]) {
+      current += 1;
+      cursor = prevLocalDateStr(cursor);
+    }
+
+    var best = 0;
+    var run = 0;
+    var prev = "";
+    days.forEach(function (d) {
+      if (prev && prevLocalDateStr(d) === prev) {
+        run += 1;
+      } else {
+        run = 1;
+      }
+      if (run > best) best = run;
+      prev = d;
+    });
+
+    return {
+      current: current,
+      best: Math.max(best, current),
+      practicedToday: practicedToday,
+      activeDays: days.length,
+      days: days
+    };
+  }
+
   function saveLastActivity(info) {
     try {
       var ds = (document.body && document.body.dataset) ? document.body.dataset : {};
@@ -440,6 +548,7 @@
       }
     });
     saveJSON(starsKey(), data);
+    recordPracticeDay();
     saveLastActivity({ gameId: gameId, stars: best });
     scheduleFallbackTimeSave(gameId, stars >= 2, getElapsed());
     fallbackProgress({ gameId: gameId, stars: stars, completed: true });
@@ -540,6 +649,7 @@
       data[id] = n;
     });
     saveJSON(playsKey(), data);
+    recordPracticeDay();
     try {
       if (typeof global.LAProgressSave === "function") {
         global.LAProgressSave({ gameId: gameId, playsDelta: 1, completed: false });
@@ -872,6 +982,9 @@
     apply: apply,
     saveLastActivity: saveLastActivity,
     getLastActivity: getLastActivity,
+    recordPracticeDay: recordPracticeDay,
+    loadPracticeDays: loadPracticeDays,
+    getStreak: getStreak,
     identitySuffix: identitySuffix,
     starsKey: starsKey,
     playsKey: playsKey,

@@ -62,6 +62,9 @@
       <p>Browse coursebooks unit by unit for games, worksheets, and audio to use alongside class.</p>
     </section>
 
+    <div id="resHomeworkMount" hidden style="margin-bottom:18px;"></div>
+    <div id="resDiscoveryMount"></div>
+
     <section class="res-books-section" aria-labelledby="coursebooksHeading">
       <div class="res-section-head">
         <h2 id="coursebooksHeading">Coursebooks</h2>
@@ -125,5 +128,20 @@
 
   <script src="../theme.js"></script>
   <script src="../script.js"></script>
+  <script src="/learningarcade/la-stars.js"></script>
+  <script src="/learningarcade/homework.js"></script>
+  <script src="/learningarcade/discovery.js"></script>
+  <script>
+    (function () {
+      if (window.LADiscovery) {
+        window.LADiscovery.mount(document.getElementById("resDiscoveryMount"));
+      }
+      if (window.LAHomework) {
+        window.LAHomework.loadActive().then(function (hw) {
+          window.LAHomework.renderInto(document.getElementById("resHomeworkMount"), hw);
+        }).catch(function () {});
+      }
+    })();
+  </script>
 </body>
 </html>

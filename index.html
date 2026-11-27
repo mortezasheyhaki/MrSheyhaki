@@ -114,6 +114,8 @@
       </div>
     </section>
 
+    <div id="homeHomeworkMount" hidden></div>
+
     <section class="hub-section" aria-labelledby="exploreHeading">
       <div class="section-head">
         <h2 id="exploreHeading">Choose where to start</h2>
@@ -568,9 +570,39 @@
         }).catch(function () {});
       }
 
+      var cachedHw = null;
+      function refreshHomepageHomework() {
+        var mount = document.getElementById("homeHomeworkMount");
+        if (!mount) return;
+        loadOnce("/learningarcade/homework.js").then(function () {
+          if (!window.LAHomework || !window.LAHomework.loadActive) return;
+          if (cachedHw) {
+            window.LAHomework.renderInto(mount, cachedHw, cachedCloudRows);
+            return;
+          }
+          window.LAHomework.loadActive().then(function (hw) {
+            cachedHw = hw;
+            window.LAHomework.renderInto(mount, hw, cachedCloudRows);
+          }).catch(function () {});
+        });
+      }
+
+      var origRenderLocal = renderLocalContinueBanner;
+      renderLocalContinueBanner = function (aefMap, cloudRows) {
+        var res = origRenderLocal(aefMap, cloudRows);
+        if (cachedHw && window.LAHomework) {
+          window.LAHomework.renderInto(document.getElementById("homeHomeworkMount"), cachedHw, cloudRows);
+        }
+        return res;
+      };
+
       refreshContinueBanner();
+      refreshHomepageHomework();
       document.addEventListener("supabase-ready", hydrateCloudContinue);
-      window.addEventListener("pageshow", refreshContinueBanner);
+      window.addEventListener("pageshow", function () {
+        refreshContinueBanner();
+        refreshHomepageHomework();
+      });
     })();
   </script>
 </body>

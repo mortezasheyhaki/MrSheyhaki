@@ -269,10 +269,13 @@
 
     .pf-kpis {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 12px;
       border-top: 1px solid var(--pf-border);
       padding-top: 16px;
+    }
+    @media (max-width: 960px) {
+      .pf-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
     @media (max-width: 720px) {
       .pf-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -773,8 +776,15 @@
           <strong class="pf-kpi-val tabular" id="kpiAccuracy">—</strong>
           <span class="pf-kpi-sub" id="kpiBestScore">Best score tracking</span>
         </div>
+        <div class="pf-kpi">
+          <span class="pf-kpi-label">Daily Streak</span>
+          <strong class="pf-kpi-val tabular" id="kpiStreak">0d</strong>
+          <span class="pf-kpi-sub" id="kpiStreakSub">Play a game to start</span>
+        </div>
       </div>
     </section>
+
+    <div id="pfHomeworkSlot" hidden></div>
 
     <nav class="pf-tabs" role="tablist" aria-label="Dashboard sections">
       <button type="button" class="pf-tab is-on" data-tab="overview" role="tab" aria-selected="true">Overview</button>
@@ -952,6 +962,7 @@
   <script src="../la-stars.js"></script>
   <script src="../../resources/american-english-file/assets/course-data.js"></script>
   <script src="../skill-catalog.js"></script>
+  <script src="../homework.js"></script>
   <script src="../theme.js"></script>
   <script>
   (function () {
@@ -1371,6 +1382,35 @@
       document.getElementById("kpiLastActive").textContent = lastAt ? "Last active " + formatRelative(lastAt) : "No plays recorded";
       document.getElementById("kpiAccuracy").textContent = accCount ? Math.round(accSum / accCount) + "%" : "—";
       document.getElementById("kpiBestScore").textContent = maxScoreBest ? "Highest score: " + maxScoreBest : "Best score tracking";
+
+      var extraDates = [];
+      (state.cloudProgress || []).forEach(function (r) {
+        if (r && (r.lastPlayedAt || r.last_at)) extraDates.push(r.lastPlayedAt || r.last_at);
+      });
+      (state.cloudScores || []).forEach(function (s) {
+        if (s && (s.at || s.created_at)) extraDates.push(s.at || s.created_at);
+      });
+      var streak = window.LAStars && typeof LAStars.getStreak === "function"
+        ? LAStars.getStreak(extraDates)
+        : { current: 0, best: 0, practicedToday: false, activeDays: 0 };
+      var streakEl = document.getElementById("kpiStreak");
+      var streakSubEl = document.getElementById("kpiStreakSub");
+      if (streakEl) {
+        streakEl.textContent = streak.current > 0
+          ? ("🔥 " + streak.current + " day" + (streak.current === 1 ? "" : "s"))
+          : "0 days";
+      }
+      if (streakSubEl) {
+        if (streak.practicedToday) {
+          streakSubEl.textContent = "Practiced today · Best: " + streak.best + "d";
+        } else if (streak.current > 0) {
+          streakSubEl.textContent = "Play 1 game today to keep it · Best: " + streak.best + "d";
+        } else if (streak.best > 0) {
+          streakSubEl.textContent = "Best streak: " + streak.best + "d · Play today!";
+        } else {
+          streakSubEl.textContent = "Play a game today to start";
+        }
+      }
     }
 
     function renderOverview() {
@@ -1899,6 +1939,12 @@
       renderOverview();
       renderStarsGrid();
       renderScoresPanel();
+
+      if (window.LAHomework && LAHomework.loadActive) {
+        LAHomework.loadActive().then(function (hw) {
+          LAHomework.renderInto(document.getElementById("pfHomeworkSlot"), hw, state.cloudProgress);
+        }).catch(function () {});
+      }
     }
 
     refreshDashboard();

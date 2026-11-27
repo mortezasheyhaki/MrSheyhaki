@@ -49,6 +49,9 @@
   <p style="margin:14px 0 0"><a href="../leaderboard/" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:#fff;color:#5425b8;font-weight:800;text-decoration:none;box-shadow:0 3px 0 rgba(84,37,184,.12)">🏆 Leaderboard</a></p>
 </section>
 
+<div id="adultHomeworkMount" hidden style="width:min(1180px,calc(100% - 32px));margin:0 auto 18px;"></div>
+<div id="adultDiscoveryMount"></div>
+
 <section class="skill-grid" aria-label="English skills">
 
 <article class="skill-card vocabulary">
@@ -128,6 +131,21 @@
 <footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · Adult Learning Arcade</p></footer>
 <script src="../script.js"></script>
 <script src="../theme.js"></script>
+<script src="../la-stars.js"></script>
+<script src="../homework.js"></script>
+<script src="../discovery.js"></script>
+<script>
+  (function () {
+    if (window.LADiscovery) {
+      window.LADiscovery.mount(document.getElementById("adultDiscoveryMount"));
+    }
+    if (window.LAHomework) {
+      window.LAHomework.loadActive().then(function (hw) {
+        window.LAHomework.renderInto(document.getElementById("adultHomeworkMount"), hw);
+      }).catch(function () {});
+    }
+  })();
+</script>
 <script src="../../swipe-nav.js"></script>
 <script src="/visit-counter.js" defer></script>
 </body>

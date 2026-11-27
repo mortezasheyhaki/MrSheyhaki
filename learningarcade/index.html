@@ -1851,6 +1851,8 @@
 
     </div>
 
+    <div id="arcadeHomeworkMount" hidden style="width:min(960px,calc(100% - 24px));margin:20px auto 0;"></div>
+    <div id="arcadeDiscoveryMount" style="width:min(960px,calc(100% - 24px));margin:18px auto 0;"></div>
 
     <p class="arcade-footer">
       <strong>Fun Games</strong> for English Learners · <a href="leaderboard/" style="color:inherit;text-decoration:underline;">Leaderboard</a>
@@ -2108,6 +2110,24 @@
   <script src="/learningarcade/vendor/supabase.min.js"></script>
   <script src="auth-system/auth.js"></script>
   <script src="auth-system/add-login-button.js"></script>
+  <script src="la-stars.js"></script>
+  <script src="homework.js"></script>
+  <script src="discovery.js"></script>
+  <script>
+    (function () {
+      var discMount = document.getElementById("arcadeDiscoveryMount");
+      var hwMount = document.getElementById("arcadeHomeworkMount");
+      var isDark = document.documentElement.getAttribute("data-theme") !== "light";
+      if (window.LADiscovery && discMount) {
+        window.LADiscovery.mount(discMount, { forceDark: isDark });
+      }
+      if (window.LAHomework && hwMount) {
+        window.LAHomework.loadActive().then(function (hw) {
+          window.LAHomework.renderInto(hwMount, hw);
+        }).catch(function () {});
+      }
+    })();
+  </script>
 
 <script src="/visit-counter.js" defer></script>
 </body>
