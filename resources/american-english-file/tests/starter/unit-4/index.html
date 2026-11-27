@@ -2,297 +2,120 @@
 <html lang="en">
 <head>
 <script src="/resources/auth-gate.js"></script>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unit 4 · Tests | AEF Starter | Mr. Sheyhaki</title>
-<meta name="description" content="Tests and practice activities for American English File Starter Unit 4.">
-<link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/theme.css">
-<style>
-  /* Header stays visible on the hub; games hide it via tests-ui.css (body.tq-body) */
-
-  body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background:
-      radial-gradient(50rem 28rem at 100% -10%, rgba(45,212,191,.2), transparent 55%),
-      radial-gradient(40rem 24rem at -5% 100%, rgba(99,102,241,.12), transparent 50%),
-      linear-gradient(180deg, #f0fdfa 0%, #f8fafc 50%, #eef2ff 100%);
-    color: #0f172a;
-  }
-
-  .tests-page { max-width: 980px; margin: 0 auto; padding: 1.35rem 1.15rem 3.5rem; }
-
-  .top-row {
-    display: flex; flex-wrap: wrap; align-items: center; gap: .55rem;
-    margin-bottom: 1.25rem;
-  }
-  .back-link {
-    display: inline-flex; align-items: center; gap: .4rem;
-    padding: .5rem 1.05rem;
-    border-radius: 999px;
-    background: #fff;
-    border: 1.5px solid #e2e8f0;
-    color: #475569 !important;
-    text-decoration: none !important;
-    font-size: .9rem; font-weight: 650;
-    box-shadow: 0 2px 8px rgba(15,23,42,.05);
-    transition: border-color .15s, color .15s, box-shadow .15s, transform .15s;
-  }
-  .back-link:hover {
-    color: #0f766e !important;
-    border-color: #99f6e4;
-    box-shadow: 0 4px 14px rgba(13,148,136,.12);
-    transform: translateY(-1px);
-  }
-  .page-badge {
-    display: inline-flex; align-items: center;
-    background: linear-gradient(135deg, #ccfbf1, #a5f3fc);
-    color: #0f766e;
-    font-size: .68rem; font-weight: 800; letter-spacing: .06em;
-    padding: .35rem .9rem; border-radius: 999px;
-    border: 1px solid rgba(13,148,136,.15);
-  }
-
-  h1 {
-    font-size: clamp(1.55rem, 4vw, 2rem); font-weight: 850;
-    letter-spacing: -.02em; margin: 0 0 .35rem;
-  }
-  .subtitle { color: #64748b; margin: 0 0 1.5rem; font-size: .98rem; }
-
-  .games-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.1rem;
-  }
-
-  .game-card {
-    display: flex; flex-direction: column;
-    text-decoration: none; color: #fff;
-    border-radius: 1.35rem;
-    padding: 1.4rem 1.3rem 1.25rem;
-    position: relative; overflow: hidden;
-    min-height: 168px;
-    box-shadow: 0 12px 28px rgba(15,23,42,.12);
-    transition: transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s;
-    border: 1px solid rgba(255,255,255,.18);
-  }
-  .game-card::before {
-    content: ""; position: absolute; inset: 0;
-    background: radial-gradient(18rem 12rem at 110% -20%, rgba(255,255,255,.28), transparent 55%);
-    pointer-events: none;
-  }
-  .game-card::after {
-    content: ""; position: absolute; width: 7rem; height: 7rem; border-radius: 50%;
-    background: rgba(255,255,255,.08); bottom: -2.5rem; left: -2rem; pointer-events: none;
-  }
-  .game-card:hover {
-    transform: translateY(-5px) scale(1.01);
-    box-shadow: 0 18px 36px rgba(15,23,42,.18);
-  }
-  .game-card:active { transform: translateY(-2px) scale(1); }
-
-  .g-grammar { background: linear-gradient(145deg, #0f766e 0%, #0d9488 45%, #2dd4bf 100%); }
-  .g-vocab   { background: linear-gradient(145deg, #1e3a8a 0%, #2563eb 50%, #60a5fa 100%); }
-  .g-speak   { background: linear-gradient(145deg, #5b21b6 0%, #7c3aed 50%, #a78bfa 100%); }
-  .g-listen  { background: linear-gradient(145deg, #9a3412 0%, #ea580c 50%, #fb923c 100%); }
-
-  .game-card .g-badge {
-    position: relative; z-index: 1;
-    font-size: .65rem; font-weight: 800; letter-spacing: .08em;
-    opacity: .92; margin-bottom: .45rem;
-  }
-  .game-card h3 {
-    position: relative; z-index: 1;
-    font-size: 1.18rem; font-weight: 800; margin: 0 0 .35rem; color: #fff;
-    letter-spacing: -.01em; line-height: 1.25;
-  }
-  .game-card p {
-    position: relative; z-index: 1;
-    font-size: .86rem; opacity: .92; margin: 0; line-height: 1.4; color: #fff;
-    flex: 1;
-  }
-  .game-card .arrow {
-    position: absolute; top: 1rem; right: 1rem; z-index: 2;
-    width: 32px; height: 32px; border-radius: 50%;
-    background: rgba(255,255,255,.22);
-    backdrop-filter: blur(6px);
-    display: flex; align-items: center; justify-content: center;
-    font-size: .9rem; font-weight: 700;
-    transition: background .15s, transform .15s;
-  }
-  .game-card:hover .arrow { background: rgba(255,255,255,.35); transform: translateX(2px); }
-
-  .chips {
-    position: relative; z-index: 1;
-    display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .9rem;
-  }
-  .chips span {
-    font-size: .68rem; font-weight: 700;
-    background: rgba(255,255,255,.2);
-    padding: .22rem .55rem; border-radius: 999px;
-    border: 1px solid rgba(255,255,255,.15);
-  }
-
-  .ts-star.ts-corner {
-    position: absolute; top: 1rem; right: 3.1rem; z-index: 2;
-    width: 32px; height: 32px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,.2);
-    font-size: 1rem; line-height: 1;
-  }
-  .ts-star.ts-corner.on {
-    background: linear-gradient(145deg, #fde68a, #f59e0b);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(245,158,11,.45);
-  }
-
-  footer.site-footer {
-    text-align: center; padding: 1rem; color: #64748b; font-size: .85rem;
-  }
-
-  @media (max-width: 520px) {
-    .tests-page { padding: 1rem .85rem 3rem; }
-    .games-grid { grid-template-columns: 1fr; gap: .85rem; }
-    .game-card { min-height: 148px; padding: 1.2rem 1.1rem; }
-  }
-
-  /* ===== Dark theme ===== */
-  [data-theme="dark"] body,
-  body.dark {
-    background:
-      radial-gradient(50rem 28rem at 100% -10%, rgba(45,212,191,.12), transparent 55%),
-      radial-gradient(40rem 24rem at -5% 100%, rgba(99,102,241,.1), transparent 50%),
-      linear-gradient(180deg, #0b1220 0%, #0f172a 50%, #111827 100%);
-    color: #f1f5f9;
-  }
-  [data-theme="dark"] h1, body.dark h1 { color: #f8fafc; }
-  [data-theme="dark"] .subtitle, body.dark .subtitle { color: #94a3b8; }
-  [data-theme="dark"] .back-link, body.dark .back-link {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    color: #e2e8f0 !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,.25);
-  }
-  [data-theme="dark"] .back-link:hover, body.dark .back-link:hover {
-    border-color: #2dd4bf !important;
-    color: #5eead4 !important;
-  }
-  [data-theme="dark"] .page-badge, body.dark .page-badge {
-    background: linear-gradient(135deg, rgba(13,148,136,.35), rgba(34,211,238,.25));
-    color: #5eead4;
-    border-color: rgba(45,212,191,.3);
-  }
-  [data-theme="dark"] .game-card, body.dark .game-card {
-    box-shadow: 0 14px 32px rgba(0,0,0,.4);
-    border-color: rgba(255,255,255,.08);
-  }
-  [data-theme="dark"] .g-grammar, body.dark .g-grammar {
-    background: linear-gradient(145deg, #134e4a 0%, #0f766e 45%, #14b8a6 100%);
-  }
-  [data-theme="dark"] .g-vocab, body.dark .g-vocab {
-    background: linear-gradient(145deg, #1e3a8a 0%, #1d4ed8 50%, #3b82f6 100%);
-  }
-  [data-theme="dark"] .g-speak, body.dark .g-speak {
-    background: linear-gradient(145deg, #4c1d95 0%, #6d28d9 50%, #8b5cf6 100%);
-  }
-  [data-theme="dark"] .g-listen, body.dark .g-listen {
-    background: linear-gradient(145deg, #7c2d12 0%, #c2410c 50%, #f97316 100%);
-  }
-  [data-theme="dark"] footer.site-footer, body.dark footer.site-footer { color: #64748b; }
-
-</style>
-<link rel="stylesheet" href="../../assets/tests-ui.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Unit 4 · Tests &amp; Exams | AEF Starter | Mr. Sheyhaki</title>
+<meta name="description" content="Grammar, vocabulary, speaking, writing, and listening practice tests for American English File Starter Unit 4." />
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("mrsheyhaki-theme");
+      if (t !== "dark" && t !== "light") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/style.css" />
+<link rel="stylesheet" href="/theme.css" />
+<link rel="stylesheet" href="/resources/style.css" />
+<link rel="stylesheet" href="/resources/american-english-file/tests/assets/tests-hub.css" />
 <!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
-<body>
+<body class="has-site-topbar">
 
-<header class="arcade-header-bar">
-  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
-    <a href="/" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
-    <a href="/learningarcade/" class="nav-link" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
-    <a href="/resources/" class="nav-link active" aria-current="page" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-    <a href="/about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
-    <a href="/learningarcade/profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
+<header class="site-topbar">
+  <div class="topbar-inner">
+    <a href="/" class="brand-mark">Mr. Sheyhaki</a>
+    <nav class="topbar-nav" aria-label="Main navigation">
+      <a href="/" class="topbar-link">Home</a>
+      <a href="/learningarcade/" class="topbar-link">Arcade</a>
+      <a href="/multiplayer/" class="topbar-link">Multiplayer</a>
+      <a href="/resources/" class="topbar-link active" aria-current="page">Resources</a>
+      <a href="/about/" class="topbar-link">About</a>
+    </nav>
+    <div class="topbar-actions">
+      <button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <a href="/learningarcade/profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>
+    </div>
+  </div>
+  <nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+    <a href="/">Home</a>
+    <a href="/learningarcade/">Arcade</a>
+    <a href="/multiplayer/">Multiplayer</a>
+    <a href="/resources/" class="active" aria-current="page">Resources</a>
+    <a href="/about/">About</a>
   </nav>
 </header>
 
-<main class="tests-page">
-  <a class="back-link" href="../">← Starter Tests</a>
+<main class="tests-hub-page">
+  <section class="tests-hero">
+    <div class="aef-back-row">
+      <a href="../" class="back-link">← Starter Tests</a>
+    </div>
+    <span class="eyebrow">AEF Starter · Unit 4</span>
+    <h1>Family &amp; Cars</h1>
+    <p>Choose any activity below. Your score is recorded from how accurately you answer each task, and your best result is saved automatically.</p>
 
-  <section class="tui-hero" data-num="4" style="--h1:#7c2d12;--h2:#ea580c;--h3:#f59e0b">
-    <span class="tui-badge">UNIT 4 · PRACTICE</span>
-    <h1>Unit 4 Games</h1>
-    <p>Pick any activity and take your time. There are no timers and no rankings — just practice.</p>
-    <div class="tui-stats"><span>6 activities</span><span>✏️ Grammar · 3</span><span>📘 Vocabulary · 1</span><span>• Speaking · writing · 1</span><span>🔊 Listening · 1</span></div>
+    <div class="tests-summary-strip" aria-label="Unit 4 score overview">
+      <span><strong>6</strong> activities</span>
+      <span aria-hidden="true">·</span>
+      <span><strong id="unitPlayedCount">0 / 6</strong> played</span>
+      <span aria-hidden="true">·</span>
+      <span>Avg score: <strong id="unitAvgScore">—</strong></span>
+      <span aria-hidden="true">·</span>
+      <span><strong id="unitPointsSummary">0 pts</strong></span>
+      <div class="tests-hero-meter">
+        <div class="tests-hero-track" aria-hidden="true"><span class="tests-hero-fill" id="unitHeroFill"></span></div>
+        <span class="tests-hero-pct" id="unitHeroPct">0% mastery</span>
+      </div>
+    </div>
   </section>
 
-  <h2 class="tui-section">All activities <small>6 activities</small></h2>
-
-  <div class="games-grid">
-    <a class="game-card g-grammar" href="tick-correct-sentence/">
-      <span class="ts-star ts-corner" data-star="starter-u4-tick-sentence" role="img">☆</span>
-      <span class="arrow" aria-hidden="true">→</span>
-      <div class="g-badge">GRAMMAR</div>
-      <h3>Tick the correct sentence</h3>
-      <p>Parts 1 &amp; 2 · Adjective order, possessives, nationalities</p>
-      <div class="chips"><span>10 items</span><span>A or B</span><span>Grammar</span></div>
-    </a>
-
-    <a class="game-card g-grammar" href="possessive-adjectives/">
-      <span class="ts-star ts-corner" data-star="starter-u4-possessive-adjectives" role="img">☆</span>
-      <span class="arrow" aria-hidden="true">→</span>
-      <div class="g-badge">GRAMMAR</div>
-      <h3>Possessive adjectives</h3>
-      <p>my, your, his, her, its, our, their</p>
-      <div class="chips"><span>15 items</span><span>Choose a word</span><span>Grammar</span></div>
-    </a>
-
-    <a class="game-card g-grammar" href="man-woman-child/">
-      <span class="ts-star ts-corner" data-star="starter-u4-man-woman-child" role="img">☆</span>
-      <span class="arrow" aria-hidden="true">→</span>
-      <div class="g-badge">GRAMMAR</div>
-      <h3>Man, men, woman, women, child, children</h3>
-      <p>People and family · one sentence at a time</p>
-      <div class="chips"><span>8 items</span><span>Choose a word</span><span>Grammar</span></div>
-    </a>
-
-    <a class="game-card g-vocab" href="tick-correct-answer/">
-      <span class="ts-star ts-corner" data-star="starter-u4-tick-correct-answer" role="img">☆</span>
-      <span class="arrow" aria-hidden="true">→</span>
-      <div class="g-badge">VOCABULARY</div>
-      <h3>Tick the correct answer</h3>
-      <p>Adjectives · choose the best reply to each question</p>
-      <div class="chips"><span>5 items</span><span>A or B</span><span>Adjectives</span></div>
-    </a>
-
-    <a class="game-card g-speak" href="family-questions/">
-      <span class="ts-star ts-corner" data-star="starter-u4-family-questions" role="img">☆</span>
-      <span class="arrow" aria-hidden="true">→</span>
-      <div class="g-badge">SPEAKING · WRITING</div>
-      <h3>Family questions</h3>
-      <p>Parts 1 &amp; 2 · Answer about a man and a woman in your family</p>
-      <div class="chips"><span>10 items</span><span>Type</span><span>Family</span></div>
-    </a>
-
-    <a class="game-card g-listen" href="who-are-the-people/">
-      <span class="ts-star ts-corner" data-star="starter-u4-who-are-the-people-tf" role="img">☆</span>
-      <span class="arrow" aria-hidden="true">→</span>
-      <div class="g-badge">LISTENING</div>
-      <h3>Who are the people?</h3>
-      <p>Listen · True or False · Unit 4A audio</p>
-      <div class="chips"><span>5 items</span><span>True / False</span><span>Listening</span></div>
-    </a>
+  <div class="tests-toolbar">
+    <div class="tests-filter-tabs" id="skillTabs" role="tablist" aria-label="Filter Unit 4 activities"></div>
+    <span class="tests-toolbar-count" id="visibleActivitiesCount">6 activities</span>
   </div>
+
+  <div class="act-grid" id="activitiesGrid"></div>
 </main>
 
-<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · AEF Starter</p></footer>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · AEF Starter</p>
+    <div class="footer-links">
+      <a class="footer-link" href="/contact/">Contact</a>
+      <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
+    </div>
+  </div>
+</footer>
+
+<script src="/resources/script.js"></script>
 <script src="/theme.js"></script>
-<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+<script src="/swipe-nav.js"></script>
 <script src="../../assets/tests-stars.js"></script>
-<script src="../../assets/tests-ui.js"></script>
+<script src="../../assets/tests-unit-hub.js"></script>
+<script>
+  TestsUnitHub.render({
+    activities: [
+      { index: 1, id: "starter-u4-tick-sentence", href: "tick-correct-sentence/", skill: "Grammar", filterKey: "grammar", filterLabel: "Grammar", title: "Tick the Correct Sentence", desc: "Parts 1 & 2 · Adjective order, possessives, nationalities.", meta: "10 items · A or B" },
+      { index: 2, id: "starter-u4-possessive-adjectives", href: "possessive-adjectives/", skill: "Grammar", filterKey: "grammar", filterLabel: "Grammar", title: "Possessive Adjectives", desc: "my, your, his, her, its, our, their.", meta: "15 items · Choose a word" },
+      { index: 3, id: "starter-u4-man-woman-child", href: "man-woman-child/", skill: "Grammar", filterKey: "grammar", filterLabel: "Grammar", title: "Man, Men, Woman, Women, Child, Children", desc: "People and family · one sentence at a time.", meta: "8 items · Choose a word" },
+      { index: 4, id: "starter-u4-tick-correct-answer", href: "tick-correct-answer/", skill: "Vocabulary", filterKey: "vocabulary", filterLabel: "Vocabulary", title: "Tick the Correct Answer", desc: "Adjectives · choose the best reply to each question.", meta: "5 items · A or B" },
+      { index: 5, id: "starter-u4-family-questions", href: "family-questions/", skill: "Speaking · Writing", skillKey: "speaking", filterKey: "speaking", filterLabel: "Speaking", title: "Family Questions", desc: "Parts 1 & 2 · Answer about a man and a woman in your family.", meta: "10 items · Family" },
+      { index: 6, id: "starter-u4-who-are-the-people-tf", href: "who-are-the-people/", skill: "Listening", filterKey: "listening", filterLabel: "Listening", title: "Who Are the People?", desc: "Listen · True or False · Unit 4A audio.", meta: "5 items · True / False" }
+    ]
+  });
+</script>
 <script src="/visit-counter.js" defer></script>
 </body>
 </html>

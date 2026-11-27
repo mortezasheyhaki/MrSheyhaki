@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $("check").style.display = "none";
     $("again").style.display = "block";
     sfx(score === TOTAL ? "win" : "wrong");
-    try { if (window.TestStars && typeof TestStars.award === "function") TestStars.award(GAME_ID); } catch (e) {}
+    try { if (window.TestScores && typeof TestScores.record === "function") TestScores.record(GAME_ID, score, TOTAL, Math.round(score / TOTAL * 100)); } catch (e) {}
     try { if (window.LAStars) { if (LAStars.recordPlay) LAStars.recordPlay(GAME_ID); if (LAStars.saveFromAccuracy) LAStars.saveFromAccuracy(GAME_ID, Math.round(score / TOTAL * 100)); } } catch (e) {}
   }
   function reset() {
