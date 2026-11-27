@@ -146,7 +146,7 @@
       } else {
         headerCta.textContent = "Sign in";
         var cur = (window.location.pathname || "/") + (window.location.search || "");
-        headerCta.setAttribute("href", loginHref + "?redirect=" + encodeURIComponent(cur));
+        headerCta.setAttribute("href", loginHref + "?next=" + encodeURIComponent(cur));
         headerCta.setAttribute("title", "Sign in or create account");
       }
       return;
@@ -173,8 +173,9 @@
         "</a>" +
         '<button type="button" class="la-logout-btn" id="la-logout-btn">Logout</button>';
     } else {
+      var curFab = (window.location.pathname || "/") + (window.location.search || "");
       fab.innerHTML =
-        '<a class="la-login-btn" href="' + loginHref + '" title="Login or create account">' +
+        '<a class="la-login-btn" href="' + loginHref + "?next=" + encodeURIComponent(curFab) + '" title="Login or create account">' +
         "🔐 Login" +
         "</a>";
     }

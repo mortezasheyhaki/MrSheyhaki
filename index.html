@@ -88,6 +88,32 @@
       </div>
     </section>
 
+    <section class="continue-banner" id="continueBanner" hidden aria-label="Continue learning">
+      <div class="continue-main">
+        <div class="continue-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+        </div>
+        <div class="continue-copy">
+          <p class="continue-kicker" id="continueKicker">Continue Learning</p>
+          <h2 class="continue-title" id="continueTitle">Pick up where you left off</h2>
+          <p class="continue-sub" id="continueSub"></p>
+          <div class="continue-progress" id="continueProgress" hidden>
+            <div class="continue-progress-meta">
+              <span id="continueProgressLabel">0 / 0 games</span>
+              <span class="continue-progress-stars" id="continueProgressStars"></span>
+            </div>
+            <div class="continue-progress-track" aria-hidden="true">
+              <div class="continue-progress-fill" id="continueProgressFill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="continue-actions">
+        <a href="resources/american-english-file/" class="continue-primary" id="continuePrimaryBtn">Continue <span aria-hidden="true">→</span></a>
+        <a href="resources/american-english-file/" class="continue-secondary" id="continueSecondaryBtn" hidden>Open Unit</a>
+      </div>
+    </section>
+
     <section class="hub-section" aria-labelledby="exploreHeading">
       <div class="section-head">
         <h2 id="exploreHeading">Choose where to start</h2>
@@ -206,6 +232,7 @@
 
   <script src="/learningarcade/vendor/load-supabase.js"></script>
   <script src="learningarcade/auth-system/auth.js"></script>
+  <script src="/learningarcade/la-stars.js"></script>
   <script>
     (function () {
       var y = document.getElementById("year");
@@ -260,7 +287,7 @@
         });
       }
 
-      // Header account CTA: show player name or Login -> profile/login
+      // Header account CTA: show player name or Sign in -> profile/login
       function syncAccountCta() {
         var cta = document.getElementById("headerAccountCta");
         if (!cta || !window.LAAuth) return;
@@ -270,15 +297,280 @@
           cta.href = "learningarcade/profile/";
         } else {
           cta.textContent = "Sign in";
-          cta.href = "learningarcade/auth-system/login.html?redirect=/";
+          cta.href = "learningarcade/auth-system/login.html?next=/";
         }
       }
       syncAccountCta();
-      document.addEventListener("supabase-ready", function () {
-        if (window.LAAuth && window.LAAuth.verify) {
-          window.LAAuth.verify().then(syncAccountCta).catch(function () {});
+
+      // Continue Learning banner helpers
+      var loadedScripts = {};
+      function loadOnce(src) {
+        if (loadedScripts[src]) return loadedScripts[src];
+        loadedScripts[src] = new Promise(function (resolve) {
+          var s = document.createElement("script");
+          s.src = src;
+          s.async = true;
+          s.onload = function () { resolve(true); };
+          s.onerror = function () { resolve(false); };
+          document.head.appendChild(s);
+        });
+        return loadedScripts[src];
+      }
+
+      function computeAefGameId(levelKey, unitKey, lessonKey, peKey, itemUrl) {
+        var slug = String(itemUrl || "").replace(/\/+$/, "").split("/").filter(Boolean).pop() || "game";
+        var mid = ((unitKey || "") + (lessonKey || "")) || (peKey || "");
+        return [levelKey || "", mid, slug].filter(Boolean).join("-");
+      }
+
+      function buildAefIndex() {
+        var map = {};
+        if (typeof COURSE_DATA === "undefined" || !COURSE_DATA["american-english-file"]) return map;
+        var aef = COURSE_DATA["american-english-file"];
+        Object.keys(aef.levels || {}).forEach(function (levelKey) {
+          var lvl = aef.levels[levelKey];
+          var lvlLabel = levelKey === "starter" ? "Starter" : ("Level " + levelKey);
+          Object.keys(lvl.units || {}).forEach(function (unitKey) {
+            var unit = lvl.units[unitKey];
+            Object.keys((unit && unit.lessons) || {}).forEach(function (lessonKey) {
+              var lesson = unit.lessons[lessonKey];
+              var baseDir = "/resources/american-english-file/" + levelKey + "/unit-" + unitKey + "/" + lessonKey + "/";
+              var lessonTitle = "Unit " + unitKey + lessonKey.toUpperCase();
+              var subtitle = "AEF " + lvlLabel + " · " + lessonTitle;
+              var games = (lesson && lesson.games) || [];
+              var entries = games.map(function (g) {
+                var gid = computeAefGameId(levelKey, unitKey, lessonKey, "", g.url);
+                return {
+                  gameId: gid,
+                  title: g.title,
+                  url: baseDir + "games/" + String(g.url || "").replace(/^\.\//, ""),
+                  lessonUrl: baseDir + "games/",
+                  lessonLabel: lessonTitle,
+                  subtitle: subtitle
+                };
+              });
+              entries.forEach(function (entry) {
+                entry.siblings = entries;
+                map[entry.gameId] = entry;
+              });
+            });
+          });
+          Object.keys(lvl.practicalEnglish || {}).forEach(function (peNum) {
+            var pe = lvl.practicalEnglish[peNum];
+            var peKey = "pe" + peNum;
+            var baseDir = "/resources/american-english-file/" + levelKey + "/practical-english-" + peNum + "/";
+            var peTitle = "Practical English " + peNum;
+            var subtitle = "AEF " + lvlLabel + " · " + peTitle;
+            var games = (pe && pe.games) || [];
+            var entries = games.map(function (g) {
+              var gid = computeAefGameId(levelKey, "", "", peKey, g.url);
+              return {
+                gameId: gid,
+                title: g.title,
+                url: baseDir + "games/" + String(g.url || "").replace(/^\.\//, ""),
+                lessonUrl: baseDir + "games/",
+                lessonLabel: peTitle,
+                subtitle: subtitle
+              };
+            });
+            entries.forEach(function (entry) {
+              entry.siblings = entries;
+              map[entry.gameId] = entry;
+            });
+          });
+        });
+        return map;
+      }
+
+      function computeBucketStats(siblings, cloudMap) {
+        if (!siblings || !siblings.length) return null;
+        var done = 0;
+        var totalStars = 0;
+        var nextUnplayed = null;
+        var starsApi = window.LAStars;
+        siblings.forEach(function (item) {
+          var localStars = starsApi ? Number(starsApi.getStars(item.gameId) || 0) : 0;
+          var localPlays = starsApi ? Number(starsApi.getPlays(item.gameId) || 0) : 0;
+          var cloud = cloudMap && cloudMap[item.gameId];
+          var s = Math.max(localStars, cloud ? Number(cloud.stars || 0) : 0);
+          var p = Math.max(localPlays, cloud ? Number(cloud.plays || 0) : 0);
+          if (s > 0 || p > 0 || (cloud && cloud.completed)) {
+            done++;
+          } else if (!nextUnplayed) {
+            nextUnplayed = item;
+          }
+          totalStars += Math.max(0, Math.min(3, s));
+        });
+        return {
+          total: siblings.length,
+          done: done,
+          stars: totalStars,
+          nextUnplayed: nextUnplayed
+        };
+      }
+
+      function showContinueBanner(cfg) {
+        var banner = document.getElementById("continueBanner");
+        if (!banner || !cfg || !cfg.url) return;
+        document.getElementById("continueKicker").textContent = cfg.kicker || "Continue learning";
+        document.getElementById("continueTitle").textContent = cfg.title || "English Activity";
+        var subEl = document.getElementById("continueSub");
+        subEl.textContent = cfg.sub || "";
+        subEl.hidden = !cfg.sub;
+
+        var primaryBtn = document.getElementById("continuePrimaryBtn");
+        primaryBtn.href = cfg.url;
+        primaryBtn.innerHTML = (cfg.ctaLabel || "Resume") + ' <span aria-hidden="true">→</span>';
+
+        var secondaryBtn = document.getElementById("continueSecondaryBtn");
+        if (cfg.secondaryUrl && cfg.secondaryLabel && cfg.secondaryUrl !== cfg.url) {
+          secondaryBtn.href = cfg.secondaryUrl;
+          secondaryBtn.textContent = cfg.secondaryLabel;
+          secondaryBtn.hidden = false;
+        } else {
+          secondaryBtn.hidden = true;
         }
-      });
+
+        var progWrap = document.getElementById("continueProgress");
+        if (cfg.progress && cfg.progress.total > 0) {
+          var pct = Math.round((cfg.progress.done / cfg.progress.total) * 100);
+          document.getElementById("continueProgressLabel").textContent =
+            cfg.progress.done === cfg.progress.total
+              ? ("All " + cfg.progress.total + " games completed")
+              : (cfg.progress.done + " / " + cfg.progress.total + " games");
+          document.getElementById("continueProgressStars").textContent =
+            cfg.progress.stars > 0 ? (cfg.progress.stars + " ★") : "";
+          document.getElementById("continueProgressFill").style.width = pct + "%";
+          progWrap.hidden = false;
+        } else {
+          progWrap.hidden = true;
+        }
+
+        banner.hidden = false;
+      }
+
+      function renderLocalContinueBanner(aefMap, cloudRows) {
+        var cloudMap = {};
+        if (Array.isArray(cloudRows)) {
+          cloudRows.forEach(function (r) {
+            if (r && r.game_id) cloudMap[r.game_id] = r;
+          });
+        }
+        var last = window.LAStars && window.LAStars.getLastActivity ? window.LAStars.getLastActivity() : null;
+        var entry = last && last.gameId && aefMap ? aefMap[last.gameId] : null;
+        if (!entry && last && last.url && aefMap) {
+          var normUrl = String(last.url).replace(/\/index\.html$/i, "/");
+          if (normUrl.slice(-1) !== "/") normUrl += "/";
+          var keys = Object.keys(aefMap);
+          for (var k = 0; k < keys.length; k++) {
+            var candidate = aefMap[keys[k]];
+            if (candidate.url === normUrl || normUrl.indexOf(candidate.url) === 0 || candidate.lessonUrl === normUrl || candidate.lessonUrl === (normUrl + "games/")) {
+              entry = candidate;
+              break;
+            }
+          }
+        }
+        if (!entry && Array.isArray(cloudRows) && cloudRows.length && aefMap) {
+          for (var i = 0; i < cloudRows.length; i++) {
+            if (aefMap[cloudRows[i].game_id]) {
+              entry = aefMap[cloudRows[i].game_id];
+              break;
+            }
+          }
+        }
+        if (entry) {
+          var stats = computeBucketStats(entry.siblings, cloudMap);
+          var lastCloud = cloudMap[entry.gameId];
+          var lastStars = Math.max(
+            window.LAStars ? window.LAStars.getStars(entry.gameId) : 0,
+            lastCloud ? Number(lastCloud.stars || 0) : 0
+          );
+          var pickNext = stats && stats.nextUnplayed && (lastStars > 0 || (lastCloud && lastCloud.completed));
+          showContinueBanner({
+            kicker: entry.subtitle || "Continue learning",
+            title: pickNext ? ("Up next: " + stats.nextUnplayed.title) : entry.title,
+            sub: pickNext ? ("Just finished " + entry.title) : ("Resume your practice in " + entry.lessonLabel),
+            url: pickNext ? stats.nextUnplayed.url : entry.url,
+            ctaLabel: pickNext ? "Play Next" : "Resume",
+            secondaryUrl: entry.lessonUrl,
+            secondaryLabel: entry.lessonLabel + " Games",
+            progress: stats
+          });
+          return true;
+        }
+        if (last && last.url) {
+          var sub = last.subtitle || "";
+          if (!sub && last.stars != null && Number(last.stars) > 0) {
+            sub = "Best score: " + last.stars + " / 3 ★";
+          }
+          showContinueBanner({
+            kicker: "Continue learning",
+            title: last.title || "Recent Activity",
+            sub: sub,
+            url: last.url,
+            ctaLabel: "Resume",
+            secondaryUrl: last.course === "american-english-file" ? "/resources/american-english-file/" : "",
+            secondaryLabel: "All Units"
+          });
+          return true;
+        }
+        if (Array.isArray(cloudRows) && cloudRows.length) {
+          var top = cloudRows[0];
+          showContinueBanner({
+            kicker: "Welcome back",
+            title: top.game_name || "Learning Arcade",
+            sub: top.stars ? ("Best score: " + top.stars + " / 3 ★ · View full progress") : "Continue practising your English games",
+            url: "/learningarcade/profile/",
+            ctaLabel: "View Progress",
+            secondaryUrl: "/resources/american-english-file/",
+            secondaryLabel: "Browse Units"
+          });
+          return true;
+        }
+        return false;
+      }
+
+      var cachedAefMap = null;
+      var cachedCloudRows = null;
+
+      function refreshContinueBanner() {
+        var last = window.LAStars && window.LAStars.getLastActivity ? window.LAStars.getLastActivity() : null;
+        if (last) {
+          renderLocalContinueBanner(cachedAefMap, cachedCloudRows);
+          if (!cachedAefMap && (last.course === "american-english-file" || (last.url && last.url.indexOf("/american-english-file/") !== -1))) {
+            loadOnce("/resources/american-english-file/assets/course-data.js").then(function () {
+              cachedAefMap = buildAefIndex();
+              renderLocalContinueBanner(cachedAefMap, cachedCloudRows);
+            });
+          }
+        }
+      }
+
+      function hydrateCloudContinue() {
+        if (!window.LAAuth || !window.LAAuth.verify) return;
+        window.LAAuth.verify().then(function (user) {
+          syncAccountCta();
+          if (!user) return;
+          Promise.all([
+            loadOnce("/learningarcade/progress.js"),
+            loadOnce("/resources/american-english-file/assets/course-data.js")
+          ]).then(function () {
+            cachedAefMap = buildAefIndex();
+            if (window.LAProgress && window.LAProgress.getMine) {
+              window.LAProgress.getMine().then(function (rows) {
+                cachedCloudRows = rows || [];
+                renderLocalContinueBanner(cachedAefMap, cachedCloudRows);
+              }).catch(function () {});
+            } else {
+              renderLocalContinueBanner(cachedAefMap, cachedCloudRows);
+            }
+          });
+        }).catch(function () {});
+      }
+
+      refreshContinueBanner();
+      document.addEventListener("supabase-ready", hydrateCloudContinue);
+      window.addEventListener("pageshow", refreshContinueBanner);
     })();
   </script>
 </body>

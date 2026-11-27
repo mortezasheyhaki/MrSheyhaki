@@ -53,6 +53,7 @@
   var STARS_KEY = "laGameStars";
   var PLAYS_KEY = "laGamePlays";
   var BEST_TIMES_KEY = "laGameBestTimes";
+  var LAST_ACTIVITY_KEY = "laLastActivity";
 
   var attemptStartedAt = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
   var lastFinishTimerSyncAt = 0;
@@ -286,6 +287,50 @@
     return BEST_TIMES_KEY + identitySuffix();
   }
 
+  function lastActivityKey() {
+    return LAST_ACTIVITY_KEY + identitySuffix();
+  }
+
+  function saveLastActivity(info) {
+    try {
+      var ds = (document.body && document.body.dataset) ? document.body.dataset : {};
+      var url = (info && info.url) || (location.pathname || "/");
+      if (!url || /\/login\.html$/i.test(url)) return null;
+      var rawTitle = (info && info.title) || (document.title ? document.title.split("|")[0].trim() : "");
+      var payload = {
+        url: url,
+        title: String(rawTitle || "English Activity").slice(0, 120),
+        subtitle: (info && info.subtitle) ? String(info.subtitle).slice(0, 120) : "",
+        gameId: (info && info.gameId) || lastSavedGameId || "",
+        course: (info && info.course) || ds.course || "",
+        level: (info && info.level) || ds.level || "",
+        unit: (info && info.unit) || ds.unit || "",
+        lesson: (info && info.lesson) || ds.lesson || "",
+        pe: (info && info.pe) || ds.pe || "",
+        stars: (info && info.stars != null) ? Number(info.stars) : null,
+        ts: Date.now()
+      };
+      if (!payload.subtitle && payload.course === "american-english-file" && payload.level) {
+        var lvl = payload.level === "starter" ? "Starter" : ("Level " + payload.level);
+        if (payload.pe) payload.subtitle = "AEF " + lvl + " · Practical English " + payload.pe;
+        else if (payload.unit && payload.lesson) payload.subtitle = "AEF " + lvl + " · Unit " + payload.unit + String(payload.lesson).toUpperCase();
+      }
+      saveJSON(lastActivityKey(), payload);
+      return payload;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getLastActivity() {
+    try {
+      var data = loadJSON(lastActivityKey());
+      return data && data.url ? data : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   function loadStars() {
     return loadJSON(starsKey());
   }
@@ -395,6 +440,7 @@
       }
     });
     saveJSON(starsKey(), data);
+    saveLastActivity({ gameId: gameId, stars: best });
     scheduleFallbackTimeSave(gameId, stars >= 2, getElapsed());
     fallbackProgress({ gameId: gameId, stars: stars, completed: true });
     return best;
@@ -504,12 +550,12 @@
 
   function getPlays(gameId) {
     if (!gameId) return 0;
-    return Number(loadPlays()[gameId] || 0);
+    return bestPlaysFor(gameId, loadPlays());
   }
 
   function getStars(gameId) {
     if (!gameId) return 0;
-    return Math.max(0, Math.min(3, Number(loadStars()[gameId] || 0)));
+    return bestStarsFor(gameId, loadStars());
   }
 
   function playLabel(n) {
@@ -824,6 +870,8 @@
     getStars: getStars,
     playLabel: playLabel,
     apply: apply,
+    saveLastActivity: saveLastActivity,
+    getLastActivity: getLastActivity,
     identitySuffix: identitySuffix,
     starsKey: starsKey,
     playsKey: playsKey,
@@ -868,6 +916,12 @@
 
   function boot() {
     apply();
+    try {
+      var ds = document.body && document.body.dataset ? document.body.dataset : {};
+      if (ds.type === "game" || ds.type === "games" || ds.type === "lesson") {
+        saveLastActivity({});
+      }
+    } catch (e) {}
   }
 
   if (document.readyState === "loading") {

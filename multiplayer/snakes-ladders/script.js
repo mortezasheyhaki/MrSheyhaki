@@ -112,16 +112,16 @@
   var PC_WORD_BOX = ["eat", "swim", "study", "wait", "build"];
   var PRESENT_CONTINUOUS_QUESTIONS = [
     // PART 1: Choose the correct "be" verb (am / is / are) — chips
-    { id: 101, promptLabel: 'Choose the correct "be" verb', q: "She ( ___ ) reading a book.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
-    { id: 102, promptLabel: 'Choose the correct "be" verb', q: "They ( ___ ) playing football.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
-    { id: 103, promptLabel: 'Choose the correct "be" verb', q: "I ( ___ ) doing my homework.", choices: ["am", "is", "are"], answer: 0, ui: "chips" },
-    { id: 104, promptLabel: 'Choose the correct "be" verb', q: "He ( ___ ) watching TV.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
-    { id: 105, promptLabel: 'Choose the correct "be" verb', q: "We ( ___ ) cooking dinner.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
-    { id: 106, promptLabel: 'Choose the correct "be" verb', q: "You ( ___ ) listening to music.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
-    { id: 107, promptLabel: 'Choose the correct "be" verb', q: "The cat ( ___ ) sleeping on the sofa.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
-    { id: 108, promptLabel: 'Choose the correct "be" verb', q: "My friends ( ___ ) coming to my house.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
-    { id: 109, promptLabel: 'Choose the correct "be" verb', q: "It ( ___ ) raining outside.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
-    { id: 110, promptLabel: 'Choose the correct "be" verb', q: "The children ( ___ ) drawing pictures.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
+    { id: 101, promptLabel: 'Choose the correct "be" verb', q: "She _____ reading a book.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
+    { id: 102, promptLabel: 'Choose the correct "be" verb', q: "They _____ playing football.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
+    { id: 103, promptLabel: 'Choose the correct "be" verb', q: "I _____ doing my homework.", choices: ["am", "is", "are"], answer: 0, ui: "chips" },
+    { id: 104, promptLabel: 'Choose the correct "be" verb', q: "He _____ watching TV.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
+    { id: 105, promptLabel: 'Choose the correct "be" verb', q: "We _____ cooking dinner.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
+    { id: 106, promptLabel: 'Choose the correct "be" verb', q: "You _____ listening to music.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
+    { id: 107, promptLabel: 'Choose the correct "be" verb', q: "The cat _____ sleeping on the sofa.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
+    { id: 108, promptLabel: 'Choose the correct "be" verb', q: "My friends _____ coming to my house.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
+    { id: 109, promptLabel: 'Choose the correct "be" verb', q: "It _____ raining outside.", choices: ["am", "is", "are"], answer: 1, ui: "chips" },
+    { id: 110, promptLabel: 'Choose the correct "be" verb', q: "The children _____ drawing pictures.", choices: ["am", "is", "are"], answer: 2, ui: "chips" },
 
     // PART 2: Choose the correct -ing form — chips
     { id: 111, promptLabel: "Choose the correct -ing form", q: "make → ______", choices: ["makeing", "making"], answer: 1, ui: "chips" },
@@ -561,6 +561,13 @@
       else { hint.textContent = ""; hint.hidden = true; }
     }
   }
+  function clearCheckButtons() {
+    var actions = $("aActions");
+    if (!actions) return;
+    Array.prototype.slice.call(actions.querySelectorAll(".sl-check-btn")).forEach(function (el) {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    });
+  }
   function showTypedResult(ok, model) {
     var res = $("aResult"); res.hidden = false; res.className = "sl-result " + (ok ? "ok" : "bad");
     res.textContent = ok ? "Correct! Stay put." : "Wrong! Back 3 squares.";
@@ -570,6 +577,7 @@
   }
   // Builds the typing UI: inline boxes inside the sentence for blank questions, one writing box otherwise
   function typedBox(q, onSubmit) {
+    clearCheckButtons();
     renderQuestionMeta(q);
     var box = $("aChoices"); box.innerHTML = ""; box.className = "sl-choices";
     var wrap = document.createElement("div"); wrap.className = "sl-typewrap";
@@ -579,7 +587,9 @@
       var empty = inputs.filter(function (i) { return !i.value.trim(); })[0];
       if (empty) { empty.focus(); return; }
       done = true;
-      inputs.forEach(function (i) { i.disabled = true; }); go.disabled = true;
+      inputs.forEach(function (i) { i.disabled = true; });
+      go.disabled = true;
+      go.hidden = true;
       onSubmit(inputs.map(function (i) { return i.value; }));
     }
     function makeInput(blank) {
@@ -604,9 +614,16 @@
       $("aText").textContent = formatQuestionText(q.q);
       var one = makeInput(false); inputs.push(one); wrap.appendChild(one);
     }
-    go.type = "button"; go.className = "sl-btn primary wide"; go.textContent = "Check answer";
+    go.type = "button";
+    go.className = "sl-icon-btn sl-check-btn";
+    go.setAttribute("aria-label", "Check answer");
+    go.setAttribute("title", "Check answer");
+    go.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
     go.onclick = submit;
-    wrap.appendChild(go); box.appendChild(wrap);
+    box.appendChild(wrap);
+    var actions = $("aActions");
+    if (actions) actions.insertBefore(go, $("aContinue"));
+    else wrap.appendChild(go);
     $("aResult").hidden = true; $("aContinue").hidden = true; $("aModal").hidden = false;
     setTimeout(function () { if (inputs[0]) inputs[0].focus(); }, 150);
   }
@@ -777,7 +794,7 @@
   }
 
   function formatPickerPrompt(item) {
-    return String((item && item.q) || "").replace(/\[\[\d+\]\]/g, "______");
+    return String((item && item.q) || "").replace(/\[\[\d+\]\]/g, "_____").replace(/_{3,}/g, "_____");
   }
 
   function renderPickerList(listEl, items, onPick) {
@@ -786,15 +803,32 @@
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "sl-qpick";
+
+      var num = document.createElement("span");
+      num.className = "sl-qpick-num";
+      num.textContent = String(idx + 1);
+      btn.appendChild(num);
+
+      var body = document.createElement("span");
+      body.className = "sl-qpick-body";
       if (item.promptLabel) {
         var tag = document.createElement("span");
         tag.className = "sl-qpick-tag";
         tag.textContent = item.promptLabel;
-        btn.appendChild(tag);
+        body.appendChild(tag);
       }
       var txt = document.createElement("span");
-      txt.textContent = (idx + 1) + ". " + formatPickerPrompt(item);
-      btn.appendChild(txt);
+      txt.className = "sl-qpick-text";
+      txt.textContent = formatPickerPrompt(item);
+      body.appendChild(txt);
+      btn.appendChild(body);
+
+      var arrow = document.createElement("span");
+      arrow.className = "sl-qpick-go";
+      arrow.setAttribute("aria-hidden", "true");
+      arrow.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+      btn.appendChild(arrow);
+
       btn.onclick = function () { onPick(item); };
       listEl.appendChild(btn);
     });
@@ -830,6 +864,35 @@
     return s.trim();
   }
 
+  function renderPromptWithSlots(container, rawText) {
+    container.innerHTML = "";
+    var formatted = formatQuestionText(rawText);
+    formatted.split(/(_{3,})/).forEach(function (part) {
+      if (/^_{3,}$/.test(part)) {
+        var slot = document.createElement("span");
+        slot.className = "sl-inline-slot";
+        slot.textContent = part;
+        container.appendChild(slot);
+      } else if (part) {
+        container.appendChild(document.createTextNode(part));
+      }
+    });
+  }
+
+  function fillInlineSlots(container, chosenText, stateClass) {
+    var slots = container.querySelectorAll(".sl-inline-slot");
+    if (!slots.length) return;
+    var text = String(chosenText == null ? "" : chosenText);
+    var multi = slots.length > 1 && text.indexOf(" / ") >= 0 ? text.split(" / ") : null;
+    Array.prototype.forEach.call(slots, function (slot, idx) {
+      var val = multi && multi.length === slots.length ? multi[idx] : text;
+      slot.textContent = val;
+      slot.classList.add("is-filled");
+      slot.classList.remove("is-ok", "is-bad");
+      if (stateClass) slot.classList.add(stateClass);
+    });
+  }
+
   /** Shuffle choices; returns { choices, answer, originalIndexMap } */
   function shuffleQuestionChoices(question) {
     var choices = (question.choices || []).slice();
@@ -859,9 +922,10 @@
     if (question.type === "type") return askTypedOffline(player, question);
     return new Promise(function (resolve) {
       sfx("question");
+      clearCheckButtons();
       renderQuestionMeta(question);
       $("aWho").textContent = "Question for " + state.names[player];
-      $("aText").textContent = formatQuestionText(question.q);
+      renderPromptWithSlots($("aText"), question.q);
       var isChips = question.ui === "chips";
       var box = $("aChoices");
       box.innerHTML = "";
@@ -879,6 +943,7 @@
           if (answered) return;
           answered = true;
           var ok = i === shuffled.answer;
+          fillInlineSlots($("aText"), c, ok ? "is-ok" : "is-bad");
           Array.prototype.forEach.call(box.children, function (b, j) {
             b.disabled = true;
             if (j === shuffled.answer) b.classList.add("correct");
@@ -1112,9 +1177,10 @@
 
   function showOnlineAnswer(question) {
     if (question.type === "type") return showOnlineTyped(question);
+    clearCheckButtons();
     renderQuestionMeta(question);
     $("aWho").textContent = "Your question";
-    $("aText").textContent = formatQuestionText(question.q);
+    renderPromptWithSlots($("aText"), question.q);
     var isChips = question.ui === "chips";
     var box = $("aChoices");
     box.innerHTML = "";
@@ -1129,9 +1195,11 @@
       btn.textContent = c;
       btn.onclick = function () {
         Array.prototype.forEach.call(box.children, function (b) { b.disabled = true; });
+        fillInlineSlots($("aText"), c, null);
         var originalIndex = shuffled.toOriginal(i);
         socket.emit("sl:answer", { choiceIndex: originalIndex }, function (res) {
           if (res && res.correct != null) {
+            fillInlineSlots($("aText"), c, res.correct ? "is-ok" : "is-bad");
             var resEl = $("aResult");
             resEl.hidden = false;
             resEl.className = "sl-result " + (res.correct ? "ok" : "bad");
@@ -1463,12 +1531,87 @@
     }
   }
 
+  // —— Mode switch & Skill filter on Topics screen ——
+  var SL_MODE_KEY = "mrsheyhaki-mp-mode";
+  var slModeSwitch = $("slModeSwitch");
+  var slModeStateText = $("slModeStateText");
+  var slModeSubLabel = $("slModeSubLabel");
+  var slVocabEmpty = $("slVocabEmpty");
+  var slShowGrammar = $("slShowGrammar");
+  var slFilterTabs = Array.prototype.slice.call(document.querySelectorAll("#slFilterTabs .mp-filter-tab"));
+  var slTopicCards = Array.prototype.slice.call(document.querySelectorAll("#topicGrid .sl-topic-card"));
+
+  function readPreferredMode() {
+    var q = new URLSearchParams(location.search).get("mode");
+    if (q === "offline" || q === "online") return q;
+    try {
+      var saved = localStorage.getItem(SL_MODE_KEY);
+      if (saved === "offline" || saved === "online") return saved;
+    } catch (e) {}
+    return "online";
+  }
+
+  var preferredMode = readPreferredMode();
+
+  function applyPreferredMode(nextMode) {
+    preferredMode = nextMode === "offline" ? "offline" : "online";
+    var isOnline = preferredMode === "online";
+    try { localStorage.setItem(SL_MODE_KEY, preferredMode); } catch (e) {}
+    if (slModeSwitch) slModeSwitch.setAttribute("aria-checked", isOnline ? "true" : "false");
+    if (slModeStateText) slModeStateText.textContent = isOnline ? "Online" : "Offline";
+    if (slModeSubLabel) slModeSubLabel.textContent = isOnline ? "Create or join a live room" : "Same device · Up to 4 players";
+    slTopicCards.forEach(function (card) {
+      var cta = card.querySelector("[data-topic-cta]");
+      if (cta) cta.textContent = isOnline ? "Play online" : "Play offline";
+    });
+  }
+
+  function applyTopicFilter(filter) {
+    slFilterTabs.forEach(function (tab) {
+      var active = tab.getAttribute("data-filter") === filter;
+      tab.classList.toggle("is-active", active);
+      tab.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    var visibleCount = 0;
+    slTopicCards.forEach(function (card) {
+      var match = filter === "all" || card.getAttribute("data-category") === filter;
+      card.hidden = !match;
+      if (match) visibleCount++;
+    });
+    if (slVocabEmpty) slVocabEmpty.hidden = visibleCount > 0;
+  }
+
+  if (slModeSwitch) {
+    slModeSwitch.addEventListener("click", function () {
+      sfx("click");
+      applyPreferredMode(preferredMode === "online" ? "offline" : "online");
+    });
+  }
+  if (slShowGrammar) {
+    slShowGrammar.addEventListener("click", function () {
+      sfx("click");
+      applyTopicFilter("grammar");
+    });
+  }
+  slFilterTabs.forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      sfx("click");
+      applyTopicFilter(tab.getAttribute("data-filter"));
+    });
+  });
+  applyPreferredMode(preferredMode);
+  applyTopicFilter("all");
+
   // —— Events ——
-  document.querySelectorAll("#topicGrid .sl-topic-card").forEach(function (card) {
+  slTopicCards.forEach(function (card) {
     card.onclick = function () {
       sfx("click");
       selectTopic(card.getAttribute("data-topic"));
-      showScreen("screenMode");
+      if (preferredMode === "online") {
+        startOnlineFlow();
+      } else {
+        showScreen("screenOffline");
+      }
     };
   });
   if ($("backFromMode")) {
@@ -1482,10 +1625,10 @@
     sfx("click");
     startOnlineFlow();
   };
-  $("backFromOffline").onclick = function () { showScreen("screenMode"); };
+  $("backFromOffline").onclick = function () { showScreen("screenTopics"); };
   $("backFromOnline").onclick = function () {
     if (socket) { socket.emit("room:leave"); }
-    showScreen("screenMode");
+    showScreen("screenTopics");
   };
   $("btnStartOffline").onclick = startOffline;
   $("diceBtn").onclick = function () {

@@ -212,7 +212,7 @@
           cta.href = "/learningarcade/profile/";
         } else {
           cta.textContent = "Sign in";
-          cta.href = "/learningarcade/auth-system/login.html?redirect=" + encodeURIComponent((location.pathname || "/") + (location.search || ""));
+          cta.href = "/learningarcade/auth-system/login.html?next=" + encodeURIComponent((location.pathname || "/") + (location.search || ""));
         }
       } catch (e) {}
     }

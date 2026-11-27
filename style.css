@@ -1,10 +1,19 @@
 /* =========================================================
-   Mr. Sheyhaki — Shared Site Layout, Topbar & Footer Styles
-   Matches home-cards.css design tokens
+   Mr. Sheyhaki — Shared Site Foundation, Top Bar & Footer
    ========================================================= */
 
 :root,
 html[data-theme="light"] {
+  --site-bg: #f8fafc;
+  --site-surface: #ffffff;
+  --site-surface-2: #f1f5f9;
+  --site-text: #0f172a;
+  --site-muted: #475569;
+  --site-border: rgba(15, 23, 42, 0.1);
+  --site-shadow: rgba(15, 23, 42, 0.08);
+  --site-glow-a: rgba(109, 40, 217, 0.09);
+  --site-glow-b: rgba(15, 118, 110, 0.07);
+  --site-glow-c: rgba(3, 105, 161, 0.07);
   --hm-bg: #f8fafc;
   --hm-surface: #ffffff;
   --hm-surface-2: #f1f5f9;
@@ -15,23 +24,36 @@ html[data-theme="light"] {
   --hm-accent: #6d28d9;
   --hm-accent-hover: #5b21b6;
   --hm-accent-soft: rgba(109, 40, 217, 0.08);
-  --hm-header-bg: rgba(248, 250, 252, 0.88);
+  --hm-header-bg: rgba(248, 250, 252, 0.9);
   --hm-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+  --hm-shadow-hover: 0 16px 36px rgba(15, 23, 42, 0.1);
 }
 
 html[data-theme="dark"] {
+  color-scheme: dark;
+  --site-bg: #0b1020;
+  --site-surface: #131b2e;
+  --site-surface-2: #1c2640;
+  --site-text: #f1f5f9;
+  --site-muted: #94a3b8;
+  --site-border: rgba(241, 245, 249, 0.12);
+  --site-shadow: rgba(0, 0, 0, 0.34);
+  --site-glow-a: rgba(139, 92, 246, 0.18);
+  --site-glow-b: rgba(45, 212, 191, 0.1);
+  --site-glow-c: rgba(56, 189, 248, 0.1);
   --hm-bg: #0b1020;
   --hm-surface: #131b2e;
   --hm-surface-2: #1c2640;
-  --hm-border: rgba(241, 245, 249, 0.1);
+  --hm-border: rgba(241, 245, 249, 0.12);
   --hm-border-strong: rgba(167, 139, 250, 0.35);
   --hm-text: #f1f5f9;
   --hm-muted: #94a3b8;
   --hm-accent: #8b5cf6;
   --hm-accent-hover: #7c3aed;
   --hm-accent-soft: rgba(139, 92, 246, 0.16);
-  --hm-header-bg: rgba(11, 16, 32, 0.88);
+  --hm-header-bg: rgba(11, 16, 32, 0.9);
   --hm-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+  --hm-shadow-hover: 0 18px 40px rgba(0, 0, 0, 0.42);
 }
 
 *,
@@ -40,28 +62,64 @@ html[data-theme="dark"] {
   box-sizing: border-box;
 }
 
-body.has-site-topbar {
+html {
+  scroll-behavior: smooth;
+}
+
+body {
   margin: 0;
-  padding-top: 0 !important;
   min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
   font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: var(--site-text, var(--hm-text));
-  background: var(--site-bg, var(--hm-bg));
+  color: var(--site-text);
+  background: var(--site-bg);
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Top Bar ─────────────────────────────────────────────────── */
+body.has-site-topbar,
+body:has(> header.site-topbar) {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+body.has-site-topbar > main,
+body:has(> header.site-topbar) > main {
+  flex: 1 0 auto;
+}
+
+html body.has-site-topbar .skill-intro-top .skill-back-btn,
+html body.has-site-topbar .skill-back-btn,
+html body.has-site-topbar .site-back-btn,
+html body:has(> header.site-topbar) .skill-intro-top .skill-back-btn,
+html body:has(> header.site-topbar) .skill-back-btn,
+html body:has(> header.site-topbar) .site-back-btn {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  z-index: 2 !important;
+}
+
+@media (max-width: 900px) {
+  html body.has-site-topbar .skill-intro-top,
+  html body:has(> header.site-topbar) .skill-intro-top {
+    padding-left: 0 !important;
+  }
+}
+
+/* ── Top Bar (3-zone contract) ─────────────────────────────────── */
 
 .site-topbar {
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: 60;
+  width: 100%;
   background: var(--hm-header-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--hm-border);
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .topbar-inner {
@@ -74,26 +132,27 @@ body.has-site-topbar {
   gap: 24px;
 }
 
-.site-topbar .brand-mark {
-  width: auto;
-  height: auto;
-  min-width: 0;
-  min-height: 0;
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-  text-decoration: none;
-  color: var(--hm-text);
-  white-space: nowrap;
+.site-topbar .brand-mark,
+.brand-mark {
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.01em !important;
+  text-decoration: none !important;
+  color: var(--hm-text) !important;
+  white-space: nowrap !important;
 }
 
 .topbar-nav {
@@ -217,50 +276,45 @@ body.has-site-topbar {
   background: var(--hm-accent-soft);
 }
 
-/* ── Shared Section & Heading Layout ─────────────────────────── */
-
-.quick-section {
-  padding: 44px 20px 64px;
+@media (max-width: 900px) {
+  .topbar-nav {
+    gap: 14px;
+  }
 }
 
-.section-container {
-  width: min(1120px, 100%);
-  margin: 0 auto;
+@media (max-width: 720px) {
+  .topbar-inner {
+    padding: 10px 16px;
+    gap: 12px;
+  }
+
+  .topbar-nav {
+    display: none;
+  }
+
+  .mobile-nav-btn {
+    display: inline-flex;
+  }
+
+  .topbar-cta {
+    padding: 8px 14px;
+    font-size: 0.8125rem;
+  }
 }
 
-.section-heading .eyebrow,
-.eyebrow {
-  display: inline-block;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--hm-accent);
-  margin-bottom: 8px;
-}
-
-.section-heading h1,
-.section-heading h2 {
-  margin: 0 0 10px;
-  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
-  color: var(--hm-text);
-}
-
-.section-heading p {
-  margin: 0;
-  color: var(--hm-muted);
-  max-width: 56ch;
-}
-
-/* ── Footer ──────────────────────────────────────────────────── */
+/* ── Shared Footer ─────────────────────────────────────────────── */
 
 .site-footer {
   margin-top: auto;
+  padding: 0;
+  text-align: left;
   border-top: 1px solid var(--hm-border);
   background: var(--hm-surface);
+  color: var(--hm-muted);
+  font-size: 0.875rem;
 }
 
-.footer-inner {
+.site-footer .footer-inner {
   width: min(1120px, 100%);
   margin: 0 auto;
   padding: 20px;
@@ -269,22 +323,20 @@ body.has-site-topbar {
   align-items: center;
   justify-content: space-between;
   gap: 12px 20px;
-  font-size: 0.875rem;
-  color: var(--hm-muted);
 }
 
-.footer-copy {
+.site-footer .footer-copy {
   margin: 0;
 }
 
-.footer-links {
+.site-footer .footer-links {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 16px;
 }
 
-.footer-link {
+.site-footer .footer-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -294,7 +346,7 @@ body.has-site-topbar {
   min-height: 36px;
 }
 
-.footer-link:hover {
+.site-footer .footer-link:hover {
   color: var(--hm-text);
 }
 
@@ -315,22 +367,54 @@ body.has-site-topbar {
   border-color: var(--hm-accent);
 }
 
-@media (max-width: 720px) {
-  .topbar-inner {
-    padding: 10px 16px;
-    gap: 12px;
-  }
+/* ── Calm / Content Page Helpers (Contact, Info pages) ─────────── */
 
-  .topbar-nav {
-    display: none;
-  }
+.quick-section {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  padding: 40px 20px 64px;
+}
 
-  .mobile-nav-btn {
-    display: inline-flex;
-  }
+.section-container {
+  width: 100%;
+}
 
+.section-heading .eyebrow,
+.eyebrow-label {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--hm-accent);
+}
+
+.section-heading h1 {
+  margin: 0 0 12px;
+  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(2rem, 3.8vw, 3rem);
+  line-height: 1.1;
+  color: var(--hm-text);
+}
+
+.section-heading p {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--hm-muted);
+  line-height: 1.65;
+}
+
+/* Hide legacy floating theme/profile artifacts when topbar is active */
+body.has-site-topbar .site-theme-fab,
+body.has-site-topbar a.profile-fab,
+body.has-site-topbar .profile-fab {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar-link,
+  .topbar-link::after,
   .topbar-cta {
-    padding: 8px 14px;
-    font-size: 0.8125rem;
+    transition: none !important;
   }
 }

@@ -220,7 +220,7 @@
     } else {
       cta.textContent = "Sign in";
       var cur = (window.location.pathname || "/") + (window.location.search || "");
-      cta.href = "/learningarcade/auth-system/login.html?redirect=" + encodeURIComponent(cur);
+      cta.href = "/learningarcade/auth-system/login.html?next=" + encodeURIComponent(cur);
     }
   }
 

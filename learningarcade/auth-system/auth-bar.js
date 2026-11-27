@@ -30,6 +30,7 @@
         '<button type="button" class="la-auth-bar-btn" id="la-auth-logout">Logout</button>' +
         "</div></div>";
     } else {
+      var nextUrl = encodeURIComponent((window.location.pathname || "/") + (window.location.search || ""));
       bar.innerHTML =
         '<div class="la-auth-bar-inner">' +
         '<div class="la-auth-bar-left">' +
@@ -37,7 +38,7 @@
         '<span class="la-auth-bar-text">Playing as Guest</span>' +
         "</div>" +
         '<div class="la-auth-bar-right">' +
-        '<a href="auth-system/login.html" class="la-auth-bar-btn primary">Login / Register</a>' +
+        '<a href="auth-system/login.html?next=' + nextUrl + '" class="la-auth-bar-btn primary">Login / Register</a>' +
         "</div></div>";
     }
 
