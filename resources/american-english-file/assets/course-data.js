@@ -113,6 +113,7 @@ COURSE_DATA["american-english-file"].levels.starter.units[1].lessons.a.games = [
   { title: "Complete the Conversations", url: "complete-conversations/", label: "Grammar" },
   { title: "Are you…?", url: "are-you/", label: "Grammar" },
   { title: "Am or Are? · I and You", url: "am-or-are/", label: "Grammar" },
+  { title: "Type am / are", url: "type-am-are/", label: "Grammar" },
   { title: "Negative · am not / are not", url: "negative-am-are-not/", label: "Grammar" },
   { title: "Questions · Am I / Are you?", url: "questions-am-are/", label: "Grammar" },
   { title: "Word Order · be", url: "word-order-be/", label: "Grammar" },
