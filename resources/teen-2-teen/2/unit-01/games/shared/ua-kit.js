@@ -177,10 +177,18 @@
     if (!window.LAFinish || typeof LAFinish.show !== "function") return;
     var timeMs = 0;
     try { timeMs = typeof LAFinish.stopTimer === "function" ? LAFinish.stopTimer() : 0; } catch (e) {}
+    var resolvedGameId = o.gameId ||
+      (window.LAStars && typeof LAStars.getLastGameId === "function" && LAStars.getLastGameId()) ||
+      ((document.body && document.body.dataset && document.body.dataset.course ? document.body.dataset.course : "ua") + ":" + location.pathname);
+    try {
+      if (window.LAStars && typeof LAStars.markFinishTimeHandled === "function") {
+        LAStars.markFinishTimeHandled(resolvedGameId);
+      }
+    } catch (e0) {}
     setTimeout(function () {
       try {
         LAFinish.show({
-          gameId: (document.body && document.body.dataset && document.body.dataset.course ? document.body.dataset.course : "ua") + ":" + location.pathname,
+          gameId: resolvedGameId,
           score: o.score,
           total: o.total,
           stars: o.stars || 0,

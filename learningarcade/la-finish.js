@@ -76,8 +76,9 @@
   }
 
   function formatTime(ms) {
-    ms = Math.max(0, Number(ms) || 0);
-    var totalSec = Math.floor(ms / 1000);
+    ms = Number(ms) || 0;
+    if (ms <= 0) return "0s";
+    var totalSec = Math.max(1, Math.round(ms / 1000));
     var m = Math.floor(totalSec / 60);
     var s = totalSec % 60;
     if (m > 0) return m + ":" + (s < 10 ? "0" : "") + s;
@@ -142,6 +143,7 @@
       ".la-finish-stat-label{display:block;font-size:.58rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#8b86b0;margin-bottom:4px}",
       "html[data-theme=dark] .la-finish-stat-label{color:#9499b5}",
       ".la-finish-stat-value{display:block;font-size:1rem;font-weight:800;color:#1e1b4b;letter-spacing:-0.02em;line-height:1.15}",
+      ".la-finish-stat-sub{display:block;font-size:.6rem;font-weight:700;margin-top:4px;color:#8b86b0;line-height:1.1;font-variant-numeric:tabular-nums}",
       "html[data-theme=dark] .la-finish-stat-value{color:#f4f6fb}",
 
       /* Accent variants for chips */
@@ -203,7 +205,9 @@
       "#" + OVERLAY_ID + " .la-finish-pct-sub{color:#c4b5fd}",
       "#" + OVERLAY_ID + " .la-finish-stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);box-shadow:none}",
       "#" + OVERLAY_ID + " .la-finish-stat-label{color:#a5a3c9}",
-      "#" + OVERLAY_ID + " .la-finish-stat-value{color:#f5f3ff}",
+      "#" + OVERLAY_ID + " .la-finish-stat-value{color:#f5f3ff;font-variant-numeric:tabular-nums}",
+      "#" + OVERLAY_ID + " .la-finish-stat-sub{color:#a5a3c9}",
+      "#" + OVERLAY_ID + " .la-finish-stat-sub.is-record{color:#fde047}",
       "#" + OVERLAY_ID + " .la-finish-stat--score{background:rgba(139,92,246,.12);border-color:rgba(167,139,250,.3)}",
       "#" + OVERLAY_ID + " .la-finish-stat--score .la-finish-stat-label{color:#c4b5fd}",
       "#" + OVERLAY_ID + " .la-finish-stat--time{background:rgba(34,211,238,.1);border-color:rgba(103,232,249,.3)}",
@@ -404,6 +408,11 @@
 
   function startTimer() {
     timerStart = performance.now();
+    try {
+      if (global.LAStars && typeof LAStars.startTimer === "function") {
+        LAStars.startTimer(true);
+      }
+    } catch (e) {}
     return timerStart;
   }
 
@@ -455,6 +464,9 @@
     var save = opts.save !== false;
     var sound = opts.sound !== false;
     var gameId = opts.gameId || null;
+    if (gameId && /^(teen2teen|ua):/.test(gameId) && global.LAStars && typeof LAStars.getLastGameId === "function") {
+      gameId = LAStars.getLastGameId() || gameId;
+    }
 
     // Persist progress (local stars — automatic, no name required)
     if (save && gameId && global.LAStars) {
@@ -463,6 +475,25 @@
         if (opts.stars != null) LAStars.save(gameId, stars);
         else LAStars.saveFromAccuracy(gameId, accuracy);
       } catch (e) {}
+    }
+
+    // Persist personal best time locally for solid runs (≥70% accuracy or ≥2 stars)
+    var isSolidRun = accuracy >= 70 || (opts.stars != null && stars >= 2) || (score == null && total == null && opts.completed !== false);
+    var timeRecord = null;
+    if (gameId && global.LAStars) {
+      try {
+        if (typeof LAStars.markFinishTimeHandled === "function") {
+          LAStars.markFinishTimeHandled(gameId);
+        }
+        if (timeMs != null && timeMs > 0 && isSolidRun && typeof LAStars.saveBestTime === "function") {
+          timeRecord = LAStars.saveBestTime(gameId, timeMs);
+        } else if (typeof LAStars.getBestTime === "function") {
+          var prevBest = LAStars.getBestTime(gameId);
+          if (prevBest) {
+            timeRecord = { bestMs: prevBest, prevBestMs: prevBest, currentMs: timeMs, isNewRecord: false };
+          }
+        }
+      } catch (eTime) {}
     }
 
     // Auto cloud score when player has a name (includes timeMs for speed board)
@@ -614,11 +645,22 @@
     if (timeMs != null && timeMs > 0) {
       var timeStat = document.createElement("div");
       timeStat.className = "la-finish-stat la-finish-stat--time";
+      var timeSubHtml = "";
+      if (timeRecord && timeRecord.isNewRecord && timeRecord.prevBestMs) {
+        timeSubHtml = '<span class="la-finish-stat-sub is-record">Beat ' + formatTime(timeRecord.prevBestMs) + "!</span>";
+      } else if (timeRecord && timeRecord.isNewRecord) {
+        timeSubHtml = '<span class="la-finish-stat-sub is-record">New record!</span>';
+      } else if (timeRecord && timeRecord.bestMs) {
+        timeSubHtml = '<span class="la-finish-stat-sub">Best ' + formatTime(timeRecord.bestMs) + "</span>";
+      } else if (!isSolidRun) {
+        timeSubHtml = '<span class="la-finish-stat-sub">70%+ for record</span>';
+      }
       timeStat.innerHTML =
         '<span class="la-finish-stat-label">Time</span>' +
         '<span class="la-finish-stat-value">' +
         formatTime(timeMs) +
-        "</span>";
+        "</span>" +
+        timeSubHtml;
       stats.appendChild(timeStat);
     }
 

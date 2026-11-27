@@ -1,15 +1,17 @@
 /**
- * Learning Arcade — shared progress (stars + play counts)
+ * Learning Arcade — shared progress (stars + play counts + best times)
  *
  * localStorage:
- *   "laGameStars"  → { "game-id": 2, ... }   // best stars 0–3
- *   "laGamePlays"  → { "game-id": 5, ... }   // times played
+ *   "laGameStars"      → { "game-id": 2, ... }       // best stars 0–3
+ *   "laGamePlays"      → { "game-id": 5, ... }       // times played
+ *   "laGameBestTimes"  → { "game-id": 34200, ... }   // best time in ms
  *
  * Usage:
  *   LAStars.save("match-rush", 3);
  *   LAStars.saveFromAccuracy("nouns", 85);
  *   LAStars.recordPlay("vocab-match-rush");  // +1 play
- *   LAStars.apply(); // fill stars + play counts on cards
+ *   LAStars.saveBestTime("match-rush", 34200);
+ *   LAStars.apply(); // fill stars + play counts + best times on cards
  *
  * Known game IDs on mrsheyhaki.ir (Adult Learning Arcade):
  *   Vocabulary
@@ -50,6 +52,13 @@
 
   var STARS_KEY = "laGameStars";
   var PLAYS_KEY = "laGamePlays";
+  var BEST_TIMES_KEY = "laGameBestTimes";
+
+  var attemptStartedAt = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+  var lastFinishTimerSyncAt = 0;
+  var lastSavedGameId = null;
+  var finishHandledAt = {};
+  var pendingTimeFallback = {};
 
   /**
    * Optional aliases: when a mini-game saves under a child id,
@@ -273,12 +282,55 @@
     return PLAYS_KEY + identitySuffix();
   }
 
+  function bestTimesKey() {
+    return BEST_TIMES_KEY + identitySuffix();
+  }
+
   function loadStars() {
     return loadJSON(starsKey());
   }
 
   function loadPlays() {
     return loadJSON(playsKey());
+  }
+
+  function loadBestTimes() {
+    return loadJSON(bestTimesKey());
+  }
+
+  function nowMs() {
+    return (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+  }
+
+  function startTimer(fromFinish) {
+    attemptStartedAt = nowMs();
+    if (fromFinish) lastFinishTimerSyncAt = attemptStartedAt;
+    return attemptStartedAt;
+  }
+
+  function getElapsed() {
+    if (!attemptStartedAt) return 0;
+    return Math.max(0, nowMs() - attemptStartedAt);
+  }
+
+  function stopTimer() {
+    var ms = getElapsed();
+    attemptStartedAt = 0;
+    return ms;
+  }
+
+  function getLastGameId() {
+    return lastSavedGameId;
+  }
+
+  function formatTime(ms) {
+    ms = Number(ms);
+    if (!isFinite(ms) || ms <= 0) return "";
+    var totalSec = Math.max(1, Math.round(ms / 1000));
+    var m = Math.floor(totalSec / 60);
+    var s = totalSec % 60;
+    if (m > 0) return m + ":" + (s < 10 ? "0" : "") + s;
+    return s + "s";
   }
 
   function relatedIds(gameId) {
@@ -303,8 +355,32 @@
     return ids;
   }
 
+  function markFinishTimeHandled(gameId) {
+    if (!gameId) return;
+    var ts = Date.now();
+    relatedIds(gameId).forEach(function (id) {
+      finishHandledAt[id] = ts;
+      if (pendingTimeFallback[id]) {
+        clearTimeout(pendingTimeFallback[id]);
+        delete pendingTimeFallback[id];
+      }
+    });
+  }
+
+  function scheduleFallbackTimeSave(gameId, isEligible, elapsedMs) {
+    if (!gameId || !isEligible || !(elapsedMs >= 1000)) return;
+    if (finishHandledAt[gameId] && (Date.now() - finishHandledAt[gameId]) < 2000) return;
+    if (pendingTimeFallback[gameId]) clearTimeout(pendingTimeFallback[gameId]);
+    pendingTimeFallback[gameId] = setTimeout(function () {
+      delete pendingTimeFallback[gameId];
+      if (finishHandledAt[gameId] && (Date.now() - finishHandledAt[gameId]) < 2000) return;
+      saveBestTime(gameId, elapsedMs);
+    }, 500);
+  }
+
   function save(gameId, stars) {
     if (!gameId) return 0;
+    lastSavedGameId = gameId;
     stars = Math.max(0, Math.min(3, Number(stars) || 0));
     var data = loadStars();
     var ids = relatedIds(gameId);
@@ -319,11 +395,14 @@
       }
     });
     saveJSON(starsKey(), data);
+    scheduleFallbackTimeSave(gameId, stars >= 2, getElapsed());
     fallbackProgress({ gameId: gameId, stars: stars, completed: true });
     return best;
   }
 
   function saveFromAccuracy(gameId, accuracyPercent) {
+    if (!gameId) return 0;
+    lastSavedGameId = gameId;
     var acc = Number(accuracyPercent) || 0;
     var stars = acc >= 90 ? 3 : acc >= 70 ? 2 : acc >= 40 ? 1 : 0;
     var best = save(gameId, stars);
@@ -346,6 +425,8 @@
   }
 
   function saveFromScore(gameId, score, thresholds) {
+    if (!gameId) return 0;
+    lastSavedGameId = gameId;
     thresholds = thresholds || [1000, 600, 200];
     var stars = 0;
     if (score >= thresholds[0]) stars = 3;
@@ -365,9 +446,46 @@
     return best;
   }
 
+  /** Save personal best time in ms (only lowers previous record). */
+  function saveBestTime(gameId, timeMs) {
+    var ms = Math.round(Number(timeMs) || 0);
+    if (!gameId || !isFinite(ms) || ms < 500) return null;
+    markFinishTimeHandled(gameId);
+    var data = loadBestTimes();
+    var ids = relatedIds(gameId);
+    var prevBest = null;
+    ids.forEach(function (id) {
+      var val = Math.round(Number(data[id]) || 0);
+      if (val > 0 && (prevBest === null || val < prevBest)) {
+        prevBest = val;
+      }
+    });
+    var isNewRecord = prevBest === null || ms < prevBest;
+    var bestMs = isNewRecord ? ms : prevBest;
+    if (isNewRecord) {
+      ids.forEach(function (id) {
+        data[id] = bestMs;
+      });
+      saveJSON(bestTimesKey(), data);
+    }
+    return {
+      bestMs: bestMs,
+      prevBestMs: prevBest,
+      currentMs: ms,
+      isNewRecord: isNewRecord,
+      improvementMs: (prevBest !== null && isNewRecord) ? (prevBest - ms) : 0
+    };
+  }
+
+  function getBestTime(gameId) {
+    if (!gameId) return null;
+    return bestTimeFor(gameId, loadBestTimes());
+  }
+
   /** Increment times played for a game. Returns new total. */
   function recordPlay(gameId) {
     if (!gameId) return 0;
+    lastSavedGameId = gameId;
     var data = loadPlays();
     var ids = relatedIds(gameId);
     var n = 0;
@@ -417,6 +535,15 @@
     return best;
   }
 
+  function bestTimeFor(gameId, bestData) {
+    var best = null;
+    relatedIds(gameId).forEach(function (id) {
+      var val = Math.round(Number(bestData[id]) || 0);
+      if (val > 0 && (best === null || val < best)) best = val;
+    });
+    return best;
+  }
+
   /** Fire level from play count: >3 → 1, >6 → 2, ≥10 → 3 */
   function fireLevelFromPlays(plays) {
     plays = Number(plays) || 0;
@@ -430,8 +557,9 @@
     var scope = root || document;
     var starsData = loadStars();
     var playsData = loadPlays();
+    var bestTimesData = loadBestTimes();
 
-    // Ensure fire/star CSS is present
+    // Ensure fire/star + time badge CSS is present
     ensureStarStyles();
 
     scope.querySelectorAll(".game-stars[data-game]").forEach(function (el) {
@@ -464,6 +592,37 @@
       if (fire > 0) label += ", " + fire + " on fire";
       el.setAttribute("aria-label", label);
       el.setAttribute("data-fire", String(fire));
+
+      // Auto-create .game-time badge inside .resource-card-footer if card markup doesn't already have one
+      var footer = el.closest ? el.closest(".resource-card-footer") : null;
+      if (footer && !footer.querySelector(".game-time[data-game]")) {
+        var timeEl = document.createElement("span");
+        timeEl.className = "game-time game-time-badge";
+        timeEl.setAttribute("data-game", id);
+        timeEl.hidden = true;
+        timeEl.setAttribute("aria-label", "Best time");
+        var playsSibling = footer.querySelector(".game-plays[data-game]");
+        if (playsSibling) footer.insertBefore(timeEl, playsSibling);
+        else footer.appendChild(timeEl);
+      }
+    });
+
+    scope.querySelectorAll(".game-time[data-game]").forEach(function (el) {
+      var id = el.getAttribute("data-game");
+      var bestMs = bestTimeFor(id, bestTimesData);
+      if (!bestMs) {
+        el.hidden = true;
+        el.textContent = "";
+        el.removeAttribute("data-ms");
+        el.removeAttribute("title");
+        return;
+      }
+      var formatted = formatTime(bestMs);
+      el.hidden = false;
+      el.setAttribute("data-ms", String(bestMs));
+      el.setAttribute("title", "Best time: " + formatted + " — Play again to beat it!");
+      el.setAttribute("aria-label", "Best time " + formatted + ", play again to beat it");
+      el.textContent = "⏱ " + formatted;
     });
 
     scope.querySelectorAll(".game-plays[data-game]").forEach(function (el) {
@@ -557,7 +716,12 @@
         "50%{opacity:.35;transform:translate(calc(var(--x,0) + var(--w,0px)*0.75),-16px) scale(calc(var(--s,1)*1.05))}" +
         "100%{opacity:0;transform:translate(calc(var(--x,0) + var(--w,0px)*1.35),-32px) scale(calc(var(--s,1)*1.4))}" +
       "}" +
-      ".resource-card .game-stars{justify-content:flex-start}";
+      ".resource-card .game-stars{justify-content:flex-start}" +
+      ".resource-card--game .resource-card-footer{flex-wrap:wrap;row-gap:8px}" +
+      ".resource-card--game .game-time-badge{display:inline-flex;align-items:center;justify-content:center;gap:4px;height:22px;padding:0 8px;margin-left:auto;border-radius:999px;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.01em;line-height:1;white-space:nowrap;color:#0369a1;background:rgba(14,165,233,.10);border:1px solid rgba(14,165,233,.24);flex:0 0 auto}" +
+      ".resource-card--game .game-time-badge[hidden]{display:none!important}" +
+      ".resource-card--game .game-time-badge:not([hidden]) + .game-plays-badge{margin-left:0!important}" +
+      "html[data-theme=\"dark\"] .resource-card--game .game-time-badge{color:#7dd3fc;background:rgba(56,189,248,.14);border-color:rgba(56,189,248,.28)}";
     document.head.appendChild(style);
   }
 
@@ -639,12 +803,22 @@
   global.LAStars = {
     KEY: STARS_KEY,
     PLAYS_KEY: PLAYS_KEY,
+    BEST_TIMES_KEY: BEST_TIMES_KEY,
     ALIASES: ALIASES,
     load: loadStars,
     loadPlays: loadPlays,
+    loadBestTimes: loadBestTimes,
     save: save,
     saveFromAccuracy: saveFromAccuracy,
     saveFromScore: saveFromScore,
+    saveBestTime: saveBestTime,
+    getBestTime: getBestTime,
+    formatTime: formatTime,
+    startTimer: startTimer,
+    stopTimer: stopTimer,
+    getElapsed: getElapsed,
+    getLastGameId: getLastGameId,
+    markFinishTimeHandled: markFinishTimeHandled,
     recordPlay: recordPlay,
     getPlays: getPlays,
     getStars: getStars,
@@ -653,6 +827,7 @@
     identitySuffix: identitySuffix,
     starsKey: starsKey,
     playsKey: playsKey,
+    bestTimesKey: bestTimesKey,
   };
 
   /**
@@ -670,6 +845,26 @@
     saveFromAccuracy(gameId, acc);
     if (t > 0) global.LAProgressSave({ gameId: gameId, score: s, maxScore: t, accuracy: acc, completed: true });
   };
+
+  // Reset fallback attempt timer when user clicks Play Again / Start on non-LAFinish games
+  document.addEventListener("click", function (ev) {
+    var btn = ev.target && ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn) return;
+    if (nowMs() - lastFinishTimerSyncAt < 80) return;
+    var id = btn.id || "";
+    var txt = (btn.textContent || "").trim().toLowerCase();
+    if (
+      id === "restart" ||
+      id === "againBtn" ||
+      id === "ua-again" ||
+      id === "pc-again" ||
+      btn.classList.contains("u3-restart") ||
+      btn.hasAttribute("data-restart") ||
+      /^(play again|restart|try again|start game|start)$/.test(txt)
+    ) {
+      startTimer(false);
+    }
+  }, true);
 
   function boot() {
     apply();

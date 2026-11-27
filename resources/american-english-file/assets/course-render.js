@@ -69,7 +69,8 @@
 .resource-card--game .resource-card-footer {
   display: flex;
   align-items: center;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 8px 10px;
   width: 100%;
   margin-top: auto;
   padding-top: 4px;
@@ -134,6 +135,34 @@
   line-height: 1;
   opacity: 0.9;
 }
+.resource-card--game .game-time-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  margin-left: auto;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  white-space: nowrap;
+  color: #0369a1;
+  background: rgba(14, 165, 233, 0.10);
+  border: 1px solid rgba(14, 165, 233, 0.24);
+  flex: 0 0 auto;
+}
+.resource-card--game .game-time-badge[hidden] {
+  display: none !important;
+}
+html[data-theme="dark"] .resource-card--game .game-time-badge {
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.14);
+  border-color: rgba(56, 189, 248, 0.28);
+}
 .resource-card--game .game-plays-badge {
   display: inline-flex;
   align-items: center;
@@ -151,6 +180,9 @@
   background: rgba(124, 108, 240, 0.10);
   border: 1px solid rgba(124, 108, 240, 0.18);
   flex: 0 0 auto;
+}
+.resource-card--game .game-time-badge:not([hidden]) + .game-plays-badge {
+  margin-left: 0;
 }
 .resource-card--game .game-plays-badge[hidden] {
   display: none !important;
@@ -1090,6 +1122,12 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
               el("span", { class: "star", "data-n": "2", text: "☆" }),
               el("span", { class: "star", "data-n": "3", text: "☆" }),
             ]),
+            el("span", {
+              class: "game-time game-time-badge",
+              "data-game": gameId,
+              hidden: true,
+              "aria-label": "Best time",
+            }),
             el("span", {
               class: "game-plays game-plays-badge",
               "data-game": gameId,
