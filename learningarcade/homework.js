@@ -165,6 +165,9 @@
     return null;
   }
 
+  var fetchAnnPromise = null;
+  var latestAnnouncement = null;
+
   function fetchServerAssignment() {
     if (fetchServerPromise) return fetchServerPromise;
     fetchServerPromise = fetch("/api/assignments", { cache: "no-store" })
@@ -174,9 +177,29 @@
     return fetchServerPromise;
   }
 
+  function fetchServerAnnouncement() {
+    if (fetchAnnPromise) return fetchAnnPromise;
+    fetchAnnPromise = fetch("/api/announcement", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        latestAnnouncement = (d && d.ok && d.announcement) ? d.announcement : null;
+        return latestAnnouncement;
+      })
+      .catch(function () { return null; });
+    return fetchAnnPromise;
+  }
+
+  function safeAnnUrl(raw) {
+    var s = String(raw || "").trim();
+    if (!s) return "";
+    if (s.charAt(0) === "/" && s.indexOf("//") !== 0) return s;
+    if (/^https?:\/\//i.test(s)) return s;
+    return "";
+  }
+
   function loadActive() {
     var fromUrl = checkUrlParam();
-    return Promise.all([ensureCatalog(), fetchServerAssignment()]).then(function (res) {
+    return Promise.all([ensureCatalog(), fetchServerAssignment(), fetchServerAnnouncement()]).then(function (res) {
       var serverHw = res[1];
       var chosen = fromUrl || serverHw || loadLocalAssignment();
       if (!chosen || !Array.isArray(chosen.items) || !chosen.items.length) return null;
@@ -244,6 +267,17 @@
     var style = document.createElement("style");
     style.id = "la-homework-css";
     style.textContent =
+      ".la-ann-card{margin:16px 0;padding:14px 18px;border-radius:14px;background:var(--hm-surface,var(--pf-surface,var(--site-surface,#fff)));border:1px solid rgba(105,55,216,.28);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;font-family:inherit;color:var(--hm-text,var(--pf-text,var(--site-text,#1e2436)))}" +
+      ".la-ann-card.is-reminder{border-color:rgba(217,119,6,.4)}" +
+      ".la-ann-card.is-alert{border-color:rgba(220,38,38,.4)}" +
+      "html[data-theme=\"dark\"] .la-ann-card{background:var(--hm-surface,var(--pf-surface,var(--site-surface,#141b2d)));color:var(--hm-text,var(--pf-text,#f1f5f9))}" +
+      ".la-ann-kicker{margin:0 0 2px;font-size:.72rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#6937d8}" +
+      ".la-ann-card.is-reminder .la-ann-kicker{color:#d97706}" +
+      ".la-ann-card.is-alert .la-ann-kicker{color:#dc2626}" +
+      "html[data-theme=\"dark\"] .la-ann-kicker{color:#a78bfa}" +
+      ".la-ann-title{margin:0;font-size:1rem;font-weight:800}" +
+      ".la-ann-msg{margin:3px 0 0;font-size:.86rem;color:var(--hm-muted,var(--pf-muted,var(--site-muted,#64748b)))}" +
+      ".la-ann-link{font-size:.8rem;font-weight:800;padding:8px 14px;border-radius:10px;background:#6937d8;color:#fff;text-decoration:none;white-space:nowrap}" +
       ".la-hw-card{position:relative;margin:16px 0;padding:18px 20px;border-radius:18px;background:var(--hm-surface,var(--pf-surface,var(--site-surface,#fff)));border:1px solid var(--hm-border-strong,var(--pf-border,var(--site-border,#dce3f2)));box-shadow:0 10px 26px rgba(15,23,42,.06);overflow:hidden;font-family:inherit;color:var(--hm-text,var(--pf-text,var(--site-text,#1e2436)))}" +
       ".la-hw-card::before{content:\"\";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#f59e0b,#6937d8,#0d9488)}" +
       "html[data-theme=\"dark\"] .la-hw-card{background:var(--hm-surface,var(--pf-surface,var(--site-surface,#141b2d)));border-color:var(--hm-border,var(--pf-border,rgba(255,255,255,.12)));color:var(--hm-text,var(--pf-text,#f1f5f9))}" +
@@ -276,52 +310,74 @@
     document.head.appendChild(style);
   }
 
+  function renderAnnouncementHtml(ann) {
+    if (!ann || (!ann.title && !ann.message)) return "";
+    var lvl = ann.level === "reminder" || ann.level === "alert" ? ann.level : "info";
+    var label = lvl === "alert" ? "Important Notice" : (lvl === "reminder" ? "Class Reminder" : "Teacher Notice");
+    var href = safeAnnUrl(ann.linkUrl);
+    return (
+      '<div class="la-ann-card is-' + lvl + '">' +
+        '<div>' +
+          '<p class="la-ann-kicker">' + esc(label) + '</p>' +
+          '<h3 class="la-ann-title">' + esc(ann.title || "Class Update") + '</h3>' +
+          (ann.message ? '<p class="la-ann-msg">' + esc(ann.message) + '</p>' : '') +
+        '</div>' +
+        (href ? '<a class="la-ann-link" href="' + esc(href) + '">' + esc(ann.linkText || "Open") + '</a>' : '') +
+      '</div>'
+    );
+  }
+
   function renderInto(el, assignment, cloudRowsOrMap) {
     if (!el) return;
-    if (!assignment || !assignment.items || !assignment.items.length) {
+    var hasHw = Boolean(assignment && assignment.items && assignment.items.length);
+    var annHtml = renderAnnouncementHtml(latestAnnouncement);
+    if (!hasHw && !annHtml) {
       el.hidden = true;
       el.innerHTML = "";
       return;
     }
     ensureStyles();
-    var prog = computeProgress(assignment, cloudRowsOrMap);
-    var allDone = prog.done === prog.total && prog.total > 0;
+    var html = annHtml;
+    if (hasHw) {
+      var prog = computeProgress(assignment, cloudRowsOrMap);
+      var allDone = prog.done === prog.total && prog.total > 0;
 
-    var html =
-      '<div class="la-hw-card">' +
-        '<div class="la-hw-head">' +
-          '<div>' +
-            '<p class="la-hw-kicker">Assigned Homework</p>' +
-            '<h2 class="la-hw-title">' + esc(assignment.title) + '</h2>' +
-            (assignment.note ? '<p class="la-hw-note">' + esc(assignment.note) + '</p>' : '') +
+      html +=
+        '<div class="la-hw-card">' +
+          '<div class="la-hw-head">' +
+            '<div>' +
+              '<p class="la-hw-kicker">Assigned Homework</p>' +
+              '<h2 class="la-hw-title">' + esc(assignment.title) + '</h2>' +
+              (assignment.note ? '<p class="la-hw-note">' + esc(assignment.note) + '</p>' : '') +
+            '</div>' +
+            '<div class="la-hw-meter">' +
+              '<span class="la-hw-meter-txt' + (allDone ? ' is-complete' : '') + '">' +
+                (allDone ? ('✓ All ' + prog.total + ' completed!') : (prog.done + ' / ' + prog.total + ' completed')) +
+              '</span>' +
+              '<div class="la-hw-track" aria-hidden="true"><div class="la-hw-fill" style="width:' + prog.pct + '%"></div></div>' +
+            '</div>' +
           '</div>' +
-          '<div class="la-hw-meter">' +
-            '<span class="la-hw-meter-txt' + (allDone ? ' is-complete' : '') + '">' +
-              (allDone ? ('✓ All ' + prog.total + ' completed!') : (prog.done + ' / ' + prog.total + ' completed')) +
-            '</span>' +
-            '<div class="la-hw-track" aria-hidden="true"><div class="la-hw-fill" style="width:' + prog.pct + '%"></div></div>' +
+          '<div class="la-hw-list">' +
+            prog.items.map(function (item) {
+              var starsTxt = item.stars > 0 ? (" · " + "★".repeat(item.stars)) : "";
+              var sub = [item.category, item.course].filter(Boolean).join(" · ") + starsTxt;
+              var cta = item.done ? "✓ Done" : "Play →";
+              return (
+                '<a class="la-hw-item' + (item.done ? ' is-done' : '') + '" href="' + esc(item.url) + '">' +
+                  '<div class="la-hw-item-info">' +
+                    '<span class="la-hw-item-title">' + esc(item.title) + '</span>' +
+                    '<span class="la-hw-item-meta">' + esc(sub) + '</span>' +
+                  '</div>' +
+                  '<span class="la-hw-item-cta">' + cta + '</span>' +
+                '</a>'
+              );
+            }).join("") +
           '</div>' +
-        '</div>' +
-        '<div class="la-hw-list">' +
-          prog.items.map(function (item) {
-            var starsTxt = item.stars > 0 ? (" · " + "★".repeat(item.stars)) : "";
-            var sub = [item.category, item.course].filter(Boolean).join(" · ") + starsTxt;
-            var cta = item.done ? "✓ Done" : "Play →";
-            return (
-              '<a class="la-hw-item' + (item.done ? ' is-done' : '') + '" href="' + esc(item.url) + '">' +
-                '<div class="la-hw-item-info">' +
-                  '<span class="la-hw-item-title">' + esc(item.title) + '</span>' +
-                  '<span class="la-hw-item-meta">' + esc(sub) + '</span>' +
-                '</div>' +
-                '<span class="la-hw-item-cta">' + cta + '</span>' +
-              '</a>'
-            );
-          }).join("") +
-        '</div>' +
-        (assignment.source === "link" || assignment.source === "local"
-          ? '<button type="button" class="la-hw-clear" data-hw-clear>Hide shared link</button>'
-          : '') +
-      '</div>';
+          (assignment.source === "link" || assignment.source === "local"
+            ? '<button type="button" class="la-hw-clear" data-hw-clear>Hide shared link</button>'
+            : '') +
+        '</div>';
+    }
 
     el.innerHTML = html;
     el.hidden = false;
@@ -330,8 +386,13 @@
     if (clr) {
       clr.addEventListener("click", function () {
         saveLocalAssignment(null);
-        el.hidden = true;
-        el.innerHTML = "";
+        if (annHtml) {
+          var hwCard = el.querySelector(".la-hw-card");
+          if (hwCard) hwCard.remove();
+        } else {
+          el.hidden = true;
+          el.innerHTML = "";
+        }
       });
     }
   }

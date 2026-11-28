@@ -705,6 +705,28 @@ export const roomManager = {
     return { ok: true, room: publicRoom(room) };
   },
 
+  listRooms() {
+    return Array.from(rooms.values()).map((r) => ({
+      code: r.code,
+      gameType: r.gameType || "a-an-swipe",
+      status: r.status,
+      createdAt: r.createdAt,
+      maxPlayers: r.maxPlayers,
+      players: r.players.map(publicPlayer),
+    }));
+  },
+
+  closeRoomByCode(rawCode) {
+    const code = normalizeRoomCode(rawCode);
+    const room = rooms.get(code);
+    if (!room) {
+      return { ok: false, error: "Room not found" };
+    }
+    const playerCount = room.players.length;
+    rooms.delete(code);
+    return { ok: true, code, playerCount };
+  },
+
   stats() {
     return { rooms: rooms.size };
   },

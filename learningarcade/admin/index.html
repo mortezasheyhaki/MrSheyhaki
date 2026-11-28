@@ -5,59 +5,78 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#6d28d9" />
   <title>Teacher Admin · Mr. Sheyhaki</title>
-  <meta name="description" content="Teacher Admin console for tracking student activity, stars, accuracy, and recent scores in Learning Arcade." />
+  <meta name="description" content="Teacher Admin console for student activity, homework assignments, class announcements, multiplayer rooms, and skill analytics in Learning Arcade." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../style.css" />
-  <link rel="stylesheet" href="../theme.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
       --adm-bg: #f8fafc;
       --adm-surface: #ffffff;
       --adm-surface-alt: #f1f5f9;
+      --adm-surface-hover: #f8fafc;
       --adm-text: #0f172a;
       --adm-muted: #64748b;
       --adm-border: #e2e8f0;
+      --adm-border-subtle: rgba(15, 23, 42, 0.06);
       --adm-accent: #6d28d9;
+      --adm-accent-hover: #5b21b6;
       --adm-accent-soft: rgba(109, 40, 217, 0.08);
       --adm-accent-border: rgba(109, 40, 217, 0.25);
       --adm-ok: #15803d;
+      --adm-ok-soft: rgba(21, 128, 61, 0.09);
       --adm-warn: #b45309;
-      --adm-err: #b91c1c;
-      --adm-err-bg: rgba(220, 38, 38, 0.09);
-      --adm-star: #eab308;
-      --adm-radius: 16px;
+      --adm-warn-soft: rgba(180, 83, 9, 0.09);
+      --adm-err: #dc2626;
+      --adm-err-soft: rgba(220, 38, 38, 0.09);
+      --adm-star: #d97706;
+      --adm-radius: 12px;
+      --adm-font-display: "Plus Jakarta Sans", system-ui, sans-serif;
+      --adm-font-body: "DM Sans", system-ui, sans-serif;
+      --adm-font-mono: "JetBrains Mono", ui-monospace, monospace;
     }
 
     html[data-theme="dark"] {
-      --adm-bg: #0f172a;
-      --adm-surface: #1e293b;
-      --adm-surface-alt: #162032;
+      --adm-bg: #0b0f19;
+      --adm-surface: #131a2a;
+      --adm-surface-alt: #1a2338;
+      --adm-surface-hover: #1e2942;
       --adm-text: #f8fafc;
       --adm-muted: #94a3b8;
-      --adm-border: #334155;
+      --adm-border: #263147;
+      --adm-border-subtle: rgba(248, 250, 252, 0.06);
       --adm-accent: #a78bfa;
-      --adm-accent-soft: rgba(167, 139, 250, 0.12);
-      --adm-accent-border: rgba(167, 139, 250, 0.3);
+      --adm-accent-hover: #8b5cf6;
+      --adm-accent-soft: rgba(167, 139, 250, 0.14);
+      --adm-accent-border: rgba(167, 139, 250, 0.34);
       --adm-ok: #4ade80;
+      --adm-ok-soft: rgba(74, 222, 128, 0.12);
       --adm-warn: #fbbf24;
+      --adm-warn-soft: rgba(251, 191, 36, 0.12);
       --adm-err: #f87171;
-      --adm-err-bg: rgba(248, 113, 113, 0.14);
+      --adm-err-soft: rgba(248, 113, 113, 0.14);
+      --adm-star: #fbbf24;
     }
 
-    * { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; }
     [hidden] { display: none !important; }
 
     body.admin-app {
       margin: 0;
+      padding: 0;
       min-height: 100dvh;
-      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      font-family: var(--adm-font-body);
       background: var(--adm-bg);
       color: var(--adm-text);
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
 
+    html[data-theme="dark"] body.admin-app {
+      letter-spacing: 0.01em;
+    }
+
+    /* Hide shared arcade chrome to preserve dedicated SaaS admin workspace */
     body.admin-app .arcade-header-bar,
     body.admin-app .site-topbar,
     body.admin-app .site-footer,
@@ -65,177 +84,341 @@
       display: none !important;
     }
 
-    .tabular { font-variant-numeric: tabular-nums; }
+    :focus-visible {
+      outline: 2px solid var(--adm-accent);
+      outline-offset: 2px;
+    }
 
-    /* Top bar */
+    .tabular {
+      font-variant-numeric: tabular-nums;
+      font-family: var(--adm-font-mono);
+    }
+
+    /* Top Bar — Strict 3-zone contract */
     .adm-topbar {
-      background: var(--adm-surface);
-      border-bottom: 1px solid var(--adm-border);
       position: sticky;
       top: 0;
-      z-index: 30;
+      z-index: 40;
+      background: var(--adm-surface);
+      border-bottom: 1px solid var(--adm-border);
     }
     .adm-topbar-inner {
-      max-width: 1260px;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 12px 20px;
+      padding: 10px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      flex-wrap: wrap;
+      gap: 24px;
+      min-height: 58px;
     }
     .adm-brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       min-width: 0;
-    }
-    .adm-back {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      text-decoration: none;
-      font-weight: 800;
-      color: var(--adm-accent);
-      background: var(--adm-surface-alt);
-      border: 1px solid var(--adm-border);
+      white-space: nowrap;
       flex-shrink: 0;
     }
-    .adm-back:hover { border-color: var(--adm-accent); }
-    .adm-crumb {
+    .adm-brand-wordmark {
+      font-family: var(--adm-font-display);
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--adm-text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+    .adm-breadcrumb-sep {
+      color: var(--adm-muted);
       font-size: 0.9rem;
+    }
+    .adm-breadcrumb-cur {
+      font-family: var(--adm-font-display);
+      font-size: 0.95rem;
       font-weight: 700;
       color: var(--adm-muted);
+      white-space: nowrap;
     }
-    .adm-crumb strong {
-      font-family: "Fredoka", sans-serif;
-      font-size: 1.15rem;
+    .adm-top-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      min-width: 0;
+    }
+    .adm-top-nav a {
+      text-decoration: none;
+      color: var(--adm-muted);
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 6px 2px;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    .adm-top-nav a:hover {
       color: var(--adm-text);
+      border-bottom-color: var(--adm-border);
     }
-
     .adm-top-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      gap: 10px;
+      flex-shrink: 0;
     }
-    .adm-link {
-      text-decoration: none;
-      color: var(--adm-muted);
-      font-weight: 700;
-      font-size: 0.85rem;
-      padding: 8px 12px;
-      border-radius: 10px;
-      white-space: nowrap;
-    }
-    .adm-link:hover {
+    .adm-mobile-menu-btn {
+      display: none;
+      min-width: 40px;
+      min-height: 40px;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: 1px solid var(--adm-border);
+      background: var(--adm-surface);
       color: var(--adm-text);
-      background: var(--adm-surface-alt);
-    }
-    .adm-btn {
       font: inherit;
-      font-weight: 700;
-      font-size: 0.84rem;
-      padding: 8px 14px;
-      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .adm-topbar-inner { padding: 10px 16px; gap: 12px; }
+      .adm-top-nav { display: none; }
+      .adm-mobile-menu-btn { display: inline-flex; align-items: center; justify-content: center; }
+    }
+
+    /* Buttons */
+    .adm-btn {
+      font-family: var(--adm-font-body);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      min-height: 40px;
+      border-radius: 8px;
       border: 1px solid var(--adm-border);
       background: var(--adm-surface);
       color: var(--adm-text);
       cursor: pointer;
       white-space: nowrap;
-      min-height: 38px;
+      flex-shrink: 0;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      transition: border-color 0.15s ease, opacity 0.15s ease;
+      gap: 8px;
+      text-decoration: none;
+      transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.12s ease;
     }
-    .adm-btn:hover { border-color: var(--adm-accent); }
-    .adm-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .adm-btn:hover:not(:disabled) {
+      border-color: var(--adm-accent);
+      background: var(--adm-surface-alt);
+    }
+    .adm-btn:active:not(:disabled) { transform: translateY(1px); }
+    .adm-btn:disabled { opacity: 0.55; cursor: not-allowed; }
     .adm-btn--primary {
       background: #6d28d9;
       border-color: #6d28d9;
       color: #ffffff;
     }
-    .adm-btn--primary:hover { background: #5b21b6; border-color: #5b21b6; }
-
-    /* Container */
-    .adm-wrap {
-      max-width: 1260px;
-      margin: 0 auto;
-      padding: 24px 20px 56px;
+    .adm-btn--primary:hover:not(:disabled) {
+      background: #5b21b6;
+      border-color: #5b21b6;
+    }
+    .adm-btn--danger {
+      color: var(--adm-err);
+      border-color: rgba(220, 38, 38, 0.3);
+      background: var(--adm-surface);
+    }
+    .adm-btn--danger:hover:not(:disabled) {
+      background: var(--adm-err-soft);
+      border-color: var(--adm-err);
+    }
+    .adm-btn--sm {
+      min-height: 34px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
     }
 
     /* Auth Gate */
+    .adm-gate-wrap {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 56px 24px;
+      display: flex;
+      justify-content: center;
+    }
     .adm-gate {
+      width: 100%;
       max-width: 440px;
-      margin: 48px auto;
       background: var(--adm-surface);
       border: 1px solid var(--adm-border);
       border-radius: var(--adm-radius);
-      padding: 28px 24px;
+      padding: 32px 28px;
     }
     .adm-gate h1 {
       margin: 0;
-      font-family: "Fredoka", sans-serif;
+      font-family: var(--adm-font-display);
       font-size: 1.5rem;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
     }
     .adm-gate p {
-      margin: 6px 0 18px;
-      font-size: 0.9rem;
-      color: var(--adm-muted);
-      font-weight: 500;
-    }
-    .adm-form { display: flex; flex-direction: column; gap: 14px; }
-    .adm-field { display: flex; flex-direction: column; gap: 6px; }
-    .adm-field label { font-size: 0.82rem; font-weight: 700; }
-    .adm-input {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--adm-border);
-      background: var(--adm-surface-alt);
-      color: var(--adm-text);
-      font: inherit;
+      margin: 8px 0 22px;
       font-size: 0.92rem;
-      outline: none;
-      min-height: 42px;
+      color: var(--adm-muted);
     }
-    .adm-input:focus { border-color: var(--adm-accent); }
+    .adm-form { display: flex; flex-direction: column; gap: 16px; }
+    .adm-field { display: flex; flex-direction: column; gap: 6px; }
+    .adm-field label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--adm-text);
+    }
+    .adm-input, .adm-textarea, .adm-select, .adm-search {
+      width: 100%;
+      padding: 9px 12px;
+      min-height: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--adm-border);
+      background: var(--adm-surface);
+      color: var(--adm-text);
+      font-family: var(--adm-font-body);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .adm-textarea { min-height: 82px; resize: vertical; }
+    .adm-input:focus, .adm-textarea:focus, .adm-select:focus, .adm-search:focus {
+      border-color: var(--adm-accent);
+    }
     .adm-error {
       margin: 0;
       font-size: 0.84rem;
-      font-weight: 700;
+      font-weight: 600;
       color: var(--adm-err);
       min-height: 1.2em;
     }
+    .adm-msg-ok {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--adm-ok);
+    }
 
-    /* Dashboard */
-    .adm-dash { display: none; flex-direction: column; gap: 20px; }
-    .adm-dash.is-on { display: flex; }
+    /* Main Workspace Layout (Sidebar + Content) */
+    .adm-shell {
+      display: none;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .adm-shell.is-on { display: grid; }
 
-    .adm-head {
+    .adm-sidebar {
+      position: sticky;
+      top: 82px;
+      background: var(--adm-surface);
+      border: 1px solid var(--adm-border);
+      border-radius: var(--adm-radius);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .adm-nav-group-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--adm-muted);
+      padding: 10px 10px 4px;
+      letter-spacing: 0.02em;
+    }
+    .adm-nav-item {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--adm-muted);
+      font-family: var(--adm-font-body);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 9px 12px;
+      min-height: 40px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      text-align: left;
+      white-space: nowrap;
+      transition: background-color 0.14s ease, color 0.14s ease;
+    }
+    .adm-nav-item:hover {
+      background: var(--adm-surface-alt);
+      color: var(--adm-text);
+    }
+    .adm-nav-item.is-active {
+      background: var(--adm-accent-soft);
+      color: var(--adm-accent);
+      font-weight: 700;
+    }
+    .adm-nav-count {
+      font-family: var(--adm-font-mono);
+      font-size: 0.76rem;
+      font-variant-numeric: tabular-nums;
+      color: var(--adm-muted);
+    }
+    .adm-nav-item.is-active .adm-nav-count {
+      color: var(--adm-accent);
+    }
+
+    @media (max-width: 900px) {
+      .adm-shell {
+        padding: 16px;
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .adm-sidebar {
+        position: static;
+        display: none;
+      }
+      .adm-sidebar.is-open {
+        display: flex;
+      }
+      .adm-btn, .adm-nav-item, .adm-input, .adm-select, .adm-search {
+        min-height: 44px;
+      }
+    }
+
+    /* Main Content Area */
+    .adm-main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .adm-section-head {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
       gap: 16px;
       flex-wrap: wrap;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--adm-border);
     }
-    .adm-head h1 {
+    .adm-section-head h1 {
       margin: 0;
-      font-family: "Fredoka", sans-serif;
-      font-size: 1.65rem;
-      font-weight: 700;
+      font-family: var(--adm-font-display);
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
       text-wrap: balance;
     }
-    .adm-head p {
+    .adm-section-sub {
       margin: 4px 0 0;
       font-size: 0.88rem;
-      font-weight: 600;
       color: var(--adm-muted);
     }
     .adm-head-actions {
@@ -245,161 +428,281 @@
       flex-wrap: wrap;
     }
 
-    /* KPI Strip */
+    .adm-tab-pane { display: none; flex-direction: column; gap: 20px; }
+    .adm-tab-pane.is-active { display: flex; }
+
+    /* Notice / Warning Banner */
+    .adm-notice {
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--adm-border);
+      background: var(--adm-surface);
+      font-size: 0.86rem;
+      color: var(--adm-text);
+    }
+    .adm-notice--err {
+      background: var(--adm-err-soft);
+      border-color: rgba(220, 38, 38, 0.28);
+      color: var(--adm-err);
+    }
+
+    /* KPI Strip — single flat level, hairline borders */
     .adm-kpis {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 12px;
     }
-    @media (max-width: 980px) {
-      .adm-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    }
-    @media (max-width: 560px) {
-      .adm-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
+    @media (max-width: 1220px) { .adm-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 640px) { .adm-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
     .adm-kpi {
       background: var(--adm-surface);
       border: 1px solid var(--adm-border);
-      border-radius: 14px;
-      padding: 14px 16px;
+      border-radius: var(--adm-radius);
+      padding: 16px;
     }
     .adm-kpi-label {
       display: block;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      font-size: 0.78rem;
+      font-weight: 600;
       color: var(--adm-muted);
     }
     .adm-kpi-val {
       display: block;
-      margin-top: 4px;
-      font-size: 1.45rem;
+      margin-top: 6px;
+      font-family: var(--adm-font-display);
+      font-size: 1.55rem;
       font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
     }
     .adm-kpi-sub {
       display: block;
-      margin-top: 2px;
-      font-size: 0.76rem;
-      font-weight: 600;
+      margin-top: 4px;
+      font-size: 0.78rem;
       color: var(--adm-muted);
     }
 
-    /* Warning notice */
-    .adm-warn-bar {
-      padding: 10px 14px;
-      border-radius: 12px;
-      background: var(--adm-err-bg);
-      border: 1px solid rgba(220, 38, 38, 0.25);
-      color: var(--adm-err);
-      font-size: 0.84rem;
-      font-weight: 600;
-    }
-
-    /* Workspace split */
-    .adm-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
-      gap: 18px;
-      align-items: start;
-    }
-    @media (max-width: 1040px) {
-      .adm-grid { grid-template-columns: 1fr; }
-    }
-
+    /* Surface Panels */
     .adm-panel {
       background: var(--adm-surface);
       border: 1px solid var(--adm-border);
       border-radius: var(--adm-radius);
-      padding: 18px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
     }
     .adm-panel-head {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
     }
     .adm-panel-head h2 {
       margin: 0;
-      font-family: "Fredoka", sans-serif;
-      font-size: 1.15rem;
+      font-family: var(--adm-font-display);
+      font-size: 1.1rem;
       font-weight: 700;
+      letter-spacing: -0.01em;
     }
     .adm-panel-meta {
-      font-size: 0.8rem;
+      margin: 2px 0 0;
+      font-size: 0.82rem;
+      color: var(--adm-muted);
+    }
+
+    .adm-two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+    .adm-two-col--even {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    @media (max-width: 1080px) {
+      .adm-two-col, .adm-two-col--even { grid-template-columns: 1fr; }
+    }
+
+    /* 7-Day Activity Pulse Chart */
+    .pulse-bars {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+      height: 150px;
+      padding-top: 16px;
+    }
+    .pulse-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .pulse-count {
+      font-family: var(--adm-font-mono);
+      font-size: 0.74rem;
+      color: var(--adm-muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .pulse-track {
+      width: 100%;
+      max-width: 38px;
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      background: var(--adm-surface-alt);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .pulse-fill {
+      width: 100%;
+      background: var(--adm-accent);
+      border-radius: 6px 6px 0 0;
+      min-height: 3px;
+      transition: opacity 0.15s ease;
+    }
+    .pulse-day {
+      font-size: 0.76rem;
       font-weight: 600;
       color: var(--adm-muted);
     }
 
-    /* Controls */
-    .adm-controls {
+    /* Skill Mastery Rows */
+    .skill-bars {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
-    .adm-controls-row {
+    .skill-row {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .skill-row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      font-size: 0.85rem;
+    }
+    .skill-row-top strong { font-weight: 700; }
+    .skill-row-meta {
+      font-size: 0.78rem;
+      color: var(--adm-muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .skill-meter {
+      height: 7px;
+      border-radius: 4px;
+      background: var(--adm-surface-alt);
+      overflow: hidden;
+    }
+    .skill-meter-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: var(--adm-accent);
+    }
+
+    /* Clean Hairline Lists */
+    .adm-list-clean {
+      display: flex;
+      flex-direction: column;
+    }
+    .adm-list-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--adm-border-subtle);
+      font-size: 0.87rem;
+    }
+    .adm-list-row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .adm-list-row:first-child { padding-top: 0; }
+    .adm-list-main { min-width: 0; }
+    .adm-list-main strong {
+      display: block;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .adm-list-sub {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--adm-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .adm-list-val {
+      text-align: right;
+      font-weight: 700;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .adm-list-val small {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 500;
+      color: var(--adm-muted);
+    }
+
+    /* Segmented Controls & Filter Bars */
+    .adm-toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .adm-toolbar-row {
       display: flex;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
     }
-    .adm-search {
-      flex: 1;
-      min-width: 200px;
-      padding: 9px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--adm-border);
-      background: var(--adm-surface-alt);
-      color: var(--adm-text);
-      font: inherit;
-      font-size: 0.88rem;
-      outline: none;
-    }
-    .adm-search:focus { border-color: var(--adm-accent); }
-    .adm-select {
-      padding: 9px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--adm-border);
-      background: var(--adm-surface-alt);
-      color: var(--adm-text);
-      font: inherit;
-      font-size: 0.84rem;
-      font-weight: 600;
-      outline: none;
-    }
-    .adm-filters {
-      display: flex;
-      gap: 6px;
+    .adm-search-grow { flex: 1; min-width: 210px; }
+    .adm-select-fit { width: auto; min-width: 170px; }
+
+    .adm-seg-group {
+      display: inline-flex;
+      align-items: center;
       flex-wrap: wrap;
-    }
-    .adm-filter-btn {
-      border: 1px solid var(--adm-border);
+      gap: 4px;
+      padding: 4px;
+      border-radius: 10px;
       background: var(--adm-surface-alt);
+      border: 1px solid var(--adm-border);
+    }
+    .adm-seg-btn {
+      border: 0;
+      background: transparent;
       color: var(--adm-muted);
-      font: inherit;
-      font-weight: 700;
-      font-size: 0.78rem;
-      padding: 6px 11px;
-      border-radius: 999px;
+      font-family: var(--adm-font-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      min-height: 32px;
+      border-radius: 7px;
       cursor: pointer;
       white-space: nowrap;
+      transition: background-color 0.14s ease, color 0.14s ease;
     }
-    .adm-filter-btn.is-on {
-      background: var(--adm-accent-soft);
-      color: var(--adm-accent);
-      border-color: var(--adm-accent-border);
+    .adm-seg-btn:hover { color: var(--adm-text); }
+    .adm-seg-btn.is-on {
+      background: var(--adm-surface);
+      color: var(--adm-text);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
     }
 
-    /* Student Roster Table / Accordion */
-    .roster-list {
-      display: flex;
-      flex-direction: column;
+    /* Student Roster — Clean dense grid, zero pill clutter */
+    .roster-table-shell {
       border: 1px solid var(--adm-border);
-      border-radius: 12px;
+      border-radius: 10px;
       overflow: hidden;
     }
     .roster-item + .roster-item {
@@ -412,23 +715,26 @@
       color: inherit;
       font: inherit;
       text-align: left;
-      padding: 12px 14px;
+      padding: 11px 16px;
+      min-height: 52px;
       display: grid;
-      grid-template-columns: 36px minmax(0, 1.5fr) auto auto auto 22px;
+      grid-template-columns: 34px minmax(0, 1.7fr) minmax(90px, auto) minmax(90px, auto) minmax(90px, auto) 92px 24px;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       cursor: pointer;
-      transition: background 0.12s ease;
+      transition: background-color 0.12s ease;
     }
-    .roster-row:hover { background: var(--adm-surface-alt); }
+    .roster-row:hover { background: var(--adm-surface-hover); }
     .roster-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #6d28d9, #4f46e5);
-      color: #ffffff;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--adm-accent-soft);
+      color: var(--adm-accent);
+      border: 1px solid var(--adm-accent-border);
+      font-family: var(--adm-font-display);
       font-weight: 800;
-      font-size: 0.92rem;
+      font-size: 0.88rem;
       display: grid;
       place-items: center;
       flex-shrink: 0;
@@ -436,296 +742,254 @@
     .roster-avatar.is-guest {
       background: var(--adm-surface-alt);
       color: var(--adm-muted);
-      border: 1px solid var(--adm-border);
+      border-color: var(--adm-border);
     }
     .roster-main { min-width: 0; }
     .roster-name {
       font-weight: 700;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .roster-meta {
-      font-size: 0.77rem;
+      font-size: 0.78rem;
       color: var(--adm-muted);
-      font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .roster-metric {
+    .roster-col {
       text-align: right;
-      min-width: 64px;
+      font-variant-numeric: tabular-nums;
     }
-    .roster-metric strong {
+    .roster-col strong {
       display: block;
-      font-size: 0.88rem;
-      font-weight: 800;
+      font-size: 0.86rem;
+      font-weight: 700;
     }
-    .roster-metric span {
+    .roster-col span {
       display: block;
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       color: var(--adm-muted);
-      font-weight: 600;
     }
-    .roster-status {
-      font-size: 0.75rem;
+    .roster-state {
+      text-align: right;
+      font-size: 0.78rem;
       font-weight: 700;
       white-space: nowrap;
-      text-align: right;
     }
-    .roster-status.is-today { color: var(--adm-ok); }
-    .roster-status.is-week { color: var(--adm-accent); }
-    .roster-status.is-idle { color: var(--adm-warn); }
-    .roster-status.is-none { color: var(--adm-muted); }
-
+    .roster-state.is-today { color: var(--adm-ok); }
+    .roster-state.is-week { color: var(--adm-accent); }
+    .roster-state.is-idle { color: var(--adm-warn); }
+    .roster-state.is-none { color: var(--adm-muted); }
     .roster-chev {
+      text-align: center;
       color: var(--adm-muted);
       font-size: 0.85rem;
-      text-align: center;
       transition: transform 0.15s ease;
     }
     .roster-item.is-open .roster-chev { transform: rotate(180deg); }
 
-    @media (max-width: 720px) {
+    @media (max-width: 860px) {
       .roster-row {
-        grid-template-columns: 36px minmax(0, 1fr) auto 20px;
+        grid-template-columns: 34px minmax(0, 1fr) auto 24px;
       }
-      .roster-metric--hide-sm { display: none; }
+      .roster-col--hide-md { display: none; }
     }
 
     .roster-detail {
       display: none;
-      padding: 14px 16px 16px;
+      padding: 16px 18px 18px;
       background: var(--adm-surface-alt);
       border-top: 1px solid var(--adm-border);
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
     .roster-item.is-open .roster-detail { display: flex; }
 
-    .detail-summary {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--adm-muted);
+    .detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
+    .detail-summary {
+      font-size: 0.82rem;
+      color: var(--adm-muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .detail-hw-line {
+      font-size: 0.82rem;
+      color: var(--adm-text);
+      padding: 8px 0;
+      border-top: 1px solid var(--adm-border-subtle);
+      border-bottom: 1px solid var(--adm-border-subtle);
+    }
+    .hw-state-ok { color: var(--adm-ok); font-weight: 700; }
+    .hw-state-pending { color: var(--adm-muted); }
 
+    /* Standard High-Density Data Tables */
     .adm-table-wrap { overflow-x: auto; }
     .adm-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
     }
     .adm-table th {
       text-align: left;
-      padding: 7px 10px;
-      font-size: 0.71rem;
+      padding: 8px 10px;
+      font-size: 0.74rem;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
       color: var(--adm-muted);
       border-bottom: 1px solid var(--adm-border);
       white-space: nowrap;
     }
     .adm-table td {
-      padding: 8px 10px;
-      border-bottom: 1px solid var(--adm-border);
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--adm-border-subtle);
+      vertical-align: middle;
     }
+    .adm-table tbody tr:hover { background: var(--adm-surface-hover); }
     .adm-table tr:last-child td { border-bottom: 0; }
-    .adm-table th.num, .adm-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .adm-table th.num, .adm-table td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-family: var(--adm-font-mono);
+      font-size: 0.8rem;
+    }
     .star-on { color: var(--adm-star); }
     .star-off { opacity: 0.25; }
 
-    /* Sidebar lists */
-    .insight-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .insight-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      background: var(--adm-surface-alt);
-      border: 1px solid var(--adm-border);
-      font-size: 0.84rem;
-    }
-    .insight-main { min-width: 0; }
-    .insight-main strong {
-      display: block;
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .insight-main small {
-      display: block;
-      font-size: 0.75rem;
-      color: var(--adm-muted);
-      font-weight: 600;
-    }
-    .insight-val {
-      text-align: right;
-      font-weight: 800;
-      color: var(--adm-accent);
-      white-space: nowrap;
-    }
-    .insight-val small {
-      display: block;
-      font-size: 0.72rem;
-      color: var(--adm-muted);
-      font-weight: 600;
-    }
-
-    .adm-empty {
-      text-align: center;
-      padding: 28px 16px;
-      color: var(--adm-muted);
-      font-size: 0.86rem;
-      font-weight: 600;
-      border: 1px dashed var(--adm-border);
-      border-radius: 12px;
-    }
-
-    /* Assigned Games / Homework Pinning */
-    .adm-hw-form {
-      display: grid;
-      grid-template-columns: minmax(200px, 1fr) minmax(200px, 1.3fr);
-      gap: 10px;
-    }
-    @media (max-width: 720px) {
-      .adm-hw-form { grid-template-columns: 1fr; }
-    }
-    .adm-hw-picker {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .adm-hw-results {
+    /* Homework Composer */
+    .hw-picker-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
       gap: 8px;
-      max-height: 220px;
+      max-height: 260px;
       overflow-y: auto;
-      padding: 8px;
-      border-radius: 12px;
-      background: var(--adm-surface-alt);
+      padding: 10px;
+      border-radius: 10px;
       border: 1px solid var(--adm-border);
+      background: var(--adm-surface-alt);
     }
-    .adm-hw-results[hidden] { display: none; }
-    .adm-hw-pick {
+    .hw-pick-btn {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      padding: 8px 10px;
-      border-radius: 10px;
+      gap: 10px;
+      padding: 9px 11px;
+      border-radius: 8px;
       border: 1px solid var(--adm-border);
       background: var(--adm-surface);
       color: var(--adm-text);
       font: inherit;
       text-align: left;
       cursor: pointer;
+      transition: border-color 0.14s ease;
     }
-    .adm-hw-pick:hover { border-color: var(--adm-accent); }
-    .adm-hw-pick.is-picked { border-color: var(--adm-ok); opacity: 0.72; }
-    .adm-hw-pick-info { min-width: 0; }
-    .adm-hw-pick-info strong {
+    .hw-pick-btn:hover { border-color: var(--adm-accent); }
+    .hw-pick-btn.is-picked {
+      border-color: var(--adm-ok);
+      background: var(--adm-ok-soft);
+    }
+    .hw-pick-info { min-width: 0; }
+    .hw-pick-info strong {
       display: block;
-      font-size: 0.82rem;
+      font-size: 0.83rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .adm-hw-pick-info small {
+    .hw-pick-info small {
       display: block;
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       color: var(--adm-muted);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .adm-hw-pick-plus {
+    .hw-pick-action {
       font-size: 0.76rem;
-      font-weight: 800;
+      font-weight: 700;
       color: var(--adm-accent);
       white-space: nowrap;
     }
-    .adm-hw-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+    .hw-pick-btn.is-picked .hw-pick-action { color: var(--adm-ok); }
+
+    .hw-queue-list {
+      border: 1px solid var(--adm-border);
+      border-radius: 10px;
+      overflow: hidden;
     }
-    .adm-hw-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: var(--adm-accent-soft);
-      border: 1px solid var(--adm-accent-border);
-      color: var(--adm-text);
-      font-size: 0.78rem;
-      font-weight: 700;
-    }
-    .adm-hw-chip button {
-      border: 0;
-      background: transparent;
-      color: var(--adm-muted);
-      font: inherit;
-      font-weight: 800;
-      cursor: pointer;
-      padding: 0 2px;
-      line-height: 1;
-    }
-    .adm-hw-chip button:hover { color: var(--adm-err); }
-    .adm-hw-actions {
+    .hw-queue-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      flex-wrap: wrap;
-    }
-    .adm-hw-btns {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .adm-hw-status {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--adm-muted);
-    }
-    .adm-hw-status.is-ok { color: var(--adm-ok); }
-    .adm-hw-status.is-err { color: var(--adm-err); }
-    .adm-hw-check {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 4px;
-    }
-    .adm-hw-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 9px;
-      border-radius: 999px;
-      font-size: 0.74rem;
-      font-weight: 700;
-      border: 1px solid var(--adm-border);
+      padding: 9px 12px;
       background: var(--adm-surface);
-      color: var(--adm-muted);
+      border-bottom: 1px solid var(--adm-border-subtle);
+      font-size: 0.85rem;
     }
-    .adm-hw-badge.is-done {
-      border-color: rgba(21, 128, 61, 0.35);
-      background: rgba(22, 163, 74, 0.1);
-      color: var(--adm-ok);
+    .hw-queue-row:last-child { border-bottom: 0; }
+    .hw-queue-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .hw-icon-btn {
+      min-width: 30px;
+      min-height: 30px;
+      border-radius: 6px;
+      border: 1px solid var(--adm-border);
+      background: var(--adm-surface-alt);
+      color: var(--adm-text);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .hw-icon-btn:hover:not(:disabled) { border-color: var(--adm-accent); }
+    .hw-icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .hw-icon-btn--del:hover { border-color: var(--adm-err); color: var(--adm-err); }
+
+    /* Empty & Skeleton States */
+    .adm-empty {
+      text-align: center;
+      padding: 32px 20px;
+      border: 1px dashed var(--adm-border);
+      border-radius: 10px;
+      color: var(--adm-muted);
+      font-size: 0.88rem;
+    }
+    .adm-empty p { margin: 0 0 12px; }
+
+    .adm-skel-line {
+      height: 16px;
+      border-radius: 6px;
+      background: var(--adm-surface-alt);
+      opacity: 0.7;
+    }
+
+    /* Announcement Live Preview */
+    .ann-preview {
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--adm-accent-border);
+      background: var(--adm-surface-alt);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .ann-preview.is-reminder { border-color: rgba(217, 119, 6, 0.45); }
+    .ann-preview.is-alert { border-color: rgba(220, 38, 38, 0.45); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
     }
   </style>
   <script>
@@ -743,26 +1007,33 @@
   </script>
 </head>
 <body class="admin-app">
+  <!-- Top Bar (3-zone contract) -->
   <header class="adm-topbar">
     <div class="adm-topbar-inner">
       <div class="adm-brand">
-        <a class="adm-back" href="../" aria-label="Back to Learning Arcade">←</a>
-        <div class="adm-crumb">
-          <a href="../" style="color:inherit;text-decoration:none;">Learning Arcade</a> /
-          <strong>Teacher Admin</strong>
-        </div>
+        <a href="../" class="adm-brand-wordmark">Mr. Sheyhaki</a>
+        <span class="adm-breadcrumb-sep" aria-hidden="true">/</span>
+        <span class="adm-breadcrumb-cur">Teacher Admin</span>
       </div>
+
+      <nav class="adm-top-nav" aria-label="Site navigation">
+        <a href="/">Home</a>
+        <a href="../">Arcade</a>
+        <a href="../leaderboard/">Leaderboard</a>
+        <a href="../profile/">Student Profile</a>
+        <a href="../../multiplayer/">Multiplayer</a>
+      </nav>
+
       <div class="adm-top-actions">
-        <a href="../" class="adm-link">Arcade</a>
-        <a href="../profile/" class="adm-link">Student Dashboard</a>
-        <button type="button" class="adm-btn" id="themeToggleBtn">Theme</button>
-        <button type="button" class="adm-btn" id="lockAdminBtn" hidden>Lock Admin</button>
+        <button type="button" class="adm-mobile-menu-btn" id="mobileSidebarBtn" aria-label="Toggle admin menu" aria-expanded="false" hidden>Menu</button>
+        <button type="button" class="adm-btn" id="themeToggleBtn">Dark Mode</button>
+        <button type="button" class="adm-btn" id="lockAdminBtn" hidden>Lock</button>
       </div>
     </div>
   </header>
 
-  <main class="adm-wrap">
-    <!-- Server-verified Admin Gate -->
+  <!-- Server-Verified Admin Gate -->
+  <main id="gateWrap" class="adm-gate-wrap">
     <section id="gateSection" class="adm-gate" aria-label="Admin authentication">
       <h1 id="gateTitle">Teacher Admin</h1>
       <p id="gateSub">Checking admin configuration…</p>
@@ -789,171 +1060,549 @@
         <button type="submit" class="adm-btn adm-btn--primary" id="loginSubmitBtn">Open Admin Console</button>
       </form>
     </section>
+  </main>
 
-    <!-- Admin Dashboard -->
-    <section id="adminDash" class="adm-dash" aria-label="Student activity tracking">
-      <div class="adm-head">
+  <!-- Authenticated Admin Workspace -->
+  <div id="adminShell" class="adm-shell">
+    <aside class="adm-sidebar" id="adminSidebar" aria-label="Admin sections">
+      <span class="adm-nav-group-label">Teaching &amp; Analytics</span>
+      <button type="button" class="adm-nav-item is-active" data-tab="overview">
+        <span>Overview</span>
+        <span class="adm-nav-count" id="navOverviewMeta"></span>
+      </button>
+      <button type="button" class="adm-nav-item" data-tab="students">
+        <span>Students</span>
+        <span class="adm-nav-count" id="navStudentsCount">0</span>
+      </button>
+      <button type="button" class="adm-nav-item" data-tab="homework">
+        <span>Homework</span>
+        <span class="adm-nav-count" id="navHwCount">0</span>
+      </button>
+      <button type="button" class="adm-nav-item" data-tab="announcements">
+        <span>Announcements</span>
+        <span class="adm-nav-count" id="navAnnState">Off</span>
+      </button>
+
+      <span class="adm-nav-group-label">Arcade &amp; Operations</span>
+      <button type="button" class="adm-nav-item" data-tab="rooms">
+        <span>Live Rooms</span>
+        <span class="adm-nav-count" id="navRoomsCount">0</span>
+      </button>
+      <button type="button" class="adm-nav-item" data-tab="catalog">
+        <span>Game Catalog</span>
+        <span class="adm-nav-count" id="navCatalogCount">0</span>
+      </button>
+      <button type="button" class="adm-nav-item" data-tab="activity">
+        <span>Activity &amp; Exports</span>
+        <span class="adm-nav-count" id="navActivityCount">0</span>
+      </button>
+      <button type="button" class="adm-nav-item" data-tab="settings">
+        <span>Security &amp; Cache</span>
+      </button>
+    </aside>
+
+    <main class="adm-main" id="adminMain">
+      <div class="adm-section-head">
         <div>
-          <h1>Student Activity Console</h1>
-          <p id="statusLine">Loading student activity…</p>
+          <h1 id="pageHeading">Class Overview</h1>
+          <p class="adm-section-sub" id="statusLine">Syncing student activity…</p>
         </div>
         <div class="adm-head-actions">
-          <button type="button" class="adm-btn" id="exportCsvBtn">Export CSV</button>
-          <button type="button" class="adm-btn adm-btn--primary" id="refreshBtn">Refresh</button>
+          <button type="button" class="adm-btn" id="quickExportStudentsBtn">Export Roster CSV</button>
+          <button type="button" class="adm-btn adm-btn--primary" id="refreshBtn">Refresh Data</button>
         </div>
       </div>
 
-      <div id="warnBar" class="adm-warn-bar" hidden></div>
+      <div id="warnBar" class="adm-notice adm-notice--err" hidden></div>
 
-      <div class="adm-kpis">
-        <div class="adm-kpi">
-          <span class="adm-kpi-label">Registered Students</span>
-          <strong class="adm-kpi-val tabular" id="kpiRegistered">0</strong>
-          <span class="adm-kpi-sub" id="kpiGuests">0 guest players</span>
-        </div>
-        <div class="adm-kpi">
-          <span class="adm-kpi-label">Active (7 Days)</span>
-          <strong class="adm-kpi-val tabular" id="kpiActive7d">0</strong>
-          <span class="adm-kpi-sub" id="kpiActive24h">0 active today</span>
-        </div>
-        <div class="adm-kpi">
-          <span class="adm-kpi-label">Total Plays</span>
-          <strong class="adm-kpi-val tabular" id="kpiPlays">0</strong>
-          <span class="adm-kpi-sub" id="kpiProgressRows">0 tracked game records</span>
-        </div>
-        <div class="adm-kpi">
-          <span class="adm-kpi-label">Stars Earned</span>
-          <strong class="adm-kpi-val tabular" id="kpiStars">0</strong>
-          <span class="adm-kpi-sub" id="kpiInactive">0 inactive accounts</span>
-        </div>
-        <div class="adm-kpi">
-          <span class="adm-kpi-label">Class Avg Accuracy</span>
-          <strong class="adm-kpi-val tabular" id="kpiAccuracy">—</strong>
-          <span class="adm-kpi-sub" id="kpiSubmissions">0 score submissions</span>
-        </div>
-      </div>
-
-      <!-- Assigned Games / Homework Pinning -->
-      <div class="adm-panel" id="homeworkPanel">
-        <div class="adm-panel-head">
-          <div>
-            <h2>Assigned Games (Homework)</h2>
-            <span class="adm-panel-meta" id="hwPanelMeta">Pin games for the class or copy a shareable homework link</span>
+      <!-- TAB 1: OVERVIEW -->
+      <section class="adm-tab-pane is-active" data-pane="overview" aria-label="Class overview">
+        <div class="adm-kpis">
+          <div class="adm-kpi">
+            <span class="adm-kpi-label">Registered Students</span>
+            <strong class="adm-kpi-val" id="kpiRegistered">0</strong>
+            <span class="adm-kpi-sub" id="kpiGuests">0 guest players</span>
           </div>
-          <span class="adm-hw-status" id="hwStatusMsg" role="status" aria-live="polite"></span>
-        </div>
-
-        <div class="adm-hw-form">
-          <div class="adm-field">
-            <label for="hwTitleInput">Assignment Title</label>
-            <input class="adm-input" id="hwTitleInput" type="text" maxlength="80" placeholder="e.g. This Week's Assigned Games" value="This Week's Assigned Games" />
+          <div class="adm-kpi">
+            <span class="adm-kpi-label">Active (7 Days)</span>
+            <strong class="adm-kpi-val" id="kpiActive7d">0</strong>
+            <span class="adm-kpi-sub" id="kpiActive24h">0 active today</span>
           </div>
-          <div class="adm-field">
-            <label for="hwNoteInput">Note for Students (optional)</label>
-            <input class="adm-input" id="hwNoteInput" type="text" maxlength="180" placeholder="e.g. Complete before Thursday's quiz" />
+          <div class="adm-kpi">
+            <span class="adm-kpi-label">Total Game Plays</span>
+            <strong class="adm-kpi-val" id="kpiPlays">0</strong>
+            <span class="adm-kpi-sub" id="kpiProgressRows">0 progress rows</span>
+          </div>
+          <div class="adm-kpi">
+            <span class="adm-kpi-label">Stars Earned</span>
+            <strong class="adm-kpi-val" id="kpiStars">0</strong>
+            <span class="adm-kpi-sub" id="kpiInactive">0 inactive accounts</span>
+          </div>
+          <div class="adm-kpi">
+            <span class="adm-kpi-label">Class Avg Accuracy</span>
+            <strong class="adm-kpi-val" id="kpiAccuracy">—</strong>
+            <span class="adm-kpi-sub" id="kpiSubmissions">0 score logs</span>
+          </div>
+          <div class="adm-kpi">
+            <span class="adm-kpi-label">Live Multiplayer</span>
+            <strong class="adm-kpi-val" id="kpiRooms">0</strong>
+            <span class="adm-kpi-sub" id="kpiRoomPlayers">0 players online</span>
           </div>
         </div>
 
-        <div class="adm-hw-picker">
-          <input type="search" class="adm-search" id="hwSearchInput" placeholder="Search all games (e.g. simple past, unit 4, clothes, tfl) to add…" aria-label="Search games to assign" />
-          <div class="adm-hw-results" id="hwSearchResults" hidden></div>
-        </div>
+        <div class="adm-two-col">
+          <div class="adm-panel">
+            <div class="adm-panel-head">
+              <div>
+                <h2>7-Day Practice Pulse</h2>
+                <p class="adm-panel-meta">Daily submitted scores across the last 7 days</p>
+              </div>
+              <span class="adm-panel-meta tabular" id="pulseTotalLabel">0 submissions</span>
+            </div>
+            <div class="pulse-bars" id="pulseChart"></div>
+          </div>
 
-        <div class="adm-hw-chips" id="hwSelectedChips"></div>
-
-        <div class="adm-hw-actions">
-          <span class="adm-panel-meta" id="hwCountLabel">0 games selected</span>
-          <div class="adm-hw-btns">
-            <button type="button" class="adm-btn" id="hwClearBtn">Clear</button>
-            <button type="button" class="adm-btn" id="hwCopyLinkBtn">Copy Share Link</button>
-            <button type="button" class="adm-btn adm-btn--primary" id="hwSaveBtn">Pin for Class</button>
+          <div class="adm-panel">
+            <div class="adm-panel-head">
+              <div>
+                <h2>Skill Coverage</h2>
+                <p class="adm-panel-meta">Plays &amp; average accuracy by English skill</p>
+              </div>
+            </div>
+            <div class="skill-bars" id="skillStatsList"></div>
           </div>
         </div>
-      </div>
 
-      <div class="adm-grid">
-        <!-- Main Roster & Per-Student Activity -->
+        <div class="adm-two-col--even adm-two-col">
+          <div class="adm-panel">
+            <div class="adm-panel-head">
+              <div>
+                <h2>Top Practiced Games</h2>
+                <p class="adm-panel-meta">Most played activities and class average accuracy</p>
+              </div>
+              <button type="button" class="adm-btn adm-btn--sm" data-jump-tab="catalog">View Catalog</button>
+            </div>
+            <div class="adm-list-clean" id="topGamesList"></div>
+          </div>
+
+          <div class="adm-panel">
+            <div class="adm-panel-head">
+              <div>
+                <h2>Games Needing Review</h2>
+                <p class="adm-panel-meta">Lowest class accuracy among practiced games</p>
+              </div>
+              <button type="button" class="adm-btn adm-btn--sm" data-jump-tab="homework">Assign Practice</button>
+            </div>
+            <div class="adm-list-clean" id="reviewGamesList"></div>
+          </div>
+        </div>
+
+        <div class="adm-two-col--even adm-two-col">
+          <div class="adm-panel">
+            <div class="adm-panel-head">
+              <div>
+                <h2>Active Homework Check</h2>
+                <p class="adm-panel-meta" id="overviewHwMeta">No homework currently pinned</p>
+              </div>
+              <button type="button" class="adm-btn adm-btn--sm" data-jump-tab="homework">Manage Homework</button>
+            </div>
+            <div id="overviewHwBody"></div>
+          </div>
+
+          <div class="adm-panel">
+            <div class="adm-panel-head">
+              <div>
+                <h2>Latest Student Submissions</h2>
+                <p class="adm-panel-meta" id="recentFeedMeta">Most recent scores</p>
+              </div>
+              <button type="button" class="adm-btn adm-btn--sm" data-jump-tab="activity">All Logs</button>
+            </div>
+            <div class="adm-list-clean" id="recentFeedList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: STUDENTS -->
+      <section class="adm-tab-pane" data-pane="students" aria-label="Student roster">
         <div class="adm-panel">
           <div class="adm-panel-head">
             <div>
-              <h2>Students &amp; Activity</h2>
-              <span class="adm-panel-meta" id="rosterCountMeta">Click any student to inspect per-game stars, scores, and attempts</span>
+              <h2>Student Roster &amp; Progress</h2>
+              <p class="adm-panel-meta" id="rosterCountMeta">Click any student row to inspect games, XP rank, homework, and export a report</p>
             </div>
           </div>
 
-          <div class="adm-controls">
-            <div class="adm-controls-row">
-              <input type="search" class="adm-search" id="studentSearch" placeholder="Search by name, @username, or game…" aria-label="Search students" />
-              <select class="adm-select" id="studentSort" aria-label="Sort students">
+          <div class="adm-toolbar">
+            <div class="adm-toolbar-row">
+              <input type="search" class="adm-search adm-search-grow" id="studentSearch" placeholder="Search by student name, @username, class, or game…" aria-label="Search students" />
+              <select class="adm-select adm-select-fit" id="classFilter" aria-label="Filter by class">
+                <option value="all">All Classes</option>
+              </select>
+              <select class="adm-select adm-select-fit" id="studentSort" aria-label="Sort students">
                 <option value="lastActive">Sort: Last Active</option>
+                <option value="xp">Sort: Highest XP</option>
                 <option value="stars">Sort: Most Stars</option>
                 <option value="plays">Sort: Most Plays</option>
                 <option value="accuracy">Sort: Highest Accuracy</option>
+                <option value="homework">Sort: Homework Progress</option>
                 <option value="joined">Sort: Newest Accounts</option>
                 <option value="name">Sort: Name (A–Z)</option>
               </select>
             </div>
-            <div class="adm-filters" id="filterBar" role="tablist" aria-label="Filter students by activity">
-              <button type="button" class="adm-filter-btn is-on" data-filter="all">All</button>
-              <button type="button" class="adm-filter-btn" data-filter="active7d">Active 7d</button>
-              <button type="button" class="adm-filter-btn" data-filter="active24h">Active Today</button>
-              <button type="button" class="adm-filter-btn" data-filter="inactive">Inactive</button>
-              <button type="button" class="adm-filter-btn" data-filter="registered">Registered</button>
-              <button type="button" class="adm-filter-btn" data-filter="guest">Guest Scores</button>
+
+            <div class="adm-seg-group" id="filterBar" role="tablist" aria-label="Filter students by activity">
+              <button type="button" class="adm-seg-btn is-on" data-filter="all">All</button>
+              <button type="button" class="adm-seg-btn" data-filter="active24h">Active Today</button>
+              <button type="button" class="adm-seg-btn" data-filter="active7d">Active 7d</button>
+              <button type="button" class="adm-seg-btn" data-filter="inactive">Inactive</button>
+              <button type="button" class="adm-seg-btn" data-filter="registered">Registered</button>
+              <button type="button" class="adm-seg-btn" data-filter="guest">Guests</button>
+              <button type="button" class="adm-seg-btn" data-filter="hwPending">HW Pending</button>
+              <button type="button" class="adm-seg-btn" data-filter="hwDone">HW Complete</button>
             </div>
           </div>
 
           <div id="rosterContainer"></div>
         </div>
+      </section>
 
-        <!-- Side Insights & Live Feed -->
-        <div style="display:flex;flex-direction:column;gap:18px;">
+      <!-- TAB 3: HOMEWORK & ASSIGNMENTS -->
+      <section class="adm-tab-pane" data-pane="homework" aria-label="Homework management">
+        <div class="adm-two-col">
           <div class="adm-panel">
             <div class="adm-panel-head">
-              <h2>Top Practiced Games</h2>
-              <span class="adm-panel-meta">Plays &amp; avg accuracy</span>
+              <div>
+                <h2>Homework Composer</h2>
+                <p class="adm-panel-meta" id="hwPanelMeta">Pin games to the homepage, arcade, and student profiles</p>
+              </div>
+              <span class="adm-msg-ok" id="hwStatusMsg" role="status" aria-live="polite"></span>
             </div>
-            <div class="insight-list" id="topGamesList"></div>
+
+            <div class="adm-two-col--even adm-two-col">
+              <div class="adm-field">
+                <label for="hwTitleInput">Assignment Title</label>
+                <input class="adm-input" id="hwTitleInput" type="text" maxlength="80" placeholder="e.g. Unit 4 Homework Pack" value="This Week's Assigned Games" />
+              </div>
+              <div class="adm-field">
+                <label for="hwNoteInput">Teacher Note / Due Date (optional)</label>
+                <input class="adm-input" id="hwNoteInput" type="text" maxlength="180" placeholder="e.g. Complete before Thursday's quiz" />
+              </div>
+            </div>
+
+            <div class="adm-toolbar">
+              <div class="adm-toolbar-row">
+                <input type="search" class="adm-search adm-search-grow" id="hwSearchInput" placeholder="Search games by title, unit, course, or skill…" aria-label="Search games to assign" />
+                <select class="adm-select adm-select-fit" id="hwSkillFilter" aria-label="Filter catalog by skill">
+                  <option value="all">All Skills</option>
+                  <option value="Vocabulary">Vocabulary</option>
+                  <option value="Grammar">Grammar</option>
+                  <option value="Listening">Listening</option>
+                  <option value="Pronunciation">Pronunciation</option>
+                  <option value="Reading">Reading</option>
+                  <option value="Writing">Writing</option>
+                  <option value="Speaking">Speaking</option>
+                </select>
+              </div>
+              <div class="hw-picker-grid" id="hwSearchResults"></div>
+            </div>
+
+            <div>
+              <div class="adm-panel-head" style="margin-bottom:8px;">
+                <span class="adm-panel-meta" id="hwCountLabel">0 games selected (max 24)</span>
+                <div class="adm-head-actions">
+                  <button type="button" class="adm-btn adm-btn--sm" id="hwClearDraftBtn">Clear Selection</button>
+                </div>
+              </div>
+              <div class="hw-queue-list" id="hwSelectedQueue"></div>
+            </div>
+
+            <div class="adm-head-actions" style="justify-content:flex-end;">
+              <button type="button" class="adm-btn adm-btn--danger" id="hwClearBtn">Unpin Class Homework</button>
+              <button type="button" class="adm-btn" id="hwCopyLinkBtn">Copy Share Link</button>
+              <button type="button" class="adm-btn adm-btn--primary" id="hwSaveBtn">Pin for Class</button>
+            </div>
           </div>
 
           <div class="adm-panel">
             <div class="adm-panel-head">
-              <h2>Recent Submissions</h2>
-              <span class="adm-panel-meta" id="recentFeedMeta">Latest scores</span>
+              <div>
+                <h2>Recent Homework Sets</h2>
+                <p class="adm-panel-meta">Load a previous assignment back into the composer</p>
+              </div>
             </div>
-            <div class="insight-list" id="recentFeedList"></div>
+            <div class="adm-list-clean" id="hwHistoryList"></div>
           </div>
         </div>
-      </div>
-    </section>
-  </main>
+
+        <div class="adm-panel">
+          <div class="adm-panel-head">
+            <div>
+              <h2>Homework Completion Matrix</h2>
+              <p class="adm-panel-meta" id="hwMatrixMeta">Track which students completed each pinned game</p>
+            </div>
+            <button type="button" class="adm-btn adm-btn--sm" id="exportHwCsvBtn">Export Homework CSV</button>
+          </div>
+          <div id="hwMatrixContainer"></div>
+        </div>
+      </section>
+
+      <!-- TAB 4: CLASS ANNOUNCEMENTS -->
+      <section class="adm-tab-pane" data-pane="announcements" aria-label="Class announcements">
+        <div class="adm-two-col">
+          <div class="adm-panel">
+            <div class="adm-panel-head">
+              <div>
+                <h2>Publish Class Announcement</h2>
+                <p class="adm-panel-meta">Shows at the top of the Homepage, Arcade, and Student Profile pages</p>
+              </div>
+              <span class="adm-msg-ok" id="annStatusMsg" role="status" aria-live="polite"></span>
+            </div>
+
+            <div class="adm-form">
+              <div class="adm-two-col--even adm-two-col">
+                <div class="adm-field">
+                  <label for="annLevelInput">Notice Type</label>
+                  <select class="adm-select" id="annLevelInput">
+                    <option value="info">General Notice</option>
+                    <option value="reminder">Class Reminder</option>
+                    <option value="alert">Urgent Alert / Quiz</option>
+                  </select>
+                </div>
+                <div class="adm-field">
+                  <label for="annTitleInput">Headline</label>
+                  <input class="adm-input" id="annTitleInput" type="text" maxlength="90" placeholder="e.g. Thursday Midterm Speaking Review" />
+                </div>
+              </div>
+
+              <div class="adm-field">
+                <label for="annMessageInput">Message</label>
+                <textarea class="adm-textarea" id="annMessageInput" maxlength="320" placeholder="Write a concise reminder or instruction for your students…"></textarea>
+              </div>
+
+              <div class="adm-two-col--even adm-two-col">
+                <div class="adm-field">
+                  <label for="annLinkUrlInput">Action Link URL (optional)</label>
+                  <input class="adm-input" id="annLinkUrlInput" type="text" maxlength="240" placeholder="e.g. /learningarcade/grammar/simple-past/" />
+                </div>
+                <div class="adm-field">
+                  <label for="annLinkTextInput">Button Label (optional)</label>
+                  <input class="adm-input" id="annLinkTextInput" type="text" maxlength="48" placeholder="e.g. Practice Now" />
+                </div>
+              </div>
+
+              <div class="adm-head-actions" style="justify-content:flex-end;">
+                <button type="button" class="adm-btn adm-btn--danger" id="annClearBtn">Clear Banner</button>
+                <button type="button" class="adm-btn adm-btn--primary" id="annPublishBtn">Publish Announcement</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="adm-panel">
+            <div class="adm-panel-head">
+              <div>
+                <h2>Live Student Preview</h2>
+                <p class="adm-panel-meta" id="annPreviewMeta">Preview updates as you type</p>
+              </div>
+            </div>
+            <div id="annPreviewContainer"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: LIVE MULTIPLAYER ROOMS -->
+      <section class="adm-tab-pane" data-pane="rooms" aria-label="Live multiplayer rooms">
+        <div class="adm-panel">
+          <div class="adm-panel-head">
+            <div>
+              <h2>Live Multiplayer Rooms</h2>
+              <p class="adm-panel-meta" id="roomsMeta">Monitor active student lobbies and close inactive rooms</p>
+            </div>
+            <div class="adm-head-actions">
+              <a href="../../multiplayer/" class="adm-btn adm-btn--sm">Open Multiplayer Hub</a>
+              <button type="button" class="adm-btn adm-btn--sm adm-btn--primary" id="refreshRoomsBtn">Refresh Rooms</button>
+            </div>
+          </div>
+          <div id="roomsContainer"></div>
+        </div>
+      </section>
+
+      <!-- TAB 6: GAME CATALOG & ANALYTICS -->
+      <section class="adm-tab-pane" data-pane="catalog" aria-label="Game catalog and analytics">
+        <div class="adm-panel">
+          <div class="adm-panel-head">
+            <div>
+              <h2>Game Catalog &amp; Performance</h2>
+              <p class="adm-panel-meta" id="catalogMeta">All arcade and textbook games combined with live class metrics</p>
+            </div>
+          </div>
+
+          <div class="adm-toolbar-row">
+            <input type="search" class="adm-search adm-search-grow" id="catalogSearchInput" placeholder="Search games by title, course, unit, or ID…" aria-label="Search game catalog" />
+            <select class="adm-select adm-select-fit" id="catalogSkillFilter" aria-label="Filter games by skill">
+              <option value="all">All Skills</option>
+              <option value="Vocabulary">Vocabulary</option>
+              <option value="Grammar">Grammar</option>
+              <option value="Listening">Listening</option>
+              <option value="Pronunciation">Pronunciation</option>
+              <option value="Reading">Reading</option>
+              <option value="Writing">Writing</option>
+              <option value="Speaking">Speaking</option>
+            </select>
+            <select class="adm-select adm-select-fit" id="catalogSortSelect" aria-label="Sort catalog">
+              <option value="plays">Sort: Most Played</option>
+              <option value="accuracy">Sort: Lowest Accuracy First</option>
+              <option value="title">Sort: Title (A–Z)</option>
+            </select>
+          </div>
+
+          <div id="catalogContainer"></div>
+        </div>
+      </section>
+
+      <!-- TAB 7: ACTIVITY LOGS & EXPORTS -->
+      <section class="adm-tab-pane" data-pane="activity" aria-label="Activity logs and exports">
+        <div class="adm-panel">
+          <div class="adm-panel-head">
+            <div>
+              <h2>Export Class Data</h2>
+              <p class="adm-panel-meta">Download clean CSV spreadsheets or a full JSON backup snapshot</p>
+            </div>
+          </div>
+          <div class="adm-head-actions">
+            <button type="button" class="adm-btn" id="exportStudentsCsvBtn">Students Summary (CSV)</button>
+            <button type="button" class="adm-btn" id="exportScoresCsvBtn">Score Submissions Log (CSV)</button>
+            <button type="button" class="adm-btn" id="exportHomeworkCsvBtn2">Homework Matrix (CSV)</button>
+            <button type="button" class="adm-btn" id="exportJsonBtn">Full Snapshot (JSON)</button>
+            <button type="button" class="adm-btn adm-btn--primary" id="exportUpdatedZipBtn">Updated Files (.zip)</button>
+          </div>
+        </div>
+
+        <div class="adm-panel">
+          <div class="adm-panel-head">
+            <div>
+              <h2>Recent Score Submissions</h2>
+              <p class="adm-panel-meta" id="activityLogMeta">Latest 120 recorded score entries</p>
+            </div>
+          </div>
+          <div class="adm-toolbar-row">
+            <input type="search" class="adm-search adm-search-grow" id="activitySearchInput" placeholder="Filter by student name, class, or game…" aria-label="Filter score submissions" />
+            <select class="adm-select adm-select-fit" id="activitySkillFilter" aria-label="Filter submissions by skill">
+              <option value="all">All Skills</option>
+              <option value="Vocabulary">Vocabulary</option>
+              <option value="Grammar">Grammar</option>
+              <option value="Listening">Listening</option>
+              <option value="Pronunciation">Pronunciation</option>
+              <option value="Reading">Reading</option>
+              <option value="Writing">Writing</option>
+              <option value="Speaking">Speaking</option>
+            </select>
+          </div>
+          <div id="activityTableContainer"></div>
+        </div>
+      </section>
+
+      <!-- TAB 8: SECURITY & CACHE -->
+      <section class="adm-tab-pane" data-pane="settings" aria-label="Security and cache">
+        <div class="adm-two-col--even adm-two-col">
+          <div class="adm-panel">
+            <div class="adm-panel-head">
+              <div>
+                <h2>Admin Session &amp; Cache</h2>
+                <p class="adm-panel-meta">Inspect current authentication state and refresh public leaderboards</p>
+              </div>
+            </div>
+            <div class="adm-list-clean" id="securityInfoList"></div>
+            <div class="adm-head-actions">
+              <button type="button" class="adm-btn" id="clearLbCacheBtn">Clear Leaderboard Cache</button>
+              <button type="button" class="adm-btn" id="revokeOthersBtn">Sign Out Other Sessions</button>
+            </div>
+            <span class="adm-msg-ok" id="secActionMsg" role="status" aria-live="polite"></span>
+          </div>
+
+          <div class="adm-panel">
+            <div class="adm-panel-head">
+              <div>
+                <h2>Change Admin Password</h2>
+                <p class="adm-panel-meta" id="changePwMeta">Update the server-stored teacher password</p>
+              </div>
+            </div>
+            <form id="changePwForm" class="adm-form">
+              <div class="adm-field">
+                <label for="curPwInput">Current Password</label>
+                <input class="adm-input" id="curPwInput" type="password" autocomplete="current-password" required />
+              </div>
+              <div class="adm-field">
+                <label for="newPwInput">New Password (min 8 characters)</label>
+                <input class="adm-input" id="newPwInput" type="password" minlength="8" autocomplete="new-password" required />
+              </div>
+              <div class="adm-field">
+                <label for="confirmNewPwInput">Confirm New Password</label>
+                <input class="adm-input" id="confirmNewPwInput" type="password" minlength="8" autocomplete="new-password" required />
+              </div>
+              <p class="adm-error" id="changePwErr" role="alert"></p>
+              <span class="adm-msg-ok" id="changePwOk" role="status"></span>
+              <button type="submit" class="adm-btn adm-btn--primary" id="changePwBtn">Update Password</button>
+            </form>
+            <div class="adm-notice" id="envPwNotice" hidden>
+              Your admin password is managed by the <strong>ADMIN_PASSWORD</strong> environment secret. Update it in your hosting/Secrets settings to rotate credentials.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script src="../../resources/american-english-file/assets/course-data.js"></script>
   <script src="../skill-catalog.js"></script>
   <script src="../homework.js"></script>
-  <script src="../theme.js"></script>
   <script>
   (function () {
     "use strict";
 
-    // Admin token held strictly in memory — never in localStorage or sessionStorage
+    // Token held strictly in JS memory — never stored in browser storage
     var adminToken = "";
+    var authStatusInfo = { authMode: "local", sessionExpiresAt: null, activeSessionCount: 0 };
     var dashboardData = null;
+
+    var activeTab = "overview";
     var activeFilter = "all";
+    var selectedClass = "all";
     var searchTerm = "";
     var sortMode = "lastActive";
     var openKeys = {};
     var currentAssignment = null;
     var draftHwItems = [];
+    var hwSkillFilter = "all";
 
-    var gateSection = document.getElementById("gateSection");
+    var catalogSearch = "";
+    var catalogSkill = "all";
+    var catalogSort = "plays";
+
+    var activitySearch = "";
+    var activitySkill = "all";
+
+    var gateWrap = document.getElementById("gateWrap");
     var gateTitle = document.getElementById("gateTitle");
     var gateSub = document.getElementById("gateSub");
     var setupForm = document.getElementById("setupForm");
     var loginForm = document.getElementById("loginForm");
-    var adminDash = document.getElementById("adminDash");
+    var adminShell = document.getElementById("adminShell");
+    var adminSidebar = document.getElementById("adminSidebar");
+    var mobileSidebarBtn = document.getElementById("mobileSidebarBtn");
     var lockBtn = document.getElementById("lockAdminBtn");
 
+    var TAB_TITLES = {
+      overview: "Class Overview",
+      students: "Students & Progress",
+      homework: "Homework Manager",
+      announcements: "Class Announcements",
+      rooms: "Live Multiplayer Rooms",
+      catalog: "Game Catalog & Analytics",
+      activity: "Activity Logs & Exports",
+      settings: "Security & Cache"
+    };
+
+    /* Theme Toggle */
     function applyTheme(t) {
       document.documentElement.setAttribute("data-theme", t);
       try { localStorage.setItem("mrsheyhaki-theme", t); } catch (e) {}
@@ -965,12 +1614,29 @@
       applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
     });
 
+    /* Mobile Sidebar Drawer */
+    mobileSidebarBtn.addEventListener("click", function () {
+      var next = !adminSidebar.classList.contains("is-open");
+      adminSidebar.classList.toggle("is-open", next);
+      mobileSidebarBtn.setAttribute("aria-expanded", next ? "true" : "false");
+    });
+
+    /* Safe Escaping & Formatting */
     function escapeHtml(s) {
       return String(s == null ? "" : s)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function safeUrl(raw) {
+      var s = String(raw || "").trim();
+      if (!s) return "/learningarcade/";
+      if (s.charAt(0) === "/" && s.indexOf("//") !== 0) return s;
+      if (/^https?:\/\//i.test(s)) return s;
+      return "/learningarcade/";
     }
 
     function formatRelative(ms) {
@@ -997,11 +1663,20 @@
       }
     }
 
+    function formatTime(ms) {
+      var n = Math.round(Number(ms) || 0);
+      if (!(n > 0)) return "—";
+      var totalSec = Math.max(1, Math.round(n / 1000));
+      var mins = Math.floor(totalSec / 60);
+      var secs = totalSec % 60;
+      return mins > 0 ? mins + ":" + (secs < 10 ? "0" : "") + secs : secs + "s";
+    }
+
     function statusInfo(s) {
-      if (s.active24h) return { label: "● Active today", cls: "is-today" };
-      if (s.active7d) return { label: "● Active 7d", cls: "is-week" };
-      if (s.lastActiveAt > 0) return { label: "○ Idle", cls: "is-idle" };
-      return { label: "○ No plays", cls: "is-none" };
+      if (s.active24h) return { label: "Active today", cls: "is-today" };
+      if (s.active7d) return { label: "Active 7d", cls: "is-week" };
+      if (s.lastActiveAt > 0) return { label: "Idle", cls: "is-idle" };
+      return { label: "No plays", cls: "is-none" };
     }
 
     function starsHtml(n) {
@@ -1013,19 +1688,11 @@
       return out;
     }
 
-    function formatTime(ms) {
-      var n = Math.round(Number(ms) || 0);
-      if (!(n > 0)) return "—";
-      var totalSec = Math.max(1, Math.round(n / 1000));
-      var mins = Math.floor(totalSec / 60);
-      var secs = totalSec % 60;
-      return mins > 0 ? mins + ":" + (secs < 10 ? "0" : "") + secs : secs + "s";
-    }
-
     function sleep(ms) {
       return new Promise(function (resolve) { setTimeout(resolve, ms); });
     }
 
+    /* Authenticated Fetch Wrapper */
     async function adminFetch(path, options) {
       var opts = Object.assign({}, options || {});
       opts.credentials = "same-origin";
@@ -1037,41 +1704,28 @@
           var text = await res.text();
           var data = null;
           if (text) {
-            try {
-              data = JSON.parse(text);
-            } catch (parseErr) {
-              data = null;
-            }
+            try { data = JSON.parse(text); } catch (e) { data = null; }
           }
           if (data && typeof data === "object") {
             return { ok: true, res: res, data: data };
           }
-          var isTransient =
-            res.status === 502 ||
-            res.status === 503 ||
-            res.status === 504 ||
-            (text && text.indexOf("__cookie_check") !== -1);
+          var isTransient = res.status === 502 || res.status === 503 || res.status === 504;
           if (isTransient && attempt === 0) {
-            await sleep(500);
+            await sleep(450);
             continue;
           }
           return {
             ok: false,
             res: res,
             status: res.status,
-            isHtml: Boolean(text && text.trim().charAt(0) === "<"),
-            isCookieCheck: Boolean(text && text.indexOf("__cookie_check") !== -1),
-            error:
-              res.status === 404
-                ? "Teacher Admin API (/api/admin) is not available on this host."
-                : (text && text.indexOf("__cookie_check") !== -1)
-                  ? "Preview session refreshed. Please reload the page and try again."
-                  : "Server returned an unexpected response (HTTP " + res.status + ")."
+            error: res.status === 404
+              ? "Teacher Admin API (/api/admin) is not available on this host."
+              : "Server returned an unexpected response (HTTP " + res.status + ")."
           };
         } catch (err) {
           lastErr = err;
           if (attempt === 0) {
-            await sleep(500);
+            await sleep(450);
             continue;
           }
         }
@@ -1079,25 +1733,54 @@
       return {
         ok: false,
         status: 0,
-        networkError: true,
-        error: "Could not reach the server. Check your connection or refresh the page.",
+        error: "Could not reach the server. Check your connection or refresh.",
         cause: lastErr
       };
     }
 
+    /* Tab Switching */
+    function switchTab(tabName) {
+      if (!TAB_TITLES[tabName]) tabName = "overview";
+      activeTab = tabName;
+      document.getElementById("pageHeading").textContent = TAB_TITLES[tabName];
+      document.querySelectorAll(".adm-nav-item[data-tab]").forEach(function (btn) {
+        btn.classList.toggle("is-active", btn.getAttribute("data-tab") === tabName);
+      });
+      document.querySelectorAll(".adm-tab-pane[data-pane]").forEach(function (pane) {
+        pane.classList.toggle("is-active", pane.getAttribute("data-pane") === tabName);
+      });
+      adminSidebar.classList.remove("is-open");
+      mobileSidebarBtn.setAttribute("aria-expanded", "false");
+    }
+
+    document.querySelectorAll(".adm-nav-item[data-tab]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        switchTab(btn.getAttribute("data-tab"));
+      });
+    });
+
+    document.addEventListener("click", function (e) {
+      var jumpBtn = e.target.closest("[data-jump-tab]");
+      if (jumpBtn) {
+        switchTab(jumpBtn.getAttribute("data-jump-tab"));
+      }
+    });
+
+    /* Auth Gate Flows */
     function showGate(needsSetup) {
-      gateSection.hidden = false;
-      adminDash.classList.remove("is-on");
+      gateWrap.hidden = false;
+      adminShell.classList.remove("is-on");
       lockBtn.hidden = true;
+      mobileSidebarBtn.hidden = true;
       if (needsSetup) {
         gateTitle.textContent = "Set Teacher Admin Password";
-        gateSub.textContent = "First-time setup: choose an admin password (at least 8 characters) to protect student activity reports.";
+        gateSub.textContent = "First-time setup: choose an admin password (at least 8 characters) to protect student activity and class controls.";
         setupForm.hidden = false;
         loginForm.hidden = true;
         document.getElementById("setupPw").focus();
       } else {
         gateTitle.textContent = "Teacher Admin Sign In";
-        gateSub.textContent = "Enter your teacher password to view student activity, stars, and recent scores.";
+        gateSub.textContent = "Enter your teacher password to manage student activity, homework, announcements, and live rooms.";
         setupForm.hidden = true;
         loginForm.hidden = false;
         document.getElementById("loginPw").focus();
@@ -1105,9 +1788,10 @@
     }
 
     function showDashboard() {
-      gateSection.hidden = true;
-      adminDash.classList.add("is-on");
+      gateWrap.hidden = true;
+      adminShell.classList.add("is-on");
       lockBtn.hidden = false;
+      mobileSidebarBtn.hidden = false;
       loadActivity();
     }
 
@@ -1122,6 +1806,11 @@
         return;
       }
       var data = result.data;
+      authStatusInfo = {
+        authMode: data.authMode || "local",
+        sessionExpiresAt: data.sessionExpiresAt || null,
+        activeSessionCount: data.activeSessionCount || 0
+      };
       if (data && data.authenticated && adminToken) {
         showDashboard();
       } else {
@@ -1138,14 +1827,8 @@
       var confirmPw = document.getElementById("setupPwConfirm").value;
 
       errEl.textContent = "";
-      if (pw.length < 8) {
-        errEl.textContent = "Password must be at least 8 characters.";
-        return;
-      }
-      if (pw !== confirmPw) {
-        errEl.textContent = "Passwords do not match.";
-        return;
-      }
+      if (pw.length < 8) { errEl.textContent = "Password must be at least 8 characters."; return; }
+      if (pw !== confirmPw) { errEl.textContent = "Passwords do not match."; return; }
 
       btn.disabled = true;
       btn.textContent = "Saving…";
@@ -1155,21 +1838,16 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ password: pw })
         });
-        if (!result.ok) {
-          errEl.textContent = result.error || "Could not reach server. Please try again.";
+        if (!result.ok) { errEl.textContent = result.error || "Could not reach server."; return; }
+        if (!result.res.ok || !result.data.ok || !result.data.token) {
+          errEl.textContent = (result.data && result.data.error) || "Could not set admin password.";
+          if (result.res.status === 409) checkAdminStatus();
           return;
         }
-        var res = result.res;
-        var data = result.data;
-        if (!res.ok || !data.ok || !data.token) {
-          errEl.textContent = (data && data.error) || "Could not set admin password.";
-          if (res.status === 409) checkAdminStatus();
-          return;
-        }
-        adminToken = data.token;
+        adminToken = result.data.token;
         document.getElementById("setupPw").value = "";
         document.getElementById("setupPwConfirm").value = "";
-        showDashboard();
+        await checkAdminStatus();
       } finally {
         btn.disabled = false;
         btn.textContent = "Set Password & Open Admin";
@@ -1183,10 +1861,7 @@
       var pw = document.getElementById("loginPw").value;
 
       errEl.textContent = "";
-      if (!pw) {
-        errEl.textContent = "Enter the admin password.";
-        return;
-      }
+      if (!pw) { errEl.textContent = "Enter the admin password."; return; }
 
       btn.disabled = true;
       btn.textContent = "Verifying…";
@@ -1196,30 +1871,22 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ password: pw })
         });
-        if (!result.ok) {
-          errEl.textContent = result.error || "Could not reach server. Please try again.";
+        if (!result.ok) { errEl.textContent = result.error || "Could not reach server."; return; }
+        if (!result.res.ok || !result.data.ok || !result.data.token) {
+          if (result.data && result.data.needsSetup) { showGate(true); return; }
+          errEl.textContent = (result.data && result.data.error) || "Incorrect password.";
           return;
         }
-        var res = result.res;
-        var data = result.data;
-        if (!res.ok || !data.ok || !data.token) {
-          if (data && data.needsSetup) {
-            showGate(true);
-            return;
-          }
-          errEl.textContent = (data && data.error) || "Incorrect password.";
-          return;
-        }
-        adminToken = data.token;
+        adminToken = result.data.token;
         document.getElementById("loginPw").value = "";
-        showDashboard();
+        await checkAdminStatus();
       } finally {
         btn.disabled = false;
         btn.textContent = "Open Admin Console";
       }
     });
 
-    lockBtn.addEventListener("click", async function () {
+    lockBtn.addEventListener("click", function () {
       var tok = adminToken;
       adminToken = "";
       dashboardData = null;
@@ -1234,43 +1901,220 @@
       showGate(false);
     });
 
+    /* Load Dashboard Data */
     document.getElementById("refreshBtn").addEventListener("click", loadActivity);
 
+    function showRosterSkeleton() {
+      var container = document.getElementById("rosterContainer");
+      if (!container || dashboardData) return;
+      container.innerHTML =
+        '<div class="adm-panel" style="gap:10px;">' +
+          '<div class="adm-skel-line" style="width:60%;"></div>' +
+          '<div class="adm-skel-line" style="width:85%;"></div>' +
+          '<div class="adm-skel-line" style="width:72%;"></div>' +
+        '</div>';
+    }
+
     async function loadActivity() {
-      if (!adminToken) {
-        checkAdminStatus();
-        return;
-      }
+      if (!adminToken) { checkAdminStatus(); return; }
       var statusLine = document.getElementById("statusLine");
       var refreshBtn = document.getElementById("refreshBtn");
-      statusLine.textContent = "Syncing latest student activity…";
+      statusLine.textContent = "Syncing latest class data…";
       refreshBtn.disabled = true;
+      showRosterSkeleton();
 
       try {
-        var result = await adminFetch("/api/admin/activity", {
-          headers: { Authorization: "Bearer " + adminToken }
-        });
-        if (!result.ok) {
-          statusLine.textContent = result.error || "Could not load student activity. Check connection and refresh.";
+        var [actRes, statusRes] = await Promise.all([
+          adminFetch("/api/admin/activity", { headers: { Authorization: "Bearer " + adminToken } }),
+          adminFetch("/api/admin/status", { headers: { Authorization: "Bearer " + adminToken } })
+        ]);
+        if (statusRes.ok && statusRes.data && statusRes.data.ok) {
+          authStatusInfo = {
+            authMode: statusRes.data.authMode || "local",
+            sessionExpiresAt: statusRes.data.sessionExpiresAt || null,
+            activeSessionCount: statusRes.data.activeSessionCount || 0
+          };
+        }
+        if (!actRes.ok) {
+          statusLine.textContent = actRes.error || "Could not load student activity.";
           return;
         }
-        var res = result.res;
-        var data = result.data;
-        if (res.status === 401) {
+        if (actRes.res.status === 401) {
           adminToken = "";
           showGate(false);
           document.getElementById("loginErr").textContent = "Session expired. Please sign in again.";
           return;
         }
-        if (!res.ok || !data.ok) {
-          statusLine.textContent = (data && data.error) || "Failed to load student activity.";
+        if (!actRes.res.ok || !actRes.data.ok) {
+          statusLine.textContent = (actRes.data && actRes.data.error) || "Failed to load activity.";
           return;
         }
-        dashboardData = data;
-        renderDashboard();
+        dashboardData = actRes.data;
+        renderAll();
       } finally {
         refreshBtn.disabled = false;
       }
+    }
+
+    function catalogList() {
+      if (window.LASkillCatalog && LASkillCatalog.rebuild) LASkillCatalog.rebuild();
+      return (window.LASkillCatalog && LASkillCatalog.getAll) ? LASkillCatalog.getAll() : [];
+    }
+
+    function studentHwCounts(student) {
+      var hwItems = (currentAssignment && Array.isArray(currentAssignment.items)) ? currentAssignment.items : [];
+      if (!hwItems.length) return { total: 0, done: 0 };
+      var map = {};
+      (student.games || []).forEach(function (g) { map[g.id] = g; });
+      var done = 0;
+      hwItems.forEach(function (it) {
+        var g = map[it.id];
+        if (g && (g.completed || g.stars > 0 || g.plays > 0)) done += 1;
+      });
+      return { total: hwItems.length, done: done };
+    }
+
+    /* Render Overview */
+    function renderOverview() {
+      var s = dashboardData.summary || {};
+      document.getElementById("kpiRegistered").textContent = String(s.registeredCount || 0);
+      document.getElementById("kpiGuests").textContent = (s.guestCount || 0) + " guest players";
+      document.getElementById("kpiActive7d").textContent = String(s.active7dCount || 0);
+      document.getElementById("kpiActive24h").textContent = (s.active24hCount || 0) + " active today";
+      document.getElementById("kpiPlays").textContent = String(s.totalPlays || 0);
+      document.getElementById("kpiProgressRows").textContent = (s.progressRows || 0) + " progress rows";
+      document.getElementById("kpiStars").textContent = String(s.totalStars || 0);
+      document.getElementById("kpiInactive").textContent = (s.inactiveCount || 0) + " inactive accounts";
+      document.getElementById("kpiAccuracy").textContent = s.avgAccuracy ? s.avgAccuracy + "%" : "—";
+      document.getElementById("kpiSubmissions").textContent = (s.scoreSubmissions || 0) + " score logs";
+      document.getElementById("kpiRooms").textContent = String(s.liveRoomsCount || 0);
+      document.getElementById("kpiRoomPlayers").textContent = (s.livePlayersCount || 0) + " players online";
+
+      // 7-day pulse chart
+      var pulse = dashboardData.dailyPulse || [];
+      var maxSub = Math.max(1, pulse.reduce(function (m, d) { return Math.max(m, d.submissions || 0); }, 0));
+      var totalSub = pulse.reduce(function (acc, d) { return acc + (d.submissions || 0); }, 0);
+      document.getElementById("pulseTotalLabel").textContent = totalSub + " submissions (7d)";
+      var pulseEl = document.getElementById("pulseChart");
+      pulseEl.innerHTML = pulse.map(function (d) {
+        var pct = Math.max(3, Math.round(((d.submissions || 0) / maxSub) * 100));
+        return (
+          '<div class="pulse-col" title="' + escapeHtml(d.date + ": " + d.submissions + " scores, " + d.activeStudents + " active") + '">' +
+            '<span class="pulse-count">' + (d.submissions || 0) + '</span>' +
+            '<div class="pulse-track"><div class="pulse-fill" style="height:' + (d.submissions ? pct : 3) + '%;opacity:' + (d.submissions ? "1" : "0.25") + ';"></div></div>' +
+            '<span class="pulse-day">' + escapeHtml(d.label) + '</span>' +
+          '</div>'
+        );
+      }).join("");
+
+      // Skill coverage
+      var skills = dashboardData.skillStats || [];
+      var maxSkillPlays = Math.max(1, skills.reduce(function (m, x) { return Math.max(m, x.totalPlays || 0); }, 0));
+      var skillEl = document.getElementById("skillStatsList");
+      if (!skills.length) {
+        skillEl.innerHTML = '<div class="adm-empty"><p>No skill activity recorded yet.</p></div>';
+      } else {
+        skillEl.innerHTML = skills.slice(0, 7).map(function (sk) {
+          var w = Math.max(4, Math.round((sk.totalPlays / maxSkillPlays) * 100));
+          return (
+            '<div class="skill-row">' +
+              '<div class="skill-row-top">' +
+                '<strong>' + escapeHtml(sk.skill) + '</strong>' +
+                '<span class="skill-row-meta">' + sk.totalPlays + ' plays · ' + (sk.avgAccuracy ? sk.avgAccuracy + '% avg' : '—') + ' · ' + sk.activeStudents + ' students</span>' +
+              '</div>' +
+              '<div class="skill-meter"><div class="skill-meter-fill" style="width:' + w + '%;"></div></div>' +
+            '</div>'
+          );
+        }).join("");
+      }
+
+      // Top games
+      var top = dashboardData.topGames || [];
+      var topEl = document.getElementById("topGamesList");
+      if (!top.length) {
+        topEl.innerHTML = '<div class="adm-empty"><p>No game plays recorded yet.</p></div>';
+      } else {
+        topEl.innerHTML = top.slice(0, 6).map(function (g) {
+          return (
+            '<div class="adm-list-row">' +
+              '<div class="adm-list-main"><strong>' + escapeHtml(g.name) + '</strong><span class="adm-list-sub">' + escapeHtml(g.category + " · " + (g.players || 0) + " players") + '</span></div>' +
+              '<div class="adm-list-val">' + g.totalPlays + ' plays<small>' + (g.avgAccuracy ? g.avgAccuracy + '% avg' : '—') + '</small></div>' +
+            '</div>'
+          );
+        }).join("");
+      }
+
+      // Games needing review (lowest avgAccuracy with at least 1 play and measurable accuracy)
+      var allGameStats = (dashboardData.gameStats || []).filter(function (g) { return g.avgAccuracy > 0; });
+      allGameStats.sort(function (a, b) { return a.avgAccuracy - b.avgAccuracy || b.totalPlays - a.totalPlays; });
+      var revEl = document.getElementById("reviewGamesList");
+      if (!allGameStats.length) {
+        revEl.innerHTML = '<div class="adm-empty"><p>Accuracy diagnostics will appear once students complete scored games.</p></div>';
+      } else {
+        revEl.innerHTML = allGameStats.slice(0, 6).map(function (g) {
+          return (
+            '<div class="adm-list-row">' +
+              '<div class="adm-list-main"><strong>' + escapeHtml(g.name) + '</strong><span class="adm-list-sub">' + escapeHtml(g.category + " · " + g.totalPlays + " plays") + '</span></div>' +
+              '<div class="adm-list-val" style="color:' + (g.avgAccuracy < 65 ? "var(--adm-err)" : (g.avgAccuracy < 80 ? "var(--adm-warn)" : "var(--adm-ok)")) + ';">' + g.avgAccuracy + '%<small>class avg</small></div>' +
+            '</div>'
+          );
+        }).join("");
+      }
+
+      // Overview Homework Check
+      var ovHwMeta = document.getElementById("overviewHwMeta");
+      var ovHwBody = document.getElementById("overviewHwBody");
+      var students = dashboardData.students || [];
+      if (!currentAssignment || !currentAssignment.items || !currentAssignment.items.length) {
+        ovHwMeta.textContent = "No homework currently pinned for the class";
+        ovHwBody.innerHTML = '<div class="adm-empty"><p>Pin games in Homework Manager to track completion across your roster.</p><button type="button" class="adm-btn adm-btn--sm adm-btn--primary" data-jump-tab="homework">Create Assignment</button></div>';
+      } else {
+        var doneAll = 0;
+        var startedSome = 0;
+        students.forEach(function (st) {
+          var c = studentHwCounts(st);
+          if (c.total > 0 && c.done === c.total) doneAll += 1;
+          else if (c.done > 0) startedSome += 1;
+        });
+        ovHwMeta.textContent = currentAssignment.title + " · " + currentAssignment.items.length + " games · Updated " + formatRelative(currentAssignment.updatedAt);
+        ovHwBody.innerHTML =
+          '<div class="adm-list-clean">' +
+            '<div class="adm-list-row"><div class="adm-list-main"><strong>Completed All Assigned Games</strong><span class="adm-list-sub">Out of ' + students.length + ' tracked profiles</span></div><div class="adm-list-val" style="color:var(--adm-ok);">' + doneAll + '</div></div>' +
+            '<div class="adm-list-row"><div class="adm-list-main"><strong>In Progress</strong><span class="adm-list-sub">At least 1 assigned game played</span></div><div class="adm-list-val" style="color:var(--adm-warn);">' + startedSome + '</div></div>' +
+            '<div class="adm-list-row"><div class="adm-list-main"><strong>Not Started</strong><span class="adm-list-sub">0 assigned games played yet</span></div><div class="adm-list-val">' + Math.max(0, students.length - doneAll - startedSome) + '</div></div>' +
+          '</div>';
+      }
+
+      // Latest submissions preview
+      var feed = dashboardData.recentActivity || [];
+      var feedEl = document.getElementById("recentFeedList");
+      document.getElementById("recentFeedMeta").textContent = feed.length + " logged scores";
+      if (!feed.length) {
+        feedEl.innerHTML = '<div class="adm-empty"><p>No recent score submissions yet.</p></div>';
+      } else {
+        feedEl.innerHTML = feed.slice(0, 6).map(function (r) {
+          var sc = r.maxScore ? r.score + " / " + r.maxScore : String(r.score);
+          var meta = r.gameName + " · " + formatRelative(r.at);
+          return (
+            '<div class="adm-list-row">' +
+              '<div class="adm-list-main"><strong>' + escapeHtml(r.studentName) + '</strong><span class="adm-list-sub">' + escapeHtml(meta) + '</span></div>' +
+              '<div class="adm-list-val">' + escapeHtml(sc) + '<small>' + (r.accuracy != null ? r.accuracy + '%' : 'score') + '</small></div>' +
+            '</div>'
+          );
+        }).join("");
+      }
+    }
+
+    /* Render Students Roster */
+    function populateClassFilter() {
+      var sel = document.getElementById("classFilter");
+      var classes = (dashboardData && dashboardData.classes) || [];
+      var prev = selectedClass;
+      sel.innerHTML = '<option value="all">All Classes</option>' + classes.map(function (c) {
+        return '<option value="' + escapeHtml(c) + '">' + escapeHtml("Class: " + c) + '</option>';
+      }).join("");
+      sel.value = classes.indexOf(prev) !== -1 ? prev : "all";
+      selectedClass = sel.value;
     }
 
     function filteredStudents() {
@@ -1278,24 +2122,34 @@
       var q = searchTerm.trim().toLowerCase();
 
       list = list.filter(function (s) {
+        if (selectedClass !== "all" && (s.classCode || "") !== selectedClass) return false;
         if (activeFilter === "active7d" && !s.active7d) return false;
         if (activeFilter === "active24h" && !s.active24h) return false;
         if (activeFilter === "inactive" && s.active7d) return false;
         if (activeFilter === "registered" && !s.registered) return false;
         if (activeFilter === "guest" && s.registered) return false;
+        if (activeFilter === "hwPending" || activeFilter === "hwDone") {
+          var hwc = studentHwCounts(s);
+          if (hwc.total === 0) return activeFilter === "hwPending";
+          if (activeFilter === "hwDone" && hwc.done < hwc.total) return false;
+          if (activeFilter === "hwPending" && hwc.done >= hwc.total) return false;
+        }
 
         if (!q) return true;
         if ((s.displayName || "").toLowerCase().indexOf(q) !== -1) return true;
         if ((s.username || "").toLowerCase().indexOf(q) !== -1) return true;
+        if ((s.classCode || "").toLowerCase().indexOf(q) !== -1) return true;
         return (s.games || []).some(function (g) {
           return (g.name || "").toLowerCase().indexOf(q) !== -1 || (g.id || "").toLowerCase().indexOf(q) !== -1;
         });
       });
 
       list.sort(function (a, b) {
-        if (sortMode === "stars") return b.totalStars - a.totalStars || b.totalPlays - a.totalPlays || b.lastActiveAt - a.lastActiveAt;
+        if (sortMode === "xp") return (b.xp || 0) - (a.xp || 0) || b.totalStars - a.totalStars;
+        if (sortMode === "stars") return b.totalStars - a.totalStars || b.totalPlays - a.totalPlays;
         if (sortMode === "plays") return b.totalPlays - a.totalPlays || b.totalStars - a.totalStars;
         if (sortMode === "accuracy") return b.avgAccuracy - a.avgAccuracy || b.totalStars - a.totalStars;
+        if (sortMode === "homework") return studentHwCounts(b).done - studentHwCounts(a).done || b.lastActiveAt - a.lastActiveAt;
         if (sortMode === "joined") return b.joinedAt - a.joinedAt || b.lastActiveAt - a.lastActiveAt;
         if (sortMode === "name") return (a.displayName || "").localeCompare(b.displayName || "");
         return b.lastActiveAt - a.lastActiveAt || b.totalStars - a.totalStars || b.joinedAt - a.joinedAt;
@@ -1304,223 +2158,231 @@
       return list;
     }
 
+    function buildStudentReportText(s) {
+      var hw = studentHwCounts(s);
+      var lines = [
+        "Student Progress Report — " + s.displayName + (s.username ? " (@" + s.username + ")" : ""),
+        "Generated: " + new Date().toLocaleDateString(),
+        "Rank: " + (s.rankName || "Bronze Novice") + " (" + (s.xp || 0) + " XP)",
+        "Activity: " + s.totalPlays + " plays · " + s.gamesPlayed + " games practiced · " + s.totalStars + " stars · " + (s.avgAccuracy ? s.avgAccuracy + "% avg accuracy" : "Accuracy N/A")
+      ];
+      if (hw.total > 0) {
+        lines.push("Assigned Homework (" + currentAssignment.title + "): " + hw.done + " / " + hw.total + " completed");
+      }
+      if (s.games && s.games.length) {
+        lines.push("", "Top Practiced Games:");
+        s.games.slice(0, 10).forEach(function (g) {
+          var sc = g.maxScore > 0 ? g.bestScore + "/" + g.maxScore : (g.bestScore || "—");
+          lines.push("- " + g.name + " (" + g.category + "): " + g.stars + "/3 stars, best " + sc + (g.accuracy ? ", " + g.accuracy + "%" : ""));
+        });
+      }
+      return lines.join("\n");
+    }
+
     function renderRoster() {
       var container = document.getElementById("rosterContainer");
       var meta = document.getElementById("rosterCountMeta");
       var list = filteredStudents();
-
-      meta.textContent = list.length + " student" + (list.length === 1 ? "" : "s") + " shown · click a row to inspect games & scores";
+      meta.textContent = list.length + " student" + (list.length === 1 ? "" : "s") + " shown · Click a row to inspect games and copy a report";
 
       if (!list.length) {
-        container.innerHTML = '<div class="adm-empty">No students match the current filter or search.</div>';
+        container.innerHTML =
+          '<div class="adm-empty">' +
+            '<p>No students match the current filter or search query.</p>' +
+            '<button type="button" class="adm-btn adm-btn--sm" id="resetStudentFiltersBtn">Reset Filters</button>' +
+          '</div>';
+        var resetBtn = document.getElementById("resetStudentFiltersBtn");
+        if (resetBtn) {
+          resetBtn.addEventListener("click", function () {
+            activeFilter = "all";
+            selectedClass = "all";
+            searchTerm = "";
+            document.getElementById("studentSearch").value = "";
+            document.getElementById("classFilter").value = "all";
+            document.querySelectorAll("#filterBar .adm-seg-btn").forEach(function (b) {
+              b.classList.toggle("is-on", b.getAttribute("data-filter") === "all");
+            });
+            renderRoster();
+          });
+        }
         return;
       }
 
       container.innerHTML =
-        '<div class="roster-list">' +
+        '<div class="roster-table-shell">' +
         list.map(function (s) {
           var isOpen = !!openKeys[s.key];
           var st = statusInfo(s);
+          var hw = studentHwCounts(s);
           var subParts = [];
           if (s.registered && s.username) subParts.push("@" + s.username);
-          else subParts.push("Guest score");
-          if (s.streak && s.streak.current > 0) subParts.push("🔥 " + s.streak.current + "d streak");
-          if (s.joinedAt) subParts.push("Joined " + new Date(s.joinedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" }));
+          else subParts.push("Guest");
+          if (s.classCode) subParts.push("Class " + s.classCode);
+          if (s.rankName) subParts.push(s.rankName);
+          if (s.streak && s.streak.current > 0) subParts.push(s.streak.current + "d streak");
           subParts.push("Last active: " + formatRelative(s.lastActiveAt));
 
-          var hwTotal = (currentAssignment && currentAssignment.items) ? currentAssignment.items.length : 0;
-          var hwDone = 0;
           var hwChecklistHtml = "";
-          if (hwTotal > 0) {
+          if (hw.total > 0) {
             var gameLookup = {};
             (s.games || []).forEach(function (g) { gameLookup[g.id] = g; });
-            hwChecklistHtml = '<div class="adm-hw-check">' + currentAssignment.items.map(function (it) {
-              var g = gameLookup[it.id];
-              var done = Boolean(g && (g.completed || g.stars > 0 || g.plays > 0));
-              if (done) hwDone += 1;
-              return '<span class="adm-hw-badge' + (done ? ' is-done' : '') + '">' + (done ? '✓ ' : '○ ') + escapeHtml(it.title || it.id) + '</span>';
-            }).join("") + '</div>';
+            hwChecklistHtml =
+              '<div class="detail-hw-line"><strong>Homework (' + hw.done + '/' + hw.total + '):</strong> ' +
+              currentAssignment.items.map(function (it) {
+                var g = gameLookup[it.id];
+                var done = Boolean(g && (g.completed || g.stars > 0 || g.plays > 0));
+                return '<span class="' + (done ? "hw-state-ok" : "hw-state-pending") + '">' + (done ? "Done: " : "Pending: ") + escapeHtml(it.title || it.id) + '</span>';
+              }).join(" · ") +
+              '</div>';
           }
 
-          var detailHtml;
-          if (!s.games || !s.games.length) {
-            detailHtml = hwChecklistHtml + '<div class="detail-summary">No game activity recorded yet for this account.</div>';
-          } else {
-            detailHtml =
-              hwChecklistHtml +
-              '<div class="detail-summary tabular">' +
-                s.gamesPlayed + " games practiced · " +
-                s.completedGames + " completed · " +
-                s.totalStars + " stars · " +
-                s.totalPlays + " plays · " +
-                (s.streak && s.streak.current > 0 ? ("🔥 " + s.streak.current + "d streak (best " + (s.streak.best || s.streak.current) + "d) · ") : "") +
-                (s.avgAccuracy ? s.avgAccuracy + "% avg accuracy" : "Accuracy tracking pending") +
-              "</div>" +
-              '<div class="adm-table-wrap"><table class="adm-table"><thead><tr>' +
+          var gamesTableHtml = (!s.games || !s.games.length)
+            ? '<div class="detail-summary">No game activity recorded yet for this account.</div>'
+            : '<div class="adm-table-wrap"><table class="adm-table"><thead><tr>' +
                 '<th>Game</th><th>Skill</th><th class="num">Stars</th><th class="num">Best Score</th><th class="num">Best Time</th><th class="num">Accuracy</th><th class="num">Plays</th><th class="num">Last Played</th>' +
-              "</tr></thead><tbody>" +
+              '</tr></thead><tbody>' +
               s.games.map(function (g) {
                 var sc = g.maxScore > 0 ? g.bestScore + " / " + g.maxScore : (g.bestScore ? String(g.bestScore) : "—");
                 return (
-                  "<tr>" +
-                    "<td><strong>" + escapeHtml(g.name) + "</strong></td>" +
-                    "<td>" + escapeHtml(g.category || "General") + "</td>" +
-                    '<td class="num">' + starsHtml(g.stars) + "</td>" +
-                    '<td class="num">' + escapeHtml(sc) + "</td>" +
-                    '<td class="num">' + escapeHtml(formatTime(g.bestTimeMs)) + "</td>" +
-                    '<td class="num">' + (g.accuracy ? g.accuracy + "%" : "—") + "</td>" +
-                    '<td class="num">' + (g.plays || 0) + "</td>" +
-                    '<td class="num">' + escapeHtml(formatExact(g.lastAt)) + "</td>" +
-                  "</tr>"
+                  '<tr>' +
+                    '<td><strong>' + escapeHtml(g.name) + '</strong></td>' +
+                    '<td>' + escapeHtml(g.category || "General") + '</td>' +
+                    '<td class="num">' + starsHtml(g.stars) + '</td>' +
+                    '<td class="num">' + escapeHtml(sc) + '</td>' +
+                    '<td class="num">' + escapeHtml(formatTime(g.bestTimeMs)) + '</td>' +
+                    '<td class="num">' + (g.accuracy ? g.accuracy + "%" : "—") + '</td>' +
+                    '<td class="num">' + (g.plays || 0) + '</td>' +
+                    '<td class="num">' + escapeHtml(formatExact(g.lastAt)) + '</td>' +
+                  '</tr>'
                 );
               }).join("") +
-              "</tbody></table></div>";
+              '</tbody></table></div>';
 
-            if (s.recentScores && s.recentScores.length) {
-              detailHtml +=
-                '<div class="detail-summary" style="margin-top:4px;">Latest score submissions: ' +
+          var recentLine = (s.recentScores && s.recentScores.length)
+            ? '<div class="detail-summary">Latest submissions: ' +
                 s.recentScores.slice(0, 5).map(function (rs) {
                   var sc = rs.maxScore ? rs.score + "/" + rs.maxScore : rs.score;
                   var tm = rs.timeMs ? ", " + formatTime(rs.timeMs) : "";
                   return escapeHtml(rs.gameName + " (" + sc + tm + ", " + formatRelative(rs.at) + ")");
                 }).join(" · ") +
-                "</div>";
-            }
-          }
+              '</div>'
+            : "";
 
           return (
             '<div class="roster-item' + (isOpen ? " is-open" : "") + '" data-key="' + escapeHtml(s.key) + '">' +
               '<button type="button" class="roster-row" aria-expanded="' + (isOpen ? "true" : "false") + '">' +
-                '<div class="roster-avatar' + (s.registered ? "" : " is-guest") + '">' + escapeHtml((s.displayName || "?").charAt(0).toUpperCase()) + "</div>" +
+                '<div class="roster-avatar' + (s.registered ? "" : " is-guest") + '">' + escapeHtml((s.displayName || "?").charAt(0).toUpperCase()) + '</div>' +
                 '<div class="roster-main">' +
-                  '<div class="roster-name">' + escapeHtml(s.displayName) + "</div>" +
-                  '<div class="roster-meta">' + escapeHtml(subParts.join(" · ")) + "</div>" +
-                "</div>" +
-                '<div class="roster-metric"><strong>' + s.totalStars + ' ★</strong><span>' + (hwTotal > 0 ? ('HW ' + hwDone + '/' + hwTotal) : (s.gamesPlayed + ' games')) + "</span></div>" +
-                '<div class="roster-metric roster-metric--hide-sm"><strong>' + s.totalPlays + '</strong><span>plays · ' + (s.avgAccuracy ? s.avgAccuracy + "%" : "—") + "</span></div>" +
-                '<div class="roster-status ' + st.cls + '">' + escapeHtml(st.label) + "</div>" +
+                  '<div class="roster-name">' + escapeHtml(s.displayName) + '</div>' +
+                  '<div class="roster-meta">' + escapeHtml(subParts.join(" · ")) + '</div>' +
+                '</div>' +
+                '<div class="roster-col roster-col--hide-md"><strong>' + (s.xp || 0) + ' XP</strong><span>' + (s.gamesPlayed || 0) + ' games</span></div>' +
+                '<div class="roster-col"><strong>' + s.totalStars + ' ★</strong><span>' + (hw.total > 0 ? ("HW " + hw.done + "/" + hw.total) : (s.completedGames + " done")) + '</span></div>' +
+                '<div class="roster-col roster-col--hide-md"><strong>' + s.totalPlays + ' plays</strong><span>' + (s.avgAccuracy ? s.avgAccuracy + "% avg" : "—") + '</span></div>' +
+                '<div class="roster-state ' + st.cls + '">' + escapeHtml(st.label) + '</div>' +
                 '<span class="roster-chev" aria-hidden="true">▾</span>' +
-              "</button>" +
-              '<div class="roster-detail">' + detailHtml + "</div>" +
-            "</div>"
+              '</button>' +
+              '<div class="roster-detail">' +
+                '<div class="detail-header">' +
+                  '<div class="detail-summary">' +
+                    escapeHtml((s.xp || 0) + " XP · " + (s.rankName || "Bronze Novice") + " · " + s.gamesPlayed + " games · " + s.completedGames + " completed · Best streak " + (s.streak && s.streak.best ? s.streak.best : 0) + "d") +
+                  '</div>' +
+                  '<button type="button" class="adm-btn adm-btn--sm" data-copy-report="' + escapeHtml(s.key) + '">Copy Progress Report</button>' +
+                '</div>' +
+                hwChecklistHtml +
+                gamesTableHtml +
+                recentLine +
+              '</div>' +
+            '</div>'
           );
         }).join("") +
-        "</div>";
-
-      container.querySelectorAll(".roster-row").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          var item = btn.closest(".roster-item");
-          if (!item) return;
-          var k = item.getAttribute("data-key");
-          var next = !item.classList.contains("is-open");
-          item.classList.toggle("is-open", next);
-          btn.setAttribute("aria-expanded", next ? "true" : "false");
-          if (next) openKeys[k] = true;
-          else delete openKeys[k];
-        });
-      });
+        '</div>';
     }
 
-    function renderInsights() {
-      var topEl = document.getElementById("topGamesList");
-      var top = (dashboardData && dashboardData.topGames) || [];
-      if (!top.length) {
-        topEl.innerHTML = '<div class="adm-empty">No game plays recorded yet.</div>';
-      } else {
-        topEl.innerHTML = top.map(function (g) {
-          return (
-            '<div class="insight-row">' +
-              '<div class="insight-main"><strong>' + escapeHtml(g.name) + "</strong><small>" + escapeHtml(g.category) + "</small></div>" +
-              '<div class="insight-val tabular">' + g.totalPlays + " plays<small>" + (g.avgAccuracy ? g.avgAccuracy + "% avg" : "—") + "</small></div>" +
-            "</div>"
-          );
-        }).join("");
+    document.getElementById("rosterContainer").addEventListener("click", async function (e) {
+      var copyBtn = e.target.closest("[data-copy-report]");
+      if (copyBtn) {
+        var key = copyBtn.getAttribute("data-copy-report");
+        var st = (dashboardData.students || []).find(function (x) { return x.key === key; });
+        if (!st) return;
+        var text = buildStudentReportText(st);
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(text);
+            copyBtn.textContent = "Copied!";
+            setTimeout(function () { copyBtn.textContent = "Copy Progress Report"; }, 1800);
+          }
+        } catch (err) {}
+        return;
       }
 
-      var feedEl = document.getElementById("recentFeedList");
-      var feedMeta = document.getElementById("recentFeedMeta");
-      var feed = (dashboardData && dashboardData.recentActivity) || [];
-      feedMeta.textContent = feed.length + " recent";
-      if (!feed.length) {
-        feedEl.innerHTML = '<div class="adm-empty">No recent score submissions yet.</div>';
-      } else {
-        feedEl.innerHTML = feed.slice(0, 20).map(function (r) {
-          var sc = r.maxScore ? r.score + " / " + r.maxScore : String(r.score);
-          var meta = r.gameName + " · " + formatRelative(r.at);
-          return (
-            '<div class="insight-row">' +
-              '<div class="insight-main"><strong>' + escapeHtml(r.studentName) + "</strong><small>" + escapeHtml(meta) + "</small></div>" +
-              '<div class="insight-val tabular">' + escapeHtml(sc) + "<small>" + (r.accuracy != null ? r.accuracy + "%" : "score") + "</small></div>" +
-            "</div>"
-          );
-        }).join("");
-      }
-    }
+      var rowBtn = e.target.closest(".roster-row");
+      if (!rowBtn) return;
+      var item = rowBtn.closest(".roster-item");
+      if (!item) return;
+      var k = item.getAttribute("data-key");
+      var next = !item.classList.contains("is-open");
+      item.classList.toggle("is-open", next);
+      rowBtn.setAttribute("aria-expanded", next ? "true" : "false");
+      if (next) openKeys[k] = true;
+      else delete openKeys[k];
+    });
 
-    function renderDashboard() {
-      if (!dashboardData) return;
-      var s = dashboardData.summary || {};
-
-      document.getElementById("statusLine").textContent =
-        "Updated " + formatExact(dashboardData.generatedAt) + " · " +
-        (s.totalStudents || 0) + " tracked profiles & guests";
-
-      var warnBar = document.getElementById("warnBar");
-      if (dashboardData.warnings && dashboardData.warnings.length) {
-        warnBar.hidden = false;
-        warnBar.textContent = "Database note: " + dashboardData.warnings.join(" | ");
-      } else {
-        warnBar.hidden = true;
-      }
-
-      document.getElementById("kpiRegistered").textContent = String(s.registeredCount || 0);
-      document.getElementById("kpiGuests").textContent = (s.guestCount || 0) + " guest score profiles";
-      document.getElementById("kpiActive7d").textContent = String(s.active7dCount || 0);
-      document.getElementById("kpiActive24h").textContent = (s.active24hCount || 0) + " active today";
-      document.getElementById("kpiPlays").textContent = String(s.totalPlays || 0);
-      document.getElementById("kpiProgressRows").textContent = (s.progressRows || 0) + " progress records";
-      document.getElementById("kpiStars").textContent = String(s.totalStars || 0);
-      document.getElementById("kpiInactive").textContent = (s.inactiveCount || 0) + " inactive registered";
-      document.getElementById("kpiAccuracy").textContent = s.avgAccuracy ? s.avgAccuracy + "%" : "—";
-      document.getElementById("kpiSubmissions").textContent = (s.scoreSubmissions || 0) + " score submissions";
-
-      currentAssignment = dashboardData.assignment || null;
-      syncHomeworkEditorFromServer();
+    document.getElementById("studentSearch").addEventListener("input", function (e) {
+      searchTerm = e.target.value || "";
       renderRoster();
-      renderInsights();
-    }
+    });
+    document.getElementById("classFilter").addEventListener("change", function (e) {
+      selectedClass = e.target.value || "all";
+      renderRoster();
+    });
+    document.getElementById("studentSort").addEventListener("change", function (e) {
+      sortMode = e.target.value || "lastActive";
+      renderRoster();
+    });
+    document.getElementById("filterBar").addEventListener("click", function (e) {
+      var btn = e.target.closest(".adm-seg-btn");
+      if (!btn) return;
+      document.querySelectorAll("#filterBar .adm-seg-btn").forEach(function (b) {
+        b.classList.toggle("is-on", b === btn);
+      });
+      activeFilter = btn.getAttribute("data-filter") || "all";
+      renderRoster();
+    });
 
-    /* Homework Pinning Composer */
+    /* Homework Manager & Matrix */
     var hwTitleInput = document.getElementById("hwTitleInput");
     var hwNoteInput = document.getElementById("hwNoteInput");
     var hwSearchInput = document.getElementById("hwSearchInput");
+    var hwSkillSelect = document.getElementById("hwSkillFilter");
     var hwSearchResults = document.getElementById("hwSearchResults");
-    var hwSelectedChips = document.getElementById("hwSelectedChips");
+    var hwSelectedQueue = document.getElementById("hwSelectedQueue");
     var hwCountLabel = document.getElementById("hwCountLabel");
     var hwStatusMsg = document.getElementById("hwStatusMsg");
 
-    function setHwStatus(text, type) {
-      if (!hwStatusMsg) return;
+    function setHwStatus(text, isErr) {
       hwStatusMsg.textContent = text || "";
-      hwStatusMsg.className = "adm-hw-status" + (type ? (" is-" + type) : "");
+      hwStatusMsg.className = isErr ? "adm-error" : "adm-msg-ok";
     }
 
-    function catalogList() {
-      if (window.LASkillCatalog && LASkillCatalog.rebuild) LASkillCatalog.rebuild();
-      return (window.LASkillCatalog && LASkillCatalog.getAll) ? LASkillCatalog.getAll() : [];
-    }
-
-    function renderHwChips() {
+    function renderHwQueue() {
       hwCountLabel.textContent = draftHwItems.length + " game" + (draftHwItems.length === 1 ? "" : "s") + " selected (max 24)";
       if (!draftHwItems.length) {
-        hwSelectedChips.innerHTML = '<span class="adm-panel-meta">No games pinned yet. Search above to pick games for your class.</span>';
+        hwSelectedQueue.innerHTML = '<div class="adm-empty" style="border:0;padding:18px;"><p style="margin:0;">No games selected yet. Pick games from the list above.</p></div>';
       } else {
-        hwSelectedChips.innerHTML = draftHwItems.map(function (it, idx) {
+        hwSelectedQueue.innerHTML = draftHwItems.map(function (it, idx) {
+          var meta = [it.category, it.course].filter(Boolean).join(" · ");
           return (
-            '<span class="adm-hw-chip">' +
-              '<span>' + escapeHtml(it.title || it.id) + '</span>' +
-              '<button type="button" data-hw-rm="' + idx + '" aria-label="Remove ' + escapeHtml(it.title || it.id) + '">×</button>' +
-            '</span>'
+            '<div class="hw-queue-row">' +
+              '<div class="adm-list-main"><strong>' + escapeHtml((idx + 1) + ". " + (it.title || it.id)) + '</strong>' +
+              (meta ? '<span class="adm-list-sub">' + escapeHtml(meta) + '</span>' : '') +
+              '</div>' +
+              '<div class="hw-queue-controls">' +
+                '<button type="button" class="hw-icon-btn" data-hw-up="' + idx + '"' + (idx === 0 ? " disabled" : "") + ' aria-label="Move up">↑</button>' +
+                '<button type="button" class="hw-icon-btn" data-hw-dn="' + idx + '"' + (idx === draftHwItems.length - 1 ? " disabled" : "") + ' aria-label="Move down">↓</button>' +
+                '<button type="button" class="hw-icon-btn hw-icon-btn--del" data-hw-rm="' + idx + '" aria-label="Remove">×</button>' +
+              '</div>' +
+            '</div>'
           );
         }).join("");
       }
@@ -1529,33 +2391,29 @@
 
     function renderHwSearchResults() {
       var q = String(hwSearchInput.value || "").trim().toLowerCase();
-      if (!q) {
-        hwSearchResults.hidden = true;
-        hwSearchResults.innerHTML = "";
-        return;
-      }
       var pickedIds = {};
       draftHwItems.forEach(function (it) { pickedIds[it.id] = true; });
 
       var matches = catalogList().filter(function (g) {
+        if (hwSkillSelect.value !== "all" && g.label !== hwSkillSelect.value) return false;
+        if (!q) return true;
         var hay = (g.title + " " + g.label + " " + g.course + " " + g.id).toLowerCase();
         return hay.indexOf(q) !== -1;
-      }).slice(0, 24);
+      }).slice(0, 36);
 
-      hwSearchResults.hidden = false;
       if (!matches.length) {
-        hwSearchResults.innerHTML = '<div class="adm-empty" style="grid-column:1/-1;padding:14px;">No matching games found.</div>';
+        hwSearchResults.innerHTML = '<div class="adm-empty" style="grid-column:1/-1;border:0;padding:14px;">No matching games found.</div>';
         return;
       }
       hwSearchResults.innerHTML = matches.map(function (g) {
         var picked = !!pickedIds[g.id];
         return (
-          '<button type="button" class="adm-hw-pick' + (picked ? ' is-picked' : '') + '" data-hw-add="' + escapeHtml(g.id) + '">' +
-            '<div class="adm-hw-pick-info">' +
+          '<button type="button" class="hw-pick-btn' + (picked ? " is-picked" : "") + '" data-hw-add="' + escapeHtml(g.id) + '">' +
+            '<div class="hw-pick-info">' +
               '<strong>' + escapeHtml(g.title) + '</strong>' +
               '<small>' + escapeHtml([g.label, g.course].filter(Boolean).join(" · ")) + '</small>' +
             '</div>' +
-            '<span class="adm-hw-pick-plus">' + (picked ? "Added ✓" : "+ Pin") + '</span>' +
+            '<span class="hw-pick-action">' + (picked ? "Added" : "+ Add") + '</span>' +
           '</button>'
         );
       }).join("");
@@ -1563,6 +2421,7 @@
 
     function syncHomeworkEditorFromServer() {
       var hw = currentAssignment;
+      document.getElementById("navHwCount").textContent = (hw && hw.items) ? String(hw.items.length) : "0";
       if (hw && Array.isArray(hw.items) && hw.items.length) {
         if (document.activeElement !== hwTitleInput) hwTitleInput.value = hw.title || "This Week's Assigned Games";
         if (document.activeElement !== hwNoteInput) hwNoteInput.value = hw.note || "";
@@ -1576,16 +2435,87 @@
           };
         });
         document.getElementById("hwPanelMeta").textContent =
-          "Active on homepage, arcade & student profiles · Updated " + formatRelative(hw.updatedAt);
+          "Active on Homepage, Arcade & Student Profiles · Updated " + formatRelative(hw.updatedAt);
       } else {
         draftHwItems = [];
         document.getElementById("hwPanelMeta").textContent =
           "Pin games for the class or copy a shareable homework link";
       }
-      renderHwChips();
+      renderHwQueue();
+      renderHwHistory();
+      renderHwMatrix();
+    }
+
+    function renderHwHistory() {
+      var hist = (dashboardData && dashboardData.assignmentHistory) || [];
+      var el = document.getElementById("hwHistoryList");
+      if (!hist.length) {
+        el.innerHTML = '<div class="adm-empty"><p>Saved homework packs will appear here so you can reuse them later.</p></div>';
+        return;
+      }
+      el.innerHTML = hist.map(function (h, i) {
+        var count = Array.isArray(h.items) ? h.items.length : 0;
+        return (
+          '<div class="adm-list-row">' +
+            '<div class="adm-list-main">' +
+              '<strong>' + escapeHtml(h.title || "Assigned Games") + '</strong>' +
+              '<span class="adm-list-sub">' + count + ' games · ' + formatRelative(h.updatedAt) + '</span>' +
+            '</div>' +
+            '<button type="button" class="adm-btn adm-btn--sm" data-hw-load="' + i + '">Load</button>' +
+          '</div>'
+        );
+      }).join("");
+    }
+
+    function renderHwMatrix() {
+      var container = document.getElementById("hwMatrixContainer");
+      var meta = document.getElementById("hwMatrixMeta");
+      if (!currentAssignment || !currentAssignment.items || !currentAssignment.items.length) {
+        meta.textContent = "Pin an assignment above to see the class completion matrix";
+        container.innerHTML = '<div class="adm-empty"><p>No pinned homework active right now.</p></div>';
+        return;
+      }
+      var students = ((dashboardData && dashboardData.students) || []).slice().sort(function (a, b) {
+        return studentHwCounts(b).done - studentHwCounts(a).done || (a.displayName || "").localeCompare(b.displayName || "");
+      });
+      var items = currentAssignment.items;
+      meta.textContent = items.length + " assigned games across " + students.length + " students";
+
+      if (!students.length) {
+        container.innerHTML = '<div class="adm-empty"><p>No students recorded yet.</p></div>';
+        return;
+      }
+
+      container.innerHTML =
+        '<div class="adm-table-wrap"><table class="adm-table"><thead><tr>' +
+          '<th>Student</th>' +
+          items.map(function (it) { return '<th>' + escapeHtml(it.title || it.id) + '</th>'; }).join("") +
+          '<th class="num">Total</th>' +
+        '</tr></thead><tbody>' +
+        students.slice(0, 80).map(function (st) {
+          var map = {};
+          (st.games || []).forEach(function (g) { map[g.id] = g; });
+          var done = 0;
+          var cells = items.map(function (it) {
+            var g = map[it.id];
+            var isDone = Boolean(g && (g.completed || g.stars > 0 || g.plays > 0));
+            if (isDone) done += 1;
+            var label = isDone ? (g.stars ? g.stars + "★" : "Done") : "—";
+            return '<td style="color:' + (isDone ? "var(--adm-ok)" : "var(--adm-muted)") + ';font-weight:' + (isDone ? "700" : "500") + ';">' + label + '</td>';
+          }).join("");
+          return (
+            '<tr>' +
+              '<td><strong>' + escapeHtml(st.displayName) + '</strong>' + (st.classCode ? '<br><small style="color:var(--adm-muted);">' + escapeHtml(st.classCode) + '</small>' : "") + '</td>' +
+              cells +
+              '<td class="num">' + done + '/' + items.length + '</td>' +
+            '</tr>'
+          );
+        }).join("") +
+        '</tbody></table></div>';
     }
 
     hwSearchInput.addEventListener("input", renderHwSearchResults);
+    hwSkillSelect.addEventListener("change", renderHwSearchResults);
 
     hwSearchResults.addEventListener("click", function (e) {
       var btn = e.target.closest("[data-hw-add]");
@@ -1605,25 +2535,65 @@
           url: found.url
         } : { id: id, title: id });
       }
-      renderHwChips();
+      renderHwQueue();
     });
 
-    hwSelectedChips.addEventListener("click", function (e) {
-      var btn = e.target.closest("[data-hw-rm]");
-      if (!btn) return;
-      var idx = Number(btn.getAttribute("data-hw-rm"));
-      if (!isNaN(idx)) {
-        draftHwItems.splice(idx, 1);
-        renderHwChips();
+    hwSelectedQueue.addEventListener("click", function (e) {
+      var up = e.target.closest("[data-hw-up]");
+      if (up) {
+        var idx = Number(up.getAttribute("data-hw-up"));
+        if (idx > 0) {
+          var tmp = draftHwItems[idx - 1];
+          draftHwItems[idx - 1] = draftHwItems[idx];
+          draftHwItems[idx] = tmp;
+          renderHwQueue();
+        }
+        return;
       }
+      var dn = e.target.closest("[data-hw-dn]");
+      if (dn) {
+        var dIdx = Number(dn.getAttribute("data-hw-dn"));
+        if (dIdx >= 0 && dIdx < draftHwItems.length - 1) {
+          var tmp2 = draftHwItems[dIdx + 1];
+          draftHwItems[dIdx + 1] = draftHwItems[dIdx];
+          draftHwItems[dIdx] = tmp2;
+          renderHwQueue();
+        }
+        return;
+      }
+      var rm = e.target.closest("[data-hw-rm]");
+      if (rm) {
+        var rIdx = Number(rm.getAttribute("data-hw-rm"));
+        if (!isNaN(rIdx)) {
+          draftHwItems.splice(rIdx, 1);
+          renderHwQueue();
+        }
+      }
+    });
+
+    document.getElementById("hwHistoryList").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-hw-load]");
+      if (!btn) return;
+      var idx = Number(btn.getAttribute("data-hw-load"));
+      var hist = (dashboardData && dashboardData.assignmentHistory) || [];
+      var item = hist[idx];
+      if (!item) return;
+      hwTitleInput.value = item.title || "This Week's Assigned Games";
+      hwNoteInput.value = item.note || "";
+      draftHwItems = (item.items || []).map(function (it) { return Object.assign({}, it); });
+      renderHwQueue();
+      setHwStatus("Loaded into composer. Click Pin for Class to publish.");
+    });
+
+    document.getElementById("hwClearDraftBtn").addEventListener("click", function () {
+      draftHwItems = [];
+      renderHwQueue();
+      setHwStatus("Selection cleared.");
     });
 
     document.getElementById("hwSaveBtn").addEventListener("click", async function () {
       if (!adminToken) return;
-      if (!draftHwItems.length) {
-        setHwStatus("Add at least 1 game or click Clear to unpin.", "err");
-        return;
-      }
+      if (!draftHwItems.length) { setHwStatus("Add at least 1 game first.", true); return; }
       var btn = this;
       btn.disabled = true;
       setHwStatus("Pinning for class…");
@@ -1635,21 +2605,22 @@
         };
         var result = await adminFetch("/api/assignments", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + adminToken
-          },
+          headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
           body: JSON.stringify(payload)
         });
         if (!result.ok || !result.data || !result.data.ok) {
-          setHwStatus((result.data && result.data.error) || result.error || "Could not save assignment.", "err");
+          setHwStatus((result.data && result.data.error) || result.error || "Could not save assignment.", true);
           return;
         }
         currentAssignment = result.data.assignment;
-        if (dashboardData) dashboardData.assignment = currentAssignment;
+        if (dashboardData) {
+          dashboardData.assignment = currentAssignment;
+          if (result.data.assignmentHistory) dashboardData.assignmentHistory = result.data.assignmentHistory;
+        }
         syncHomeworkEditorFromServer();
+        renderOverview();
         renderRoster();
-        setHwStatus("Pinned for class!", "ok");
+        setHwStatus("Pinned for class!");
       } finally {
         btn.disabled = false;
       }
@@ -1657,29 +2628,25 @@
 
     document.getElementById("hwClearBtn").addEventListener("click", async function () {
       if (!adminToken) return;
-      draftHwItems = [];
-      hwSearchInput.value = "";
-      renderHwChips();
       var btn = this;
       btn.disabled = true;
       setHwStatus("Clearing pinned homework…");
       try {
         var result = await adminFetch("/api/assignments", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + adminToken
-          },
+          headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
           body: JSON.stringify({ clear: true })
         });
         if (result.ok && result.data && result.data.ok) {
           currentAssignment = null;
+          draftHwItems = [];
           if (dashboardData) dashboardData.assignment = null;
           syncHomeworkEditorFromServer();
+          renderOverview();
           renderRoster();
-          setHwStatus("Cleared.", "ok");
+          setHwStatus("Class homework cleared.");
         } else {
-          setHwStatus((result.data && result.data.error) || "Could not clear assignment.", "err");
+          setHwStatus((result.data && result.data.error) || "Could not clear assignment.", true);
         }
       } finally {
         btn.disabled = false;
@@ -1687,10 +2654,7 @@
     });
 
     document.getElementById("hwCopyLinkBtn").addEventListener("click", async function () {
-      if (!draftHwItems.length) {
-        setHwStatus("Select at least 1 game first.", "err");
-        return;
-      }
+      if (!draftHwItems.length) { setHwStatus("Select at least 1 game first.", true); return; }
       var param = window.LAHomework && LAHomework.encodeShareParam({
         title: (hwTitleInput.value || "").trim() || "This Week's Assigned Games",
         note: (hwNoteInput.value || "").trim(),
@@ -1701,70 +2665,593 @@
       try {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(url);
-          setHwStatus("Share link copied!", "ok");
+          setHwStatus("Share link copied to clipboard!");
           return;
         }
       } catch (e) {}
-      setHwStatus("Share URL: " + url, "ok");
+      setHwStatus("Share link: " + url);
     });
 
-    /* Filter, search, sort */
-    document.getElementById("studentSearch").addEventListener("input", function (e) {
-      searchTerm = e.target.value || "";
-      renderRoster();
+    /* Announcements */
+    var annLevelInput = document.getElementById("annLevelInput");
+    var annTitleInput = document.getElementById("annTitleInput");
+    var annMessageInput = document.getElementById("annMessageInput");
+    var annLinkUrlInput = document.getElementById("annLinkUrlInput");
+    var annLinkTextInput = document.getElementById("annLinkTextInput");
+    var annStatusMsg = document.getElementById("annStatusMsg");
+
+    function renderAnnouncementPreview() {
+      var ann = dashboardData && dashboardData.announcement;
+      document.getElementById("navAnnState").textContent = ann ? "Live" : "Off";
+
+      var title = annTitleInput.value.trim();
+      var message = annMessageInput.value.trim();
+      var level = annLevelInput.value || "info";
+      var linkUrl = annLinkUrlInput.value.trim();
+      var linkText = annLinkTextInput.value.trim() || "Open";
+
+      var previewEl = document.getElementById("annPreviewContainer");
+      if (!title && !message) {
+        previewEl.innerHTML = '<div class="adm-empty"><p>No active announcement. Enter a headline or message to preview how it appears to students.</p></div>';
+        return;
+      }
+      var label = level === "alert" ? "Important Notice" : (level === "reminder" ? "Class Reminder" : "Teacher Notice");
+      previewEl.innerHTML =
+        '<div class="ann-preview is-' + escapeHtml(level) + '">' +
+          '<div>' +
+            '<div style="font-size:0.74rem;font-weight:700;color:var(--adm-accent);margin-bottom:2px;">' + escapeHtml(label) + '</div>' +
+            '<strong style="display:block;font-size:1rem;">' + escapeHtml(title || "Class Update") + '</strong>' +
+            (message ? '<div style="font-size:0.86rem;color:var(--adm-muted);margin-top:3px;">' + escapeHtml(message) + '</div>' : '') +
+          '</div>' +
+          (linkUrl ? '<a class="adm-btn adm-btn--sm adm-btn--primary" href="' + escapeHtml(safeUrl(linkUrl)) + '">' + escapeHtml(linkText) + '</a>' : '') +
+        '</div>';
+    }
+
+    function syncAnnouncementFromServer() {
+      var ann = dashboardData && dashboardData.announcement;
+      if (ann) {
+        annLevelInput.value = ann.level || "info";
+        annTitleInput.value = ann.title || "";
+        annMessageInput.value = ann.message || "";
+        annLinkUrlInput.value = ann.linkUrl || "";
+        annLinkTextInput.value = ann.linkText || "";
+        document.getElementById("annPreviewMeta").textContent = "Live on site · Updated " + formatRelative(ann.updatedAt);
+      } else {
+        document.getElementById("annPreviewMeta").textContent = "Preview updates as you type";
+      }
+      renderAnnouncementPreview();
+    }
+
+    [annLevelInput, annTitleInput, annMessageInput, annLinkUrlInput, annLinkTextInput].forEach(function (el) {
+      el.addEventListener("input", renderAnnouncementPreview);
+      el.addEventListener("change", renderAnnouncementPreview);
     });
-    document.getElementById("studentSort").addEventListener("change", function (e) {
-      sortMode = e.target.value || "lastActive";
-      renderRoster();
+
+    document.getElementById("annPublishBtn").addEventListener("click", async function () {
+      if (!adminToken) return;
+      var btn = this;
+      btn.disabled = true;
+      annStatusMsg.className = "adm-msg-ok";
+      annStatusMsg.textContent = "Publishing…";
+      try {
+        var res = await adminFetch("/api/admin/announcement", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
+          body: JSON.stringify({
+            level: annLevelInput.value,
+            title: annTitleInput.value.trim(),
+            message: annMessageInput.value.trim(),
+            linkUrl: annLinkUrlInput.value.trim(),
+            linkText: annLinkTextInput.value.trim()
+          })
+        });
+        if (!res.ok || !res.data || !res.data.ok) {
+          annStatusMsg.className = "adm-error";
+          annStatusMsg.textContent = (res.data && res.data.error) || res.error || "Could not publish announcement.";
+          return;
+        }
+        if (dashboardData) dashboardData.announcement = res.data.announcement;
+        syncAnnouncementFromServer();
+        annStatusMsg.textContent = "Announcement published live!";
+      } finally {
+        btn.disabled = false;
+      }
     });
-    document.getElementById("filterBar").addEventListener("click", function (e) {
-      var btn = e.target.closest(".adm-filter-btn");
-      if (!btn) return;
-      document.querySelectorAll(".adm-filter-btn").forEach(function (b) {
-        b.classList.toggle("is-on", b === btn);
+
+    document.getElementById("annClearBtn").addEventListener("click", async function () {
+      if (!adminToken) return;
+      var btn = this;
+      btn.disabled = true;
+      try {
+        var res = await adminFetch("/api/admin/announcement", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
+          body: JSON.stringify({ clear: true })
+        });
+        if (res.ok && res.data && res.data.ok) {
+          if (dashboardData) dashboardData.announcement = null;
+          annTitleInput.value = "";
+          annMessageInput.value = "";
+          annLinkUrlInput.value = "";
+          annLinkTextInput.value = "";
+          syncAnnouncementFromServer();
+          annStatusMsg.className = "adm-msg-ok";
+          annStatusMsg.textContent = "Announcement cleared.";
+        }
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    /* Live Multiplayer Rooms */
+    function renderRooms() {
+      var rooms = (dashboardData && dashboardData.rooms) || [];
+      document.getElementById("navRoomsCount").textContent = String(rooms.length);
+      document.getElementById("roomsMeta").textContent = rooms.length + " active multiplayer room" + (rooms.length === 1 ? "" : "s");
+      var container = document.getElementById("roomsContainer");
+
+      if (!rooms.length) {
+        container.innerHTML =
+          '<div class="adm-empty">' +
+            '<p>No multiplayer rooms are active right now. Rooms created by teachers or students will appear here.</p>' +
+            '<a href="../../multiplayer/" class="adm-btn adm-btn--sm">Launch Multiplayer Room</a>' +
+          '</div>';
+        return;
+      }
+
+      container.innerHTML =
+        '<div class="adm-table-wrap"><table class="adm-table"><thead><tr>' +
+          '<th>Room Code</th><th>Game</th><th>Status</th><th>Players</th><th>Created</th><th class="num">Action</th>' +
+        '</tr></thead><tbody>' +
+        rooms.map(function (r) {
+          var names = (r.players || []).map(function (p) { return p.displayName || p.username || "Player"; }).join(", ");
+          return (
+            '<tr>' +
+              '<td class="tabular"><strong>' + escapeHtml(r.code) + '</strong></td>' +
+              '<td>' + escapeHtml(r.gameType || "a-an-swipe") + '</td>' +
+              '<td>' + escapeHtml((r.status || "lobby").toUpperCase()) + '</td>' +
+              '<td>' + (r.players ? r.players.length : 0) + ' / ' + (r.maxPlayers || 10) + (names ? '<br><small style="color:var(--adm-muted);">' + escapeHtml(names) + '</small>' : "") + '</td>' +
+              '<td class="tabular">' + escapeHtml(formatRelative(r.createdAt)) + '</td>' +
+              '<td class="num"><button type="button" class="adm-btn adm-btn--sm adm-btn--danger" data-close-room="' + escapeHtml(r.code) + '">Close Room</button></td>' +
+            '</tr>'
+          );
+        }).join("") +
+        '</tbody></table></div>';
+    }
+
+    async function refreshRoomsOnly() {
+      if (!adminToken) return;
+      var btn = document.getElementById("refreshRoomsBtn");
+      btn.disabled = true;
+      try {
+        var res = await adminFetch("/api/admin/rooms", { headers: { Authorization: "Bearer " + adminToken } });
+        if (res.ok && res.data && res.data.ok && dashboardData) {
+          dashboardData.rooms = res.data.rooms || [];
+          renderRooms();
+        }
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    document.getElementById("refreshRoomsBtn").addEventListener("click", refreshRoomsOnly);
+    document.getElementById("roomsContainer").addEventListener("click", async function (e) {
+      var btn = e.target.closest("[data-close-room]");
+      if (!btn || !adminToken) return;
+      var code = btn.getAttribute("data-close-room");
+      if (!code) return;
+      if (btn.getAttribute("data-confirm") !== "1") {
+        btn.setAttribute("data-confirm", "1");
+        btn.textContent = "Confirm Close";
+        setTimeout(function () {
+          if (btn && btn.isConnected) {
+            btn.removeAttribute("data-confirm");
+            btn.textContent = "Close Room";
+          }
+        }, 3000);
+        return;
+      }
+      btn.disabled = true;
+      var res = await adminFetch("/api/admin/rooms/" + encodeURIComponent(code) + "/close", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + adminToken }
       });
-      activeFilter = btn.getAttribute("data-filter") || "all";
-      renderRoster();
+      if (res.ok && res.data && res.data.ok && dashboardData) {
+        dashboardData.rooms = res.data.rooms || [];
+        renderRooms();
+        renderOverview();
+      } else {
+        btn.disabled = false;
+      }
     });
 
-    /* Safe CSV export */
+    /* Game Catalog & Performance */
+    function renderCatalog() {
+      var statsMap = {};
+      ((dashboardData && dashboardData.gameStats) || []).forEach(function (g) {
+        statsMap[g.id] = g;
+      });
+      var items = catalogList().map(function (g) {
+        var st = statsMap[g.id] || {};
+        return {
+          id: g.id,
+          title: g.title,
+          label: g.label || "General",
+          course: g.course || "",
+          url: g.url || "/learningarcade/",
+          players: st.players || 0,
+          totalPlays: st.totalPlays || 0,
+          avgAccuracy: st.avgAccuracy || 0,
+          totalStars: st.totalStars || 0
+        };
+      });
+
+      document.getElementById("navCatalogCount").textContent = String(items.length);
+
+      var q = catalogSearch.trim().toLowerCase();
+      var filtered = items.filter(function (g) {
+        if (catalogSkill !== "all" && g.label !== catalogSkill) return false;
+        if (!q) return true;
+        return (g.title + " " + g.label + " " + g.course + " " + g.id).toLowerCase().indexOf(q) !== -1;
+      });
+
+      filtered.sort(function (a, b) {
+        if (catalogSort === "accuracy") {
+          var aVal = a.avgAccuracy || 999;
+          var bVal = b.avgAccuracy || 999;
+          return aVal - bVal || b.totalPlays - a.totalPlays;
+        }
+        if (catalogSort === "title") return a.title.localeCompare(b.title);
+        return b.totalPlays - a.totalPlays || a.title.localeCompare(b.title);
+      });
+
+      document.getElementById("catalogMeta").textContent = filtered.length + " of " + items.length + " catalog games shown";
+      var container = document.getElementById("catalogContainer");
+      if (!filtered.length) {
+        container.innerHTML = '<div class="adm-empty"><p>No games match your catalog filter.</p></div>';
+        return;
+      }
+
+      var pickedIds = {};
+      draftHwItems.forEach(function (it) { pickedIds[it.id] = true; });
+
+      container.innerHTML =
+        '<div class="adm-table-wrap"><table class="adm-table"><thead><tr>' +
+          '<th>Game</th><th>Skill</th><th>Course</th><th class="num">Players</th><th class="num">Plays</th><th class="num">Avg Accuracy</th><th class="num">Actions</th>' +
+        '</tr></thead><tbody>' +
+        filtered.slice(0, 120).map(function (g) {
+          var inHw = !!pickedIds[g.id];
+          return (
+            '<tr>' +
+              '<td><strong>' + escapeHtml(g.title) + '</strong></td>' +
+              '<td>' + escapeHtml(g.label) + '</td>' +
+              '<td>' + escapeHtml(g.course) + '</td>' +
+              '<td class="num">' + g.players + '</td>' +
+              '<td class="num">' + g.totalPlays + '</td>' +
+              '<td class="num">' + (g.avgAccuracy ? g.avgAccuracy + "%" : "—") + '</td>' +
+              '<td class="num" style="white-space:nowrap;">' +
+                '<a class="adm-btn adm-btn--sm" href="' + escapeHtml(safeUrl(g.url)) + '" style="margin-right:6px;">Open</a>' +
+                '<button type="button" class="adm-btn adm-btn--sm" data-cat-pin="' + escapeHtml(g.id) + '">' + (inHw ? "Pinned" : "+ Homework") + '</button>' +
+              '</td>' +
+            '</tr>'
+          );
+        }).join("") +
+        '</tbody></table></div>';
+    }
+
+    document.getElementById("catalogSearchInput").addEventListener("input", function (e) {
+      catalogSearch = e.target.value || "";
+      renderCatalog();
+    });
+    document.getElementById("catalogSkillFilter").addEventListener("change", function (e) {
+      catalogSkill = e.target.value || "all";
+      renderCatalog();
+    });
+    document.getElementById("catalogSortSelect").addEventListener("change", function (e) {
+      catalogSort = e.target.value || "plays";
+      renderCatalog();
+    });
+    document.getElementById("catalogContainer").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-cat-pin]");
+      if (!btn) return;
+      var id = btn.getAttribute("data-cat-pin");
+      if (!id) return;
+      if (!draftHwItems.some(function (it) { return it.id === id; }) && draftHwItems.length < 24) {
+        var found = catalogList().find(function (g) { return g.id === id; });
+        if (found) {
+          draftHwItems.push({ id: found.id, title: found.title, category: found.label, course: found.course, url: found.url });
+          renderHwQueue();
+          renderCatalog();
+          setHwStatus("Added \"" + found.title + "\" to Homework Composer.");
+        }
+      }
+    });
+
+    /* Activity Logs & Exports */
+    function renderActivityLogs() {
+      var feed = (dashboardData && dashboardData.recentActivity) || [];
+      document.getElementById("navActivityCount").textContent = String(feed.length);
+      var q = activitySearch.trim().toLowerCase();
+      var rows = feed.filter(function (r) {
+        if (activitySkill !== "all" && (r.category || "General") !== activitySkill) return false;
+        if (!q) return true;
+        return (r.studentName + " " + r.classCode + " " + r.gameName + " " + r.category).toLowerCase().indexOf(q) !== -1;
+      });
+      document.getElementById("activityLogMeta").textContent = rows.length + " score entries shown";
+      var container = document.getElementById("activityTableContainer");
+      if (!rows.length) {
+        container.innerHTML = '<div class="adm-empty"><p>No score submissions match your filter.</p></div>';
+        return;
+      }
+      container.innerHTML =
+        '<div class="adm-table-wrap"><table class="adm-table"><thead><tr>' +
+          '<th>Student</th><th>Game</th><th>Skill</th><th class="num">Score</th><th class="num">Accuracy</th><th class="num">Time</th><th class="num">Submitted</th>' +
+        '</tr></thead><tbody>' +
+        rows.map(function (r) {
+          var sc = r.maxScore ? r.score + " / " + r.maxScore : String(r.score);
+          return (
+            '<tr>' +
+              '<td><strong>' + escapeHtml(r.studentName) + '</strong>' + (r.classCode ? '<br><small style="color:var(--adm-muted);">' + escapeHtml(r.classCode) + '</small>' : "") + '</td>' +
+              '<td>' + escapeHtml(r.gameName) + '</td>' +
+              '<td>' + escapeHtml(r.category || "General") + '</td>' +
+              '<td class="num">' + escapeHtml(sc) + '</td>' +
+              '<td class="num">' + (r.accuracy != null ? r.accuracy + "%" : "—") + '</td>' +
+              '<td class="num">' + escapeHtml(formatTime(r.timeMs)) + '</td>' +
+              '<td class="num">' + escapeHtml(formatExact(r.at)) + '</td>' +
+            '</tr>'
+          );
+        }).join("") +
+        '</tbody></table></div>';
+    }
+
+    document.getElementById("activitySearchInput").addEventListener("input", function (e) {
+      activitySearch = e.target.value || "";
+      renderActivityLogs();
+    });
+    document.getElementById("activitySkillFilter").addEventListener("change", function (e) {
+      activitySkill = e.target.value || "all";
+      renderActivityLogs();
+    });
+
+    /* Safe CSV & JSON Downloads */
     function csvCell(val) {
       var str = String(val == null ? "" : val);
       if (/^[=+\-@\t\r]/.test(str)) str = "'" + str;
       return '"' + str.replace(/"/g, '""') + '"';
     }
 
-    document.getElementById("exportCsvBtn").addEventListener("click", function () {
+    function triggerDownload(filename, content, mimeType) {
+      var blob = new Blob([content], { type: mimeType });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    }
+
+    function exportStudentsCsv() {
       if (!dashboardData) return;
       var rows = filteredStudents();
-      var header = ["Showing Name", "Username", "Account Type", "Status", "Stars", "Games Practiced", "Completed Games", "Total Plays", "Avg Accuracy %", "Total Score", "Last Active", "Joined"];
+      var header = ["Display Name", "Username", "Class", "Account Type", "Rank", "XP", "Status", "Stars", "Games Practiced", "Completed Games", "Total Plays", "Avg Accuracy %", "Total Score", "Current Streak", "Last Active", "Joined"];
       var lines = [header.map(csvCell).join(",")];
       rows.forEach(function (s) {
         lines.push([
           s.displayName,
           s.username || "",
+          s.classCode || "",
           s.registered ? "Registered" : "Guest",
-          statusInfo(s).label.replace(/^[●○]\s*/, ""),
+          s.rankName || "",
+          s.xp || 0,
+          statusInfo(s).label,
           s.totalStars,
           s.gamesPlayed,
           s.completedGames,
           s.totalPlays,
           s.avgAccuracy,
           s.totalScore,
+          s.streak ? s.streak.current : 0,
           s.lastActiveAt ? new Date(s.lastActiveAt).toISOString() : "",
           s.joinedAt ? new Date(s.joinedAt).toISOString() : ""
         ].map(csvCell).join(","));
       });
-      var blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement("a");
-      a.href = url;
-      a.download = "student-activity-" + new Date().toISOString().slice(0, 10) + ".csv";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      triggerDownload("students-roster-" + new Date().toISOString().slice(0, 10) + ".csv", lines.join("\n"), "text/csv;charset=utf-8;");
+    }
+
+    function exportScoresCsv() {
+      if (!dashboardData) return;
+      var rows = dashboardData.recentActivity || [];
+      var header = ["Student", "Class", "Game", "Skill", "Score", "Max Score", "Accuracy %", "Time (ms)", "Submitted At"];
+      var lines = [header.map(csvCell).join(",")];
+      rows.forEach(function (r) {
+        lines.push([
+          r.studentName,
+          r.classCode || "",
+          r.gameName,
+          r.category || "",
+          r.score,
+          r.maxScore || "",
+          r.accuracy != null ? r.accuracy : "",
+          r.timeMs || "",
+          r.at ? new Date(r.at).toISOString() : ""
+        ].map(csvCell).join(","));
+      });
+      triggerDownload("score-submissions-" + new Date().toISOString().slice(0, 10) + ".csv", lines.join("\n"), "text/csv;charset=utf-8;");
+    }
+
+    function exportHomeworkCsv() {
+      if (!dashboardData || !currentAssignment || !currentAssignment.items || !currentAssignment.items.length) return;
+      var items = currentAssignment.items;
+      var header = ["Student", "Class"].concat(items.map(function (i) { return i.title || i.id; })).concat(["Completed", "Total"]);
+      var lines = [header.map(csvCell).join(",")];
+      (dashboardData.students || []).forEach(function (st) {
+        var map = {};
+        (st.games || []).forEach(function (g) { map[g.id] = g; });
+        var done = 0;
+        var cols = items.map(function (it) {
+          var g = map[it.id];
+          var ok = Boolean(g && (g.completed || g.stars > 0 || g.plays > 0));
+          if (ok) done += 1;
+          return ok ? (g.stars ? g.stars + " stars" : "Done") : "Pending";
+        });
+        lines.push([st.displayName, st.classCode || ""].concat(cols).concat([done, items.length]).map(csvCell).join(","));
+      });
+      triggerDownload("homework-matrix-" + new Date().toISOString().slice(0, 10) + ".csv", lines.join("\n"), "text/csv;charset=utf-8;");
+    }
+
+    document.getElementById("quickExportStudentsBtn").addEventListener("click", exportStudentsCsv);
+    document.getElementById("exportStudentsCsvBtn").addEventListener("click", exportStudentsCsv);
+    document.getElementById("exportScoresCsvBtn").addEventListener("click", exportScoresCsv);
+    document.getElementById("exportHwCsvBtn").addEventListener("click", exportHomeworkCsv);
+    document.getElementById("exportHomeworkCsvBtn2").addEventListener("click", exportHomeworkCsv);
+    document.getElementById("exportJsonBtn").addEventListener("click", function () {
+      if (!dashboardData) return;
+      triggerDownload("admin-snapshot-" + new Date().toISOString().slice(0, 10) + ".json", JSON.stringify(dashboardData, null, 2), "application/json;charset=utf-8;");
     });
+    document.getElementById("exportUpdatedZipBtn").addEventListener("click", async function () {
+      if (!adminToken) return;
+      var btn = document.getElementById("exportUpdatedZipBtn");
+      var prev = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Preparing ZIP…";
+      try {
+        var res = await fetch("/api/admin/updated-files.zip", {
+          credentials: "same-origin",
+          cache: "no-store",
+          headers: { Authorization: "Bearer " + adminToken }
+        });
+        if (!res.ok) {
+          btn.textContent = "ZIP Unavailable";
+          setTimeout(function () { btn.textContent = prev; }, 2200);
+          return;
+        }
+        var blob = await res.blob();
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "mrsheyhaki-updated-files.zip";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+        btn.textContent = "Downloaded ✓";
+        setTimeout(function () { btn.textContent = prev; }, 2200);
+      } catch (e) {
+        btn.textContent = "Download Failed";
+        setTimeout(function () { btn.textContent = prev; }, 2200);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    /* Security & Cache Controls */
+    function renderSecurityPanel() {
+      var modeLabel = authStatusInfo.authMode === "env"
+        ? "Environment Secret (ADMIN_PASSWORD)"
+        : "Server Password Hash (scrypt)";
+      var expLabel = authStatusInfo.sessionExpiresAt ? formatExact(authStatusInfo.sessionExpiresAt) : "12h session";
+      document.getElementById("securityInfoList").innerHTML =
+        '<div class="adm-list-row"><div class="adm-list-main"><strong>Password Source</strong></div><div class="adm-list-val">' + escapeHtml(modeLabel) + '</div></div>' +
+        '<div class="adm-list-row"><div class="adm-list-main"><strong>Active Admin Sessions</strong></div><div class="adm-list-val">' + (authStatusInfo.activeSessionCount || 1) + '</div></div>' +
+        '<div class="adm-list-row"><div class="adm-list-main"><strong>Current Session Expires</strong></div><div class="adm-list-val">' + escapeHtml(expLabel) + '</div></div>';
+
+      var isEnv = authStatusInfo.authMode === "env";
+      document.getElementById("changePwForm").hidden = isEnv;
+      document.getElementById("envPwNotice").hidden = !isEnv;
+    }
+
+    document.getElementById("clearLbCacheBtn").addEventListener("click", async function () {
+      if (!adminToken) return;
+      var msg = document.getElementById("secActionMsg");
+      var res = await adminFetch("/api/admin/cache/clear", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + adminToken }
+      });
+      msg.textContent = (res.ok && res.data && res.data.ok) ? "Leaderboard cache cleared." : "Could not clear cache.";
+    });
+
+    document.getElementById("revokeOthersBtn").addEventListener("click", async function () {
+      if (!adminToken) return;
+      var msg = document.getElementById("secActionMsg");
+      var res = await adminFetch("/api/admin/sessions/revoke-others", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + adminToken }
+      });
+      if (res.ok && res.data && res.data.ok) {
+        authStatusInfo.activeSessionCount = res.data.activeSessionCount || 1;
+        renderSecurityPanel();
+        msg.textContent = "All other admin sessions signed out.";
+      }
+    });
+
+    document.getElementById("changePwForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      if (!adminToken) return;
+      var errEl = document.getElementById("changePwErr");
+      var okEl = document.getElementById("changePwOk");
+      var btn = document.getElementById("changePwBtn");
+      var curPw = document.getElementById("curPwInput").value;
+      var newPw = document.getElementById("newPwInput").value;
+      var confirmPw = document.getElementById("confirmNewPwInput").value;
+
+      errEl.textContent = "";
+      okEl.textContent = "";
+      if (newPw.length < 8) { errEl.textContent = "New password must be at least 8 characters."; return; }
+      if (newPw !== confirmPw) { errEl.textContent = "New passwords do not match."; return; }
+
+      btn.disabled = true;
+      try {
+        var res = await adminFetch("/api/admin/change-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
+          body: JSON.stringify({ currentPassword: curPw, newPassword: newPw })
+        });
+        if (!res.ok || !res.data || !res.data.ok) {
+          errEl.textContent = (res.data && res.data.error) || res.error || "Could not change password.";
+          return;
+        }
+        document.getElementById("curPwInput").value = "";
+        document.getElementById("newPwInput").value = "";
+        document.getElementById("confirmNewPwInput").value = "";
+        okEl.textContent = "Admin password updated and other sessions cleared.";
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    /* Master Render */
+    function renderAll() {
+      if (!dashboardData) return;
+      var s = dashboardData.summary || {};
+
+      document.getElementById("statusLine").textContent =
+        "Updated " + formatExact(dashboardData.generatedAt) + " · " +
+        (s.totalStudents || 0) + " tracked profiles & guests";
+
+      document.getElementById("navStudentsCount").textContent = String(s.totalStudents || 0);
+      document.getElementById("navOverviewMeta").textContent = s.active24hCount ? (s.active24hCount + " today") : "";
+
+      var warnBar = document.getElementById("warnBar");
+      if (dashboardData.warnings && dashboardData.warnings.length) {
+        warnBar.hidden = false;
+        warnBar.textContent = "Database notice: " + dashboardData.warnings.join(" | ");
+      } else {
+        warnBar.hidden = true;
+      }
+
+      currentAssignment = dashboardData.assignment || null;
+      populateClassFilter();
+      syncHomeworkEditorFromServer();
+      syncAnnouncementFromServer();
+      renderOverview();
+      renderRoster();
+      renderRooms();
+      renderCatalog();
+      renderActivityLogs();
+      renderSecurityPanel();
+    }
 
     checkAdminStatus();
   })();

@@ -69,8 +69,7 @@
 .resource-card--game .resource-card-footer {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 8px 10px;
+  gap: 12px;
   width: 100%;
   margin-top: auto;
   padding-top: 4px;
@@ -135,34 +134,6 @@
   line-height: 1;
   opacity: 0.9;
 }
-.resource-card--game .game-time-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  height: 22px;
-  padding: 0 8px;
-  margin-left: auto;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
-  line-height: 1;
-  white-space: nowrap;
-  color: #0369a1;
-  background: rgba(14, 165, 233, 0.10);
-  border: 1px solid rgba(14, 165, 233, 0.24);
-  flex: 0 0 auto;
-}
-.resource-card--game .game-time-badge[hidden] {
-  display: none !important;
-}
-html[data-theme="dark"] .resource-card--game .game-time-badge {
-  color: #7dd3fc;
-  background: rgba(56, 189, 248, 0.14);
-  border-color: rgba(56, 189, 248, 0.28);
-}
 .resource-card--game .game-plays-badge {
   display: inline-flex;
   align-items: center;
@@ -180,9 +151,6 @@ html[data-theme="dark"] .resource-card--game .game-time-badge {
   background: rgba(124, 108, 240, 0.10);
   border: 1px solid rgba(124, 108, 240, 0.18);
   flex: 0 0 auto;
-}
-.resource-card--game .game-time-badge:not([hidden]) + .game-plays-badge {
-  margin-left: 0;
 }
 .resource-card--game .game-plays-badge[hidden] {
   display: none !important;
@@ -847,93 +815,7 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     main.appendChild(quizGrid);
   }
 
-  function aefGameId(levelKey, unitKey, lessonKey, peKey, itemUrl) {
-    const slug = String(itemUrl || "")
-      .replace(/\/+$/, "")
-      .split("/")
-      .filter(Boolean)
-      .pop() || "game";
-    const mid = ((unitKey || "") + (lessonKey || "")) || (peKey || "");
-    return [levelKey || "", mid, slug].filter(Boolean).join("-");
-  }
-
-  function collectLessonGameIds(levelKey, unitKey, lessonKey, peKey, lessonObj) {
-    const games = (lessonObj && Array.isArray(lessonObj.games)) ? lessonObj.games : [];
-    return games.map((g) => aefGameId(levelKey, unitKey, lessonKey, peKey, g.url)).filter(Boolean);
-  }
-
-  function collectUnitGameIds(levelKey, unitKey, unitObj) {
-    const ids = [];
-    const lessons = (unitObj && unitObj.lessons) ? unitObj.lessons : {};
-    Object.keys(lessons).forEach((letter) => {
-      collectLessonGameIds(levelKey, unitKey, letter, "", lessons[letter]).forEach((id) => {
-        if (ids.indexOf(id) === -1) ids.push(id);
-      });
-    });
-    return ids;
-  }
-
-  function createProgressBlock(gameIds) {
-    if (!gameIds || gameIds.length === 0) return null;
-    const total = gameIds.length;
-    return el("div", {
-      class: "aef-card-progress",
-      "data-progress-games": gameIds.join(","),
-    }, [
-      el("div", { class: "aef-card-progress-meta" }, [
-        el("span", {
-          class: "aef-card-progress-count",
-          text: total === 1 ? "1 game" : (total + " games"),
-        }),
-        el("span", { class: "aef-card-progress-stars", text: "" }),
-      ]),
-      el("div", { class: "aef-card-progress-track", "aria-hidden": "true" }, [
-        el("div", { class: "aef-card-progress-fill" }),
-      ]),
-    ]);
-  }
-
-  function hydrateCourseProgress(root) {
-    const scope = root || document;
-    const nodes = scope.querySelectorAll(".aef-card-progress[data-progress-games]");
-    if (!nodes.length) return;
-    const starsApi = window.LAStars;
-    nodes.forEach((box) => {
-      const ids = (box.getAttribute("data-progress-games") || "").split(",").filter(Boolean);
-      const total = ids.length;
-      if (!total) return;
-      let done = 0;
-      let totalStars = 0;
-      ids.forEach((id) => {
-        const s = starsApi && typeof starsApi.getStars === "function" ? Number(starsApi.getStars(id) || 0) : 0;
-        const p = starsApi && typeof starsApi.getPlays === "function" ? Number(starsApi.getPlays(id) || 0) : 0;
-        if (s > 0 || p > 0) done++;
-        totalStars += Math.max(0, Math.min(3, s));
-      });
-      const pct = Math.round((done / total) * 100);
-      const countEl = box.querySelector(".aef-card-progress-count");
-      const starsEl = box.querySelector(".aef-card-progress-stars");
-      const fillEl = box.querySelector(".aef-card-progress-fill");
-      if (countEl) {
-        if (done === 0) {
-          countEl.textContent = total === 1 ? "1 game" : (total + " games");
-        } else if (done === total) {
-          countEl.textContent = "All " + total + " done";
-        } else {
-          countEl.textContent = done + " / " + total + " games";
-        }
-      }
-      if (starsEl) {
-        starsEl.textContent = totalStars > 0 ? (totalStars + " ★") : "";
-      }
-      if (fillEl) {
-        fillEl.style.width = pct + "%";
-      }
-      box.classList.toggle("is-complete", done === total && total > 0);
-    });
-  }
-
-  function itemCard(href, index, title, name, isPE, gameIds) {
+  function itemCard(href, index, title, name, isPE) {
     // AEF syllabus colors: 1/5/9 plum purple, 2/6/10 lime green, 3/7/11 orange, 4/8/12 cyan blue
     let colorClass = "";
     if (!isPE) {
@@ -943,19 +825,6 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
       else if ([3, 7, 11].indexOf(n) !== -1) colorClass = " unit-color--aef-u3";
       else if ([4, 8, 12].indexOf(n) !== -1) colorClass = " unit-color--aef-u4";
     }
-    const kids = [
-      el("div", { class: "unit-card-top" }, [
-        el("span", { class: "unit-number", text: isPE ? "Practical English" : "Unit " + index }),
-        el("span", { class: "unit-arrow", "aria-hidden": "true", text: "→" }),
-      ]),
-      el("h3", { text: title }),
-      el("p", {
-        class: "item-name-placeholder",
-        text: name || (isPE ? "[Add name]" : "[Add unit name]"),
-      }),
-    ];
-    const progressEl = createProgressBlock(gameIds);
-    if (progressEl) kids.push(progressEl);
     return el(
       "a",
       {
@@ -965,7 +834,17 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
           colorClass,
         href,
       },
-      kids
+      [
+        el("div", { class: "unit-card-top" }, [
+          el("span", { class: "unit-number", text: isPE ? "Practical English" : "Unit " + index }),
+          el("span", { class: "unit-arrow", "aria-hidden": "true", text: "→" }),
+        ]),
+        el("h3", { text: title }),
+        el("p", {
+          class: "item-name-placeholder",
+          text: name || (isPE ? "[Add name]" : "[Add unit name]"),
+        }),
+      ]
     );
   }
 
@@ -1007,7 +886,6 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     let peIndex = 1;
     for (let u = 1; u <= unitCount; u++) {
       const unit = level.units[u];
-      const unitGameIds = collectUnitGameIds(levelKey, String(u), unit);
       grid.appendChild(
         itemCard(
           resolveRel(body, "unit-" + u + "/"),
@@ -1015,35 +893,29 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
           "Unit " + u,
           unit.name,
           false,
-          unitGameIds
+          levelKey
         )
       );
       if (u % peInterval === 1 && level.practicalEnglish[peIndex]) {
-        const peObj = level.practicalEnglish[peIndex];
-        const peGameIds = collectLessonGameIds(levelKey, "", "", "pe" + peIndex, peObj);
         grid.appendChild(
           itemCard(
             resolveRel(body, "practical-english-" + peIndex + "/"),
             "PE",
             "Practical English " + peIndex,
-            peObj.name,
+            level.practicalEnglish[peIndex].name,
             true,
-            peGameIds
+            levelKey
           )
         );
         peIndex++;
       }
     }
     main.appendChild(grid);
-    ensureLAStars(function () {
-      hydrateCourseProgress(main);
-    });
   }
 
   function renderUnit(body, main) {
     const course = courseFor(body);
-    const levelKey = body.dataset.level;
-    const level = course.levels[levelKey];
+    const level = course.levels[body.dataset.level];
     const unitNum = body.dataset.unit;
     const unit = level.units[unitNum];
     const hasC = !!(unit && unit.lessons && unit.lessons.c);
@@ -1074,41 +946,31 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
       const meta = lessonMeta[letter];
       const lessonData = unit && unit.lessons && unit.lessons[letter];
       const lessonName = (lessonData && lessonData.name) ? lessonData.name : meta.fallback;
-      const lessonGameIds = collectLessonGameIds(levelKey, String(unitNum), letter, "", lessonData);
-      const cardKids = [
-        el("div", { class: "ab-card-top" }, [
-          el("span", { class: "ab-letter-badge", text: letter.toUpperCase() }),
-          el("span", { class: "ab-card-tag", text: "UNIT " + unitNum }),
-        ]),
-        el("h2", { class: "ab-card-title", text: "Unit " + unitNum + letter.toUpperCase() }),
-        el("p", { class: "ab-card-blurb", text: lessonName }),
-      ];
-      const progressEl = createProgressBlock(lessonGameIds);
-      if (progressEl) cardKids.push(progressEl);
-      cardKids.push(el("span", { class: "ab-card-btn", text: "OPEN" }));
       grid.appendChild(
         el("a", {
           class: "ab-card ab-card--arcade ab-card--" + meta.color,
           href: resolveRel(body, letter + "/"),
-        }, cardKids)
+        }, [
+          el("div", { class: "ab-card-top" }, [
+            el("span", { class: "ab-letter-badge", text: letter.toUpperCase() }),
+            el("span", { class: "ab-card-tag", text: "UNIT " + unitNum }),
+          ]),
+          el("h2", { class: "ab-card-title", text: "Unit " + unitNum + letter.toUpperCase() }),
+          el("p", { class: "ab-card-blurb", text: lessonName }),
+          el("span", { class: "ab-card-btn", text: "OPEN" }),
+        ])
       );
     });
     main.appendChild(grid);
-    ensureLAStars(function () {
-      hydrateCourseProgress(main);
-    });
   }
 
-  function resourceCard(href, icon, title, description, tone, gameIds) {
-    const kids = [
+  function resourceCard(href, icon, title, description, tone) {
+    return el("a", { class: "lesson-type-card lesson-type-card--" + (tone || "purple"), href: resolveRel(document.body, href) }, [
       el("div", { class: "lesson-type-icon", "aria-hidden": "true", text: icon }),
       el("h3", { text: title }),
       el("p", { text: description }),
-    ];
-    const progressEl = createProgressBlock(gameIds);
-    if (progressEl) kids.push(progressEl);
-    kids.push(el("span", { class: "lesson-type-btn", text: "Open →" }));
-    return el("a", { class: "lesson-type-card lesson-type-card--" + (tone || "purple"), href: resolveRel(document.body, href) }, kids);
+      el("span", { class: "lesson-type-btn", text: "Open →" }),
+    ]);
   }
 
   function lessonFromBody(body) {
@@ -1130,11 +992,6 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
   function renderLesson(body, main) {
     const course = courseFor(body);
     const { label, lesson, back, backLabel } = lessonFromBody(body);
-    const levelKey = body.dataset.level || "";
-    const unitKey = body.dataset.unit || "";
-    const lessonKey = body.dataset.lesson || "";
-    const peKey = body.dataset.pe ? ("pe" + body.dataset.pe) : "";
-    const lessonGameIds = collectLessonGameIds(levelKey, unitKey, lessonKey, peKey, lesson);
     main.appendChild(
       el("section", { class: "arcade-intro" }, [
         backLink(back, backLabel),
@@ -1148,14 +1005,11 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
     );
     main.appendChild(
       el("section", { class: "content-grid lesson-type-grid", "aria-label": label + " resources" }, [
-        resourceCard("games/", "🎮", "Games", "Interactive games and activities for " + label + ".", "blue", lessonGameIds),
+        resourceCard("games/", "🎮", "Games", "Interactive games and activities for " + label + ".", "blue"),
         resourceCard("worksheets/", "📝", "Worksheets", "Printable worksheets and classroom practice.", "green"),
         resourceCard("audio/", "🎧", "Audio", "Student Book listening tracks for " + label + ".", "purple"),
       ])
     );
-    ensureLAStars(function () {
-      hydrateCourseProgress(main);
-    });
   }
 
   const SECTION_META = {
@@ -1236,12 +1090,6 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
               el("span", { class: "star", "data-n": "2", text: "☆" }),
               el("span", { class: "star", "data-n": "3", text: "☆" }),
             ]),
-            el("span", {
-              class: "game-time game-time-badge",
-              "data-game": gameId,
-              hidden: true,
-              "aria-label": "Best time",
-            }),
             el("span", {
               class: "game-plays game-plays-badge",
               "data-game": gameId,
@@ -1551,13 +1399,6 @@ html[data-theme="dark"] .audio-card.audio-card--workbook {
       case "audio":
         renderAudio(body, main);
         break;
-    }
-  });
-
-  window.addEventListener("pageshow", function () {
-    const main = document.getElementById("app");
-    if (main && window.LAStars) {
-      hydrateCourseProgress(main);
     }
   });
 })();

@@ -1,0 +1,667 @@
+/* =========================================================
+   LEARNING ARCADE — SHARED SKILL HUB FOUNDATION
+   Pairs with /style.css (topbar/footer) and ../theme.js.
+   Each skill page defines its own --sk-* palette & stage vibe.
+========================================================= */
+
+:root,
+html[data-theme="dark"] {
+  --sh-bg: #070a14;
+  --sh-surface: rgba(15, 23, 42, 0.86);
+  --sh-surface-2: rgba(20, 30, 52, 0.78);
+  --sh-surface-solid: #11182b;
+  --sh-ink: #f8fafc;
+  --sh-muted: #9eb0ca;
+  --sh-border: rgba(148, 163, 184, 0.22);
+  --sh-shadow: 0 18px 42px -18px rgba(2, 6, 23, 0.72);
+  --sh-star-empty: #475569;
+  --sh-star-fill: #fbbf24;
+  --sh-locked-bg: rgba(15, 23, 42, 0.56);
+  --sh-locked-ink: #94a3b8;
+  --sh-img-filter: brightness(1.08) contrast(1.05) drop-shadow(0 14px 26px rgba(2, 6, 23, 0.55));
+}
+
+html[data-theme="light"] {
+  --sh-bg: #f5f7fc;
+  --sh-surface: rgba(255, 255, 255, 0.94);
+  --sh-surface-2: rgba(248, 250, 255, 0.92);
+  --sh-surface-solid: #ffffff;
+  --sh-ink: #171d33;
+  --sh-muted: #4b5770;
+  --sh-border: rgba(23, 29, 51, 0.11);
+  --sh-shadow: 0 16px 36px -18px rgba(15, 23, 42, 0.14);
+  --sh-star-empty: #cbd5e1;
+  --sh-star-fill: #f59e0b;
+  --sh-locked-bg: rgba(241, 245, 249, 0.85);
+  --sh-locked-ink: #64748b;
+  --sh-img-filter: drop-shadow(0 12px 22px rgba(15, 23, 42, 0.14));
+}
+
+body.has-site-topbar {
+  background: var(--sh-bg);
+  color: var(--sh-ink);
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-x: hidden;
+}
+
+.skill-stage {
+  position: relative;
+  flex: 1 0 auto;
+  padding: 26px 20px 72px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.skill-container {
+  position: relative;
+  z-index: 2;
+  width: min(1140px, 100%);
+  margin: 0 auto;
+}
+
+/* ---------- Breadcrumb & Top Bar ---------- */
+.skill-crumb-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.skill-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 11px;
+  background: var(--sh-surface);
+  border: 1px solid var(--sh-border);
+  color: var(--sh-ink);
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: transform 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.skill-back-link:hover {
+  transform: translateX(-2px);
+  border-color: var(--sk-accent);
+  color: var(--sk-accent);
+}
+
+.skill-back-link:focus-visible {
+  outline: 2px solid var(--sk-accent);
+  outline-offset: 2px;
+}
+
+.skill-crumb-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--sh-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.skill-crumb-meta strong {
+  color: var(--sk-accent);
+  font-weight: 800;
+}
+
+/* ---------- Hero Stage ---------- */
+.skill-hero-panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(220px, 0.75fr);
+  align-items: center;
+  gap: 28px;
+  padding: 32px 34px;
+  border-radius: 26px;
+  background: var(--sk-hero-bg, var(--sh-surface));
+  border: 1.5px solid var(--sk-border, var(--sh-border));
+  box-shadow: var(--sh-shadow);
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.skill-hero-copy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+
+.skill-kicker-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--sk-accent);
+}
+
+.skill-kicker-line::before {
+  content: "";
+  width: 22px;
+  height: 2px;
+  border-radius: 99px;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+.skill-hero-title {
+  margin: 0 0 10px;
+  font-family: var(--sk-display-font, "Fredoka", "Plus Jakarta Sans", sans-serif);
+  font-size: clamp(2rem, 4.2vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--sh-ink);
+  text-wrap: balance;
+}
+
+.skill-hero-lead {
+  margin: 0 0 18px;
+  max-width: 56ch;
+  font-size: 1rem;
+  line-height: 1.58;
+  color: var(--sh-muted);
+}
+
+.skill-hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--sh-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.skill-hero-stats .stat-sep {
+  color: var(--sh-muted);
+  opacity: 0.55;
+}
+
+.skill-hero-stats .stat-highlight {
+  color: var(--sk-accent);
+}
+
+/* Hero Art Frame */
+.skill-hero-art {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  min-height: 210px;
+}
+
+.skill-hero-art .art-backdrop {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.skill-hero-art img {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 210px;
+  max-height: 215px;
+  height: auto;
+  object-fit: contain;
+  filter: var(--sh-img-filter);
+  pointer-events: none;
+}
+
+.skill-hero-art .art-fallback {
+  display: none;
+  position: relative;
+  z-index: 2;
+  width: 118px;
+  height: 118px;
+  border-radius: 26px;
+  place-items: center;
+  background: var(--sk-soft);
+  border: 1.5px solid var(--sk-border);
+  color: var(--sk-accent);
+}
+
+.skill-hero-art .art-fallback svg {
+  width: 54px;
+  height: 54px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.skill-hero-art.is-fallback img {
+  display: none;
+}
+
+.skill-hero-art.is-fallback .art-fallback {
+  display: grid;
+}
+
+/* ---------- Interactive Controls / Filter Strip ---------- */
+.skill-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.skill-section-label {
+  margin: 0;
+  font-family: var(--sk-display-font, "Fredoka", "Plus Jakarta Sans", sans-serif);
+  font-size: 1.32rem;
+  font-weight: 700;
+  color: var(--sh-ink);
+  letter-spacing: -0.01em;
+}
+
+.skill-filter-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.skill-filter-btn {
+  min-height: 40px;
+  padding: 8px 15px;
+  border-radius: 11px;
+  border: 1px solid var(--sh-border);
+  background: var(--sh-surface);
+  color: var(--sh-muted);
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease, transform 0.14s ease;
+}
+
+.skill-filter-btn:hover {
+  color: var(--sh-ink);
+  border-color: var(--sk-accent);
+}
+
+.skill-filter-btn[aria-pressed="true"],
+.skill-filter-btn.is-active {
+  background: var(--sk-accent);
+  border-color: var(--sk-accent);
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .skill-filter-btn.is-active {
+  color: #06101a;
+}
+
+.skill-filter-btn:focus-visible {
+  outline: 2px solid var(--sk-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Game Grid & Cards ---------- */
+.skill-game-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.skill-game-grid--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.skill-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 22px;
+  border-radius: 22px;
+  background: var(--sh-surface);
+  border: 1.5px solid var(--sk-card-border, var(--sh-border));
+  box-shadow: var(--sh-shadow);
+  overflow: hidden;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.skill-card--playable:hover {
+  transform: translateY(-4px);
+  border-color: var(--sk-accent);
+  box-shadow: 0 22px 44px -18px var(--sk-glow, rgba(15, 23, 42, 0.35));
+}
+
+.skill-card--locked {
+  background: var(--sh-locked-bg);
+  border-style: dashed;
+  border-color: var(--sh-border);
+  box-shadow: none;
+}
+
+.skill-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.skill-card-icon-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.skill-card-icon {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: var(--sk-soft);
+  border: 1px solid var(--sk-border);
+  color: var(--sk-accent);
+  font-size: 1.35rem;
+}
+
+.skill-card-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.skill-card--locked .skill-card-icon {
+  background: rgba(148, 163, 184, 0.14);
+  border-color: rgba(148, 163, 184, 0.22);
+  color: var(--sh-locked-ink);
+}
+
+.skill-card-index {
+  font-size: 0.78rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--sh-muted);
+}
+
+/* Zero-pill inline metadata line */
+.skill-card-kicker {
+  margin: 0 0 5px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sk-accent);
+}
+
+.skill-card--locked .skill-card-kicker {
+  color: var(--sh-locked-ink);
+}
+
+.skill-card-title {
+  margin: 0 0 8px;
+  font-family: var(--sk-display-font, "Fredoka", "Plus Jakarta Sans", sans-serif);
+  font-size: 1.28rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--sh-ink);
+}
+
+.skill-card--locked .skill-card-title {
+  color: var(--sh-locked-ink);
+}
+
+.skill-card-desc {
+  margin: 0 0 16px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--sh-muted);
+}
+
+.skill-card-meta {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--sh-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.skill-card-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.skill-card-note {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--sh-muted);
+}
+
+.skill-card-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.game-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 1.08rem;
+  line-height: 1;
+}
+
+.game-stars .star {
+  color: var(--sh-star-empty);
+}
+
+.game-stars .star.is-filled {
+  color: var(--sh-star-fill);
+}
+
+.skill-play-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 12px;
+  background: var(--sk-btn-bg, var(--sk-accent));
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px -8px var(--sk-glow, rgba(15, 23, 42, 0.4));
+  transition: transform 0.16s ease, filter 0.16s ease;
+}
+
+.skill-play-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+}
+
+.skill-play-btn:focus-visible {
+  outline: 2px solid var(--sk-accent);
+  outline-offset: 2px;
+}
+
+.skill-play-btn .arrow {
+  transition: transform 0.16s ease;
+}
+
+.skill-play-btn:hover .arrow {
+  transform: translateX(2px);
+}
+
+/* ---------- Interactive Studio / Workshop Widget ---------- */
+.skill-studio-box {
+  position: relative;
+  margin-bottom: 28px;
+  padding: 24px 26px;
+  border-radius: 22px;
+  background: var(--sh-surface);
+  border: 1.5px solid var(--sk-border, var(--sh-border));
+  box-shadow: var(--sh-shadow);
+}
+
+/* ---------- Verified Course Resource Bridge ---------- */
+.course-bridge {
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px solid var(--sh-border);
+}
+
+.course-bridge-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.course-bridge-head p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--sh-muted);
+}
+
+.course-bridge-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.course-bridge-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: var(--sh-surface);
+  border: 1px solid var(--sh-border);
+  color: var(--sh-ink);
+  text-decoration: none;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.course-bridge-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--sk-accent);
+}
+
+.course-bridge-card h3 {
+  margin: 2px 0 4px;
+  font-family: var(--sk-display-font, "Fredoka", "Plus Jakarta Sans", sans-serif);
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+
+.course-bridge-card p {
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--sh-muted);
+  line-height: 1.45;
+}
+
+.course-bridge-kicker {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sk-accent);
+}
+
+.course-bridge-go {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--sk-accent);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 980px) {
+  .skill-game-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .skill-hero-panel {
+    grid-template-columns: minmax(0, 1.2fr) minmax(170px, 0.7fr);
+    padding: 26px;
+  }
+}
+
+@media (max-width: 720px) {
+  .skill-stage {
+    padding: 18px 14px 54px;
+  }
+  .skill-hero-panel {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 22px 20px;
+    border-radius: 22px;
+  }
+  .skill-hero-art {
+    min-height: 150px;
+  }
+  .skill-hero-art img {
+    max-width: 155px;
+    max-height: 160px;
+  }
+  .skill-game-grid,
+  .skill-game-grid--two,
+  .course-bridge-grid {
+    grid-template-columns: 1fr;
+  }
+  .skill-studio-box {
+    padding: 18px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skill-card,
+  .skill-play-btn,
+  .skill-back-link,
+  .course-bridge-card,
+  .skill-filter-btn {
+    transition: none !important;
+  }
+  .skill-card--playable:hover,
+  .skill-play-btn:hover,
+  .course-bridge-card:hover {
+    transform: none !important;
+  }
+}

@@ -1,567 +1,1769 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Supermarket Order | Speaking | Mr. Sheyhaki</title>
-  <meta name="description" content="Speak to the shopkeeper and order food and drinks. Practice real English conversation with voice recognition.">
-  <link rel="stylesheet" href="../style.css">
-  <link rel="stylesheet" href="../../../style.css">
-  <link rel="stylesheet" href="../../../theme.css">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("mrsheyhaki-theme");
+        if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+        else if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches)
+          document.documentElement.setAttribute("data-theme", "dark");
+        else document.documentElement.setAttribute("data-theme", "light");
+      } catch (e) {}
+    })();
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Supermarket Order · Speaking | Mr. Sheyhaki</title>
+  <meta name="description" content="Practice real-world English café and supermarket conversations with voice recognition, polite sentence coaching, and interactive counter roleplay." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
   <style>
-    /* Game-specific layout on top of site styles */
-    .game-page {
-      width: min(calc(100% - 32px), 760px);
-      margin: 0 auto;
-      padding: 24px 0 48px;
+    :root,
+    html[data-theme="light"] {
+      --sm-bg: #f8fafc;
+      --sm-surface: #ffffff;
+      --sm-surface-alt: #f1f5f9;
+      --sm-ink: #0f172a;
+      --sm-muted: #475569;
+      --sm-border: #e2e8f0;
+      --sm-accent: #0d9488;
+      --sm-accent-hover: #0f766e;
+      --sm-accent-soft: rgba(13, 148, 136, 0.1);
+      --sm-accent-border: rgba(13, 148, 136, 0.28);
+      --sm-ok: #15803d;
+      --sm-ok-soft: rgba(21, 128, 61, 0.1);
+      --sm-warn: #b45309;
+      --sm-warn-soft: rgba(180, 83, 9, 0.1);
+      --sm-err: #dc2626;
+      --sm-err-soft: rgba(220, 38, 38, 0.1);
+      --sm-shadow: 0 12px 28px -14px rgba(15, 23, 42, 0.12);
     }
 
-    .game-page .skill-intro-top {
+    html[data-theme="dark"] {
+      --sm-bg: #0b0f19;
+      --sm-surface: #131a2a;
+      --sm-surface-alt: #1a2338;
+      --sm-ink: #f8fafc;
+      --sm-muted: #94a3b8;
+      --sm-border: #263147;
+      --sm-accent: #2dd4bf;
+      --sm-accent-hover: #14b8a6;
+      --sm-accent-soft: rgba(45, 212, 191, 0.14);
+      --sm-accent-border: rgba(45, 212, 191, 0.34);
+      --sm-ok: #4ade80;
+      --sm-ok-soft: rgba(74, 222, 128, 0.12);
+      --sm-warn: #fbbf24;
+      --sm-warn-soft: rgba(251, 191, 36, 0.12);
+      --sm-err: #f87171;
+      --sm-err-soft: rgba(248, 113, 113, 0.14);
+      --sm-shadow: 0 16px 36px -14px rgba(0, 0, 0, 0.5);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+
+    body.sm-body {
+      margin: 0;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background: var(--sm-bg);
+      color: var(--sm-ink);
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    html[data-theme="dark"] body.sm-body {
+      letter-spacing: 0.01em;
+    }
+
+    .tabular {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .sm-stage {
+      flex: 1 0 auto;
+      width: min(1240px, 100%);
+      margin: 0 auto;
+      padding: 20px 24px 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Breadcrumb + Game Header Row */
+    .sm-top-row {
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .sm-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 8px 14px 8px 12px;
+      border-radius: 10px;
+      background: var(--sm-surface);
+      border: 1px solid var(--sm-border);
+      color: var(--sm-ink);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .sm-back-link:hover {
+      border-color: var(--sm-accent);
+      transform: translateX(-2px);
+    }
+
+    .sm-mode-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      border-radius: 11px;
+      background: var(--sm-surface-alt);
+      border: 1px solid var(--sm-border);
+    }
+
+    .sm-mode-btn {
+      min-height: 36px;
+      padding: 6px 14px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--sm-muted);
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .sm-mode-btn.is-active {
+      background: var(--sm-surface);
+      color: var(--sm-ink);
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+    }
+
+    .sm-head-block {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .sm-kicker {
+      margin: 0 0 4px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--sm-accent);
+      letter-spacing: 0.04em;
+    }
+
+    .sm-title {
+      margin: 0;
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: clamp(1.75rem, 3.2vw, 2.45rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+    }
+
+    .sm-subtitle {
+      margin: 6px 0 0;
+      color: var(--sm-muted);
+      font-size: 0.95rem;
+      max-width: 58ch;
+    }
+
+    .sm-head-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .sm-tool-btn {
+      min-height: 44px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--sm-border);
+      background: var(--sm-surface);
+      color: var(--sm-ink);
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .sm-tool-btn:hover {
+      border-color: var(--sm-accent);
+    }
+
+    .sm-tool-btn.is-accent {
+      background: var(--sm-accent-soft);
+      border-color: var(--sm-accent-border);
+      color: var(--sm-accent);
+    }
+
+    /* Compact Live HUD Bar */
+    .sm-hud {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
-      margin-bottom: 8px;
     }
 
-    .game-page h1 {
-      margin: 6px 0 6px;
-      font-size: clamp(28px, 4vw, 40px);
-      letter-spacing: -1px;
-      color: #202636;
+    .sm-hud-card {
+      background: var(--sm-surface);
+      border: 1px solid var(--sm-border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
-    .game-page .subtitle {
-      color: #687184;
-      font-size: 15px;
-      margin-bottom: 20px;
-      line-height: 1.5;
+    .sm-hud-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--sm-muted);
     }
 
-    #scene {
-      width: 100%;
-      aspect-ratio: 16/9;
-      background: #1a1a2e;
+    .sm-hud-value {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--sm-ink);
+      line-height: 1.2;
+    }
+
+    .sm-hud-value.is-accent {
+      color: var(--sm-accent);
+    }
+
+    /* Two-Column Desktop Split */
+    .sm-workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr);
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .sm-panel {
+      background: var(--sm-surface);
+      border: 1px solid var(--sm-border);
       border-radius: 18px;
-      overflow: hidden;
-      position: relative;
-      box-shadow: 0 12px 36px rgba(32, 38, 54, 0.18);
-      border: 1px solid #e7e9ef;
+      padding: 18px;
+      box-shadow: var(--sm-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
     }
 
-    #character {
+    /* Left Column: Shopkeeper Stage */
+    .sm-scene {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #0f172a;
+      border: 1px solid var(--sm-border);
+    }
+
+    .sm-scene img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.24s ease;
     }
 
-    #dialogue {
+    .sm-scene.is-fallback img {
+      display: none;
+    }
+
+    .sm-scene-fallback {
+      display: none;
       position: absolute;
-      bottom: 0;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 10px;
+      background: radial-gradient(circle at 50% 35%, rgba(45, 212, 191, 0.2), #0f172a 75%);
+      color: #ccfbf1;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .sm-scene.is-fallback .sm-scene-fallback {
+      display: flex;
+    }
+
+    .sm-scene-fallback svg {
+      width: 68px;
+      height: 68px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.75;
+    }
+
+    .sm-dialogue-bar {
+      position: absolute;
       left: 0;
       right: 0;
-      background: linear-gradient(transparent, rgba(0,0,0,0.82));
-      padding: 28px 18px 16px;
-      font-size: 1.15rem;
-      text-align: center;
-      line-height: 1.35;
-      color: #fff;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-    }
-
-    #controls {
-      margin-top: 20px;
+      bottom: 0;
+      padding: 36px 16px 14px;
+      background: linear-gradient(180deg, transparent 0%, rgba(7, 11, 20, 0.88) 65%);
+      color: #ffffff;
       display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
       gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: center;
     }
 
-    .game-btn {
-      background: #6937d8;
-      color: #fff;
-      border: none;
-      padding: 13px 26px;
-      font-size: 1rem;
-      border-radius: 50px;
-      cursor: pointer;
+    .sm-dialogue-text {
+      margin: 0;
+      font-size: 1.05rem;
       font-weight: 700;
+      line-height: 1.35;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+    }
+
+    .sm-replay-voice-btn {
+      flex-shrink: 0;
+      min-height: 36px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: rgba(15, 23, 42, 0.72);
+      color: #ffffff;
       font-family: inherit;
-      transition: transform 0.15s, background 0.2s;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      backdrop-filter: blur(6px);
     }
 
-    .game-btn:hover:not(:disabled) {
-      background: #5425b8;
-      transform: scale(1.03);
+    .sm-replay-voice-btn:hover {
+      border-color: #2dd4bf;
     }
 
-    .game-btn:disabled {
-      background: #a0a6b4;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .game-btn.listening {
-      background: #16a34a;
-      animation: pulse 1.1s infinite;
-    }
-
-    .game-btn.secondary {
-      background: #3b82f6;
-    }
-
-    .game-btn.secondary:hover:not(:disabled) {
-      background: #2563eb;
-    }
-
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.5); }
-      50% { box-shadow: 0 0 0 12px rgba(22,163,74,0); }
-    }
-
-    #status {
-      margin-top: 12px;
-      font-size: 0.92rem;
-      color: #687184;
-      min-height: 1.4em;
-      text-align: center;
-    }
-
-    .hint {
-      margin-top: 18px;
-      font-size: 0.88rem;
-      color: #687184;
-      text-align: center;
-      line-height: 1.55;
-      max-width: 520px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .hint b { color: #202636; }
-
-    #fallback {
-      margin-top: 12px;
-      display: none;
-      gap: 10px;
-      justify-content: center;
+    /* Active Prompt Card inside Booth */
+    .sm-goal-box {
+      border-radius: 12px;
+      background: var(--sm-surface-alt);
+      border: 1px solid var(--sm-border);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
       flex-wrap: wrap;
     }
 
-    #fallback input {
-      padding: 11px 14px;
-      border-radius: 10px;
-      border: 1px solid #e7e9ef;
-      background: #fff;
-      color: #202636;
-      font-size: 1rem;
-      width: min(240px, 100%);
-      font-family: inherit;
+    .sm-goal-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      flex: 1 1 240px;
     }
 
-    #fallback input:focus {
-      outline: 2px solid #6937d8;
+    .sm-goal-emoji {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      border-radius: 12px;
+      background: var(--sm-surface);
+      border: 1px solid var(--sm-border);
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+    }
+
+    .sm-goal-kicker {
+      margin: 0 0 2px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--sm-accent);
+    }
+
+    .sm-goal-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--sm-ink);
+    }
+
+    .sm-goal-phrase {
+      margin: 2px 0 0;
+      font-size: 0.86rem;
+      color: var(--sm-muted);
+    }
+
+    .sm-goal-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Primary Controls */
+    .sm-controls-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .sm-btn {
+      min-height: 46px;
+      padding: 10px 18px;
+      border-radius: 11px;
+      border: 1px solid var(--sm-border);
+      background: var(--sm-surface);
+      color: var(--sm-ink);
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.14s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .sm-btn:hover:not(:disabled) {
+      border-color: var(--sm-accent);
+      transform: translateY(-1px);
+    }
+
+    .sm-btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    .sm-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .sm-btn--primary {
+      background: #0d9488;
+      border-color: #0d9488;
+      color: #ffffff;
+      flex: 1 1 200px;
+    }
+
+    .sm-btn--primary:hover:not(:disabled) {
+      background: #0f766e;
+      border-color: #0f766e;
+    }
+
+    .sm-btn--primary.is-listening {
+      background: #15803d;
+      border-color: #15803d;
+    }
+
+    /* Live Wave Bars (visible only when listening) */
+    .sm-wave {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      height: 16px;
+    }
+
+    .sm-wave span {
+      width: 3px;
+      height: 10px;
+      border-radius: 2px;
+      background: currentColor;
+      animation: smWave 0.7s ease-in-out infinite alternate;
+    }
+
+    .sm-wave span:nth-child(2) { animation-delay: 0.15s; height: 15px; }
+    .sm-wave span:nth-child(3) { animation-delay: 0.3s; height: 8px; }
+
+    @keyframes smWave {
+      from { transform: scaleY(0.45); opacity: 0.7; }
+      to { transform: scaleY(1.05); opacity: 1; }
+    }
+
+    /* Polite Phrase Helper + Fallback Text Input */
+    .sm-phrase-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .sm-phrase-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--sm-muted);
+    }
+
+    .sm-phrase-btn {
+      min-height: 36px;
+      padding: 6px 11px;
+      border-radius: 8px;
+      border: 1px solid var(--sm-border);
+      background: var(--sm-surface-alt);
+      color: var(--sm-ink);
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 0.14s ease;
+    }
+
+    .sm-phrase-btn:hover {
+      border-color: var(--sm-accent);
+    }
+
+    .sm-type-form {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .sm-input {
+      flex: 1;
+      min-width: 0;
+      min-height: 46px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--sm-border);
+      background: var(--sm-surface-alt);
+      color: var(--sm-ink);
+      font-family: inherit;
+      font-size: 0.96rem;
+    }
+
+    .sm-input:focus {
+      outline: 2px solid var(--sm-accent);
       outline-offset: 1px;
     }
 
-    .items-list {
-      margin-top: 22px;
-      padding: 16px 18px;
-      background: #f8f7fc;
-      border: 1px solid #e7e9ef;
-      border-radius: 14px;
-      font-size: 0.88rem;
-      color: #687184;
-      line-height: 1.6;
-      text-align: center;
+    .sm-status-banner {
+      min-height: 24px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--sm-muted);
+      background: var(--sm-surface-alt);
+      border: 1px solid var(--sm-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .items-list strong {
-      color: #202636;
+    .sm-status-banner.is-ok {
+      color: var(--sm-ok);
+      background: var(--sm-ok-soft);
+      border-color: rgba(21, 128, 61, 0.25);
+    }
+
+    .sm-status-banner.is-warn {
+      color: var(--sm-warn);
+      background: var(--sm-warn-soft);
+      border-color: rgba(180, 83, 9, 0.25);
+    }
+
+    .sm-status-banner.is-err {
+      color: var(--sm-err);
+      background: var(--sm-err-soft);
+      border-color: rgba(220, 38, 38, 0.25);
+    }
+
+    /* Right Column: Counter Menu & Receipt */
+    .sm-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .sm-panel-head h2 {
+      margin: 0;
+      font-size: 1.08rem;
+      font-weight: 800;
+    }
+
+    .sm-panel-meta {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--sm-muted);
+    }
+
+    .sm-cat-bar {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .sm-cat-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sm-cat-btn {
+      min-height: 38px;
+      padding: 6px 13px;
+      border-radius: 9px;
+      border: 1px solid var(--sm-border);
+      background: var(--sm-surface-alt);
+      color: var(--sm-muted);
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+    }
+
+    .sm-cat-btn.is-active {
+      background: var(--sm-accent);
+      border-color: var(--sm-accent);
+      color: #ffffff;
+    }
+
+    html[data-theme="dark"] .sm-cat-btn.is-active {
+      color: #06141a;
+    }
+
+    .sm-menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
+      gap: 9px;
+      align-content: start;
+    }
+
+    .sm-item-card {
+      position: relative;
+      min-height: 58px;
+      padding: 10px 12px;
+      border-radius: 11px;
+      border: 1px solid var(--sm-border);
+      background: var(--sm-surface-alt);
+      color: var(--sm-ink);
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: border-color 0.14s ease, transform 0.12s ease, background 0.14s ease;
+    }
+
+    .sm-item-card:hover:not(:disabled) {
+      border-color: var(--sm-accent);
+      transform: translateY(-1px);
+    }
+
+    .sm-item-card:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .sm-item-card.is-target {
+      border-color: var(--sm-accent);
+      background: var(--sm-accent-soft);
+    }
+
+    .sm-item-card.is-ordered {
+      border-color: rgba(21, 128, 61, 0.38);
+      background: var(--sm-ok-soft);
+    }
+
+    .sm-item-emoji {
+      font-size: 1.35rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .sm-item-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .sm-item-name {
       display: block;
-      margin-bottom: 4px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-transform: capitalize;
+    }
+
+    .sm-item-sub {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--sm-muted);
+    }
+
+    .sm-receipt-box {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--sm-border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sm-receipt-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .sm-receipt-list {
+      font-size: 0.84rem;
+      color: var(--sm-muted);
+      line-height: 1.5;
+    }
+
+    /* Sticky Mobile Thumb Dock (<= 15% mobile height) */
+    .sm-mobile-dock {
+      display: none;
+    }
+
+    @media (max-width: 960px) {
+      .sm-workspace {
+        grid-template-columns: 1fr;
+      }
+      .sm-hud {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .sm-stage {
+        padding: 14px 14px 86px;
+        gap: 14px;
+      }
+      .sm-panel {
+        padding: 14px;
+        border-radius: 16px;
+      }
+      .sm-hud-card {
+        padding: 10px 12px;
+      }
+      .sm-hud-value {
+        font-size: 1.1rem;
+      }
+      .sm-menu-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .sm-controls-row {
+        display: none;
+      }
+      .sm-mobile-dock {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 45;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px calc(8px + env(safe-area-inset-bottom));
+        background: var(--sm-surface);
+        border-top: 1px solid var(--sm-border);
+        box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.12);
+      }
+      .sm-mobile-dock .sm-btn {
+        min-height: 44px;
+        padding: 8px 12px;
+        font-size: 0.88rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
     }
   </style>
-<!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script>
 </head>
-<body>
+<body class="sm-body has-site-topbar">
 
-<header class="arcade-header-bar">
-  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
-      <a href="../../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
-      <a href="../../" class="nav-link active" aria-current="page" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
-      <a href="../../../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-      <a href="../../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
-      <a href="../../profile/" class="nav-link nav-profile" aria-label="Profile" title="My Profile" data-icon="👤"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
-    </nav>
-</header>
+  <header class="site-topbar">
+    <div class="topbar-inner">
+      <a href="../../../" class="brand-mark">Mr. Sheyhaki</a>
 
-<main class="game-page">
-  <section class="arcade-intro skill-intro" style="padding-bottom: 8px;">
-    <div class="skill-intro-top">
-      <a class="skill-back-btn" href="../" data-back-one aria-label="Back" title="Back to Speaking"><span aria-hidden="true">←</span></a>
-      <span class="eyebrow">SPEAKING · SUPERMARKET</span>
+      <nav class="topbar-nav" aria-label="Main navigation">
+        <a href="../../../" class="topbar-link">Home</a>
+        <a href="../../" class="topbar-link active" aria-current="page">Arcade</a>
+        <a href="../../../multiplayer/" class="topbar-link">Multiplayer</a>
+        <a href="../../../resources/" class="topbar-link">Resources</a>
+        <a href="../../../about/" class="topbar-link">About</a>
+      </nav>
+
+      <div class="topbar-actions">
+        <button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <a href="../../profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>
+      </div>
     </div>
-    <h1>Supermarket Order</h1>
-    <p class="subtitle">Speak to the shopkeeper and order what you want. Use your microphone or type.</p>
-  </section>
+    <nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+      <a href="../../../">Home</a>
+      <a href="../../" class="active" aria-current="page">Arcade</a>
+      <a href="../../../multiplayer/">Multiplayer</a>
+      <a href="../../../resources/">Resources</a>
+      <a href="../../../about/">About</a>
+    </nav>
+  </header>
 
-  <div id="scene">
-    <img id="character" src="https://cdn.imgurl.ir/uploads/f638289_idle_waiting.jpg" alt="Shopkeeper">
-    <div id="dialogue">Welcome! What would you like today?</div>
+  <main class="sm-stage">
+    <div class="sm-top-row">
+      <a class="sm-back-link" href="../">
+        <span aria-hidden="true">←</span>
+        <span>Speaking Hub</span>
+      </a>
+
+      <div class="sm-mode-switch" role="tablist" aria-label="Game mode">
+        <button type="button" class="sm-mode-btn is-active" id="modeShiftBtn" data-mode="shift" aria-selected="true">Guided Shift (8 Orders)</button>
+        <button type="button" class="sm-mode-btn" id="modeFreeBtn" data-mode="free" aria-selected="false">Free Roleplay (20 Items)</button>
+      </div>
+    </div>
+
+    <div class="sm-head-block">
+      <div>
+        <p class="sm-kicker">Speaking Booth · Roleplay &amp; Everyday Ordering</p>
+        <h1 class="sm-title">Supermarket Order</h1>
+        <p class="sm-subtitle">Speak politely to the shopkeeper using your microphone, type a full sentence, or tap any menu item to practice pronunciation.</p>
+      </div>
+
+      <div class="sm-head-tools">
+        <button type="button" class="sm-tool-btn is-accent" id="voiceToggleBtn" aria-pressed="true">Shopkeeper Voice: On</button>
+        <button type="button" class="sm-tool-btn" id="finishShiftBtn">Finish &amp; Save</button>
+      </div>
+    </div>
+
+    <!-- Compact Telemetry Strip -->
+    <section class="sm-hud" aria-label="Session score and progress">
+      <div class="sm-hud-card">
+        <span class="sm-hud-label">Score</span>
+        <strong class="sm-hud-value is-accent tabular" id="hudScore">0</strong>
+      </div>
+      <div class="sm-hud-card">
+        <span class="sm-hud-label" id="hudProgressLabel">Order Progress</span>
+        <strong class="sm-hud-value tabular" id="hudProgress">1 / 8</strong>
+      </div>
+      <div class="sm-hud-card">
+        <span class="sm-hud-label">Streak</span>
+        <strong class="sm-hud-value tabular" id="hudStreak">0</strong>
+      </div>
+      <div class="sm-hud-card">
+        <span class="sm-hud-label">Stars Earned</span>
+        <strong class="sm-hud-value tabular" id="hudStars">☆☆☆</strong>
+      </div>
+    </section>
+
+    <!-- Main Split Stage -->
+    <div class="sm-workspace">
+      <!-- Left: Shopkeeper Counter & Speaking Controls -->
+      <section class="sm-panel" aria-label="Shopkeeper conversation booth">
+        <div class="sm-scene" id="sceneBox">
+          <img
+            id="character"
+            src="https://cdn.imgurl.ir/uploads/f638289_idle_waiting.jpg"
+            alt="Shopkeeper behind the supermarket counter"
+            referrerPolicy="no-referrer"
+            onerror="document.getElementById('sceneBox').classList.add('is-fallback')"
+          />
+          <div class="sm-scene-fallback" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <circle cx="32" cy="22" r="10"/>
+              <path d="M14 52c2-11 10-16 18-16s16 5 18 16"/>
+              <path d="M8 54h48"/>
+            </svg>
+            <strong id="fallbackSceneLabel">Supermarket Counter</strong>
+          </div>
+          <div class="sm-dialogue-bar">
+            <p class="sm-dialogue-text" id="dialogue">Welcome! What would you like today?</p>
+            <button type="button" class="sm-replay-voice-btn" id="hearShopkeeperBtn">Hear Line</button>
+          </div>
+        </div>
+
+        <!-- Goal / Prompt Bar -->
+        <div class="sm-goal-box" id="goalBox">
+          <div class="sm-goal-main">
+            <div class="sm-goal-emoji" id="goalEmoji" aria-hidden="true">☕</div>
+            <div>
+              <p class="sm-goal-kicker" id="goalKicker">Order 1 of 8 · Polite Sentence Goal (+150 pts)</p>
+              <p class="sm-goal-title" id="goalTitle">Ask for: coffee</p>
+              <p class="sm-goal-phrase" id="goalPhrase">Model: “Can I have a coffee, please?”</p>
+            </div>
+          </div>
+          <div class="sm-goal-actions">
+            <button type="button" class="sm-tool-btn" id="hearModelBtn">▶ Hear Model</button>
+            <button type="button" class="sm-tool-btn" id="skipOrderBtn">Skip</button>
+          </div>
+        </div>
+
+        <!-- Desktop Mic + Input Controls -->
+        <div class="sm-controls-row">
+          <button type="button" id="speakBtn" class="sm-btn sm-btn--primary">
+            <span id="speakBtnLabel">Speak Your Order (Space)</span>
+          </button>
+          <button type="button" id="focusTypeBtn" class="sm-btn">Type Order</button>
+        </div>
+
+        <!-- Polite Phrase Quick Coach -->
+        <div class="sm-phrase-strip">
+          <span class="sm-phrase-label">Quick starters:</span>
+          <button type="button" class="sm-phrase-btn" data-starter="Can I have ">Can I have…</button>
+          <button type="button" class="sm-phrase-btn" data-starter="I'd like ">I'd like…</button>
+          <button type="button" class="sm-phrase-btn" data-starter="Two ">Two…</button>
+          <button type="button" class="sm-phrase-btn" data-suffix=", please">…, please</button>
+        </div>
+
+        <form class="sm-type-form" id="typeForm">
+          <input
+            id="textInput"
+            class="sm-input"
+            type="text"
+            autocomplete="off"
+            placeholder="Type an order, e.g. Can I have a coffee, please?"
+            aria-label="Type your supermarket order"
+          />
+          <button type="submit" id="submitTextBtn" class="sm-btn">Send Order</button>
+        </form>
+
+        <div class="sm-status-banner" id="statusBanner" role="status" aria-live="polite">
+          <span id="statusText">Press Space or Speak Your Order to talk to the shopkeeper.</span>
+          <span class="tabular" id="lastHeardLabel"></span>
+        </div>
+      </section>
+
+      <!-- Right: Counter Menu & Order Receipt -->
+      <section class="sm-panel" aria-label="Counter menu and receipt">
+        <div class="sm-panel-head">
+          <div>
+            <h2>Counter Menu</h2>
+            <p class="sm-panel-meta" id="menuHint">Tap any item to hear its name and add it to your sentence</p>
+          </div>
+          <span class="sm-panel-meta tabular" id="unlockedCount">0 / 20 tried</span>
+        </div>
+
+        <div class="sm-cat-bar" id="catBar" role="tablist" aria-label="Filter menu by category">
+          <button type="button" class="sm-cat-btn is-active" data-cat="all">All (20)</button>
+          <button type="button" class="sm-cat-btn" data-cat="drinks">Drinks &amp; Meals (4)</button>
+          <button type="button" class="sm-cat-btn" data-cat="veggies">Vegetables (6)</button>
+          <button type="button" class="sm-cat-btn" data-cat="fruits">Fruits (4)</button>
+          <button type="button" class="sm-cat-btn" data-cat="sweets">Bakery &amp; Snacks (6)</button>
+        </div>
+
+        <div class="sm-menu-grid" id="menuGrid"></div>
+
+        <div class="sm-receipt-box">
+          <div class="sm-receipt-head">
+            <span>Basket Receipt</span>
+            <span class="tabular" id="receiptCount">0 items ordered</span>
+          </div>
+          <div class="sm-receipt-list" id="receiptList">No items ordered yet — try speaking or sending your first order!</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Mobile Bottom Action Dock (<= 15% height) -->
+  <div class="sm-mobile-dock" aria-label="Quick mobile speaking controls">
+    <button type="button" id="mobileSpeakBtn" class="sm-btn sm-btn--primary">Speak Order</button>
+    <button type="button" id="mobileTypeBtn" class="sm-btn">Type</button>
+    <button type="button" id="mobileFinishBtn" class="sm-btn">Finish</button>
   </div>
 
-  <div id="controls">
-    <button id="speakBtn" class="game-btn">Speak your order</button>
-    <button id="textBtn" class="game-btn secondary">Type instead</button>
-  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · Speaking Arcade</p>
+      <div class="footer-links">
+        <a class="footer-link" href="../../../contact/">Contact</a>
+        <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
+      </div>
+    </div>
+  </footer>
 
-  <div id="fallback">
-    <input id="textInput" placeholder="e.g. coffee, sandwich…" autocomplete="off">
-    <button id="submitText" class="game-btn">Go</button>
-  </div>
+  <script src="/learningarcade/vendor/supabase.min.js"></script>
+  <script src="../../auth-system/auth.js"></script>
+  <script src="../../firebase-scores.js"></script>
+  <script src="../../la-stars.js"></script>
+  <script src="../../la-sfx.js"></script>
+  <script src="../../la-finish.js"></script>
+  <script src="../../theme.js"></script>
+  <script src="/visit-counter.js" defer></script>
+  <script>
+    (function () {
+      "use strict";
 
-  <div id="status"></div>
+      var GAME_ID = "speaking-supermarket";
 
-  <div class="hint">
-    Try saying: <b>coffee</b>, <b>tea</b>, <b>sandwich</b>, <b>french fries</b>, <b>meat</b>,
-    <b>carrots</b>, <b>cake</b>, <b>chocolate</b>, <b>potato chips</b>, <b>apples</b>…<br>
-    Best in <b>Chrome</b> or <b>Edge</b>. Press <b>Space</b> to speak.
-  </div>
+      var IMG = {
+        idle_waiting:     "https://cdn.imgurl.ir/uploads/f638289_idle_waiting.jpg",
+        idle_empty:       "https://cdn.imgurl.ir/uploads/c064677_idle_empty.jpg",
+        idle_phone:       "https://cdn.imgurl.ir/uploads/d21507_idle_phone.jpg",
+        idle_sleeping:    "https://cdn.imgurl.ir/uploads/j8618_idle_sleeping.jpg",
+        idle_thinking:    "https://cdn.imgurl.ir/uploads/v104096_idle_thinking.jpg",
+        making_coffee:    "https://cdn.imgurl.ir/uploads/w76742_making_coffee.jpg",
+        handing_cup:      "https://cdn.imgurl.ir/uploads/j516865_handing_cup.jpg",
+        making_sandwich:  "https://cdn.imgurl.ir/uploads/d771641_making_sandwich.jpg",
+        handing_sandwich: "https://cdn.imgurl.ir/uploads/w771367_handing_sandwich.jpg",
+        handing_fries:    "https://cdn.imgurl.ir/uploads/s440681_handing_fries.jpg",
+        handing_bag:      "https://cdn.imgurl.ir/uploads/j392716_handing_bag.jpg",
+        looking_snacks:   "https://cdn.imgurl.ir/uploads/d337844_looking_snacks.jpg",
+        looking_cakes:    "https://cdn.imgurl.ir/uploads/r91922_looking_cakes.jpg",
+        looking_meat:     "https://cdn.imgurl.ir/uploads/x01075_looking_m.jpg",
+        falling:          "https://cdn.imgurl.ir/uploads/l8194_falling.jpg",
+        embarrassed:      "https://cdn.imgurl.ir/uploads/g941297_embarred.jpg"
+      };
 
-  <div class="items-list">
-    <strong>You can order</strong>
-    coffee · tea · sandwich · french fries · meat · carrots · lettuce · mushrooms · onions · potatoes · tomatoes · apples · bananas · oranges · pineapple · cake · candies · chocolate · nuts · potato chips
-  </div>
-</main>
+      // Preload scene images silently so transitions stay snappy
+      Object.keys(IMG).forEach(function (k) {
+        var pre = new Image();
+        pre.referrerPolicy = "no-referrer";
+        pre.src = IMG[k];
+      });
 
-<footer class="site-footer"><p>© <span id="year"></span> Mr. Sheyhaki · English Teacher</p></footer>
+      var MENU = [
+        { key: "coffee",       emoji: "☕", cat: "drinks",  model: "Can I have a coffee, please?" },
+        { key: "tea",          emoji: "🫖", cat: "drinks",  model: "I'd like a cup of tea, please." },
+        { key: "sandwich",     emoji: "🥪", cat: "drinks",  model: "Can I have a fresh sandwich, please?", aliases: ["sandwiches"] },
+        { key: "french fries", emoji: "🍟", cat: "drinks",  model: "I'd like some french fries, please.", aliases: ["fries"] },
+        { key: "meat",         emoji: "🥩", cat: "sweets",  model: "Can I have some meat, please?" },
+        { key: "carrots",      emoji: "🥕", cat: "veggies", model: "Can I have some carrots, please?", aliases: ["carrot"] },
+        { key: "lettuce",      emoji: "🥬", cat: "veggies", model: "I'd like some lettuce, please." },
+        { key: "mushrooms",    emoji: "🍄", cat: "veggies", model: "Can I have some mushrooms, please?", aliases: ["mushroom"] },
+        { key: "onions",       emoji: "🧅", cat: "veggies", model: "I'd like two onions, please.", aliases: ["onion"] },
+        { key: "potatoes",     emoji: "🥔", cat: "veggies", model: "Can I have some potatoes, please?", aliases: ["potato"] },
+        { key: "tomatoes",     emoji: "🍅", cat: "veggies", model: "I'd like three tomatoes, please.", aliases: ["tomato"] },
+        { key: "apples",       emoji: "🍎", cat: "fruits",  model: "Can I have two apples, please?", aliases: ["apple"] },
+        { key: "bananas",      emoji: "🍌", cat: "fruits",  model: "I'd like three bananas, please?", aliases: ["banana"] },
+        { key: "oranges",      emoji: "🍊", cat: "fruits",  model: "Can I have some oranges, please?", aliases: ["orange"] },
+        { key: "pineapple",    emoji: "🍍", cat: "fruits",  model: "I'd like a pineapple, please?" },
+        { key: "cake",         emoji: "🍰", cat: "sweets",  model: "Can I have a slice of cake, please?" },
+        { key: "candies",      emoji: "🍬", cat: "sweets",  model: "I'd like some candies, please.", aliases: ["candy"] },
+        { key: "chocolate",    emoji: "🍫", cat: "sweets",  model: "Can I have some chocolate, please?" },
+        { key: "nuts",         emoji: "🥜", cat: "sweets",  model: "I'd like a bag of nuts, please.", aliases: ["nut"] },
+        { key: "potato chips", emoji: "🥔", cat: "sweets",  model: "Can I have some potato chips, please?", aliases: ["chips"] }
+      ];
 
-<script src="../../../script.js"></script>
-<script src="../../../theme.js"></script>
-<script src="../../la-stars.js"></script>
-<script>
-  // ========== IMAGE PATHS ==========
-  const IMG = {
-    idle_waiting:   "https://cdn.imgurl.ir/uploads/f638289_idle_waiting.jpg",
-    idle_empty:     "https://cdn.imgurl.ir/uploads/c064677_idle_empty.jpg",
-    idle_phone:     "https://cdn.imgurl.ir/uploads/d21507_idle_phone.jpg",
-    idle_sleeping:  "https://cdn.imgurl.ir/uploads/j8618_idle_sleeping.jpg",
-    idle_thinking:  "https://cdn.imgurl.ir/uploads/v104096_idle_thinking.jpg",
+      function veg(item) {
+        return [
+          { img: "idle_thinking", text: "Getting some " + item + " for you…", delay: 1900 },
+          { img: "handing_bag",   text: "Here are your " + item + "!", delay: 2200 }
+        ];
+      }
+      function bag(item) {
+        return [
+          { img: "handing_bag", text: "Here's your " + item + ". Anything else?", delay: 2300 }
+        ];
+      }
+      function snack(item) {
+        return [
+          { img: "looking_snacks", text: "Grabbing " + item + " from the shelf…", delay: 1900 },
+          { img: "handing_bag",    text: "Here's your " + item + "!", delay: 2200 }
+        ];
+      }
 
-    making_coffee:  "https://cdn.imgurl.ir/uploads/w76742_making_coffee.jpg",
-    handing_cup:    "https://cdn.imgurl.ir/uploads/j516865_handing_cup.jpg",
+      var SEQUENCES = {
+        coffee: [
+          { img: "making_coffee", text: "One coffee coming right up!", delay: 2000 },
+          { img: "handing_cup",   text: "Here's your coffee. Enjoy!", delay: 2300 }
+        ],
+        tea: [
+          { img: "making_coffee", text: "Brewing a warm cup of tea…", delay: 2000 },
+          { img: "handing_cup",   text: "Your tea is ready!", delay: 2300 }
+        ],
+        sandwich: [
+          { img: "making_sandwich",  text: "Making a fresh sandwich…", delay: 2100 },
+          { img: "handing_sandwich", text: "Here's your sandwich!", delay: 2300 }
+        ],
+        "french fries": [
+          { img: "handing_fries", text: "Crispy french fries for you!", delay: 2400 }
+        ],
+        meat: [
+          { img: "looking_meat", text: "Checking the fresh counter…", delay: 1900 },
+          { img: "handing_bag",  text: "Here's your meat!", delay: 2200 }
+        ],
+        carrots:   veg("carrots"),
+        lettuce:   veg("lettuce"),
+        mushrooms: veg("mushrooms"),
+        onions:    veg("onions"),
+        potatoes:  veg("potatoes"),
+        tomatoes:  veg("tomatoes"),
+        apples:    bag("apples"),
+        bananas:   bag("bananas"),
+        oranges:   bag("oranges"),
+        pineapple: bag("pineapple"),
+        cake: [
+          { img: "looking_cakes", text: "Checking the cake display…", delay: 1900 },
+          { img: "handing_bag",   text: "One slice of cake for you!", delay: 2200 }
+        ],
+        candies:        snack("candies"),
+        chocolate:      snack("chocolate"),
+        nuts:           snack("nuts"),
+        "potato chips": snack("potato chips")
+      };
 
-    making_sandwich:"https://cdn.imgurl.ir/uploads/d771641_making_sandwich.jpg",
-    handing_sandwich:"https://cdn.imgurl.ir/uploads/w771367_handing_sandwich.jpg",
+      // Build alias match lookup longest-first
+      var MATCH_PAIRS = [];
+      MENU.forEach(function (item) {
+        MATCH_PAIRS.push({ term: item.key, canonical: item.key });
+        (item.aliases || []).forEach(function (al) {
+          MATCH_PAIRS.push({ term: al, canonical: item.key });
+        });
+      });
+      MATCH_PAIRS.sort(function (a, b) { return b.term.length - a.term.length; });
 
-    handing_fries:  "https://cdn.imgurl.ir/uploads/s440681_handing_fries.jpg",
-    handing_bag:    "https://cdn.imgurl.ir/uploads/j392716_handing_bag.jpg",
+      // State
+      var mode = "shift"; // "shift" (8 guided orders) | "free" (20 open items)
+      var activeCategory = "all";
+      var shopkeeperVoice = true;
+      var isBusy = false;
+      var isListening = false;
+      var score = 0;
+      var streak = 0;
+      var attemptsTotal = 0;
+      var correctTotal = 0;
+      var shiftTargets = [];
+      var shiftIndex = 0;
+      var orderedSet = {};
+      var receiptItems = [];
+      var mistakes = [];
+      var idleTimer = null;
+      var idleIndex = 0;
+      var idleKeys = ["idle_waiting", "idle_thinking", "idle_phone", "idle_sleeping", "idle_empty"];
+      var activeRunId = 0;
 
-    looking_snacks: "https://cdn.imgurl.ir/uploads/d337844_looking_snacks.jpg",
-    looking_cakes:  "https://cdn.imgurl.ir/uploads/r91922_looking_cakes.jpg",
-    looking_meat:   "https://cdn.imgurl.ir/uploads/x01075_looking_m.jpg",
+      // DOM refs
+      var sceneBox = document.getElementById("sceneBox");
+      var characterEl = document.getElementById("character");
+      var dialogueEl = document.getElementById("dialogue");
+      var fallbackSceneLabel = document.getElementById("fallbackSceneLabel");
+      var speakBtn = document.getElementById("speakBtn");
+      var speakBtnLabel = document.getElementById("speakBtnLabel");
+      var mobileSpeakBtn = document.getElementById("mobileSpeakBtn");
+      var mobileTypeBtn = document.getElementById("mobileTypeBtn");
+      var mobileFinishBtn = document.getElementById("mobileFinishBtn");
+      var textInput = document.getElementById("textInput");
+      var submitTextBtn = document.getElementById("submitTextBtn");
+      var statusBanner = document.getElementById("statusBanner");
+      var statusText = document.getElementById("statusText");
+      var lastHeardLabel = document.getElementById("lastHeardLabel");
+      var menuGrid = document.getElementById("menuGrid");
 
-    falling:        "https://cdn.imgurl.ir/uploads/l8194_falling.jpg",
-    embarrassed:    "https://cdn.imgurl.ir/uploads/g941297_embarred.jpg"
-  };
+      var yearEl = document.getElementById("year");
+      if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  function seq(...steps) { return steps; }
+      function shuffle(arr) {
+        var copy = arr.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = copy[i];
+          copy[i] = copy[j];
+          copy[j] = tmp;
+        }
+        return copy;
+      }
 
-  const sequences = {
-    coffee: seq(
-      { img: "making_coffee", text: "One coffee coming right up!", delay: 3500 },
-      { img: "handing_cup",   text: "Here's your coffee. Enjoy!", delay: 4000 }
-    ),
-    tea: seq(
-      { img: "making_coffee", text: "Brewing a nice cup of tea…", delay: 3500 },
-      { img: "handing_cup",   text: "Your tea is ready!", delay: 4000 }
-    ),
-    sandwich: seq(
-      { img: "making_sandwich",  text: "Making a fresh sandwich…", delay: 3800 },
-      { img: "handing_sandwich", text: "Here's your sandwich!", delay: 4000 }
-    ),
-    sandwiches: seq(
-      { img: "making_sandwich",  text: "Making a fresh sandwich…", delay: 3800 },
-      { img: "handing_sandwich", text: "Here's your sandwich!", delay: 4000 }
-    ),
-    "french fries": seq(
-      { img: "handing_fries", text: "Crispy french fries for you!", delay: 4000 }
-    ),
-    fries: seq(
-      { img: "handing_fries", text: "Crispy french fries for you!", delay: 4000 }
-    ),
-    meat: seq(
-      { img: "looking_meat", text: "Let me grab some meat…", delay: 3200 },
-      { img: "handing_bag",  text: "Here's your meat!", delay: 3800 }
-    ),
-    carrots:   veg("carrots"),
-    lettuce:   veg("lettuce"),
-    mushrooms: veg("mushrooms"),
-    onions:    veg("onions"),
-    potatoes:  veg("potatoes"),
-    tomatoes:  veg("tomatoes"),
-    apples:    bag("apples"),
-    bananas:   bag("bananas"),
-    oranges:   bag("oranges"),
-    pineapple: bag("pineapple"),
-    cake: seq(
-      { img: "looking_cakes", text: "Checking the cake display…", delay: 3200 },
-      { img: "handing_bag",   text: "One cake for you!", delay: 3800 }
-    ),
-    candies:   snack("candies"),
-    candy:     snack("candy"),
-    chocolate: snack("chocolate"),
-    nuts:      snack("nuts"),
-    "potato chips": snack("potato chips"),
-    chips:     snack("chips")
-  };
+      function menuByKey(k) {
+        for (var i = 0; i < MENU.length; i++) {
+          if (MENU[i].key === k) return MENU[i];
+        }
+        return MENU[0];
+      }
 
-  function veg(item) {
-    return seq(
-      { img: "idle_thinking", text: `Getting some ${item} for you…`, delay: 3000 },
-      { img: "handing_bag",   text: `Here's your ${item}!`, delay: 3800 }
-    );
-  }
-  function bag(item) {
-    return seq(
-      { img: "handing_bag", text: `Here's your ${item}!`, delay: 3800 }
-    );
-  }
-  function snack(item) {
-    return seq(
-      { img: "looking_snacks", text: `Looking for ${item}…`, delay: 3000 },
-      { img: "handing_bag",    text: `Here's your ${item}!`, delay: 3800 }
-    );
-  }
+      function speakLine(text, rate) {
+        if (!shopkeeperVoice || !("speechSynthesis" in window)) return;
+        try {
+          window.speechSynthesis.cancel();
+          var u = new SpeechSynthesisUtterance(String(text || ""));
+          u.lang = "en-US";
+          u.rate = rate || 0.96;
+          window.speechSynthesis.speak(u);
+        } catch (e) {}
+      }
 
-  const character = document.getElementById("character");
-  const dialogue  = document.getElementById("dialogue");
-  const speakBtn  = document.getElementById("speakBtn");
-  const textBtn   = document.getElementById("textBtn");
-  const statusEl  = document.getElementById("status");
-  const fallback  = document.getElementById("fallback");
-  const textInput = document.getElementById("textInput");
-  const submitText= document.getElementById("submitText");
+      function setStatus(msg, tone, heard) {
+        statusText.textContent = msg;
+        lastHeardLabel.textContent = heard ? ("“" + heard + "”") : "";
+        statusBanner.classList.remove("is-ok", "is-warn", "is-err");
+        if (tone === "ok") statusBanner.classList.add("is-ok");
+        else if (tone === "warn") statusBanner.classList.add("is-warn");
+        else if (tone === "err") statusBanner.classList.add("is-err");
+      }
 
-  let isBusy = false;
-  let idleTimer = null;
-  const idleKeys = ["idle_waiting", "idle_thinking", "idle_phone", "idle_sleeping", "idle_empty"];
-  let idleIndex = 0;
+      function setSceneImage(key) {
+        sceneBox.classList.remove("is-fallback");
+        characterEl.style.opacity = "0.55";
+        fallbackSceneLabel.textContent = key.replace(/_/g, " ");
+        setTimeout(function () {
+          characterEl.src = IMG[key] || IMG.idle_waiting;
+          characterEl.style.opacity = "1";
+        }, 90);
+      }
 
-  // Progress (stars) — uses site LAStars system
-  const GAME_ID = "speaking-supermarket";
-  const orderedItems = new Set(); // unique successful orders this session
-  let playRecorded = false;
+      function setDialogue(txt, shouldSpeak) {
+        dialogueEl.textContent = txt;
+        if (shouldSpeak) speakLine(txt, 0.98);
+      }
 
-  function updateStars() {
-    if (!window.LAStars) return;
-    const n = orderedItems.size;
-    // 1 unique item → 1★, 3 → 2★, 5+ → 3★
-    const stars = n >= 5 ? 3 : n >= 3 ? 2 : n >= 1 ? 1 : 0;
-    if (stars > 0) LAStars.save(GAME_ID, stars);
-  }
+      function startIdleCycle() {
+        stopIdleCycle();
+        idleTimer = setInterval(function () {
+          if (isBusy || isListening) return;
+          idleIndex = (idleIndex + 1) % idleKeys.length;
+          var key = idleKeys[idleIndex];
+          setSceneImage(key);
+          if (key === "idle_empty")         setDialogue("Stepped away for a second…");
+          else if (key === "idle_sleeping") setDialogue("Quiet day at the counter…");
+          else if (key === "idle_phone")    setDialogue("Just checking stock…");
+          else if (key === "idle_thinking") setDialogue("Hmm, what's next?");
+          else                              setDialogue("Welcome! What would you like today?");
+        }, 8000);
+      }
 
-  function recordSuccessfulOrder(itemKey) {
-    // Normalize aliases so "fries" and "french fries" count as one
-    const canonical = itemKey === "fries" ? "french fries"
-      : itemKey === "sandwiches" ? "sandwich"
-      : itemKey === "candy" ? "candies"
-      : itemKey === "chips" ? "potato chips"
-      : itemKey;
-    orderedItems.add(canonical);
-    if (!playRecorded && window.LAStars) {
-      LAStars.recordPlay(GAME_ID);
-      playRecorded = true;
-    }
-    updateStars();
-  }
-
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  let recognition = null;
-
-  if (SpeechRecognition) {
-    recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 5;
-    recognition.continuous = false;
-
-    recognition.onstart = () => {
-      speakBtn.classList.add("listening");
-      speakBtn.textContent = "Listening…";
-      statusEl.textContent = "Speak now…";
-    };
-
-    recognition.onresult = (event) => {
-      let best = event.results[0][0].transcript.toLowerCase().trim();
-      for (let i = 0; i < event.results[0].length; i++) {
-        const t = event.results[0][i].transcript.toLowerCase().trim();
-        if (findMatch(t)) {
-          best = t;
-          break;
+      function stopIdleCycle() {
+        if (idleTimer) {
+          clearInterval(idleTimer);
+          idleTimer = null;
         }
       }
-      statusEl.textContent = `Heard: “${best}”`;
-      handleOrder(best);
-    };
 
-    recognition.onerror = (e) => {
-      if (e.error === "no-speech") {
-        statusEl.textContent = "No speech detected. Try again.";
-      } else if (e.error === "not-allowed") {
-        statusEl.textContent = "Microphone permission denied.";
-      } else {
-        statusEl.textContent = "Could not hear you clearly.";
+      function starsForScore() {
+        var uniqueCount = Object.keys(orderedSet).length;
+        if (mode === "shift") {
+          var acc = attemptsTotal > 0 ? Math.round((correctTotal / attemptsTotal) * 100) : 0;
+          if (correctTotal >= 7 && acc >= 85) return 3;
+          if (correctTotal >= 5) return 2;
+          if (correctTotal >= 2) return 1;
+          return 0;
+        }
+        return uniqueCount >= 5 ? 3 : uniqueCount >= 3 ? 2 : uniqueCount >= 1 ? 1 : 0;
       }
-      resetButton();
-    };
 
-    recognition.onend = () => {
-      if (!isBusy) resetButton();
-    };
-  } else {
-    speakBtn.disabled = true;
-    statusEl.textContent = "Speech recognition not supported. Use the Type button instead.";
-  }
+      function starString(n) {
+        var s = "";
+        for (var i = 1; i <= 3; i++) s += i <= n ? "★" : "☆";
+        return s;
+      }
 
-  function setImage(key) {
-    character.style.opacity = 0.4;
-    setTimeout(() => {
-      character.src = IMG[key] || IMG.idle_waiting;
-      character.style.opacity = 1;
-    }, 120);
-  }
+      function updateHud() {
+        document.getElementById("hudScore").textContent = String(score);
+        document.getElementById("hudStreak").textContent = String(streak);
+        document.getElementById("hudStars").textContent = starString(starsForScore());
 
-  function setText(txt) {
-    dialogue.textContent = txt;
-  }
+        if (mode === "shift") {
+          document.getElementById("hudProgressLabel").textContent = "Customer Shift";
+          var shownRound = Math.min(shiftIndex + 1, shiftTargets.length || 8);
+          document.getElementById("hudProgress").textContent = shownRound + " / " + (shiftTargets.length || 8);
+        } else {
+          document.getElementById("hudProgressLabel").textContent = "Menu Explored";
+          document.getElementById("hudProgress").textContent = Object.keys(orderedSet).length + " / " + MENU.length;
+        }
 
-  function wait(ms) {
-    return new Promise(r => setTimeout(r, ms));
-  }
+        document.getElementById("unlockedCount").textContent = Object.keys(orderedSet).length + " / " + MENU.length + " tried";
+        document.getElementById("receiptCount").textContent = receiptItems.length + (receiptItems.length === 1 ? " item ordered" : " items ordered");
 
-  function startIdleCycle() {
-    stopIdleCycle();
-    idleTimer = setInterval(() => {
-      if (isBusy) return;
-      idleIndex = (idleIndex + 1) % idleKeys.length;
-      const key = idleKeys[idleIndex];
-      setImage(key);
-      if (key === "idle_empty")      setText("…");
-      else if (key === "idle_sleeping") setText("Zzz…");
-      else if (key === "idle_phone")    setText("Just a second…");
-      else if (key === "idle_thinking") setText("Hmm…");
-      else                              setText("What can I get for you?");
-    }, 7000);
-  }
+        if (!receiptItems.length) {
+          document.getElementById("receiptList").textContent = "No items ordered yet — try speaking or sending your first order!";
+        } else {
+          document.getElementById("receiptList").textContent = receiptItems.slice(-8).join(" · ") + (receiptItems.length > 8 ? " (+" + (receiptItems.length - 8) + " earlier)" : "");
+        }
+      }
 
-  function stopIdleCycle() {
-    if (idleTimer) {
-      clearInterval(idleTimer);
-      idleTimer = null;
-    }
-  }
+      function renderGoalCard() {
+        var goalEmoji = document.getElementById("goalEmoji");
+        var goalKicker = document.getElementById("goalKicker");
+        var goalTitle = document.getElementById("goalTitle");
+        var goalPhrase = document.getElementById("goalPhrase");
+        var skipBtn = document.getElementById("skipOrderBtn");
 
-  function resetButton() {
-    speakBtn.classList.remove("listening");
-    speakBtn.textContent = "Speak your order";
-    speakBtn.disabled = false;
-  }
+        if (mode === "shift") {
+          var targetKey = shiftTargets[shiftIndex] || "coffee";
+          var item = menuByKey(targetKey);
+          goalEmoji.textContent = item.emoji;
+          goalKicker.textContent = "Order " + (shiftIndex + 1) + " of " + shiftTargets.length + " · Polite sentence = +150 pts";
+          goalTitle.textContent = "Ask the shopkeeper for: " + item.key;
+          goalPhrase.textContent = "Model: “" + item.model + "”";
+          skipBtn.hidden = false;
+        } else {
+          goalEmoji.textContent = "🛒";
+          goalKicker.textContent = "Free Roleplay · Open Counter";
+          goalTitle.textContent = "Order any item from the menu";
+          goalPhrase.textContent = "Try full polite sentences like “Can I have two apples, please?”";
+          skipBtn.hidden = true;
+        }
+      }
 
-  function findMatch(transcript) {
-    const keys = Object.keys(sequences).sort((a, b) => b.length - a.length);
-    for (const key of keys) {
-      if (transcript.includes(key)) return key;
-    }
-    return null;
-  }
+      function renderMenuGrid() {
+        var currentTarget = mode === "shift" ? shiftTargets[shiftIndex] : "";
+        var items = MENU.filter(function (it) {
+          return activeCategory === "all" || it.cat === activeCategory;
+        });
 
-  async function playSequence(steps) {
-    isBusy = true;
-    stopIdleCycle();
-    speakBtn.disabled = true;
-    textBtn.disabled = true;
+        menuGrid.innerHTML = "";
+        items.forEach(function (it) {
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "sm-item-card";
+          if (currentTarget === it.key) btn.classList.add("is-target");
+          if (orderedSet[it.key]) btn.classList.add("is-ordered");
 
-    for (const step of steps) {
-      setImage(step.img);
-      setText(step.text);
-      await wait(step.delay);
-    }
+          var emojiSpan = document.createElement("span");
+          emojiSpan.className = "sm-item-emoji";
+          emojiSpan.setAttribute("aria-hidden", "true");
+          emojiSpan.textContent = it.emoji;
 
-    setImage("idle_waiting");
-    setText("Anything else?");
-    isBusy = false;
-    resetButton();
-    textBtn.disabled = false;
-    startIdleCycle();
-  }
+          var info = document.createElement("span");
+          info.className = "sm-item-info";
 
-  function handleOrder(transcript) {
-    const matched = findMatch(transcript);
-    if (matched) {
-      recordSuccessfulOrder(matched);
-      playSequence(sequences[matched]);
-    } else {
-      const fails = [
-        seq(
-          { img: "falling",     text: "Wait… what?!", delay: 3000 },
-          { img: "embarrassed", text: "Sorry, I didn't catch that…", delay: 3800 }
-        ),
-        seq(
-          { img: "embarrassed", text: "Could you say that again?", delay: 3500 }
-        ),
-        seq(
-          { img: "falling",     text: "Whoa!", delay: 2800 },
-          { img: "embarrassed", text: "I only understand the items on the menu…", delay: 3800 }
-        )
-      ];
-      playSequence(fails[Math.floor(Math.random() * fails.length)]);
-    }
-  }
+          var nameEl = document.createElement("span");
+          nameEl.className = "sm-item-name";
+          nameEl.textContent = it.key;
 
-  speakBtn.addEventListener("click", () => {
-    if (!recognition || isBusy) return;
-    try {
-      recognition.start();
-    } catch (e) {
-      statusEl.textContent = "Already listening…";
-    }
-  });
+          var subEl = document.createElement("span");
+          subEl.className = "sm-item-sub";
+          if (orderedSet[it.key]) subEl.textContent = "Ordered ✓";
+          else if (currentTarget === it.key) subEl.textContent = "Current goal";
+          else subEl.textContent = "Tap to hear";
 
-  textBtn.addEventListener("click", () => {
-    fallback.style.display = fallback.style.display === "none" || !fallback.style.display ? "flex" : "none";
-    if (fallback.style.display !== "none") textInput.focus();
-  });
+          info.appendChild(nameEl);
+          info.appendChild(subEl);
+          btn.appendChild(emojiSpan);
+          btn.appendChild(info);
 
-  function submitTyped() {
-    const val = textInput.value.trim().toLowerCase();
-    if (!val || isBusy) return;
-    statusEl.textContent = `Typed: “${val}”`;
-    textInput.value = "";
-    handleOrder(val);
-  }
+          btn.addEventListener("click", function () {
+            if (window.LASfx) LASfx.click();
+            speakLine(it.model, 0.94);
+            textInput.value = it.model;
+            setStatus("Practicing: “" + it.model + "” — press Speak or Send Order!", "ok");
+          });
 
-  submitText.addEventListener("click", submitTyped);
-  textInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") submitTyped();
-  });
+          menuGrid.appendChild(btn);
+        });
+      }
 
-  document.addEventListener("keydown", (e) => {
-    if (e.code === "Space" && !isBusy && recognition && document.activeElement !== textInput) {
-      e.preventDefault();
-      speakBtn.click();
-    }
-  });
+      function findMatch(transcript) {
+        var norm = String(transcript || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+        for (var i = 0; i < MATCH_PAIRS.length; i++) {
+          var term = MATCH_PAIRS[i].term;
+          var re = new RegExp("(^|\\s)" + term.replace(/\s+/g, "\\s+") + "(\\s|$)");
+          if (re.test(norm)) return MATCH_PAIRS[i].canonical;
+        }
+        return null;
+      }
 
-  // Footer year
-  const yearEl = document.getElementById("year");
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
+      function isPoliteSentence(transcript) {
+        var s = String(transcript || "").toLowerCase();
+        return /\b(please|can i|could i|may i|i'd like|i would like|i want|cup of|slice of|bag of|some|two|three)\b/.test(s);
+      }
 
-  startIdleCycle();
-</script>
-<script src="/visit-counter.js" defer></script>
+      function syncStarsLive() {
+        var s = starsForScore();
+        if (window.LAStars && s > 0) {
+          LAStars.save(GAME_ID, s);
+        }
+      }
+
+      function wait(ms) {
+        return new Promise(function (resolve) { setTimeout(resolve, ms); });
+      }
+
+      async function playSequence(steps, runId, finishDialogue) {
+        isBusy = true;
+        stopIdleCycle();
+        syncControlsDisabled();
+
+        for (var i = 0; i < steps.length; i++) {
+          if (runId !== activeRunId) return;
+          var step = steps[i];
+          setSceneImage(step.img);
+          setDialogue(step.text, true);
+          await wait(step.delay);
+        }
+
+        if (runId !== activeRunId) return;
+        setSceneImage("idle_waiting");
+        setDialogue(finishDialogue || "Anything else today?");
+        isBusy = false;
+        syncControlsDisabled();
+        startIdleCycle();
+      }
+
+      function handleOrder(rawInput, usedVoice) {
+        if (isBusy) return;
+        var clean = String(rawInput || "").trim();
+        if (!clean) return;
+
+        var matched = findMatch(clean);
+        var target = mode === "shift" ? shiftTargets[shiftIndex] : null;
+        var polite = isPoliteSentence(clean);
+        attemptsTotal += 1;
+
+        if (!matched) {
+          streak = 0;
+          if (window.LASfx) LASfx.wrong();
+          if (target) {
+            mistakes.push({ prompt: "Order: " + target, yours: clean, answer: menuByKey(target).model });
+          }
+          setStatus("Shopkeeper didn't catch a menu item. Check the Counter Menu and try again!", "err", clean);
+          updateHud();
+          activeRunId += 1;
+          var fails = [
+            [
+              { img: "falling", text: "Wait… what did you say?!", delay: 1600 },
+              { img: "embarrassed", text: "Sorry, try asking for an item on our counter!", delay: 2200 }
+            ],
+            [
+              { img: "embarrassed", text: "Could you say that again a little slower?", delay: 2300 }
+            ]
+          ];
+          playSequence(fails[Math.floor(Math.random() * fails.length)], activeRunId, target ? ("Still waiting on your " + target + "!") : "Anything from the menu?");
+          return;
+        }
+
+        if (mode === "shift" && matched !== target) {
+          streak = 0;
+          if (window.LASfx) LASfx.wrong();
+          mistakes.push({ prompt: "Customer goal: " + target, yours: clean, answer: menuByKey(target).model });
+          setStatus("You asked for “" + matched + "”, but your goal is “" + target + "”.", "warn", clean);
+          updateHud();
+          activeRunId += 1;
+          playSequence([
+            { img: "idle_thinking", text: "You ordered " + matched + ", right? Wait—check your shopping list!", delay: 2200 }
+          ], activeRunId, "Try asking for " + target + "!");
+          return;
+        }
+
+        // Valid order accepted!
+        correctTotal += 1;
+        streak += 1;
+        orderedSet[matched] = true;
+        receiptItems.push(matched);
+
+        var pts = 100 + (polite ? 40 : 0) + (usedVoice ? 20 : 0);
+        score += pts;
+        if (window.LASfx) LASfx.correct();
+        syncStarsLive();
+
+        var bonusBits = [];
+        if (polite) bonusBits.push("Polite phrase +40");
+        if (usedVoice) bonusBits.push("Voice +20");
+        setStatus(
+          "Order filled: " + matched + " (+" + pts + " pts" + (bonusBits.length ? " · " + bonusBits.join(", ") : "") + ")",
+          "ok",
+          clean
+        );
+
+        renderMenuGrid();
+        updateHud();
+
+        activeRunId += 1;
+        var runId = activeRunId;
+        var seq = SEQUENCES[matched] || bag(matched);
+
+        playSequence(seq, runId).then(function () {
+          if (runId !== activeRunId) return;
+          if (mode === "shift") {
+            shiftIndex += 1;
+            if (shiftIndex >= shiftTargets.length) {
+              finishGame();
+            } else {
+              renderGoalCard();
+              renderMenuGrid();
+              updateHud();
+              setDialogue("Next customer order! What would you like?", true);
+            }
+          }
+        });
+      }
+
+      function finishGame() {
+        stopIdleCycle();
+        isBusy = false;
+        syncControlsDisabled();
+
+        var timeMs = (window.LAFinish && LAFinish.stopTimer) ? LAFinish.stopTimer() : 0;
+        var maxScore = mode === "shift" ? (shiftTargets.length * 160) : Math.max(score, 800);
+        var acc = attemptsTotal > 0 ? Math.round((correctTotal / attemptsTotal) * 100) : (correctTotal > 0 ? 100 : 0);
+
+        if (window.LAFinish && typeof LAFinish.show === "function") {
+          LAFinish.show({
+            gameId: GAME_ID,
+            gameName: "Supermarket Order",
+            category: "Speaking",
+            score: score,
+            total: maxScore,
+            accuracy: acc,
+            stars: starsForScore(),
+            timeMs: timeMs,
+            mistakes: mistakes,
+            backHref: "../",
+            onAgain: function () {
+              resetRound(mode);
+            }
+          });
+        }
+      }
+
+      function resetRound(nextMode) {
+        mode = nextMode || mode;
+        activeRunId += 1;
+        isBusy = false;
+        score = 0;
+        streak = 0;
+        attemptsTotal = 0;
+        correctTotal = 0;
+        receiptItems = [];
+        mistakes = [];
+        shiftIndex = 0;
+        shiftTargets = shuffle(MENU.map(function (m) { return m.key; })).slice(0, 8);
+
+        document.getElementById("modeShiftBtn").classList.toggle("is-active", mode === "shift");
+        document.getElementById("modeShiftBtn").setAttribute("aria-selected", mode === "shift" ? "true" : "false");
+        document.getElementById("modeFreeBtn").classList.toggle("is-active", mode === "free");
+        document.getElementById("modeFreeBtn").setAttribute("aria-selected", mode === "free" ? "true" : "false");
+
+        setSceneImage("idle_waiting");
+        setDialogue("Welcome! What would you like today?");
+        setStatus("Press Space or Speak Your Order to talk to the shopkeeper.");
+        renderGoalCard();
+        renderMenuGrid();
+        updateHud();
+        syncControlsDisabled();
+        startIdleCycle();
+        if (window.LAFinish && LAFinish.startTimer) LAFinish.startTimer();
+      }
+
+      /* Speech Recognition */
+      var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      var recognition = null;
+
+      function syncListeningUi(listening) {
+        isListening = listening;
+        speakBtn.classList.toggle("is-listening", listening);
+        mobileSpeakBtn.classList.toggle("is-listening", listening);
+
+        if (listening) {
+          speakBtnLabel.innerHTML = '<span class="sm-wave" aria-hidden="true"><span></span><span></span><span></span></span> Listening…';
+          mobileSpeakBtn.textContent = "Listening…";
+        } else {
+          speakBtnLabel.textContent = SpeechRecognition ? "Speak Your Order (Space)" : "Mic Unavailable — Type Below";
+          mobileSpeakBtn.textContent = SpeechRecognition ? "Speak Order" : "Mic N/A";
+        }
+        syncControlsDisabled();
+      }
+
+      function syncControlsDisabled() {
+        var disSpeak = isBusy || !SpeechRecognition;
+        speakBtn.disabled = disSpeak;
+        mobileSpeakBtn.disabled = disSpeak;
+        submitTextBtn.disabled = isBusy;
+        document.getElementById("skipOrderBtn").disabled = isBusy;
+      }
+
+      if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 5;
+        recognition.continuous = false;
+
+        recognition.onstart = function () {
+          syncListeningUi(true);
+          setStatus("Listening… say a polite order like “Can I have a coffee, please?”");
+        };
+
+        recognition.onresult = function (event) {
+          var list = event.results[0];
+          var best = list[0].transcript.trim();
+          for (var i = 0; i < list.length; i++) {
+            var alt = list[i].transcript.trim();
+            if (findMatch(alt)) {
+              best = alt;
+              break;
+            }
+          }
+          syncListeningUi(false);
+          handleOrder(best, true);
+        };
+
+        recognition.onerror = function (e) {
+          syncListeningUi(false);
+          if (e.error === "no-speech") setStatus("No speech detected — tap Speak or type your order.", "warn");
+          else if (e.error === "not-allowed") setStatus("Microphone permission blocked. Use the Type box or enable mic access.", "err");
+          else setStatus("Could not hear clearly — please try again.", "warn");
+        };
+
+        recognition.onend = function () {
+          if (isListening) syncListeningUi(false);
+        };
+      } else {
+        setStatus("Voice recognition isn't supported in this browser — type or tap items on the Counter Menu!", "warn");
+      }
+
+      function triggerMic() {
+        if (!recognition || isBusy) return;
+        try {
+          if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+          recognition.start();
+        } catch (e) {
+          setStatus("Already listening…");
+        }
+      }
+
+      /* Event Wiring */
+      speakBtn.addEventListener("click", triggerMic);
+      mobileSpeakBtn.addEventListener("click", triggerMic);
+
+      document.getElementById("focusTypeBtn").addEventListener("click", function () {
+        textInput.focus();
+        textInput.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+
+      mobileTypeBtn.addEventListener("click", function () {
+        textInput.focus();
+        textInput.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+
+      document.getElementById("typeForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var val = textInput.value.trim();
+        if (!val || isBusy) return;
+        textInput.value = "";
+        handleOrder(val, false);
+      });
+
+      document.querySelectorAll(".sm-phrase-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var starter = btn.getAttribute("data-starter");
+          var suffix = btn.getAttribute("data-suffix");
+          if (starter) {
+            textInput.value = starter + (textInput.value ? textInput.value.replace(/^(Can I have|I'd like|Two)\s+/i, "") : "");
+          } else if (suffix && textInput.value.indexOf("please") === -1) {
+            textInput.value = textInput.value.trim().replace(/[.,!?]+$/, "") + suffix;
+          }
+          textInput.focus();
+        });
+      });
+
+      document.getElementById("hearModelBtn").addEventListener("click", function () {
+        var targetKey = mode === "shift" ? (shiftTargets[shiftIndex] || "coffee") : "coffee";
+        var model = menuByKey(targetKey).model;
+        var prev = shopkeeperVoice;
+        shopkeeperVoice = true;
+        speakLine(model, 0.92);
+        shopkeeperVoice = prev;
+      });
+
+      document.getElementById("hearShopkeeperBtn").addEventListener("click", function () {
+        var prev = shopkeeperVoice;
+        shopkeeperVoice = true;
+        speakLine(dialogueEl.textContent, 0.96);
+        shopkeeperVoice = prev;
+      });
+
+      document.getElementById("skipOrderBtn").addEventListener("click", function () {
+        if (mode !== "shift" || isBusy) return;
+        var skipped = shiftTargets[shiftIndex];
+        mistakes.push({ prompt: "Skipped: " + skipped, yours: "Skipped", answer: menuByKey(skipped).model });
+        shiftIndex += 1;
+        streak = 0;
+        if (shiftIndex >= shiftTargets.length) {
+          finishGame();
+        } else {
+          renderGoalCard();
+          renderMenuGrid();
+          updateHud();
+          setStatus("Skipped “" + skipped + "”. Ready for your next customer order!");
+        }
+      });
+
+      document.getElementById("voiceToggleBtn").addEventListener("click", function () {
+        shopkeeperVoice = !shopkeeperVoice;
+        var btn = document.getElementById("voiceToggleBtn");
+        btn.setAttribute("aria-pressed", shopkeeperVoice ? "true" : "false");
+        btn.classList.toggle("is-accent", shopkeeperVoice);
+        btn.textContent = shopkeeperVoice ? "Shopkeeper Voice: On" : "Shopkeeper Voice: Off";
+        if (!shopkeeperVoice && "speechSynthesis" in window) {
+          try { window.speechSynthesis.cancel(); } catch (e) {}
+        }
+      });
+
+      document.getElementById("finishShiftBtn").addEventListener("click", finishGame);
+      mobileFinishBtn.addEventListener("click", finishGame);
+
+      document.getElementById("modeShiftBtn").addEventListener("click", function () {
+        if (mode !== "shift") resetRound("shift");
+      });
+      document.getElementById("modeFreeBtn").addEventListener("click", function () {
+        if (mode !== "free") resetRound("free");
+      });
+
+      document.getElementById("catBar").addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-cat]");
+        if (!btn) return;
+        activeCategory = btn.getAttribute("data-cat") || "all";
+        document.querySelectorAll(".sm-cat-btn").forEach(function (b) {
+          b.classList.toggle("is-active", b === btn);
+        });
+        renderMenuGrid();
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.code === "Space" && !isBusy && recognition && document.activeElement !== textInput && document.activeElement.tagName !== "BUTTON") {
+          e.preventDefault();
+          triggerMic();
+        }
+      });
+
+      syncListeningUi(false);
+      resetRound("shift");
+    })();
+  </script>
 </body>
 </html>

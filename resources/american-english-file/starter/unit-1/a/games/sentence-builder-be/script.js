@@ -29,13 +29,13 @@
     el.style.right = Math.max(8, document.documentElement.clientWidth - r.right) + "px";
     el.style.top = Math.max(8, r.bottom + 8) + "px";
   }
-  function showCombo() {
+  function showCombo() { return;
     var el = chip(); place(el);
     el.className = "afx-combo is-on" + (streak >= 5 ? " is-hot" : "");
     el.innerHTML = '<span class="afx-fire">🔥</span> x' + streak + " <em>" + label(streak) + "</em>";
     void el.offsetWidth; el.classList.add("is-bump");
   }
-  function celebrate(n) {
+  function celebrate(n) { return;
     var c = CHEERS[Math.min(Math.floor(n / 10) - 1, 2)];
     [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.22, "triangle", 0.1, i * 0.09); });
     tone(1568, 0.6, "sine", 0.08, 0.5);
@@ -247,8 +247,6 @@
   let correctCount = 0;
   let totalCount = 0;
   let audioEl = null;
-  let celebrateFadeTimer = null;
-  let celebrateEndTimer = null;
 
   function shuffle(arr) {
     const a = arr.slice();
@@ -427,7 +425,6 @@
           <div class="sb-slots" id="sb-slots">
             ${item.answer.map(() => `<span class="sb-slot"></span>`).join("")}
           </div>
-          <div class="sb-feedback" id="sb-feedback" aria-live="polite"></div>
         </div>
         <div class="sb-chips" id="sb-chips">
           ${pool
@@ -446,11 +443,6 @@
       if (locked) return;
       selected = [];
       updateSlots();
-      const fb = document.getElementById("sb-feedback");
-      if (fb) {
-        fb.className = "sb-feedback";
-        fb.textContent = "";
-      }
       app.querySelectorAll(".sb-chip").forEach((b) => {
         b.disabled = false;
         b.classList.remove("used");
@@ -514,32 +506,19 @@
 
     const checkBtn = document.getElementById("sb-check");
     if (checkBtn) checkBtn.disabled = true;
-    const fb = document.getElementById("sb-feedback");
 
     if (ok) {
       correctCount++;
-      if (fb) {
-        fb.className = "sb-feedback is-ok";
-        fb.textContent = "✓ " + praise();
-      }
       sfxCorrect();
       playAudio(item.audio).then(() => {
-        setTimeout(() => advance(), 320);
+        setTimeout(() => advance(), 280);
       });
     } else {
-      if (fb) {
-        fb.className = "sb-feedback is-bad";
-        fb.textContent = "Try again!";
-      }
       sfxWrong();
       setTimeout(() => {
         locked = false;
         selected = [];
         updateSlots();
-        if (fb) {
-          fb.className = "sb-feedback";
-          fb.textContent = "";
-        }
         app.querySelectorAll(".sb-chip").forEach((b) => {
           b.disabled = false;
           b.classList.remove("used");
@@ -550,19 +529,7 @@
   }
 
   const SETS = ["positive", "negative", "questions"];
-  const SET_END = ["Good job!", "Excellent!", "Great work!", "Awesome!"];
-
-  function clearCelebrations() {
-    if (celebrateFadeTimer) {
-      clearTimeout(celebrateFadeTimer);
-      celebrateFadeTimer = null;
-    }
-    if (celebrateEndTimer) {
-      clearTimeout(celebrateEndTimer);
-      celebrateEndTimer = null;
-    }
-    document.querySelectorAll(".sb-celebrate, .afx-burst").forEach((el) => el.remove());
-  }
+  const SET_END = ["Good job!", "Excellent!"];
 
   function advance() {
     itemIndex++;
@@ -571,7 +538,7 @@
       renderItem();
       return;
     }
-    // phase complete (full form -> short form): carry on smoothly
+    // phase complete (full form -> short form): carry on with no message
     phaseIndex++;
     itemIndex = 0;
     if (phaseIndex < DATA[mode].phases.length) {
@@ -585,37 +552,26 @@
       showFinalFinish();
       return;
     }
-    clearCelebrations();
     const card = document.createElement("div");
     card.className = "sb-celebrate";
-    const badgeIcon = next === "negative" ? "🎉" : "🌟";
     card.innerHTML = `
       <div class="sb-celebrate-card">
-        <div class="sb-celebrate-badge" aria-hidden="true">${badgeIcon}</div>
         <h2>${escapeHtml(SET_END[Math.floor(Math.random() * SET_END.length)])}</h2>
         <p>Now the ${escapeHtml(DATA[next].label.toLowerCase())} sentences.</p>
       </div>`;
     document.body.appendChild(card);
-    spawnSparkles(card.querySelector(".sb-celebrate-card"));
     sfxCelebrate();
-    celebrateFadeTimer = setTimeout(() => {
-      card.classList.add("is-out");
-    }, 1450);
-    celebrateEndTimer = setTimeout(() => {
+    setTimeout(() => {
       card.remove();
-      celebrateFadeTimer = null;
-      celebrateEndTimer = null;
       startMode(next);
-    }, 1720);
+    }, 1600);
   }
 
   function showCelebrate(title, subtitle, onContinue, nextMode) {
-    clearCelebrations();
     const card = document.createElement("div");
     card.className = "sb-celebrate";
     card.innerHTML = `
       <div class="sb-celebrate-card">
-        <div class="sb-celebrate-badge" aria-hidden="true">🎉</div>
         <h2>${escapeHtml(title)}</h2>
         <p>${escapeHtml(subtitle)}</p>
         <button type="button" class="sb-btn sb-btn-primary" id="sb-cont" style="width:100%;">
@@ -623,7 +579,6 @@
         </button>
       </div>`;
     document.body.appendChild(card);
-    spawnSparkles(card.querySelector(".sb-celebrate-card"));
     sfxCelebrate();
     document.getElementById("sb-cont").addEventListener("click", () => {
       card.remove();
@@ -686,7 +641,6 @@
   }
 
   function restartAll() {
-    clearCelebrations();
     modeDone = { positive: false, negative: false, questions: false };
     startMode("positive");
   }

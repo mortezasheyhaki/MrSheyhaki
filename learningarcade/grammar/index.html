@@ -1,373 +1,540 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("mrsheyhaki-theme");
+        if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+        else if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches)
+          document.documentElement.setAttribute("data-theme", "dark");
+        else document.documentElement.setAttribute("data-theme", "light");
+      } catch (e) {}
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Grammar Games | Mr. Sheyhaki</title>
+  <meta name="description" content="Practice grammar in short challenges that make sentence building faster and more natural.">
 
-<title>Grammar Games | Mr. Sheyhaki</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=JetBrains+Mono:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="../skill-hub.css">
 
-<meta
-  name="description"
-  content="Practice grammar in short challenges that make sentence building faster and more natural."
->
+  <style>
+    /* =========================================================
+       GRAMMAR VIBE — Syntax Blueprint & Tense Studio
+       Drafting grid, structural nodes, monospace indices
+    ========================================================= */
+    :root,
+    html[data-theme="dark"] {
+      --sk-accent: #34d399;
+      --sk-btn-bg: #059669;
+      --sk-soft: rgba(16, 185, 129, 0.14);
+      --sk-border: rgba(52, 211, 153, 0.34);
+      --sk-card-border: rgba(52, 211, 153, 0.28);
+      --sk-glow: rgba(16, 185, 129, 0.32);
+      --sk-hero-bg: linear-gradient(145deg, rgba(6, 78, 59, 0.56) 0%, rgba(15, 23, 42, 0.92) 72%);
+      --bp-grid: rgba(52, 211, 153, 0.06);
+      --bp-grid-major: rgba(52, 211, 153, 0.11);
+      --bp-rule: rgba(52, 211, 153, 0.22);
+    }
 
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="../../style.css">
-<link rel="stylesheet" href="../../theme.css">
-<!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script><!-- End Cloudflare Web Analytics -->
+    html[data-theme="light"] {
+      --sk-accent: #047857;
+      --sk-btn-bg: #059669;
+      --sk-soft: rgba(5, 150, 105, 0.1);
+      --sk-border: rgba(5, 150, 105, 0.28);
+      --sk-card-border: rgba(5, 150, 105, 0.22);
+      --sk-glow: rgba(5, 150, 105, 0.22);
+      --sk-hero-bg: linear-gradient(145deg, #ecfdf5 0%, #ffffff 74%);
+      --bp-grid: rgba(5, 150, 105, 0.05);
+      --bp-grid-major: rgba(5, 150, 105, 0.095);
+      --bp-rule: rgba(5, 150, 105, 0.2);
+    }
+
+    .grammar-stage {
+      background-color: var(--sh-bg);
+      background-image:
+        radial-gradient(ellipse 65% 42% at 15% 0%, rgba(16, 185, 129, 0.14), transparent 62%),
+        linear-gradient(var(--bp-grid-major) 1px, transparent 1px),
+        linear-gradient(90deg, var(--bp-grid-major) 1px, transparent 1px),
+        linear-gradient(var(--bp-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--bp-grid) 1px, transparent 1px);
+      background-size: 100% 100%, 112px 112px, 112px 112px, 28px 28px, 28px 28px;
+    }
+
+    .skill-card-index,
+    .grammar-syntax-code {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    /* Syntax Blueprint Hero Overlay */
+    .grammar-syntax-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: var(--sk-soft);
+      border: 1px dashed var(--bp-rule);
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--sk-accent);
+    }
+
+    .grammar-syntax-bar .syn-op {
+      color: var(--sh-muted);
+      font-weight: 600;
+    }
+
+    .grammar-hero-svg {
+      width: 240px;
+      height: 210px;
+      color: var(--sk-accent);
+      opacity: 0.34;
+    }
+
+    /* Subtle architectural corner ticks on cards */
+    .skill-card--playable::after {
+      content: "";
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 12px;
+      height: 12px;
+      border-top: 2px solid var(--sk-accent);
+      border-right: 2px solid var(--sk-accent);
+      border-top-right-radius: 4px;
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .grammar-card-hidden {
+      display: none !important;
+    }
+  </style>
+
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "02177b6ca21e456c8c869b6f675f461a"}'></script>
 </head>
+<body class="has-site-topbar">
 
-<body>
+  <header class="site-topbar">
+    <div class="topbar-inner">
+      <a href="../../" class="brand-mark">Mr. Sheyhaki</a>
 
-<!-- =================================
-     FLOATING ARCADE-STYLE HEADER
-================================== -->
-<header class="arcade-header-bar">
-  <nav class="arcade-nav" id="mainNav" aria-label="Main navigation">
-      <a href="../../" class="nav-link" aria-label="Home" data-icon="🏠"><span class="nav-ico" aria-hidden="true">🏠</span><span class="nav-text">Home</span></a>
-      <a href="../" class="nav-link active" aria-current="page" aria-label="Arcade" data-icon="🕹️"><span class="nav-ico" aria-hidden="true">🕹️</span><span class="nav-text">Arcade</span></a>
-      <a href="../../resources/" class="nav-link" aria-label="Resources" data-icon="📚"><span class="nav-ico" aria-hidden="true">📚</span><span class="nav-text">Resources</span></a>
-      <a href="../../about/" class="nav-link" aria-label="About" data-icon="ℹ️"><span class="nav-ico" aria-hidden="true">ℹ️</span><span class="nav-text">About</span></a>
-      <a href="../profile/" class="nav-link nav-profile" aria-label="My Profile" title="My Profile"><span class="nav-ico" aria-hidden="true">👤</span><span class="nav-text">Profile</span></a>
-    </nav>
-</header>
+      <nav class="topbar-nav" aria-label="Main navigation">
+        <a href="../../" class="topbar-link">Home</a>
+        <a href="../" class="topbar-link active" aria-current="page">Arcade</a>
+        <a href="../../multiplayer/" class="topbar-link">Multiplayer</a>
+        <a href="../../resources/" class="topbar-link">Resources</a>
+        <a href="../../about/" class="topbar-link">About</a>
+      </nav>
 
-
-
-<main class="grammar">
-
-  <section class="arcade-intro skill-intro">
-    <div class="skill-intro-top">
-      <a class="skill-back-btn" href="../adult/" data-back-one aria-label="Back" title="Back"><span aria-hidden="true">←</span></a>
-      <span class="eyebrow">GRAMMAR ARCADE</span>
+      <div class="topbar-actions">
+        <button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <a href="../profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>
+      </div>
     </div>
-    <h1>Grammar - Choose a game</h1>
-  </section>
+    <nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+      <a href="../../">Home</a>
+      <a href="../" class="active" aria-current="page">Arcade</a>
+      <a href="../../multiplayer/">Multiplayer</a>
+      <a href="../../resources/">Resources</a>
+      <a href="../../about/">About</a>
+    </nav>
+  </header>
 
+  <main class="skill-stage grammar-stage">
+    <div class="skill-container">
 
-  <!-- GAME GRID -->
-
-  <section
-    class="game-grid"
-    aria-label="Grammar games"
-  >
-
-
-    <!-- Be Verbs hub -->
-
-    <article class="game-card game-card--playable">
-
-            <div class="game-card-icon" aria-hidden="true">🌍</div>
-<span class="game-tag">
-        Be Verbs · A1
-      </span>
-
-      <h3>
-        Be Verbs
-      </h3>
-
-      <p>
-        Practice the verb be, WH questions and matching
-        WH words to meanings.
-      </p>
-
-      <div class="game-meta">
-        3 games · Ready to play
+      <div class="skill-crumb-row">
+        <a class="skill-back-link" href="../adult/">
+          <span aria-hidden="true">←</span>
+          <span>All Skills</span>
+        </a>
+        <div class="skill-crumb-meta">
+          <span>Grammar Studio</span>
+          <span aria-hidden="true">·</span>
+          <span><strong id="grammarStarsCount">0</strong> / 24 Stars Earned</span>
+        </div>
       </div>
 
-      <div class="game-card-actions">
-        <a class="game-launch" href="be-verbs/">Explore</a>
-        <div class="game-stars" data-game="be-verbs" aria-label="Progress stars">
-        <span class="star" data-n="1">☆</span>
-        <span class="star" data-n="2">☆</span>
-        <span class="star" data-n="3">☆</span>
-      </div>
-      </div>
+      <section class="skill-hero-panel" aria-labelledby="grammarTitle">
+        <div class="skill-hero-copy">
+          <p class="skill-kicker-line">Structure &amp; Syntax Studio</p>
+          <h1 class="skill-hero-title" id="grammarTitle">Grammar Arcade</h1>
+          <p class="skill-hero-lead">Build clean English sentences step by step—master verb tenses, questions, quantifiers, and phrasal patterns through quick rounds.</p>
 
-    </article>
+          <div class="grammar-syntax-bar" aria-hidden="true">
+            <span>[Subject]</span>
+            <span class="syn-op">+</span>
+            <span>[Auxiliary / Tense]</span>
+            <span class="syn-op">+</span>
+            <span>[Main Verb / Clause]</span>
+          </div>
 
+          <div class="skill-hero-stats">
+            <span class="stat-highlight">8 Live Challenges</span>
+            <span class="stat-sep" aria-hidden="true">·</span>
+            <span>A1 to A2+ Levels</span>
+            <span class="stat-sep" aria-hidden="true">·</span>
+            <span>Match Rush &amp; Sentence Builders</span>
+          </div>
+        </div>
 
-    <!-- Simple Present -->
+        <div class="skill-hero-art">
+          <div class="art-backdrop" aria-hidden="true">
+            <svg class="grammar-hero-svg" viewBox="0 0 240 210" fill="none">
+              <rect x="18" y="20" width="204" height="170" rx="18" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 5"/>
+              <path d="M52 55H188M52 105H188M52 155H188" stroke="currentColor" stroke-width="1" opacity="0.45"/>
+              <circle cx="52" cy="55" r="5" fill="currentColor"/>
+              <circle cx="188" cy="105" r="5" fill="currentColor"/>
+              <circle cx="52" cy="155" r="5" fill="currentColor"/>
+            </svg>
+          </div>
+          <img
+            src="https://cdn.imgurl.ir/uploads/o608619_grammar.png"
+            alt="Grammar Studio"
+            width="210"
+            height="210"
+            onerror="this.parentElement.classList.add('is-fallback')"
+          >
+          <div class="art-fallback" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><rect x="7" y="10" width="14" height="11" rx="2.5"/><rect x="27" y="10" width="14" height="11" rx="2.5"/><rect x="17" y="27" width="14" height="11" rx="2.5"/><path d="M21 15h6M14 21v11h3M34 21v11h-3"/></svg>
+          </div>
+        </div>
+      </section>
 
-    <article class="game-card game-card--playable">
-
-            <div class="game-card-icon" aria-hidden="true">⏱️</div>
-<span class="game-tag">
-        Simple Present · A1
-      </span>
-
-      <h3>
-        Simple Present
-      </h3>
-
-      <p>
-        Practice positive, negative and question forms
-        of the simple present tense.
-      </p>
-
-      <div class="game-meta">
-        Verb forms · Ready to play
-      </div>
-
-      <div class="game-card-actions">
-        <a class="game-launch" href="simple-present/">Play</a>
-        <div class="game-stars" data-game="simple-present" aria-label="Progress stars">
-        <span class="star" data-n="1">☆</span>
-        <span class="star" data-n="2">☆</span>
-        <span class="star" data-n="3">☆</span>
-      </div>
-      </div>
-
-    </article>
-
-
-
-
-    <!-- GAME 5: There is / There are -->
-
-    <article class="game-card game-card--playable">
-
-            <div class="game-card-icon" aria-hidden="true">🏠</div>
-<span class="game-tag">
-        There is / There are · A1
-      </span>
-
-      <h3>
-        There is / There are
-      </h3>
-
-      <p>
-        Practice positive, negative and question forms
-        with rooms &amp; places and some / any.
-      </p>
-
-      <div class="game-meta">
-        there is / there are · Ready to play
+      <div class="skill-toolbar">
+        <h2 class="skill-section-label">Choose a Structure</h2>
+        <div class="skill-filter-group" role="group" aria-label="Filter grammar games by focus">
+          <button type="button" class="skill-filter-btn is-active" data-filter="all" aria-pressed="true">All · 10</button>
+          <button type="button" class="skill-filter-btn" data-filter="tenses" aria-pressed="false">Tenses &amp; Be</button>
+          <button type="button" class="skill-filter-btn" data-filter="clauses" aria-pressed="false">Nouns &amp; Patterns</button>
+          <button type="button" class="skill-filter-btn" data-filter="upcoming" aria-pressed="false">Upcoming</button>
+        </div>
       </div>
 
-      <div class="game-card-actions">
-        <a class="game-launch" href="there-is-there-are/">Play</a>
-        <div class="game-stars" data-game="there-is-there-are" aria-label="Progress stars">
-        <span class="star" data-n="1">☆</span>
-        <span class="star" data-n="2">☆</span>
-        <span class="star" data-n="3">☆</span>
+      <section class="skill-game-grid" aria-label="Grammar games">
+
+        <!-- 01 Be Verbs -->
+        <article class="skill-card skill-card--playable" data-category="tenses">
+          <div class="skill-card-top">
+            <div class="skill-card-icon-wrap">
+              <div class="skill-card-icon" aria-hidden="true">🌍</div>
+            </div>
+            <span class="skill-card-index">01</span>
+          </div>
+          <p class="skill-card-kicker">Be Verbs · A1</p>
+          <h3 class="skill-card-title">Be Verbs</h3>
+          <p class="skill-card-desc">Practice the verb be, WH questions, and matching WH question words to their meanings.</p>
+          <div class="skill-card-meta">
+            <div class="skill-card-progress">
+              <span class="skill-card-note">3 games inside</span>
+              <div class="skill-card-stats-row">
+                <div class="game-stars" data-game="be-verbs" aria-label="Progress stars">
+                  <span class="star" data-n="1">☆</span>
+                  <span class="star" data-n="2">☆</span>
+                  <span class="star" data-n="3">☆</span>
+                </div>
+              </div>
+            </div>
+            <a class="skill-play-btn" href="be-verbs/">Explore <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <!-- 02 Simple Present -->
+        <article class="skill-card skill-card--playable" data-category="tenses">
+          <div class="skill-card-top">
+            <div class="skill-card-icon-wrap">
+              <div class="skill-card-icon" aria-hidden="true">⏱️</div>
+            </div>
+            <span class="skill-card-index">02</span>
+          </div>
+          <p class="skill-card-kicker">Simple Present · A1</p>
+          <h3 class="skill-card-title">Simple Present</h3>
+          <p class="skill-card-desc">Practice positive, negative, and question forms of the simple present tense with fast feedback.</p>
+          <div class="skill-card-meta">
+            <div class="skill-card-progress">
+              <span class="skill-card-note">Verb forms · Ready</span>
+              <div class="skill-card-stats-row">
+                <div class="game-stars" data-game="simple-present" aria-label="Progress stars">
+                  <span class="star" data-n="1">☆</span>
+                  <span class="star" data-n="2">☆</span>
+                  <span class="star" data-n="3">☆</span>
+                </div>
+              </div>
+            </div>
+            <a class="skill-play-btn" href="simple-present/">Play <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <!-- 03 There is / There are -->
+        <article class="skill-card skill-card--playable" data-category="clauses">
+          <div class="skill-card-top">
+            <div class="skill-card-icon-wrap">
+              <div class="skill-card-icon" aria-hidden="true">🏠</div>
+            </div>
+            <span class="skill-card-index">03</span>
+          </div>
+          <p class="skill-card-kicker">Existence · A1</p>
+          <h3 class="skill-card-title">There is / There are</h3>
+          <p class="skill-card-desc">Practice positive, negative, and question forms with rooms, places, and some / any.</p>
+          <div class="skill-card-meta">
+            <div class="skill-card-progress">
+              <span class="skill-card-note">Rooms &amp; places</span>
+              <div class="skill-card-stats-row">
+                <div class="game-stars" data-game="there-is-there-are" aria-label="Progress stars">
+                  <span class="star" data-n="1">☆</span>
+                  <span class="star" data-n="2">☆</span>
+                  <span class="star" data-n="3">☆</span>
+                </div>
+              </div>
+            </div>
+            <a class="skill-play-btn" href="there-is-there-are/">Play <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <!-- 04 Simple Past -->
+        <article class="skill-card skill-card--playable" data-category="tenses">
+          <div class="skill-card-top">
+            <div class="skill-card-icon-wrap">
+              <div class="skill-card-icon" aria-hidden="true">⏳</div>
+            </div>
+            <span class="skill-card-index">04</span>
+          </div>
+          <p class="skill-card-kicker">Simple Past · A1–A2</p>
+          <h3 class="skill-card-title">Simple Past</h3>
+          <p class="skill-card-desc">Was / were, regular -ed endings, and irregular verbs across sentences, questions, and matching.</p>
+          <div class="skill-card-meta">
+            <div class="skill-card-progress">
+              <span class="skill-card-note">9 practice modes</span>
+              <div class="skill-card-stats-row">
+                <div class="game-stars" data-game="simple-past" aria-label="Progress stars">
+                  <span class="star" data-n="1">☆</span>
+                  <span class="star" data-n="2">☆</span>
+                  <span class="star" data-n="3">☆</span>
+                </div>
+              </div>
+            </div>
+            <a class="skill-play-btn" href="simple-past/">Play <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <!-- 05 Present Perfect -->
+        <article class="skill-card skill-card--playable" data-category="tenses">
+          <div class="skill-card-top">
+            <div class="skill-card-icon-wrap">
+              <div class="skill-card-icon" aria-hidden="true">✅</div>
+            </div>
+            <span class="skill-card-index">05</span>
+          </div>
+          <p class="skill-card-kicker">Present Perfect · A2</p>
+          <h3 class="skill-card-title">Present Perfect</h3>
+          <p class="skill-card-desc">Match past participles, write +, −, ?, choose the correct form, and complete dialogue blanks.</p>
+          <div class="skill-card-meta">
+            <div class="skill-card-progress">
+              <span class="skill-card-note">4 games inside</span>
+              <div class="skill-card-stats-row">
+                <div class="game-stars" data-game="present-perfect" aria-label="Progress stars">
+                  <span class="star" data-n="1">☆</span>
+                  <span class="star" data-n="2">☆</span>
+                  <span class="star" data-n="3">☆</span>
+                </div>
+              </div>
+            </div>
+            <a class="skill-play-btn" href="present-perfect/">Play <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <!-- 06 Phrasal Verbs -->
+        <article class="skill-card skill-card--playable" data-category="clauses">
+          <div class="skill-card-top">
+            <div class="skill-card-icon-wrap">
+              <div class="skill-card-icon" aria-hidden="true">⚡</div>
+            </div>
+            <span class="skill-card-index">06</span>
+          </div>
+          <p class="skill-card-kicker">Match Rush · Phrasal Verbs</p>
+          <h3 class="skill-card-title">Phrasal Verbs</h3>
+          <p class="skill-card-desc">Match verbs with their particles and meanings before the clock runs down. Build combo streaks!</p>
+          <div class="skill-card-meta">
+            <div class="skill-card-progress">
+              <span class="skill-card-note">Timed Match Rush</span>
+              <div class="skill-card-stats-row">
+                <div class="game-stars" data-game="grammar-phrasal-verbs" aria-label="Progress stars">
+                  <span class="star" data-n="1">☆</span>
+                  <span class="star" data-n="2">☆</span>
+                  <span class="star" data-n="3">☆</span>
+                </div>
+              </div>
+            </div>
+            <a class="skill-play-btn" href="phrasal-verbs/">Play <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <!-- 07 Nouns -->
+        <article class="skill-card skill-card--playable" data-category="clauses">
+          <div class="skill-card-top">
+            <div class="skill-card-icon-wrap">
+              <div class="skill-card-icon" aria-hidden="true">🔤</div>
+            </div>
+            <span class="skill-card-index">07</span>
+          </div>
+          <p class="skill-card-kicker">Nouns · A1</p>
+          <h3 class="skill-card-title">Singular &amp; Plural Match Rush</h3>
+          <p class="skill-card-desc">Race against the clock sorting regular and irregular nouns into singular and plural columns.</p>
+          <div class="skill-card-meta">
+            <div class="skill-card-progress">
+              <span class="skill-card-note">3 modes · Timed</span>
+              <div class="skill-card-stats-row">
+                <div class="game-stars" data-game="nouns" aria-label="Progress stars">
+                  <span class="star" data-n="1">☆</span>
+                  <span class="star" data-n="2">☆</span>
+                  <span class="star" data-n="3">☆</span>
+                </div>
+              </div>
+            </div>
+            <a class="skill-play-btn" href="nouns/">Play <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <!-- 08 How much / How many -->
+        <article class="skill-card skill-card--playable" data-category="clauses">
+          <div class="skill-card-top">
+            <div class="skill-card-icon-wrap">
+              <div class="skill-card-icon" aria-hidden="true">📊</div>
+            </div>
+            <span class="skill-card-index">08</span>
+          </div>
+          <p class="skill-card-kicker">Quantifiers · A1–A2</p>
+          <h3 class="skill-card-title">How much / How many</h3>
+          <p class="skill-card-desc">Spin a board card, choose much or many for countable and uncountable nouns, and write full answers.</p>
+          <div class="skill-card-meta">
+            <div class="skill-card-progress">
+              <span class="skill-card-note">Board spin · Writing</span>
+              <div class="skill-card-stats-row">
+                <div class="game-stars" data-game="grammar-how-much-how-many" aria-label="Progress stars">
+                  <span class="star" data-n="1">☆</span>
+                  <span class="star" data-n="2">☆</span>
+                  <span class="star" data-n="3">☆</span>
+                </div>
+              </div>
+            </div>
+            <a class="skill-play-btn" href="how-much-how-many/">Play <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <!-- 09 Jobs & Work (Upcoming) -->
+        <article class="skill-card skill-card--locked" data-category="upcoming" aria-disabled="true">
+          <div class="skill-card-top">
+            <div class="skill-card-icon-wrap">
+              <div class="skill-card-icon" aria-hidden="true">💼</div>
+            </div>
+            <span class="skill-card-index">09</span>
+          </div>
+          <p class="skill-card-kicker">Jobs &amp; Work · Coming Soon</p>
+          <h3 class="skill-card-title">Jobs &amp; Work</h3>
+          <p class="skill-card-desc">Practice jobs, workplaces, and simple present questions about work routines.</p>
+          <div class="skill-card-meta">
+            <span class="skill-card-note">In development</span>
+          </div>
+        </article>
+
+        <!-- 10 Drag & Drop (Upcoming) -->
+        <article class="skill-card skill-card--locked" data-category="upcoming" aria-disabled="true">
+          <div class="skill-card-top">
+            <div class="skill-card-icon-wrap">
+              <div class="skill-card-icon" aria-hidden="true">🧩</div>
+            </div>
+            <span class="skill-card-index">10</span>
+          </div>
+          <p class="skill-card-kicker">Word Order · Coming Soon</p>
+          <h3 class="skill-card-title">Drag &amp; Drop Builder</h3>
+          <p class="skill-card-desc">Arrange words and clause blocks into clean, natural English word order.</p>
+          <div class="skill-card-meta">
+            <span class="skill-card-note">In development</span>
+          </div>
+        </article>
+
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · Grammar Arcade</p>
+      <div class="footer-links">
+        <a class="footer-link" href="../../contact/">Contact</a>
+        <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
       </div>
-      </div>
+    </div>
+  </footer>
 
-    </article>
+  <script>
+    (function () {
+      var yearEl = document.getElementById("year");
+      if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-    
-    
-    <!-- GAME: Simple Past -->
-    <article class="game-card game-card--playable">
-            <div class="game-card-icon" aria-hidden="true">⏳</div>
-<span class="game-tag">
-        Simple Past · A1–A2
-      </span>
-      <h3>
-        Simple Past
-      </h3>
-      <p>
-        Was / were, regular verbs, irregular verbs —
-        positives, negatives, questions and matching.
-      </p>
-      <div class="game-meta">
-        9 practice modes · Ready to play
-      </div>
-      <div class="game-card-actions">
-        <a class="game-launch" href="simple-past/">Play</a>
-        <div class="game-stars" data-game="simple-past" aria-label="Progress stars">
-        <span class="star" data-n="1">☆</span>
-        <span class="star" data-n="2">☆</span>
-        <span class="star" data-n="3">☆</span>
-      </div>
-      </div>
-    </article>
+      var filterBtns = document.querySelectorAll(".skill-filter-btn[data-filter]");
+      var cards = document.querySelectorAll(".skill-card[data-category]");
+      filterBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var filter = btn.getAttribute("data-filter");
+          filterBtns.forEach(function (b) {
+            var active = b === btn;
+            b.classList.toggle("is-active", active);
+            b.setAttribute("aria-pressed", active ? "true" : "false");
+          });
+          cards.forEach(function (card) {
+            var cat = card.getAttribute("data-category");
+            var show = filter === "all" || cat === filter;
+            card.classList.toggle("grammar-card-hidden", !show);
+          });
+        });
+      });
 
+      function updateGrammarStarSummary() {
+        var total = 0;
+        var seen = {};
+        document.querySelectorAll(".game-stars[data-game]").forEach(function (el) {
+          var gid = el.getAttribute("data-game");
+          if (!gid || seen[gid]) return;
+          seen[gid] = true;
+          if (window.LAStars && typeof window.LAStars.getStars === "function") {
+            total += Number(window.LAStars.getStars(gid) || 0);
+          }
+        });
+        var out = document.getElementById("grammarStarsCount");
+        if (out) out.textContent = String(total);
+      }
 
-
-    <!-- Present Perfect -->
-    <article class="game-card game-card--playable">
-      <div class="game-card-icon" aria-hidden="true">✅</div>
-      <span class="game-tag">
-        Present Perfect · A2
-      </span>
-      <h3>
-        Present Perfect
-      </h3>
-      <p>
-        Match past participles, write +, −, ?, choose the form,
-        and fill dialogue blanks.
-      </p>
-      <div class="game-meta">
-        4 games · Ready to play
-      </div>
-      <div class="game-card-actions">
-        <a class="game-launch" href="present-perfect/">Play</a>
-        <div class="game-stars" data-game="present-perfect" aria-label="Progress stars">
-        <span class="star" data-n="1">☆</span>
-        <span class="star" data-n="2">☆</span>
-        <span class="star" data-n="3">☆</span>
-      </div>
-      </div>
-    </article>
-
-
-    <!-- GAME: Phrasal Verbs Match Rush -->
-    <article class="game-card game-card--playable">
-      <div class="game-card-icon" aria-hidden="true">⚡</div>
-      <span class="game-tag">Match Rush · Phrasal Verbs</span>
-      <h3>Phrasal Verbs</h3>
-      <p>Match verbs with their phrases before the timer runs out. Build combo streaks for bonus points!</p>
-      <div class="game-meta">Ready to play</div>
-      <div class="game-card-actions">
-        <a class="game-launch" href="phrasal-verbs/">Play</a>
-        <div class="game-stars" data-game="grammar-phrasal-verbs" aria-label="Progress stars">
-        <span class="star" data-n="1">☆</span>
-        <span class="star" data-n="2">☆</span>
-        <span class="star" data-n="3">☆</span>
-      </div>
-      </div>
-    </article>
-
-    <!-- GAME: Nouns Match Rush -->
-
-    <article class="game-card game-card--playable">
-
-            <div class="game-card-icon" aria-hidden="true">🔤</div>
-<span class="game-tag">
-        Nouns · A1
-      </span>
-
-      <h3>
-        Singular &amp; Plural Match Rush
-      </h3>
-
-      <p>
-        Race against the clock sorting nouns into singular
-        and plural columns.
-      </p>
-
-      <div class="game-meta">
-        3 modes · Ready to play
-      </div>
-
-      <div class="game-card-actions">
-        <a class="game-launch" href="nouns/">Play</a>
-        <div class="game-stars" data-game="nouns" aria-label="Progress stars">
-        <span class="star" data-n="1">☆</span>
-        <span class="star" data-n="2">☆</span>
-        <span class="star" data-n="3">☆</span>
-      </div>
-      </div>
-
-    </article>
-
-
-
-
-    <!-- GAME: How much / How many -->
-
-    <article class="game-card game-card--playable">
-
-            <div class="game-card-icon" aria-hidden="true">📊</div>
-<span class="game-tag">
-        Quantifiers · A1–A2
-      </span>
-
-      <h3>
-        How much / How many
-      </h3>
-
-      <p>
-        Spin a board card, choose much or many, then write a full sentence answer.
-      </p>
-
-      <div class="game-meta">
-        Board spin · Full answers · Ready to play
-      </div>
-
-      <div class="game-card-actions">
-        <a class="game-launch" href="how-much-how-many/">Play</a>
-        <div class="game-stars" data-game="grammar-how-much-how-many" aria-label="Progress stars">
-        <span class="star" data-n="1">☆</span>
-        <span class="star" data-n="2">☆</span>
-        <span class="star" data-n="3">☆</span>
-      </div>
-      </div>
-
-    </article>
-
-
-    <!-- LOCKED: Jobs & Work -->
-
-    <article class="game-card" aria-disabled="true">
-
-            <div class="game-card-icon" aria-hidden="true">💼</div>
-<span class="game-tag">
-        Jobs &amp; Work · Locked
-      </span>
-
-      <h3>
-        Jobs &amp; Work
-      </h3>
-
-      <p>
-        Practise jobs, workplaces, and simple present
-        questions about work.
-      </p>
-
-      <div class="game-meta">
-        🔒 Coming soon
-      </div>
-
-    </article>
-
-
-    <!-- LOCKED: Drag & Drop (placeholder) -->
-
-    <article class="game-card" aria-disabled="true">
-
-            <div class="game-card-icon" aria-hidden="true">🧩</div>
-<span class="game-tag">
-        Drag &amp; Drop · Locked
-      </span>
-
-      <h3>
-        Drag &amp; Drop
-      </h3>
-
-      <p>
-        Put words and sentence parts in the correct order.
-      </p>
-
-      <div class="game-meta">
-        🔒 Coming soon
-      </div>
-
-    </article>
-
-
-  </section>
-
-</main>
-
-
-<footer class="site-footer">
-
-  <p>
-    © <span id="year"></span>
-    Mr. Sheyhaki · English Teacher
-  </p>
-
-</footer>
-
-
-<script src="script.js"></script>
-<script src="../../theme.js"></script>
-
-<script src="../la-stars.js"></script>
-<script>document.addEventListener("DOMContentLoaded",function(){if(window.LAStars)LAStars.apply(document);});</script>
-<script src="/visit-counter.js" defer></script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (window.LAStars) window.LAStars.apply(document);
+        updateGrammarStarSummary();
+      });
+      window.addEventListener("pageshow", function () {
+        if (window.LAStars) window.LAStars.apply(document);
+        updateGrammarStarSummary();
+      });
+    })();
+  </script>
+  <script src="../theme.js"></script>
+  <script src="/learningarcade/vendor/supabase.min.js"></script>
+  <script src="../auth-system/auth.js"></script>
+  <script src="../la-stars.js"></script>
+  <script src="../../swipe-nav.js"></script>
+  <script src="/visit-counter.js" defer></script>
 </body>
 </html>

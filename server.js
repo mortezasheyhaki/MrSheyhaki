@@ -15,12 +15,15 @@ import { roomManager } from "./multiplayer-server/src/rooms/roomManager.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.DEFAULT_APP_PORT || process.env.PORT) || 3000;
 const HOST = "0.0.0.0";
 
 const ADMIN_STATE_FILE = "/tmp/mrsheyhaki-admin.json";
 const ASSIGNMENT_STATE_FILE = "/tmp/mrsheyhaki-assignment.json";
+const ASSIGNMENT_HISTORY_FILE = "/tmp/mrsheyhaki-assignment-history.json";
+const ANNOUNCEMENT_STATE_FILE = "/tmp/mrsheyhaki-announcement.json";
 const TOKEN_TTL_MS = 12 * 60 * 60 * 1000;
+const MAX_TOKENS = 200;
 
 function readJsonSafe(filePath, fallback) {
   try {
@@ -32,11 +35,12 @@ function readJsonSafe(filePath, fallback) {
   }
 }
 
-function writeJsonSafe(filePath, data) {
+function writeJsonSafe(filePath, data, opts = {}) {
   try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), { encoding: "utf8", mode: 0o600, ...opts });
+    return true;
   } catch {
-    // Ignore ephemeral /tmp write errors
+    return false;
   }
 }
 
@@ -59,16 +63,67 @@ function timingSafeComparePlain(a, b) {
   return crypto.timingSafeEqual(ha, hb);
 }
 
-const envAdminPassword = String(process.env.ADMIN_PASSWORD || "").trim();
+function getEnvAdminPassword() {
+  return String(process.env.ADMIN_PASSWORD || "").trim();
+}
+
 let storedAdminRecord = readJsonSafe(ADMIN_STATE_FILE, null);
 let currentAssignment = readJsonSafe(ASSIGNMENT_STATE_FILE, null);
+let assignmentHistory = readJsonSafe(ASSIGNMENT_HISTORY_FILE, []);
+if (!Array.isArray(assignmentHistory)) assignmentHistory = [];
+let currentAnnouncement = readJsonSafe(ANNOUNCEMENT_STATE_FILE, null);
 const adminTokens = new Map();
+const authAttempts = new Map();
+const AUTH_WINDOW_MS = 5 * 60 * 1000;
+const AUTH_MAX_ATTEMPTS = 15;
+
+function getClientIp(req) {
+  const fwd = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim();
+  return fwd || req.socket?.remoteAddress || "unknown";
+}
+
+function checkAuthRateLimit(req, res) {
+  const now = Date.now();
+  const ip = getClientIp(req);
+  const entry = authAttempts.get(ip);
+  if (entry && now < entry.resetAt) {
+    if (entry.count >= AUTH_MAX_ATTEMPTS) {
+      res.status(429).json({ ok: false, error: "Too many attempts. Please wait a few minutes and try again." });
+      return false;
+    }
+    entry.count += 1;
+  } else {
+    if (authAttempts.size > 500) {
+      for (const [k, v] of authAttempts.entries()) {
+        if (now >= v.resetAt) authAttempts.delete(k);
+      }
+    }
+    authAttempts.set(ip, { count: 1, resetAt: now + AUTH_WINDOW_MS });
+  }
+  return true;
+}
+
+function clearAuthRateLimit(req) {
+  authAttempts.delete(getClientIp(req));
+}
 
 function isAdminSetupNeeded() {
-  return !envAdminPassword && !(storedAdminRecord && storedAdminRecord.hash);
+  return !getEnvAdminPassword() && !(storedAdminRecord && storedAdminRecord.hash);
+}
+
+function pruneExpiredTokens() {
+  const now = Date.now();
+  for (const [tok, exp] of adminTokens.entries()) {
+    if (now > exp) adminTokens.delete(tok);
+  }
 }
 
 function issueAdminToken() {
+  pruneExpiredTokens();
+  if (adminTokens.size >= MAX_TOKENS) {
+    const oldestKey = adminTokens.keys().next().value;
+    if (oldestKey) adminTokens.delete(oldestKey);
+  }
   const token = crypto.randomBytes(24).toString("hex");
   adminTokens.set(token, Date.now() + TOKEN_TTL_MS);
   return token;
@@ -97,6 +152,30 @@ function requireAdminAuth(req, res, next) {
     return res.status(401).json({ ok: false, error: "Unauthorized. Please sign in again." });
   }
   return next();
+}
+
+function sanitizeSafeUrl(rawUrl) {
+  const s = String(rawUrl || "").trim().slice(0, 240);
+  if (!s) return "/learningarcade/";
+  if (s.startsWith("/") && !s.startsWith("//")) return s;
+  try {
+    const parsed = new URL(s);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      return parsed.toString().slice(0, 240);
+    }
+  } catch {
+    // Fall through to default safe path
+  }
+  return "/learningarcade/";
+}
+
+function escapeHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function inferCategory(gameId, explicitCategory) {
@@ -179,15 +258,20 @@ function getSupabaseServerClient() {
   });
 }
 
-function isAllowedOrigin(origin) {
+function isAllowedOrigin(origin, reqHost) {
   if (!origin) return true;
   if (config.corsOrigins.includes(origin)) return true;
   try {
     const u = new URL(origin);
+    if (reqHost && u.host === reqHost) {
+      return true;
+    }
     if (
       u.hostname === "localhost" ||
       u.hostname === "127.0.0.1" ||
-      u.hostname.endsWith(".run.app")
+      u.hostname.endsWith(".run.app") ||
+      u.hostname.endsWith(".googleusercontent.com") ||
+      u.hostname.endsWith(".scf.usercontent.goog")
     ) {
       return true;
     }
@@ -201,13 +285,17 @@ const app = express();
 app.disable("x-powered-by");
 
 app.use(
-  cors({
-    origin(origin, cb) {
-      if (isAllowedOrigin(origin)) return cb(null, true);
-      return cb(new Error("Not allowed by CORS"));
-    },
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+  cors((req, cb) => {
+    const origin = req.headers.origin;
+    const reqHost = req.headers.host;
+    if (isAllowedOrigin(origin, reqHost)) {
+      return cb(null, {
+        origin: true,
+        methods: ["GET", "POST", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+      });
+    }
+    return cb(new Error("Not allowed by CORS"));
   })
 );
 
@@ -216,13 +304,19 @@ app.use(express.json({ limit: "256kb" }));
 app.get("/health", (_req, res) => {
   res.json({
     ok: true,
+    phase: 4,
     service: "mrsheyhaki-web",
     time: new Date().toISOString(),
     rooms: roomManager.stats().rooms,
-    supabaseConfigured: Boolean(config.supabaseUrl && config.supabaseAnonKey),
+    supabaseConfigured: Boolean(
+      config.supabaseUrl &&
+      config.supabaseAnonKey &&
+      !config.supabaseAnonKey.includes("your_anon")
+    ),
   });
 });
 
+// Room metadata lookup so /j/:code and /multiplayer/ quick-join route to the right game
 app.get("/api/rooms/:code", (req, res) => {
   const room = roomManager.getRoomByCode(req.params.code);
   if (!room) {
@@ -232,6 +326,9 @@ app.get("/api/rooms/:code", (req, res) => {
     ok: true,
     code: room.code,
     gameType: room.gameType || "a-an-swipe",
+    status: room.status,
+    playerCount: Array.isArray(room.players) ? room.players.length : 0,
+    maxPlayers: room.maxPlayers,
   });
 });
 
@@ -458,7 +555,6 @@ async function buildUnifiedLeaderboard() {
     for (const [gid, g] of player.games.entries()) {
       totalStars += g.stars;
       totalPlays += g.plays;
-      // Use normalized points when score isn't stored (e.g. stars*25 + accuracy) so all games contribute fairly
       const effectivePoints = g.bestScore > 0 ? g.bestScore : (g.stars * 10 + (g.completed ? 5 : 0));
       totalScore += effectivePoints;
       if (g.stars >= 3) threeStarGames += 1;
@@ -581,7 +677,7 @@ app.get("/api/leaderboard", async (req, res) => {
     const payload = await buildUnifiedLeaderboard();
     leaderboardCache = { at: Date.now(), payload };
     return res.json(payload);
-  } catch (err) {
+  } catch {
     return res.status(500).json({ ok: false, error: "Could not load leaderboard right now." });
   }
 });
@@ -595,7 +691,7 @@ app.get("/api/assignments", (_req, res) => {
 });
 
 app.post("/api/assignments", requireAdminAuth, (req, res) => {
-  const body = req.body || {};
+  const body = req.body && typeof req.body === "object" ? req.body : {};
   if (body.clear) {
     currentAssignment = null;
     writeJsonSafe(ASSIGNMENT_STATE_FILE, null);
@@ -618,7 +714,7 @@ app.post("/api/assignments", requireAdminAuth, (req, res) => {
         title: String(it.title || prettyName(id)).trim().slice(0, 120),
         category: String(it.category || inferCategory(id)).trim().slice(0, 48),
         course: String(it.course || "").trim().slice(0, 80),
-        url: String(it.url || "/learningarcade/").trim().slice(0, 240),
+        url: sanitizeSafeUrl(it.url),
       };
     })
     .filter(Boolean);
@@ -635,34 +731,195 @@ app.post("/api/assignments", requireAdminAuth, (req, res) => {
     items,
   };
   writeJsonSafe(ASSIGNMENT_STATE_FILE, currentAssignment);
-  return res.json({ ok: true, assignment: currentAssignment });
+
+  const sig = currentAssignment.title + "|" + items.map((i) => i.id).join(",");
+  assignmentHistory = [
+    currentAssignment,
+    ...assignmentHistory.filter((h) => h && (h.title + "|" + (h.items || []).map((i) => i.id).join(",")) !== sig),
+  ].slice(0, 10);
+  writeJsonSafe(ASSIGNMENT_HISTORY_FILE, assignmentHistory);
+
+  return res.json({ ok: true, assignment: currentAssignment, assignmentHistory });
+});
+
+app.get("/api/announcement", (_req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  return res.json({
+    ok: true,
+    announcement: currentAnnouncement || null,
+  });
+});
+
+app.post("/api/admin/announcement", requireAdminAuth, (req, res) => {
+  const body = req.body && typeof req.body === "object" ? req.body : {};
+  if (body.clear) {
+    currentAnnouncement = null;
+    writeJsonSafe(ANNOUNCEMENT_STATE_FILE, null);
+    return res.json({ ok: true, announcement: null });
+  }
+  const title = String(body.title || "").trim().slice(0, 90);
+  const message = String(body.message || "").trim().slice(0, 320);
+  if (!title && !message) {
+    return res.status(400).json({ ok: false, error: "Enter a headline or message for the announcement." });
+  }
+  const rawLevel = String(body.level || "info").toLowerCase();
+  const level = rawLevel === "reminder" || rawLevel === "alert" ? rawLevel : "info";
+  const rawLinkUrl = String(body.linkUrl || "").trim();
+  const linkUrl = rawLinkUrl ? sanitizeSafeUrl(rawLinkUrl) : "";
+  const linkText = linkUrl ? String(body.linkText || "Open link").trim().slice(0, 48) : "";
+
+  currentAnnouncement = {
+    id: "ann-" + Date.now(),
+    title: title || "Class Update",
+    message,
+    level,
+    linkUrl,
+    linkText,
+    updatedAt: Date.now(),
+  };
+  writeJsonSafe(ANNOUNCEMENT_STATE_FILE, currentAnnouncement);
+  return res.json({ ok: true, announcement: currentAnnouncement });
+});
+
+app.get("/api/admin/rooms", requireAdminAuth, (_req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  const list = roomManager.listRooms();
+  return res.json({ ok: true, rooms: list });
+});
+
+app.post("/api/admin/rooms/:code/close", requireAdminAuth, (req, res) => {
+  const rawCode = String(req.params.code || "").trim().toUpperCase();
+  if (!rawCode) {
+    return res.status(400).json({ ok: false, error: "Invalid room code." });
+  }
+  const result = roomManager.closeRoomByCode(rawCode);
+  if (!result.ok) {
+    return res.status(404).json(result);
+  }
+  try {
+    const channel = `room:${result.code}`;
+    io.to(channel).emit("room:error", { error: "Room closed by teacher." });
+    io.in(channel).socketsLeave(channel);
+  } catch {
+    // Ignore socket cleanup failures
+  }
+  return res.json({ ok: true, closedCode: result.code, rooms: roomManager.listRooms() });
+});
+
+app.post("/api/admin/cache/clear", requireAdminAuth, (_req, res) => {
+  leaderboardCache = { at: 0, payload: null };
+  return res.json({ ok: true });
+});
+
+app.get("/api/admin/updated-files.zip", requireAdminAuth, (_req, res) => {
+  const zipPath = path.join(__dirname, "exports", "updated-files.zip");
+  if (!fs.existsSync(zipPath)) {
+    return res.status(404).json({ ok: false, error: "Updated files archive not found." });
+  }
+  return res.download(zipPath, "mrsheyhaki-updated-files.zip");
+});
+
+const ZIP_DOWNLOAD_TOKEN_FILE = "/tmp/mrsheyhaki-zip-token.json";
+
+app.get("/download/updated-files/:token", (req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  const provided = typeof req.params.token === "string" ? req.params.token.trim() : "";
+  const record = readJsonSafe(ZIP_DOWNLOAD_TOKEN_FILE);
+  if (
+    !provided ||
+    !record ||
+    typeof record.token !== "string" ||
+    !record.expiresAt ||
+    Date.now() > Number(record.expiresAt)
+  ) {
+    return res.status(404).send("Download link expired or invalid.");
+  }
+  const a = Buffer.from(provided, "utf8");
+  const b = Buffer.from(record.token, "utf8");
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
+    return res.status(404).send("Download link expired or invalid.");
+  }
+  const zipPath = path.join(__dirname, "exports", "updated-files.zip");
+  if (!fs.existsSync(zipPath)) {
+    return res.status(404).send("Archive not found.");
+  }
+  return res.download(zipPath, "mrsheyhaki-updated-files.zip");
+});
+
+app.post("/api/admin/sessions/revoke-others", requireAdminAuth, (req, res) => {
+  const token = extractBearerToken(req);
+  const expiresAt = adminTokens.get(token);
+  adminTokens.clear();
+  if (token && expiresAt) {
+    adminTokens.set(token, expiresAt);
+  }
+  return res.json({ ok: true, activeSessionCount: adminTokens.size });
+});
+
+app.post("/api/admin/change-password", requireAdminAuth, (req, res) => {
+  if (getEnvAdminPassword()) {
+    return res.status(400).json({
+      ok: false,
+      error: "Admin password is managed by the ADMIN_PASSWORD environment secret.",
+    });
+  }
+  const currentPassword = typeof req.body?.currentPassword === "string" ? req.body.currentPassword : "";
+  const newPassword = typeof req.body?.newPassword === "string" ? req.body.newPassword : "";
+  if (!currentPassword || !verifyScrypt(currentPassword, storedAdminRecord)) {
+    return res.status(401).json({ ok: false, error: "Current password is incorrect." });
+  }
+  if (newPassword.length < 8 || newPassword.length > 256) {
+    return res.status(400).json({ ok: false, error: "New password must be between 8 and 256 characters." });
+  }
+  const nextRecord = hashPassword(newPassword);
+  storedAdminRecord = nextRecord;
+  writeJsonSafe(ADMIN_STATE_FILE, nextRecord);
+  const currentToken = extractBearerToken(req);
+  const exp = adminTokens.get(currentToken);
+  adminTokens.clear();
+  if (currentToken && exp) adminTokens.set(currentToken, exp);
+  return res.json({ ok: true });
 });
 
 app.get("/api/admin/status", (req, res) => {
   res.setHeader("Cache-Control", "no-store");
+  pruneExpiredTokens();
   const token = extractBearerToken(req);
+  const authenticated = isTokenValid(token);
+  const authMode = getEnvAdminPassword() ? "env" : (isAdminSetupNeeded() ? "unconfigured" : "local");
   return res.json({
     ok: true,
     needsSetup: isAdminSetupNeeded(),
-    authenticated: isTokenValid(token),
+    authenticated,
+    authMode,
+    sessionExpiresAt: authenticated ? adminTokens.get(token) : null,
+    activeSessionCount: authenticated ? adminTokens.size : 0,
   });
 });
 
 app.post("/api/admin/setup", (req, res) => {
+  if (!checkAuthRateLimit(req, res)) return;
   if (!isAdminSetupNeeded()) {
     return res.status(409).json({ ok: false, error: "Admin password is already set." });
   }
-  const password = String(req.body?.password || "");
-  if (password.length < 8) {
-    return res.status(400).json({ ok: false, error: "Password must be at least 8 characters." });
+  const password = typeof req.body?.password === "string" ? req.body.password : "";
+  if (password.length < 8 || password.length > 256) {
+    return res.status(400).json({ ok: false, error: "Password must be between 8 and 256 characters." });
   }
-  storedAdminRecord = hashPassword(password);
-  writeJsonSafe(ADMIN_STATE_FILE, storedAdminRecord);
+  const nextRecord = hashPassword(password);
+  const created = writeJsonSafe(ADMIN_STATE_FILE, nextRecord, { flag: "wx" });
+  if (!created && fs.existsSync(ADMIN_STATE_FILE)) {
+    storedAdminRecord = readJsonSafe(ADMIN_STATE_FILE, storedAdminRecord);
+    return res.status(409).json({ ok: false, error: "Admin password is already set." });
+  }
+  storedAdminRecord = nextRecord;
+  clearAuthRateLimit(req);
   const token = issueAdminToken();
   return res.json({ ok: true, token });
 });
 
 app.post("/api/admin/login", (req, res) => {
+  if (!checkAuthRateLimit(req, res)) return;
   if (isAdminSetupNeeded()) {
     return res.status(400).json({
       ok: false,
@@ -670,17 +927,19 @@ app.post("/api/admin/login", (req, res) => {
       error: "Admin password has not been configured yet.",
     });
   }
-  const password = String(req.body?.password || "");
-  if (!password) {
+  const password = typeof req.body?.password === "string" ? req.body.password : "";
+  if (!password || password.length > 256) {
     return res.status(400).json({ ok: false, error: "Enter the admin password." });
   }
-  const valid = envAdminPassword
-    ? timingSafeComparePlain(password, envAdminPassword)
+  const envPw = getEnvAdminPassword();
+  const valid = envPw
+    ? timingSafeComparePlain(password, envPw)
     : verifyScrypt(password, storedAdminRecord);
 
   if (!valid) {
     return res.status(401).json({ ok: false, error: "Incorrect password." });
   }
+  clearAuthRateLimit(req);
   const token = issueAdminToken();
   return res.json({ ok: true, token });
 });
@@ -743,6 +1002,7 @@ app.get("/api/admin/activity", requireAdminAuth, async (_req, res) => {
         userId: defaults.userId || null,
         displayName: defaults.displayName || defaults.username || "Student",
         username: defaults.username || "",
+        classCode: defaults.classCode || "",
         registered: Boolean(defaults.registered),
         joinedAt: defaults.joinedAt || 0,
         lastActiveAt: 0,
@@ -759,6 +1019,8 @@ app.get("/api/admin/activity", requireAdminAuth, async (_req, res) => {
         recentScores: [],
         activityDates: [],
       });
+    } else if (defaults.classCode && !studentMap.get(key).classCode) {
+      studentMap.get(key).classCode = defaults.classCode;
     }
     return studentMap.get(key);
   }
@@ -791,10 +1053,12 @@ app.get("/api/admin/activity", requireAdminAuth, async (_req, res) => {
     if (!p || !p.id) continue;
     const key = "reg:" + p.id;
     const joinedAt = parseTimestampMs(p.created_at);
+    const parsedProf = splitNameAndClass(p.display_name || p.username || "Student");
     ensureStudent(key, {
       userId: p.id,
-      displayName: p.display_name || p.username || "Student",
+      displayName: parsedProf.name || p.username || "Student",
       username: p.username || "",
+      classCode: parsedProf.classCode,
       registered: true,
       joinedAt,
     });
@@ -807,6 +1071,7 @@ app.get("/api/admin/activity", requireAdminAuth, async (_req, res) => {
       userId: r.user_id,
       displayName: "Student " + String(r.user_id).slice(0, 6),
       username: "",
+      classCode: "",
       registered: true,
       joinedAt: 0,
     });
@@ -835,21 +1100,25 @@ app.get("/api/admin/activity", requireAdminAuth, async (_req, res) => {
     const maxScore = s.max_score != null ? Number(s.max_score) : 0;
     const timeMs = s.time_ms != null ? Number(s.time_ms) : 0;
     const accuracy = maxScore > 0 ? Math.max(0, Math.min(100, Math.round((score / maxScore) * 100))) : null;
+    const parsedScore = splitNameAndClass(s.name);
 
     let student;
     if (s.user_id) {
       student = ensureStudent("reg:" + s.user_id, {
         userId: s.user_id,
-        displayName: s.name || "Student",
+        displayName: parsedScore.name || "Student",
         username: "",
+        classCode: parsedScore.classCode,
         registered: true,
         joinedAt: at,
       });
     } else {
-      const cleanName = String(s.name || "Guest").trim() || "Guest";
-      student = ensureStudent("guest:" + cleanName.toLowerCase(), {
+      const cleanName = parsedScore.name || "Guest";
+      const gKey = "guest:" + cleanName.toLowerCase() + (parsedScore.classCode ? "|" + parsedScore.classCode.toLowerCase() : "");
+      student = ensureStudent(gKey, {
         displayName: cleanName,
         username: "",
+        classCode: parsedScore.classCode,
         registered: false,
         joinedAt: at,
       });
@@ -879,18 +1148,25 @@ app.get("/api/admin/activity", requireAdminAuth, async (_req, res) => {
     if (at > g.lastAt) g.lastAt = at;
 
     student.recentScores.push({
+      gameId: gid,
       gameName: gname,
       score,
       maxScore,
       timeMs,
+      accuracy,
       at,
     });
 
     recentActivity.push({
+      studentKey: student.key,
       studentName: student.displayName,
+      classCode: student.classCode || "",
+      gameId: gid,
       gameName: gname,
+      category: g.category,
       score,
       maxScore,
+      timeMs,
       accuracy,
       at,
     });
@@ -899,6 +1175,29 @@ app.get("/api/admin/activity", requireAdminAuth, async (_req, res) => {
   recentActivity.sort((a, b) => b.at - a.at);
 
   const gameAgg = new Map();
+  const skillAgg = new Map();
+  const classSet = new Set();
+  const pulseDays = new Map();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now - i * DAY_MS);
+    const key = d.toISOString().slice(0, 10);
+    pulseDays.set(key, {
+      date: key,
+      label: d.toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" }),
+      submissions: 0,
+      activeKeys: new Set(),
+    });
+  }
+  for (const act of recentActivity) {
+    if (!act.at) continue;
+    const key = new Date(act.at).toISOString().slice(0, 10);
+    const bucket = pulseDays.get(key);
+    if (bucket) {
+      bucket.submissions += 1;
+      bucket.activeKeys.add(act.studentKey);
+    }
+  }
+
   let registeredCount = 0;
   let guestCount = 0;
   let active7dCount = 0;
@@ -912,17 +1211,27 @@ app.get("/api/admin/activity", requireAdminAuth, async (_req, res) => {
   const students = Array.from(studentMap.values()).map((st) => {
     const games = Array.from(st.gamesMap.values()).sort((a, b) => b.lastAt - a.lastAt);
     st.recentScores.sort((a, b) => b.at - a.at);
+    if (st.classCode) classSet.add(st.classCode);
+
+    for (const ms of st.activityDates) {
+      if (!ms) continue;
+      const dKey = new Date(ms).toISOString().slice(0, 10);
+      const bucket = pulseDays.get(dKey);
+      if (bucket) bucket.activeKeys.add(st.key);
+    }
 
     let stStars = 0;
     let stPlays = 0;
     let stCompleted = 0;
     let stScore = 0;
+    let threeStarGames = 0;
     let accSum = 0;
     let accCnt = 0;
 
     for (const g of games) {
       stStars += g.stars;
       stPlays += g.plays;
+      if (g.stars >= 3) threeStarGames += 1;
       if (g.completed || g.stars > 0) stCompleted += 1;
       stScore += g.bestScore;
       if (g.accuracy > 0) {
@@ -937,21 +1246,60 @@ app.get("/api/admin/activity", requireAdminAuth, async (_req, res) => {
           id: g.id,
           name: g.name,
           category: g.category,
+          players: 0,
+          completedPlayers: 0,
           totalPlays: 0,
+          totalStars: 0,
+          accSum: 0,
+          accCnt: 0,
+          lastAt: 0,
+        });
+      }
+      const agg = gameAgg.get(g.id);
+      agg.players += 1;
+      if (g.completed || g.stars > 0) agg.completedPlayers += 1;
+      agg.totalPlays += g.plays || 1;
+      agg.totalStars += g.stars || 0;
+      if (g.lastAt > agg.lastAt) agg.lastAt = g.lastAt;
+      if (g.accuracy > 0) {
+        agg.accSum += g.accuracy;
+        agg.accCnt += 1;
+      }
+
+      const sk = g.category || "General";
+      if (!skillAgg.has(sk)) {
+        skillAgg.set(sk, {
+          skill: sk,
+          gamesSet: new Set(),
+          playersSet: new Set(),
+          totalPlays: 0,
+          totalStars: 0,
           accSum: 0,
           accCnt: 0,
         });
       }
-      const agg = gameAgg.get(g.id);
-      agg.totalPlays += g.plays || 1;
+      const sAgg = skillAgg.get(sk);
+      sAgg.gamesSet.add(g.id);
+      sAgg.playersSet.add(st.key);
+      sAgg.totalPlays += g.plays || 1;
+      sAgg.totalStars += g.stars || 0;
       if (g.accuracy > 0) {
-        agg.accSum += g.accuracy;
-        agg.accCnt += 1;
+        sAgg.accSum += g.accuracy;
+        sAgg.accCnt += 1;
       }
     }
 
     const active24h = st.lastActiveAt > 0 && now - st.lastActiveAt <= DAY_MS;
     const active7d = st.lastActiveAt > 0 && now - st.lastActiveAt <= WEEK_MS;
+    const streak = computeDailyStreak(st.activityDates);
+    const avgAccuracy = accCnt ? Math.round(accSum / accCnt) : 0;
+    const playsXp = stPlays * 12;
+    const varietyXp = games.length * 40;
+    const starsXp = stStars * 25 + threeStarGames * 35;
+    const accBonus = accCnt >= 2 ? (avgAccuracy >= 90 ? 140 : avgAccuracy >= 80 ? 80 : avgAccuracy >= 70 ? 40 : 0) : 0;
+    const streakXp = (streak.best || 0) * 15;
+    const xp = playsXp + varietyXp + starsXp + accBonus + streakXp;
+    const rank = rankForXp(xp);
 
     if (st.registered) {
       registeredCount += 1;
@@ -969,38 +1317,74 @@ app.get("/api/admin/activity", requireAdminAuth, async (_req, res) => {
       key: st.key,
       displayName: st.displayName,
       username: st.username,
+      classCode: st.classCode,
       registered: st.registered,
       active24h,
       active7d,
       lastActiveAt: st.lastActiveAt,
       joinedAt: st.joinedAt,
+      xp,
+      rankTier: rank.tier,
+      rankName: rank.name,
+      rankIcon: rank.icon,
       totalStars: stStars,
       gamesPlayed: games.length,
       completedGames: stCompleted,
       totalPlays: stPlays,
-      avgAccuracy: accCnt ? Math.round(accSum / accCnt) : 0,
+      avgAccuracy,
       totalScore: stScore,
-      streak: computeDailyStreak(st.activityDates),
+      streak,
       games,
-      recentScores: st.recentScores.slice(0, 10),
+      recentScores: st.recentScores.slice(0, 12),
     };
   });
 
-  const topGames = Array.from(gameAgg.values())
+  const gameStats = Array.from(gameAgg.values())
     .map((g) => ({
+      id: g.id,
       name: g.name,
       category: g.category,
+      players: g.players,
+      completedPlayers: g.completedPlayers,
       totalPlays: g.totalPlays,
+      totalStars: g.totalStars,
       avgAccuracy: g.accCnt ? Math.round(g.accSum / g.accCnt) : 0,
+      lastAt: g.lastAt,
     }))
-    .sort((a, b) => b.totalPlays - a.totalPlays)
-    .slice(0, 10);
+    .sort((a, b) => b.totalPlays - a.totalPlays);
+
+  const topGames = gameStats.slice(0, 10);
+
+  const skillStats = Array.from(skillAgg.values())
+    .map((s) => ({
+      skill: s.skill,
+      gamesCount: s.gamesSet.size,
+      activeStudents: s.playersSet.size,
+      totalPlays: s.totalPlays,
+      totalStars: s.totalStars,
+      avgAccuracy: s.accCnt ? Math.round(s.accSum / s.accCnt) : 0,
+    }))
+    .sort((a, b) => b.totalPlays - a.totalPlays);
+
+  const dailyPulse = Array.from(pulseDays.values()).map((d) => ({
+    date: d.date,
+    label: d.label,
+    submissions: d.submissions,
+    activeStudents: d.activeKeys.size,
+  }));
+
+  const liveRooms = roomManager.listRooms();
+  const livePlayersCount = liveRooms.reduce((acc, r) => acc + (r.players ? r.players.length : 0), 0);
 
   return res.json({
     ok: true,
     generatedAt: now,
     warnings,
     assignment: currentAssignment || null,
+    assignmentHistory,
+    announcement: currentAnnouncement || null,
+    classes: Array.from(classSet).sort(),
+    rooms: liveRooms,
     summary: {
       totalStudents: students.length,
       registeredCount,
@@ -1013,10 +1397,15 @@ app.get("/api/admin/activity", requireAdminAuth, async (_req, res) => {
       totalStars,
       avgAccuracy: classAccCount ? Math.round(classAccSum / classAccCount) : 0,
       scoreSubmissions: scoreRows.length,
+      liveRoomsCount: liveRooms.length,
+      livePlayersCount,
     },
     students,
     topGames,
-    recentActivity: recentActivity.slice(0, 30),
+    gameStats,
+    skillStats,
+    dailyPulse,
+    recentActivity: recentActivity.slice(0, 120),
   });
 });
 
@@ -1028,8 +1417,32 @@ app.get("/j/:code", (_req, res) => {
   res.sendFile(path.join(__dirname, "j", "index.html"));
 });
 
+// Block direct web access to server/config internals
+app.use((req, res, next) => {
+  const rel = req.path.toLowerCase();
+  if (
+    rel.startsWith("/.env") ||
+    rel.startsWith("/.git") ||
+    rel.startsWith("/node_modules") ||
+    rel.startsWith("/multiplayer-server/src") ||
+    rel.startsWith("/exports") ||
+    rel === "/server.js" ||
+    rel === "/package.json" ||
+    rel === "/package-lock.json" ||
+    rel === "/metadata.json"
+  ) {
+    return res.status(404).send("Not found");
+  }
+  next();
+});
+
 // Static files from workspace root
-app.use(express.static(__dirname, { extensions: ["html"] }));
+app.use(
+  express.static(__dirname, {
+    extensions: ["html"],
+    index: ["index.html"],
+  })
+);
 
 // Fallback asset aliases referenced by subpages when root counterparts are absent
 app.get("/style.css", (_req, res) => {
@@ -1057,7 +1470,7 @@ function renderAefShellHtml(title, dataAttrs) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${title} | Mr. Sheyhaki</title>
+<title>${escapeHtml(title)} | Mr. Sheyhaki</title>
 <link rel="stylesheet" href="/style.css">
 <link rel="stylesheet" href="/theme.css">
 <link rel="stylesheet" href="/resources/style.css">
@@ -1137,7 +1550,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin(origin, cb) {
-      if (isAllowedOrigin(origin)) return cb(null, true);
+      if (isAllowedOrigin(origin, null)) return cb(null, true);
       return cb(new Error("Not allowed by CORS"));
     },
     methods: ["GET", "POST"],
@@ -1148,5 +1561,5 @@ const io = new Server(server, {
 attachSocket(io);
 
 server.listen(PORT, HOST, () => {
-  console.log(`[mrsheyhaki] Server running at http://${HOST}:${PORT}`);
+  console.log(`[mrsheyhaki] Server running at http://${HOST}:${PORT} (env=${config.nodeEnv})`);
 });
