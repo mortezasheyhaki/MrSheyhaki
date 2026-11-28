@@ -1,10 +1,19 @@
--- Profiles: one row per signed-up student (visible in Admin)
+-- Profiles: one row per signed-up user (visible in Admin)
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   username text not null,
   display_name text,
+  birthdate date,
+  role text default 'student',
+  studying_book text default 'not-a-student',
+  active_title text,
   created_at timestamptz default now()
 );
+
+alter table public.profiles add column if not exists birthdate date;
+alter table public.profiles add column if not exists role text default 'student';
+alter table public.profiles add column if not exists studying_book text default 'not-a-student';
+alter table public.profiles add column if not exists active_title text;
 
 create index if not exists profiles_username_idx on public.profiles (username);
 create index if not exists profiles_created_at_idx on public.profiles (created_at desc);
@@ -35,16 +44,31 @@ returns trigger
 language plpgsql
 security definer set search_path = public
 as $$
+declare
+  raw_bday text := nullif(trim(coalesce(new.raw_user_meta_data->>'birthdate', '')), '');
+  parsed_bday date := null;
 begin
-  insert into public.profiles (id, username, display_name)
+  if raw_bday ~ '^\d{4}-\d{2}-\d{2}$' then
+    parsed_bday := raw_bday::date;
+  end if;
+
+  insert into public.profiles (id, username, display_name, birthdate, role, studying_book, active_title)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'username', split_part(new.email, '@', 1)),
-    coalesce(new.raw_user_meta_data->>'display_name', new.raw_user_meta_data->>'username', split_part(new.email, '@', 1))
+    coalesce(new.raw_user_meta_data->>'display_name', new.raw_user_meta_data->>'username', split_part(new.email, '@', 1)),
+    parsed_bday,
+    nullif(trim(coalesce(new.raw_user_meta_data->>'role', '')), ''),
+    nullif(trim(coalesce(new.raw_user_meta_data->>'studying_book', '')), ''),
+    nullif(trim(coalesce(new.raw_user_meta_data->>'active_title', '')), '')
   )
   on conflict (id) do update set
     username = excluded.username,
-    display_name = excluded.display_name;
+    display_name = excluded.display_name,
+    birthdate = coalesce(excluded.birthdate, public.profiles.birthdate),
+    role = coalesce(excluded.role, public.profiles.role),
+    studying_book = coalesce(excluded.studying_book, public.profiles.studying_book),
+    active_title = coalesce(excluded.active_title, public.profiles.active_title);
   return new;
 end;
 $$;

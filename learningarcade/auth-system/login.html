@@ -465,6 +465,160 @@
       color: #f87171;
     }
 
+    /* Multi-step onboarding / registration UI */
+    .auth-stepper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .auth-stepper-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--site-muted);
+    }
+    .auth-stepper-name {
+      color: var(--hm-accent);
+    }
+    .auth-step-bars {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .auth-step-bar {
+      height: 5px;
+      border-radius: 999px;
+      background: var(--site-border);
+      transition: background-color 0.2s ease;
+    }
+    .auth-step-bar.is-done {
+      background: var(--hm-accent);
+      opacity: 0.55;
+    }
+    .auth-step-bar.is-active {
+      background: var(--hm-accent);
+    }
+
+    .auth-bday-preview {
+      margin-top: 0.55rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 10px;
+      border: 1px solid var(--site-border);
+      background: var(--site-surface-2);
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--site-text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .auth-bday-preview.is-muted {
+      color: var(--site-muted);
+    }
+
+    html .auth-field input[type="date"] {
+      color-scheme: light;
+    }
+    html[data-theme="dark"] .auth-field input[type="date"] {
+      color-scheme: dark;
+    }
+
+    .auth-choice-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      margin-bottom: 1.05rem;
+    }
+    .auth-choice-grid--2col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem;
+    }
+    @media (max-width: 440px) {
+      .auth-choice-grid--2col {
+        grid-template-columns: 1fr;
+      }
+    }
+    .auth-choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      width: 100%;
+      text-align: left;
+      padding: 0.72rem 0.85rem;
+      border-radius: 12px;
+      border: 1.5px solid var(--site-border);
+      background: var(--site-surface-2);
+      color: var(--site-text);
+      font: inherit;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+    }
+    .auth-choice:hover {
+      border-color: var(--hm-border-strong);
+      transform: translateY(-1px);
+    }
+    .auth-choice.is-selected {
+      border-color: var(--hm-accent);
+      background: var(--hm-accent-soft);
+      box-shadow: 0 0 0 2px var(--hm-accent-soft);
+    }
+    .auth-choice-icon {
+      font-size: 1.2rem;
+      line-height: 1.1;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .auth-choice-body {
+      min-width: 0;
+      flex: 1;
+    }
+    .auth-choice-title {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .auth-choice-desc {
+      display: block;
+      margin-top: 2px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--site-muted);
+      line-height: 1.3;
+    }
+
+    .auth-step-actions {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+    .auth-btn-back {
+      min-height: 46px;
+      padding: 0.72rem 1rem;
+      border-radius: 11px;
+      border: 1px solid var(--site-border);
+      background: var(--site-surface);
+      color: var(--site-text);
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .auth-btn-back:hover:not(:disabled) {
+      border-color: var(--hm-border-strong);
+      background: var(--site-surface-2);
+    }
+    .auth-btn-back:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     .hidden { display: none !important; }
 
     @media (max-width: 480px) {
@@ -526,37 +680,147 @@
           <span id="authContextText">Sign in to continue.</span>
         </div>
 
-        <div class="auth-tabs" role="tablist" aria-label="Authentication mode">
+        <div class="auth-tabs" id="authTabs" role="tablist" aria-label="Authentication mode">
           <button type="button" class="auth-tab is-on" id="tabLogin" role="tab" aria-selected="true">Sign in</button>
           <button type="button" class="auth-tab" id="tabRegister" role="tab" aria-selected="false">Create account</button>
         </div>
 
-        <form id="authForm" autocomplete="on">
-          <div class="auth-field">
-            <label for="username">Username</label>
-            <input id="username" name="username" type="text" maxlength="24" placeholder="e.g. ali_7a" required autocomplete="username" autocapitalize="none" spellcheck="false" />
+        <div class="auth-stepper hidden" id="authStepper" aria-live="polite">
+          <div class="auth-stepper-top">
+            <span id="stepperCount">Step 1 of 4</span>
+            <span class="auth-stepper-name" id="stepperLabel">Account</span>
+          </div>
+          <div class="auth-step-bars" id="stepBars">
+            <span class="auth-step-bar is-active"></span>
+            <span class="auth-step-bar"></span>
+            <span class="auth-step-bar"></span>
+            <span class="auth-step-bar"></span>
+          </div>
+        </div>
+
+        <form id="authForm" autocomplete="on" novalidate>
+          <!-- Step 1: Credentials (also used for Login) -->
+          <div id="stepCredentials">
+            <div class="auth-field">
+              <label for="username">Username</label>
+              <input id="username" name="username" type="text" maxlength="24" placeholder="e.g. ali_7a" required autocomplete="username" autocapitalize="none" spellcheck="false" />
+            </div>
+
+            <div class="auth-field hidden" id="displayNameField">
+              <label for="displayName">Display name <span class="auth-label-opt">Optional</span></label>
+              <input id="displayName" name="displayName" type="text" maxlength="32" placeholder="Name shown to classmates" autocomplete="nickname" />
+            </div>
+
+            <div class="auth-field">
+              <label for="password">Password</label>
+              <div class="auth-input-wrap">
+                <input id="password" name="password" type="password" maxlength="64" placeholder="Enter your password" required autocomplete="current-password" />
+                <button type="button" class="auth-pass-toggle" id="togglePassword" aria-label="Show password" aria-pressed="false">
+                  <svg id="eyeOpenIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg id="eyeClosedIcon" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+                </button>
+              </div>
+              <p class="auth-hint hidden" id="passwordHint">Use at least 8 characters.</p>
+            </div>
           </div>
 
-          <div class="auth-field hidden" id="displayNameField">
-            <label for="displayName">Display name <span class="auth-label-opt">Optional</span></label>
-            <input id="displayName" name="displayName" type="text" maxlength="32" placeholder="Name shown to classmates" autocomplete="nickname" />
+          <!-- Step 2: Birthdate -->
+          <div id="stepBirthdate" class="hidden">
+            <div class="auth-field">
+              <label for="birthdateInput">Your birthday</label>
+              <input id="birthdateInput" name="birthdate" type="date" min="1920-01-01" autocomplete="bday" />
+              <p class="auth-hint">Required when creating your profile.</p>
+              <div class="auth-bday-preview is-muted" id="bdayPreview">Select your birth date to continue.</div>
+            </div>
           </div>
 
-          <div class="auth-field">
-            <label for="password">Password</label>
-            <div class="auth-input-wrap">
-              <input id="password" name="password" type="password" maxlength="64" placeholder="Enter your password" required autocomplete="current-password" />
-              <button type="button" class="auth-pass-toggle" id="togglePassword" aria-label="Show password" aria-pressed="false">
-                <svg id="eyeOpenIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                <svg id="eyeClosedIcon" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+          <!-- Step 3: Role -->
+          <div id="stepRole" class="hidden">
+            <div class="auth-field" style="margin-bottom:0.5rem;">
+              <label>Select your role</label>
+            </div>
+            <div class="auth-choice-grid auth-choice-grid--2col" id="roleChoices" role="radiogroup" aria-label="Your role">
+              <button type="button" class="auth-choice" data-role="student" role="radio" aria-checked="false">
+                <span class="auth-choice-icon" aria-hidden="true">🎓</span>
+                <span class="auth-choice-body">
+                  <span class="auth-choice-title">Student</span>
+                  <span class="auth-choice-desc">Learning English &amp; playing games</span>
+                </span>
+              </button>
+              <button type="button" class="auth-choice" data-role="teacher" role="radio" aria-checked="false">
+                <span class="auth-choice-icon" aria-hidden="true">👩‍🏫</span>
+                <span class="auth-choice-body">
+                  <span class="auth-choice-title">Teacher</span>
+                  <span class="auth-choice-desc">Teaching English &amp; classes</span>
+                </span>
+              </button>
+              <button type="button" class="auth-choice" data-role="parent" role="radio" aria-checked="false">
+                <span class="auth-choice-icon" aria-hidden="true">🏡</span>
+                <span class="auth-choice-body">
+                  <span class="auth-choice-title">Parent / Guardian</span>
+                  <span class="auth-choice-desc">Supporting a student at home</span>
+                </span>
+              </button>
+              <button type="button" class="auth-choice" data-role="self-learner" role="radio" aria-checked="false">
+                <span class="auth-choice-icon" aria-hidden="true">🚀</span>
+                <span class="auth-choice-body">
+                  <span class="auth-choice-title">Self-Learner</span>
+                  <span class="auth-choice-desc">Practicing independently</span>
+                </span>
               </button>
             </div>
-            <p class="auth-hint hidden" id="passwordHint">Use at least 8 characters.</p>
+          </div>
+
+          <!-- Step 4: Studying Book -->
+          <div id="stepBook" class="hidden">
+            <div class="auth-field" style="margin-bottom:0.5rem;">
+              <label id="bookStepLabel">Which book are you studying?</label>
+            </div>
+            <div class="auth-choice-grid" id="bookChoices" role="radiogroup" aria-label="Studying book">
+              <button type="button" class="auth-choice" data-book="american-english-file" role="radio" aria-checked="false">
+                <span class="auth-choice-icon" aria-hidden="true">📘</span>
+                <span class="auth-choice-body">
+                  <span class="auth-choice-title">American English File</span>
+                  <span class="auth-choice-desc">Starter, Levels 1–4, Games &amp; Tests</span>
+                </span>
+              </button>
+              <button type="button" class="auth-choice" data-book="teen-2-teen" role="radio" aria-checked="false">
+                <span class="auth-choice-icon" aria-hidden="true">📗</span>
+                <span class="auth-choice-body">
+                  <span class="auth-choice-title">Teen2Teen</span>
+                  <span class="auth-choice-desc">Teen English units &amp; practice</span>
+                </span>
+              </button>
+              <button type="button" class="auth-choice" data-book="pre-starter" role="radio" aria-checked="false">
+                <span class="auth-choice-icon" aria-hidden="true">🔤</span>
+                <span class="auth-choice-body">
+                  <span class="auth-choice-title">Pre-starter</span>
+                  <span class="auth-choice-desc">Alphabet, phonics &amp; first words</span>
+                </span>
+              </button>
+              <button type="button" class="auth-choice" data-book="tactics-for-listening" role="radio" aria-checked="false">
+                <span class="auth-choice-icon" aria-hidden="true">🎧</span>
+                <span class="auth-choice-body">
+                  <span class="auth-choice-title">Tactics for Listening</span>
+                  <span class="auth-choice-desc">Listening comprehension tracks</span>
+                </span>
+              </button>
+              <button type="button" class="auth-choice" data-book="not-a-student" role="radio" aria-checked="false">
+                <span class="auth-choice-icon" aria-hidden="true">✨</span>
+                <span class="auth-choice-body">
+                  <span class="auth-choice-title">Not a student / No specific book</span>
+                  <span class="auth-choice-desc">Teachers, parents, or open arcade practice</span>
+                </span>
+              </button>
+            </div>
           </div>
 
           <p class="auth-error" id="authMsg" aria-live="polite"></p>
 
-          <button type="submit" class="auth-btn" id="authSubmit">Sign in</button>
+          <div class="auth-step-actions">
+            <button type="button" class="auth-btn-back hidden" id="stepBackBtn">← Back</button>
+            <button type="submit" class="auth-btn" id="authSubmit">Sign in</button>
+          </div>
         </form>
 
         <div class="auth-already hidden" id="alreadyIn">
@@ -694,9 +958,31 @@
 
       var mode = "login";
       var upgrading = false;
+      var onboardingExistingUser = false;
+      var regStep = 1; // 1: credentials, 2: birthdate, 3: role, 4: studyingBook
+      var draftBirthdate = "";
+      var draftRole = "";
+      var draftBook = "";
+
       var form = document.getElementById("authForm");
+      var authTabs = document.getElementById("authTabs");
       var tabLogin = document.getElementById("tabLogin");
       var tabRegister = document.getElementById("tabRegister");
+      var authStepper = document.getElementById("authStepper");
+      var stepperCount = document.getElementById("stepperCount");
+      var stepperLabel = document.getElementById("stepperLabel");
+      var stepBars = document.getElementById("stepBars");
+      var stepCredentials = document.getElementById("stepCredentials");
+      var stepBirthdate = document.getElementById("stepBirthdate");
+      var stepRole = document.getElementById("stepRole");
+      var stepBook = document.getElementById("stepBook");
+      var stepBackBtn = document.getElementById("stepBackBtn");
+      var birthdateInput = document.getElementById("birthdateInput");
+      var bdayPreview = document.getElementById("bdayPreview");
+      var roleChoices = document.getElementById("roleChoices");
+      var bookChoices = document.getElementById("bookChoices");
+      var bookStepLabel = document.getElementById("bookStepLabel");
+
       var title = document.getElementById("authTitle");
       var sub = document.getElementById("authSub");
       var submitBtn = document.getElementById("authSubmit");
@@ -712,6 +998,101 @@
       var continueSignedIn = document.getElementById("continueSignedIn");
       var forceLogout = document.getElementById("forceLogout");
 
+      // Set max date on birthdate picker to today
+      if (birthdateInput) {
+        var now = new Date();
+        var yyyy = now.getFullYear();
+        var mm = String(now.getMonth() + 1).padStart(2, "0");
+        var dd = String(now.getDate()).padStart(2, "0");
+        birthdateInput.max = yyyy + "-" + mm + "-" + dd;
+      }
+
+      function computeAgeText(ymd) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return "";
+        var p = ymd.split("-");
+        var y = parseInt(p[0], 10);
+        var m = parseInt(p[1], 10);
+        var d = parseInt(p[2], 10);
+        var dt = new Date(y, m - 1, d);
+        if (!dt || dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return "";
+        var today = new Date();
+        var age = today.getFullYear() - y;
+        if (today.getMonth() + 1 < m || (today.getMonth() + 1 === m && today.getDate() < d)) age--;
+        if (age < 0 || age > 120) return "";
+        var label = dt.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+        return "🎂 " + label + " (" + age + " year" + (age === 1 ? "" : "s") + " old)";
+      }
+
+      function refreshBdayPreview() {
+        if (!bdayPreview || !birthdateInput) return;
+        var v = birthdateInput.value;
+        var text = computeAgeText(v);
+        if (text) {
+          bdayPreview.textContent = text;
+          bdayPreview.classList.remove("is-muted");
+        } else {
+          bdayPreview.textContent = "Select your birth date to continue.";
+          bdayPreview.classList.add("is-muted");
+        }
+      }
+
+      if (birthdateInput) {
+        birthdateInput.addEventListener("input", function () {
+          draftBirthdate = birthdateInput.value;
+          refreshBdayPreview();
+        });
+        birthdateInput.addEventListener("change", function () {
+          draftBirthdate = birthdateInput.value;
+          refreshBdayPreview();
+        });
+      }
+
+      function selectRole(roleId) {
+        draftRole = roleId;
+        if (roleChoices) {
+          roleChoices.querySelectorAll(".auth-choice").forEach(function (btn) {
+            var on = btn.getAttribute("data-role") === roleId;
+            btn.classList.toggle("is-selected", on);
+            btn.setAttribute("aria-checked", on ? "true" : "false");
+          });
+        }
+        // If not a student, gently suggest "Not a student" if user hasn't picked a book yet
+        if (!draftBook && roleId && roleId !== "student") {
+          selectBook("not-a-student");
+        }
+      }
+
+      function selectBook(bookId) {
+        draftBook = bookId;
+        if (bookChoices) {
+          bookChoices.querySelectorAll(".auth-choice").forEach(function (btn) {
+            var on = btn.getAttribute("data-book") === bookId;
+            btn.classList.toggle("is-selected", on);
+            btn.setAttribute("aria-checked", on ? "true" : "false");
+          });
+        }
+      }
+
+      if (roleChoices) {
+        roleChoices.addEventListener("click", function (e) {
+          var btn = e.target.closest(".auth-choice");
+          if (!btn) return;
+          selectRole(btn.getAttribute("data-role") || "");
+          msg.textContent = "";
+          msg.className = "auth-error";
+        });
+      }
+
+      if (bookChoices) {
+        bookChoices.addEventListener("click", function (e) {
+          var btn = e.target.closest(".auth-choice");
+          if (!btn) return;
+          selectBook(btn.getAttribute("data-book") || "");
+          msg.textContent = "";
+          msg.className = "auth-error";
+        });
+      }
+
       if (togglePassword && passwordInput) {
         togglePassword.addEventListener("click", function () {
           var show = passwordInput.type === "password";
@@ -725,8 +1106,69 @@
         });
       }
 
+      var STEP_META = [
+        { num: 1, name: "Account", title: "Create account", sub: "Choose a username and password to get started." },
+        { num: 2, name: "Birthday", title: "When is your birthday?", sub: "Add and save your birthdate for your profile." },
+        { num: 3, name: "Role", title: "What brings you here?", sub: "Choose whether you are a student, teacher, parent, or self-learner." },
+        { num: 4, name: "Studying Book", title: "Choose your book", sub: "Pick the book you study—or choose Not a student." }
+      ];
+
+      function renderStepUI() {
+        var isFlow = mode === "register" || onboardingExistingUser;
+        if (authTabs) authTabs.classList.toggle("hidden", onboardingExistingUser);
+        if (authStepper) authStepper.classList.toggle("hidden", !isFlow);
+
+        stepCredentials.classList.toggle("hidden", isFlow && regStep !== 1);
+        stepBirthdate.classList.toggle("hidden", !(isFlow && regStep === 2));
+        stepRole.classList.toggle("hidden", !(isFlow && regStep === 3));
+        stepBook.classList.toggle("hidden", !(isFlow && regStep === 4));
+
+        var minBackStep = onboardingExistingUser ? 2 : 1;
+        stepBackBtn.classList.toggle("hidden", !(isFlow && regStep > minBackStep));
+
+        if (!isFlow) {
+          title.textContent = "Welcome back";
+          sub.textContent = "Sign in to save your progress, open tests, and play live matches.";
+          submitBtn.textContent = upgrading ? "Save new password" : "Sign in";
+          return;
+        }
+
+        var totalSteps = onboardingExistingUser ? 3 : 4;
+        var displayStep = onboardingExistingUser ? Math.max(1, regStep - 1) : regStep;
+        var meta = STEP_META[regStep - 1] || STEP_META[0];
+        if (stepperCount) stepperCount.textContent = "Step " + displayStep + " of " + totalSteps;
+        if (stepperLabel) stepperLabel.textContent = meta.name;
+
+        if (stepBars) {
+          var bars = stepBars.querySelectorAll(".auth-step-bar");
+          stepBars.style.gridTemplateColumns = "repeat(" + totalSteps + ", 1fr)";
+          bars.forEach(function (bar, idx) {
+            bar.classList.toggle("hidden", idx >= totalSteps);
+            bar.classList.toggle("is-done", idx + 1 < displayStep);
+            bar.classList.toggle("is-active", idx + 1 === displayStep);
+          });
+        }
+
+        title.textContent = onboardingExistingUser && regStep === 2 ? "Complete your profile" : meta.title;
+        sub.textContent = meta.sub;
+
+        if (bookStepLabel) {
+          bookStepLabel.textContent = draftRole && draftRole !== "student"
+            ? "Which book do you use or teach? (Optional)"
+            : "Which book are you studying?";
+        }
+
+        if (regStep < 4) {
+          submitBtn.textContent = regStep === 2 ? "Save birthday & continue →" : "Continue →";
+        } else {
+          submitBtn.textContent = onboardingExistingUser ? "Save & Enter Profile" : "Finish & Enter Profile";
+        }
+      }
+
       function setMode(m) {
         mode = m;
+        onboardingExistingUser = false;
+        regStep = 1;
         upgrading = false;
         var np = document.getElementById("newPasswordField");
         if (np) np.remove();
@@ -739,9 +1181,6 @@
           tabLogin.setAttribute("aria-selected", "true");
           tabRegister.classList.remove("is-on");
           tabRegister.setAttribute("aria-selected", "false");
-          title.textContent = "Welcome back";
-          sub.textContent = "Sign in to save your progress, open tests, and play live matches.";
-          submitBtn.textContent = "Sign in";
           displayField.classList.add("hidden");
           passwordHint.classList.add("hidden");
           passwordInput.placeholder = "Enter your password";
@@ -751,19 +1190,46 @@
           tabLogin.setAttribute("aria-selected", "false");
           tabRegister.classList.add("is-on");
           tabRegister.setAttribute("aria-selected", "true");
-          title.textContent = "Create account";
-          sub.textContent = "Register to track your stars, unlock tests, and play online.";
-          submitBtn.textContent = "Create account";
           displayField.classList.remove("hidden");
           passwordHint.textContent = "Use at least " + minLen + " characters.";
           passwordHint.classList.remove("hidden");
           passwordInput.placeholder = "Choose a password";
           passwordInput.autocomplete = "new-password";
         }
+        renderStepUI();
+      }
+
+      function startOnboardingForUser(u) {
+        onboardingExistingUser = true;
+        draftBirthdate = (u && u.birthdate) || "";
+        draftRole = (u && u.role) || "";
+        draftBook = (u && u.studyingBook) || "";
+        if (birthdateInput && draftBirthdate) {
+          birthdateInput.value = draftBirthdate;
+          refreshBdayPreview();
+        }
+        if (draftRole) selectRole(draftRole);
+        if (draftBook) selectBook(draftBook);
+        regStep = !draftBirthdate ? 2 : (!draftRole ? 3 : 4);
+        if (alreadyIn) alreadyIn.classList.add("hidden");
+        msg.textContent = "";
+        msg.className = "auth-error";
+        renderStepUI();
       }
 
       tabLogin.onclick = function () { setMode("login"); };
       tabRegister.onclick = function () { setMode("register"); };
+      if (stepBackBtn) {
+        stepBackBtn.onclick = function () {
+          var minStep = onboardingExistingUser ? 2 : 1;
+          if (regStep > minStep) {
+            regStep--;
+            msg.textContent = "";
+            msg.className = "auth-error";
+            renderStepUI();
+          }
+        };
+      }
 
       var sessionChecked = false;
       function checkExistingSession() {
@@ -771,6 +1237,10 @@
         sessionChecked = true;
         LAAuth.verify().then(function (u) {
           if (!u) return;
+          if (typeof LAAuth.hasCompletedOnboarding === "function" && !LAAuth.hasCompletedOnboarding(u)) {
+            startOnboardingForUser(u);
+            return;
+          }
           if (rawNext) {
             window.location.replace(returnUrl);
             return;
@@ -781,7 +1251,6 @@
               alreadyInLabel.textContent = "Signed in as " + name + ".";
             }
             if (continueSignedIn) continueSignedIn.href = returnUrl;
-            alreadyIn.classList.add("hidden");
             alreadyIn.classList.remove("hidden");
           }
         }).catch(function () {});
@@ -806,6 +1275,7 @@
             if (alreadyIn) alreadyIn.classList.add("hidden");
             forceLogout.disabled = false;
             forceLogout.textContent = "Sign out";
+            setMode("login");
             msg.className = "auth-error auth-success";
             msg.textContent = "Signed out. You can sign in with another account.";
           };
@@ -835,6 +1305,14 @@
         submitBtn.textContent = "Save new password";
       }
 
+      function validateBirthdateClient(val) {
+        if (window.LAAuth && typeof LAAuth.validateBirthdate === "function") {
+          return LAAuth.validateBirthdate(val);
+        }
+        if (!val || !/^\d{4}-\d{2}-\d{2}$/.test(val)) return { ok: false, error: "Please select your birthdate." };
+        return { ok: true, value: val };
+      }
+
       form.onsubmit = async function (e) {
         e.preventDefault();
         msg.textContent = "";
@@ -843,8 +1321,62 @@
           msg.textContent = "Authentication is still loading — please wait a moment and try again.";
           return;
         }
+
+        // Handle multi-step registration or post-login onboarding steps 1..3
+        var inFlow = mode === "register" || onboardingExistingUser;
+        if (inFlow && regStep === 1) {
+          var uname = String(document.getElementById("username").value || "").trim();
+          var pw = document.getElementById("password").value || "";
+          var cleanU = uname.toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9._-]/g, "");
+          if (cleanU.length < 3) {
+            msg.textContent = "Username must be at least 3 characters.";
+            return;
+          }
+          var minPw = (window.LAAuth && LAAuth.MIN_PASSWORD) ? LAAuth.MIN_PASSWORD : 8;
+          if (pw.length < minPw) {
+            msg.textContent = "Password must be at least " + minPw + " characters.";
+            return;
+          }
+          regStep = 2;
+          renderStepUI();
+          if (birthdateInput) birthdateInput.focus();
+          return;
+        }
+
+        if (inFlow && regStep === 2) {
+          var bval = birthdateInput ? birthdateInput.value : draftBirthdate;
+          var bcheck = validateBirthdateClient(bval);
+          if (!bcheck.ok) {
+            msg.textContent = bcheck.error;
+            return;
+          }
+          draftBirthdate = bcheck.value;
+          regStep = 3;
+          renderStepUI();
+          return;
+        }
+
+        if (inFlow && regStep === 3) {
+          if (!draftRole) {
+            msg.textContent = "Please choose your role to continue.";
+            return;
+          }
+          regStep = 4;
+          renderStepUI();
+          return;
+        }
+
+        if (inFlow && regStep === 4) {
+          if (!draftBook) {
+            msg.textContent = "Please choose your studying book (or Not a student).";
+            return;
+          }
+        }
+
         submitBtn.disabled = true;
-        submitBtn.textContent = mode === "login" ? "Signing in…" : "Creating account…";
+        submitBtn.textContent = onboardingExistingUser
+          ? "Saving profile…"
+          : (mode === "login" ? "Signing in…" : "Creating account…");
 
         var username = document.getElementById("username").value;
         var password = document.getElementById("password").value;
@@ -852,32 +1384,61 @@
 
         var result;
         try {
-          if (upgrading) {
+          if (onboardingExistingUser) {
+            result = await LAAuth.updateProfile({
+              birthdate: draftBirthdate,
+              role: draftRole,
+              studyingBook: draftBook
+            });
+          } else if (upgrading) {
             var np = document.getElementById("newPassword").value;
             result = await LAAuth.upgradeLegacy(username, password, np);
           } else if (mode === "login") {
             result = await LAAuth.login(username, password);
           } else {
-            result = await LAAuth.register(username, password, displayName);
+            result = await LAAuth.register(username, password, {
+              displayName: displayName,
+              birthdate: draftBirthdate,
+              role: draftRole,
+              studyingBook: draftBook
+            });
           }
         } catch (err) {
           result = { ok: false, error: "Something went wrong. Please try again." };
         }
 
         submitBtn.disabled = false;
-        submitBtn.textContent = upgrading ? "Save new password" : (mode === "login" ? "Sign in" : "Create account");
+        renderStepUI();
 
         if (result.ok) {
+          if (!onboardingExistingUser && mode === "login" && typeof LAAuth.hasCompletedOnboarding === "function" && !LAAuth.hasCompletedOnboarding(result.player)) {
+            startOnboardingForUser(result.player);
+            msg.className = "auth-error auth-success";
+            msg.textContent = "Signed in! Just a quick profile setup before you enter.";
+            return;
+          }
           msg.className = "auth-error auth-success";
-          msg.textContent = mode === "login" ? "Signed in! Redirecting…" : "Account created! Redirecting…";
+          msg.textContent = onboardingExistingUser
+            ? "Profile saved! Entering your profile…"
+            : (mode === "login" ? "Signed in! Redirecting…" : "Account created! Entering your profile…");
           setTimeout(function () {
             window.location.replace(returnUrl);
           }, 550);
         } else {
           if (result.needsPasswordUpgrade) askNewPassword();
-          msg.textContent = result.error || "Something went wrong";
+          var errText = result.error || "Something went wrong";
+          if (!onboardingExistingUser && mode === "register" && errText.toLowerCase().indexOf("username") !== -1) {
+            regStep = 1;
+            renderStepUI();
+          }
+          msg.textContent = errText;
         }
       };
+
+      // Handle ?mode=register if opened directly
+      if (params && params.get("mode") === "register") {
+        setMode("register");
+      }
     })();
   </script>
   <script src="/visit-counter.js" defer></script>

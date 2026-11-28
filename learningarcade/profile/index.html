@@ -13,15 +13,21 @@
   <link rel="stylesheet" href="../theme.css" />
   <style>
     :root {
-      --pf-bg: #f8fafc;
+      --pf-bg: #f6f7fb;
       --pf-surface: #ffffff;
-      --pf-surface-alt: #f1f5f9;
+      --pf-surface-alt: #f3f5fc;
       --pf-text: #0f172a;
-      --pf-muted: #64748b;
+      --pf-muted: #52607a;
       --pf-accent: #6d28d9;
+      --pf-accent-2: #4f46e5;
+      --pf-accent-3: #0ea5e9;
       --pf-accent-soft: rgba(109, 40, 217, 0.08);
-      --pf-accent-border: rgba(109, 40, 217, 0.22);
-      --pf-border: #e2e8f0;
+      --pf-accent-border: rgba(109, 40, 217, 0.34);
+      --pf-border: rgba(100, 116, 139, 0.24);
+      --pf-outline-glow: rgba(109, 40, 217, 0.36);
+      --pf-glow-soft: rgba(109, 40, 217, 0.14);
+      --pf-glow-strong: rgba(109, 40, 217, 0.28);
+      --pf-rim: rgba(255, 255, 255, 0.9);
       --pf-ok: #15803d;
       --pf-ok-bg: rgba(22, 163, 74, 0.1);
       --pf-warn: #b45309;
@@ -32,15 +38,21 @@
     }
 
     html[data-theme="dark"] {
-      --pf-bg: #0f172a;
-      --pf-surface: #1e293b;
-      --pf-surface-alt: #162032;
+      --pf-bg: #080d1a;
+      --pf-surface: #10182b;
+      --pf-surface-alt: #0c1324;
       --pf-text: #f8fafc;
       --pf-muted: #94a3b8;
       --pf-accent: #a78bfa;
-      --pf-accent-soft: rgba(167, 139, 250, 0.12);
-      --pf-accent-border: rgba(167, 139, 250, 0.3);
-      --pf-border: #334155;
+      --pf-accent-2: #818cf8;
+      --pf-accent-3: #38bdf8;
+      --pf-accent-soft: rgba(139, 92, 246, 0.14);
+      --pf-accent-border: rgba(167, 139, 250, 0.45);
+      --pf-border: rgba(148, 163, 184, 0.22);
+      --pf-outline-glow: rgba(167, 139, 250, 0.48);
+      --pf-glow-soft: rgba(139, 92, 246, 0.22);
+      --pf-glow-strong: rgba(139, 92, 246, 0.42);
+      --pf-rim: rgba(255, 255, 255, 0.09);
       --pf-ok: #4ade80;
       --pf-ok-bg: rgba(34, 197, 94, 0.14);
       --pf-warn: #fbbf24;
@@ -52,12 +64,32 @@
     [hidden] { display: none !important; }
 
     body.profile-app {
+      position: relative;
       margin: 0;
       min-height: 100dvh;
       font-family: "Plus Jakarta Sans", system-ui, sans-serif;
       background: var(--pf-bg);
       color: var(--pf-text);
       line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    body.profile-app::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 68% 42% at 15% -6%, rgba(109, 40, 217, 0.13), transparent 62%),
+        radial-gradient(ellipse 52% 36% at 88% 8%, rgba(14, 165, 233, 0.11), transparent 58%),
+        radial-gradient(ellipse 50% 40% at 50% 100%, rgba(79, 70, 229, 0.08), transparent 60%);
+    }
+    html[data-theme="dark"] body.profile-app::before {
+      background:
+        radial-gradient(ellipse 68% 44% at 14% -6%, rgba(139, 92, 246, 0.22), transparent 60%),
+        radial-gradient(ellipse 54% 38% at 90% 8%, rgba(56, 189, 248, 0.16), transparent 56%),
+        radial-gradient(ellipse 50% 42% at 50% 102%, rgba(99, 102, 241, 0.14), transparent 60%);
     }
 
     body.profile-app .arcade-header-bar,
@@ -69,16 +101,31 @@
 
     .tabular { font-variant-numeric: tabular-nums; }
 
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--pf-accent);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px var(--pf-glow-soft);
+    }
+
     /* Top workspace bar */
     .pf-topbar {
-      background: var(--pf-surface);
-      border-bottom: 1px solid var(--pf-border);
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--pf-outline-glow);
+      box-shadow: 0 1px 0 var(--pf-rim), 0 6px 24px -8px var(--pf-glow-soft);
       position: sticky;
       top: 0;
       z-index: 30;
     }
+    html[data-theme="dark"] .pf-topbar {
+      background: rgba(11, 17, 32, 0.82);
+    }
     .pf-topbar-inner {
-      max-width: 1080px;
+      max-width: 1120px;
       margin: 0 auto;
       padding: 12px 20px;
       display: flex;
@@ -104,11 +151,16 @@
       font-size: 1.05rem;
       color: var(--pf-accent);
       background: var(--pf-surface-alt);
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
+      box-shadow: inset 0 1px 0 var(--pf-rim);
       flex-shrink: 0;
-      transition: border-color 0.15s ease;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease;
     }
-    .pf-back:hover { border-color: var(--pf-accent); }
+    .pf-back:hover {
+      border-color: var(--pf-accent);
+      box-shadow: 0 0 16px var(--pf-glow-soft);
+      transform: translateY(-1px);
+    }
     .pf-breadcrumb {
       font-size: 0.9rem;
       font-weight: 700;
@@ -139,19 +191,21 @@
       border-radius: 10px;
       border: 1px solid transparent;
       white-space: nowrap;
-      transition: color 0.15s ease, background 0.15s ease;
+      transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
     }
     .pf-nav-link:hover {
       color: var(--pf-text);
       background: var(--pf-surface-alt);
+      border-color: var(--pf-border);
+      box-shadow: 0 0 12px var(--pf-glow-soft);
     }
     .pf-btn {
       font: inherit;
       font-weight: 700;
       font-size: 0.85rem;
-      padding: 8px 14px;
+      padding: 8px 15px;
       border-radius: 10px;
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
       background: var(--pf-surface);
       color: var(--pf-text);
       cursor: pointer;
@@ -162,28 +216,43 @@
       justify-content: center;
       gap: 6px;
       min-height: 38px;
-      transition: border-color 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+      box-shadow: inset 0 1px 0 var(--pf-rim);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease, background 0.15s ease, opacity 0.15s ease;
     }
-    .pf-btn:hover { border-color: var(--pf-accent); }
+    .pf-btn:hover:not(:disabled) {
+      border-color: var(--pf-accent);
+      box-shadow: 0 0 16px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
+      transform: translateY(-1px);
+    }
     .pf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .pf-btn--primary {
-      background: #6d28d9;
-      border-color: #6d28d9;
+      background: linear-gradient(135deg, #6d28d9 0%, #4f46e5 100%);
+      border-color: rgba(167, 139, 250, 0.55);
       color: #ffffff;
+      box-shadow: 0 0 20px rgba(109, 40, 217, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
     }
-    .pf-btn--primary:hover { background: #5b21b6; border-color: #5b21b6; }
+    .pf-btn--primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+      border-color: #c4b5fd;
+      box-shadow: 0 0 26px rgba(124, 58, 237, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
     .pf-btn--danger {
       color: var(--pf-err);
-      border-color: rgba(220, 38, 38, 0.3);
+      border-color: rgba(220, 38, 38, 0.38);
       background: var(--pf-err-bg);
     }
-    .pf-btn--danger:hover { border-color: var(--pf-err); }
+    .pf-btn--danger:hover:not(:disabled) {
+      border-color: var(--pf-err);
+      box-shadow: 0 0 14px rgba(220, 38, 38, 0.24);
+    }
 
     /* Main layout */
     .pf-shell {
-      max-width: 1080px;
+      position: relative;
+      z-index: 1;
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 24px 20px 56px;
+      padding: 24px 20px 60px;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -198,8 +267,9 @@
       flex-wrap: wrap;
       padding: 14px 18px;
       background: var(--pf-accent-soft);
-      border: 1px solid var(--pf-accent-border);
+      border: 1.5px solid var(--pf-outline-glow);
       border-radius: var(--pf-radius);
+      box-shadow: 0 0 22px -6px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
     }
     .pf-banner[hidden] { display: none; }
     .pf-banner p {
@@ -211,13 +281,36 @@
 
     /* Hero + KPIs */
     .pf-hero {
+      position: relative;
+      overflow: hidden;
       background: var(--pf-surface);
-      border: 1px solid var(--pf-border);
-      border-radius: var(--pf-radius);
-      padding: 20px;
+      border: 1.5px solid var(--pf-outline-glow);
+      border-radius: 20px;
+      padding: 22px;
       display: flex;
       flex-direction: column;
       gap: 18px;
+      box-shadow:
+        0 0 0 1px var(--pf-rim) inset,
+        0 0 34px -8px var(--pf-glow-soft),
+        0 14px 36px -14px rgba(15, 23, 42, 0.16);
+    }
+    .pf-hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--pf-accent) 28%, var(--pf-accent-3) 72%, transparent 100%);
+      opacity: 0.95;
+    }
+    html[data-theme="dark"] .pf-hero {
+      background: linear-gradient(180deg, rgba(22, 32, 56, 0.96) 0%, rgba(14, 21, 38, 0.98) 100%);
+      box-shadow:
+        0 0 0 1px var(--pf-rim) inset,
+        0 0 42px -8px var(--pf-glow-strong),
+        0 18px 40px -16px rgba(0, 0, 0, 0.65);
     }
     .pf-hero-top {
       display: flex;
@@ -229,36 +322,112 @@
     .pf-identity {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
       min-width: 0;
     }
+    .pf-avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+      padding: 3px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--pf-accent), var(--pf-accent-3));
+      box-shadow: 0 0 24px var(--pf-glow-strong);
+    }
     .pf-avatar {
-      width: 56px;
-      height: 56px;
-      border-radius: 14px;
+      width: 62px;
+      height: 62px;
+      border-radius: 17px;
       background: linear-gradient(135deg, #6d28d9, #4f46e5);
       color: #ffffff;
       display: grid;
       place-items: center;
       font-family: "Fredoka", sans-serif;
       font-weight: 700;
-      font-size: 1.45rem;
-      flex-shrink: 0;
+      font-size: 1.55rem;
+      border: 2px solid var(--pf-surface);
+    }
+    .pf-avatar.rank-1 { background: linear-gradient(135deg, #b45309, #f59e0b); }
+    .pf-avatar.rank-2 { background: linear-gradient(135deg, #475569, #94a3b8); }
+    .pf-avatar.rank-3 { background: linear-gradient(135deg, #d97706, #facc15); color: #1e293b; }
+    .pf-avatar.rank-4 { background: linear-gradient(135deg, #0284c7, #6366f1); }
+    .pf-avatar.rank-5 { background: linear-gradient(135deg, #7c3aed, #ec4899); }
+
+    .pf-rank-pip {
+      position: absolute;
+      bottom: -5px;
+      right: -5px;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: var(--pf-surface);
+      border: 1.5px solid var(--pf-outline-glow);
+      display: grid;
+      place-items: center;
+      font-size: 0.82rem;
+      line-height: 1;
+      box-shadow: 0 0 12px var(--pf-glow-strong);
     }
     .pf-identity-meta { min-width: 0; }
+    .pf-name-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
     .pf-identity-meta h1 {
       margin: 0;
       font-family: "Fredoka", sans-serif;
-      font-size: 1.55rem;
+      font-size: 1.6rem;
       font-weight: 700;
       line-height: 1.2;
       text-wrap: balance;
     }
+    .pf-title-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 8px;
+      background: var(--pf-accent-soft);
+      border: 1px solid var(--pf-outline-glow);
+      color: var(--pf-accent);
+      font-size: 0.76rem;
+      font-weight: 800;
+      white-space: nowrap;
+      box-shadow: 0 0 14px -2px var(--pf-glow-soft);
+    }
+    .pf-rank-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 8px;
+      background: var(--pf-surface-alt);
+      border: 1px solid var(--pf-border);
+      color: var(--pf-text);
+      font-size: 0.76rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
     .pf-identity-sub {
-      margin: 4px 0 0;
-      font-size: 0.86rem;
+      margin: 6px 0 0;
+      font-size: 0.85rem;
       font-weight: 600;
       color: var(--pf-muted);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px 10px;
+    }
+    .pf-meta-link {
+      color: var(--pf-accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .pf-meta-link:hover { text-decoration: underline; }
+    .pf-bday-today {
+      color: var(--pf-warn);
+      font-weight: 800;
     }
     .pf-hero-quick {
       display: flex;
@@ -281,32 +450,221 @@
       .pf-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     .pf-kpi {
-      padding: 12px 14px;
-      border-radius: 12px;
+      position: relative;
+      padding: 13px 14px;
+      border-radius: 13px;
       background: var(--pf-surface-alt);
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
+      box-shadow: inset 0 1px 0 var(--pf-rim);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease;
+    }
+    .pf-kpi:hover {
+      border-color: var(--pf-outline-glow);
+      box-shadow: 0 0 20px -4px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
+      transform: translateY(-1px);
+    }
+    .pf-kpi--fire.is-active {
+      border-color: rgba(249, 115, 22, 0.56);
+      background: linear-gradient(155deg, rgba(251, 146, 60, 0.10) 0%, var(--pf-surface-alt) 68%);
+      box-shadow:
+        0 0 24px -5px rgba(249, 115, 22, 0.34),
+        0 0 10px -2px rgba(250, 204, 21, 0.18),
+        inset 0 1px 0 var(--pf-rim);
+    }
+    .pf-kpi--fire.is-active:hover {
+      border-color: #fb923c;
+      box-shadow:
+        0 0 30px -3px rgba(249, 115, 22, 0.48),
+        0 0 14px -2px rgba(250, 204, 21, 0.28),
+        inset 0 1px 0 var(--pf-rim);
+    }
+    .pf-kpi--stars.is-lit {
+      border-color: rgba(234, 179, 8, 0.5);
+      box-shadow: 0 0 20px -6px rgba(234, 179, 8, 0.28), inset 0 1px 0 var(--pf-rim);
+    }
+    .pf-kpi--stars.is-on-fire {
+      border-color: rgba(249, 115, 22, 0.54);
+      background: linear-gradient(155deg, rgba(250, 204, 21, 0.08) 0%, var(--pf-surface-alt) 68%);
+      box-shadow:
+        0 0 24px -5px rgba(249, 115, 22, 0.32),
+        0 0 12px -2px rgba(234, 179, 8, 0.22),
+        inset 0 1px 0 var(--pf-rim);
     }
     .pf-kpi-label {
       display: block;
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       color: var(--pf-muted);
+    }
+    .pf-kpi-val-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .pf-kpi-val-row .pf-kpi-val {
+      margin-top: 0;
     }
     .pf-kpi-val {
       display: block;
       margin-top: 4px;
-      font-size: 1.4rem;
+      font-size: 1.45rem;
       font-weight: 800;
       color: var(--pf-text);
     }
     .pf-kpi-sub {
       display: block;
-      margin-top: 2px;
+      margin-top: 3px;
       font-size: 0.76rem;
       font-weight: 600;
       color: var(--pf-muted);
+    }
+
+    /* Fire Stars & Flame Particle Visualizer */
+    .pf-fire-emblem,
+    .pf-star-emblem {
+      position: relative;
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      flex-shrink: 0;
+      font-size: 1.25rem;
+      line-height: 1;
+      border: 1px solid var(--pf-border);
+      background: var(--pf-surface);
+      overflow: visible;
+    }
+    .pf-fire-emblem.is-muted,
+    .pf-star-emblem.is-muted {
+      opacity: 0.45;
+      filter: grayscale(0.8);
+    }
+    .pf-fire-emblem.is-lit {
+      border-color: rgba(249, 115, 22, 0.65);
+      background: radial-gradient(circle at 50% 72%, rgba(251, 146, 60, 0.34), rgba(234, 88, 12, 0.10) 70%);
+      box-shadow: 0 0 16px rgba(249, 115, 22, 0.55), 0 0 6px rgba(250, 204, 21, 0.45);
+    }
+    .pf-fire-emblem.is-lit .pf-flame-glyph {
+      display: inline-block;
+      filter: drop-shadow(0 0 6px rgba(255, 107, 26, 0.9)) drop-shadow(0 0 12px rgba(250, 204, 21, 0.65));
+      animation: pf-flame-pulse 0.75s ease-in-out infinite alternate;
+    }
+    .pf-star-emblem.is-lit {
+      border-color: rgba(234, 179, 8, 0.6);
+      background: radial-gradient(circle, rgba(250, 204, 21, 0.25), rgba(234, 179, 8, 0.06) 72%);
+      color: #f59e0b;
+      box-shadow: 0 0 14px rgba(234, 179, 8, 0.42);
+    }
+    .pf-star-emblem.is-on-fire {
+      border-color: rgba(249, 115, 22, 0.68);
+      background: radial-gradient(circle at 50% 70%, rgba(251, 146, 60, 0.34), rgba(234, 88, 12, 0.1) 72%);
+      color: #ff6b1a;
+      text-shadow: 0 0 8px #ff3d00, 0 0 14px #ff8c00;
+      box-shadow: 0 0 18px rgba(249, 115, 22, 0.55);
+    }
+    .pf-star-emblem.is-on-fire::after {
+      content: "🔥";
+      position: absolute;
+      left: 50%;
+      bottom: 62%;
+      transform: translateX(-50%) scale(0.58);
+      font-size: 0.95em;
+      pointer-events: none;
+      animation: pf-star-flame 0.7s ease-in-out infinite alternate;
+      z-index: 2;
+    }
+    @keyframes pf-flame-pulse {
+      0% { transform: scale(0.95) translateY(0); }
+      100% { transform: scale(1.08) translateY(-2px); }
+    }
+    @keyframes pf-star-flame {
+      0% { transform: translateX(-50%) scale(0.52) translateY(0); opacity: 0.88; }
+      100% { transform: translateX(-50%) scale(0.68) translateY(-3px); opacity: 1; }
+    }
+
+    .pf-fire-emblem .la-particles,
+    .pf-star-emblem .la-particles,
+    .game-stars .star .la-particles {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .la-particle--fire {
+      position: absolute;
+      width: 3.5px;
+      height: 3.5px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fef08a 0%, #ff6b1a 62%, transparent 100%);
+      opacity: 0;
+      animation: pf-particle-fire 1.35s ease-out infinite;
+      animation-delay: var(--d, 0s);
+    }
+    .la-particle--smoke {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(226, 232, 240, 0.65) 0%, rgba(148, 163, 184, 0.28) 52%, transparent 100%);
+      opacity: 0;
+      filter: blur(1px);
+      animation: pf-particle-smoke 2.6s ease-out infinite;
+      animation-delay: var(--d, 0s);
+    }
+    @keyframes pf-particle-fire {
+      0% { opacity: 0; transform: translate(var(--x, 0), 0) scale(0.45); }
+      18% { opacity: 0.95; transform: translate(calc(var(--x, 0) + var(--w, 0px) * 0.25), -6px) scale(0.95); }
+      58% { opacity: 0.62; transform: translate(calc(var(--x, 0) + var(--w, 0px) * 0.7), -14px) scale(0.55); }
+      100% { opacity: 0; transform: translate(calc(var(--x, 0) + var(--w, 0px)), -23px) scale(0.15); }
+    }
+    @keyframes pf-particle-smoke {
+      0% { opacity: 0; transform: translate(var(--x, 0), 1px) scale(calc(var(--s, 1) * 0.45)); }
+      20% { opacity: 0.5; transform: translate(calc(var(--x, 0) + var(--w, 0px) * 0.3), -7px) scale(calc(var(--s, 1) * 0.75)); }
+      55% { opacity: 0.3; transform: translate(calc(var(--x, 0) + var(--w, 0px) * 0.75), -16px) scale(calc(var(--s, 1) * 1.05)); }
+      100% { opacity: 0; transform: translate(calc(var(--x, 0) + var(--w, 0px) * 1.35), -30px) scale(calc(var(--s, 1) * 1.35)); }
+    }
+
+    /* 7-day fire-star streak strip */
+    .pf-streak-flames {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 7px;
+    }
+    .pf-streak-pip {
+      position: relative;
+      display: inline-grid;
+      place-items: center;
+      width: 19px;
+      height: 19px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      line-height: 1;
+      color: var(--pf-muted);
+      background: var(--pf-surface);
+      border: 1px solid var(--pf-border);
+      opacity: 0.5;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+    }
+    .pf-streak-pip.is-lit {
+      opacity: 1;
+      color: #ff6b1a;
+      border-color: rgba(249, 115, 22, 0.72);
+      background: radial-gradient(circle, rgba(251, 146, 60, 0.30), rgba(234, 88, 12, 0.08) 75%);
+      text-shadow: 0 0 6px rgba(255, 61, 0, 0.75), 0 0 10px rgba(250, 204, 21, 0.65);
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.42);
+    }
+    .pf-streak-pip.is-lit.is-blaze {
+      color: #fde047;
+      border-color: #fb923c;
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.65);
     }
 
     /* Segmented Tabs */
@@ -314,30 +672,35 @@
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      padding: 4px;
+      padding: 5px;
       background: var(--pf-surface);
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
       border-radius: 14px;
+      box-shadow: 0 0 22px -10px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
     }
     .pf-tab {
-      border: 0;
+      border: 1px solid transparent;
       background: transparent;
       color: var(--pf-muted);
       font: inherit;
       font-weight: 700;
       font-size: 0.86rem;
-      padding: 10px 14px;
+      padding: 9px 14px;
       border-radius: 10px;
       cursor: pointer;
       white-space: nowrap;
       flex-shrink: 0;
-      transition: background 0.15s ease, color 0.15s ease;
+      transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
     }
-    .pf-tab:hover { color: var(--pf-text); }
+    .pf-tab:hover {
+      color: var(--pf-text);
+      border-color: var(--pf-border);
+    }
     .pf-tab.is-on {
       background: var(--pf-accent-soft);
       color: var(--pf-accent);
-      box-shadow: inset 0 0 0 1px var(--pf-accent-border);
+      border-color: var(--pf-outline-glow);
+      box-shadow: 0 0 16px -2px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
     }
 
     /* Panels */
@@ -345,13 +708,22 @@
     .pf-panel.is-on { display: flex; }
 
     .pf-section {
+      position: relative;
       background: var(--pf-surface);
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
       border-radius: var(--pf-radius);
       padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 14px;
+      box-shadow: 0 0 28px -14px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .pf-section:hover {
+      border-color: var(--pf-accent-border);
+    }
+    html[data-theme="dark"] .pf-section {
+      background: linear-gradient(180deg, rgba(20, 30, 52, 0.92) 0%, rgba(15, 22, 40, 0.96) 100%);
     }
     .pf-section-head {
       display: flex;
@@ -363,7 +735,7 @@
     .pf-section-head h2 {
       margin: 0;
       font-family: "Fredoka", sans-serif;
-      font-size: 1.15rem;
+      font-size: 1.18rem;
       font-weight: 700;
     }
     .pf-section-meta {
@@ -394,17 +766,20 @@
     .skill-row-top strong { font-weight: 700; }
     .skill-row-top span { color: var(--pf-muted); font-weight: 600; font-size: 0.8rem; }
     .skill-bar {
-      height: 8px;
+      height: 9px;
       border-radius: 999px;
       background: var(--pf-surface-alt);
       overflow: hidden;
       border: 1px solid var(--pf-border);
+      padding: 1px;
     }
     .skill-bar > i {
       display: block;
       height: 100%;
-      background: linear-gradient(90deg, #6d28d9, #4f46e5);
+      background: linear-gradient(90deg, #6d28d9 0%, #6366f1 55%, #0ea5e9 100%);
       border-radius: 999px;
+      box-shadow: 0 0 12px var(--pf-glow-strong);
+      transition: width 0.25s ease;
     }
 
     /* Quick launch list */
@@ -424,12 +799,17 @@
       padding: 12px 14px;
       border-radius: 12px;
       background: var(--pf-surface-alt);
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
       text-decoration: none;
       color: var(--pf-text);
-      transition: border-color 0.15s ease;
+      box-shadow: inset 0 1px 0 var(--pf-rim);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease;
     }
-    .quick-item:hover { border-color: var(--pf-accent); }
+    .quick-item:hover {
+      border-color: var(--pf-accent);
+      box-shadow: 0 0 18px -4px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
+      transform: translateY(-1px);
+    }
     .quick-item strong {
       display: block;
       font-size: 0.88rem;
@@ -454,14 +834,18 @@
       max-width: 280px;
       padding: 9px 12px;
       border-radius: 10px;
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
       background: var(--pf-surface-alt);
       color: var(--pf-text);
       font: inherit;
       font-size: 0.86rem;
       outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease;
     }
-    .pf-search:focus { border-color: var(--pf-accent); }
+    .pf-search:focus {
+      border-color: var(--pf-accent);
+      box-shadow: 0 0 16px -3px var(--pf-glow-soft);
+    }
 
     .stars-grid {
       display: grid;
@@ -476,12 +860,26 @@
       padding: 14px;
       border-radius: 12px;
       background: var(--pf-surface-alt);
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
       text-decoration: none;
       color: var(--pf-text);
-      transition: border-color 0.15s ease;
+      box-shadow: inset 0 1px 0 var(--pf-rim);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease;
     }
-    a.ach-tile:hover { border-color: var(--pf-accent); }
+    a.ach-tile:hover {
+      border-color: var(--pf-accent);
+      box-shadow: 0 0 18px -4px var(--pf-glow-soft);
+      transform: translateY(-1px);
+    }
+    .ach-tile.is-on-fire {
+      border-color: rgba(249, 115, 22, 0.54);
+      background: linear-gradient(160deg, rgba(251, 146, 60, 0.08) 0%, var(--pf-surface-alt) 68%);
+      box-shadow: 0 0 22px -5px rgba(249, 115, 22, 0.3), inset 0 1px 0 var(--pf-rim);
+    }
+    a.ach-tile.is-on-fire:hover {
+      border-color: #fb923c;
+      box-shadow: 0 0 26px -3px rgba(249, 115, 22, 0.45), inset 0 1px 0 var(--pf-rim);
+    }
     .ach-tile-title {
       font-size: 0.88rem;
       font-weight: 700;
@@ -492,16 +890,34 @@
       font-weight: 600;
       color: var(--pf-muted);
     }
-    .game-stars {
+    .ach-tile .game-stars {
       display: flex;
-      gap: 4px;
-      font-size: 1.05rem;
+      gap: 6px;
+      margin: 12px 0 4px;
+      font-size: 1.15rem;
       line-height: 1;
     }
-    .game-stars .star { opacity: 0.25; }
+    .game-stars .star { position: relative; display: inline-block; opacity: 0.22; }
     .game-stars .star.is-filled {
       opacity: 1;
       color: var(--pf-star);
+      text-shadow: 0 0 10px rgba(234, 179, 8, 0.55);
+    }
+    .game-stars .star.on-fire {
+      opacity: 1;
+      color: #ff6b1a;
+      text-shadow: 0 0 6px #ff3d00, 0 0 12px #ff8c00;
+    }
+    .game-stars .star.on-fire::after {
+      content: "🔥";
+      position: absolute;
+      left: 50%;
+      bottom: 70%;
+      transform: translateX(-50%) scale(0.55);
+      font-size: 1em;
+      pointer-events: none;
+      animation: pf-star-flame 0.7s ease-in-out infinite alternate;
+      z-index: 2;
     }
 
     /* Tables / Scores */
@@ -544,20 +960,26 @@
       gap: 6px;
     }
     .lb-chip {
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
       background: var(--pf-surface-alt);
       color: var(--pf-muted);
       font: inherit;
       font-weight: 700;
       font-size: 0.8rem;
       padding: 7px 12px;
-      border-radius: 999px;
+      border-radius: 10px;
       cursor: pointer;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, color 0.16s ease;
+    }
+    .lb-chip:hover {
+      border-color: var(--pf-accent-border);
+      color: var(--pf-text);
     }
     .lb-chip.is-on {
       background: var(--pf-accent-soft);
       color: var(--pf-accent);
-      border-color: var(--pf-accent-border);
+      border-color: var(--pf-outline-glow);
+      box-shadow: 0 0 14px -3px var(--pf-glow-soft);
     }
     .lb-podium {
       display: grid;
@@ -570,12 +992,17 @@
     }
     .lb-pod {
       background: var(--pf-surface-alt);
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
       border-radius: 12px;
       padding: 14px 10px;
       text-align: center;
+      box-shadow: inset 0 1px 0 var(--pf-rim);
     }
-    .lb-pod.is-me { border-color: var(--pf-accent); background: var(--pf-accent-soft); }
+    .lb-pod.is-me {
+      border-color: var(--pf-accent);
+      background: var(--pf-accent-soft);
+      box-shadow: 0 0 22px -4px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
+    }
     .lb-pod-medal { font-size: 1.35rem; }
     .lb-pod-name {
       margin-top: 4px;
@@ -600,11 +1027,12 @@
       padding: 10px 14px;
       border-radius: 10px;
       background: var(--pf-surface-alt);
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
     }
     .lb-row.is-me {
       background: var(--pf-accent-soft);
-      border-color: var(--pf-accent-border);
+      border-color: var(--pf-outline-glow);
+      box-shadow: 0 0 16px -4px var(--pf-glow-soft);
     }
     .lb-row-rank { width: 28px; font-weight: 800; color: var(--pf-muted); }
     .lb-row-name { flex: 1; font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -632,15 +1060,19 @@
       width: 100%;
       padding: 10px 12px;
       border-radius: 10px;
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
       background: var(--pf-surface-alt);
       color: var(--pf-text);
       font: inherit;
       font-size: 0.92rem;
       outline: none;
       min-height: 42px;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease;
     }
-    .pf-input:focus { border-color: var(--pf-accent); }
+    .pf-input:focus {
+      border-color: var(--pf-accent);
+      box-shadow: 0 0 16px -3px var(--pf-glow-soft);
+    }
     .pf-input--pw { padding-right: 68px; }
     .pf-pw-toggle {
       position: absolute;
@@ -681,10 +1113,10 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      padding: 10px 12px;
+      padding: 10px 13px;
       border-radius: 10px;
       background: var(--pf-surface-alt);
-      border: 1px solid var(--pf-border);
+      border: 1.5px solid var(--pf-border);
       font-size: 0.86rem;
     }
     .pf-kv span { color: var(--pf-muted); font-weight: 600; }
@@ -696,8 +1128,339 @@
       color: var(--pf-muted);
       font-size: 0.88rem;
       font-weight: 600;
-      border: 1px dashed var(--pf-border);
+      border: 1.5px dashed var(--pf-border);
       border-radius: 12px;
+    }
+
+    /* Onboarding wizard card on profile */
+    .pf-onboard-card {
+      position: relative;
+      background: var(--pf-surface);
+      border: 1.5px solid var(--pf-outline-glow);
+      border-radius: var(--pf-radius);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 0 32px -8px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
+    }
+    .pf-onboard-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .pf-onboard-top h2 {
+      margin: 0;
+      font-family: "Fredoka", sans-serif;
+      font-size: 1.3rem;
+    }
+    .pf-onboard-step {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--pf-accent);
+      background: var(--pf-accent-soft);
+      border: 1px solid var(--pf-outline-glow);
+      padding: 4px 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 12px -2px var(--pf-glow-soft);
+    }
+    .pf-choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 600px) {
+      .pf-choice-grid { grid-template-columns: 1fr; }
+    }
+    .pf-choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1.5px solid var(--pf-border);
+      background: var(--pf-surface-alt);
+      color: var(--pf-text);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, transform 0.14s ease;
+    }
+    .pf-choice:hover {
+      border-color: var(--pf-accent);
+      box-shadow: 0 0 16px -4px var(--pf-glow-soft);
+      transform: translateY(-1px);
+    }
+    .pf-choice.is-selected {
+      border-color: var(--pf-accent);
+      background: var(--pf-accent-soft);
+      box-shadow: 0 0 20px -2px var(--pf-glow-strong);
+    }
+    .pf-choice-icon { font-size: 1.25rem; line-height: 1.1; flex-shrink: 0; }
+    .pf-choice strong { display: block; font-size: 0.9rem; font-weight: 700; }
+    .pf-choice small { display: block; font-size: 0.76rem; color: var(--pf-muted); font-weight: 500; margin-top: 2px; }
+
+    /* Rank & XP UI */
+    .rank-overview-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-color: var(--pf-outline-glow);
+      box-shadow: 0 0 32px -10px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
+    }
+    .rank-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 15px 17px;
+      border-radius: 14px;
+      background: var(--pf-surface-alt);
+      border: 1.5px solid var(--pf-accent-border);
+      box-shadow: 0 0 22px -6px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
+    }
+    .rank-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .rank-emblem {
+      width: 50px;
+      height: 50px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      font-size: 1.6rem;
+      background: var(--pf-surface);
+      border: 1.5px solid var(--pf-outline-glow);
+      box-shadow: 0 0 18px var(--pf-glow-soft);
+      flex-shrink: 0;
+    }
+    .rank-banner-title {
+      font-family: "Fredoka", sans-serif;
+      font-size: 1.18rem;
+      font-weight: 700;
+      margin: 0;
+    }
+    .rank-banner-sub {
+      font-size: 0.82rem;
+      color: var(--pf-muted);
+      font-weight: 600;
+      margin: 2px 0 0;
+    }
+    .rank-xp-num {
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--pf-accent);
+      text-shadow: 0 0 16px var(--pf-glow-soft);
+    }
+    .rank-progress-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .rank-progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--pf-muted);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .rank-ladder {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 900px) {
+      .rank-ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 520px) {
+      .rank-ladder { grid-template-columns: 1fr; }
+    }
+    .rank-tier-card {
+      position: relative;
+      padding: 15px 14px;
+      border-radius: 14px;
+      border: 1.5px solid var(--pf-border);
+      background: var(--pf-surface-alt);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      opacity: 0.64;
+      box-shadow: inset 0 1px 0 var(--pf-rim);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease, opacity 0.15s ease;
+    }
+    .rank-tier-card.is-unlocked {
+      opacity: 1;
+      border-color: var(--pf-accent-border);
+    }
+    .rank-tier-card.is-current {
+      opacity: 1;
+      border-color: var(--rank-outline, var(--pf-accent));
+      background: var(--pf-accent-soft);
+      box-shadow: 0 0 26px -4px var(--rank-glow, var(--pf-glow-strong)), inset 0 1px 0 var(--pf-rim);
+      transform: translateY(-2px);
+    }
+    .rank-tier-card[data-rank="1"] { --rank-outline: #d97706; --rank-glow: rgba(217, 119, 6, 0.35); }
+    .rank-tier-card[data-rank="2"] { --rank-outline: #94a3b8; --rank-glow: rgba(148, 163, 184, 0.38); }
+    .rank-tier-card[data-rank="3"] { --rank-outline: #eab308; --rank-glow: rgba(234, 179, 8, 0.42); }
+    .rank-tier-card[data-rank="4"] { --rank-outline: #38bdf8; --rank-glow: rgba(56, 189, 248, 0.42); }
+    .rank-tier-card[data-rank="5"] { --rank-outline: #c084fc; --rank-glow: rgba(192, 132, 252, 0.48); }
+
+    .rank-tier-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .rank-tier-icon { font-size: 1.4rem; }
+    .rank-tier-state {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--pf-muted);
+    }
+    .rank-tier-card.is-current .rank-tier-state { color: var(--pf-accent); }
+    .rank-tier-card.is-unlocked:not(.is-current) .rank-tier-state { color: var(--pf-ok); }
+    .rank-tier-name { font-weight: 800; font-size: 0.92rem; }
+    .rank-tier-req { font-size: 0.76rem; font-weight: 700; color: var(--pf-muted); }
+    .rank-tier-desc { font-size: 0.75rem; color: var(--pf-muted); line-height: 1.35; }
+
+    /* Improvable Titles & Badges */
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .badge-card {
+      position: relative;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1.5px solid var(--pf-accent-border);
+      background: var(--pf-surface-alt);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 0 18px -8px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease;
+    }
+    .badge-card:not(.is-locked):hover {
+      border-color: var(--pf-accent);
+      box-shadow: 0 0 26px -4px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
+      transform: translateY(-1px);
+    }
+    .badge-card.is-equipped {
+      border-color: var(--pf-accent);
+      background: var(--pf-accent-soft);
+      box-shadow: 0 0 28px -3px var(--pf-glow-strong), inset 0 1px 0 var(--pf-rim);
+    }
+    .badge-card.is-locked {
+      opacity: 0.74;
+      border-style: dashed;
+      border-color: var(--pf-border);
+      box-shadow: none;
+    }
+    .badge-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .badge-head-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .badge-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--pf-surface);
+      border: 1.5px solid var(--pf-outline-glow);
+      box-shadow: 0 0 14px -2px var(--pf-glow-soft);
+      display: grid;
+      place-items: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .badge-card.is-locked .badge-icon {
+      border-color: var(--pf-border);
+      box-shadow: none;
+    }
+    .badge-track-name {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--pf-muted);
+    }
+    .badge-title-name {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--pf-text);
+      line-height: 1.25;
+    }
+    .badge-tier-pill {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 7px;
+      background: var(--pf-surface);
+      border: 1px solid var(--pf-outline-glow);
+      color: var(--pf-accent);
+      white-space: nowrap;
+    }
+    .badge-card.is-locked .badge-tier-pill {
+      border-color: var(--pf-border);
+      color: var(--pf-muted);
+    }
+    .badge-desc {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--pf-muted);
+    }
+    .badge-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 4px;
+    }
+    .badge-next {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--pf-muted);
+    }
+    .pf-input[type="date"] { color-scheme: light; }
+    html[data-theme="dark"] .pf-input[type="date"] { color-scheme: dark; }
+    .pf-grid-inputs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 560px) {
+      .pf-grid-inputs { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+      .la-particles { display: none !important; }
+      .pf-btn:hover, .pf-kpi:hover, .quick-item:hover, .ach-tile:hover, .pf-choice:hover, .badge-card:hover {
+        transform: none !important;
+      }
     }
   </style>
   <script>
@@ -740,12 +1503,69 @@
       <a href="../auth-system/login.html?redirect=/learningarcade/profile/" class="pf-btn pf-btn--primary">Sign in / Register</a>
     </div>
 
+    <section class="pf-onboard-card" id="onboardingGate" hidden aria-label="Complete your profile">
+      <div class="pf-onboard-top">
+        <h2 id="onboardTitle">Welcome! Finish setting up your profile</h2>
+        <span class="pf-onboard-step" id="onboardStepLabel">Step 1 of 3</span>
+      </div>
+      <p style="margin:0;font-size:0.88rem;color:var(--pf-muted);font-weight:600;" id="onboardDesc">Add your birthday, select your role, and pick your studying book before entering your profile.</p>
+
+      <div id="obStep1">
+        <div class="pf-field">
+          <label for="obBirthdateInput">Your Birthday</label>
+          <input class="pf-input" id="obBirthdateInput" type="date" min="1920-01-01" />
+          <small id="obBdayHint">Required so your profile age &amp; birthday card work accurately.</small>
+        </div>
+      </div>
+
+      <div id="obStep2" hidden>
+        <div class="pf-field" style="margin-bottom:8px;">
+          <label>Select Your Role</label>
+        </div>
+        <div class="pf-choice-grid" id="obRoleChoices">
+          <button type="button" class="pf-choice" data-role="student"><span class="pf-choice-icon">🎓</span><div><strong>Student</strong><small>Learning English in class or school</small></div></button>
+          <button type="button" class="pf-choice" data-role="teacher"><span class="pf-choice-icon">👩‍🏫</span><div><strong>Teacher</strong><small>Teaching classes &amp; tracking students</small></div></button>
+          <button type="button" class="pf-choice" data-role="parent"><span class="pf-choice-icon">🏡</span><div><strong>Parent / Guardian</strong><small>Helping a learner practice at home</small></div></button>
+          <button type="button" class="pf-choice" data-role="self-learner"><span class="pf-choice-icon">🚀</span><div><strong>Self-Learner</strong><small>Practicing English independently</small></div></button>
+        </div>
+      </div>
+
+      <div id="obStep3" hidden>
+        <div class="pf-field" style="margin-bottom:8px;">
+          <label>Choose Your Studying Book</label>
+        </div>
+        <div class="pf-choice-grid" id="obBookChoices">
+          <button type="button" class="pf-choice" data-book="american-english-file"><span class="pf-choice-icon">📘</span><div><strong>American English File</strong><small>Starter, Levels 1–4 &amp; Tests</small></div></button>
+          <button type="button" class="pf-choice" data-book="teen-2-teen"><span class="pf-choice-icon">📗</span><div><strong>Teen2Teen</strong><small>Teen English coursebook</small></div></button>
+          <button type="button" class="pf-choice" data-book="pre-starter"><span class="pf-choice-icon">🔤</span><div><strong>Pre-starter</strong><small>Early beginner &amp; phonics</small></div></button>
+          <button type="button" class="pf-choice" data-book="tactics-for-listening"><span class="pf-choice-icon">🎧</span><div><strong>Tactics for Listening</strong><small>Listening comprehension skills</small></div></button>
+          <button type="button" class="pf-choice" data-book="not-a-student"><span class="pf-choice-icon">✨</span><div><strong>Not a student / No book</strong><small>Teachers, parents, or open arcade practice</small></div></button>
+        </div>
+      </div>
+
+      <div class="pf-form-foot">
+        <span class="pf-feedback" id="obFeedback" role="status" aria-live="polite"></span>
+        <div style="display:flex;gap:8px;margin-left:auto;">
+          <button type="button" class="pf-btn" id="obBackBtn" hidden>← Back</button>
+          <button type="button" class="pf-btn pf-btn--primary" id="obNextBtn">Save &amp; Continue →</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="pfMainProfile" style="display:flex;flex-direction:column;gap:20px;">
     <section class="pf-hero" aria-label="Student summary">
       <div class="pf-hero-top">
         <div class="pf-identity">
-          <div class="pf-avatar" id="pfAvatar">?</div>
+          <div class="pf-avatar-wrap">
+            <div class="pf-avatar rank-1" id="pfAvatar">?</div>
+            <span class="pf-rank-pip" id="pfRankPip" title="Current Rank">🥉</span>
+          </div>
           <div class="pf-identity-meta">
-            <h1 id="pfDisplayName">Student</h1>
+            <div class="pf-name-row">
+              <h1 id="pfDisplayName">Student</h1>
+              <span class="pf-rank-tag" id="pfHeroRankTag">Rank I · Bronze Novice</span>
+              <span class="pf-title-tag" id="pfHeroTitleTag" hidden>✦ Warm-Up Player</span>
+            </div>
             <p class="pf-identity-sub" id="pfSubtitle">Loading account…</p>
           </div>
         </div>
@@ -756,9 +1576,12 @@
       </div>
 
       <div class="pf-kpis">
-        <div class="pf-kpi">
+        <div class="pf-kpi pf-kpi--stars" id="kpiStarsCard">
           <span class="pf-kpi-label">Stars Earned</span>
-          <strong class="pf-kpi-val tabular" id="kpiStars">0</strong>
+          <div class="pf-kpi-val-row">
+            <span class="pf-star-emblem is-muted" id="kpiStarsVisual" aria-hidden="true">☆</span>
+            <strong class="pf-kpi-val tabular" id="kpiStars">0</strong>
+          </div>
           <span class="pf-kpi-sub" id="kpiStarsSub">Across practiced games</span>
         </div>
         <div class="pf-kpi">
@@ -776,9 +1599,13 @@
           <strong class="pf-kpi-val tabular" id="kpiAccuracy">—</strong>
           <span class="pf-kpi-sub" id="kpiBestScore">Best score tracking</span>
         </div>
-        <div class="pf-kpi">
+        <div class="pf-kpi pf-kpi--fire" id="kpiStreakCard">
           <span class="pf-kpi-label">Daily Streak</span>
-          <strong class="pf-kpi-val tabular" id="kpiStreak">0d</strong>
+          <div class="pf-kpi-val-row">
+            <span class="pf-fire-emblem is-muted" id="kpiStreakVisual" aria-hidden="true"><span class="pf-flame-glyph">🔥</span></span>
+            <strong class="pf-kpi-val tabular" id="kpiStreak">0 days</strong>
+          </div>
+          <div class="pf-streak-flames" id="kpiStreakFlames" aria-hidden="true"></div>
           <span class="pf-kpi-sub" id="kpiStreakSub">Play a game to start</span>
         </div>
       </div>
@@ -788,6 +1615,7 @@
 
     <nav class="pf-tabs" role="tablist" aria-label="Dashboard sections">
       <button type="button" class="pf-tab is-on" data-tab="overview" role="tab" aria-selected="true">Overview</button>
+      <button type="button" class="pf-tab" data-tab="ranks" role="tab" aria-selected="false">Ranks &amp; Titles</button>
       <button type="button" class="pf-tab" data-tab="stars" role="tab" aria-selected="false">Stars &amp; Games</button>
       <button type="button" class="pf-tab" data-tab="scores" role="tab" aria-selected="false">Scores &amp; History</button>
       <button type="button" class="pf-tab" data-tab="leaderboard" role="tab" aria-selected="false">Leaderboard</button>
@@ -796,6 +1624,33 @@
 
     <!-- OVERVIEW -->
     <section class="pf-panel is-on" id="panel-overview" role="tabpanel">
+      <div class="pf-section rank-overview-card" id="overviewRankSection">
+        <div class="pf-section-head">
+          <h2>Rank &amp; Title Progress</h2>
+          <button type="button" class="pf-btn" id="openRanksTabBtn">View All 5 Ranks &amp; Titles →</button>
+        </div>
+        <div class="rank-banner">
+          <div class="rank-banner-left">
+            <div class="rank-emblem" id="ovRankIcon">🥉</div>
+            <div>
+              <h3 class="rank-banner-title" id="ovRankTitle">Rank I · Bronze Novice</h3>
+              <p class="rank-banner-sub" id="ovRankSub">Play games, explore variety, and aim for 3 stars to rank up.</p>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <span class="rank-xp-num tabular" id="ovRankXp">0 XP</span>
+            <div style="font-size:0.75rem;color:var(--pf-muted);font-weight:700;" id="ovEquippedTitleLabel">No title equipped</div>
+          </div>
+        </div>
+        <div class="rank-progress-wrap">
+          <div class="rank-progress-labels">
+            <span id="ovProgressLeft">Progress to Rank II</span>
+            <span class="tabular" id="ovProgressRight">0 / 150 XP</span>
+          </div>
+          <div class="skill-bar"><i id="ovRankBar" style="width:4%"></i></div>
+        </div>
+      </div>
+
       <div class="pf-grid-2">
         <div class="pf-section">
           <div class="pf-section-head">
@@ -820,6 +1675,30 @@
           <span class="pf-section-meta" id="recentActivityMeta">Latest games and scores</span>
         </div>
         <div id="recentActivityWrap"></div>
+      </div>
+    </section>
+
+    <!-- RANKS & TITLES -->
+    <section class="pf-panel" id="panel-ranks" role="tabpanel">
+      <div class="pf-section">
+        <div class="pf-section-head">
+          <div>
+            <h2>5-Tier Arcade Ranks</h2>
+            <span class="pf-section-meta" id="ranksXpBreakdown">Earn XP by playing often, trying many games, and earning high accuracy &amp; stars.</span>
+          </div>
+          <span class="rank-xp-num tabular" id="ranksTotalXp">0 XP</span>
+        </div>
+        <div class="rank-ladder" id="rankLadder"></div>
+      </div>
+
+      <div class="pf-section">
+        <div class="pf-section-head">
+          <div>
+            <h2>Improvable Badges &amp; Titles</h2>
+            <span class="pf-section-meta" id="titlesSummaryMeta">Upgrade badges from Tier I to Tier IV to unlock better titles for your profile.</span>
+          </div>
+        </div>
+        <div class="badge-grid" id="badgesGrid"></div>
       </div>
     </section>
 
@@ -873,19 +1752,46 @@
       <div class="pf-grid-2">
         <div class="pf-section">
           <div class="pf-section-head">
-            <h2>Showing Name &amp; Class</h2>
-            <span class="pf-section-meta">Shown on leaderboards and teacher reports</span>
+            <h2>Profile Information</h2>
+            <span class="pf-section-meta">Name, birthday, role &amp; book</span>
           </div>
           <form class="pf-form" id="profileForm">
-            <div class="pf-field">
-              <label for="displayNameInput">Showing Name</label>
-              <input class="pf-input" id="displayNameInput" type="text" maxlength="32" required placeholder="e.g. Sara Ahmadi" />
-              <small>This is the name your teacher and classmates see.</small>
+            <div class="pf-grid-inputs">
+              <div class="pf-field">
+                <label for="displayNameInput">Showing Name</label>
+                <input class="pf-input" id="displayNameInput" type="text" maxlength="32" required placeholder="e.g. Sara Ahmadi" />
+              </div>
+              <div class="pf-field">
+                <label for="classCodeInput">Class Code (optional)</label>
+                <input class="pf-input" id="classCodeInput" type="text" maxlength="16" placeholder="e.g. 7A or STARTER" />
+              </div>
             </div>
             <div class="pf-field">
-              <label for="classCodeInput">Class Code (optional)</label>
-              <input class="pf-input" id="classCodeInput" type="text" maxlength="16" placeholder="e.g. 7A or STARTER" />
-              <small>Helps separate shared names on class leaderboards.</small>
+              <label for="birthdateSettingInput">Birthday</label>
+              <input class="pf-input" id="birthdateSettingInput" type="date" min="1920-01-01" />
+            </div>
+            <div class="pf-grid-inputs">
+              <div class="pf-field">
+                <label for="roleSettingInput">Role</label>
+                <select class="pf-input" id="roleSettingInput">
+                  <option value="">Select role…</option>
+                  <option value="student">Student</option>
+                  <option value="teacher">Teacher</option>
+                  <option value="parent">Parent / Guardian</option>
+                  <option value="self-learner">Self-Learner</option>
+                </select>
+              </div>
+              <div class="pf-field">
+                <label for="bookSettingInput">Studying Book</label>
+                <select class="pf-input" id="bookSettingInput">
+                  <option value="">Select book…</option>
+                  <option value="american-english-file">American English File</option>
+                  <option value="teen-2-teen">Teen2Teen</option>
+                  <option value="pre-starter">Pre-starter</option>
+                  <option value="tactics-for-listening">Tactics for Listening</option>
+                  <option value="not-a-student">Not a student / No book</option>
+                </select>
+              </div>
             </div>
             <div class="pf-form-foot">
               <span class="pf-feedback" id="profileFeedback" role="status" aria-live="polite"></span>
@@ -937,10 +1843,15 @@
       <div class="pf-section">
         <div class="pf-section-head">
           <h2>Account Details &amp; Preferences</h2>
-          <span class="pf-section-meta">Session &amp; appearance</span>
+          <span class="pf-section-meta">Profile summary &amp; appearance</span>
         </div>
         <div class="pf-kv-list" id="accountDetailsList">
           <div class="pf-kv"><span>Username</span><strong id="detailUsername">—</strong></div>
+          <div class="pf-kv"><span>Role</span><strong id="detailRole">—</strong></div>
+          <div class="pf-kv"><span>Studying Book</span><strong id="detailBook">—</strong></div>
+          <div class="pf-kv"><span>Birthday</span><strong id="detailBirthdate">—</strong></div>
+          <div class="pf-kv"><span>Arcade Rank</span><strong id="detailRank">—</strong></div>
+          <div class="pf-kv"><span>Equipped Title</span><strong id="detailTitle">—</strong></div>
           <div class="pf-kv"><span>Sync Status</span><strong id="detailSyncStatus">—</strong></div>
           <div class="pf-kv"><span>Joined</span><strong id="detailJoined">—</strong></div>
           <div class="pf-kv">
@@ -953,6 +1864,7 @@
         </div>
       </div>
     </section>
+    </div>
   </main>
 
   <script src="/learningarcade/vendor/supabase.min.js"></script>
@@ -1101,11 +2013,49 @@
       return new Date(ms).toLocaleDateString(undefined, { month: "short", day: "numeric" });
     }
 
-    function starsMarkup(n) {
+    function fireLevelFromPlays(plays) {
+      plays = Number(plays) || 0;
+      if (plays >= 10) return 3;
+      if (plays > 6) return 2;
+      if (plays > 3) return 1;
+      return 0;
+    }
+
+    function createFireParticlesNode() {
+      var wrap = document.createElement("span");
+      wrap.className = "la-particles";
+      wrap.setAttribute("aria-hidden", "true");
+      var wind = (Math.random() * 2 - 1) * 10;
+      for (var i = 0; i < 6; i++) {
+        var p = document.createElement("span");
+        p.className = "la-particle la-particle--fire";
+        p.style.setProperty("--d", (i * 0.18) + "s");
+        p.style.setProperty("--x", (Math.random() * 10 - 5).toFixed(1) + "px");
+        p.style.setProperty("--w", (wind * (0.35 + Math.random() * 0.3)).toFixed(1) + "px");
+        wrap.appendChild(p);
+      }
+      for (var j = 0; j < 4; j++) {
+        var s = document.createElement("span");
+        s.className = "la-particle la-particle--smoke";
+        s.style.setProperty("--d", (j * 0.36 + 0.15) + "s");
+        s.style.setProperty("--x", (Math.random() * 10 - 5).toFixed(1) + "px");
+        s.style.setProperty("--s", (0.7 + Math.random() * 0.65).toFixed(2));
+        s.style.setProperty("--w", (wind * (0.85 + Math.random() * 0.45)).toFixed(1) + "px");
+        wrap.appendChild(s);
+      }
+      return wrap;
+    }
+
+    function starsMarkup(n, plays, gameId) {
       n = Math.max(0, Math.min(3, Number(n) || 0));
-      var out = '<div class="game-stars" aria-label="' + n + ' of 3 stars">';
+      var fire = fireLevelFromPlays(plays);
+      var label = n + " of 3 stars" + (fire > 0 ? (", " + fire + " on fire") : "");
+      var attr = gameId ? (' data-game="' + escapeHtml(gameId) + '"') : "";
+      var out = '<div class="game-stars"' + attr + ' data-stars="' + n + '" data-plays="' + (Number(plays) || 0) + '" data-fire="' + fire + '" aria-label="' + escapeHtml(label) + '">';
       for (var i = 1; i <= 3; i++) {
-        out += '<span class="star' + (i <= n ? " is-filled" : "") + '">' + (i <= n ? "★" : "☆") + "</span>";
+        var filled = i <= n;
+        var onFire = i <= fire;
+        out += '<span class="star' + (filled ? " is-filled" : "") + (onFire ? " on-fire" : "") + '" data-n="' + i + '">' + (filled ? "★" : "☆") + "</span>";
       }
       return out + "</div>";
     }
@@ -1140,6 +2090,7 @@
     var tabs = document.querySelectorAll(".pf-tab");
     var panels = {
       overview: document.getElementById("panel-overview"),
+      ranks: document.getElementById("panel-ranks"),
       stars: document.getElementById("panel-stars"),
       scores: document.getElementById("panel-scores"),
       leaderboard: document.getElementById("panel-leaderboard"),
@@ -1169,6 +2120,12 @@
       var el = document.getElementById("displayNameInput");
       if (el) el.focus();
     });
+    var openRanksBtn = document.getElementById("openRanksTabBtn");
+    if (openRanksBtn) {
+      openRanksBtn.addEventListener("click", function () {
+        activateTab("ranks");
+      });
+    }
 
     /* State */
     var state = {
@@ -1308,22 +2265,317 @@
         });
     }
 
-    function renderIdentity() {
+    /* 5 Ranks & Improvable Titles/Badges Engine */
+    var RANKS = [
+      { tier: 1, name: "Bronze Novice", icon: "🥉", minXp: 0, desc: "Starting your English arcade journey." },
+      { tier: 2, name: "Silver Explorer", icon: "🥈", minXp: 150, desc: "Playing regularly and trying multiple games." },
+      { tier: 3, name: "Gold Challenger", icon: "🥇", minXp: 450, desc: "Strong accuracy across different skills." },
+      { tier: 4, name: "Platinum Scholar", icon: "💠", minXp: 1000, desc: "Deep mastery with many 3-star finishes." },
+      { tier: 5, name: "Diamond Legend", icon: "👑", minXp: 2000, desc: "Elite Mr. Sheyhaki Arcade champion." }
+    ];
+
+    var ROLE_LABELS = {
+      "student": "🎓 Student",
+      "teacher": "👩‍🏫 Teacher",
+      "parent": "🏡 Parent / Guardian",
+      "self-learner": "🚀 Self-Learner"
+    };
+
+    var BOOK_META = {
+      "american-english-file": { label: "American English File", url: "../../resources/american-english-file/" },
+      "teen-2-teen": { label: "Teen2Teen", url: "../../resources/teen-2-teen/" },
+      "pre-starter": { label: "Pre-starter", url: "../../resources/pre-starter/" },
+      "tactics-for-listening": { label: "Tactics for Listening", url: "../../resources/tactics-for-listening/" },
+      "not-a-student": { label: "Not a student / General practice", url: "" }
+    };
+
+    function formatBirthdateInfo(ymd) {
+      if (!ymd || !/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return null;
+      var p = ymd.split("-");
+      var y = parseInt(p[0], 10);
+      var m = parseInt(p[1], 10);
+      var d = parseInt(p[2], 10);
+      var dt = new Date(y, m - 1, d);
+      if (!dt || dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return null;
+      var now = new Date();
+      var age = now.getFullYear() - y;
+      if (now.getMonth() + 1 < m || (now.getMonth() + 1 === m && now.getDate() < d)) age--;
+      var isToday = (now.getMonth() + 1 === m && now.getDate() === d);
+      return {
+        raw: ymd,
+        short: dt.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+        full: dt.toLocaleDateString(undefined, { dateStyle: "medium" }),
+        age: age >= 0 && age <= 120 ? age : null,
+        isToday: isToday
+      };
+    }
+
+    function computeStats() {
+      var games = state.mergedGames || [];
+      var totalStars = 0;
+      var totalPlays = 0;
+      var completed = 0;
+      var threeStarGames = 0;
+      var highAccGames = 0;
+      var accSum = 0;
+      var accCount = 0;
+      var lastAt = 0;
+      var maxScoreBest = 0;
+      var activeCats = {};
+
+      games.forEach(function (g) {
+        totalStars += g.stars;
+        totalPlays += g.plays;
+        if (g.completed || g.stars > 0) completed += 1;
+        if (g.stars >= 3) threeStarGames += 1;
+        if (g.accuracy >= 85) highAccGames += 1;
+        if (g.accuracy > 0) {
+          accSum += g.accuracy;
+          accCount += 1;
+        }
+        if (g.stars > 0 || g.plays > 0) {
+          activeCats[g.category || "General"] = true;
+        }
+        if (g.lastAt > lastAt) lastAt = g.lastAt;
+        if (g.bestScore > maxScoreBest) maxScoreBest = g.bestScore;
+      });
+
+      var extraDates = [];
+      (state.cloudProgress || []).forEach(function (r) {
+        if (r && (r.lastPlayedAt || r.last_at)) extraDates.push(r.lastPlayedAt || r.last_at);
+      });
+      (state.cloudScores || []).forEach(function (s) {
+        if (s && (s.at || s.created_at)) extraDates.push(s.at || s.created_at);
+      });
+      var streak = window.LAStars && typeof LAStars.getStreak === "function"
+        ? LAStars.getStreak(extraDates)
+        : { current: 0, best: 0, practicedToday: false, activeDays: 0 };
+
+      return {
+        uniqueGames: games.length,
+        totalStars: totalStars,
+        totalPlays: totalPlays,
+        completed: completed,
+        threeStarGames: threeStarGames,
+        highAccGames: highAccGames,
+        avgAccuracy: accCount ? Math.round(accSum / accCount) : 0,
+        accCount: accCount,
+        skillCategories: Object.keys(activeCats).length,
+        streak: streak,
+        lastAt: lastAt,
+        maxScoreBest: maxScoreBest
+      };
+    }
+
+    function computeProgression(stats) {
+      // XP blends volume (plays), breadth (unique games), skill (stars, 3-star finishes, accuracy), and consistency (streak)
+      var playsXp = stats.totalPlays * 12;
+      var varietyXp = stats.uniqueGames * 40;
+      var starsXp = stats.totalStars * 25 + stats.threeStarGames * 35;
+      var accBonus = stats.accCount >= 2 ? (stats.avgAccuracy >= 90 ? 140 : stats.avgAccuracy >= 80 ? 80 : stats.avgAccuracy >= 70 ? 40 : 0) : 0;
+      var streakXp = (stats.streak.best || 0) * 15;
+      var totalXp = playsXp + varietyXp + starsXp + accBonus + streakXp;
+
+      var currentRank = RANKS[0];
+      var nextRank = RANKS[1] || null;
+      for (var i = 0; i < RANKS.length; i++) {
+        if (totalXp >= RANKS[i].minXp) {
+          currentRank = RANKS[i];
+          nextRank = RANKS[i + 1] || null;
+        }
+      }
+
+      // 6 Improvable Badge/Title Tracks (4 tiers each: Tier I -> Tier IV)
+      var tracks = [
+        {
+          id: "plays",
+          trackName: "Arcade Activity",
+          icon: "🎮",
+          unit: "plays",
+          value: stats.totalPlays,
+          desc: "Play more rounds to level up this title.",
+          tiers: [
+            { level: 1, title: "Warm-Up Player", req: 3 },
+            { level: 2, title: "Regular Challenger", req: 15 },
+            { level: 3, title: "Arcade Enthusiast", req: 40 },
+            { level: 4, title: "Unstoppable Grinder", req: 100 }
+          ]
+        },
+        {
+          id: "variety",
+          trackName: "Game Explorer",
+          icon: "🧭",
+          unit: "games",
+          value: stats.uniqueGames,
+          desc: "Try many different games across the arcade.",
+          tiers: [
+            { level: 1, title: "Curious Explorer", req: 2 },
+            { level: 2, title: "Skill Adventurer", req: 6 },
+            { level: 3, title: "Arcade Collector", req: 14 },
+            { level: 4, title: "Master of All Trades", req: 25 }
+          ]
+        },
+        {
+          id: "accuracy",
+          trackName: "Play Quality",
+          icon: "🎯",
+          unit: "high-accuracy games (85%+)",
+          value: stats.highAccGames > 0 ? stats.highAccGames : (stats.avgAccuracy >= 75 && stats.accCount > 0 ? 1 : 0),
+          desc: "Score 85%+ accuracy across games to upgrade.",
+          tiers: [
+            { level: 1, title: "Steady Learner", req: 1 },
+            { level: 2, title: "Sharp Mind", req: 3 },
+            { level: 3, title: "Precision Ace", req: 7 },
+            { level: 4, title: "Flawless Prodigy", req: 12 }
+          ]
+        },
+        {
+          id: "stars",
+          trackName: "Star Mastery",
+          icon: "🌟",
+          unit: "stars",
+          value: stats.totalStars,
+          desc: "Earn stars and 3-star finishes by playing well.",
+          tiers: [
+            { level: 1, title: "Star Seeker", req: 3 },
+            { level: 2, title: "Star Catcher", req: 15 },
+            { level: 3, title: "Constellation Builder", req: 40 },
+            { level: 4, title: "Supernova Master", req: 80 }
+          ]
+        },
+        {
+          id: "skills",
+          trackName: "Skill Balance",
+          icon: "📚",
+          unit: "skill areas",
+          value: stats.skillCategories,
+          desc: "Practice across Vocabulary, Grammar, Listening & Writing.",
+          tiers: [
+            { level: 1, title: "Dual Linguist", req: 2 },
+            { level: 2, title: "Well-Rounded Scholar", req: 3 },
+            { level: 3, title: "Polymath Learner", req: 4 },
+            { level: 4, title: "Complete Linguist", req: 5 }
+          ]
+        },
+        {
+          id: "streak",
+          trackName: "Consistency",
+          icon: "🔥",
+          unit: "best day streak",
+          value: stats.streak.best || 0,
+          desc: "Return on consecutive days to strengthen your streak badge.",
+          tiers: [
+            { level: 1, title: "Daily Starter", req: 2 },
+            { level: 2, title: "Habit Builder", req: 5 },
+            { level: 3, title: "Dedicated Scholar", req: 10 },
+            { level: 4, title: "Iron Discipline", req: 21 }
+          ]
+        }
+      ];
+
+      var unlockedTitles = [];
+      tracks.forEach(function (tr) {
+        var curTier = null;
+        var nextTier = tr.tiers[0];
+        for (var j = 0; j < tr.tiers.length; j++) {
+          if (tr.value >= tr.tiers[j].req) {
+            curTier = tr.tiers[j];
+            nextTier = tr.tiers[j + 1] || null;
+          }
+        }
+        tr.currentTier = curTier;
+        tr.nextTier = nextTier;
+        if (curTier) unlockedTitles.push(curTier.title);
+      });
+
+      var savedTitle = (state.session && state.session.activeTitle) || "";
+      if (!savedTitle) {
+        try { savedTitle = localStorage.getItem("laActiveTitle") || ""; } catch (e) {}
+      }
+      var equippedTitle = (savedTitle && unlockedTitles.indexOf(savedTitle) !== -1)
+        ? savedTitle
+        : (unlockedTitles.length ? unlockedTitles[unlockedTitles.length - 1] : "");
+
+      return {
+        totalXp: totalXp,
+        playsXp: playsXp,
+        varietyXp: varietyXp,
+        starsXp: starsXp,
+        accBonus: accBonus,
+        streakXp: streakXp,
+        currentRank: currentRank,
+        nextRank: nextRank,
+        tracks: tracks,
+        unlockedTitles: unlockedTitles,
+        equippedTitle: equippedTitle
+      };
+    }
+
+    function getLatestStatsAndProg() {
+      var stats = computeStats();
+      var prog = computeProgression(stats);
+      return { stats: stats, prog: prog };
+    }
+
+    function renderIdentity(prog) {
       var s = state.session;
       var loggedIn = !!(s && (s.id || s.username));
       var localName = window.LAScores ? (LAScores.getPlayerName() || "") : "";
       var classCode = window.LAScores ? (LAScores.getClassCode() || "") : "";
       var showingName = (s && (s.displayName || s.username)) || localName || "Student";
 
-      document.getElementById("pfDisplayName").textContent = showingName;
-      document.getElementById("pfAvatar").textContent = showingName.charAt(0).toUpperCase();
+      var bday = (s && s.birthdate) || "";
+      var role = (s && s.role) || "";
+      var book = (s && s.studyingBook) || "";
+      var bdayInfo = formatBirthdateInfo(bday);
+      var roleLabel = ROLE_LABELS[role] || "";
+      var bookInfo = BOOK_META[book] || null;
 
-      var subParts = [];
-      if (loggedIn && s.username) subParts.push("@" + s.username);
-      else subParts.push("Guest mode");
-      if (classCode) subParts.push("Class " + classCode);
-      subParts.push(loggedIn ? "Cloud progress active" : "Saved on this browser");
-      document.getElementById("pfSubtitle").textContent = subParts.join(" · ");
+      if (!prog) prog = getLatestStatsAndProg().prog;
+      var rank = prog.currentRank;
+
+      document.getElementById("pfDisplayName").textContent = showingName;
+      var avEl = document.getElementById("pfAvatar");
+      avEl.textContent = showingName.charAt(0).toUpperCase();
+      avEl.className = "pf-avatar rank-" + rank.tier;
+      var pipEl = document.getElementById("pfRankPip");
+      if (pipEl) {
+        pipEl.textContent = rank.icon;
+        pipEl.title = "Rank " + rank.tier + ": " + rank.name;
+      }
+
+      var rankTag = document.getElementById("pfHeroRankTag");
+      if (rankTag) rankTag.textContent = rank.icon + " Rank " + rank.tier + " · " + rank.name;
+
+      var titleTag = document.getElementById("pfHeroTitleTag");
+      if (titleTag) {
+        if (prog.equippedTitle) {
+          titleTag.textContent = "✦ " + prog.equippedTitle;
+          titleTag.hidden = false;
+        } else {
+          titleTag.hidden = true;
+        }
+      }
+
+      var subEl = document.getElementById("pfSubtitle");
+      var partsHtml = [];
+      partsHtml.push(loggedIn && s.username ? "<span>@" + escapeHtml(s.username) + "</span>" : "<span>Guest mode</span>");
+      if (roleLabel) partsHtml.push("<span>" + escapeHtml(roleLabel) + "</span>");
+      if (bookInfo) {
+        if (bookInfo.url) {
+          partsHtml.push('<a class="pf-meta-link" href="' + escapeHtml(bookInfo.url) + '">📖 ' + escapeHtml(bookInfo.label) + "</a>");
+        } else {
+          partsHtml.push("<span>✨ " + escapeHtml(bookInfo.label) + "</span>");
+        }
+      }
+      if (bdayInfo) {
+        var bText = bdayInfo.isToday
+          ? '<span class="pf-bday-today">🎉 Happy Birthday! (' + escapeHtml(bdayInfo.short) + ")</span>"
+          : "<span>🎂 " + escapeHtml(bdayInfo.short) + (bdayInfo.age !== null ? " (" + bdayInfo.age + "y)" : "") + "</span>";
+        partsHtml.push(bText);
+      }
+      if (classCode) partsHtml.push("<span>Class " + escapeHtml(classCode) + "</span>");
+      subEl.innerHTML = partsHtml.join('<span aria-hidden="true">·</span>');
 
       document.getElementById("guestBanner").hidden = loggedIn;
       document.getElementById("topSignInLink").hidden = loggedIn;
@@ -1340,8 +2592,23 @@
       if (ccInput && document.activeElement !== ccInput) {
         ccInput.value = classCode;
       }
+      var bdInput = document.getElementById("birthdateSettingInput");
+      if (bdInput) {
+        var todayNow = new Date();
+        bdInput.max = todayNow.getFullYear() + "-" + String(todayNow.getMonth() + 1).padStart(2, "0") + "-" + String(todayNow.getDate()).padStart(2, "0");
+        if (document.activeElement !== bdInput) bdInput.value = bday;
+      }
+      var roleSel = document.getElementById("roleSettingInput");
+      if (roleSel && document.activeElement !== roleSel) roleSel.value = role;
+      var bookSel = document.getElementById("bookSettingInput");
+      if (bookSel && document.activeElement !== bookSel) bookSel.value = book;
 
       document.getElementById("detailUsername").textContent = loggedIn && s.username ? "@" + s.username : "Guest (no username)";
+      document.getElementById("detailRole").textContent = roleLabel || "Not set";
+      document.getElementById("detailBook").textContent = bookInfo ? bookInfo.label : "Not set";
+      document.getElementById("detailBirthdate").textContent = bdayInfo ? (bdayInfo.full + (bdayInfo.age !== null ? " (" + bdayInfo.age + " yrs)" : "")) : "Not set";
+      document.getElementById("detailRank").textContent = rank.icon + " Rank " + rank.tier + " · " + rank.name + " (" + prog.totalXp + " XP)";
+      document.getElementById("detailTitle").textContent = prog.equippedTitle ? ("✦ " + prog.equippedTitle) : "Play games to unlock titles";
       document.getElementById("detailSyncStatus").textContent = loggedIn ? "Cloud synced" : "Local browser only";
       document.getElementById("detailJoined").textContent =
         state.account && state.account.createdAt
@@ -1349,56 +2616,188 @@
           : "—";
     }
 
-    function renderKPIs() {
-      var games = state.mergedGames;
-      var totalStars = 0;
-      var totalPlays = 0;
-      var completed = 0;
-      var accSum = 0;
-      var accCount = 0;
-      var lastAt = 0;
-      var maxScoreBest = 0;
+    function renderRanksAndBadges(stats, prog) {
+      var rank = prog.currentRank;
+      var next = prog.nextRank;
 
-      games.forEach(function (g) {
-        totalStars += g.stars;
-        totalPlays += g.plays;
-        if (g.completed || g.stars > 0) completed += 1;
-        if (g.accuracy > 0) {
-          accSum += g.accuracy;
-          accCount += 1;
+      // Overview rank summary
+      document.getElementById("ovRankIcon").textContent = rank.icon;
+      document.getElementById("ovRankTitle").textContent = "Rank " + rank.tier + " · " + rank.name;
+      document.getElementById("ovRankSub").textContent = rank.desc;
+      document.getElementById("ovRankXp").textContent = prog.totalXp + " XP";
+      document.getElementById("ovEquippedTitleLabel").textContent = prog.equippedTitle
+        ? ("Title: ✦ " + prog.equippedTitle)
+        : "No title unlocked yet";
+
+      if (next) {
+        var span = next.minXp - rank.minXp;
+        var into = Math.max(0, prog.totalXp - rank.minXp);
+        var pct = Math.max(4, Math.min(100, Math.round((into / span) * 100)));
+        document.getElementById("ovProgressLeft").textContent = "Next: Rank " + next.tier + " · " + next.name;
+        document.getElementById("ovProgressRight").textContent = prog.totalXp + " / " + next.minXp + " XP";
+        document.getElementById("ovRankBar").style.width = pct + "%";
+      } else {
+        document.getElementById("ovProgressLeft").textContent = "Maximum Rank Reached!";
+        document.getElementById("ovProgressRight").textContent = prog.totalXp + " XP (Max)";
+        document.getElementById("ovRankBar").style.width = "100%";
+      }
+
+      // Ranks tab: XP Breakdown & 5-Rank Ladder
+      document.getElementById("ranksTotalXp").textContent = prog.totalXp + " XP";
+      document.getElementById("ranksXpBreakdown").textContent =
+        "XP Breakdown: " + prog.playsXp + " XP (plays) + " + prog.varietyXp + " XP (games) + " +
+        prog.starsXp + " XP (stars) + " + prog.accBonus + " XP (accuracy) + " + prog.streakXp + " XP (streak)";
+
+      var ladderEl = document.getElementById("rankLadder");
+      ladderEl.innerHTML = RANKS.map(function (r) {
+        var unlocked = prog.totalXp >= r.minXp;
+        var isCur = r.tier === rank.tier;
+        var stateTxt = isCur ? "Current" : (unlocked ? "Unlocked" : (r.minXp - prog.totalXp) + " XP left");
+        return (
+          '<article data-rank="' + r.tier + '" class="rank-tier-card' + (unlocked ? " is-unlocked" : "") + (isCur ? " is-current" : "") + '">' +
+            '<div class="rank-tier-top">' +
+              '<span class="rank-tier-icon">' + r.icon + "</span>" +
+              '<span class="rank-tier-state tabular">' + escapeHtml(stateTxt) + "</span>" +
+            "</div>" +
+            '<div class="rank-tier-name">Rank ' + r.tier + " · " + escapeHtml(r.name) + "</div>" +
+            '<div class="rank-tier-req tabular">' + r.minXp + " XP required</div>" +
+            '<div class="rank-tier-desc">' + escapeHtml(r.desc) + "</div>" +
+          "</article>"
+        );
+      }).join("");
+
+      // Improvable Badges & Titles Grid
+      var unlockedCount = prog.tracks.filter(function (t) { return !!t.currentTier; }).length;
+      document.getElementById("titlesSummaryMeta").textContent =
+        unlockedCount + " of " + prog.tracks.length + " badge tracks unlocked · Equip any unlocked title for your profile";
+
+      var gridEl = document.getElementById("badgesGrid");
+      gridEl.innerHTML = prog.tracks.map(function (tr) {
+        var cur = tr.currentTier;
+        var nxt = tr.nextTier;
+        var isEquipped = cur && prog.equippedTitle === cur.title;
+        var tierBadge = cur ? ("Tier " + cur.level + " / 4") : "Locked";
+        var displayTitle = cur ? cur.title : tr.tiers[0].title;
+        var pct = nxt ? Math.max(4, Math.min(100, Math.round((tr.value / nxt.req) * 100))) : 100;
+        var progressText = nxt
+          ? ("Next: " + nxt.title + " (" + Math.min(tr.value, nxt.req) + " / " + nxt.req + " " + tr.unit + ")")
+          : ("Max Tier Achieved (" + tr.value + " " + tr.unit + ")");
+
+        var actionHtml = "";
+        if (!cur) {
+          actionHtml = '<span class="badge-next">Need ' + tr.tiers[0].req + " " + escapeHtml(tr.unit) + "</span>";
+        } else if (isEquipped) {
+          actionHtml = '<button type="button" class="pf-btn pf-btn--primary" disabled>Equipped ✓</button>';
+        } else {
+          actionHtml = '<button type="button" class="pf-btn equip-title-btn" data-title="' + escapeHtml(cur.title) + '">Equip Title</button>';
         }
-        if (g.lastAt > lastAt) lastAt = g.lastAt;
-        if (g.bestScore > maxScoreBest) maxScoreBest = g.bestScore;
+
+        return (
+          '<article class="badge-card' + (isEquipped ? " is-equipped" : "") + (!cur ? " is-locked" : "") + '">' +
+            '<div class="badge-head">' +
+              '<div class="badge-head-left">' +
+                '<div class="badge-icon">' + tr.icon + "</div>" +
+                '<div>' +
+                  '<div class="badge-track-name">' + escapeHtml(tr.trackName) + "</div>" +
+                  '<div class="badge-title-name">' + (cur ? "✦ " : "🔒 ") + escapeHtml(displayTitle) + "</div>" +
+                "</div>" +
+              "</div>" +
+              '<span class="badge-tier-pill tabular">' + escapeHtml(tierBadge) + "</span>" +
+            "</div>" +
+            '<p class="badge-desc">' + escapeHtml(tr.desc) + "</p>" +
+            '<div class="skill-bar"><i style="width:' + pct + '%"></i></div>' +
+            '<div class="badge-foot">' +
+              '<span class="badge-next tabular">' + escapeHtml(progressText) + "</span>" +
+              actionHtml +
+            "</div>" +
+          "</article>"
+        );
+      }).join("");
+    }
+
+    document.getElementById("badgesGrid").addEventListener("click", async function (e) {
+      var btn = e.target.closest(".equip-title-btn");
+      if (!btn) return;
+      var chosen = btn.getAttribute("data-title") || "";
+      if (!chosen) return;
+      btn.disabled = true;
+      btn.textContent = "Saving…";
+      try { localStorage.setItem("laActiveTitle", chosen); } catch (err) {}
+      if (window.LAAuth && LAAuth.isLoggedIn && LAAuth.isLoggedIn() && LAAuth.updateProfile) {
+        var res = await LAAuth.updateProfile({ activeTitle: chosen }).catch(function () { return null; });
+        if (res && res.ok && res.player) state.session = res.player;
+      } else if (state.session) {
+        state.session.activeTitle = chosen;
+      }
+      var resProg = getLatestStatsAndProg();
+      renderIdentity(resProg.prog);
+      renderRanksAndBadges(resProg.stats, resProg.prog);
+    });
+
+    function renderKPIs(stats) {
+      if (!stats) stats = computeStats();
+      var games = state.mergedGames || [];
+      var fireStarsTotal = 0;
+      games.forEach(function (g) {
+        fireStarsTotal += fireLevelFromPlays(g.plays);
       });
 
-      var maxPossibleStars = games.length * 3;
-      document.getElementById("kpiStars").textContent = String(totalStars);
-      document.getElementById("kpiStarsSub").textContent = games.length
-        ? totalStars + " / " + maxPossibleStars + " possible"
+      var maxPossibleStars = stats.uniqueGames * 3;
+      document.getElementById("kpiStars").textContent = String(stats.totalStars);
+      document.getElementById("kpiStarsSub").textContent = stats.uniqueGames
+        ? (stats.totalStars + " / " + maxPossibleStars + " possible" + (fireStarsTotal > 0 ? " · 🔥 " + fireStarsTotal + " on fire" : ""))
         : "Finish games to earn stars";
-      document.getElementById("kpiGames").textContent = String(games.length);
-      document.getElementById("kpiCompletedSub").textContent = completed + " completed";
-      document.getElementById("kpiPlays").textContent = String(totalPlays);
-      document.getElementById("kpiLastActive").textContent = lastAt ? "Last active " + formatRelative(lastAt) : "No plays recorded";
-      document.getElementById("kpiAccuracy").textContent = accCount ? Math.round(accSum / accCount) + "%" : "—";
-      document.getElementById("kpiBestScore").textContent = maxScoreBest ? "Highest score: " + maxScoreBest : "Best score tracking";
 
-      var extraDates = [];
-      (state.cloudProgress || []).forEach(function (r) {
-        if (r && (r.lastPlayedAt || r.last_at)) extraDates.push(r.lastPlayedAt || r.last_at);
-      });
-      (state.cloudScores || []).forEach(function (s) {
-        if (s && (s.at || s.created_at)) extraDates.push(s.at || s.created_at);
-      });
-      var streak = window.LAStars && typeof LAStars.getStreak === "function"
-        ? LAStars.getStreak(extraDates)
-        : { current: 0, best: 0, practicedToday: false, activeDays: 0 };
+      var starsCard = document.getElementById("kpiStarsCard");
+      var starsVis = document.getElementById("kpiStarsVisual");
+      if (starsCard) {
+        starsCard.classList.toggle("is-lit", stats.totalStars > 0 && fireStarsTotal === 0);
+        starsCard.classList.toggle("is-on-fire", fireStarsTotal > 0);
+      }
+      if (starsVis) {
+        starsVis.innerHTML = stats.totalStars > 0 ? "★" : "☆";
+        starsVis.classList.toggle("is-muted", stats.totalStars === 0);
+        starsVis.classList.toggle("is-lit", stats.totalStars > 0 && fireStarsTotal === 0);
+        starsVis.classList.toggle("is-on-fire", fireStarsTotal > 0);
+        if (fireStarsTotal > 0) starsVis.appendChild(createFireParticlesNode());
+      }
+
+      document.getElementById("kpiGames").textContent = String(stats.uniqueGames);
+      document.getElementById("kpiCompletedSub").textContent = stats.completed + " completed";
+      document.getElementById("kpiPlays").textContent = String(stats.totalPlays);
+      document.getElementById("kpiLastActive").textContent = stats.lastAt ? "Last active " + formatRelative(stats.lastAt) : "No plays recorded";
+      document.getElementById("kpiAccuracy").textContent = stats.accCount ? stats.avgAccuracy + "%" : "—";
+      document.getElementById("kpiBestScore").textContent = stats.maxScoreBest ? "Highest score: " + stats.maxScoreBest : "Best score tracking";
+
+      var streak = stats.streak;
+      var streakCard = document.getElementById("kpiStreakCard");
+      var streakVis = document.getElementById("kpiStreakVisual");
+      var streakFlames = document.getElementById("kpiStreakFlames");
       var streakEl = document.getElementById("kpiStreak");
       var streakSubEl = document.getElementById("kpiStreakSub");
+      var hasStreak = streak.current > 0;
+
+      if (streakCard) streakCard.classList.toggle("is-active", hasStreak);
+      if (streakVis) {
+        streakVis.innerHTML = '<span class="pf-flame-glyph">🔥</span>';
+        streakVis.classList.toggle("is-muted", !hasStreak);
+        streakVis.classList.toggle("is-lit", hasStreak);
+        if (hasStreak) streakVis.appendChild(createFireParticlesNode());
+      }
       if (streakEl) {
         streakEl.textContent = streak.current > 0
-          ? ("🔥 " + streak.current + " day" + (streak.current === 1 ? "" : "s"))
+          ? (streak.current + " day" + (streak.current === 1 ? "" : "s"))
           : "0 days";
+      }
+      if (streakFlames) {
+        var litCount = Math.min(7, Math.max(0, Number(streak.current) || 0));
+        var isBlaze = (Number(streak.current) || 0) >= 7;
+        var pips = "";
+        for (var d = 1; d <= 7; d++) {
+          var lit = d <= litCount;
+          pips += '<span class="pf-streak-pip' + (lit ? " is-lit" : "") + (lit && isBlaze ? " is-blaze" : "") + '" title="Day ' + d + '">' + (lit ? "★" : "☆") + "</span>";
+        }
+        streakFlames.innerHTML = pips;
       }
       if (streakSubEl) {
         if (streak.practicedToday) {
@@ -1545,18 +2944,43 @@
       }
 
       grid.innerHTML = list.map(function (g) {
+        var fire = fireLevelFromPlays(g.plays);
         var metaParts = [g.category];
         if (g.plays > 0) metaParts.push(g.plays + " play" + (g.plays === 1 ? "" : "s"));
+        if (fire > 0) metaParts.push("🔥 " + fire + " fire");
         if (g.bestTimeMs > 0) metaParts.push("⏱ " + formatTime(g.bestTimeMs));
         if (g.accuracy > 0) metaParts.push(g.accuracy + "% best");
         var inner =
           '<span class="ach-tile-title">' + escapeHtml(g.title) + "</span>" +
-          starsMarkup(g.stars) +
+          starsMarkup(g.stars, g.plays, g.id) +
           '<span class="ach-tile-meta tabular">' + escapeHtml(metaParts.join(" · ")) + "</span>";
+        var cls = "ach-tile" + (fire > 0 ? " is-on-fire" : "");
         return g.url
-          ? '<a class="ach-tile" href="' + escapeHtml(g.url) + '">' + inner + "</a>"
-          : '<article class="ach-tile">' + inner + "</article>";
+          ? '<a class="' + cls + '" href="' + escapeHtml(g.url) + '">' + inner + "</a>"
+          : '<article class="' + cls + '">' + inner + "</article>";
       }).join("");
+
+      if (window.LAStars && typeof LAStars.apply === "function") {
+        LAStars.apply(grid);
+      }
+      grid.querySelectorAll(".game-stars").forEach(function (box) {
+        var mergedStars = Number(box.getAttribute("data-stars") || 0);
+        var mergedPlays = Number(box.getAttribute("data-plays") || 0);
+        var mergedFire = fireLevelFromPlays(mergedPlays);
+        box.querySelectorAll(".star").forEach(function (star) {
+          var need = Number(star.getAttribute("data-n") || 0);
+          if (need <= mergedStars) {
+            star.classList.add("is-filled");
+            star.textContent = "★";
+          }
+          if (need <= mergedFire) {
+            star.classList.add("on-fire");
+            if (!star.querySelector(".la-particles")) {
+              star.appendChild(createFireParticlesNode());
+            }
+          }
+        });
+      });
     }
 
     document.getElementById("starsSearch").addEventListener("input", renderStarsGrid);
@@ -1787,12 +3211,24 @@
       var btn = document.getElementById("saveProfileBtn");
       var dn = String(document.getElementById("displayNameInput").value || "").trim().slice(0, 32);
       var cc = String(document.getElementById("classCodeInput").value || "").trim().slice(0, 16);
+      var bd = document.getElementById("birthdateSettingInput").value || "";
+      var rl = document.getElementById("roleSettingInput").value || "";
+      var bk = document.getElementById("bookSettingInput").value || "";
 
       feedback.className = "pf-feedback";
       if (dn.length < 2) {
         feedback.className = "pf-feedback is-err";
         feedback.textContent = "Please enter at least 2 characters for your showing name.";
         return;
+      }
+
+      if (bd && window.LAAuth && LAAuth.validateBirthdate) {
+        var bv = LAAuth.validateBirthdate(bd);
+        if (!bv.ok) {
+          feedback.className = "pf-feedback is-err";
+          feedback.textContent = bv.error;
+          return;
+        }
       }
 
       btn.disabled = true;
@@ -1812,10 +3248,14 @@
         }
 
         if (window.LAAuth && LAAuth.isLoggedIn()) {
-          var res = await LAAuth.updateDisplayName(dn);
+          var payload = { displayName: dn };
+          if (bd) payload.birthdate = bd;
+          if (rl) payload.role = rl;
+          if (bk) payload.studyingBook = bk;
+          var res = await LAAuth.updateProfile(payload);
           if (!res || !res.ok) {
             feedback.className = "pf-feedback is-err";
-            feedback.textContent = (res && res.error) || "Could not update showing name.";
+            feedback.textContent = (res && res.error) || "Could not update profile.";
             return;
           }
           state.session = res.player || LAAuth.getSession();
@@ -1827,6 +3267,126 @@
       } finally {
         btn.disabled = false;
         btn.textContent = "Save Changes";
+      }
+    });
+
+    /* Onboarding wizard inside profile page (for existing logged-in users missing birthdate/role/book) */
+    var obState = { step: 1, birthdate: "", role: "", book: "" };
+    var obGate = document.getElementById("onboardingGate");
+    var mainProfileWrap = document.getElementById("pfMainProfile");
+    var obStep1 = document.getElementById("obStep1");
+    var obStep2 = document.getElementById("obStep2");
+    var obStep3 = document.getElementById("obStep3");
+    var obStepLabel = document.getElementById("onboardStepLabel");
+    var obFeedback = document.getElementById("obFeedback");
+    var obBackBtn = document.getElementById("obBackBtn");
+    var obNextBtn = document.getElementById("obNextBtn");
+    var obBirthInput = document.getElementById("obBirthdateInput");
+
+    if (obBirthInput) {
+      var td = new Date();
+      obBirthInput.max = td.getFullYear() + "-" + String(td.getMonth() + 1).padStart(2, "0") + "-" + String(td.getDate()).padStart(2, "0");
+    }
+
+    function renderOnboardingGateStep() {
+      obStep1.hidden = obState.step !== 1;
+      obStep2.hidden = obState.step !== 2;
+      obStep3.hidden = obState.step !== 3;
+      obBackBtn.hidden = obState.step <= 1;
+      obStepLabel.textContent = "Step " + obState.step + " of 3";
+      obNextBtn.textContent = obState.step < 3 ? "Save & Continue →" : "Finish & View Profile";
+      obFeedback.textContent = "";
+      obFeedback.className = "pf-feedback";
+    }
+
+    document.getElementById("obRoleChoices").addEventListener("click", function (e) {
+      var btn = e.target.closest(".pf-choice");
+      if (!btn) return;
+      obState.role = btn.getAttribute("data-role") || "";
+      document.querySelectorAll("#obRoleChoices .pf-choice").forEach(function (b) {
+        b.classList.toggle("is-selected", b === btn);
+      });
+      if (!obState.book && obState.role && obState.role !== "student") {
+        obState.book = "not-a-student";
+        document.querySelectorAll("#obBookChoices .pf-choice").forEach(function (b) {
+          b.classList.toggle("is-selected", b.getAttribute("data-book") === "not-a-student");
+        });
+      }
+      obFeedback.textContent = "";
+    });
+
+    document.getElementById("obBookChoices").addEventListener("click", function (e) {
+      var btn = e.target.closest(".pf-choice");
+      if (!btn) return;
+      obState.book = btn.getAttribute("data-book") || "";
+      document.querySelectorAll("#obBookChoices .pf-choice").forEach(function (b) {
+        b.classList.toggle("is-selected", b === btn);
+      });
+      obFeedback.textContent = "";
+    });
+
+    obBackBtn.addEventListener("click", function () {
+      if (obState.step > 1) {
+        obState.step--;
+        renderOnboardingGateStep();
+      }
+    });
+
+    obNextBtn.addEventListener("click", async function () {
+      obFeedback.textContent = "";
+      obFeedback.className = "pf-feedback";
+      if (obState.step === 1) {
+        var val = obBirthInput.value || "";
+        var check = window.LAAuth && LAAuth.validateBirthdate
+          ? LAAuth.validateBirthdate(val)
+          : (val ? { ok: true, value: val } : { ok: false, error: "Please select your birthday." });
+        if (!check.ok) {
+          obFeedback.className = "pf-feedback is-err";
+          obFeedback.textContent = check.error;
+          return;
+        }
+        obState.birthdate = check.value;
+        obState.step = 2;
+        renderOnboardingGateStep();
+        return;
+      }
+      if (obState.step === 2) {
+        if (!obState.role) {
+          obFeedback.className = "pf-feedback is-err";
+          obFeedback.textContent = "Please choose your role.";
+          return;
+        }
+        obState.step = 3;
+        renderOnboardingGateStep();
+        return;
+      }
+      if (obState.step === 3) {
+        if (!obState.book) {
+          obFeedback.className = "pf-feedback is-err";
+          obFeedback.textContent = "Please choose a studying book option.";
+          return;
+        }
+        obNextBtn.disabled = true;
+        obNextBtn.textContent = "Saving…";
+        try {
+          var res = await LAAuth.updateProfile({
+            birthdate: obState.birthdate,
+            role: obState.role,
+            studyingBook: obState.book
+          });
+          if (!res || !res.ok) {
+            obFeedback.className = "pf-feedback is-err";
+            obFeedback.textContent = (res && res.error) || "Could not save profile setup.";
+            return;
+          }
+          state.session = res.player || LAAuth.getSession();
+          obGate.hidden = true;
+          mainProfileWrap.hidden = false;
+          await refreshDashboard();
+        } finally {
+          obNextBtn.disabled = false;
+          obNextBtn.textContent = "Finish & View Profile";
+        }
       }
     });
 
@@ -1913,6 +3473,27 @@
       }
 
       var loggedIn = !!(state.session && (state.session.id || state.session.username));
+      var needsSetup = loggedIn && window.LAAuth && LAAuth.hasCompletedOnboarding && !LAAuth.hasCompletedOnboarding(state.session);
+      if (needsSetup) {
+        obState.birthdate = state.session.birthdate || "";
+        obState.role = state.session.role || "";
+        obState.book = state.session.studyingBook || "";
+        if (obBirthInput && obState.birthdate) obBirthInput.value = obState.birthdate;
+        document.querySelectorAll("#obRoleChoices .pf-choice").forEach(function (b) {
+          b.classList.toggle("is-selected", b.getAttribute("data-role") === obState.role);
+        });
+        document.querySelectorAll("#obBookChoices .pf-choice").forEach(function (b) {
+          b.classList.toggle("is-selected", b.getAttribute("data-book") === obState.book);
+        });
+        obState.step = !obState.birthdate ? 1 : (!obState.role ? 2 : 3);
+        renderOnboardingGateStep();
+        obGate.hidden = false;
+        mainProfileWrap.hidden = true;
+      } else {
+        obGate.hidden = true;
+        mainProfileWrap.hidden = false;
+      }
+
       var tasks = [];
       if (loggedIn && window.LAProgress && LAProgress.getMine) {
         tasks.push(LAProgress.getMine().catch(function () { return []; }));
@@ -1934,8 +3515,10 @@
       state.cloudScores = res[1] || [];
 
       buildMergedGames();
-      renderIdentity();
-      renderKPIs();
+      var computed = getLatestStatsAndProg();
+      renderIdentity(computed.prog);
+      renderKPIs(computed.stats);
+      renderRanksAndBadges(computed.stats, computed.prog);
       renderOverview();
       renderStarsGrid();
       renderScoresPanel();
