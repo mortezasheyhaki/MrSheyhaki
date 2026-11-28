@@ -89,6 +89,7 @@
     "writing-sara-daily": { label: "Writing", title: "Sara's Daily Routine", course: "Learning Arcade · Writing", url: "/learningarcade/writing/Daily%20Routine/Sara/" },
     "writing-personal-info": { label: "Writing", title: "Personal Information Questions", course: "Learning Arcade · Writing", url: "/learningarcade/writing/personal-info-questions/" },
     "writing-conversation-questions": { label: "Writing", title: "Conversation Questions", course: "Learning Arcade · Writing", url: "/learningarcade/writing/conversation-questions/" },
+    "writing-ai-coach": { label: "Writing", title: "AI Writing Coach", course: "Learning Arcade · Writing", url: "/learningarcade/writing/coach/" },
 
     "speaking-supermarket": { label: "Speaking", title: "Supermarket Order Roleplay", course: "Learning Arcade · Speaking", url: "/learningarcade/speaking/supermarket/" },
     "speaking-how-much-how-many": { label: "Speaking", title: "How Much / How Many Speaking", course: "Learning Arcade · Speaking", url: "/learningarcade/grammar/how-much-how-many/?mode=speaking" },

@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("mrsheyhaki-theme");
+        if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+        else if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches)
+          document.documentElement.setAttribute("data-theme", "dark");
+        else document.documentElement.setAttribute("data-theme", "light");
+      } catch (e) {}
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>AI Writing Coach | Mr. Sheyhaki</title>
+  <meta name="description" content="Get instant CEFR-inspired writing feedback on grammar, spelling, vocabulary, and organization.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+
+  <style>
+    :root,
+    html[data-theme="light"] {
+      --wc-bg: #f6f7fb;
+      --wc-surface: #ffffff;
+      --wc-surface-2: #f8fafc;
+      --wc-ink: #161b2e;
+      --wc-muted: #52607a;
+      --wc-border: rgba(22, 27, 46, 0.11);
+      --wc-accent: #c2410c;
+      --wc-accent-solid: #ea580c;
+      --wc-accent-soft: rgba(234, 88, 12, 0.1);
+      --wc-accent-border: rgba(234, 88, 12, 0.28);
+      --wc-good: #15803d;
+      --wc-good-soft: rgba(22, 163, 74, 0.1);
+      --wc-bad: #be123c;
+      --wc-bad-soft: rgba(225, 29, 72, 0.1);
+      --wc-warn: #b45309;
+      --wc-warn-soft: rgba(217, 119, 6, 0.12);
+      --wc-shadow: 0 18px 40px -22px rgba(15, 23, 42, 0.16);
+      --wc-paper-line: rgba(194, 65, 12, 0.065);
+    }
+
+    html[data-theme="dark"] {
+      --wc-bg: #080c17;
+      --wc-surface: #11182b;
+      --wc-surface-2: #17213a;
+      --wc-ink: #f8fafc;
+      --wc-muted: #9fb0cc;
+      --wc-border: rgba(148, 163, 184, 0.18);
+      --wc-accent: #fbbf24;
+      --wc-accent-solid: #d97706;
+      --wc-accent-soft: rgba(251, 191, 36, 0.13);
+      --wc-accent-border: rgba(251, 191, 36, 0.32);
+      --wc-good: #4ade80;
+      --wc-good-soft: rgba(74, 222, 128, 0.13);
+      --wc-bad: #fb7185;
+      --wc-bad-soft: rgba(251, 113, 133, 0.14);
+      --wc-warn: #fbbf24;
+      --wc-warn-soft: rgba(251, 191, 36, 0.14);
+      --wc-shadow: 0 22px 46px -22px rgba(2, 6, 23, 0.72);
+      --wc-paper-line: rgba(251, 191, 36, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body.has-site-topbar {
+      background-color: var(--wc-bg);
+      background-image:
+        radial-gradient(ellipse 60% 40% at 10% 0%, rgba(245, 158, 11, 0.12), transparent 60%),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 33px,
+          var(--wc-paper-line) 33px,
+          var(--wc-paper-line) 34px
+        );
+      color: var(--wc-ink);
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    .wc-stage {
+      flex: 1 0 auto;
+      padding: 20px 18px 64px;
+    }
+
+    .wc-container {
+      width: min(1220px, 100%);
+      margin: 0 auto;
+    }
+
+    /* Breadcrumb + Meta */
+    .wc-crumb-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .wc-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 8px 14px;
+      border-radius: 12px;
+      background: var(--wc-surface);
+      border: 1px solid var(--wc-border);
+      color: var(--wc-ink);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+    }
+
+    .wc-back-link:hover {
+      border-color: var(--wc-accent);
+      color: var(--wc-accent);
+      transform: translateX(-2px);
+    }
+
+    .wc-stars-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--wc-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .wc-stars-meta strong {
+      color: var(--wc-accent);
+      font-weight: 800;
+    }
+
+    /* Compact Header */
+    .wc-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 22px 26px;
+      border-radius: 22px;
+      background: var(--wc-surface);
+      border: 1.5px solid var(--wc-accent-border);
+      box-shadow: var(--wc-shadow);
+      margin-bottom: 20px;
+    }
+
+    .wc-kicker {
+      margin: 0 0 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--wc-accent);
+    }
+
+    .wc-title {
+      margin: 0 0 6px;
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: clamp(1.65rem, 3vw, 2.3rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--wc-ink);
+    }
+
+    .wc-subtitle {
+      margin: 0;
+      max-width: 64ch;
+      font-size: 0.94rem;
+      line-height: 1.5;
+      color: var(--wc-muted);
+    }
+
+    .wc-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Workspace 2-Column Split */
+    .wc-workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .wc-panel {
+      background: var(--wc-surface);
+      border: 1px solid var(--wc-border);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: var(--wc-shadow);
+      min-width: 0;
+    }
+
+    .wc-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .wc-panel-title {
+      margin: 0;
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--wc-ink);
+    }
+
+    /* Controls */
+    .wc-controls-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 14px;
+    }
+
+    .wc-field-label {
+      display: block;
+      margin: 0 0 6px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--wc-muted);
+    }
+
+    .wc-select {
+      width: 100%;
+      min-height: 44px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--wc-border);
+      background: var(--wc-surface-2);
+      color: var(--wc-ink);
+      font: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .wc-cefr-seg {
+      display: inline-flex;
+      background: var(--wc-surface-2);
+      border: 1px solid var(--wc-border);
+      border-radius: 12px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .wc-cefr-btn {
+      min-width: 44px;
+      min-height: 38px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--wc-muted);
+      font: inherit;
+      font-size: 0.84rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .wc-cefr-btn[aria-pressed="true"] {
+      background: var(--wc-accent-solid);
+      color: #ffffff;
+    }
+
+    /* Task prompt strip */
+    .wc-prompt-box {
+      padding: 13px 15px;
+      border-radius: 14px;
+      background: var(--wc-accent-soft);
+      border: 1px solid var(--wc-accent-border);
+      margin-bottom: 14px;
+    }
+
+    .wc-prompt-box-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .wc-prompt-tag {
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--wc-accent);
+    }
+
+    .wc-prompt-target {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--wc-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .wc-prompt-text {
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--wc-ink);
+    }
+
+    /* Textarea */
+    .wc-editor-wrap {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .wc-textarea {
+      width: 100%;
+      min-height: 250px;
+      resize: vertical;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1.5px solid var(--wc-border);
+      background: var(--wc-surface-2);
+      color: var(--wc-ink);
+      font: inherit;
+      font-size: 0.98rem;
+      line-height: 1.7;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .wc-textarea:focus {
+      outline: none;
+      border-color: var(--wc-accent);
+      box-shadow: 0 0 0 3px var(--wc-accent-soft);
+    }
+
+    /* Editor Footer */
+    .wc-editor-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--wc-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .wc-counts {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .wc-counts strong {
+      color: var(--wc-ink);
+    }
+
+    .wc-editor-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .wc-secondary-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .wc-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--wc-border);
+      background: var(--wc-surface-2);
+      color: var(--wc-ink);
+      font: inherit;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+    }
+
+    .wc-btn:hover:not(:disabled) {
+      border-color: var(--wc-accent);
+      transform: translateY(-1px);
+    }
+
+    .wc-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .wc-btn-primary {
+      background: var(--wc-accent-solid);
+      border-color: transparent;
+      color: #ffffff;
+      padding: 10px 22px;
+      font-weight: 800;
+      box-shadow: 0 10px 24px -12px rgba(234, 88, 12, 0.7);
+    }
+
+    .wc-btn-primary:hover:not(:disabled) {
+      filter: brightness(1.06);
+      border-color: transparent;
+    }
+
+    .wc-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2.5px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: wc-spin 0.7s linear infinite;
+    }
+
+    @keyframes wc-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Inline message banner */
+    .wc-status-banner {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      line-height: 1.45;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .wc-status-banner[hidden] {
+      display: none;
+    }
+
+    .wc-status-banner.is-error {
+      background: var(--wc-bad-soft);
+      border: 1px solid rgba(225, 29, 72, 0.3);
+      color: var(--wc-bad);
+    }
+
+    .wc-status-banner.is-info {
+      background: var(--wc-good-soft);
+      border: 1px solid rgba(22, 163, 74, 0.28);
+      color: var(--wc-good);
+    }
+
+    /* Right Column — Inspector */
+    .wc-empty-state {
+      padding: 10px 4px;
+    }
+
+    .wc-checklist {
+      display: grid;
+      gap: 10px;
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .wc-checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--wc-surface-2);
+      border: 1px solid var(--wc-border);
+    }
+
+    .wc-check-num {
+      flex: 0 0 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: var(--wc-accent-soft);
+      color: var(--wc-accent);
+    }
+
+    .wc-checklist strong {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--wc-ink);
+      margin-bottom: 2px;
+    }
+
+    .wc-checklist span {
+      display: block;
+      font-size: 0.82rem;
+      line-height: 1.45;
+      color: var(--wc-muted);
+    }
+
+    /* Loading skeleton */
+    .wc-loading-box {
+      padding: 12px 2px;
+    }
+
+    .wc-skel {
+      height: 16px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, var(--wc-surface-2) 25%, var(--wc-accent-soft) 50%, var(--wc-surface-2) 75%);
+      background-size: 200% 100%;
+      animation: wc-shimmer 1.25s infinite;
+      margin-bottom: 12px;
+    }
+
+    .wc-skel--lg { height: 78px; border-radius: 14px; }
+    .wc-skel--md { height: 42px; border-radius: 12px; }
+    .wc-skel--short { width: 62%; }
+
+    @keyframes wc-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Score Banner */
+    .wc-score-banner {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 16px;
+      align-items: center;
+      padding: 16px;
+      border-radius: 16px;
+      background: var(--wc-surface-2);
+      border: 1px solid var(--wc-accent-border);
+      margin-bottom: 14px;
+    }
+
+    .wc-cefr-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 86px;
+      padding: 12px 10px;
+      border-radius: 14px;
+      background: var(--wc-accent-solid);
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .wc-cefr-badge span {
+      font-size: 0.66rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .wc-cefr-badge strong {
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: 1.75rem;
+      line-height: 1.08;
+    }
+
+    .wc-score-top-line {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .wc-score-num {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--wc-ink);
+    }
+
+    .wc-star-strip {
+      font-size: 1.05rem;
+      color: #f59e0b;
+      letter-spacing: 2px;
+    }
+
+    .wc-summary-text {
+      margin: 0;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--wc-muted);
+    }
+
+    /* Tabs */
+    .wc-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--wc-border);
+      scrollbar-width: thin;
+    }
+
+    .wc-tab-btn {
+      flex: 0 0 auto;
+      min-height: 40px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--wc-muted);
+      font: inherit;
+      font-size: 0.83rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+    }
+
+    .wc-tab-btn:hover {
+      color: var(--wc-ink);
+      background: var(--wc-surface-2);
+    }
+
+    .wc-tab-btn[aria-selected="true"] {
+      background: var(--wc-accent-soft);
+      border-color: var(--wc-accent-border);
+      color: var(--wc-accent);
+    }
+
+    .wc-tab-count {
+      display: inline-block;
+      margin-left: 5px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+      opacity: 0.85;
+    }
+
+    /* Rubric Grid */
+    .wc-rubric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .wc-rubric-card {
+      padding: 12px;
+      border-radius: 13px;
+      background: var(--wc-surface-2);
+      border: 1px solid var(--wc-border);
+    }
+
+    .wc-rubric-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .wc-rubric-row strong {
+      font-size: 0.86rem;
+      color: var(--wc-ink);
+    }
+
+    .wc-rubric-row span {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--wc-accent);
+    }
+
+    .wc-meter {
+      height: 6px;
+      border-radius: 99px;
+      background: var(--wc-border);
+      overflow: hidden;
+      margin-bottom: 7px;
+    }
+
+    .wc-meter-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: var(--wc-accent-solid);
+    }
+
+    .wc-rubric-comment {
+      margin: 0;
+      font-size: 0.79rem;
+      line-height: 1.42;
+      color: var(--wc-muted);
+    }
+
+    /* Annotated text box */
+    .wc-annotated-box {
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--wc-surface-2);
+      border: 1px solid var(--wc-border);
+    }
+
+    .wc-annotated-legend {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--wc-muted);
+      margin-bottom: 8px;
+    }
+
+    .wc-dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    .wc-dot--spell { background: #e11d48; }
+    .wc-dot--gram { background: #d97706; }
+
+    .wc-annotated-text {
+      margin: 0;
+      font-size: 0.92rem;
+      line-height: 1.72;
+      color: var(--wc-ink);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    mark.wc-mark-spell {
+      background: var(--wc-bad-soft);
+      color: var(--wc-bad);
+      border-bottom: 2px wavy currentColor;
+      border-radius: 4px;
+      padding: 0 3px;
+      font-weight: 700;
+    }
+
+    mark.wc-mark-grammar {
+      background: var(--wc-warn-soft);
+      color: var(--wc-warn);
+      border-bottom: 2px solid currentColor;
+      border-radius: 4px;
+      padding: 0 3px;
+      font-weight: 700;
+    }
+
+    /* Issue Cards */
+    .wc-issue-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .wc-issue-card {
+      padding: 13px 14px;
+      border-radius: 14px;
+      background: var(--wc-surface-2);
+      border: 1px solid var(--wc-border);
+    }
+
+    .wc-diff-line {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .wc-del {
+      color: var(--wc-bad);
+      text-decoration: line-through;
+      font-weight: 700;
+    }
+
+    .wc-add {
+      color: var(--wc-good);
+      font-weight: 800;
+    }
+
+    .wc-note {
+      margin: 0;
+      font-size: 0.83rem;
+      line-height: 1.48;
+      color: var(--wc-muted);
+    }
+
+    .wc-example {
+      margin: 6px 0 0;
+      padding: 7px 10px;
+      border-radius: 9px;
+      background: var(--wc-surface);
+      border: 1px solid var(--wc-border);
+      font-size: 0.81rem;
+      color: var(--wc-ink);
+    }
+
+    .wc-org-block {
+      margin-bottom: 12px;
+      padding: 13px 14px;
+      border-radius: 14px;
+      background: var(--wc-surface-2);
+      border: 1px solid var(--wc-border);
+    }
+
+    .wc-org-block h4 {
+      margin: 0 0 7px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: var(--wc-ink);
+    }
+
+    .wc-org-block ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 5px;
+      font-size: 0.84rem;
+      line-height: 1.45;
+      color: var(--wc-muted);
+    }
+
+    .wc-connectors {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 6px;
+    }
+
+    .wc-connector-item {
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: var(--wc-accent-soft);
+      border: 1px solid var(--wc-accent-border);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--wc-accent);
+    }
+
+    .wc-revised-box {
+      padding: 16px;
+      border-radius: 14px;
+      background: var(--wc-surface-2);
+      border: 1px solid var(--wc-good-soft);
+      font-size: 0.94rem;
+      line-height: 1.72;
+      color: var(--wc-ink);
+      white-space: pre-wrap;
+      margin-bottom: 12px;
+    }
+
+    .wc-clean-banner {
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--wc-good-soft);
+      border: 1px solid rgba(22, 163, 74, 0.25);
+      color: var(--wc-good);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 980px) {
+      .wc-workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wc-stage {
+        padding: 14px 12px 48px;
+      }
+      .wc-header,
+      .wc-panel {
+        padding: 16px;
+        border-radius: 18px;
+      }
+      .wc-controls-grid {
+        grid-template-columns: 1fr;
+      }
+      .wc-rubric-grid {
+        grid-template-columns: 1fr;
+      }
+      .wc-score-banner {
+        grid-template-columns: 1fr;
+      }
+      .wc-cefr-badge {
+        flex-direction: row;
+        gap: 10px;
+        justify-content: flex-start;
+      }
+      .wc-editor-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .wc-btn-primary {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="has-site-topbar">
+
+  <header class="site-topbar">
+    <div class="topbar-inner">
+      <a href="../../../" class="brand-mark">Mr. Sheyhaki</a>
+
+      <nav class="topbar-nav" aria-label="Main navigation">
+        <a href="../../../" class="topbar-link">Home</a>
+        <a href="../../" class="topbar-link active" aria-current="page">Arcade</a>
+        <a href="../../../multiplayer/" class="topbar-link">Multiplayer</a>
+        <a href="../../../resources/" class="topbar-link">Resources</a>
+        <a href="../../../about/" class="topbar-link">About</a>
+      </nav>
+
+      <div class="topbar-actions">
+        <button type="button" class="mobile-nav-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <a href="../../profile/" class="topbar-cta" id="headerAccountCta">My Profile</a>
+      </div>
+    </div>
+    <nav class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+      <a href="../../../">Home</a>
+      <a href="../../" class="active" aria-current="page">Arcade</a>
+      <a href="../../../multiplayer/">Multiplayer</a>
+      <a href="../../../resources/">Resources</a>
+      <a href="../../../about/">About</a>
+    </nav>
+  </header>
+
+  <main class="wc-stage">
+    <div class="wc-container">
+
+      <div class="wc-crumb-row">
+        <a class="wc-back-link" href="../">
+          <span aria-hidden="true">←</span>
+          <span>Writing Arcade</span>
+        </a>
+        <div class="wc-stars-meta">
+          <span>Best Score: <strong id="coachBestScore">—</strong></span>
+          <span aria-hidden="true">·</span>
+          <span>Stars: <strong id="coachStarsLabel">0 / 3 ★</strong></span>
+        </div>
+      </div>
+
+      <section class="wc-header" aria-labelledby="coachHeading">
+        <div>
+          <p class="wc-kicker">Writing Studio · CEFR Rubric Feedback</p>
+          <h1 class="wc-title" id="coachHeading">AI Writing Coach</h1>
+          <p class="wc-subtitle">Write a paragraph, email, or short essay to check grammar mistakes, highlight spelling errors, upgrade vocabulary, and review organization.</p>
+        </div>
+        <div class="wc-header-actions">
+          <button type="button" class="wc-btn" id="openFinishBtn" hidden>🏆 Save &amp; Celebrate</button>
+        </div>
+      </section>
+
+      <div class="wc-workspace">
+        <!-- LEFT COLUMN: Editor -->
+        <section class="wc-panel" aria-labelledby="editorTitle">
+          <div class="wc-panel-head">
+            <h2 class="wc-panel-title" id="editorTitle">Your Writing Desk</h2>
+          </div>
+
+          <div class="wc-controls-grid">
+            <div>
+              <label class="wc-field-label" for="taskSelect">Writing Task</label>
+              <select class="wc-select" id="taskSelect"></select>
+            </div>
+            <div>
+              <span class="wc-field-label" id="cefrTargetLabel">Target CEFR</span>
+              <div class="wc-cefr-seg" role="group" aria-labelledby="cefrTargetLabel" id="cefrGroup">
+                <button type="button" class="wc-cefr-btn" data-level="A1" aria-pressed="false">A1</button>
+                <button type="button" class="wc-cefr-btn" data-level="A2" aria-pressed="true">A2</button>
+                <button type="button" class="wc-cefr-btn" data-level="B1" aria-pressed="false">B1</button>
+                <button type="button" class="wc-cefr-btn" data-level="B2" aria-pressed="false">B2</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="wc-prompt-box">
+            <div class="wc-prompt-box-top">
+              <span class="wc-prompt-tag" id="promptTag">Prompt</span>
+              <span class="wc-prompt-target" id="promptWordGoal">Goal: 50–100 words</span>
+            </div>
+            <p class="wc-prompt-text" id="promptDescription"></p>
+          </div>
+
+          <div class="wc-editor-wrap">
+            <label class="wc-field-label" for="draftInput">Your Text</label>
+            <textarea
+              id="draftInput"
+              class="wc-textarea"
+              maxlength="3500"
+              placeholder="Write your sentences or paragraph here... (minimum 15 characters)"
+              spellcheck="false"
+            ></textarea>
+          </div>
+
+          <div class="wc-editor-meta">
+            <div class="wc-counts">
+              <span>Words: <strong id="wordCount">0</strong></span>
+              <span>Sentences: <strong id="sentenceCount">0</strong></span>
+              <span>Characters: <strong id="charCount">0</strong> / 3,500</span>
+            </div>
+            <span id="autosaveNote">Draft saved locally</span>
+          </div>
+
+          <div class="wc-editor-actions">
+            <div class="wc-secondary-actions">
+              <button type="button" class="wc-btn" id="sampleBtn">Load Sample Draft</button>
+              <button type="button" class="wc-btn" id="clearBtn">Clear</button>
+            </div>
+            <button type="button" class="wc-btn wc-btn-primary" id="analyzeBtn">
+              <span id="analyzeBtnText">Check My Writing</span>
+            </button>
+          </div>
+
+          <div class="wc-status-banner" id="editorBanner" role="status" hidden></div>
+        </section>
+
+        <!-- RIGHT COLUMN: Feedback Inspector -->
+        <section class="wc-panel" aria-labelledby="feedbackTitle">
+          <div class="wc-panel-head">
+            <h2 class="wc-panel-title" id="feedbackTitle">CEFR Feedback Inspector</h2>
+          </div>
+
+          <div id="inspectorEmpty" class="wc-empty-state">
+            <p class="wc-summary-text">Submit your writing on the left (or click <strong>Load Sample Draft</strong> to try an example) to receive a full diagnostic report:</p>
+            <ul class="wc-checklist">
+              <li>
+                <span class="wc-check-num">01</span>
+                <div>
+                  <strong>Grammar Mistakes</strong>
+                  <span>Spots tense, verb agreement, article, and sentence-order issues with clear fixes.</span>
+                </div>
+              </li>
+              <li>
+                <span class="wc-check-num">02</span>
+                <div>
+                  <strong>Spelling Highlights</strong>
+                  <span>Flags misspelled words directly inside your text and shows the right spelling.</span>
+                </div>
+              </li>
+              <li>
+                <span class="wc-check-num">03</span>
+                <div>
+                  <strong>Better Vocabulary</strong>
+                  <span>Suggests natural word upgrades calibrated to your CEFR target level.</span>
+                </div>
+              </li>
+              <li>
+                <span class="wc-check-num">04</span>
+                <div>
+                  <strong>Organization &amp; Coherence</strong>
+                  <span>Reviews flow, clarity, and helpful linking words like <em>however</em> and <em>for example</em>.</span>
+                </div>
+              </li>
+              <li>
+                <span class="wc-check-num">05</span>
+                <div>
+                  <strong>CEFR-Inspired Rubric</strong>
+                  <span>Scores Grammar, Vocabulary, Organization, and Mechanics from 1–5 with an estimated CEFR band.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div id="inspectorLoading" class="wc-loading-box" hidden>
+            <div class="wc-skel wc-skel--lg"></div>
+            <div class="wc-skel wc-skel--md"></div>
+            <div class="wc-skel"></div>
+            <div class="wc-skel wc-skel--short"></div>
+            <div class="wc-skel wc-skel--md"></div>
+            <p class="wc-summary-text">Checking grammar, spelling, vocabulary upgrades, and CEFR rubric...</p>
+          </div>
+
+          <div id="inspectorResults" hidden>
+            <div class="wc-score-banner">
+              <div class="wc-cefr-badge">
+                <span>CEFR Band</span>
+                <strong id="resCefr">A2</strong>
+              </div>
+              <div>
+                <div class="wc-score-top-line">
+                  <span class="wc-score-num">Score: <span id="resScore">0</span> / 100</span>
+                  <span class="wc-star-strip" id="resStars" aria-label="Stars earned">☆☆☆</span>
+                </div>
+                <p class="wc-summary-text" id="resSummary"></p>
+              </div>
+            </div>
+
+            <div class="wc-tabs" role="tablist" aria-label="Feedback categories">
+              <button type="button" class="wc-tab-btn" role="tab" data-tab="rubric" aria-selected="true">Rubric &amp; Highlights</button>
+              <button type="button" class="wc-tab-btn" role="tab" data-tab="grammar" aria-selected="false">Grammar <span class="wc-tab-count" id="cntGrammar">0</span></button>
+              <button type="button" class="wc-tab-btn" role="tab" data-tab="spelling" aria-selected="false">Spelling <span class="wc-tab-count" id="cntSpelling">0</span></button>
+              <button type="button" class="wc-tab-btn" role="tab" data-tab="vocab" aria-selected="false">Vocabulary <span class="wc-tab-count" id="cntVocab">0</span></button>
+              <button type="button" class="wc-tab-btn" role="tab" data-tab="org" aria-selected="false">Organization</button>
+              <button type="button" class="wc-tab-btn" role="tab" data-tab="revised" aria-selected="false">Model Revision</button>
+            </div>
+
+            <div id="tabPanelRubric" class="wc-tab-panel">
+              <div class="wc-rubric-grid" id="rubricGrid"></div>
+              <div class="wc-annotated-box">
+                <div class="wc-annotated-legend">
+                  <span><span class="wc-dot wc-dot--spell"></span>Spelling highlight</span>
+                  <span><span class="wc-dot wc-dot--gram"></span>Grammar check</span>
+                </div>
+                <p class="wc-annotated-text" id="annotatedDraft"></p>
+              </div>
+            </div>
+
+            <div id="tabPanelGrammar" class="wc-tab-panel" hidden></div>
+            <div id="tabPanelSpelling" class="wc-tab-panel" hidden></div>
+            <div id="tabPanelVocab" class="wc-tab-panel" hidden></div>
+            <div id="tabPanelOrg" class="wc-tab-panel" hidden></div>
+
+            <div id="tabPanelRevised" class="wc-tab-panel" hidden>
+              <div class="wc-revised-box" id="revisedText"></div>
+              <div class="wc-secondary-actions">
+                <button type="button" class="wc-btn" id="copyRevisedBtn">Copy Model Text</button>
+                <button type="button" class="wc-btn" id="applyRevisedBtn">Load into Editor</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-copy">© <span id="year"></span> Mr. Sheyhaki · AI Writing Coach</p>
+      <div class="footer-links">
+        <a class="footer-link" href="../../../contact/">Contact</a>
+        <a class="footer-link" href="https://www.instagram.com/mrsheyhaki.ir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <button type="button" class="theme-switch-btn" id="themeToggle">Switch theme</button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../theme.js"></script>
+  <script src="/learningarcade/vendor/supabase.min.js"></script>
+  <script src="../../auth-system/auth.js"></script>
+  <script src="../../la-stars.js" data-la-stars></script>
+  <script src="../../la-sfx.js"></script>
+  <script src="../../la-finish.js"></script>
+  <script src="../../firebase-scores.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var GAME_ID = "writing-ai-coach";
+      var DRAFT_KEY = "laWritingCoachDraft";
+      var BEST_SCORE_KEY = "laWritingCoachBestScore";
+
+      var TASKS = [
+        {
+          id: "daily-routine",
+          title: "My Daily Routine",
+          level: "A1",
+          goal: "50–100 words",
+          prompt: "Describe your typical weekday from morning to night. Mention what time you wake up, what you eat, your school or work, and what you do in the evening.",
+          sample: "I usually wakes up at 7:00 in the morning. First, I wash my face and eat a small brekfast with tea. Then I go to work by bus becuase my office is far from home. At work I talk with customers and write emails. In the evening, I come home and cook dinner. Sometimes I watch a good movie before I go to sleep at 11."
+        },
+        {
+          id: "favorite-place",
+          title: "My Favorite Place",
+          level: "A2",
+          goal: "70–130 words",
+          prompt: "Write about a city, park, cafe, or room you really like. Explain where it is, what it looks like, and why you enjoy spending time there.",
+          sample: "My favorite place in my city is a small park near the river. It have many big trees and green grass, so the air feels very good. Every weekend I go there with my freinds to walk and drink coffee. We sit on a bench and talk about our week. I like this place alot because it is quiet and peaceful, and I feel very happy when I am there."
+        },
+        {
+          id: "friend-email",
+          title: "Email to a Friend",
+          level: "B1",
+          goal: "80–150 words",
+          prompt: "Write a short email to an English-speaking friend telling them about a fun trip or event you went to recently, and invite them to visit you next month.",
+          sample: "Hi Alex, How are you doing? Last weekend I went to the mountains with my family and it was really nice! We stay in a small wooden house and cooked food outside. On Sunday we walked for three hours, even though the wether was a little cold. Let me know if you can visit my town next month because I want to show you the new museum!"
+        },
+        {
+          id: "opinion-paragraph",
+          title: "Opinion: Learning Online vs. in Class",
+          level: "B2",
+          goal: "100–180 words",
+          prompt: "Do you prefer studying English online or in a physical classroom? State your opinion clearly, give two reasons with examples, and write a brief conclusion.",
+          sample: "In my opinion, studying English in a classroom is better than learning only online, even though online tools are very usefull. First, students can practice speaking face to face with classmates, which makes conversations feel natural. Second, a teacher can correct mistakes imediatly and keep everyone focused. To conclude, online apps are good for homework, however classroom lessons help learners build real confidence."
+        },
+        {
+          id: "free-writing",
+          title: "Free Writing Practice",
+          level: "A2",
+          goal: "Any length (15–3,500 chars)",
+          prompt: "Write anything you want—a journal entry, story, job cover note, or paragraph for class—and check your grammar, spelling, vocabulary, and CEFR level.",
+          sample: "Yesterday I try to cook a new recipe for dinner, and it was very hard! I forgot to buy onions at the shop, so I had to go back quickly. Finaly, the food tasted really good and my family liked it very much."
+        }
+      ];
+
+      var yearEl = document.getElementById("year");
+      if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+      var taskSelect = document.getElementById("taskSelect");
+      var cefrButtons = Array.prototype.slice.call(document.querySelectorAll(".wc-cefr-btn"));
+      var promptTag = document.getElementById("promptTag");
+      var promptWordGoal = document.getElementById("promptWordGoal");
+      var promptDescription = document.getElementById("promptDescription");
+      var draftInput = document.getElementById("draftInput");
+      var wordCountEl = document.getElementById("wordCount");
+      var sentenceCountEl = document.getElementById("sentenceCount");
+      var charCountEl = document.getElementById("charCount");
+      var autosaveNoteEl = document.getElementById("autosaveNote");
+      var sampleBtn = document.getElementById("sampleBtn");
+      var clearBtn = document.getElementById("clearBtn");
+      var analyzeBtn = document.getElementById("analyzeBtn");
+      var analyzeBtnText = document.getElementById("analyzeBtnText");
+      var editorBanner = document.getElementById("editorBanner");
+      var openFinishBtn = document.getElementById("openFinishBtn");
+      var coachBestScoreEl = document.getElementById("coachBestScore");
+      var coachStarsLabelEl = document.getElementById("coachStarsLabel");
+
+      var inspectorEmpty = document.getElementById("inspectorEmpty");
+      var inspectorLoading = document.getElementById("inspectorLoading");
+      var inspectorResults = document.getElementById("inspectorResults");
+
+      var resCefr = document.getElementById("resCefr");
+      var resScore = document.getElementById("resScore");
+      var resStars = document.getElementById("resStars");
+      var resSummary = document.getElementById("resSummary");
+      var rubricGrid = document.getElementById("rubricGrid");
+      var annotatedDraft = document.getElementById("annotatedDraft");
+      var cntGrammar = document.getElementById("cntGrammar");
+      var cntSpelling = document.getElementById("cntSpelling");
+      var cntVocab = document.getElementById("cntVocab");
+
+      var tabButtons = Array.prototype.slice.call(document.querySelectorAll(".wc-tab-btn"));
+      var tabPanels = {
+        rubric: document.getElementById("tabPanelRubric"),
+        grammar: document.getElementById("tabPanelGrammar"),
+        spelling: document.getElementById("tabPanelSpelling"),
+        vocab: document.getElementById("tabPanelVocab"),
+        org: document.getElementById("tabPanelOrg"),
+        revised: document.getElementById("tabPanelRevised")
+      };
+
+      var revisedTextEl = document.getElementById("revisedText");
+      var copyRevisedBtn = document.getElementById("copyRevisedBtn");
+      var applyRevisedBtn = document.getElementById("applyRevisedBtn");
+
+      var targetLevel = "A2";
+      var activeTaskId = TASKS[0].id;
+      var lastFeedback = null;
+      var lastCheckedText = "";
+      var isBusy = false;
+
+      function escapeHtml(s) {
+        return String(s == null ? "" : s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function currentTask() {
+        for (var i = 0; i < TASKS.length; i++) {
+          if (TASKS[i].id === activeTaskId) return TASKS[i];
+        }
+        return TASKS[0];
+      }
+
+      function setTargetLevel(level) {
+        targetLevel = level;
+        cefrButtons.forEach(function (btn) {
+          btn.setAttribute("aria-pressed", btn.getAttribute("data-level") === level ? "true" : "false");
+        });
+      }
+
+      function renderTaskInfo() {
+        var t = currentTask();
+        promptTag.textContent = t.title;
+        promptWordGoal.textContent = "Goal: " + t.goal;
+        promptDescription.textContent = t.prompt;
+      }
+
+      function updateCounts() {
+        var val = draftInput.value || "";
+        var trimmed = val.trim();
+        var words = trimmed ? trimmed.split(/\s+/).filter(Boolean).length : 0;
+        var sentences = trimmed ? trimmed.split(/[.!?]+/).filter(function (s) { return s.trim().length > 0; }).length : 0;
+        wordCountEl.textContent = String(words);
+        sentenceCountEl.textContent = String(sentences);
+        charCountEl.textContent = String(val.length);
+      }
+
+      function saveDraftLocally() {
+        try {
+          localStorage.setItem(DRAFT_KEY, JSON.stringify({
+            taskId: activeTaskId,
+            targetLevel: targetLevel,
+            text: draftInput.value
+          }));
+          if (autosaveNoteEl) autosaveNoteEl.textContent = "Draft saved locally";
+        } catch (e) {}
+      }
+
+      function showBanner(type, message) {
+        if (!message) {
+          editorBanner.hidden = true;
+          editorBanner.textContent = "";
+          editorBanner.className = "wc-status-banner";
+          return;
+        }
+        editorBanner.hidden = false;
+        editorBanner.className = "wc-status-banner " + (type === "error" ? "is-error" : "is-info");
+        editorBanner.textContent = message;
+      }
+
+      function refreshHeaderMeta() {
+        var stars = 0;
+        if (window.LAStars && typeof window.LAStars.getStars === "function") {
+          stars = Number(window.LAStars.getStars(GAME_ID) || 0);
+        }
+        if (coachStarsLabelEl) coachStarsLabelEl.textContent = stars + " / 3 ★";
+        try {
+          var best = Number(localStorage.getItem(BEST_SCORE_KEY) || 0);
+          if (coachBestScoreEl) coachBestScoreEl.textContent = best > 0 ? best + " / 100" : "—";
+        } catch (e) {}
+      }
+
+      function switchTab(tabName) {
+        tabButtons.forEach(function (b) {
+          b.setAttribute("aria-selected", b.getAttribute("data-tab") === tabName ? "true" : "false");
+        });
+        Object.keys(tabPanels).forEach(function (k) {
+          tabPanels[k].hidden = k !== tabName;
+        });
+      }
+
+      function buildAnnotatedHtml(sourceText, spellingErrors, grammarMistakes) {
+        var text = String(sourceText || "");
+        if (!text) return "";
+        var ranges = [];
+
+        function collectMatches(phrase, kind) {
+          var needle = String(phrase || "").trim();
+          if (!needle || needle.length < 2) return;
+          var lowerText = text.toLowerCase();
+          var lowerNeedle = needle.toLowerCase();
+          var from = 0;
+          var hits = 0;
+          while (hits < 3) {
+            var idx = lowerText.indexOf(lowerNeedle, from);
+            if (idx === -1) break;
+            var end = idx + needle.length;
+            var overlaps = ranges.some(function (r) {
+              return idx < r.end && end > r.start;
+            });
+            if (!overlaps) {
+              ranges.push({ start: idx, end: end, kind: kind });
+            }
+            from = end;
+            hits++;
+          }
+        }
+
+        (spellingErrors || []).forEach(function (e) { collectMatches(e.misspelled, "spell"); });
+        (grammarMistakes || []).forEach(function (g) { collectMatches(g.original, "grammar"); });
+
+        ranges.sort(function (a, b) { return a.start - b.start; });
+        var out = [];
+        var cursor = 0;
+        ranges.forEach(function (r) {
+          if (r.start > cursor) {
+            out.push(escapeHtml(text.slice(cursor, r.start)));
+          }
+          var cls = r.kind === "spell" ? "wc-mark-spell" : "wc-mark-grammar";
+          out.push('<mark class="' + cls + '">' + escapeHtml(text.slice(r.start, r.end)) + "</mark>");
+          cursor = r.end;
+        });
+        if (cursor < text.length) {
+          out.push(escapeHtml(text.slice(cursor)));
+        }
+        return out.join("");
+      }
+
+      function renderFeedback(feedback, sourceText) {
+        lastFeedback = feedback;
+        lastCheckedText = sourceText;
+        inspectorEmpty.hidden = true;
+        inspectorLoading.hidden = true;
+        inspectorResults.hidden = false;
+        openFinishBtn.hidden = false;
+
+        var score = Number(feedback.overallScore || 0);
+        var stars = score >= 90 ? 3 : score >= 70 ? 2 : score >= 40 ? 1 : 0;
+
+        resCefr.textContent = String(feedback.estimatedCefr || targetLevel);
+        resScore.textContent = String(score);
+        resStars.textContent = "★★★".slice(0, stars) + "☆☆☆".slice(0, 3 - stars);
+        resSummary.textContent = feedback.summary || "";
+
+        var grammarList = Array.isArray(feedback.grammarMistakes) ? feedback.grammarMistakes : [];
+        var spellingList = Array.isArray(feedback.spellingErrors) ? feedback.spellingErrors : [];
+        var vocabList = Array.isArray(feedback.vocabularySuggestions) ? feedback.vocabularySuggestions : [];
+        var org = feedback.organizationFeedback || {};
+
+        cntGrammar.textContent = String(grammarList.length);
+        cntSpelling.textContent = String(spellingList.length);
+        cntVocab.textContent = String(vocabList.length);
+
+        var rubric = feedback.rubric || {};
+        var criteria = [
+          { key: "grammar", label: "Grammar Accuracy" },
+          { key: "vocabulary", label: "Vocabulary Range" },
+          { key: "organization", label: "Organization & Coherence" },
+          { key: "mechanics", label: "Spelling & Mechanics" }
+        ];
+        rubricGrid.innerHTML = criteria.map(function (c) {
+          var item = rubric[c.key] || { score: 3, comment: "" };
+          var s = Math.max(1, Math.min(5, Number(item.score || 3)));
+          var pct = (s / 5) * 100;
+          return (
+            '<div class="wc-rubric-card">' +
+            '<div class="wc-rubric-row"><strong>' + escapeHtml(c.label) + '</strong><span>' + s + ' / 5</span></div>' +
+            '<div class="wc-meter"><div class="wc-meter-fill" style="width:' + pct + '%"></div></div>' +
+            '<p class="wc-rubric-comment">' + escapeHtml(item.comment) + '</p>' +
+            "</div>"
+          );
+        }).join("");
+
+        annotatedDraft.innerHTML = buildAnnotatedHtml(sourceText, spellingList, grammarList);
+
+        // Grammar Tab
+        if (!grammarList.length) {
+          tabPanels.grammar.innerHTML = '<div class="wc-clean-banner">No major grammar mistakes found in this draft. Great sentence control!</div>';
+        } else {
+          tabPanels.grammar.innerHTML = '<div class="wc-issue-list">' + grammarList.map(function (item) {
+            return (
+              '<div class="wc-issue-card">' +
+              '<div class="wc-diff-line">' +
+              '<span class="wc-del">' + escapeHtml(item.original) + '</span>' +
+              '<span aria-hidden="true">→</span>' +
+              '<span class="wc-add">' + escapeHtml(item.correction) + '</span>' +
+              "</div>" +
+              '<p class="wc-note">' + escapeHtml(item.explanation) + "</p>" +
+              "</div>"
+            );
+          }).join("") + "</div>";
+        }
+
+        // Spelling Tab
+        if (!spellingList.length) {
+          tabPanels.spelling.innerHTML = '<div class="wc-clean-banner">No spelling errors detected. Clean spelling throughout!</div>';
+        } else {
+          tabPanels.spelling.innerHTML = '<div class="wc-issue-list">' + spellingList.map(function (item) {
+            return (
+              '<div class="wc-issue-card">' +
+              '<div class="wc-diff-line">' +
+              '<span class="wc-del">' + escapeHtml(item.misspelled) + '</span>' +
+              '<span aria-hidden="true">→</span>' +
+              '<span class="wc-add">' + escapeHtml(item.correction) + '</span>' +
+              "</div>" +
+              (item.context ? '<p class="wc-note">In context: “' + escapeHtml(item.context) + '”</p>' : "") +
+              "</div>"
+            );
+          }).join("") + "</div>";
+        }
+
+        // Vocabulary Tab
+        if (!vocabList.length) {
+          tabPanels.vocab.innerHTML = '<div class="wc-clean-banner">Your word choices already fit the target level well.</div>';
+        } else {
+          tabPanels.vocab.innerHTML = '<div class="wc-issue-list">' + vocabList.map(function (item) {
+            return (
+              '<div class="wc-issue-card">' +
+              '<div class="wc-diff-line">' +
+              '<span class="wc-del">' + escapeHtml(item.original) + '</span>' +
+              '<span aria-hidden="true">→</span>' +
+              '<span class="wc-add">' + escapeHtml(item.suggestion) + '</span>' +
+              "</div>" +
+              '<p class="wc-note">' + escapeHtml(item.reason) + "</p>" +
+              (item.example ? '<div class="wc-example">Example: ' + escapeHtml(item.example) + "</div>" : "") +
+              "</div>"
+            );
+          }).join("") + "</div>";
+        }
+
+        // Organization Tab
+        var strengths = Array.isArray(org.strengths) ? org.strengths : [];
+        var improvements = Array.isArray(org.improvements) ? org.improvements : [];
+        var links = Array.isArray(org.linkingWordsSuggested) ? org.linkingWordsSuggested : [];
+        tabPanels.org.innerHTML =
+          '<div class="wc-org-block"><h4>What Works Well</h4>' +
+          (strengths.length
+            ? "<ul>" + strengths.map(function (s) { return "<li>" + escapeHtml(s) + "</li>"; }).join("") + "</ul>"
+            : '<p class="wc-note">Clear topic focus for your level.</p>') +
+          "</div>" +
+          '<div class="wc-org-block"><h4>Ways to Improve Flow &amp; Structure</h4>' +
+          (improvements.length
+            ? "<ul>" + improvements.map(function (s) { return "<li>" + escapeHtml(s) + "</li>"; }).join("") + "</ul>"
+            : '<p class="wc-note">Keep connecting your ideas smoothly with clear topic sentences.</p>') +
+          "</div>" +
+          (links.length
+            ? '<div class="wc-org-block"><h4>Useful Linking Words to Try</h4><div class="wc-connectors">' +
+              links.map(function (w) { return '<span class="wc-connector-item">' + escapeHtml(w) + "</span>"; }).join("") +
+              "</div></div>"
+            : "");
+
+        // Model Revision Tab
+        revisedTextEl.textContent = feedback.improvedVersion || sourceText;
+        switchTab("rubric");
+
+        // Record stars & score cleanly
+        try {
+          var prevBest = Number(localStorage.getItem(BEST_SCORE_KEY) || 0);
+          if (score > prevBest) localStorage.setItem(BEST_SCORE_KEY, String(score));
+        } catch (e) {}
+
+        if (window.LAStars) {
+          try {
+            window.LAStars.recordPlay(GAME_ID);
+            window.LAStars.saveFromAccuracy(GAME_ID, score);
+          } catch (e) {}
+        }
+        if (window.LAScores && typeof window.LAScores.submit === "function") {
+          try {
+            var pname = window.LAScores.getPlayerName && window.LAScores.getPlayerName();
+            if (pname) {
+              window.LAScores.submit({
+                gameId: GAME_ID,
+                gameName: "AI Writing Coach",
+                score: score,
+                maxScore: 100
+              }).catch(function () {});
+            }
+          } catch (e) {}
+        }
+        if (window.LASfx && typeof window.LASfx.correct === "function") {
+          try { window.LASfx.correct(); } catch (e) {}
+        }
+        refreshHeaderMeta();
+      }
+
+      async function runAnalysis() {
+        if (isBusy) return;
+        var text = (draftInput.value || "").trim();
+        if (text.length < 15) {
+          showBanner("error", "Please write at least 15 characters before checking your writing.");
+          draftInput.focus();
+          return;
+        }
+
+        isBusy = true;
+        showBanner(null, "");
+        analyzeBtn.disabled = true;
+        analyzeBtnText.innerHTML = '<span class="wc-spinner" aria-hidden="true"></span> Checking...';
+        inspectorEmpty.hidden = true;
+        inspectorResults.hidden = true;
+        inspectorLoading.hidden = false;
+
+        try {
+          var t = currentTask();
+          var resp = await fetch("/api/writing/feedback", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              text: text,
+              targetLevel: targetLevel,
+              promptTitle: t.title,
+              promptDescription: t.prompt
+            })
+          });
+          var data = await resp.json().catch(function () { return {}; });
+          if (!resp.ok || !data || !data.ok || !data.feedback) {
+            throw new Error((data && data.error) || "Could not analyze writing right now.");
+          }
+          renderFeedback(data.feedback, text);
+          showBanner("info", "Feedback ready! Review your CEFR rubric and tabs on the right.");
+        } catch (err) {
+          inspectorLoading.hidden = true;
+          if (lastFeedback) inspectorResults.hidden = false;
+          else inspectorEmpty.hidden = false;
+          showBanner("error", err && err.message ? err.message : "Failed to connect to the Writing Coach.");
+          if (window.LASfx && typeof window.LASfx.wrong === "function") {
+            try { window.LASfx.wrong(); } catch (e) {}
+          }
+        } finally {
+          isBusy = false;
+          analyzeBtn.disabled = false;
+          analyzeBtnText.textContent = "Check My Writing";
+        }
+      }
+
+      // Initialize Task Select
+      TASKS.forEach(function (t) {
+        var opt = document.createElement("option");
+        opt.value = t.id;
+        opt.textContent = t.title + " (" + t.level + ")";
+        taskSelect.appendChild(opt);
+      });
+
+      // Restore draft
+      try {
+        var saved = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+        if (saved && typeof saved === "object") {
+          if (saved.taskId && TASKS.some(function (t) { return t.id === saved.taskId; })) {
+            activeTaskId = saved.taskId;
+            taskSelect.value = activeTaskId;
+          }
+          if (saved.targetLevel) setTargetLevel(saved.targetLevel);
+          if (typeof saved.text === "string") draftInput.value = saved.text;
+        }
+      } catch (e) {}
+
+      renderTaskInfo();
+      updateCounts();
+      refreshHeaderMeta();
+
+      taskSelect.addEventListener("change", function () {
+        activeTaskId = taskSelect.value;
+        var t = currentTask();
+        if (t && t.level) setTargetLevel(t.level);
+        renderTaskInfo();
+        saveDraftLocally();
+      });
+
+      cefrButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          setTargetLevel(btn.getAttribute("data-level") || "A2");
+          saveDraftLocally();
+        });
+      });
+
+      draftInput.addEventListener("input", function () {
+        updateCounts();
+        saveDraftLocally();
+      });
+
+      sampleBtn.addEventListener("click", function () {
+        var t = currentTask();
+        draftInput.value = t.sample;
+        updateCounts();
+        saveDraftLocally();
+        showBanner("info", "Sample draft loaded. Click Check My Writing to test the AI coach.");
+      });
+
+      clearBtn.addEventListener("click", function () {
+        draftInput.value = "";
+        updateCounts();
+        saveDraftLocally();
+        showBanner(null, "");
+      });
+
+      analyzeBtn.addEventListener("click", runAnalysis);
+
+      tabButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          switchTab(btn.getAttribute("data-tab") || "rubric");
+        });
+      });
+
+      copyRevisedBtn.addEventListener("click", function () {
+        var txt = (revisedTextEl.textContent || "").trim();
+        if (!txt || !navigator.clipboard) return;
+        navigator.clipboard.writeText(txt).then(function () {
+          copyRevisedBtn.textContent = "Copied!";
+          setTimeout(function () { copyRevisedBtn.textContent = "Copy Model Text"; }, 1600);
+        }).catch(function () {});
+      });
+
+      applyRevisedBtn.addEventListener("click", function () {
+        var txt = (revisedTextEl.textContent || "").trim();
+        if (!txt) return;
+        draftInput.value = txt;
+        updateCounts();
+        saveDraftLocally();
+        showBanner("info", "Model version loaded into the editor so you can customize or expand it.");
+      });
+
+      openFinishBtn.addEventListener("click", function () {
+        if (!lastFeedback || !window.LAFinish) return;
+        var score = Number(lastFeedback.overallScore || 0);
+        var mistakes = (lastFeedback.grammarMistakes || []).slice(0, 6).map(function (m) {
+          return { prompt: m.explanation || "Grammar check", yours: m.original, answer: m.correction };
+        });
+        window.LAFinish.show({
+          gameId: GAME_ID,
+          gameName: "AI Writing Coach",
+          category: "Writing",
+          score: score,
+          total: 100,
+          ringLabel: "CEFR " + (lastFeedback.estimatedCefr || targetLevel),
+          mistakes: mistakes,
+          save: false,
+          backHref: "../"
+        });
+      });
+
+      if (window.LAStars && typeof window.LAStars.startTimer === "function") {
+        window.LAStars.startTimer(false);
+      }
+    })();
+  </script>
+</body>
+</html>
