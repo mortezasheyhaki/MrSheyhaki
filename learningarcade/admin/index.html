@@ -267,6 +267,15 @@
       font-size: 0.92rem;
       color: var(--adm-muted);
     }
+    .adm-host-bar {
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .adm-host-bar[hidden] { display: none; }
     .adm-form { display: flex; flex-direction: column; gap: 16px; }
     .adm-field { display: flex; flex-direction: column; gap: 6px; }
     .adm-field label {
@@ -1038,6 +1047,11 @@
       <h1 id="gateTitle">Teacher Admin</h1>
       <p id="gateSub">Checking admin configuration…</p>
 
+      <div id="connectedHostBar" class="adm-notice adm-host-bar" hidden>
+        <span id="connectedHostLabel">Connected to external server</span>
+        <button type="button" class="adm-btn adm-btn--sm" id="disconnectHostBtn">Use This Host</button>
+      </div>
+
       <form id="setupForm" class="adm-form" hidden>
         <div class="adm-field">
           <label for="setupPw">Create Admin Password</label>
@@ -1059,6 +1073,24 @@
         <p class="adm-error" id="loginErr" role="alert"></p>
         <button type="submit" class="adm-btn adm-btn--primary" id="loginSubmitBtn">Open Admin Console</button>
       </form>
+
+      <div id="unavailablePanel" class="adm-form" hidden>
+        <div class="adm-head-actions">
+          <button type="button" class="adm-btn adm-btn--primary" id="retryStatusBtn">Retry Connection</button>
+          <button type="button" class="adm-btn" id="resetHostBtn" hidden>Reset to This Host</button>
+        </div>
+        <form id="backendConnectForm" class="adm-form" style="padding-top:12px;border-top:1px solid var(--adm-border);">
+          <div class="adm-field">
+            <label for="backendUrlInput">Connect to Running Backend Server (optional)</label>
+            <input class="adm-input" id="backendUrlInput" type="url" inputmode="url" placeholder="https://your-app.run.app" />
+          </div>
+          <p style="margin:0;font-size:0.8rem;color:var(--adm-muted);">
+            If you opened this page on a static host (such as GitHub Pages), enter the URL of your running MrSheyhaki Node server (<code>server.js</code>).
+          </p>
+          <p class="adm-error" id="backendErr" role="alert"></p>
+          <button type="submit" class="adm-btn" id="backendConnectBtn">Connect Server</button>
+        </form>
+      </div>
     </section>
   </main>
 
@@ -1561,6 +1593,8 @@
 
     // Token held strictly in JS memory — never stored in browser storage
     var adminToken = "";
+    var ADMIN_API_KEY = "laAdminApiBase";
+    var adminApiBase = "";
     var authStatusInfo = { authMode: "local", sessionExpiresAt: null, activeSessionCount: 0 };
     var dashboardData = null;
 
@@ -1584,12 +1618,62 @@
     var gateWrap = document.getElementById("gateWrap");
     var gateTitle = document.getElementById("gateTitle");
     var gateSub = document.getElementById("gateSub");
+    var connectedHostBar = document.getElementById("connectedHostBar");
+    var connectedHostLabel = document.getElementById("connectedHostLabel");
+    var disconnectHostBtn = document.getElementById("disconnectHostBtn");
     var setupForm = document.getElementById("setupForm");
     var loginForm = document.getElementById("loginForm");
+    var unavailablePanel = document.getElementById("unavailablePanel");
+    var retryStatusBtn = document.getElementById("retryStatusBtn");
+    var resetHostBtn = document.getElementById("resetHostBtn");
+    var backendConnectForm = document.getElementById("backendConnectForm");
+    var backendUrlInput = document.getElementById("backendUrlInput");
+    var backendErr = document.getElementById("backendErr");
+    var backendConnectBtn = document.getElementById("backendConnectBtn");
     var adminShell = document.getElementById("adminShell");
     var adminSidebar = document.getElementById("adminSidebar");
     var mobileSidebarBtn = document.getElementById("mobileSidebarBtn");
     var lockBtn = document.getElementById("lockAdminBtn");
+
+    function normalizeApiBase(raw) {
+      var s = String(raw || "").trim();
+      if (!s) return "";
+      if (!/^https?:\/\//i.test(s)) s = "https://" + s;
+      try {
+        var u = new URL(s);
+        if (u.username || u.password) return "";
+        var isLocal = u.hostname === "localhost" || u.hostname === "127.0.0.1";
+        if (u.protocol !== "https:" && !(u.protocol === "http:" && isLocal)) return "";
+        return u.origin === location.origin ? "" : u.origin;
+      } catch (e) {
+        return "";
+      }
+    }
+
+    function apiUrl(path) {
+      return (adminApiBase || "") + path;
+    }
+
+    function isCrossOriginBase() {
+      return Boolean(adminApiBase && adminApiBase !== location.origin);
+    }
+
+    (function initApiBase() {
+      try {
+        var params = new URLSearchParams(location.search || "");
+        var fromQuery = params.get("api");
+        if (fromQuery) {
+          var normQ = normalizeApiBase(fromQuery);
+          if (normQ) {
+            adminApiBase = normQ;
+            localStorage.setItem(ADMIN_API_KEY, normQ);
+            return;
+          }
+        }
+        var saved = localStorage.getItem(ADMIN_API_KEY);
+        if (saved) adminApiBase = normalizeApiBase(saved);
+      } catch (e) {}
+    })();
 
     var TAB_TITLES = {
       overview: "Class Overview",
@@ -1695,12 +1779,13 @@
     /* Authenticated Fetch Wrapper */
     async function adminFetch(path, options) {
       var opts = Object.assign({}, options || {});
-      opts.credentials = "same-origin";
+      opts.credentials = isCrossOriginBase() ? "omit" : "same-origin";
       opts.cache = "no-store";
+      var targetUrl = apiUrl(path);
       var lastErr = null;
       for (var attempt = 0; attempt < 2; attempt++) {
         try {
-          var res = await fetch(path, opts);
+          var res = await fetch(targetUrl, opts);
           var text = await res.text();
           var data = null;
           if (text) {
@@ -1709,7 +1794,7 @@
           if (data && typeof data === "object") {
             return { ok: true, res: res, data: data };
           }
-          var isTransient = res.status === 502 || res.status === 503 || res.status === 504;
+          var isTransient = res.status === 404 || res.status === 502 || res.status === 503 || res.status === 504;
           if (isTransient && attempt === 0) {
             await sleep(450);
             continue;
@@ -1719,7 +1804,9 @@
             res: res,
             status: res.status,
             error: res.status === 404
-              ? "Teacher Admin API (/api/admin) is not available on this host."
+              ? (isCrossOriginBase()
+                  ? "The server at " + adminApiBase + " returned 404 for /api/admin."
+                  : "Teacher Admin API (/api/admin) is not running on " + location.origin + ". Retry or connect to your Node backend URL below.")
               : "Server returned an unexpected response (HTTP " + res.status + ")."
           };
         } catch (err) {
@@ -1733,7 +1820,9 @@
       return {
         ok: false,
         status: 0,
-        error: "Could not reach the server. Check your connection or refresh.",
+        error: isCrossOriginBase()
+          ? "Could not reach " + adminApiBase + ". Verify the URL and that the server is running."
+          : "Could not reach the server. Check your connection or retry.",
         cause: lastErr
       };
     }
@@ -1766,12 +1855,26 @@
       }
     });
 
+    function syncHostIndicator() {
+      var hasCustom = isCrossOriginBase();
+      connectedHostBar.hidden = !hasCustom;
+      if (hasCustom) {
+        connectedHostLabel.textContent = "Server: " + adminApiBase;
+      }
+      if (resetHostBtn) resetHostBtn.hidden = !hasCustom;
+      if (backendUrlInput && hasCustom && !backendUrlInput.value) {
+        backendUrlInput.value = adminApiBase;
+      }
+    }
+
     /* Auth Gate Flows */
     function showGate(needsSetup) {
       gateWrap.hidden = false;
       adminShell.classList.remove("is-on");
       lockBtn.hidden = true;
       mobileSidebarBtn.hidden = true;
+      unavailablePanel.hidden = true;
+      syncHostIndicator();
       if (needsSetup) {
         gateTitle.textContent = "Set Teacher Admin Password";
         gateSub.textContent = "First-time setup: choose an admin password (at least 8 characters) to protect student activity and class controls.";
@@ -1796,13 +1899,19 @@
     }
 
     async function checkAdminStatus() {
+      syncHostIndicator();
       var headers = adminToken ? { Authorization: "Bearer " + adminToken } : {};
       var result = await adminFetch("/api/admin/status", { headers: headers });
       if (!result.ok) {
+        gateWrap.hidden = false;
+        adminShell.classList.remove("is-on");
+        lockBtn.hidden = true;
+        mobileSidebarBtn.hidden = true;
         gateTitle.textContent = "Teacher Admin";
-        gateSub.textContent = result.error || "Could not connect to server. Please refresh.";
+        gateSub.textContent = result.error || "Could not connect to server. Please retry.";
         setupForm.hidden = true;
         loginForm.hidden = true;
+        unavailablePanel.hidden = false;
         return;
       }
       var data = result.data;
@@ -1818,6 +1927,60 @@
         showGate(Boolean(data && data.needsSetup));
       }
     }
+
+    retryStatusBtn.addEventListener("click", async function () {
+      retryStatusBtn.disabled = true;
+      retryStatusBtn.textContent = "Checking…";
+      try {
+        await checkAdminStatus();
+      } finally {
+        retryStatusBtn.disabled = false;
+        retryStatusBtn.textContent = "Retry Connection";
+      }
+    });
+
+    function clearExternalHost() {
+      adminApiBase = "";
+      adminToken = "";
+      try { localStorage.removeItem(ADMIN_API_KEY); } catch (e) {}
+      if (backendUrlInput) backendUrlInput.value = "";
+      backendErr.textContent = "";
+      checkAdminStatus();
+    }
+
+    if (resetHostBtn) resetHostBtn.addEventListener("click", clearExternalHost);
+    if (disconnectHostBtn) disconnectHostBtn.addEventListener("click", clearExternalHost);
+
+    backendConnectForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      backendErr.textContent = "";
+      var nextBase = normalizeApiBase(backendUrlInput.value);
+      if (!nextBase && String(backendUrlInput.value || "").trim()) {
+        backendErr.textContent = "Enter a valid https:// server URL (or http://localhost).";
+        return;
+      }
+      backendConnectBtn.disabled = true;
+      backendConnectBtn.textContent = "Connecting…";
+      var prevBase = adminApiBase;
+      try {
+        adminApiBase = nextBase;
+        var res = await adminFetch("/api/admin/status");
+        if (!res.ok) {
+          adminApiBase = prevBase;
+          backendErr.textContent = res.error || "Could not reach Teacher Admin API at that URL.";
+          return;
+        }
+        try {
+          if (adminApiBase) localStorage.setItem(ADMIN_API_KEY, adminApiBase);
+          else localStorage.removeItem(ADMIN_API_KEY);
+        } catch (err) {}
+        adminToken = "";
+        await checkAdminStatus();
+      } finally {
+        backendConnectBtn.disabled = false;
+        backendConnectBtn.textContent = "Connect Server";
+      }
+    });
 
     setupForm.addEventListener("submit", async function (e) {
       e.preventDefault();
@@ -1892,9 +2055,9 @@
       dashboardData = null;
       openKeys = {};
       if (tok) {
-        fetch("/api/admin/logout", {
+        fetch(apiUrl("/api/admin/logout"), {
           method: "POST",
-          credentials: "same-origin",
+          credentials: isCrossOriginBase() ? "omit" : "same-origin",
           headers: { Authorization: "Bearer " + tok }
         }).catch(function () {});
       }
@@ -3117,8 +3280,8 @@
       btn.disabled = true;
       btn.textContent = "Preparing ZIP…";
       try {
-        var res = await fetch("/api/admin/updated-files.zip", {
-          credentials: "same-origin",
+        var res = await fetch(apiUrl("/api/admin/updated-files.zip"), {
+          credentials: isCrossOriginBase() ? "omit" : "same-origin",
           cache: "no-store",
           headers: { Authorization: "Bearer " + adminToken }
         });

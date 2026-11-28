@@ -259,17 +259,18 @@ function getSupabaseServerClient() {
   });
 }
 
-function isAllowedOrigin(origin, reqHost) {
+function isAllowedOrigin(origin, reqHost, fwdHost) {
   if (!origin) return true;
   if (config.corsOrigins.includes(origin)) return true;
   try {
     const u = new URL(origin);
-    if (reqHost && u.host === reqHost) {
+    if ((reqHost && u.host === reqHost) || (fwdHost && u.host === fwdHost)) {
       return true;
     }
     if (
       u.hostname === "localhost" ||
       u.hostname === "127.0.0.1" ||
+      u.hostname === "mortezasheyhaki.github.io" ||
       u.hostname.endsWith(".run.app") ||
       u.hostname.endsWith(".googleusercontent.com") ||
       u.hostname.endsWith(".scf.usercontent.goog")
@@ -289,14 +290,15 @@ app.use(
   cors((req, cb) => {
     const origin = req.headers.origin;
     const reqHost = req.headers.host;
-    if (isAllowedOrigin(origin, reqHost)) {
+    const fwdHost = String(req.headers["x-forwarded-host"] || "").split(",")[0].trim();
+    if (isAllowedOrigin(origin, reqHost, fwdHost)) {
       return cb(null, {
         origin: true,
         methods: ["GET", "POST", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
       });
     }
-    return cb(new Error("Not allowed by CORS"));
+    return cb(null, { origin: false });
   })
 );
 
