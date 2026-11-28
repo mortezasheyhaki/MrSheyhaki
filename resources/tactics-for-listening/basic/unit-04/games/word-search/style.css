@@ -1,6 +1,6 @@
 /* Word search · Tactics For Listening Basic Unit 4 · Desktop & mobile responsive */
 
-.ws-app {
+#game-app.ws-app {
   --ws-cell: var(--lc-card, #ffffff);
   --ws-sel: #c7d2fe;
   --ws-found: #bbf7d0;
@@ -20,7 +20,7 @@
   overflow: hidden;
 }
 
-html[data-theme="dark"] .ws-app {
+html[data-theme="dark"] #game-app.ws-app {
   --ws-cell: #1d2230;
   --ws-sel: #3d4a7a;
   --ws-found: #134e34;
@@ -84,6 +84,7 @@ html[data-theme="dark"] .ws-app {
 .ws-workspace {
   flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -92,12 +93,14 @@ html[data-theme="dark"] .ws-app {
 .ws-board-area {
   flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
   display: grid;
   place-items: center;
 }
 
 .ws-board {
   width: min(100%, calc(100dvh - 170px), 560px);
+  max-width: 100%;
   aspect-ratio: 1 / 1;
   display: grid;
   grid-template-columns: repeat(15, 1fr);
@@ -273,6 +276,11 @@ html[data-theme="dark"] .ws-app {
 @media (min-width: 860px) and (min-height: 620px) {
   .ws-words-wrap { display: none; }
   .ws-app .lc-top { grid-template-columns: auto minmax(0, 1fr) 88px; }
+  .ws-app .lc-top-center {
+    width: 100%;
+    max-width: 480px;
+    justify-self: center;
+  }
   .ws-workspace {
     flex-direction: row;
     align-items: center;
@@ -281,9 +289,11 @@ html[data-theme="dark"] .ws-app {
   }
   .ws-board-area {
     flex: 0 1 auto;
+    max-width: calc(100% - 268px);
   }
   .ws-board {
-    width: min(560px, calc(100dvh - 155px), calc(100vw - 320px));
+    width: min(540px, calc(100dvh - 175px), calc(100vw - 320px));
+    max-width: 100%;
   }
   .ws-sidebar {
     display: flex;
@@ -296,7 +306,7 @@ html[data-theme="dark"] .ws-app {
     background: var(--lc-card);
     border: 1px solid var(--lc-line);
     box-shadow: var(--lc-shadow);
-    max-height: calc(100dvh - 155px);
+    max-height: calc(100dvh - 175px);
     overflow-y: auto;
   }
   .ws-sidebar-title {
@@ -332,7 +342,7 @@ html[data-theme="dark"] .ws-app {
 }
 
 @media (max-height: 660px), (max-width: 440px) {
-  html, body.game-page, .ws-app {
+  html, body.game-page, #game-app.ws-app {
     height: auto;
     min-height: 100dvh;
     max-height: none;
