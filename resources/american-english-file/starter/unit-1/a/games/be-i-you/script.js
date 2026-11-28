@@ -102,88 +102,67 @@
 })();
 window.ArcadeFX && (ArcadeFX.noMilestone = true);
 
-/* I'm / You're – American English File Starter Unit 1A */
+/* I'm / You're – American English File Starter Unit 1A (3-Part Sequential Game) */
 (function () {
+  "use strict";
 
-/* === Shared UI sound effects (Web Audio) === */
-(function () {
-  if (window.__laUiSfx) return;
-  var ctx = null;
-  function getCtx() {
-    if (!ctx) {
-      var AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return null;
-      ctx = new AC();
-    }
-    if (ctx.state === "suspended") ctx.resume().catch(function () {});
-    return ctx;
-  }
-  function tone(freq, dur, type, vol, when) {
-    var c = getCtx();
-    if (!c) return;
-    var t0 = (when || 0) + c.currentTime;
-    var osc = c.createOscillator();
-    var gain = c.createGain();
-    osc.type = type || "sine";
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(vol || 0.12, t0);
-    gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
-    osc.connect(gain);
-    gain.connect(c.destination);
-    osc.start(t0);
-    osc.stop(t0 + dur + 0.02);
-  }
-  function sfxTap() { tone(520, 0.06, "triangle", 0.08); }
-  function sfxCorrect() { window.ArcadeFX && ArcadeFX.ok();
-    tone(523, 0.1, "sine", 0.12, 0);
-    tone(659, 0.12, "sine", 0.12, 0.08);
-    tone(784, 0.18, "sine", 0.1, 0.16);
-  }
-  function sfxWrong() { window.ArcadeFX && ArcadeFX.bad();
-    tone(220, 0.14, "sawtooth", 0.07, 0);
-    tone(180, 0.18, "sawtooth", 0.06, 0.1);
-  }
-  function sfxCelebrate() {
-    [523, 659, 784, 1047].forEach(function (f, i) { tone(f, 0.15, "sine", 0.1, i * 0.07); });
-  }
-  window.__laUiSfx = { tap: sfxTap, correct: sfxCorrect, wrong: sfxWrong, celebrate: sfxCelebrate };
-  // Local aliases used by many games
-  window.sfxTap = sfxTap;
-  window.sfxCorrect = sfxCorrect;
-  window.sfxWrong = sfxWrong;
-  window.sfxCelebrate = sfxCelebrate;
-
-  // Auto-play on common feedback class tokens (debounced)
-  var lastAt = 0, lastKind = "";
-  function fire(kind, fn) {
-    var now = Date.now();
-    if (kind === lastKind && now - lastAt < 80) return;
-    lastKind = kind; lastAt = now;
-    try { fn(); } catch (e) {}
-  }
-  try {
-    var origAdd = DOMTokenList.prototype.add;
-    DOMTokenList.prototype.add = function () {
-      var tokens = Array.prototype.slice.call(arguments);
-      var r = origAdd.apply(this, tokens);
-      if (tokens.indexOf("correct") >= 0 || tokens.indexOf("is-correct") >= 0 || tokens.indexOf("picked-ok") >= 0) {
-        fire("correct", sfxCorrect);
-      } else if (tokens.indexOf("wrong") >= 0 || tokens.indexOf("is-wrong") >= 0) {
-        fire("wrong", sfxWrong);
+  /* === Shared UI sound effects (Web Audio) === */
+  (function () {
+    if (window.__laUiSfx) return;
+    var ctx = null;
+    function getCtx() {
+      if (!ctx) {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        ctx = new AC();
       }
-      return r;
-    };
-  } catch (e) {}
-})();
-
+      if (ctx.state === "suspended") ctx.resume().catch(function () {});
+      return ctx;
+    }
+    function tone(freq, dur, type, vol, when) {
+      var c = getCtx();
+      if (!c) return;
+      var t0 = (when || 0) + c.currentTime;
+      var osc = c.createOscillator();
+      var gain = c.createGain();
+      osc.type = type || "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(vol || 0.12, t0);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+      osc.connect(gain);
+      gain.connect(c.destination);
+      osc.start(t0);
+      osc.stop(t0 + dur + 0.02);
+    }
+    function sfxTap() { tone(520, 0.06, "triangle", 0.08); }
+    function sfxCorrect() {
+      if (window.ArcadeFX) ArcadeFX.ok();
+      tone(523, 0.1, "sine", 0.12, 0);
+      tone(659, 0.12, "sine", 0.12, 0.08);
+      tone(784, 0.18, "sine", 0.1, 0.16);
+    }
+    function sfxWrong() {
+      if (window.ArcadeFX) ArcadeFX.bad();
+      tone(220, 0.14, "sawtooth", 0.07, 0);
+      tone(180, 0.18, "sawtooth", 0.06, 0.1);
+    }
+    function sfxCelebrate() {
+      [523, 659, 784, 1047].forEach(function (f, i) { tone(f, 0.15, "sine", 0.1, i * 0.07); });
+    }
+    window.__laUiSfx = { tap: sfxTap, correct: sfxCorrect, wrong: sfxWrong, celebrate: sfxCelebrate };
+    window.sfxTap = sfxTap;
+    window.sfxCorrect = sfxCorrect;
+    window.sfxWrong = sfxWrong;
+    window.sfxCelebrate = sfxCelebrate;
+  })();
 
   const GAME_ID = "starter-1a-be-i-you";
-  // ========== DATA ==========
+
   const FORMS = [
-    { full: "I am", short: "I'm", emoji: "🙋", tip: "I + am → I'm" },
-    { full: "You are", short: "You're", emoji: "👤", tip: "You + are → You're" },
-    { full: "I am not", short: "I'm not", emoji: "🙅", tip: "I + am not → I'm not" },
-    { full: "You are not", short: "You're not", emoji: "🚫", tip: "You + are not → You're not / You aren't" }
+    { full: "I am", short: "I'm", tip: "I + am → I'm" },
+    { full: "You are", short: "You're", tip: "You + are → You're" },
+    { full: "I am not", short: "I'm not", tip: "I + am not → I'm not" },
+    { full: "You are not", short: "You're not", tip: "You + are not → You're not / You aren't" }
   ];
 
   const POSITIVE = [
@@ -264,25 +243,44 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     }
   ];
 
-  // ========== STATE ==========
+  const PARTS = [
+    { key: "forms", label: "Match the forms", short: "Forms", desc: "Full ↔ contraction" },
+    { key: "positive", label: "Positive · I'm / You're", short: "Positive", desc: "Complete 5 picture prompts" },
+    { key: "negative", label: "Negative · I'm not / You're not", short: "Negative", desc: "Complete 4 picture prompts" }
+  ];
+
   const app = document.getElementById("game-app");
   if (!app) return;
 
-  let part = null;          // "forms" | "positive" | "negative"
+  // ========== STATE ==========
+  let part = null; // "forms" | "positive" | "negative"
   let index = 0;
   let items = [];
   let locked = false;
   let blankIndex = 0;
-  let formsScore = 0;
-  let formsTotal = 0;
-  let formsMistakes = 0;
-  let partScore = 0;
-  let partAttempts = 0;
+
+  // Cumulative scoring across all 3 parts
+  let totalCorrect = 0;
+  let totalAttempts = 0;
+
   let matchedPairs = new Set();
   let selectedFull = null;
   let selectedShort = null;
+  let formsOrderFull = null;
+  let formsOrderShort = null;
 
-  // ========== HELPERS ==========
+  let pendingTimers = [];
+  function schedule(fn, ms) {
+    const id = setTimeout(fn, ms);
+    pendingTimers.push(id);
+    return id;
+  }
+  function clearPendingTimers() {
+    while (pendingTimers.length) {
+      clearTimeout(pendingTimers.pop());
+    }
+  }
+
   function shuffle(arr) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
@@ -292,97 +290,100 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     return a;
   }
 
-  function spawnConfetti(container) {
-    if (!container) return;
-    const colors = ["#7c5cff", "#ec4899", "#f59e0b", "#22c55e", "#38bdf8", "#f472b6", "#a3e635"];
-    for (let i = 0; i < 48; i++) {
-      const el = document.createElement("span");
-      el.className = "be-confetti";
-      el.style.left = Math.random() * 100 + "%";
-      el.style.background = colors[i % colors.length];
-      el.style.animationDelay = Math.random() * 0.9 + "s";
-      el.style.animationDuration = 2.2 + Math.random() * 1.4 + "s";
-      el.style.width = 6 + Math.random() * 8 + "px";
-      el.style.height = 8 + Math.random() * 10 + "px";
-      container.appendChild(el);
-    }
+  function calcStars(correct, total) {
+    if (total <= 0) return 0;
+    const pct = (correct / total) * 100;
+    if (pct >= 90) return 3;
+    if (pct >= 70) return 2;
+    if (pct >= 40) return 1;
+    return 0;
+  }
+
+  function stepperHtml(activeKey) {
+    const activeIdx = PARTS.findIndex((p) => p.key === activeKey);
+    return `<div class="be-stepper" aria-label="Game progress">
+      ${PARTS.map((p, i) => {
+        const state = i < activeIdx ? "is-done" : i === activeIdx ? "is-active" : "";
+        const num = i < activeIdx ? "✓" : String(i + 1);
+        return `<div class="be-step ${state}">
+          <span class="be-step-num" aria-hidden="true">${num}</span>
+          <span>${p.short}</span>
+        </div>`;
+      }).join("")}
+    </div>`;
   }
 
   // ========== START SCREEN ==========
   function showStart() {
+    clearPendingTimers();
     part = null;
+    locked = false;
+
     app.innerHTML = `
       <div class="be-topbar">
-        <a class="be-back-btn" href="../" title="Back to Unit 1A Games" aria-label="Back">←</a>
+        <a class="be-back-btn" href="../" title="Back to Unit 1A Games" aria-label="Back to Unit 1A Games">←</a>
         <span class="be-topbar-title">Unit 1A · Games</span>
       </div>
       <div class="be-start">
-        <div class="be-start-hero">
-          <div class="be-start-blob" aria-hidden="true"></div>
-          <div class="be-start-icon-wrap" aria-hidden="true">
-            <span class="be-start-icon">💬</span>
+        <div class="be-start-card">
+          <div class="be-start-hero">
+            <div class="be-start-icon-wrap" aria-hidden="true">💬</div>
+            <h1>I'm / You're</h1>
+            <p class="be-sub">Complete all 3 parts in order to finish the challenge.</p>
           </div>
-          <h1>
-            <span class="be-title-line">I'm / You're</span>
-          </h1>
-          <p class="be-sub">Match full forms and contractions · I and you</p>
-        </div>
 
-        <div class="be-part-pills">
-          <button class="be-pill be-pill-1" data-part="forms">
-            <span class="be-pill-num">1</span>
-            <span class="be-pill-body">
-              <span class="be-pill-title">Match the forms</span>
-              <span class="be-pill-desc">Full ↔ contraction</span>
-            </span>
-          </button>
-          <button class="be-pill be-pill-2" data-part="positive">
-            <span class="be-pill-num">2</span>
-            <span class="be-pill-body">
-              <span class="be-pill-title">Positive</span>
-              <span class="be-pill-desc">I'm · You're</span>
-            </span>
-          </button>
-          <button class="be-pill be-pill-3" data-part="negative">
-            <span class="be-pill-num">3</span>
-            <span class="be-pill-body">
-              <span class="be-pill-title">Negative</span>
-              <span class="be-pill-desc">I'm not · You're not</span>
-            </span>
-          </button>
-        </div>
+          <div class="be-roadmap" aria-label="Three parts in this game">
+            <div class="be-roadmap-item">
+              <span class="be-roadmap-num">1</span>
+              <div class="be-roadmap-body">
+                <span class="be-roadmap-title">Match the forms</span>
+                <span class="be-roadmap-desc">Full form ↔ contraction</span>
+              </div>
+            </div>
+            <div class="be-roadmap-item">
+              <span class="be-roadmap-num">2</span>
+              <div class="be-roadmap-body">
+                <span class="be-roadmap-title">Positive</span>
+                <span class="be-roadmap-desc">I'm · You're (5 pictures)</span>
+              </div>
+            </div>
+            <div class="be-roadmap-item">
+              <span class="be-roadmap-num">3</span>
+              <div class="be-roadmap-body">
+                <span class="be-roadmap-title">Negative</span>
+                <span class="be-roadmap-desc">I'm not · You're not (4 pictures)</span>
+              </div>
+            </div>
+          </div>
 
-        <div class="be-chips">
-          <span class="be-chip">I am → I'm</span>
-          <span class="be-chip">You are → You're</span>
+          <button type="button" class="be-btn be-start-cta" id="be-start-btn">Start Game →</button>
         </div>
       </div>
     `;
-    app.querySelectorAll("[data-part]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        if (btn.dataset.part === "forms") startForms();
-        else startPart(btn.dataset.part);
-      });
-    });
+
+    document.getElementById("be-start-btn").addEventListener("click", startGame);
+  }
+
+  // ========== FULL 3-PART RUN ==========
+  function startGame() {
+    clearPendingTimers();
+    totalCorrect = 0;
+    totalAttempts = 0;
+    if (window.LAFinish) LAFinish.startTimer();
+    if (window.ArcadeFX && ArcadeFX.reset) ArcadeFX.reset();
+    startForms();
   }
 
   // ========== PART 1: MATCH FORMS ==========
-  let formsOrderFull = null;
-  let formsOrderShort = null;
-  let formsFirstRender = true;
-
   function startForms() {
+    clearPendingTimers();
     part = "forms";
-    if (window.LAFinish) LAFinish.startTimer();
-    formsScore = 0;
-    formsMistakes = 0;
-    formsTotal = FORMS.length;
+    locked = false;
     matchedPairs = new Set();
     selectedFull = null;
     selectedShort = null;
     formsOrderFull = shuffle(FORMS.map((f, i) => ({ ...f, idx: i })));
     formsOrderShort = shuffle(FORMS.map((f, i) => ({ ...f, idx: i })));
-    formsFirstRender = true;
     renderForms();
   }
 
@@ -392,10 +393,11 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
 
     app.innerHTML = `
       <div class="be-topbar">
-        <a class="be-back-btn" href="#" id="be-back-start" title="Back" aria-label="Back">←</a>
-        <span class="be-topbar-title">I'm / You're</span>
+        <a class="be-back-btn" href="#" id="be-back-start" title="Back to start" aria-label="Back to start">←</a>
+        <span class="be-topbar-title">Part 1 of 3 · Match the forms</span>
         <span class="be-progress">${matchedPairs.size} / ${FORMS.length}</span>
       </div>
+      ${stepperHtml("forms")}
       <div class="be-forms-intro">
         <p>Tap a <strong>full form</strong>, then its <strong>contraction</strong>.</p>
       </div>
@@ -422,35 +424,39 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
 
     fulls.forEach((f) => {
       const btn = document.createElement("button");
-      btn.className = "be-form-card" + (matchedPairs.has(f.idx) ? " matched" : "") + (formsFirstRender ? "" : " no-enter");
+      btn.className = "be-form-card" + (matchedPairs.has(f.idx) ? " matched" : "");
       btn.type = "button";
       btn.dataset.idx = f.idx;
       btn.dataset.side = "full";
-      btn.innerHTML = '<span class="be-form-text">' + f.full + '</span>';
+      btn.innerHTML = '<span class="be-form-text">' + f.full + "</span>";
       if (!matchedPairs.has(f.idx)) {
         btn.addEventListener("click", () => onFormSelect(btn, "full", f.idx));
+      } else {
+        btn.disabled = true;
       }
       fullsEl.appendChild(btn);
     });
 
     shorts.forEach((f) => {
       const btn = document.createElement("button");
-      btn.className = "be-form-card" + (matchedPairs.has(f.idx) ? " matched" : "") + (formsFirstRender ? "" : " no-enter");
+      btn.className = "be-form-card" + (matchedPairs.has(f.idx) ? " matched" : "");
       btn.type = "button";
       btn.dataset.idx = f.idx;
       btn.dataset.side = "short";
-      btn.innerHTML = '<span class="be-form-text">' + f.short + '</span>';
+      btn.innerHTML = '<span class="be-form-text">' + f.short + "</span>";
       if (!matchedPairs.has(f.idx)) {
         btn.addEventListener("click", () => onFormSelect(btn, "short", f.idx));
+      } else {
+        btn.disabled = true;
       }
       shortsEl.appendChild(btn);
     });
-    formsFirstRender = false;
   }
 
   function onFormSelect(btn, side, idx) {
     if (locked || matchedPairs.has(idx)) return;
 
+    try { sfxTap(); } catch (e) {}
     app.querySelectorAll('.be-form-card[data-side="' + side + '"]').forEach((b) => b.classList.remove("selected"));
 
     if (side === "full") {
@@ -463,44 +469,43 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
 
     if (selectedFull !== null && selectedShort !== null) {
       locked = true;
+      totalAttempts++;
       const feedback = document.getElementById("be-feedback");
       const fullBtn = app.querySelector('.be-form-card[data-side="full"][data-idx="' + selectedFull + '"]');
       const shortBtn = app.querySelector('.be-form-card[data-side="short"][data-idx="' + selectedShort + '"]');
 
       if (selectedFull === selectedShort) {
         matchedPairs.add(selectedFull);
-        formsScore++;
+        totalCorrect++;
         fullBtn.classList.remove("selected");
         shortBtn.classList.remove("selected");
         fullBtn.classList.add("correct", "matched");
         shortBtn.classList.add("correct", "matched");
-        // Disable further clicks without re-rendering
         fullBtn.disabled = true;
         shortBtn.disabled = true;
         feedback.className = "be-feedback ok";
         feedback.textContent = "✓ " + FORMS[selectedFull].tip;
+        try { sfxCorrect(); } catch (e) {}
 
-        // Update progress in place (no full board re-render → no flicker)
         const prog = app.querySelector(".be-progress");
         if (prog) prog.textContent = matchedPairs.size + " / " + FORMS.length;
 
-        setTimeout(() => {
+        schedule(() => {
           selectedFull = null;
           selectedShort = null;
           locked = false;
           if (matchedPairs.size >= FORMS.length) {
-            showFormsDone();
+            showPartTransition(1, "positive");
           }
-          // else: keep board as-is — matched cards stay green, no flicker
-        }, 280);
+        }, 420);
       } else {
-        formsMistakes++;
         fullBtn.classList.add("wrong");
         shortBtn.classList.add("wrong");
         feedback.className = "be-feedback bad";
-        feedback.textContent = "Try again"; try{sfxWrong();}catch(e){}
+        feedback.textContent = "Try again";
+        try { sfxWrong(); } catch (e) {}
 
-        setTimeout(() => {
+        schedule(() => {
           fullBtn.classList.remove("selected", "wrong");
           shortBtn.classList.remove("selected", "wrong");
           selectedFull = null;
@@ -508,55 +513,55 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
           locked = false;
           feedback.textContent = "";
           feedback.className = "be-feedback";
-        }, 380);
+        }, 420);
       }
     }
   }
 
-  function calcStars(correct, total) {
-    if (total <= 0) return 0;
-    if (correct >= total) return 3;
-    if (correct >= total - 1 || correct / total >= 0.8) return 2;
-    if (correct >= Math.ceil(total / 2)) return 1;
-    return 0;
+  // ========== PART TRANSITION (PART 1 -> 2, PART 2 -> 3) ==========
+  function showPartTransition(completedPartNum, nextPartKey) {
+    clearPendingTimers();
+    locked = false;
+    const nextMeta = PARTS.find((p) => p.key === nextPartKey);
+    try { sfxCelebrate(); } catch (e) {}
+
+    app.innerHTML = `
+      <div class="be-topbar">
+        <a class="be-back-btn" href="#" id="be-back-start" title="Back to start" aria-label="Back to start">←</a>
+        <span class="be-topbar-title">Part ${completedPartNum} of 3 complete</span>
+      </div>
+      ${stepperHtml(nextPartKey)}
+      <div class="be-transition">
+        <div class="be-transition-card">
+          <div class="be-transition-icon" aria-hidden="true">✓</div>
+          <h2>Part ${completedPartNum} complete!</h2>
+          <p>Next up: Part ${completedPartNum + 1} · ${nextMeta.label}</p>
+          <button type="button" class="be-btn" id="be-next-part">Continue to Part ${completedPartNum + 1} →</button>
+        </div>
+      </div>
+    `;
+
+    const advance = () => {
+      clearPendingTimers();
+      startPart(nextPartKey);
+    };
+
+    document.getElementById("be-back-start").addEventListener("click", (e) => {
+      e.preventDefault();
+      showStart();
+    });
+    document.getElementById("be-next-part").addEventListener("click", advance);
+    schedule(advance, 1400);
   }
 
-  function showFormsDone() {
-    if (window.ArcadeFX) ArcadeFX.cheer(0, 2);
-    const accuracy = Math.max(0, formsTotal - formsMistakes);
-    if (window.LAFinish) {
-      const timeMs = LAFinish.stopTimer();
-      LAFinish.show({
-        gameId: GAME_ID,
-        score: accuracy,
-        total: formsTotal,
-        timeMs: timeMs,
-        onAgain: () => startForms(),
-        onModes: () => showStart(),
-        backHref: "../",
-      });
-      return;
-    }
-    const stars = calcStars(accuracy, formsTotal);
-    if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
-    app.innerHTML = `<div class="be-topbar"><a class="be-back-btn" href="../">←</a></div>
-      <div class="be-done"><div class="be-done-inner"><h1>Forms complete!</h1>
-      <button class="be-btn" id="be-again">Practice again</button>
-      <button class="be-btn secondary" id="be-next">Go to Positive →</button></div></div>`;
-    document.getElementById("be-again").addEventListener("click", () => startForms());
-    document.getElementById("be-next").addEventListener("click", () => startPart("positive"));
-  }
-
-  // ========== PART 2 & 3: SENTENCES ==========
+  // ========== PART 2 & 3: POSITIVE & NEGATIVE ==========
   function startPart(p) {
+    clearPendingTimers();
     part = p;
-    if (window.LAFinish) LAFinish.startTimer();
     items = p === "positive" ? POSITIVE.slice() : NEGATIVE.slice();
     index = 0;
     blankIndex = 0;
     locked = false;
-    partScore = 0;
-    partAttempts = 0;
     renderItem();
   }
 
@@ -579,29 +584,35 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
 
   function renderItem() {
     if (index >= items.length) {
-      showDone();
+      if (part === "positive") {
+        showPartTransition(2, "negative");
+      } else {
+        showFinalFinish();
+      }
       return;
     }
+
     const item = items[index];
     const partLabel =
       part === "positive"
-        ? "Positive · I am / You are"
-        : "Negative · I'm not / You're not";
+        ? "Part 2 of 3 · Positive (I'm / You're)"
+        : "Part 3 of 3 · Negative (I'm not / You're not)";
     blankIndex = Math.min(blankIndex, item.blanks.length - 1);
 
-    const imgSrc = item.image && (item.image.startsWith("http") ? item.image : ("images/" + item.image));
+    const imgSrc = item.image && (item.image.startsWith("http") ? item.image : "images/" + item.image);
     const imgHtml = item.image
       ? `<div class="be-image-wrap has-image" id="be-img">
-           <img alt="" src="${imgSrc}" onerror="this.parentElement.classList.remove('has-image'); this.style.display='none';">
+           <img alt="Picture prompt ${index + 1}" src="${imgSrc}" referrerpolicy="no-referrer">
          </div>`
       : "";
 
     app.innerHTML = `
       <div class="be-topbar">
-        <a class="be-back-btn" href="#" id="be-back-start" title="Back to parts" aria-label="Back">←</a>
+        <a class="be-back-btn" href="#" id="be-back-start" title="Back to start" aria-label="Back to start">←</a>
         <span class="be-topbar-title">${partLabel}</span>
         <span class="be-progress">${index + 1} / ${items.length}</span>
       </div>
+      ${stepperHtml(part)}
       <div class="be-card">
         ${imgHtml}
         <p class="be-sentence" id="be-sentence">${buildSentenceHtml(item, blankIndex)}</p>
@@ -634,36 +645,38 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
     buttons.forEach((b) => (b.disabled = true));
 
     const expected = item.blanks[blankIndex];
+    totalAttempts++;
 
-    partAttempts++;
     if (choice === expected) {
-      partScore++;
+      totalCorrect++;
       btn.classList.add("correct");
       document.getElementById("be-sentence").innerHTML = buildSentenceHtml(item, blankIndex + 1);
+      try { sfxCorrect(); } catch (e) {}
 
       if (blankIndex + 1 < item.blanks.length) {
         feedback.className = "be-feedback ok";
-        feedback.textContent = "✓ Good — next blank"; try{sfxCorrect();}catch(e){}
-        setTimeout(() => {
+        feedback.textContent = "✓ Good — next blank";
+        schedule(() => {
           blankIndex++;
           locked = false;
           renderItem();
-        }, 650);
+        }, 620);
       } else {
         feedback.className = "be-feedback ok";
         feedback.textContent = "✓ " + item.full;
-        setTimeout(() => {
+        schedule(() => {
           index++;
           blankIndex = 0;
           locked = false;
           renderItem();
-        }, 900);
+        }, 860);
       }
     } else {
       btn.classList.add("wrong");
       feedback.className = "be-feedback bad";
-      feedback.textContent = "Try again"; try{sfxWrong();}catch(e){}
-      setTimeout(() => {
+      feedback.textContent = "Try again";
+      try { sfxWrong(); } catch (e) {}
+      schedule(() => {
         buttons.forEach((b) => {
           b.disabled = false;
           b.classList.remove("wrong");
@@ -671,32 +684,38 @@ window.ArcadeFX && (ArcadeFX.noMilestone = true);
         locked = false;
         feedback.textContent = "";
         feedback.className = "be-feedback";
-      }, 750);
+      }, 720);
     }
   }
 
-  function showDone() {
+  // ========== FINAL FINISH SCREEN (AFTER PART 3) ==========
+  function showFinalFinish() {
+    clearPendingTimers();
     if (window.LAFinish) {
       const timeMs = LAFinish.stopTimer();
       LAFinish.show({
         gameId: GAME_ID,
-        score: partScore,
-        total: Math.max(partAttempts, 1),
+        score: totalCorrect,
+        total: Math.max(totalAttempts, 1),
         timeMs: timeMs,
-        onAgain: () => startPart(part),
-        onModes: () => showStart(),
-        backHref: "../",
+        onAgain: startGame,
+        backHref: "../"
       });
       return;
     }
-    const title = part === "positive" ? "Positive complete!" : "Negative complete!";
-    const total = items.length;
-    const stars = calcStars(partScore, Math.max(partAttempts, 1));
-    if (window.LAStars) { LAStars.recordPlay(GAME_ID); LAStars.save(GAME_ID, stars); }
+    const stars = calcStars(totalCorrect, Math.max(totalAttempts, 1));
+    if (window.LAStars) {
+      LAStars.recordPlay(GAME_ID);
+      LAStars.save(GAME_ID, stars);
+    }
     app.innerHTML = `<div class="be-topbar"><a class="be-back-btn" href="../">←</a></div>
-      <div class="be-done"><div class="be-done-inner"><h1>${title}</h1>
-      <button class="be-btn" id="be-again">Practice again</button></div></div>`;
-    document.getElementById("be-again").addEventListener("click", () => startPart(part));
+      <div class="be-done">
+        <h1>All 3 parts complete!</h1>
+        <p>You scored ${totalCorrect} / ${Math.max(totalAttempts, 1)}.</p>
+        <button type="button" class="be-btn" id="be-again">Play again</button>
+        <a class="be-btn secondary" href="../">Back to games</a>
+      </div>`;
+    document.getElementById("be-again").addEventListener("click", startGame);
   }
 
   // ========== INIT ==========
