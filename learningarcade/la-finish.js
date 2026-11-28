@@ -989,16 +989,30 @@
         return;
       }
       speedBox.hidden = false;
-      var me = "";
+      var meNames = [];
       try {
-        if (global.LAScores && LAScores.getDisplayName) me = (LAScores.getDisplayName() || "").toLowerCase();
-        if (!me && LAScores.getPlayerName) me = (LAScores.getPlayerName() || "").toLowerCase();
+        if (global.LAScores && LAScores.getDisplayName) {
+          var dn = (LAScores.getDisplayName() || "").toLowerCase();
+          if (dn) meNames.push(dn);
+        }
+        if (global.LAScores && LAScores.getPlayerName) {
+          var pn = (LAScores.getPlayerName() || "").toLowerCase();
+          if (pn) meNames.push(pn);
+        }
+        if (global.LAAuth && LAAuth.currentUser) {
+          var u = LAAuth.currentUser();
+          if (u && u.displayName) meNames.push(String(u.displayName).trim().toLowerCase());
+          if (u && u.username) meNames.push(String(u.username).trim().toLowerCase());
+        }
       } catch (e) {}
 
       var html = '<div class="la-finish-speed-title">⚡ Fastest</div>';
       rows.slice(0, 3).forEach(function (r, idx) {
         var medals = ["🥇", "🥈", "🥉"];
-        var isMe = me && r.key === me;
+        var rowName = String(r.name || "").trim().toLowerCase();
+        var isMe = meNames.some(function (m) {
+          return m && (rowName === m || rowName.indexOf(m + " · ") === 0 || String(r.key || "").toLowerCase() === m);
+        });
         html +=
           '<div class="la-finish-speed-row' +
           (isMe ? " is-me" : "") +

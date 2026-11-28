@@ -272,7 +272,7 @@ function submitScore() {
       status.className = 'score-submit-status is-ok';
       btn.textContent = 'Saved';
     } else {
-      status.textContent = res.error || 'Could not save. Check Firebase rules.';
+      status.textContent = res.error || 'Could not save score right now. Please try again.';
       status.className = 'score-submit-status is-err';
       btn.disabled = false;
       btn.textContent = 'Save score';

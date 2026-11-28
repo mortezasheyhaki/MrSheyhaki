@@ -124,13 +124,42 @@
     }
   }
 
+  function updateAudioUI() {
+    app.querySelectorAll(".dr-person-btn").forEach(function (btn, idx) {
+      var p = btn.getAttribute("data-who");
+      if (!p) return;
+      var cls = "dr-person-btn";
+      if (playingWho === p) cls += " is-playing";
+      if (listenedMap[p]) cls += " is-listened";
+      if (audioError[p]) cls += " is-error";
+      btn.className = cls;
+      btn.setAttribute("aria-pressed", playingWho === p ? "true" : "false");
+      var ico = btn.querySelector(".dr-person-ico");
+      if (ico) ico.innerHTML = personPlayIcon(p);
+      var sub = btn.querySelector(".dr-person-sub");
+      if (sub) sub.textContent = personSubLabel(p);
+      var badge = btn.querySelector(".dr-person-badge");
+      if (badge) badge.textContent = listenedMap[p] && playingWho !== p ? "✓" : String(idx + 1);
+      var fill = btn.querySelector(".dr-progress-fill");
+      if (fill) fill.style.width = (audioProgress[p] || 0) + "%";
+    });
+    app.querySelectorAll(".dr-person-th").forEach(function (th, idx) {
+      var p = PEOPLE[idx];
+      th.classList.toggle("is-listening", playingWho === p);
+    });
+    app.querySelectorAll(".dr-cell").forEach(function (td) {
+      var p = td.getAttribute("data-p");
+      td.classList.toggle("is-col-listening", playingWho === p);
+    });
+  }
+
   function playPerson(who) {
     if (!HAS_AUDIO || !AUDIO[who]) return;
 
     // Toggle stop if currently playing this person
     if (playingWho === who) {
       stopAudio(true);
-      renderPlay();
+      updateAudioUI();
       return;
     }
 
@@ -152,14 +181,14 @@
         audioProgress[who] = 0;
         if (playingWho === who) {
           playingWho = null;
-          renderPlay();
+          updateAudioUI();
         }
       });
       audioEl.addEventListener("error", function () {
         audioError[who] = true;
         audioProgress[who] = 0;
         if (playingWho === who) playingWho = null;
-        renderPlay();
+        updateAudioUI();
       });
       audios[who] = audioEl;
     }
@@ -168,7 +197,7 @@
     audioProgress[who] = 0;
     playingWho = who;
     listenedMap[who] = true;
-    renderPlay();
+    updateAudioUI();
 
     var a = audios[who];
     try { a.currentTime = 0; } catch (e) {}
@@ -177,7 +206,7 @@
       p.catch(function () {
         audioError[who] = true;
         if (playingWho === who) playingWho = null;
-        renderPlay();
+        updateAudioUI();
       });
     }
   }
@@ -203,6 +232,21 @@
       LAStars.recordPlay(GAME_ID);
       LAStars.save(GAME_ID, stars);
     }
+    try {
+      if (typeof window.LAProgressSave === "function") {
+        window.LAProgressSave({
+          gameId: GAME_ID,
+          gameName: GAME_NAME,
+          category: "tactics-for-listening",
+          unit: "basic-4",
+          score: score(),
+          maxScore: TOTAL,
+          accuracy: Math.round((score() / TOTAL) * 100),
+          completed: true,
+          stars: stars
+        });
+      }
+    } catch (e) {}
   }
 
   function startGame() {
@@ -576,7 +620,7 @@
       e.preventDefault();
       if (playingWho) {
         stopAudio(true);
-        renderPlay();
+        updateAudioUI();
       } else {
         playPerson(lastPlayedWho || "Peter");
       }

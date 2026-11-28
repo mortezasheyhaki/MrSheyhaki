@@ -235,6 +235,357 @@ app.get("/api/rooms/:code", (req, res) => {
   });
 });
 
+const LEADERBOARD_RANKS = [
+  { tier: 1, name: "Bronze Novice", icon: "🥉", minXp: 0 },
+  { tier: 2, name: "Silver Explorer", icon: "🥈", minXp: 150 },
+  { tier: 3, name: "Gold Challenger", icon: "🥇", minXp: 450 },
+  { tier: 4, name: "Platinum Scholar", icon: "💠", minXp: 1000 },
+  { tier: 5, name: "Diamond Legend", icon: "👑", minXp: 2000 },
+];
+
+function rankForXp(xp) {
+  let cur = LEADERBOARD_RANKS[0];
+  for (const r of LEADERBOARD_RANKS) {
+    if (xp >= r.minXp) cur = r;
+  }
+  return cur;
+}
+
+function splitNameAndClass(rawName) {
+  const clean = String(rawName || "").trim();
+  const idx = clean.indexOf(" · ");
+  if (idx > 0) {
+    return {
+      name: clean.slice(0, idx).trim(),
+      classCode: clean.slice(idx + 3).trim().slice(0, 16),
+    };
+  }
+  return { name: clean, classCode: "" };
+}
+
+let leaderboardCache = { at: 0, payload: null };
+const LEADERBOARD_CACHE_TTL_MS = 15000;
+
+async function buildUnifiedLeaderboard() {
+  const sb = getSupabaseServerClient();
+  if (!sb) {
+    return {
+      ok: true,
+      generatedAt: Date.now(),
+      overall: [],
+      games: {},
+      gameList: [],
+      classes: [],
+      summary: { players: 0, games: 0, totalPlays: 0, totalStars: 0 },
+    };
+  }
+
+  const [profRes, progRes, scoreRes] = await Promise.allSettled([
+    sb.from("profiles").select("id,username,display_name,created_at").limit(1000),
+    sb.from("game_progress").select("user_id,game_id,game_name,category,stars,plays,best_score,max_score,best_accuracy,completed,last_at").limit(3000),
+    sb.from("scores").select("id,name,score,max_score,game_id,game_name,user_id,time_ms,at,created_at").order("at", { ascending: false }).limit(1500),
+  ]);
+
+  const profiles = profRes.status === "fulfilled" && !profRes.value.error ? (profRes.value.data || []) : [];
+  const progressRows = progRes.status === "fulfilled" && !progRes.value.error ? (progRes.value.data || []) : [];
+  const scoreRows = scoreRes.status === "fulfilled" && !scoreRes.value.error ? (scoreRes.value.data || []) : [];
+
+  const profileById = new Map();
+  for (const p of profiles) {
+    if (!p || !p.id) continue;
+    profileById.set(p.id, {
+      id: p.id,
+      username: String(p.username || "").trim(),
+      displayName: String(p.display_name || p.username || "Player").trim(),
+    });
+  }
+
+  const players = new Map();
+  const gameCatalog = new Map();
+
+  function ensurePlayer(key, info) {
+    if (!players.has(key)) {
+      players.set(key, {
+        key,
+        userId: info.userId || null,
+        name: info.name || "Player",
+        username: info.username || "",
+        classCode: info.classCode || "",
+        registered: Boolean(info.registered),
+        games: new Map(),
+        dates: [],
+        lastActiveAt: 0,
+      });
+    } else {
+      const pl = players.get(key);
+      if (info.name && (pl.name === "Player" || pl.name.startsWith("Student "))) pl.name = info.name;
+      if (info.username && !pl.username) pl.username = info.username;
+      if (info.classCode && !pl.classCode) pl.classCode = info.classCode;
+      if (info.registered) pl.registered = true;
+    }
+    return players.get(key);
+  }
+
+  function ensureGameCatalog(gameId, gameName, category) {
+    const gid = String(gameId || "").trim();
+    if (!gid) return null;
+    if (!gameCatalog.has(gid)) {
+      gameCatalog.set(gid, {
+        id: gid,
+        title: (gameName && gameName !== gid) ? String(gameName).trim() : prettyName(gid),
+        category: inferCategory(gid, category),
+      });
+    } else {
+      const gc = gameCatalog.get(gid);
+      if (gameName && gameName !== gid && gc.title === prettyName(gid)) {
+        gc.title = String(gameName).trim();
+      }
+      if (category && gc.category === "General") {
+        gc.category = inferCategory(gid, category);
+      }
+    }
+    return gameCatalog.get(gid);
+  }
+
+  function ensurePlayerGame(player, gid) {
+    if (!player.games.has(gid)) {
+      player.games.set(gid, {
+        gameId: gid,
+        stars: 0,
+        plays: 0,
+        bestScore: 0,
+        maxScore: 0,
+        accuracy: 0,
+        bestTimeMs: 0,
+        completed: false,
+        lastAt: 0,
+      });
+    }
+    return player.games.get(gid);
+  }
+
+  for (const r of progressRows) {
+    if (!r || !r.user_id || !r.game_id) continue;
+    const prof = profileById.get(r.user_id);
+    const player = ensurePlayer("u:" + r.user_id, {
+      userId: r.user_id,
+      name: prof ? prof.displayName : ("Student " + String(r.user_id).slice(0, 6)),
+      username: prof ? prof.username : "",
+      registered: true,
+    });
+    const gid = String(r.game_id).trim();
+    ensureGameCatalog(gid, r.game_name, r.category);
+
+    const lastAt = parseTimestampMs(r.last_at);
+    if (lastAt > 0) {
+      player.dates.push(lastAt);
+      if (lastAt > player.lastActiveAt) player.lastActiveAt = lastAt;
+    }
+
+    const g = ensurePlayerGame(player, gid);
+    g.stars = Math.max(g.stars, Math.min(3, Number(r.stars) || 0));
+    g.plays = Math.max(g.plays, Number(r.plays) || 0);
+    g.bestScore = Math.max(g.bestScore, Number(r.best_score) || 0);
+    g.maxScore = Math.max(g.maxScore, Number(r.max_score) || 0);
+    g.accuracy = Math.max(g.accuracy, Number(r.best_accuracy) || 0);
+    g.completed = Boolean(g.completed || r.completed || g.stars > 0);
+    if (lastAt > g.lastAt) g.lastAt = lastAt;
+  }
+
+  for (const s of scoreRows) {
+    if (!s || !s.game_id) continue;
+    const gid = String(s.game_id).trim();
+    const parsedName = splitNameAndClass(s.name);
+    const prof = s.user_id ? profileById.get(s.user_id) : null;
+    const pKey = s.user_id
+      ? ("u:" + s.user_id)
+      : ("g:" + (parsedName.name || "guest").toLowerCase() + (parsedName.classCode ? "|" + parsedName.classCode.toLowerCase() : ""));
+
+    const player = ensurePlayer(pKey, {
+      userId: s.user_id || null,
+      name: (prof && prof.displayName) || parsedName.name || "Player",
+      username: (prof && prof.username) || "",
+      classCode: parsedName.classCode,
+      registered: Boolean(s.user_id),
+    });
+
+    ensureGameCatalog(gid, s.game_name, null);
+
+    const at = parseTimestampMs(s.at) || parseTimestampMs(s.created_at);
+    if (at > 0) {
+      player.dates.push(at);
+      if (at > player.lastActiveAt) player.lastActiveAt = at;
+    }
+
+    const scoreVal = Math.max(0, Number(s.score) || 0);
+    const maxVal = s.max_score != null ? Math.max(0, Number(s.max_score) || 0) : 0;
+    const pct = maxVal > 0 ? Math.min(100, Math.round((scoreVal / maxVal) * 100)) : 0;
+    const inferredStars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
+    const timeMs = s.time_ms != null && Number(s.time_ms) > 0 ? Math.round(Number(s.time_ms)) : 0;
+
+    const g = ensurePlayerGame(player, gid);
+    if (scoreVal > g.bestScore) {
+      g.bestScore = scoreVal;
+      if (maxVal > 0) g.maxScore = maxVal;
+    } else if (maxVal > g.maxScore) {
+      g.maxScore = maxVal;
+    }
+    if (pct > g.accuracy) g.accuracy = pct;
+    if (inferredStars > g.stars) g.stars = inferredStars;
+    if (timeMs > 0 && (g.bestTimeMs === 0 || timeMs < g.bestTimeMs)) g.bestTimeMs = timeMs;
+    if (g.plays === 0) g.plays = 1;
+    g.completed = Boolean(g.completed || scoreVal > 0);
+    if (at > g.lastAt) g.lastAt = at;
+  }
+
+  const overall = [];
+  const gamesMap = new Map();
+  const classSet = new Set();
+  let sumPlays = 0;
+  let sumStars = 0;
+
+  for (const player of players.values()) {
+    if (player.games.size === 0) continue;
+    if (player.classCode) classSet.add(player.classCode);
+
+    let totalStars = 0;
+    let totalPlays = 0;
+    let totalScore = 0;
+    let threeStarGames = 0;
+    let accSum = 0;
+    let accCount = 0;
+
+    for (const [gid, g] of player.games.entries()) {
+      totalStars += g.stars;
+      totalPlays += g.plays;
+      // Use normalized points when score isn't stored (e.g. stars*25 + accuracy) so all games contribute fairly
+      const effectivePoints = g.bestScore > 0 ? g.bestScore : (g.stars * 10 + (g.completed ? 5 : 0));
+      totalScore += effectivePoints;
+      if (g.stars >= 3) threeStarGames += 1;
+      if (g.accuracy > 0) {
+        accSum += g.accuracy;
+        accCount += 1;
+      }
+
+      if (!gamesMap.has(gid)) gamesMap.set(gid, []);
+      gamesMap.get(gid).push({
+        key: player.key,
+        userId: player.userId,
+        name: player.name,
+        username: player.username,
+        classCode: player.classCode,
+        registered: player.registered,
+        score: g.bestScore > 0 ? g.bestScore : effectivePoints,
+        rawScore: g.bestScore,
+        maxScore: g.maxScore,
+        accuracy: g.accuracy,
+        stars: g.stars,
+        plays: g.plays,
+        timeMs: g.bestTimeMs || null,
+        lastAt: g.lastAt,
+      });
+    }
+
+    const avgAccuracy = accCount > 0 ? Math.round(accSum / accCount) : 0;
+    const streak = computeDailyStreak(player.dates);
+    const uniqueGames = player.games.size;
+    const playsXp = totalPlays * 12;
+    const varietyXp = uniqueGames * 40;
+    const starsXp = totalStars * 25 + threeStarGames * 35;
+    const accBonus = accCount >= 2 ? (avgAccuracy >= 90 ? 140 : avgAccuracy >= 80 ? 80 : avgAccuracy >= 70 ? 40 : 0) : 0;
+    const streakXp = (streak.best || 0) * 15;
+    const xp = playsXp + varietyXp + starsXp + accBonus + streakXp;
+    const rank = rankForXp(xp);
+
+    sumPlays += totalPlays;
+    sumStars += totalStars;
+
+    overall.push({
+      key: player.key,
+      userId: player.userId,
+      name: player.name,
+      username: player.username,
+      classCode: player.classCode,
+      registered: player.registered,
+      xp,
+      rankTier: rank.tier,
+      rankName: rank.name,
+      rankIcon: rank.icon,
+      totalStars,
+      gamesPlayed: uniqueGames,
+      totalPlays,
+      avgAccuracy,
+      totalScore,
+      streakCurrent: streak.current,
+      streakBest: streak.best,
+      lastActiveAt: player.lastActiveAt,
+    });
+  }
+
+  overall.sort((a, b) =>
+    b.xp - a.xp ||
+    b.totalStars - a.totalStars ||
+    b.gamesPlayed - a.gamesPlayed ||
+    b.avgAccuracy - a.avgAccuracy ||
+    a.name.localeCompare(b.name)
+  );
+
+  const games = {};
+  const gameList = [];
+  for (const [gid, rows] of gamesMap.entries()) {
+    rows.sort((a, b) =>
+      b.stars - a.stars ||
+      b.accuracy - a.accuracy ||
+      b.score - a.score ||
+      (a.timeMs || 1e9) - (b.timeMs || 1e9) ||
+      b.plays - a.plays ||
+      a.name.localeCompare(b.name)
+    );
+    games[gid] = rows.slice(0, 100);
+    const meta = gameCatalog.get(gid) || { id: gid, title: prettyName(gid), category: inferCategory(gid) };
+    gameList.push({
+      id: gid,
+      title: meta.title,
+      category: meta.category,
+      players: rows.length,
+      totalPlays: rows.reduce((acc, r) => acc + (r.plays || 0), 0),
+    });
+  }
+
+  gameList.sort((a, b) => b.players - a.players || b.totalPlays - a.totalPlays || a.title.localeCompare(b.title));
+
+  return {
+    ok: true,
+    generatedAt: Date.now(),
+    overall: overall.slice(0, 150),
+    games,
+    gameList,
+    classes: Array.from(classSet).sort(),
+    summary: {
+      players: overall.length,
+      games: gameList.length,
+      totalPlays: sumPlays,
+      totalStars: sumStars,
+    },
+  };
+}
+
+app.get("/api/leaderboard", async (req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  try {
+    const force = req.query.refresh === "1";
+    const now = Date.now();
+    if (!force && leaderboardCache.payload && now - leaderboardCache.at < LEADERBOARD_CACHE_TTL_MS) {
+      return res.json(leaderboardCache.payload);
+    }
+    const payload = await buildUnifiedLeaderboard();
+    leaderboardCache = { at: Date.now(), payload };
+    return res.json(payload);
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: "Could not load leaderboard right now." });
+  }
+});
+
 app.get("/api/assignments", (_req, res) => {
   res.setHeader("Cache-Control", "no-store");
   return res.json({

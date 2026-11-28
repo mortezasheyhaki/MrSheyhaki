@@ -1,4 +1,4 @@
-/* Word search · Tactics For Listening Basic Unit 4 · one screen, no scroll */
+/* Word search · Tactics For Listening Basic Unit 4 · Desktop & mobile responsive */
 
 .ws-app {
   --ws-cell: var(--lc-card, #ffffff);
@@ -7,12 +7,12 @@
   --ws-found-ink: #14532d;
   --ws-bad: #fde2e2;
   position: relative;
-  max-width: 760px;
+  max-width: 960px;
   width: 100%;
   margin: 0 auto;
   height: 100dvh;
   max-height: 100dvh;
-  padding: max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  padding: max(8px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -28,48 +28,40 @@ html[data-theme="dark"] .ws-app {
   --ws-bad: #4c1d1d;
 }
 
-/* ----- header: title on the left, round word-list button on the top-right ----- */
-.ws-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+.ws-app .lc-top {
+  margin: 0;
   flex: 0 0 auto;
-  padding-top: 4px;
 }
-.ws-title { min-width: 0; }
-.ws-eyebrow {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--lc-muted);
+
+.ws-words-wrap {
+  position: relative;
+  flex: 0 0 auto;
 }
-.ws-title strong {
-  display: block;
-  font-size: 19px;
-  color: var(--lc-ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+
 .ws-words-btn {
   flex: 0 0 auto;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  border: 2px solid var(--lc-accent);
+  min-width: 44px;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--lc-accent);
   background: var(--lc-accent);
   color: #ffffff;
-  font-size: 22px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
   cursor: pointer;
-  display: grid;
-  place-items: center;
-  box-shadow: 0 6px 16px rgba(59, 91, 219, .3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 6px 16px rgba(59, 91, 219, .28);
   touch-action: manipulation;
+  transition: transform .12s ease, box-shadow .15s ease;
 }
-.ws-words-btn:active { transform: scale(.94); }
+.ws-words-btn:active { transform: scale(.96); }
+.ws-words-btn:focus-visible { outline: none; box-shadow: var(--lc-ring); }
+
 .ws-words-wrap .ws-badge {
   position: absolute;
   top: -6px;
@@ -84,46 +76,79 @@ html[data-theme="dark"] .ws-app {
   font-weight: 800;
   line-height: 22px;
   text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+  pointer-events: none;
 }
-.ws-words-wrap { position: relative; flex: 0 0 auto; }
 
-/* ----- board: fills the space left under the header, never scrolls ----- */
+/* ----- workspace: board centered on mobile, board + sidebar on desktop ----- */
+.ws-workspace {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .ws-board-area {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
   place-items: center;
 }
+
 .ws-board {
-  width: min(100%, calc(100dvh - 190px));
+  width: min(100%, calc(100dvh - 170px), 560px);
   aspect-ratio: 1 / 1;
   display: grid;
   grid-template-columns: repeat(15, 1fr);
   grid-template-rows: repeat(15, 1fr);
   gap: 3px;
+  padding: 6px;
+  border-radius: 18px;
+  background: var(--lc-card);
+  border: 1px solid var(--lc-line);
+  box-shadow: var(--lc-shadow);
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
 }
+
 .ws-cell {
   display: grid;
   place-items: center;
-  border-radius: 7px;
+  border-radius: 6px;
   background: var(--ws-cell);
   color: var(--lc-ink);
-  font-size: clamp(12px, calc(min(100vw, 100dvh) / 30), 22px);
+  font-size: clamp(11px, calc(min(100vw, 100dvh) / 32), 20px);
   font-weight: 800;
   line-height: 1;
   cursor: pointer;
   border: 1px solid var(--lc-line);
+  transition: background .1s ease, color .1s ease, border-color .1s ease;
 }
-.ws-cell.is-sel { background: var(--ws-sel); }
-.ws-cell.is-found { background: var(--ws-found); color: var(--ws-found-ink); border-color: transparent; }
-.ws-cell.is-bad { animation: ws-shake .3s; background: var(--ws-bad); }
+.ws-cell.is-sel {
+  background: var(--ws-sel);
+  border-color: var(--lc-accent);
+}
+.ws-cell.is-found {
+  background: var(--ws-found);
+  color: var(--ws-found-ink);
+  border-color: transparent;
+}
+.ws-cell.is-bad {
+  animation: ws-shake .3s;
+  background: var(--ws-bad);
+}
+
 @keyframes ws-shake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-3px); }
   75% { transform: translateX(3px); }
+}
+
+/* ----- desktop sidebar word list ----- */
+.ws-sidebar {
+  display: none;
 }
 
 /* ----- footer status ----- */
@@ -133,31 +158,47 @@ html[data-theme="dark"] .ws-app {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  font-size: 15px;
+  flex-wrap: wrap;
+  font-size: 14px;
   font-weight: 700;
   color: var(--lc-muted);
+  padding: 4px 2px 0;
 }
 .ws-foot .ws-found-count { color: var(--lc-ink); }
+.ws-foot-hint {
+  font-size: 13px;
+  color: var(--lc-muted);
+}
 .ws-foot-btn {
   font: inherit;
   font-size: 14px;
   font-weight: 700;
-  padding: 8px 14px;
-  border-radius: 10px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 999px;
   border: 1.5px solid var(--lc-line);
-  background: transparent;
-  color: var(--lc-muted);
+  background: var(--lc-card);
+  color: var(--lc-ink);
   cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color .15s ease, color .15s ease, transform .1s ease;
 }
+.ws-foot-btn:hover { border-color: var(--lc-accent-line); color: var(--lc-accent); }
+.ws-foot-btn:active { transform: scale(.97); }
+.ws-foot-btn:focus-visible { outline: none; box-shadow: var(--lc-ring); }
+
 .ws-done {
   flex: 0 0 auto;
   text-align: center;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 800;
   color: var(--lc-ok-ink);
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: var(--lc-ok-soft);
 }
 
-/* ----- words panel (opened by the round button) ----- */
+/* ----- words panel (mobile modal & shared list styles) ----- */
 .ws-modal {
   position: fixed;
   inset: 0;
@@ -165,17 +206,18 @@ html[data-theme="dark"] .ws-app {
   display: grid;
   place-items: center;
   padding: 16px;
-  background: rgba(10, 12, 20, .55);
+  background: rgba(10, 12, 20, .58);
+  backdrop-filter: blur(4px);
 }
 .ws-modal[hidden] { display: none; }
 .ws-sheet {
-  width: min(100%, 420px);
+  width: min(100%, 440px);
   max-height: 88dvh;
   overflow-y: auto;
   background: var(--lc-card);
   color: var(--lc-ink);
   border: 1px solid var(--lc-line);
-  border-radius: 20px;
+  border-radius: 22px;
   box-shadow: var(--lc-shadow);
   padding: 18px 18px 16px;
 }
@@ -184,21 +226,24 @@ html[data-theme="dark"] .ws-app {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
-.ws-sheet-head h2 { margin: 0; font-size: 20px; }
+.ws-sheet-head h2 { margin: 0; font-size: 19px; font-weight: 800; }
 .ws-close {
   font: inherit;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
-  padding: 9px 16px;
-  border-radius: 12px;
+  min-height: 44px;
+  padding: 9px 18px;
+  border-radius: 999px;
   border: none;
   background: var(--lc-accent);
   color: #ffffff;
   cursor: pointer;
+  touch-action: manipulation;
 }
-.ws-sheet-hint { margin: 0 0 12px; font-size: 15px; color: var(--lc-muted); }
+.ws-close:focus-visible { outline: none; box-shadow: var(--lc-ring); }
+.ws-sheet-hint { margin: 0 0 12px; font-size: 14px; color: var(--lc-muted); line-height: 1.4; }
 .ws-words {
   list-style: none;
   margin: 0;
@@ -208,13 +253,14 @@ html[data-theme="dark"] .ws-app {
   gap: 8px;
 }
 .ws-words li {
-  padding: 11px 12px;
+  padding: 10px 12px;
   border-radius: 12px;
   border: 1.5px solid var(--lc-line);
   background: var(--ws-cell);
   color: var(--lc-ink);
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
+  transition: background .15s ease, color .15s ease;
 }
 .ws-words li.is-found {
   background: var(--ws-found);
@@ -223,7 +269,81 @@ html[data-theme="dark"] .ws-app {
   text-decoration: line-through;
 }
 
+/* ----- desktop side-by-side word list ----- */
+@media (min-width: 860px) and (min-height: 620px) {
+  .ws-words-wrap { display: none; }
+  .ws-app .lc-top { grid-template-columns: auto minmax(0, 1fr) 88px; }
+  .ws-workspace {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  .ws-board-area {
+    flex: 0 1 auto;
+  }
+  .ws-board {
+    width: min(560px, calc(100dvh - 155px), calc(100vw - 320px));
+  }
+  .ws-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 248px;
+    flex: 0 0 248px;
+    padding: 16px;
+    border-radius: 20px;
+    background: var(--lc-card);
+    border: 1px solid var(--lc-line);
+    box-shadow: var(--lc-shadow);
+    max-height: calc(100dvh - 155px);
+    overflow-y: auto;
+  }
+  .ws-sidebar-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--lc-muted);
+  }
+  .ws-sidebar .ws-words {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .ws-sidebar .ws-words li {
+    font-size: 14px;
+    padding: 8px 11px;
+  }
+}
+
 @media (max-width: 520px) {
+  .ws-board {
+    width: min(100%, calc(100dvh - 175px));
+    gap: 2px;
+    padding: 4px;
+    border-radius: 14px;
+  }
+  .ws-cell { border-radius: 5px; }
+  .ws-words-btn-label { display: none; }
+  .ws-words-btn { width: 44px; padding: 0; font-size: 18px; }
   .ws-words { grid-template-columns: 1fr; }
-  .ws-title strong { font-size: 17px; }
+  .ws-foot-hint { display: none; }
+}
+
+@media (max-height: 660px), (max-width: 440px) {
+  html, body.game-page, .ws-app {
+    height: auto;
+    min-height: 100dvh;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .ws-board {
+    width: min(100%, 480px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-cell.is-bad { animation: none; }
 }

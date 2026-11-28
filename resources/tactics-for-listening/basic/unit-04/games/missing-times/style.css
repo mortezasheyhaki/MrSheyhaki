@@ -38,7 +38,7 @@
   align-items: center;
   gap: 12px;
   padding: 8px 12px;
-  background: var(--lc-surface, #fff);
+  background: var(--lc-card, #fff);
   border: 1px solid var(--lc-line, #e2e8f0);
   border-radius: 14px;
 }
@@ -107,7 +107,7 @@
   min-height: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  background: var(--lc-surface, #fff);
+  background: var(--lc-card, #fff);
   border: 1px solid var(--lc-line, #e2e8f0);
   border-radius: 14px;
   padding: 12px 14px;
@@ -150,12 +150,13 @@
 }
 
 .mt-input {
-  width: 72px;
+  width: 78px;
+  min-height: 36px;
   padding: 4px 8px;
   border: 2px solid var(--lc-accent, #0ea5e9);
   border-radius: 8px;
   background: rgba(14, 165, 233, 0.06);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   font-family: inherit;
   color: var(--lc-ink, #0f172a);
@@ -213,8 +214,9 @@
 .mt-foot-action {
   width: 100%;
   justify-content: space-between;
+  flex-wrap: wrap;
   padding: 8px 10px 8px 14px;
-  background: var(--lc-surface, #fff);
+  background: var(--lc-card, #fff);
   border: 1px solid var(--lc-line, #e2e8f0);
   border-radius: 12px;
   gap: 10px;
@@ -228,32 +230,44 @@
 .mt-foot-text.is-mid { color: #d97706; }
 .mt-foot-text.is-bad { color: var(--lc-bad, #e11d48); }
 
-/* ----- Compact ----- */
+/* ----- Compact & Mobile Scroll Safety ----- */
+@media (max-height: 700px), (max-width: 480px) {
+  html, body.game-page, .mt-app {
+    height: auto;
+    min-height: 100dvh;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .mt-stage { overflow: visible; }
+  .mt-dialogue { overflow: visible; }
+}
+
 @media (max-height: 720px) {
   .mt-app { gap: 4px; }
   .mt-head { padding: 6px 10px; }
-  .mt-play { width: 42px; height: 42px; }
+  .mt-play { width: 44px; height: 44px; }
   .mt-dialogue { padding: 10px 12px; gap: 8px; }
-  .mt-line { font-size: 13.5px; }
-  .mt-input { width: 64px; padding: 3px 6px; font-size: 13px; }
+  .mt-line { font-size: 14px; }
+  .mt-input { width: 72px; padding: 4px 6px; font-size: 16px; }
 }
 
 @media (max-height: 640px) {
   .mt-head-text span { display: none; }
-  .mt-line { font-size: 13px; }
-  .mt-input { width: 58px; font-size: 12.5px; }
+  .mt-line { font-size: 13.5px; }
+  .mt-input { width: 68px; font-size: 16px; }
 }
 
 @media (max-width: 380px) {
-  .mt-input { width: 56px; }
-  .mt-line { font-size: 13px; }
+  .mt-input { width: 68px; font-size: 16px; }
+  .mt-line { font-size: 14px; }
 }
 
 /* ----- Dark ----- */
 [data-theme="dark"] .mt-head,
 [data-theme="dark"] .mt-dialogue,
 [data-theme="dark"] .mt-foot-action {
-  background: var(--lc-surface, #1e293b);
+  background: var(--lc-card, #1e293b);
   border-color: var(--lc-line, #334155);
 }
 [data-theme="dark"] .mt-head-text strong,

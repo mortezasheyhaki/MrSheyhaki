@@ -67,6 +67,17 @@
     }
   }
 
+  function updateAudioUI() {
+    var replay = document.getElementById("lft-replay");
+    var title = document.querySelector(".lft-listen-title");
+    if (replay) {
+      replay.className = "lft-play" + (playing ? " is-playing" : "") + (audioError ? " is-error" : "");
+      replay.setAttribute("aria-label", playLabel());
+      replay.innerHTML = playIcon();
+    }
+    if (title) title.textContent = playLabel();
+  }
+
   function play() {
     if (!HAS_AUDIO) return;
     sfx("click");
@@ -75,12 +86,12 @@
     audio = new Audio(ITEMS[current].audio);
     audio.preload = "auto";
     playing = true;
-    renderPlay();
-    audio.onended = function () { playing = false; renderPlay(); };
-    audio.onerror = function () { playing = false; audioError = true; renderPlay(); };
+    updateAudioUI();
+    audio.onended = function () { playing = false; updateAudioUI(); };
+    audio.onerror = function () { playing = false; audioError = true; updateAudioUI(); };
     var p = audio.play();
     if (p && p.catch) {
-      p.catch(function () { playing = false; audioError = true; renderPlay(); });
+      p.catch(function () { playing = false; audioError = true; updateAudioUI(); });
     }
   }
 
@@ -349,7 +360,7 @@
     var replay = document.getElementById("lft-replay");
     if (replay) {
       replay.onclick = function () {
-        if (playing) { stopAudio(); renderPlay(); }
+        if (playing) { stopAudio(); updateAudioUI(); }
         else play();
       };
     }
@@ -372,6 +383,18 @@
       var face = document.getElementById("lft-face-time");
       if (face) face.textContent = pad2(hour) + ":" + pad2(minute);
     }
+    function bindInputKey(el) {
+      el.addEventListener("focus", function () {
+        try { el.select(); } catch (e) {}
+      });
+      el.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (!checked) checkAnswer();
+          else next();
+        }
+      });
+    }
     if (hi) {
       hi.addEventListener("input", onType);
       hi.addEventListener("change", function () {
@@ -379,6 +402,7 @@
         hi.value = pad2(hour);
         onType();
       });
+      bindInputKey(hi);
     }
     if (mi) {
       mi.addEventListener("input", onType);
@@ -387,6 +411,7 @@
         mi.value = pad2(minute);
         onType();
       });
+      bindInputKey(mi);
     }
 
     var checkBtn = document.getElementById("lft-check");
@@ -422,7 +447,7 @@
     var k = e.key.toLowerCase();
     if (k === " " || k === "r") {
       e.preventDefault();
-      if (playing) { stopAudio(); renderPlay(); }
+      if (playing) { stopAudio(); updateAudioUI(); }
       else play();
     }
     if (k === "enter") {

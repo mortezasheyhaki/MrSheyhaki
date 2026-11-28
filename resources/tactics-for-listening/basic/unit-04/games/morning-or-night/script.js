@@ -102,6 +102,17 @@
     }
   }
 
+  function updateAudioUI() {
+    var replay = document.getElementById("mon-replay");
+    var title = document.querySelector(".mon-listen-title");
+    if (replay) {
+      replay.className = "mon-play" + (playing ? " is-playing" : "") + (audioError ? " is-error" : "");
+      replay.setAttribute("aria-label", playLabel());
+      replay.innerHTML = playIcon();
+    }
+    if (title) title.textContent = playLabel();
+  }
+
   function play() {
     if (!HAS_AUDIO) return;
     sfx("click");
@@ -110,12 +121,12 @@
     audio = new Audio(ITEMS[current].audio);
     audio.preload = "auto";
     playing = true;
-    renderPlay();
-    audio.onended = function () { playing = false; renderPlay(); };
-    audio.onerror = function () { playing = false; audioError = true; renderPlay(); };
+    updateAudioUI();
+    audio.onended = function () { playing = false; updateAudioUI(); };
+    audio.onerror = function () { playing = false; audioError = true; updateAudioUI(); };
     var p = audio.play();
     if (p && p.catch) {
-      p.catch(function () { playing = false; audioError = true; renderPlay(); });
+      p.catch(function () { playing = false; audioError = true; updateAudioUI(); });
     }
   }
 
@@ -339,7 +350,7 @@
     var replay = document.getElementById("mon-replay");
     if (replay) {
       replay.onclick = function () {
-        if (playing) { stopAudio(); renderPlay(); }
+        if (playing) { stopAudio(); updateAudioUI(); }
         else play();
       };
     }
@@ -381,7 +392,7 @@
     var k = e.key.toLowerCase();
     if (k === " " || k === "r") {
       e.preventDefault();
-      if (playing) { stopAudio(); renderPlay(); }
+      if (playing) { stopAudio(); updateAudioUI(); }
       else play();
       return;
     }

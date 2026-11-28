@@ -1,8 +1,8 @@
 /* True or false? · equal-height flex worksheet · light & dark mode · no-scroll */
 
 .tf-app {
-  --tf-surface: var(--lc-surface, #ffffff);
-  --tf-soft: var(--lc-soft, #f1f5f9);
+  --tf-surface: var(--lc-card, #ffffff);
+  --tf-soft: var(--lc-page, #f1f5f9);
   --tf-line: var(--lc-line, #e2e8f0);
   --tf-ink: var(--lc-ink, #0f172a);
   --tf-muted: var(--lc-muted, #64748b);
@@ -33,7 +33,7 @@ html[data-theme="dark"] .tf-app,
 body[data-theme="dark"] .tf-app,
 html.dark .tf-app,
 body.dark .tf-app {
-  --tf-surface: var(--lc-surface, #141b2d);
+  --tf-surface: var(--lc-card, #141b2d);
   --tf-soft: #1e293b;
   --tf-line: #293548;
   --tf-ink: #f1f5f9;
@@ -437,6 +437,7 @@ body.dark .tf-app {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 6px 8px 6px 12px;
   background: var(--tf-surface);
@@ -543,8 +544,23 @@ body.dark .tf-app {
   .tf-foot-msg {
     font-size: 14px;
   }
+  .tf-foot-actions {
+    margin-left: auto;
+  }
   .tf-app .tf-foot-actions .lc-btn {
     padding: 9px 14px !important;
     font-size: 14px !important;
   }
+}
+
+@media (max-height: 680px), (max-width: 420px) {
+  html, body.game-page, .tf-app {
+    height: auto;
+    min-height: 100dvh;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .tf-stage { overflow: visible; }
+  .tf-sheet { min-height: 280px; }
 }

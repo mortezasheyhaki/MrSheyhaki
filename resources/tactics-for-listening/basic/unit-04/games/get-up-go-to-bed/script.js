@@ -28,6 +28,7 @@
   var ans = { upH: 12, upM: 0, bedH: 12, bedM: 0 };
   var checked = false;
   var results = []; // true if both times correct
+  var details = {}; // idx -> { up, bed }
   var playing = false;
   var audioError = false;
   var audio = null;
@@ -76,6 +77,17 @@
     }
   }
 
+  function updateAudioUI() {
+    var replay = document.getElementById("ggb-replay");
+    var title = document.querySelector(".ggb-listen-title");
+    if (replay) {
+      replay.className = "ggb-play" + (playing ? " is-playing" : "") + (audioError ? " is-error" : "");
+      replay.setAttribute("aria-label", playLabel());
+      replay.innerHTML = playIcon();
+    }
+    if (title) title.textContent = playLabel();
+  }
+
   function play() {
     if (!HAS_AUDIO) return;
     sfx("click");
@@ -84,12 +96,12 @@
     audio = new Audio(ITEMS[current].audio);
     audio.preload = "auto";
     playing = true;
-    renderPlay();
-    audio.onended = function () { playing = false; renderPlay(); };
-    audio.onerror = function () { playing = false; audioError = true; renderPlay(); };
+    updateAudioUI();
+    audio.onended = function () { playing = false; updateAudioUI(); };
+    audio.onerror = function () { playing = false; audioError = true; updateAudioUI(); };
     var p = audio.play();
     if (p && p.catch) {
-      p.catch(function () { playing = false; audioError = true; renderPlay(); });
+      p.catch(function () { playing = false; audioError = true; updateAudioUI(); });
     }
   }
 
@@ -138,6 +150,7 @@
     resetAns();
     checked = false;
     results = [];
+    details = {};
     playRecorded = false;
     stopAudio();
     phase = "play";
@@ -179,9 +192,7 @@
     var okUp = hourEq(ans.upH, it.upH) && normMin(ans.upM) === it.upM;
     var okBed = hourEq(ans.bedH, it.bedH) && normMin(ans.bedM) === it.bedM;
     results[current] = okUp && okBed;
-    // store detail for feedback
-    results[current + "_up"] = okUp;
-    results[current + "_bed"] = okBed;
+    details[current] = { up: okUp, bed: okBed };
     sfx(results[current] ? "correct" : "wrong");
     stopAudio();
     renderPlay();
@@ -319,8 +330,9 @@
     var last = current + 1 >= TOTAL;
     var playCls = "ggb-play" + (playing ? " is-playing" : "") + (audioError ? " is-error" : "");
 
-    var okUp = checked ? results[current + "_up"] : null;
-    var okBed = checked ? results[current + "_bed"] : null;
+    var det = details[current] || {};
+    var okUp = checked ? det.up : null;
+    var okBed = checked ? det.bed : null;
 
     var foot;
     if (!checked) {
@@ -365,7 +377,7 @@
     var replay = document.getElementById("ggb-replay");
     if (replay) {
       replay.onclick = function () {
-        if (playing) { stopAudio(); renderPlay(); }
+        if (playing) { stopAudio(); updateAudioUI(); }
         else play();
       };
     }
@@ -380,6 +392,16 @@
     ["upH", "upM", "bedH", "bedM"].forEach(function (k) {
       var el = document.getElementById("ggb-" + k);
       if (!el) return;
+      el.addEventListener("focus", function () {
+        try { el.select(); } catch (e) {}
+      });
+      el.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (!checked) checkAnswer();
+          else next();
+        }
+      });
       el.addEventListener("input", function () {
         if (checked) return;
         if (k.indexOf("H") >= 0) ans[k] = normHour(el.value);
@@ -431,7 +453,7 @@
     var k = e.key.toLowerCase();
     if (k === " " || k === "r") {
       e.preventDefault();
-      if (playing) { stopAudio(); renderPlay(); }
+      if (playing) { stopAudio(); updateAudioUI(); }
       else play();
     }
     if (k === "enter") {

@@ -1,6 +1,6 @@
 /* Word search · Tactics For Listening Basic Unit 4
  * Drag across letters in a straight line to select a word.
- * The word list is hidden on the board; the round button opens it.
+ * Desktop shows the word list beside the board; mobile uses the top-right Words button.
  */
 (function () {
   "use strict";
@@ -43,12 +43,13 @@
   var selected = [];
   var startCell = null;
   var dragging = false;
+  var completed = false;
+  var playRecorded = false;
   var cellEls = [];
   var boardEl = null;
   var modalEl = null;
   var countEl = null;
   var doneEl = null;
-  var started = false;
 
   function sfx(name) {
     try { if (window.LASfx && typeof LASfx[name] === "function") LASfx[name](); } catch (e) {}
@@ -60,15 +61,39 @@
 
   function foundCount() { return Object.keys(found).length; }
 
+  function saveProgress(stars) {
+    if (window.LAStars) {
+      if (!playRecorded) { LAStars.recordPlay(GAME_ID); playRecorded = true; }
+      LAStars.save(GAME_ID, stars);
+    }
+    try {
+      if (typeof window.LAProgressSave === "function") {
+        window.LAProgressSave({
+          gameId: GAME_ID,
+          gameName: GAME_NAME,
+          category: "tactics-for-listening",
+          unit: "basic-4",
+          score: foundCount(),
+          maxScore: WORDS.length,
+          accuracy: 100,
+          completed: true,
+          stars: stars
+        });
+      }
+    } catch (e) {}
+  }
+
   function topBar() {
     return (
-      '<header class="ws-top">' +
-      '<div class="ws-title"><span class="ws-eyebrow">' + esc(UNIT) + '</span><strong>' + esc(GAME_NAME) + '</strong></div>' +
+      '<header class="lc-top">' +
+      '<a class="lc-back" href="' + BACK + '" aria-label="Back to unit">←<span>Unit</span></a>' +
+      '<div class="lc-top-center"><span class="lc-eyebrow">' + esc(UNIT) + "</span><strong>" + esc(GAME_NAME) + "</strong></div>" +
       '<div class="ws-words-wrap">' +
-      '<button type="button" class="ws-words-btn" id="ws-open" aria-label="Show the words to find" title="Words">☰' +
-      '</button>' +
+      '<button type="button" class="ws-words-btn" id="ws-open" aria-label="Show the words to find" title="Words">' +
+      '<span aria-hidden="true">☰</span><span class="ws-words-btn-label">Words</span>' +
+      "</button>" +
       '<span class="ws-badge" id="ws-badge" aria-hidden="true" style="display:none"></span>' +
-      '</div>' +
+      "</div>" +
       "</header>"
     );
   }
@@ -76,11 +101,17 @@
   function render() {
     app.innerHTML =
       topBar() +
+      '<div class="ws-workspace">' +
       '<div class="ws-board-area"><div class="ws-board" id="ws-board" role="grid" aria-label="Letter grid"></div></div>' +
+      '<aside class="ws-sidebar" aria-label="Words to find">' +
+      '<h2 class="ws-sidebar-title">Find these words</h2>' +
+      '<ul class="ws-words" id="ws-words-side"></ul>' +
+      "</aside>" +
+      "</div>" +
       '<div class="ws-done" id="ws-done" hidden></div>' +
       '<footer class="ws-foot">' +
       '<span class="ws-found-count" id="ws-count"></span>' +
-      '<span>Drag across the letters</span>' +
+      '<span class="ws-foot-hint">Drag across letters in any straight line</span>' +
       '<button type="button" class="ws-foot-btn" id="ws-restart">Restart</button>' +
       "</footer>" +
       '<div class="ws-modal" id="ws-modal" hidden role="dialog" aria-modal="true" aria-labelledby="ws-sheet-title">' +
@@ -128,10 +159,13 @@
   }
 
   function buildWordList() {
-    var list = document.getElementById("ws-words");
-    list.innerHTML = WORDS.map(function (w, i) {
+    var html = WORDS.map(function (w, i) {
       return '<li data-i="' + i + '" class="' + (found[i] ? "is-found" : "") + '">' + esc(w) + "</li>";
     }).join("");
+    var list = document.getElementById("ws-words");
+    if (list) list.innerHTML = html;
+    var side = document.getElementById("ws-words-side");
+    if (side) side.innerHTML = html;
   }
 
   function updateStatus() {
@@ -142,7 +176,9 @@
       badge.textContent = (WORDS.length - n);
       badge.style.display = n < WORDS.length ? "" : "none";
     }
-    if (n === WORDS.length) {
+    buildWordList();
+    if (n === WORDS.length && !completed) {
+      completed = true;
       doneEl.hidden = false;
       doneEl.textContent = "Well done! You found all " + WORDS.length + " words.";
       finish();
@@ -161,10 +197,26 @@
     sfx("click");
   }
 
+  // Coordinate-based hit test so dragging across grid gaps never drops selection
   function cellFromPoint(x, y) {
+    if (!boardEl) return null;
     var el = document.elementFromPoint(x, y);
-    if (!el || !el.classList || !el.classList.contains("ws-cell")) return null;
-    return { r: +el.dataset.r, c: +el.dataset.c };
+    if (el && el.classList && el.classList.contains("ws-cell")) {
+      return { r: +el.dataset.r, c: +el.dataset.c };
+    }
+    var rect = boardEl.getBoundingClientRect();
+    var pad = 6;
+    var innerW = rect.width - pad * 2;
+    var innerH = rect.height - pad * 2;
+    if (innerW <= 0 || innerH <= 0) return null;
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      if (!dragging) return null;
+    }
+    var relX = Math.max(0, Math.min(innerW - 0.01, x - (rect.left + pad)));
+    var relY = Math.max(0, Math.min(innerH - 0.01, y - (rect.top + pad)));
+    var c = Math.max(0, Math.min(N - 1, Math.floor((relX / innerW) * N)));
+    var r = Math.max(0, Math.min(N - 1, Math.floor((relY / innerH) * N)));
+    return { r: r, c: c };
   }
 
   function lineBetween(a, b) {
@@ -224,6 +276,7 @@
   }
 
   function onDown(e) {
+    if (completed) return;
     var p = cellFromPoint(e.clientX, e.clientY);
     if (!p) return;
     dragging = true;
@@ -233,10 +286,11 @@
   }
 
   function onMove(e) {
-    if (!dragging) return;
+    if (!dragging || completed) return;
     var p = cellFromPoint(e.clientX, e.clientY);
     if (!p) return;
-    paintSelection(lineBetween(startCell, p));
+    var line = lineBetween(startCell, p);
+    if (line) paintSelection(line);
   }
 
   function onUp() {
@@ -247,10 +301,8 @@
 
   function finish() {
     var stars = 3;
-    if (window.LAStars) {
-      LAStars.recordPlay(GAME_ID);
-      LAStars.save(GAME_ID, stars);
-    }
+    saveProgress(stars);
+    sfx("win");
     if (window.LAFinish && typeof LAFinish.show === "function") {
       var timeMs = typeof LAFinish.stopTimer === "function" ? LAFinish.stopTimer() : 0;
       LAFinish.show({
@@ -265,7 +317,24 @@
         backHref: BACK,
         save: false
       });
+      return;
     }
+    renderDone();
+  }
+
+  function renderDone() {
+    app.innerHTML =
+      topBar() +
+      '<section class="lc-intro">' +
+      '<div class="lc-intro-main">' +
+      '<div class="lc-hero-icon" aria-hidden="true">🏆</div>' +
+      "<h1>All " + WORDS.length + " words found!</h1>" +
+      '<p class="lc-intro-lede">Great job finding every Unit 4 phrase in the grid.</p>' +
+      '<div class="lc-start-row" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">' +
+      '<button type="button" class="lc-btn primary" id="ws-again">Play again</button>' +
+      '<a class="lc-btn secondary" href="' + BACK + '">Back to Unit 4</a>' +
+      "</div></div></section>";
+    document.getElementById("ws-again").onclick = startGame;
   }
 
   function startGame() {
@@ -274,6 +343,8 @@
     foundCells = {};
     selected = [];
     dragging = false;
+    completed = false;
+    playRecorded = false;
     render();
   }
 

@@ -1,4 +1,4 @@
-/* Complete the sentences · Tactics For Listening Basic Unit 4 · one screen, no scroll */
+/* Complete the sentences · Tactics For Listening Basic Unit 4 · Desktop & mobile responsive */
 
 .sc-app {
   max-width: 720px;
@@ -9,43 +9,29 @@
   padding: max(8px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   box-sizing: border-box;
   overflow: hidden;
 }
 
 /* ----- header ----- */
-.sc-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+.sc-app .lc-top {
+  margin: 0;
   flex: 0 0 auto;
-  padding-top: 4px;
 }
-.sc-eyebrow {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--lc-muted);
-}
-.sc-title strong {
-  display: block;
-  font-size: 19px;
-  color: var(--lc-ink);
-}
+
 .sc-score {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   color: var(--lc-ink);
-  padding: 7px 14px;
+  padding: 7px 12px;
   border-radius: 999px;
   background: var(--lc-accent-soft);
   border: 1px solid var(--lc-accent-line);
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
+
 .sc-progress {
   flex: 0 0 auto;
   height: 6px;
@@ -69,12 +55,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 22px;
+  gap: 20px;
   background: var(--lc-card);
   border: 1px solid var(--lc-line);
   border-radius: 24px;
   box-shadow: var(--lc-shadow);
   padding: 24px 20px;
+  overflow-y: auto;
 }
 .sc-q-label {
   font-size: 12px;
@@ -87,38 +74,52 @@
   margin: 0;
   max-width: 34em;
   text-align: center;
-  font-size: clamp(20px, 3.8dvh, 27px);
-  line-height: 1.6;
+  font-size: clamp(19px, 3.4dvh, 26px);
+  line-height: 1.65;
   color: var(--lc-ink);
 }
 .sc-gap {
   display: inline-block;
-  min-width: 130px;
+  min-width: 124px;
   margin: 0 2px;
   padding: 0 10px;
   border-bottom: 3px solid var(--lc-accent);
   color: var(--lc-accent);
   font-weight: 800;
   text-align: center;
-  transition: color .2s, border-color .2s;
+  transition: color .2s, border-color .2s, background-color .2s;
 }
-.sc-gap.is-ok { color: var(--lc-ok-ink); border-color: var(--lc-ok); }
-.sc-gap.is-reveal { color: var(--lc-ok-ink); border-color: var(--lc-ok); }
-.sc-gap.is-bad { color: var(--lc-bad-ink); border-color: var(--lc-bad); }
+.sc-gap.is-picked {
+  color: var(--lc-accent);
+  border-color: var(--lc-accent);
+  background: var(--lc-accent-soft);
+  border-radius: 8px;
+}
+.sc-gap.is-ok,
+.sc-gap.is-reveal {
+  color: var(--lc-ok-ink);
+  border-color: var(--lc-ok);
+  background: var(--lc-ok-soft);
+  border-radius: 8px;
+}
+.sc-gap.is-bad {
+  color: var(--lc-bad-ink);
+  border-color: var(--lc-bad);
+}
 
 /* ----- chips ----- */
 .sc-chips {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
 }
 .sc-chip {
   font: inherit;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 800;
-  min-height: 56px;
-  padding: 12px 24px;
+  min-height: 52px;
+  padding: 11px 22px;
   border-radius: 999px;
   border: 2px solid var(--lc-line);
   background: var(--lc-card);
@@ -130,33 +131,11 @@
 }
 .sc-chip:hover:not(:disabled) { border-color: var(--lc-accent); transform: translateY(-1px); }
 .sc-chip:active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
-.sc-chip:focus-visible { outline: 3px solid var(--lc-ring-color, #5c7cfa); outline-offset: 3px; }
+.sc-chip:focus-visible { outline: none; box-shadow: var(--lc-ring); }
 .sc-chip:disabled { cursor: default; }
 .sc-chip.is-correct { background: var(--lc-ok-soft); border-color: var(--lc-ok); color: var(--lc-ok-ink); box-shadow: 0 4px 0 var(--lc-ok); }
 .sc-chip.is-wrong { background: var(--lc-bad-soft); border-color: var(--lc-bad); color: var(--lc-bad-ink); box-shadow: 0 4px 0 var(--lc-bad); }
 .sc-chip.is-missed { border-style: dashed; border-color: var(--lc-ok); color: var(--lc-ok-ink); }
-
-/* ----- feedback + action button, directly under the chips ----- */
-.sc-after {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  min-height: 110px;
-  justify-content: flex-start;
-}
-.sc-feedback {
-  min-height: 24px;
-  margin: 0;
-  text-align: center;
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--lc-muted);
-}
-.sc-feedback.is-ok { color: var(--lc-ok-ink); }
-.sc-feedback.is-bad { color: var(--lc-bad-ink); }
-
-/* Chip selected but not yet checked */
 .sc-chip.is-selected {
   border-color: var(--lc-accent);
   background: var(--lc-accent-soft);
@@ -164,17 +143,40 @@
   box-shadow: 0 4px 0 var(--lc-accent);
 }
 
-/* Step 2: Check (cool, outlined) */
+/* ----- feedback + action button, directly under the chips ----- */
+.sc-after {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-height: 98px;
+  width: 100%;
+  justify-content: flex-start;
+}
+.sc-feedback {
+  min-height: 24px;
+  margin: 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--lc-muted);
+}
+.sc-feedback.is-ok { color: var(--lc-ok-ink); }
+.sc-feedback.is-bad { color: var(--lc-bad-ink); }
+
 .sc-btn {
   font: inherit;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 900;
   min-width: 200px;
-  padding: 13px 30px;
+  min-height: 48px;
+  padding: 12px 28px;
   border-radius: 16px;
   cursor: pointer;
+  touch-action: manipulation;
   transition: transform .1s, box-shadow .12s, opacity .2s, background .2s;
 }
+.sc-btn:focus-visible { outline: none; box-shadow: var(--lc-ring); }
 .sc-btn:disabled { cursor: default; }
 .sc-btn-check {
   background: var(--lc-accent);
@@ -187,28 +189,44 @@
   background: var(--lc-line);
   color: var(--lc-muted);
   box-shadow: none;
-  opacity: .7;
+  opacity: .75;
 }
 
-/* Step 3: Next (solid green, arrow, gentle pulse) */
 .sc-btn-next {
-  background: linear-gradient(180deg, #46d9a6, #0f9d74);
-  color: #053b2a;
+  background: linear-gradient(180deg, #12b886, #099268);
+  color: #ffffff;
   border: none;
-  box-shadow: 0 5px 0 #0a6e52;
+  box-shadow: 0 5px 0 #087f5b;
   animation: sc-pulse 1.6s ease-in-out infinite;
 }
-.sc-btn-next:active { transform: translateY(3px); box-shadow: 0 2px 0 #0a6e52; animation: none; }
+.sc-btn-next:active { transform: translateY(3px); box-shadow: 0 2px 0 #087f5b; animation: none; }
 @keyframes sc-pulse {
-  0%, 100% { box-shadow: 0 5px 0 #0a6e52, 0 0 0 0 rgba(15, 157, 116, .35); }
-  50% { box-shadow: 0 5px 0 #0a6e52, 0 0 0 8px rgba(15, 157, 116, 0); }
+  0%, 100% { box-shadow: 0 5px 0 #087f5b, 0 0 0 0 rgba(15, 157, 116, .35); }
+  50% { box-shadow: 0 5px 0 #087f5b, 0 0 0 8px rgba(15, 157, 116, 0); }
 }
 
-@media (max-width: 520px) {
-  .sc-chip { font-size: 17px; padding: 11px 20px; }
-  .sc-gap { min-width: 110px; }
-  .sc-stage { gap: 18px; padding: 20px 14px; }
+@media (max-width: 560px) {
+  .sc-score { font-size: 12px; padding: 6px 10px; }
+  .sc-chip { font-size: 16px; min-height: 48px; padding: 10px 18px; }
+  .sc-gap { min-width: 100px; }
+  .sc-stage { gap: 16px; padding: 18px 14px; justify-content: flex-start; }
+  .sc-sentence { font-size: 19px; }
+  .sc-btn { width: 100%; max-width: 280px; }
 }
 
-/* gap while picking: soft accent so the choice is visible before checking */
-.sc-gap.is-picked { color: var(--lc-accent); border-color: var(--lc-accent); background: var(--lc-accent-soft); border-radius: 8px; }
+@media (max-height: 700px), (max-width: 600px) {
+  html, body.game-page, .sc-app {
+    height: auto;
+    min-height: 100dvh;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .sc-stage {
+    overflow: visible;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-btn-next { animation: none; }
+}

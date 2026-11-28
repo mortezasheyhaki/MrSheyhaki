@@ -109,9 +109,11 @@
     s = String(s || "")
       .toLowerCase()
       .trim()
+      .replace(/(?:^|\s)(?:a\.?\s*m\.?|p\.?\s*m\.?|o'?clock)(?=\s|$)/gi, " ")
       .replace(/[^\w\s:.]/g, "")
-      .replace(/\s+/g, " ");
-    // 5:15 / 5.15 / 515 → comparable forms already in accept lists
+      .replace(/\s+/g, " ")
+      .trim()
+      .replace(/^0+([1-9])/, "$1");
     return s;
   }
 
@@ -133,11 +135,23 @@
     }
   }
 
+  function updateAudioUI() {
+    var replay = document.getElementById("mt-replay");
+    var title = document.querySelector(".mt-head-text strong");
+    if (replay) {
+      replay.className = "mt-play" + (playing ? " is-playing" : "") + (audioError ? " is-error" : "");
+      replay.innerHTML = playIcon();
+    }
+    if (title) {
+      title.textContent = audioError ? "Audio unavailable" : playing ? "Playing…" : "Listen to the conversation";
+    }
+  }
+
   function play() {
     if (!HAS_AUDIO) return;
     if (playing) {
       stopAudio();
-      renderPlay();
+      updateAudioUI();
       return;
     }
     if (!audio) {
@@ -146,15 +160,15 @@
     }
     audioError = false;
     playing = true;
-    renderPlay();
+    updateAudioUI();
     audio.onended = function () {
       playing = false;
-      renderPlay();
+      updateAudioUI();
     };
     audio.onerror = function () {
       playing = false;
       audioError = true;
-      renderPlay();
+      updateAudioUI();
     };
     try {
       audio.currentTime = 0;
@@ -164,7 +178,7 @@
       p.catch(function () {
         playing = false;
         audioError = true;
-        renderPlay();
+        updateAudioUI();
       });
     }
   }
@@ -188,6 +202,21 @@
       LAStars.recordPlay(GAME_ID);
       LAStars.save(GAME_ID, stars);
     }
+    try {
+      if (typeof window.LAProgressSave === "function") {
+        window.LAProgressSave({
+          gameId: GAME_ID,
+          gameName: GAME_NAME,
+          category: "tactics-for-listening",
+          unit: "basic-4",
+          score: score(),
+          maxScore: TOTAL,
+          accuracy: Math.round((score() / TOTAL) * 100),
+          completed: true,
+          stars: stars
+        });
+      }
+    } catch (e) {}
   }
 
   function startGame() {
@@ -285,7 +314,7 @@
     return (
       '<span class="' + cls + '">' +
       '<input type="text" id="inp-' + b.id + '" class="mt-input" ' +
-      'placeholder="— : —" inputmode="decimal" autocomplete="off" spellcheck="false" ' +
+      'placeholder="— : —" inputmode="text" autocomplete="off" spellcheck="false" ' +
       (checked ? "disabled " : "") +
       'value="' + esc(val) + '" data-idx="' + idx + '" aria-label="Blank ' + (idx + 1) + '">' +
       feedback +
@@ -402,9 +431,6 @@
       });
       var checkBtn = document.getElementById("mt-check");
       if (checkBtn) checkBtn.onclick = checkAnswers;
-      // focus first empty
-      var first = document.getElementById("inp-b1");
-      if (first) setTimeout(function () { first.focus(); }, 200);
     } else {
       var fin = document.getElementById("mt-finish");
       if (fin) fin.onclick = finish;

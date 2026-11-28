@@ -33,6 +33,8 @@
   var answered = false;   // checked?
   var selected = null;    // chosen option text, before checking
   var current = null;
+  var phase = "play";
+  var playRecorded = false;
 
   function sfx(name) {
     try { if (window.LASfx && typeof LASfx[name] === "function") LASfx[name](); } catch (e) {}
@@ -51,12 +53,19 @@
     return a;
   }
 
+  function topBar() {
+    return (
+      '<header class="lc-top">' +
+      '<a class="lc-back" href="' + BACK + '" aria-label="Back to unit">←<span>Unit</span></a>' +
+      '<div class="lc-top-center"><span class="lc-eyebrow">' + esc(UNIT) + "</span><strong>" + esc(GAME_NAME) + "</strong></div>" +
+      '<span class="sc-score" id="sc-score"></span>' +
+      "</header>"
+    );
+  }
+
   function renderShell() {
     app.innerHTML =
-      '<header class="sc-top">' +
-      '<div class="sc-title"><span class="sc-eyebrow">' + esc(UNIT) + "</span><strong>" + esc(GAME_NAME) + "</strong></div>" +
-      '<span class="sc-score" id="sc-score"></span>' +
-      "</header>" +
+      topBar() +
       '<div class="sc-progress"><div class="sc-progress-fill" id="sc-fill"></div></div>' +
       '<section class="sc-stage" id="sc-stage"></section>';
   }
@@ -64,7 +73,7 @@
   function updateHeader() {
     var fill = document.getElementById("sc-fill");
     var score_el = document.getElementById("sc-score");
-    if (score_el) score_el.textContent = "Score " + score + " / " + ITEMS.length;
+    if (score_el) score_el.textContent = score + " / " + ITEMS.length;
     if (fill) fill.style.width = ((answered ? pos + 1 : pos) / ITEMS.length) * 100 + "%";
   }
 
@@ -100,8 +109,9 @@
 
   // Step 1: select a chip (tap another chip to change the choice)
   function pick(opt) {
-    if (answered || !current) return;
+    if (phase !== "play" || answered || !current) return;
     selected = opt;
+    sfx("tap");
     var gap = document.getElementById("sc-gap");
     gap.innerHTML = "&nbsp;" + esc(opt) + "&nbsp;";
     gap.classList.remove("is-ok", "is-reveal", "is-bad");
@@ -171,13 +181,34 @@
     }
   }
 
-  function finish() {
-    var pct = score / ITEMS.length;
-    var stars = pct >= 0.9 ? 3 : pct >= 0.6 ? 2 : pct >= 0.3 ? 1 : 0;
+  function saveProgress(stars, pct) {
     if (window.LAStars) {
-      LAStars.recordPlay(GAME_ID);
+      if (!playRecorded) { LAStars.recordPlay(GAME_ID); playRecorded = true; }
       LAStars.save(GAME_ID, stars);
     }
+    try {
+      if (typeof window.LAProgressSave === "function") {
+        window.LAProgressSave({
+          gameId: GAME_ID,
+          gameName: GAME_NAME,
+          category: "tactics-for-listening",
+          unit: "basic-4",
+          score: score,
+          maxScore: ITEMS.length,
+          accuracy: Math.round(pct * 100),
+          completed: true,
+          stars: stars
+        });
+      }
+    } catch (e) {}
+  }
+
+  function finish() {
+    phase = "done";
+    var pct = score / ITEMS.length;
+    var stars = pct >= 0.9 ? 3 : pct >= 0.6 ? 2 : pct >= 0.3 ? 1 : 0;
+    saveProgress(stars, pct);
+    sfx("win");
     if (window.LAFinish && typeof LAFinish.show === "function") {
       var timeMs = typeof LAFinish.stopTimer === "function" ? LAFinish.stopTimer() : 0;
       LAFinish.show({
@@ -192,11 +223,31 @@
         backHref: BACK,
         save: false
       });
+      return;
     }
+    renderDone();
+  }
+
+  function renderDone() {
+    app.innerHTML =
+      topBar() +
+      '<section class="lc-intro">' +
+      '<div class="lc-intro-main">' +
+      '<div class="lc-hero-icon" aria-hidden="true">🏆</div>' +
+      "<h1>" + score + " of " + ITEMS.length + " correct</h1>" +
+      '<p class="lc-intro-lede">Great job completing the Unit 4 vocabulary sentences!</p>' +
+      '<div class="lc-start-row" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">' +
+      '<button type="button" class="lc-btn primary" id="sc-again">Play again</button>' +
+      '<a class="lc-btn secondary" href="' + BACK + '">Back to Unit 4</a>' +
+      "</div></div></section>";
+    updateHeader();
+    document.getElementById("sc-again").onclick = startGame;
   }
 
   function startGame() {
     if (window.LAFinish && typeof LAFinish.startTimer === "function") LAFinish.startTimer();
+    phase = "play";
+    playRecorded = false;
     order = shuffle(ITEMS.map(function (_, i) { return i; }));
     pos = 0;
     score = 0;
@@ -206,6 +257,7 @@
   }
 
   document.addEventListener("keydown", function (e) {
+    if (phase !== "play") return;
     if (e.key === "Enter") {
       var action = document.getElementById("sc-action");
       if (action && !action.disabled) { e.preventDefault(); onAction(); }

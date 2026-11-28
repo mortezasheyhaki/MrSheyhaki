@@ -954,10 +954,104 @@
     .pf-table a.game-link:hover { color: var(--pf-accent); text-decoration: underline; }
 
     /* Leaderboard */
+    @keyframes lbRiseIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.985); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes lbSlideIn {
+      from { opacity: 0; transform: translateX(-8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes lbCrownFloat {
+      0%, 100% { transform: translateY(0) rotate(-3deg); }
+      50%      { transform: translateY(-4px) rotate(3deg); }
+    }
+    @keyframes lbSweep {
+      0%   { transform: translateX(-120%) skewX(-18deg); opacity: 0; }
+      20%  { opacity: 0.36; }
+      45%  { transform: translateX(220%) skewX(-18deg); opacity: 0; }
+      100% { transform: translateX(220%) skewX(-18deg); opacity: 0; }
+    }
+    @keyframes lbMeterFill {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+    @keyframes lbSkelPulse {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .lb-head-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .lb-action-btn, .lb-full-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid var(--pf-border);
+      background: var(--pf-surface-alt);
+      color: var(--pf-text);
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.78rem;
+      padding: 7px 13px;
+      border-radius: 10px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+    }
+    .lb-action-btn:hover, .lb-full-link:hover {
+      border-color: var(--pf-outline-glow);
+      color: var(--pf-accent);
+      box-shadow: 0 0 16px -4px var(--pf-glow-soft);
+      transform: translateY(-1px);
+    }
+    .lb-action-btn:disabled { opacity: 0.55; cursor: wait; }
+    .lb-full-link {
+      background: var(--pf-accent-soft);
+      border-color: var(--pf-outline-glow);
+      color: var(--pf-accent);
+      box-shadow: 0 0 18px -6px var(--pf-glow-soft);
+    }
+    .lb-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
     .lb-filters {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
+      flex: 1 1 280px;
+    }
+    .lb-select-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .lb-select {
+      border: 1.5px solid var(--pf-border);
+      background: var(--pf-surface-alt);
+      color: var(--pf-text);
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 7px 10px;
+      border-radius: 10px;
+      max-width: 240px;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+    .lb-select:focus {
+      border-color: var(--pf-accent);
+      box-shadow: 0 0 0 3px var(--pf-glow-soft);
     }
     .lb-chip {
       border: 1.5px solid var(--pf-border);
@@ -969,74 +1063,318 @@
       padding: 7px 12px;
       border-radius: 10px;
       cursor: pointer;
-      transition: border-color 0.16s ease, box-shadow 0.16s ease, color 0.16s ease;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, color 0.16s ease, transform 0.14s ease;
     }
     .lb-chip:hover {
-      border-color: var(--pf-accent-border);
+      border-color: var(--pf-outline-glow);
       color: var(--pf-text);
+      transform: translateY(-1px);
     }
     .lb-chip.is-on {
       background: var(--pf-accent-soft);
       color: var(--pf-accent);
       border-color: var(--pf-outline-glow);
-      box-shadow: 0 0 14px -3px var(--pf-glow-soft);
+      box-shadow: 0 0 16px -3px var(--pf-glow-soft);
+    }
+    .lb-standing {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 13px 15px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--pf-accent-soft) 0%, rgba(14, 165, 233, 0.08) 100%);
+      border: 1.5px solid var(--pf-outline-glow);
+      box-shadow: 0 0 22px -5px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
+      animation: lbRiseIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .lb-standing::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 36%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      pointer-events: none;
+      animation: lbSweep 6.5s ease-in-out infinite;
+    }
+    .lb-standing[hidden] { display: none; }
+    .lb-standing-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .lb-standing-pos {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--pf-accent);
+      padding: 5px 11px;
+      border-radius: 10px;
+      background: var(--pf-surface);
+      border: 1.5px solid var(--pf-outline-glow);
+      box-shadow: 0 0 14px -4px var(--pf-glow-soft);
+    }
+    .lb-standing-title {
+      font-weight: 800;
+      font-size: 0.93rem;
+      color: var(--pf-text);
+    }
+    .lb-standing-sub {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--pf-muted);
+    }
+    .lb-standing-metrics {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--pf-text);
     }
     .lb-podium {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
+      gap: 12px;
       align-items: end;
+      padding-top: 4px;
     }
-    @media (max-width: 520px) {
-      .lb-podium { grid-template-columns: 1fr; }
+    @media (max-width: 600px) {
+      .lb-podium { grid-template-columns: 1fr; align-items: stretch; }
+      .lb-pod { order: 0 !important; min-height: auto !important; }
     }
     .lb-pod {
+      position: relative;
+      overflow: hidden;
       background: var(--pf-surface-alt);
       border: 1.5px solid var(--pf-border);
-      border-radius: 12px;
-      padding: 14px 10px;
+      border-radius: 14px;
+      padding: 16px 12px;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
       box-shadow: inset 0 1px 0 var(--pf-rim);
+      animation: lbRiseIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: var(--pod-delay, 0ms);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
     }
+    .lb-pod:hover { transform: translateY(-3px); }
+    .lb-pod::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      pointer-events: none;
+    }
+    .lb-pod.r1 {
+      order: 2;
+      min-height: 204px;
+      justify-content: center;
+      border-color: var(--pf-gold-border);
+      background: linear-gradient(180deg, rgba(245, 158, 11, 0.12) 0%, var(--pf-surface-alt) 82%);
+      box-shadow: 0 0 28px -5px rgba(245, 158, 11, 0.36), inset 0 1px 0 var(--pf-rim);
+    }
+    .lb-pod.r1::before { background: linear-gradient(90deg, transparent, #fbbf24, #f59e0b, transparent); }
+    .lb-pod.r1::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 44%;
+      background: linear-gradient(90deg, transparent, rgba(255, 248, 220, 0.22), transparent);
+      pointer-events: none;
+      animation: lbSweep 5.5s ease-in-out infinite;
+    }
+    .lb-pod.r1 .lb-pod-medal { animation: lbCrownFloat 3s ease-in-out infinite; }
+    .lb-pod.r2 {
+      order: 1;
+      min-height: 178px;
+      justify-content: center;
+      border-color: rgba(56, 189, 248, 0.55);
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, var(--pf-surface-alt) 84%);
+      box-shadow: 0 0 22px -7px rgba(56, 189, 248, 0.35), inset 0 1px 0 var(--pf-rim);
+    }
+    .lb-pod.r2::before { background: linear-gradient(90deg, transparent, #38bdf8, #a78bfa, transparent); }
+    .lb-pod.r3 {
+      order: 3;
+      min-height: 166px;
+      justify-content: center;
+      border-color: rgba(251, 146, 60, 0.48);
+      background: linear-gradient(180deg, rgba(251, 146, 60, 0.07) 0%, var(--pf-surface-alt) 84%);
+      box-shadow: 0 0 20px -7px rgba(251, 146, 60, 0.3), inset 0 1px 0 var(--pf-rim);
+    }
+    .lb-pod.r3::before { background: linear-gradient(90deg, transparent, #fb923c, #f59e0b, transparent); }
     .lb-pod.is-me {
-      border-color: var(--pf-accent);
-      background: var(--pf-accent-soft);
-      box-shadow: 0 0 22px -4px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
+      box-shadow: 0 0 0 2px var(--pf-accent), 0 0 28px -4px var(--pf-glow-soft), inset 0 1px 0 var(--pf-rim);
     }
-    .lb-pod-medal { font-size: 1.35rem; }
-    .lb-pod-name {
-      margin-top: 4px;
+    .lb-pod-medal { font-size: 1.35rem; line-height: 1; }
+    .lb-pod-av {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6d28d9, #0284c7);
+      color: #fff;
+      display: grid;
+      place-items: center;
       font-weight: 800;
-      font-size: 0.9rem;
+      font-size: 1rem;
+      margin-top: 2px;
+      border: 1.5px solid rgba(255, 255, 255, 0.28);
+      box-shadow: 0 0 14px -3px var(--pf-glow-soft);
+    }
+    .lb-pod.r1 .lb-pod-av {
+      width: 46px;
+      height: 46px;
+      font-size: 1.15rem;
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+    }
+    .lb-pod.r3 .lb-pod-av {
+      background: linear-gradient(135deg, #ea580c, #b45309);
+    }
+    .lb-pod-name {
+      margin-top: 2px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      max-width: 100%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .lb-pod-tier {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--pf-muted);
+    }
     .lb-pod-score {
-      margin-top: 4px;
+      margin-top: 2px;
       font-weight: 800;
-      font-size: 1.05rem;
+      font-size: 1.12rem;
       color: var(--pf-accent);
     }
-    .lb-pod-rank { font-size: 0.75rem; color: var(--pf-muted); font-weight: 600; margin-top: 2px; }
-    .lb-list { display: flex; flex-direction: column; gap: 6px; }
+    .lb-pod.r1 .lb-pod-score { color: var(--pf-gold); }
+    .lb-pod-rank { font-size: 0.74rem; color: var(--pf-muted); font-weight: 600; }
+    .lb-list { display: flex; flex-direction: column; gap: 7px; }
     .lb-row {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
+      gap: 10px;
       padding: 10px 14px;
-      border-radius: 10px;
+      border-radius: 11px;
       background: var(--pf-surface-alt);
       border: 1.5px solid var(--pf-border);
+      animation: lbSlideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: var(--row-delay, 0ms);
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+    }
+    .lb-row:hover {
+      border-color: var(--pf-outline-glow);
+      box-shadow: 0 0 16px -5px var(--pf-glow-soft);
+      transform: translateX(3px);
     }
     .lb-row.is-me {
       background: var(--pf-accent-soft);
       border-color: var(--pf-outline-glow);
-      box-shadow: 0 0 16px -4px var(--pf-glow-soft);
+      box-shadow: 0 0 20px -4px var(--pf-glow-soft);
     }
-    .lb-row-rank { width: 28px; font-weight: 800; color: var(--pf-muted); }
-    .lb-row-name { flex: 1; font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-row-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+    .lb-row-rank { width: 30px; flex-shrink: 0; font-weight: 800; color: var(--pf-muted); }
+    .lb-row-av {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: var(--pf-surface);
+      border: 1.5px solid var(--pf-outline-glow);
+      color: var(--pf-accent);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.82rem;
+      flex-shrink: 0;
+    }
+    .lb-row-name-wrap {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .lb-row-name { font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-row-sub { font-size: 0.74rem; color: var(--pf-muted); font-weight: 600; }
+    .lb-row-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .lb-row-meta { font-size: 0.78rem; color: var(--pf-muted); font-weight: 700; }
+    .lb-row-score-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+      min-width: 72px;
+    }
     .lb-row-score { font-weight: 800; color: var(--pf-accent); }
+    .lb-row-meter {
+      width: 68px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--pf-border);
+      overflow: hidden;
+    }
+    .lb-row-meter-fill {
+      display: block;
+      height: 100%;
+      width: var(--pct, 0%);
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--pf-accent), #38bdf8);
+      transform-origin: left center;
+      animation: lbMeterFill 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: var(--row-delay, 40ms);
+    }
+    .lb-skel-wrap { display: flex; flex-direction: column; gap: 10px; }
+    .lb-skel-line {
+      position: relative;
+      overflow: hidden;
+      height: 54px;
+      border-radius: 12px;
+      background: var(--pf-surface-alt);
+      border: 1.5px solid var(--pf-border);
+    }
+    .lb-skel-line::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.16), transparent);
+      animation: lbSkelPulse 1.35s infinite;
+    }
+    .lb-footer-link {
+      display: flex;
+      justify-content: center;
+      padding-top: 4px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .lb-standing, .lb-standing::after, .lb-pod, .lb-pod.r1::after, .lb-pod.r1 .lb-pod-medal,
+      .lb-row, .lb-row-meter-fill, .lb-skel-line::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
 
     /* Account & Settings forms */
     .pf-form { display: flex; flex-direction: column; gap: 14px; }
@@ -1731,18 +2069,44 @@
     <section class="pf-panel" id="panel-leaderboard" role="tabpanel">
       <div class="pf-section">
         <div class="pf-section-head">
-          <h2>Class Leaderboard</h2>
-          <span class="pf-section-meta" id="lbMeta">Overall</span>
+          <div>
+            <h2>Class Leaderboard</h2>
+            <span class="pf-section-meta" id="lbMeta">Overall · Live Rankings</span>
+          </div>
+          <div class="lb-head-actions">
+            <button type="button" class="lb-action-btn" id="lbRefreshBtn">↻ Refresh</button>
+            <a class="lb-full-link" href="../leaderboard/">Open Full Board →</a>
+          </div>
         </div>
-        <div class="lb-filters" id="lbFilters" role="tablist" aria-label="Filter leaderboard by game">
-          <button type="button" class="lb-chip is-on" data-game="overall">Overall</button>
+        <div class="lb-standing" id="lbStanding" hidden></div>
+        <div class="lb-toolbar">
+          <div class="lb-filters" id="lbFilters" role="tablist" aria-label="Filter leaderboard by game">
+            <button type="button" class="lb-chip is-on" data-game="overall">Overall XP</button>
+          </div>
+          <div class="lb-select-group">
+            <select class="lb-select" id="lbClassSelect" aria-label="Filter by class" hidden>
+              <option value="">All Classes</option>
+            </select>
+            <select class="lb-select" id="lbGameSelect" aria-label="Choose any game leaderboard">
+              <option value="overall">All Games (Overall XP)</option>
+            </select>
+          </div>
         </div>
-        <div id="lbBody" style="display:flex;flex-direction:column;gap:14px;">
+        <div id="lbSkeleton" class="lb-skel-wrap" hidden>
+          <div class="lb-skel-line"></div>
+          <div class="lb-skel-line"></div>
+          <div class="lb-skel-line"></div>
+        </div>
+        <div id="lbBody" style="display:none;flex-direction:column;gap:14px;">
           <div class="lb-podium" id="lbPodium"></div>
           <div class="lb-list" id="lbList"></div>
+          <div class="lb-footer-link" id="lbFooterLink" hidden>
+            <a class="lb-full-link" href="../leaderboard/">Explore All Players &amp; Skill Filters →</a>
+          </div>
         </div>
         <div class="pf-empty" id="lbEmpty" hidden>
-          No scores on the board yet. Finish a game with your showing name set to appear here.
+          <p id="lbEmptyText" style="margin:0;">No scores on the board yet. Finish a game to appear here.</p>
+          <button type="button" class="lb-action-btn" id="lbRetryBtn" style="margin-top:10px;" hidden>Try Again</button>
         </div>
       </div>
     </section>
@@ -3020,18 +3384,32 @@
     }
 
     /* Leaderboard */
-    var lbCache = { overall: [], games: {}, loaded: false, filter: "overall" };
+    var lbCache = { data: null, loaded: false, filter: "overall", classFilter: "" };
     var lbFilters = document.getElementById("lbFilters");
+    var lbGameSelect = document.getElementById("lbGameSelect");
+    var lbClassSelect = document.getElementById("lbClassSelect");
+    var lbRefreshBtn = document.getElementById("lbRefreshBtn");
+    var lbRetryBtn = document.getElementById("lbRetryBtn");
+    var lbStanding = document.getElementById("lbStanding");
     var lbPodium = document.getElementById("lbPodium");
     var lbList = document.getElementById("lbList");
     var lbEmpty = document.getElementById("lbEmpty");
+    var lbEmptyText = document.getElementById("lbEmptyText");
     var lbMeta = document.getElementById("lbMeta");
     var lbBody = document.getElementById("lbBody");
+    var lbFooterLink = document.getElementById("lbFooterLink");
 
-    function myNameKey() {
+    function isMeRow(row) {
+      if (!row) return false;
       var s = state.session;
-      var n = (s && (s.displayName || s.username)) || (window.LAScores ? LAScores.getPlayerName() : "") || "";
-      return String(n).trim().toLowerCase();
+      if (s && s.id && row.userId && String(row.userId) === String(s.id)) return true;
+      var rowUser = String(row.username || "").trim().toLowerCase();
+      var myUser = s && s.username ? String(s.username).trim().toLowerCase() : "";
+      if (myUser && rowUser && myUser === rowUser) return true;
+      var rowName = String(row.name || "").trim().toLowerCase();
+      var myDisplay = s && s.displayName ? String(s.displayName).trim().toLowerCase() : "";
+      var myLocal = window.LAScores && LAScores.getPlayerName ? String(LAScores.getPlayerName() || "").trim().toLowerCase() : "";
+      return Boolean((myDisplay && rowName === myDisplay) || (myLocal && rowName === myLocal) || (myUser && rowName === myUser));
     }
 
     function medal(rank) {
@@ -3041,147 +3419,322 @@
       return String(rank);
     }
 
-    function buildLbFilters(gameIds) {
-      lbFilters.innerHTML = '<button type="button" class="lb-chip is-on" data-game="overall">Overall</button>';
-      (gameIds || []).forEach(function (id) {
+    function starsInline(n) {
+      var count = Math.max(0, Math.min(3, Math.round(Number(n) || 0)));
+      var out = "";
+      for (var i = 0; i < 3; i++) out += i < count ? "★" : "☆";
+      return out;
+    }
+
+    function gameLabelForId(gid) {
+      var list = (lbCache.data && lbCache.data.gameList) || [];
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === gid) return list[i].title;
+      }
+      return prettyTitle(gid);
+    }
+
+    function buildLbControls(data) {
+      var gameList = (data && data.gameList) || [];
+      var classes = (data && data.classes) || [];
+
+      if (lbGameSelect) {
+        lbGameSelect.innerHTML = '<option value="overall">All Games (Overall XP)</option>';
+        gameList.forEach(function (g) {
+          var opt = document.createElement("option");
+          opt.value = g.id;
+          opt.textContent = g.title + " (" + g.players + ")";
+          lbGameSelect.appendChild(opt);
+        });
+        if (lbCache.filter !== "overall" && !(data.games && data.games[lbCache.filter])) {
+          lbCache.filter = "overall";
+        }
+        lbGameSelect.value = lbCache.filter;
+      }
+
+      if (lbClassSelect) {
+        var myClass = window.LAScores && LAScores.getClassCode ? LAScores.getClassCode() : "";
+        var allClasses = classes.slice();
+        if (myClass && allClasses.indexOf(myClass) === -1) allClasses.push(myClass);
+        allClasses.sort();
+        if (allClasses.length) {
+          lbClassSelect.hidden = false;
+          lbClassSelect.innerHTML = '<option value="">All Classes</option>';
+          allClasses.forEach(function (cc) {
+            var opt = document.createElement("option");
+            opt.value = cc;
+            opt.textContent = "Class: " + cc;
+            lbClassSelect.appendChild(opt);
+          });
+          lbClassSelect.value = lbCache.classFilter;
+        } else {
+          lbClassSelect.hidden = true;
+          lbCache.classFilter = "";
+        }
+      }
+
+      // Quick filter chips: Overall + top 5 most-played games + currently selected custom game
+      var quickIds = gameList.slice(0, 5).map(function (g) { return g.id; });
+      if (lbCache.filter !== "overall" && quickIds.indexOf(lbCache.filter) === -1) {
+        quickIds.unshift(lbCache.filter);
+      }
+
+      lbFilters.innerHTML = '<button type="button" class="lb-chip' + (lbCache.filter === "overall" ? " is-on" : "") + '" data-game="overall">Overall XP</button>';
+      quickIds.forEach(function (id) {
         var btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "lb-chip";
+        btn.className = "lb-chip" + (lbCache.filter === id ? " is-on" : "");
         btn.setAttribute("data-game", id);
-        btn.textContent = prettyTitle(id);
+        btn.textContent = gameLabelForId(id);
         lbFilters.appendChild(btn);
       });
+    }
+
+    function syncLbChipStates() {
+      lbFilters.querySelectorAll(".lb-chip").forEach(function (b) {
+        b.classList.toggle("is-on", (b.getAttribute("data-game") || "overall") === lbCache.filter);
+      });
+      if (lbGameSelect) lbGameSelect.value = lbCache.filter;
     }
 
     lbFilters.addEventListener("click", function (e) {
       var btn = e.target.closest(".lb-chip");
       if (!btn) return;
-      lbFilters.querySelectorAll(".lb-chip").forEach(function (b) {
-        b.classList.toggle("is-on", b === btn);
-      });
       lbCache.filter = btn.getAttribute("data-game") || "overall";
+      syncLbChipStates();
       renderLeaderboard();
     });
 
-    function renderLeaderboard() {
-      var filter = lbCache.filter || "overall";
-      var rows = filter === "overall" ? (lbCache.overall || []) : ((lbCache.games && lbCache.games[filter]) || []);
-      lbMeta.textContent = filter === "overall" ? "Overall" : prettyTitle(filter);
-
-      if (!rows.length) {
-        lbBody.style.display = "none";
-        lbEmpty.hidden = false;
-        return;
-      }
-      lbBody.style.display = "flex";
-      lbEmpty.hidden = true;
-
-      var me = myNameKey();
-      var top3 = rows.slice(0, 3);
-      var visual = [];
-      if (top3[1]) visual.push({ row: top3[1], rank: 2 });
-      if (top3[0]) visual.push({ row: top3[0], rank: 1 });
-      if (top3[2]) visual.push({ row: top3[2], rank: 3 });
-
-      lbPodium.innerHTML = visual.map(function (item) {
-        var isMe = me && (item.row.key === me || item.row.key.indexOf(me + " · ") === 0);
-        return (
-          '<div class="lb-pod' + (isMe ? " is-me" : "") + '">' +
-            '<div class="lb-pod-medal">' + medal(item.rank) + "</div>" +
-            '<div class="lb-pod-name">' + escapeHtml(item.row.name) + "</div>" +
-            '<div class="lb-pod-score tabular">' + item.row.score + " pts</div>" +
-            '<div class="lb-pod-rank tabular">#' + item.rank + (filter === "overall" && item.row.games ? " · " + item.row.games + " games" : "") + "</div>" +
-          "</div>"
-        );
-      }).join("");
-
-      lbList.innerHTML = rows.slice(3, 30).map(function (p, i) {
-        var rank = i + 4;
-        var isMe = me && (p.key === me || p.key.indexOf(me + " · ") === 0);
-        return (
-          '<div class="lb-row' + (isMe ? " is-me" : "") + '">' +
-            '<span class="lb-row-rank tabular">' + rank + "</span>" +
-            '<span class="lb-row-name">' + escapeHtml(p.name) + "</span>" +
-            '<span class="lb-row-score tabular">' + p.score + " pts</span>" +
-          "</div>"
-        );
-      }).join("");
+    if (lbGameSelect) {
+      lbGameSelect.addEventListener("change", function () {
+        lbCache.filter = lbGameSelect.value || "overall";
+        if (lbCache.data) buildLbControls(lbCache.data);
+        renderLeaderboard();
+      });
     }
 
-    function loadLeaderboard() {
-      if (!window.LAScores || !LAScores.top) {
+    if (lbClassSelect) {
+      lbClassSelect.addEventListener("change", function () {
+        lbCache.classFilter = lbClassSelect.value || "";
+        renderLeaderboard();
+      });
+    }
+
+    if (lbRefreshBtn) {
+      lbRefreshBtn.addEventListener("click", function () {
+        loadLeaderboard(true);
+      });
+    }
+
+    if (lbRetryBtn) {
+      lbRetryBtn.addEventListener("click", function () {
+        loadLeaderboard(true);
+      });
+    }
+
+    function renderLeaderboard() {
+      var data = lbCache.data;
+      if (!data) return;
+
+      var filter = lbCache.filter || "overall";
+      var rawRows = filter === "overall" ? (data.overall || []) : ((data.games && data.games[filter]) || []);
+      var classFilter = lbCache.classFilter || "";
+      var rows = classFilter
+        ? rawRows.filter(function (r) { return String(r.classCode || "") === classFilter; })
+        : rawRows;
+
+      var titleLabel = filter === "overall" ? "Overall XP" : gameLabelForId(filter);
+      lbMeta.textContent = titleLabel + " · " + rows.length + (rows.length === 1 ? " player" : " players") + (classFilter ? " (" + classFilter + ")" : "");
+
+      if (!rows.length) {
+        lbStanding.hidden = true;
         lbBody.style.display = "none";
         lbEmpty.hidden = false;
+        lbRetryBtn.hidden = true;
+        lbEmptyText.textContent = classFilter
+          ? "No players found in class \"" + classFilter + "\" for this view."
+          : (filter === "overall"
+            ? "No scores on the board yet. Finish a game to appear here."
+            : "No attempts recorded for " + titleLabel + " yet.");
         return;
       }
-      if (lbCache.loaded) {
+
+      lbBody.style.display = "flex";
+      lbEmpty.hidden = true;
+      lbRetryBtn.hidden = true;
+
+      // Highlight user's standing
+      var myIdx = -1;
+      for (var m = 0; m < rows.length; m++) {
+        if (isMeRow(rows[m])) {
+          myIdx = m;
+          break;
+        }
+      }
+      if (myIdx >= 0) {
+        var meRow = rows[myIdx];
+        lbStanding.hidden = false;
+        if (filter === "overall") {
+          lbStanding.innerHTML =
+            '<div class="lb-standing-left">' +
+              '<span class="lb-standing-pos tabular">#' + (myIdx + 1) + "</span>" +
+              "<div>" +
+                '<div class="lb-standing-title">' + escapeHtml(meRow.name) + ' · ' + escapeHtml(meRow.rankIcon + " " + meRow.rankName) + "</div>" +
+                '<div class="lb-standing-sub">Your standing out of ' + rows.length + " ranked learners</div>" +
+              "</div>" +
+            "</div>" +
+            '<div class="lb-standing-metrics tabular">' +
+              "<span>⚡ " + meRow.xp + " XP</span>" +
+              "<span>★ " + meRow.totalStars + " Stars</span>" +
+              "<span>🎮 " + meRow.gamesPlayed + " Games</span>" +
+            "</div>";
+        } else {
+          lbStanding.innerHTML =
+            '<div class="lb-standing-left">' +
+              '<span class="lb-standing-pos tabular">#' + (myIdx + 1) + "</span>" +
+              "<div>" +
+                '<div class="lb-standing-title">' + escapeHtml(meRow.name) + "</div>" +
+                '<div class="lb-standing-sub">Your best on ' + escapeHtml(titleLabel) + "</div>" +
+              "</div>" +
+            "</div>" +
+            '<div class="lb-standing-metrics tabular">' +
+              "<span>" + starsInline(meRow.stars) + "</span>" +
+              (meRow.accuracy > 0 ? "<span>" + meRow.accuracy + "%</span>" : "") +
+              "<span>" + meRow.score + (meRow.maxScore > 0 ? "/" + meRow.maxScore : " pts") + "</span>" +
+            "</div>";
+        }
+      } else {
+        lbStanding.hidden = true;
+      }
+
+      var top3 = rows.slice(0, 3);
+      var visual = [];
+      if (top3[1]) visual.push({ row: top3[1], rank: 2, delay: 70 });
+      if (top3[0]) visual.push({ row: top3[0], rank: 1, delay: 0 });
+      if (top3[2]) visual.push({ row: top3[2], rank: 3, delay: 140 });
+
+      lbPodium.innerHTML = visual.map(function (item) {
+        var r = item.row;
+        var me = isMeRow(r);
+        var tierLine = filter === "overall"
+          ? '<div class="lb-pod-tier">' + escapeHtml(r.rankIcon + " " + r.rankName) + "</div>"
+          : '<div class="lb-pod-tier">' + starsInline(r.stars) + (r.accuracy > 0 ? " · " + r.accuracy + "%" : "") + "</div>";
+        var primaryVal = filter === "overall"
+          ? r.xp + " XP"
+          : (r.score + (r.maxScore > 0 ? "/" + r.maxScore : " pts"));
+        var subLine = filter === "overall"
+          ? "#" + item.rank + " · ★ " + r.totalStars + " · " + r.gamesPlayed + " games"
+          : "#" + item.rank + " · " + (r.plays || 1) + ((r.plays || 1) === 1 ? " play" : " plays") + (r.timeMs ? " · " + formatTime(r.timeMs) : "");
+        var crownOrMedal = item.rank === 1 ? "👑" : medal(item.rank);
+
+        return (
+          '<div class="lb-pod r' + item.rank + (me ? " is-me" : "") + '" style="--pod-delay:' + item.delay + 'ms">' +
+            '<div class="lb-pod-medal">' + crownOrMedal + "</div>" +
+            '<div class="lb-pod-av">' + escapeHtml((r.name || "P").charAt(0).toUpperCase()) + "</div>" +
+            '<div class="lb-pod-name">' + escapeHtml(r.name) + (me ? " (you)" : "") + "</div>" +
+            tierLine +
+            '<div class="lb-pod-score tabular">' + escapeHtml(primaryVal) + "</div>" +
+            '<div class="lb-pod-rank tabular">' + escapeHtml(subLine) + "</div>" +
+          "</div>"
+        );
+      }).join("");
+
+      var maxMetric = 1;
+      rows.forEach(function (rowItem) {
+        var mv = filter === "overall" ? (Number(rowItem.xp) || 0) : (rowItem.maxScore > 0 ? Math.round(((Number(rowItem.score) || 0) / rowItem.maxScore) * 100) : (Number(rowItem.accuracy || rowItem.score) || 0));
+        if (mv > maxMetric) maxMetric = mv;
+      });
+
+      lbList.innerHTML = rows.slice(3, 25).map(function (p, i) {
+        var rank = i + 4;
+        var me = isMeRow(p);
+        var subText = filter === "overall"
+          ? (p.rankIcon + " " + p.rankName + " · " + p.gamesPlayed + " games" + (p.avgAccuracy > 0 ? " · " + p.avgAccuracy + "% avg" : ""))
+          : (starsInline(p.stars) + (p.accuracy > 0 ? " · " + p.accuracy + "%" : "") + (p.timeMs ? " · " + formatTime(p.timeMs) : ""));
+        var metaText = filter === "overall"
+          ? "★ " + p.totalStars
+          : (p.plays || 1) + ((p.plays || 1) === 1 ? " play" : " plays");
+        var scoreText = filter === "overall"
+          ? p.xp + " XP"
+          : (p.score + (p.maxScore > 0 ? "/" + p.maxScore : " pts"));
+        var mv = filter === "overall" ? (Number(p.xp) || 0) : (p.maxScore > 0 ? Math.round(((Number(p.score) || 0) / p.maxScore) * 100) : (Number(p.accuracy || p.score) || 0));
+        var pct = Math.max(6, Math.min(100, Math.round((mv / maxMetric) * 100)));
+        var delay = Math.min(i, 12) * 28;
+
+        return (
+          '<div class="lb-row' + (me ? " is-me" : "") + '" style="--row-delay:' + delay + 'ms">' +
+            '<div class="lb-row-left">' +
+              '<span class="lb-row-rank tabular">#' + rank + "</span>" +
+              '<span class="lb-row-av">' + escapeHtml((p.name || "P").charAt(0).toUpperCase()) + "</span>" +
+              '<div class="lb-row-name-wrap">' +
+                '<span class="lb-row-name">' + escapeHtml(p.name) + (p.classCode ? ' <small style="opacity:.7">(' + escapeHtml(p.classCode) + ")</small>" : "") + (me ? " (you)" : "") + "</span>" +
+                '<span class="lb-row-sub">' + escapeHtml(subText) + "</span>" +
+              "</div>" +
+            "</div>" +
+            '<div class="lb-row-right tabular">' +
+              '<span class="lb-row-meta">' + escapeHtml(metaText) + "</span>" +
+              '<div class="lb-row-score-box">' +
+                '<span class="lb-row-score">' + escapeHtml(scoreText) + "</span>" +
+                '<span class="lb-row-meter"><span class="lb-row-meter-fill" style="--pct:' + pct + '%;--row-delay:' + delay + 'ms"></span></span>' +
+              "</div>" +
+            "</div>" +
+          "</div>"
+        );
+      }).join("");
+
+      if (lbFooterLink) lbFooterLink.hidden = rows.length <= 25;
+    }
+
+    function loadLeaderboard(force) {
+      var lbSkel = document.getElementById("lbSkeleton");
+      if (!window.LAScores || !LAScores.fetchLeaderboard) {
+        if (lbSkel) lbSkel.hidden = true;
+        lbStanding.hidden = true;
+        lbBody.style.display = "none";
+        lbEmpty.hidden = false;
+        lbRetryBtn.hidden = false;
+        lbEmptyText.textContent = "Leaderboard module could not load.";
+        return;
+      }
+      if (lbCache.loaded && lbCache.data && !force) {
+        if (lbSkel) lbSkel.hidden = true;
+        buildLbControls(lbCache.data);
         renderLeaderboard();
         return;
       }
-      lbEmpty.hidden = false;
-      lbEmpty.textContent = "Loading leaderboard…";
+
+      if (lbRefreshBtn) {
+        lbRefreshBtn.disabled = true;
+        lbRefreshBtn.textContent = "Loading…";
+      }
+      lbStanding.hidden = true;
+      lbEmpty.hidden = true;
+      lbRetryBtn.hidden = true;
       lbBody.style.display = "none";
+      if (lbSkel) lbSkel.hidden = false;
 
-      Promise.resolve(LAScores.ensureAuth ? LAScores.ensureAuth() : null)
-        .then(function () { return LAScores.listGames(); })
-        .then(function (ids) {
-          if (!ids || !ids.length) ids = Object.keys(LAScores.GAMES || {});
-          return Promise.all((ids || []).map(function (gid) {
-            return LAScores.top(gid, 50).then(function (rows) {
-              return { gameId: gid, rows: rows || [] };
-            });
-          }));
-        })
-        .then(function (buckets) {
-          var perGame = {};
-          var overall = {};
-          (buckets || []).forEach(function (bucket) {
-            var gid = bucket.gameId;
-            perGame[gid] = {};
-            (bucket.rows || []).forEach(function (v) {
-              var name = String(v.name || "Player").trim() || "Player";
-              var key = name.toLowerCase();
-              var score = Number(v.score) || 0;
-              var at = Number(v.at) || 0;
-              var prev = perGame[gid][key];
-              if (!prev || score > prev.score || (score === prev.score && at > prev.at)) {
-                perGame[gid][key] = { name: name, score: score, at: at };
-              }
-            });
-          });
-
-          Object.keys(perGame).forEach(function (gid) {
-            Object.keys(perGame[gid]).forEach(function (key) {
-              var p = perGame[gid][key];
-              if (!overall[key]) overall[key] = { name: p.name, total: 0, games: 0, best: 0 };
-              overall[key].total += p.score;
-              overall[key].games += 1;
-              if (p.score > overall[key].best) overall[key].best = p.score;
-            });
-          });
-
-          function toRanked(map, scoreKey) {
-            return Object.keys(map).map(function (k) {
-              var o = map[k];
-              return { name: o.name, score: o[scoreKey] != null ? o[scoreKey] : o.score, games: o.games || 1, key: k };
-            }).sort(function (a, b) {
-              return b.score - a.score || b.games - a.games || a.name.localeCompare(b.name);
-            });
-          }
-
-          lbCache.overall = toRanked(overall, "total");
-          lbCache.games = {};
-          Object.keys(perGame).forEach(function (gid) {
-            lbCache.games[gid] = toRanked(perGame[gid], "score");
-          });
+      Promise.resolve(LAScores.fetchLeaderboard({ force: Boolean(force) }))
+        .then(function (data) {
+          if (lbSkel) lbSkel.hidden = true;
+          if (!data) throw new Error("Empty leaderboard response");
+          lbCache.data = data;
           lbCache.loaded = true;
-          buildLbFilters(Object.keys(perGame).sort());
+          buildLbControls(data);
           renderLeaderboard();
         })
         .catch(function () {
+          if (lbSkel) lbSkel.hidden = true;
+          lbStanding.hidden = true;
           lbBody.style.display = "none";
           lbEmpty.hidden = false;
-          lbEmpty.textContent = "Could not load leaderboard right now.";
+          lbRetryBtn.hidden = false;
+          lbEmptyText.textContent = "Could not load leaderboard right now.";
+        })
+        .finally(function () {
+          if (lbRefreshBtn) {
+            lbRefreshBtn.disabled = false;
+            lbRefreshBtn.textContent = "↻ Refresh";
+          }
         });
     }
 
@@ -3261,6 +3814,8 @@
           state.session = res.player || LAAuth.getSession();
         }
 
+        if (window.LAScores && LAScores.invalidateCache) LAScores.invalidateCache();
+        lbCache.loaded = false;
         feedback.className = "pf-feedback is-ok";
         feedback.textContent = "Profile updated.";
         await refreshDashboard();
